@@ -148,7 +148,7 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: "URL (RegExp)",
                 name: "url",
                 value: data.url,
-                width: 400
+                width: 500
             },{
                 xtype: "hidden",
                 name: "type",
@@ -189,7 +189,7 @@ pimcore.settings.targeting.conditions = {
                 ],
                 name: "browser",
                 mode: "local",
-                width: 200,
+                width: 300,
                 value: data.browser,
                 triggerAction: "all"
             },{
@@ -240,7 +240,7 @@ pimcore.settings.targeting.conditions = {
                 }),
                 triggerAction: "all",
                 mode: "local",
-                width: 250,
+                width: 350,
                 value: data.country,
                 listeners: {
                     afterrender: function (el) {
@@ -295,7 +295,7 @@ pimcore.settings.targeting.conditions = {
                 }),
                 triggerAction: "all",
                 mode: "local",
-                width: 250,
+                width: 350,
                 value: data.language,
                 listeners: {
                     afterrender: function (el) {
@@ -335,13 +335,13 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: t('key'),
                 name: "key",
                 value: data.key,
-                width: 200
+                width: 300
             },{
                 xtype:'textfield',
                 fieldLabel: t('value'),
                 name: "value",
                 value: data.value,
-                width: 100
+                width: 200
             },{
                 xtype: "hidden",
                 name: "type",
@@ -369,7 +369,7 @@ pimcore.settings.targeting.conditions = {
             fieldLabel: t('longitude'),
             name: "longitude",
             value: data.longitude,
-            width: 250
+            width: 350
         });
 
         var latitude = new Ext.form.NumberField({
@@ -377,7 +377,7 @@ pimcore.settings.targeting.conditions = {
             fieldLabel: t('latitude'),
             name: "latitude",
             value: data.latitude,
-            width: 250
+            width: 350
         });
 
         var radius = new Ext.form.NumberField({
@@ -385,7 +385,7 @@ pimcore.settings.targeting.conditions = {
             fieldLabel: t('radius_in_km'),
             name: "radius",
             value: data.radius,
-            width: 50
+            width: 200
         });
 
         var item =  new Ext.form.FormPanel({
@@ -403,7 +403,7 @@ pimcore.settings.targeting.conditions = {
                     var gmap, marker, mapPanel, circle;
 
                     var searchfield = new Ext.form.TextField({
-                        width: 300,
+                        width: 400,
                         name: "mapSearch",
                         style: "float: left;",
                         fieldLabel: t("search")
@@ -557,7 +557,7 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: t('referrer'),
                 name: "referrer",
                 value: data.referrer,
-                width: 350
+                width: 450
             },{
                 xtype: "hidden",
                 name: "type",
@@ -594,7 +594,7 @@ pimcore.settings.targeting.conditions = {
                 store: [["",t("all")],["google","Google"],["bing","Bing"],["yahoo", "Yahoo!"]],
                 triggerAction: "all",
                 mode: "local",
-                width: 250,
+                width: 350,
                 value: data.searchengine ? data.searchengine : ""
             },{
                 xtype: "hidden",
@@ -629,7 +629,7 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: "URL",
                 name: "url",
                 value: data.url,
-                width: 350
+                width: 450
             },{
                 xtype: "hidden",
                 name: "type",
@@ -663,7 +663,7 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: t("number"),
                 name: "number",
                 value: data.number,
-                width: 40
+                width: 200
             },{
                 xtype: "hidden",
                 name: "type",
@@ -697,19 +697,19 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: t("hours"),
                 name: "hours",
                 value: data.hours ? data.hours : 0,
-                width: 40
+                width: 200
             },{
                 xtype:'spinnerfield',
                 fieldLabel: t("minutes"),
                 name: "minutes",
                 value: data.minutes ? data.minutes : 0,
-                width: 40
+                width: 200
             },{
                 xtype:'spinnerfield',
                 fieldLabel: t("seconds"),
                 name: "seconds",
                 value: data.seconds ? data.seconds : 0,
-                width: 40
+                width: 200
             },{
                 xtype: "hidden",
                 name: "type",
@@ -743,7 +743,7 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: "URL",
                 name: "url",
                 value: data.url,
-                width: 350
+                width: 450
             },{
                 xtype: "hidden",
                 name: "type",
@@ -777,7 +777,7 @@ pimcore.settings.targeting.conditions = {
                 fieldLabel: t("number"),
                 name: "number",
                 value: data.number,
-                width: 40
+                width: 200
             },{
                 xtype: "hidden",
                 name: "type",
@@ -814,7 +814,7 @@ pimcore.settings.targeting.conditions = {
                 store: [["",t("all")],["desktop",t("desktop")],["tablet", t("tablet")], ["mobile", t("mobile")]],
                 triggerAction: "all",
                 mode: "local",
-                width: 250,
+                width: 350,
                 value: data.platform ? data.platform : "all"
             },{
                 xtype: "hidden",
@@ -853,7 +853,7 @@ pimcore.settings.targeting.conditions = {
                                                                 ["android","Android"], ["ios", "iOS"]],
                 triggerAction: "all",
                 mode: "local",
-                width: 250,
+                width: 350,
                 value: data.system ? data.system : "all"
             },{
                 xtype: "hidden",
@@ -890,7 +890,7 @@ pimcore.settings.targeting.conditions = {
                 valueField: "id",
                 store: pimcore.globalmanager.get("personas"),
                 editable: false,
-                width: 300,
+                width: 400,
                 triggerAction: 'all',
                 listWidth: 200,
                 mode: "local",
