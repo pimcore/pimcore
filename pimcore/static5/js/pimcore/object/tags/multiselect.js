@@ -88,7 +88,8 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             editable: false,
             fieldLabel: this.fieldConfig.title,
             store: store,
-            itemCls: "object_field"
+            itemCls: "object_field",
+            height: 100
         };
 
         if (this.fieldConfig.width) {
