@@ -752,7 +752,7 @@ pimcore.settings.system = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 800},
                         items :[
                             {
                                 fieldLabel: t('adapter'),
@@ -801,7 +801,7 @@ pimcore.settings.system = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 400},
                         items :[
                             {
                                 fieldLabel: t('store_version_history_in_days'),
@@ -900,7 +900,7 @@ pimcore.settings.system = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 400},
                         items :[
                             {
                                 fieldLabel: t('store_version_history_in_days'),
@@ -943,7 +943,8 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t('hostname_for_webdav'),
                                 name: 'assets.webdav.hostname',
-                                value: this.getValue("assets.webdav.hostname")
+                                value: this.getValue("assets.webdav.hostname"),
+                                width: 400
                             },
                             {
                                 fieldLabel: t('store_version_history_in_days'),
@@ -956,7 +957,8 @@ pimcore.settings.system = Class.create({
                                     "keyup": this.checkVersionInputs.bind(this, "assets", "days"),
                                     "spin": this.checkVersionInputs.bind(this, "assets", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "days", "init")
-                                }
+                                },
+                                width: 400
                             },
                             {
                                 fieldLabel: t('store_version_history_in_steps'),
@@ -969,7 +971,8 @@ pimcore.settings.system = Class.create({
                                     "keyup": this.checkVersionInputs.bind(this, "assets", "steps"),
                                     "spin": this.checkVersionInputs.bind(this, "assets", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "steps", "init")
-                                }
+                                },
+                                width: 400
                             },
                             {
                                 fieldLabel: t('absolute_path_to_ffmpeg_binary'),
@@ -1026,18 +1029,18 @@ pimcore.settings.system = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 800},
                         items :[
                             {
                                 xtype: "displayfield",
                                 hideLabel: true,
-                                width: 600,
+                                width: 800,
                                 value: "<b>" + t('google_api_key_service') + "</b>",
                                 cls: "pimcore_extra_label"
                             },{
                                 xtype: "displayfield",
                                 hideLabel: true,
-                                width: 600,
+                                width: 800,
                                 value: t("google_api_access_description"),
                                 cls: "pimcore_extra_label"
                             },
@@ -1045,17 +1048,17 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('client_id'),
                                 name: 'services.google.client_id',
                                 value: this.getValue("services.google.client_id"),
-                                width: 600
+                                width: 800
                             },
                             {
                                 fieldLabel: t('email'),
                                 name: 'services.google.email',
                                 value: this.getValue("services.google.email"),
-                                width: 600
+                                width: 800
                             },{
                                 xtype: "displayfield",
                                 hideLabel: true,
-                                width: 600,
+                                width: 800,
                                 value: this.data.config.google_private_key_exists ?
                                     t("google_api_private_key_installed")
                                     : ('<span style="color:red;">'
@@ -1067,13 +1070,13 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 style: "margin-top: 10px;",
-                                width: 600,
+                                width: 800,
                                 value: "&nbsp;"
                             },
                             {
                                 xtype: "displayfield",
                                 hideLabel: true,
-                                width: 600,
+                                width: 800,
                                 value: "<b>" + t('google_api_key_simple') + "</b>",
                                 cls: "pimcore_extra_label"
                             },
@@ -1081,24 +1084,24 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('server_api_key'),
                                 name: 'services.google.simpleapikey',
                                 value: this.getValue("services.google.simpleapikey"),
-                                width: 650
+                                width: 850
                             },
                             {
                                 fieldLabel: t('browser_api_key'),
                                 name: 'services.google.browserapikey',
                                 value: this.getValue("services.google.browserapikey"),
-                                width: 650
+                                width: 850
                             },{
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 style: "margin-top: 10px;",
-                                width: 600,
+                                width: 800,
                                 value: "&nbsp;"
                             },
                             {
                                 xtype: "displayfield",
                                 hideLabel: true,
-                                width: 600,
+                                width: 800,
                                 value: "<b>" + t('translate_api_key') + "</b>",
                                 cls: "pimcore_extra_label"
                             },
@@ -1106,7 +1109,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('api_key'),
                                 name: 'services.translate.apikey',
                                 value: this.getValue("services.translate.apikey"),
-                                width: 650
+                                width: 850
                             }
                         ]
                     }
