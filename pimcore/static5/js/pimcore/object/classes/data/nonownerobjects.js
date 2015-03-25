@@ -92,18 +92,22 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
                     this.datax.ownerClassName=classNamevalue;
                 }.bind(this)
             }
-
         });
 
 
-
-        this.fieldComboStore = new Ext.data.JsonStore({
-            url: '/admin/object-helper/grid-get-column-config',
-            baseParams: {
-                types: 'objects',
-                name: this.datax.ownerClassName
+        this.fieldComboStore = new Ext.data.Store({
+            proxy: {
+                type: 'ajax',
+                url: '/admin/object-helper/grid-get-column-config',
+                reader: {
+                    type: 'json',
+                    rootProperty: "availableFields"
+                },
+                extraParams: {
+                    types: 'objects',
+                    name: this.datax.ownerClassName
+                }
             },
-            root: "availableFields",
             fields: ['key', 'label'],
             disabled: this.isInCustomLayoutEditor(),
             autoLoad: false,
@@ -113,7 +117,6 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
 
         this.fieldCombo = new Ext.form.ComboBox({
             fieldLabel: t('owner_field'),
-//            name: 'objects' ,
             value: this.datax.ownerFieldName,
             store: this.fieldComboStore,
             listWidth: 'auto',
