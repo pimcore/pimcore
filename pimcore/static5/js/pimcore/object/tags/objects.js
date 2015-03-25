@@ -599,11 +599,11 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         if (items.length > 0) {
             for (var i = 0; i < items.length; i++) {
                 if (!this.objectAlreadyExists(items[i].id)) {
-                    this.store.add(new this.store.recordType({
+                    this.store.add({
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].classname
-                    }));
+                    });
                 }
             }
         }

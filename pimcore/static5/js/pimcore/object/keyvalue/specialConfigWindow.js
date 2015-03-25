@@ -135,7 +135,7 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
         for (var i = 0; i < this.data.length; i++) {
             var pair = this.data[i];
 
-            this.store.add(new this.store.recordType(pair));
+            this.store.add(pair);
         }
 
         var gridColumns = [];
@@ -181,19 +181,17 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
             }
         ];
 
-        this.gridPanel = new Ext.grid.EditorGridPanel({
-            clicksToEdit: 1,
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
+
+        this.gridPanel = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                    sortable: false
-                },
-                columns: gridColumns
-            }),
+            columns: gridColumns,
             viewConfig: {
                 markDirty: false
             },
-            // cls: cls,
+            plugins: [this.cellEditing],
             width: 200,
             height: 200,
             stripeRows: true,
@@ -215,7 +213,7 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
                 cls: "pimcore_force_auto_width"
             },
             autoHeight: true,
-            bodyCssClass: "pimcore_object_tag_objects"
+            bodyCls: "pimcore_object_tag_objects"
         });
 
         return this.gridPanel;

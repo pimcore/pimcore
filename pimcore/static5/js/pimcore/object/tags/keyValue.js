@@ -363,7 +363,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                                                 var pair = this.originalData[i];
                                                 if (pair.key == key && pair.inherited) {
                                                     var newpair = JSON.parse(JSON.stringify(pair));
-                                                    this.store.add(new this.store.recordType(newpair));
+                                                    this.store.add(newpair);
                                                 }
                                             }
                                         }
