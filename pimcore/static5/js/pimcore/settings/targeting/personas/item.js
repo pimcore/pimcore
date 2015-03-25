@@ -217,7 +217,7 @@ pimcore.settings.targeting.personas.item = Class.create({
         var conditions = this.conditionsContainer.items.getRange();
         var tb;
         for (var i=0; i<conditions.length; i++) {
-            tb = conditions[i].getTopToolbar();
+            var tb = conditions[i].getDockedItems()[0];
             if(i==0) {
                 tb.getComponent("toggle_and").hide();
                 tb.getComponent("toggle_or").hide();
@@ -287,7 +287,7 @@ pimcore.settings.targeting.personas.item = Class.create({
                 });
 
 
-            // remeber current ident
+            // remember current ident
             lastIdent = ident;
 
 
