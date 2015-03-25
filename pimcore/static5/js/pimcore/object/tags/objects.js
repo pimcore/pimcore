@@ -94,22 +94,18 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             layout: "fit"
         });
 
-        this.nameField = new Ext.form.Field({
-            xtype: 'field',
+        this.nameField = new Ext.form.TextField({
             fieldLabel: t('name'),
-            width: 200
+            width: 300
 
         });
 
-        this.parentIdField = new Ext.form.Hidden({
-            xtype: 'parentld'
+        this.parentIdField = new Ext.form.Hidden({});
 
-        });
-
-        this.parentField = new Ext.form.Field({
+        this.parentField = new Ext.form.TextField({
             name: 'parent',
             fieldLabel: t('parent_element'),
-            width: 200,
+            width: 300,
             disabled:true
         });
 
@@ -121,12 +117,11 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
 
         var panel = new Ext.Panel({
-            layout: "pimcoreform",
             bodyStyle: "padding: 10px;",
             items: [
                 this.nameField,
-                new Ext.form.CompositeField({
-                    width: 300,
+                new Ext.form.FieldContainer({
+                    layout: 'hbox',
                     items: [
                         this.parentField,
                         this.parentChooseButton
