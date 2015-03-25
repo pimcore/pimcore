@@ -209,7 +209,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         this.resetData();
 
         this.updateImage();
-        this.getBody().addClass("pimcore_tag_image_empty");
+        this.getBody().addCls("pimcore_tag_image_empty");
         this.reload();
     },
 
