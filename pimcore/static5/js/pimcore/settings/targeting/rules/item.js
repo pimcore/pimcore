@@ -64,7 +64,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                 collapsed: !this.data.actions.redirectEnabled,
                 items: [{
                     xtype: "textfield",
-                    width: 350,
+                    width: 450,
                     fieldLabel: "URL",
                     name: "redirect.url",
                     value: this.data.actions.redirectUrl,
@@ -83,8 +83,9 @@ pimcore.settings.targeting.rules.item = Class.create({
                                 },
 
                                 onNodeDrop : function (target, dd, e, data) {
-                                    if (data.node.attributes.elementType == "document") {
-                                        this.setValue(data.node.attributes.path);
+                                    var data = data.records[0].data;
+                                    if (data.elementType == "document") {
+                                        this.setValue(data.path);
                                         return true;
                                     }
                                     return false;
@@ -112,13 +113,13 @@ pimcore.settings.targeting.rules.item = Class.create({
                 items: [{
                     xtype: "textfield",
                     name: "event.key",
-                    width: 200,
+                    width: 300,
                     fieldLabel: t("key"),
                     value: this.data.actions.eventKey
                 }, {
                     xtype: "textfield",
                     name: "event.value",
-                    width: 100,
+                    width: 200,
                     fieldLabel: t("value"),
                     value: this.data.actions.eventValue
                 }]
@@ -130,7 +131,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                 collapsed: !this.data.actions.codesnippetEnabled,
                 items: [{
                     xtype: "textarea",
-                    width: 500,
+                    width: 600,
                     height: 200,
                     fieldLabel: t("code"),
                     name: "codesnippet.code",
@@ -143,7 +144,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                     store: [["body","body"],["head","head"]],
                     triggerAction: "all",
                     mode: "local",
-                    width: 250,
+                    width: 350,
                     value: this.data.actions.codesnippetSelector
                 },{
                     xtype:'combo',
@@ -155,7 +156,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                     editable: false,
                     forceSelection: true,
                     mode: "local",
-                    width: 250,
+                    width: 350,
                     value: this.data.actions.codesnippetPosition
                 }]
             }, {
@@ -171,7 +172,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                     valueField: "id",
                     store: pimcore.globalmanager.get("personas"),
                     editable: false,
-                    width: 300,
+                    width: 400,
                     triggerAction: 'all',
                     listWidth: 200,
                     mode: "local",
