@@ -211,8 +211,6 @@ pimcore.object.tree = Class.create({
     },
 
     onTreeNodeOver: function (targetNode, position, dragData, e, eOpts ) {
-        console.log("onTreeNodeOver");
-
         var node = dragData.records[0];
         // check for permission
         try {

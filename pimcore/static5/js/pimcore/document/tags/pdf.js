@@ -146,7 +146,8 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
-        if (this.dndAllowed(data)) {
+        var record = data.records[0];
+        if (this.dndAllowed(record)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -155,10 +156,11 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        var record = data.records[0];
 
-        if (data.node.attributes.type == "document") {
+        if (record.data.type == "document") {
             this.resetData();
-            this.data.id = data.node.attributes.id;
+            this.data.id = record.data.id;
 
             this.updateImage();
             this.reload();
@@ -167,9 +169,9 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         }
     },
 
-    dndAllowed: function(data) {
+    dndAllowed: function(record) {
 
-        if(data.node.attributes.elementType!="asset" || data.node.attributes.type!="document"){
+        if(record.data.elementType!="asset" || record.data.type!="document"){
             return false;
         } else {
             return true;
