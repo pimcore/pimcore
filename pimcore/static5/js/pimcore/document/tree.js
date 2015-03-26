@@ -144,7 +144,12 @@ pimcore.document.tree = Class.create({
         //this.tree.on("enddrag", this.onDragEnd.bind(this));
         //this.tree.on("nodedragover", this.onTreeNodeOver.bind(this));
         //this.tree.on("afterrender", function () {
-        //    this.tree.loadMask = new Ext.LoadMask(this.tree.getEl(), {msg: t("please_wait")});
+
+        this.tree.loadMask = new Ext.LoadMask({
+            target: this.tree,
+            msg: t("please_wait")
+        });
+
         //    this.tree.loadMask.enable();
         //}.bind(this));
         //
@@ -433,7 +438,7 @@ pimcore.document.tree = Class.create({
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
                     this.pasteCutDocument(this.cutDocument,
-                        this.cutParentNode, this, this.tree);
+                        this.cutParentNode, record, this.tree);
                     this.cutParentNode = null;
                     this.cutDocument = null;
                 }.bind(this)
@@ -696,19 +701,19 @@ pimcore.document.tree = Class.create({
     },
 
     pasteCutDocument: function(document, oldParent, newParent, tree) {
-        document.attributes.reference.updateDocument(document.id, {
+        this.updateDocument(document.id, {
             parentId: newParent.id
-        }, function (newParent, oldParent, tree, response) {
+        }, function (document, newParent, oldParent, tree, response) {
             try {
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
                     // set new pathes
-                    var newBasePath = newParent.attributes.path;
+                    var newBasePath = newParent.data.path;
                     if (newBasePath == "/") {
                         newBasePath = "";
                     }
-                    this.attributes.basePath = newBasePath;
-                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.text;
+                    document.data.basePath = newBasePath;
+                    document.data.path = document.data.basePath + "/" + document.data.text;
                 }
                 else {
                     tree.loadMask.hide();
@@ -722,9 +727,9 @@ pimcore.document.tree = Class.create({
             this.refresh(oldParent);
             this.refresh(newParent);
 
-            tree.loadMask.hide();
+            this.tree.loadMask.hide();
 
-        }.bind(document, newParent, oldParent, tree));
+        }.bind(this, document, newParent, oldParent, tree));
 
     },
 
