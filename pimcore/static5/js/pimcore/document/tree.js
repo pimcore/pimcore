@@ -1170,25 +1170,25 @@ pimcore.document.tree = Class.create({
         if (button == "ok") {
 
             // check for ident filename in current level
-            if(this.attributes.reference.isExistingKeyInLevel(this.parentNode, value, this)) {
+            if(this.isExistingKeyInLevel(record.parentNode, value, this)) {
                 return;
             }
 
-            if(this.attributes.reference.isDisallowedKey(this.parentNode.id, value)) {
+            if(this.isDisallowedKey(record.parentNode.id, value)) {
                 return;
             }
 
             value = pimcore.helpers.getValidFilename(value);
 
-            this.setText(value);
-            this.attributes.path = this.attributes.basePath + value;
+            record.set("text", value);
+            record.data.path = record.data.basePath + value;
 
-            this.getOwnerTree().loadMask.show();
+            this.tree.loadMask.show();
 
-            this.attributes.reference.updateDocument(this.id, {key: value}, function (response) {
+            this.updateDocument(record.id, {key: value}, function (response) {
 
-                this.getOwnerTree().loadMask.hide();
-                this.reload();
+                this.tree.loadMask.hide();
+                this.refresh(record);
 
                 try {
                     var rdata = Ext.decode(response.responseText);
