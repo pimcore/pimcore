@@ -83,11 +83,11 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 editable: false,
                 fieldLabel: t("allowed_types"),
                 store: this.store,
-//                width: 'auto',
                 value: this.datax.allowedTypes,
                 displayField: "key",
                 valueField: "key",
-                width: 300
+                width: 400,
+                height: 100
             }), {
                 xtype: "checkbox",
                 fieldLabel: t("lazy_loading"),
