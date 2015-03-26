@@ -568,7 +568,7 @@ pimcore.asset.tree = Class.create({
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
                     this.pasteCutAsset(this.cutAsset,
-                        this.cutParentNode, this, this.tree);
+                        this.cutParentNode, record, this.tree);
                     this.cutParentNode = null;
                     this.cutAsset = null;
                 }.bind(this)
@@ -682,33 +682,33 @@ pimcore.asset.tree = Class.create({
     },
 
     pasteCutAsset: function(asset, oldParent, newParent, tree) {
-        asset.attributes.reference.updateAsset(asset.id, {
+        this.updateAsset(asset.id, {
             parentId: newParent.id
-        }, function (newParent, oldParent, tree, response) {
+        }, function (asset, newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
                     // set new pathes
-                    var newBasePath = newParent.attributes.path;
+                    var newBasePath = newParent.data.path;
                     if (newBasePath == "/") {
                         newBasePath = "";
                     }
-                    this.attributes.basePath = newBasePath;
-                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.text;
+                    asset.data.basePath = newBasePath;
+                    asset.data.path = asset.data.basePath + "/" + asset.data.text;
                 }
                 else {
-                    tree.loadMask.hide();
+                    this.tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
                         "error",t(rdata.message));
                 }
             } catch(e){
-                tree.loadMask.hide();
+                this.tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
             }
-            tree.loadMask.hide();
-            oldParent.reload();
-            newParent.reload();
-        }.bind(asset, newParent, oldParent, tree));
+            this.tree.loadMask.hide();
+            this.refresh(oldParent);
+            this.refresh(newParent);
+        }.bind(this, asset, newParent, oldParent, tree));
 
     },
 
