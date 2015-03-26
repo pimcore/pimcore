@@ -31,7 +31,7 @@ pimcore.settings.user.role.settings = Class.create({
                 fieldLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
                 checked: this.data.permissions[this.data.availablePermissions[i].key],
-                labelStyle: "width: 200px;"
+                labelWidth: 200
             });
         }
 
@@ -50,7 +50,7 @@ pimcore.settings.user.role.settings = Class.create({
                 triggerAction:"all",
                 editable:false,
                 fieldLabel:t("document_types"),
-                width:300,
+                width: 400,
                 displayField: "name",
                 valueField: "id",
                 store: pimcore.globalmanager.get("document_types_store"),
@@ -61,7 +61,7 @@ pimcore.settings.user.role.settings = Class.create({
                 triggerAction:"all",
                 editable:false,
                 fieldLabel:t("classes"),
-                width:300,
+                width: 400,
                 displayField: "text",
                 valueField: "id",
                 store: pimcore.globalmanager.get("object_types_store"),
