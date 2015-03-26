@@ -970,7 +970,19 @@ pimcore.asset.tree = Class.create({
         //}
     },
 
-    importFromServer: function () {
+    importFromServer: function (tree, record) {
+
+        var store = Ext.create('Ext.data.TreeStore', {
+            proxy: {
+                type: 'ajax',
+                url: "/admin/misc/fileexplorer-tree"
+            },
+            folderSort: true,
+            sorters: [{
+                property: 'text',
+                direction: 'ASC'
+            }]
+        });
 
         this.treePanel = new Ext.tree.TreePanel({
             region: "west",
@@ -980,6 +992,7 @@ pimcore.asset.tree = Class.create({
             enableDD: false,
             useArrows: true,
             autoScroll: true,
+            store: store,
             root: {
                 nodeType: 'async',
                 text: t("document_root"),
@@ -988,18 +1001,12 @@ pimcore.asset.tree = Class.create({
                 expanded: true,
                 type: "folder"
             },
-            dataUrl: "/admin/misc/fileexplorer-tree",
             listeners: {
-                click: function(n) {
-                    Ext.getCmp("pimcore_asset_server_import_button").disable();
-                    if(n.attributes.type == "folder") {
-                        Ext.getCmp("pimcore_asset_server_import_button").enable();
-                    }
+                itemclick: function(tree, record, item, index, e, eOpts ) {
+                    Ext.getCmp("pimcore_asset_server_import_button").setDisabled(record.data.type != "folder");
                 }.bind(this)
             }
         });
-
-        new Ext.tree.TreeSorter(this.treePanel, {folderSort:true});
 
         this.uploadWindow = new Ext.Window({
             layout: 'fit',
@@ -1013,11 +1020,12 @@ pimcore.asset.tree = Class.create({
                 text: t("import"),
                 disabled: true,
                 id: "pimcore_asset_server_import_button",
-                handler: function () {
+                handler: function (tree, record) {
 
                     try {
                         Ext.getCmp("pimcore_asset_server_import_button").disable();
-                        var selectedNode = this.treePanel.getSelectionModel().getSelectedNode();
+                        var selModel =  this.treePanel.getSelectionModel();
+                        var selectedNode = selModel.getSelected().getAt(0);
                         this.uploadWindow.removeAll();
 
                         this.uploadWindow.add({
@@ -1030,15 +1038,12 @@ pimcore.asset.tree = Class.create({
                         Ext.Ajax.request({
                             url: "/admin/asset/import-server",
                             params: {
-                                parentId: this.id,
+                                parentId: record.id,
                                 serverPath: selectedNode.id
                             },
-                            success: function (response) {
+                            success: function (tree, record, response) {
                                 this.uploadWindow.close();
                                 this.uploadWindow = null;
-
-
-                                this.attributes.reference;
 
                                 var res = Ext.decode(response.responseText);
 
@@ -1068,7 +1073,7 @@ pimcore.asset.tree = Class.create({
                                         this.downloadProgressBar = null;
                                         this.downloadProgressWin = null;
 
-                                        this.reload();
+                                        this.refresh(record);
                                     }.bind(this),
                                     update: function (currentStep, steps, percent) {
                                         if(this.downloadProgressBar) {
@@ -1083,12 +1088,14 @@ pimcore.asset.tree = Class.create({
                                     }.bind(this),
                                     jobs: res.jobs
                                 });
-                            }.bind(this)
+                            }.bind(this, tree, record)
                         });
 
 
-                    } catch (e) { }
-                }.bind(this)
+                    } catch (e) {
+                        console.log(e)
+                    }
+                }.bind(this, tree, record)
             }]
         });
 

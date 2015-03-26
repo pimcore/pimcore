@@ -47,8 +47,6 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                 proxy: {
                     type: 'ajax',
                     url: '/admin/misc/fileexplorer-tree'
-                    // ,
-                    // url: "/admin/object/tree-get-childs-by-id/"
                 },
                 folderSort: true,
                 sorters: [{
