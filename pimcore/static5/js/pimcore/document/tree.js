@@ -395,11 +395,11 @@ pimcore.document.tree = Class.create({
             }));
 
             //paste
-            if (record.data.cacheDocumentId && record.data.permissions.create) {
+            if (this.cacheDocumentId && record.data.permissions.create) {
                 pasteMenu.push({
                     text: t("paste_recursive_as_childs"),
                     iconCls: "pimcore_icon_paste",
-                    handler: this.pasteInfo.bind(this, record, data, "recursive")
+                    handler: this.pasteInfo.bind(this, tree, record, "recursive")
                 });
                 pasteMenu.push({
                     text: t("paste_recursive_updating_references"),
@@ -481,7 +481,7 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-        if (this.id != 1 && !record.data.locked && record.data.permissions.rename) {
+        if (record.data.id != 1 && !record.data.locked && record.data.permissions.rename) {
             menu.add(new Ext.menu.Item({
                 text: t('cut'),
                 iconCls: "pimcore_icon_cut",
@@ -734,8 +734,6 @@ pimcore.document.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type, enableInheritance) {
-        //this.attributes.reference.tree.loadMask.show();
-
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
 
         if(enableInheritance !== true) {
@@ -750,22 +748,22 @@ pimcore.document.tree = Class.create({
                 type: type,
                 enableInheritance: enableInheritance
             },
-            success: this.paste.bind(this)
+            success: this.paste.bind(this, tree, record)
         });
     },
 
-    paste: function (response) {
+    paste: function (tree, record, response) {
 
         try {
             var res = Ext.decode(response.responseText);
 
             if (res.pastejobs) {
 
-                this.pasteProgressBar = new Ext.ProgressBar({
+                record.pasteProgressBar = new Ext.ProgressBar({
                     text: t('initializing')
                 });
 
-                this.pasteWindow = new Ext.Window({
+                record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout:'fit',
                     width:500,
@@ -776,32 +774,32 @@ pimcore.document.tree = Class.create({
                     items: [this.pasteProgressBar]
                 });
 
-                this.pasteWindow.show();
+                record.pasteWindow.show();
 
 
                 var pj = new pimcore.tool.paralleljobs({
                     success: function () {
 
                         try {
-                            this.attributes.reference.pasteComplete(this);
+                            this.pasteComplete(record);
                         } catch(e) {
                             console.log(e);
                             pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error");
-                            this.parentNode.reload();
+                            this.refresh(record);
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
                         if(this.pasteProgressBar) {
                             var status = currentStep / steps;
-                            this.pasteProgressBar.updateProgress(status, percent + "%");
+                            record.pasteProgressBar.updateProgress(status, percent + "%");
                         }
                     }.bind(this),
                     failure: function (message) {
-                        this.pasteWindow.close();
-                        this.pasteProgressBar = null;
+                        record.pasteWindow.close();
+                        record.pasteProgressBar = null;
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error", t(message));
-                        this.parentNode.reload();
+                        this.refresh(record);
                     }.bind(this),
                     jobs: res.pastejobs
                 });
@@ -810,7 +808,7 @@ pimcore.document.tree = Class.create({
             }
         } catch (e) {
             Ext.MessageBox.alert(t('error'), e);
-            this.attributes.reference.pasteComplete(this);
+            this.pasteComplete(this);
         }
     },
 

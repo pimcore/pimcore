@@ -103,13 +103,6 @@ pimcore.asset.tree = Class.create({
             rootVisible: this.config.rootVisible,
             forceLayout: true,
             border: false,
-            //dockedItems: [{
-            //    xtype: 'pagingtoolbar',
-            //    store: store,   // same store GridPanel is using
-            //    //dock: 'bottom',
-            //    displayInfo: true,
-            //    pageSize: itemsPerPage
-            //}],
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
@@ -174,8 +167,6 @@ pimcore.asset.tree = Class.create({
                         msg: t("please_wait"),
                         hidden: true
                     });
-                //TODO loadmask
-                //this.tree.loadMask.enable();
 
                 // hadd listener to root node -> other nodes are added om the "append" event -> see this.enableHtml5Upload()
                 this.addHtml5DragListener(this.tree.getRootNode());
