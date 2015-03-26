@@ -143,11 +143,11 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
 
         var typesColumns = [
-            {header: t("position"), width: 10, sortable: true, dataIndex: 'position',
+            {header: t("position"), flex: 10, sortable: true, dataIndex: 'position',
                                     editor: new Ext.form.NumberField({})},
-            {header: t("key"), width: 50, sortable: true, dataIndex: 'key',
+            {header: t("key"), flex: 50, sortable: true, dataIndex: 'key',
                                     editor: keyTextField},
-            {header: t("label"), width: 150, sortable: true, dataIndex: 'label',
+            {header: t("label"), flex: 150, sortable: true, dataIndex: 'label',
                                     editor: new Ext.form.TextField({})}
         ];
 
@@ -175,26 +175,31 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), width: 50, sortable: true, dataIndex: 'type',
+            typesColumns.push({header: t("type"), flex: 50, sortable: true, dataIndex: 'type',
                                         editor: typeComboBox, renderer: function(value) {
                 return types[value];
             }});
 
-            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width',
+            typesColumns.push({header: t("width"), flex: 10, sortable: true, dataIndex: 'width',
                                         editor: new Ext.form.NumberField({})});
 
         }
 
 
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
 
-        this.grids[title] = new Ext.grid.EditorGridPanel({
+
+        this.grids[title] = Ext.create('Ext.grid.Panel', {
             title: t(title),
             autoScroll: true,
             autoDestroy: false,
             store: this.stores[title],
             height: 200,
+            plugins: [this.cellEditing],
             columns : typesColumns,
-            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+            selModel: new Ext.selection.RowModel({singleSelect:true}),
             columnLines: true,
             name: title,
             tbar: [

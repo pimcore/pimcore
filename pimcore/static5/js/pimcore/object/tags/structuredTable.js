@@ -230,7 +230,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             columns: columns,
-            cls: cls,
+            componentCls: cls,
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: [
@@ -251,7 +251,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                 }
             ],
             autoHeight: autoHeight,
-            bodyCssClass: "pimcore_object_tag_objects"
+            bodyCls: "pimcore_object_tag_objects"
         });
 
         return this.component;
