@@ -54,7 +54,7 @@ pimcore.settings.user.role.settings = Class.create({
                 displayField: "name",
                 valueField: "id",
                 store: pimcore.globalmanager.get("document_types_store"),
-                value: this.data.docTypes.join(",")
+                value: this.data.docTypes
             }, {
                 xtype: "multiselect",
                 name: "classes",
@@ -65,7 +65,7 @@ pimcore.settings.user.role.settings = Class.create({
                 displayField: "text",
                 valueField: "id",
                 store: pimcore.globalmanager.get("object_types_store"),
-                value: this.data.classes.join(",")
+                value: this.data.classes
             }]
         });
 

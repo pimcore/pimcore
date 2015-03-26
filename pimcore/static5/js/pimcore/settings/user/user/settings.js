@@ -317,7 +317,7 @@ pimcore.settings.user.user.settings = Class.create({
                 displayField: "name",
                 valueField: "id",
                 store: pimcore.globalmanager.get("document_types_store"),
-                value: this.currentUser.docTypes.join(",")
+                value: this.currentUser.docTypes
             }),
                 Ext.create('Ext.ux.form.MultiSelect', {
                 name: "classes",
@@ -328,7 +328,7 @@ pimcore.settings.user.user.settings = Class.create({
                 displayField: "text",
                 valueField: "id",
                 store: pimcore.globalmanager.get("object_types_store"),
-                value: this.currentUser.classes.join(",")
+                value: this.currentUser.classes
             })],
             hidden:this.currentUser.admin
         });
