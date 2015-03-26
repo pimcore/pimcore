@@ -206,8 +206,10 @@ class UserRole extends AbstractUser {
      */
     public function setClasses($classes)
     {
-        if(strlen($classes)) {
-            $classes = explode(",", $classes);
+        if (!\Pimcore\Tool\Admin::isExtJS5()) {
+            if (strlen($classes)) {
+                $classes = explode(",", $classes);
+            }
         }
 
         if(empty($classes)) {
@@ -229,8 +231,10 @@ class UserRole extends AbstractUser {
      */
     public function setDocTypes($docTypes)
     {
-        if(strlen($docTypes)) {
-            $docTypes = explode(",", $docTypes);
+        if (!\Pimcore\Tool\Admin::isExtJS5()) {
+            if (strlen($docTypes)) {
+                $docTypes = explode(",", $docTypes);
+            }
         }
 
         if(empty($docTypes)) {
