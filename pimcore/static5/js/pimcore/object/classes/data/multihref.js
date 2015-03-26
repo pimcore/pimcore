@@ -198,7 +198,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         fieldLabel: t("allow_documents"),
                         checked: this.datax.documentsAllowed,
                         listeners:{
-                            check:function(cbox, checked) {
+                            change:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).show();
                                 } else {
@@ -218,7 +218,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         displayField: "text",
                         valueField: "text",
                         store: documentTypeStore,
-                        width: 300
+                        width: 400
                     })
                 ]
             },
@@ -236,7 +236,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         name: "assetsAllowed",
                         checked: this.datax.assetsAllowed,
                         listeners:{
-                            check:function(cbox, checked) {
+                            change:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
                                     Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
@@ -258,7 +258,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         displayField: "text",
                         valueField: "text",
                         store: assetTypeStore,
-                        width: 300
+                        width: 400
                     }), {
                         fieldLabel: t("upload_path"),
                         name: "assetUploadPath",
@@ -266,7 +266,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         id: 'class_asset_upload_path_' + this.uniqeFieldId,
                         cls: "input_drop_target",
                         value: this.datax.assetUploadPath,
-                        width: 250,
+                        width: 350,
                         xtype: "textfield",
                         listeners: {
                             "render": function (el) {
@@ -282,8 +282,9 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                                     },
 
                                     onNodeDrop : function (target, dd, e, data) {
-                                        if (data.node.attributes.elementType == "asset") {
-                                            this.setValue(data.node.attributes.path);
+                                        data = data.records[0].data;
+                                        if (data.elementType == "asset") {
+                                            this.setValue(data.path);
                                             return true;
                                         }
                                         return false;
@@ -308,7 +309,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         name: "objectsAllowed",
                         checked: this.datax.objectsAllowed,
                         listeners:{
-                            check:function(cbox, checked) {
+                            change:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).show();
                                 } else {
@@ -328,7 +329,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         displayField: "text",
                         valueField: "text",
                         store: classesStore,
-                        width: 300
+                        width: 400
                     })
                 ]
             }
