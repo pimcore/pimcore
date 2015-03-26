@@ -861,11 +861,11 @@ pimcore.document.tree = Class.create({
             items: [{
                 xtype: "form",
                 bodyStyle: "padding: 10px;",
-                labelWidth: 250,
-                itemId: "form",
                 defaults: {
+                    labelWidth: 250,
                     width: 550
                 },
+                itemId: "form",
                 items: [{
                     xtype: "textfield",
                     name: "mainDomain",
