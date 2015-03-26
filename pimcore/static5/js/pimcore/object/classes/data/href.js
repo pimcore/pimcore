@@ -91,34 +91,43 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
 
         var classesStore = new Ext.data.JsonStore({
             autoDestroy: true,
-            url: '/admin/class/get-tree',
+            proxy: {
+                type: 'ajax',
+                url: '/admin/class/get-tree'
+            },
             fields: ["text"]
         });
         classesStore.load({
             "callback": function (allowedClasses) {
-                Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
+                Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses);
             }.bind(this, allowedClasses)
         });
 
         var documentTypeStore = new Ext.data.JsonStore({
             autoDestroy: true,
-            url: '/admin/class/get-document-types',
+            proxy: {
+                type: 'ajax',
+                url: '/admin/class/get-document-types'
+            },
             fields: ["text"]
         });
         documentTypeStore.load({
             "callback": function (allowedDocuments) {
-                Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
+                Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join);
             }.bind(this, allowedDocuments)
         });
 
         var assetTypeStore = new Ext.data.JsonStore({
             autoDestroy: true,
-            url: '/admin/class/get-asset-types',
+            proxy: {
+                type: 'ajax',
+                url: '/admin/class/get-document-types'
+            },
             fields: ["text"]
         });
         assetTypeStore.load({
             "callback": function (allowedAssets) {
-                Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
+                Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join);
             }.bind(this, allowedAssets)
         });
 
@@ -173,7 +182,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         fieldLabel: t("allow_documents"),
                         checked: this.datax.documentsAllowed,
                         listeners:{
-                            check:function(cbox, checked) {
+                            change:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).show();
                                 } else {
@@ -189,11 +198,11 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_document_types_' + this.uniqeFieldId,
                         hidden: !this.datax.documentsAllowed,
                         allowEdit: this.datax.documentsAllowed,
-                        value: allowedDocuments.join(","),
+                        value: allowedDocuments,
                         displayField: "text",
                         valueField: "text",
                         store: documentTypeStore,
-                        width: 300
+                        width: 400
                     })
                 ]
             }, 
@@ -211,7 +220,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         name: "assetsAllowed",
                         checked: this.datax.assetsAllowed,
                         listeners:{
-                            check:function(cbox, checked) {
+                            change:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
                                     Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
@@ -229,11 +238,11 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_asset_types_' + this.uniqeFieldId,
                         hidden: !this.datax.assetsAllowed,
                         allowEdit: this.datax.assetsAllowed,
-                        value: allowedAssets.join(","),
+                        value: allowedAssets,
                         displayField: "text",
                         valueField: "text",
                         store: assetTypeStore,
-                        width: 300
+                        width: 400
                     }), {
                         fieldLabel: t("upload_path"),
                         name: "assetUploadPath",
@@ -241,7 +250,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_asset_upload_path_' + this.uniqeFieldId,
                         cls: "input_drop_target",
                         value: this.datax.assetUploadPath,
-                        width: 250,
+                        width: 350,
                         xtype: "textfield",
                         listeners: {
                             "render": function (el) {
@@ -257,8 +266,9 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                                     },
 
                                     onNodeDrop : function (target, dd, e, data) {
-                                        if (data.node.attributes.elementType == "asset") {
-                                            this.setValue(data.node.attributes.path);
+                                        data = data.records[0].data;
+                                        if (data.elementType == "asset") {
+                                            this.setValue(data.path);
                                             return true;
                                         }
                                         return false;
@@ -283,7 +293,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         name: "objectsAllowed",
                         checked: this.datax.objectsAllowed,
                         listeners:{
-                            check:function(cbox, checked) {
+                            change:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).show();
                                 } else {
@@ -299,11 +309,11 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_object_classes_' + this.uniqeFieldId,
                         hidden: !this.datax.objectsAllowed,
                         allowEdit: this.datax.objectsAllowed,
-                        value: allowedClasses.join(","),
+                        value: allowedClasses,
                         displayField: "text",
                         valueField: "text",
                         store: classesStore,
-                        width: 300
+                        width: 400
                     })
                 ]
             }
