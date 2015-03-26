@@ -198,7 +198,7 @@ pimcore.document.seopanel = Class.create({
                 fieldLabel: t("title") + " (" + record.data.title.length + ")",
                 name: "title",
                 value: record.data.title,
-                width: 350,
+                width: 450,
                 enableKeyEvents: true,
                 listeners: {
                     "keyup": function (el) {
@@ -210,7 +210,7 @@ pimcore.document.seopanel = Class.create({
                 fieldLabel: t("description") + " (" + record.data.description.length + ")",
                 name: "description",
                 value: record.data.description,
-                width: 350,
+                width: 450,
                 enableKeyEvents: true,
                 listeners: {
                     "keyup": function (el) {
