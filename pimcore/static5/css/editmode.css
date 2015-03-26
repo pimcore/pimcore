@@ -422,11 +422,9 @@
 
 .x5-btn {
     cursor: pointer;
-    color: #fff;
     border-collapse: collapse;
     padding: 0 3px 0 3px;
     margin: 0;
-
     border-radius: 2px;
     text-decoration: none;
     display: inline-block;

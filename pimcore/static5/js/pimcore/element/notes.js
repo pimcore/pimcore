@@ -340,17 +340,17 @@ pimcore.element.notes = Class.create({
                 editable: true,
                 mode: "local",
                 triggerAction: "all",
-                width: 150
+                width: 250
             },{
                 xtype: "textfield",
                 fieldLabel: t("title"),
                 name: "title",
-                width: 350
+                width: 450
             }, {
                 xtype: "textarea",
                 fieldLabel: t("description"),
                 name: "description",
-                width: 350
+                width: 450
             },{
                 xtype: "hidden",
                 name: "cid",
@@ -372,7 +372,6 @@ pimcore.element.notes = Class.create({
                 text: t("save"),
                 iconCls: "pimcore_icon_accept",
                 handler: function () {
-
                     var values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
