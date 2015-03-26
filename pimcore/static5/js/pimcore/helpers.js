@@ -2393,7 +2393,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                     xtype: "textfield",
                     name: "value",
                     fieldLabel: t("value"),
-                    width: 400,
+                    width: 500,
                     value: data["value"]
                 };
             } else if(type == "textarea") {
@@ -2401,7 +2401,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                     xtype: "textarea",
                     name: "value",
                     fieldLabel: t("value"),
-                    width: 400,
+                    width: 500,
                     value: data["value"]
                 };
             } else if(type == "checkbox") {
@@ -2414,11 +2414,11 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             } else if(type == "object") {
                 valueField = {
                     xtype: "textfield",
-                    cls: "pimcore_droptarget_input",
+                    fieldCls: "pimcore_droptarget_input",
                     name: "value",
                     fieldLabel: t("value"),
                     value: data["value"],
-                    width: 400,
+                    width: 500,
                     listeners: {
                         render: function (el) {
                             new Ext.dd.DropZone(el.getEl(), {
@@ -2429,15 +2429,19 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                                 }.bind(el),
 
                                 onNodeOver : function (target, dd, e, data) {
-                                    if(data.node.attributes.elementType == "object") {
+                                    var data = data.records[0].data;
+                                    if(data.elementType == "object") {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                                 },
 
                                 onNodeDrop : function (target, dd, e, data) {
-                                    if(data.node.attributes.elementType == "object") {
-                                        target.dom.value = data.node.attributes.path;
+                                    var data = data.records[0].data;
+                                    if(data.elementType == "object") {
+                                        var id = target.getId();
+                                        var textfield = Ext.getCmp(id);
+                                        textfield.setValue(data.path);
                                         return true;
                                     } else {
                                         return false;
@@ -2450,11 +2454,11 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             } else if(type == "asset") {
                 valueField = {
                     xtype: "textfield",
-                    cls: "pimcore_droptarget_input",
+                    fieldCls: "pimcore_droptarget_input",
                     name: "value",
                     fieldLabel: t("value"),
                     value: data["value"],
-                    width: 400,
+                    width: 500,
                     listeners: {
                         render: function (el) {
                             new Ext.dd.DropZone(el.getEl(), {
@@ -2465,15 +2469,19 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                                 }.bind(el),
 
                                 onNodeOver : function (target, dd, e, data) {
-                                    if(data.node.attributes.elementType == "asset") {
+                                    var data = data.records[0].data;
+                                    if(data.elementType == "asset") {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                                 },
 
                                 onNodeDrop : function (target, dd, e, data) {
-                                    if(data.node.attributes.elementType == "asset") {
-                                        target.dom.value = data.node.attributes.path;
+                                    var data = data.records[0].data;
+                                    if(data.elementType == "asset") {
+                                        var id = target.getId();
+                                        var textfield = Ext.getCmp(id);
+                                        textfield.setValue(data.path);
                                         return true;
                                     } else {
                                         return false;
@@ -2491,11 +2499,11 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
                 valueField = {
                     xtype: "textfield",
-                    cls: "pimcore_droptarget_input",
+                    fieldCls: "pimcore_droptarget_input",
                     name: "value",
                     fieldLabel: t("value"),
                     value: data["value"],
-                    width: 400,
+                    width: 500,
                     listeners: {
                         render: function (el) {
                             new Ext.dd.DropZone(el.getEl(), {
@@ -2506,15 +2514,19 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                                 }.bind(el),
 
                                 onNodeOver : function (target, dd, e, data) {
-                                    if(data.node.attributes.elementType == "document") {
+                                    var data = data.records[0].data;
+                                    if(data.elementType == "document") {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                                 },
 
                                 onNodeDrop : function (target, dd, e, data) {
-                                    if(data.node.attributes.elementType == "document") {
-                                        target.dom.value = data.node.attributes.path;
+                                    var data = data.records[0].data;
+                                    if(data.elementType == "document") {
+                                        var id = target.getId();
+                                        var textfield = Ext.getCmp(id);
+                                        textfield.setValue(data.path);
                                         return true;
                                     } else {
                                         return false;
@@ -2530,25 +2542,31 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             }
 
             hotspotMetaDataWin.getComponent("form").add({
-                xtype: "fieldset",
-                style: "padding: 0;",
-                bodyStyle: "padding: 5px;",
+                xtype: 'panel',
+                layout: 'fit',
                 itemId: id,
-                items: [{
-                    xtype: "hidden",
-                    name: "type",
-                    value: type
-                },{
-                    xtype: "textfield",
-                    name: "name",
-                    value: data["name"],
-                    fieldLabel: t("name")
-                }, valueField],
+                items: [
+                    {
+                        xtype: "fieldcontainer",
+                        style: "padding: 0;",
+                        bodyStyle: "padding: 5px;",
+                        items: [{
+                            xtype: "hidden",
+                            name: "type",
+                            value: type
+                        }, {
+                            xtype: "textfield",
+                            name: "name",
+                            value: data["name"],
+                            fieldLabel: t("name")
+                        }, valueField]
+                    }],
                 tbar: ["->", {
                     iconCls: "pimcore_icon_delete",
                     handler: function (hotspotMetaDataWin) {
                         var form = hotspotMetaDataWin.getComponent("form");
-                        form.remove(form.getComponent(id));
+                        var component = form.queryById(id);
+                        form.remove(component);
                         hotspotMetaDataWin.doLayout();
                     }.bind(this, hotspotMetaDataWin)
                 }]

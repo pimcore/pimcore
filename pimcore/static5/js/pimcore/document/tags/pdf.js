@@ -327,7 +327,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             for(var i=0; i<hotspots.length; i++) {
                 hotspot = Ext.get(hotspots[i]);
 
-                var dimensions = hotspot.getStyles("top","left","width","height");
+                var dimensions = hotspot.getStyle(["top","left","width","height"]);
 
                 metaData = null;
                 if(this.hotspotMetaData[hotspot.getAttribute("id")]) {
@@ -351,7 +351,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
             Ext.each(this.pagesContainer.body.query('.nr'), function(value) {
                 if(parseInt($(value).text()) == this.currentPage){
-                    metaData ? $(value).addCls('hasMetadata') : $(value).removeCls('hasMetadata');
+                    metaData ? $(value).addClass('hasMetadata') : $(value).removeClass('hasMetadata');
                }
             }.bind(this));
 
