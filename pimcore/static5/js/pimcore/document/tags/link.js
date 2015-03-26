@@ -83,9 +83,10 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        var record = data.records[0].data;
 
         if(this.dndAllowed(data)){
-            this.fieldPath.setValue(data.node.attributes.path);
+            this.fieldPath.setValue(data.path);
             return true;
         } else {
             return false;
@@ -93,6 +94,8 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
+        var record = data.records[0].data;
+
         if (this.dndAllowed(data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
@@ -103,11 +106,11 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-        if (data.node.attributes.elementType == "asset" && data.node.attributes.type != "folder") {
+        if (data.elementType == "asset" && data.type != "folder") {
             return true;
-        } else if (data.node.attributes.elementType == "document"
-                            && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink"
-                                                                            || data.node.attributes.type=="link")){
+        } else if (data.elementType == "document"
+                            && (data.type=="page" || data.type=="hardlink"
+                                                                            || data.type=="link")){
             return true;
         }
         return false;

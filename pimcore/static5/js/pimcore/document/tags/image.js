@@ -53,7 +53,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
             // register at global DnD manager
-            //TODO ExtJS 5
             if (typeof dndManager != 'undefined') {
                 dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
             }
