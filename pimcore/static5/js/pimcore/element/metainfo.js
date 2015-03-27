@@ -73,7 +73,7 @@ pimcore.element.metainfo = Class.create({
                     fieldLabel: t(this.data[i]["name"]),
                     readOnly: true,
                     value: new Date(this.data[i]["value"] * 1000) + " (" + this.data[i]["value"] + ")",
-                    width: 600
+                    width: 730
                 };
             } else {
                 var type = this.data[i]["type"];
@@ -93,7 +93,7 @@ pimcore.element.metainfo = Class.create({
                         fieldLabel: name,
                         readOnly: true,
                         value: htmlValue,
-                        width: 600
+                        width: 730
                     };
                     if (user.admin) {
                         item.listeners = {
@@ -113,7 +113,7 @@ pimcore.element.metainfo = Class.create({
                         fieldLabel: name,
                         readOnly: true,
                         value: value,
-                        width: 600
+                        width: 730
                     };
                 }
             }
@@ -125,7 +125,9 @@ pimcore.element.metainfo = Class.create({
             frame:false,
             bodyStyle: 'padding:10px',
             items: items,
-            labelWidth: 130,
+            defaults: {
+                labelWidth: 130
+            },
             collapsible: false,
             autoScroll: true
         });
