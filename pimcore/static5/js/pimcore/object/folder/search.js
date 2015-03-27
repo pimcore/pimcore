@@ -231,7 +231,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 loadMask: true,
                 plugins: plugins,
                 viewConfig: {
-                    forceFit: false
+                    forceFit: false,
+                    xtype: 'patchedgridview'
                 },
                 tbar: [this.languageInfo, "-", this.toolbarFilterInfo, "->", this.checkboxOnlyDirectChildren, t("only_children"), "-", this.sqlEditor, this.sqlButton, "-", {
                     text: t("search_and_move"),

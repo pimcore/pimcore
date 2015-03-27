@@ -112,13 +112,6 @@ pimcore.object.tree = Class.create({
             //rootVisible: this.config.rootVisible,
             rootVisible: true,
             border: true,
-            //dockedItems: [{
-            //    xtype: 'pagingtoolbar',
-            //    store: store,   // same store GridPanel is using
-            //    //dock: 'bottom',
-            //    displayInfo: true,
-            //    pageSize: itemsPerPage
-            //}],
             listeners: this.getTreeNodeListeners(),
             viewConfig: {
                 plugins: {
@@ -128,18 +121,6 @@ pimcore.object.tree = Class.create({
                 },
                 xtype: 'pimcoretreeview'
             },
-
-            //tools: [
-            //    {
-            //        //id: "right",
-            //        handler: pimcore.layout.treepanelmanager.toRight.bind(this)
-            //    },
-            //    {
-            //        //id: "left",
-            //        handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
-            //        hidden: true
-            //    }
-            //],
             root: rootNodeConfig
         });
 
@@ -156,7 +137,6 @@ pimcore.object.tree = Class.create({
                     target: Ext.getCmp(this.config.treeId),
                     msg:t("please_wait")
                 });
-            //this.tree.loadMask.enable();
         }.bind(this));
 
         this.config.parentPanel.insert(this.config.index, this.tree);
@@ -759,7 +739,6 @@ pimcore.object.tree = Class.create({
     createVariant: function (tree, record) {
         Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'),
             this.addVariantCreate.bind(this, tree, record));
-//        this.reload();
     },
 
     addVariantCreate: function (tree, record, button, value, object) {

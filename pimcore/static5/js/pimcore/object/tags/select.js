@@ -28,7 +28,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             this.applyPermissionStyle(key, value, metaData, record);
 
             if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
+                metaData.tdCls += " grid_value_inherited";
             }
 
             for(var i=0; i<field.layout.options.length; i++) {

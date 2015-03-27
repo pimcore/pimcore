@@ -63,11 +63,11 @@ pimcore.object.tags.abstract = Class.create({
             // evaluate permissions
             if (metadata.permission[key] !== undefined) {
                 if (metadata.permission[key].noView) {
-                    metaData.css += " grid_value_noview";
+                    metaData.tdCls += " grid_value_noview";
                 }
 
                 if (metadata.permission[key].noEdit) {
-                    metaData.css += " grid_value_noedit";
+                    metaData.tdCls += " grid_value_noedit";
                 }
             }
         }
@@ -80,7 +80,7 @@ pimcore.object.tags.abstract = Class.create({
             this.applyPermissionStyle(key, value, metaData, record);
 
             if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
+                metaData.tdCls += " grid_value_inherited";
             }
             return value;
 

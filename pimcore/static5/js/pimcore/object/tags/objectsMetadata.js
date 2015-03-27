@@ -152,7 +152,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 });
             } else if(this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css += ' x-grid3-check-col-td';
+                    metaData.tdCls += ' x-grid3-check-col-td';
                     if(!value || value == "0") {
                         value = false;
                     }

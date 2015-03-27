@@ -70,7 +70,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                         this.applyPermissionStyle(key, value, metaData, record);
 
                         if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
+                            metaData.tdCls += " grid_value_inherited";
                         }
                         var rows = Object.keys(value);
                         if (rows && rows.length > 0) {
@@ -115,7 +115,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         var columns = [
             {header: this.fieldConfig.labelFirstCell, width: this.fieldConfig.labelWidth, sortable: false,
                                 dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
-                    metaData.css = 'x-grid-hd-row';
+                    metaData.tdCls = 'x-grid-hd-row';
                     return ts(value);
                }
             }
@@ -136,7 +136,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             } else if(this.fieldConfig.cols[i].type == "bool") {
                 editor = new Ext.form.Checkbox();
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css += ' x-grid3-check-col-td';
+                    metaData.tdCls += ' x-grid3-check-col-td';
                     return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>',
                                                                                     value ? '-on' : '');
                 };
@@ -212,7 +212,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         var columns = [
             {header: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null,
                 renderer: function(value, metaData) {
-                                metaData.css = 'x-grid3-hd-row';
+                                metaData.tdCls = 'x-grid3-hd-row';
                                 return ts(value);
                            }
             }

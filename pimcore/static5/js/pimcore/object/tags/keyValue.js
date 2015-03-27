@@ -473,14 +473,14 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
         if (colIndex == 0) {
             if (record.data.inherited) {
-                metaData.css += " grid_value_inherited";
+                metaData.tdCls += " grid_value_inherited";
             }
         } else {
             if (colIndex == 3) {
-                metaData.css += " grid_value_noedit";
+                metaData.tdCls += " grid_value_noedit";
             }
             if (this.isInvalid(record)) {
-                metaData.css += " keyvalue_mandatory_violation";
+                metaData.tdCls += " keyvalue_mandatory_violation";
             }
 
             if (type == "translated") {
@@ -488,7 +488,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     return data.translated;
                 }
             } else if (type == "bool") {
-                metaData.css += ' x-grid3-check-col-td';
+                metaData.tdCls += ' x-grid3-check-col-td';
                 return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
             } else if (type == "range") {
                 // render range value for list view [YouWe]
@@ -821,14 +821,14 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     var inherited = record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited;
 
                     if (inherited && multivalent) {
-                        metaData.css += " grid_value_inherited_locked";
+                        metaData.tdCls += " grid_value_inherited_locked";
                     } else if (inherited) {
-                        metaData.css += " grid_value_inherited";
+                        metaData.tdCls += " grid_value_inherited";
                     } else if (multivalent) {
-                        metaData.css += " grid_value_locked";
+                        metaData.tdCls += " grid_value_locked";
                     }
 
-                    metaData.css += ' x-grid3-check-col-td';
+                    metaData.tdCls += ' x-grid3-check-col-td';
                     return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
                 }.bind(this, field.key)
             });
@@ -838,11 +838,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 var inherited = record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited;
 
                 if (inherited && multivalent) {
-                    metaData.css += " grid_value_inherited_locked";
+                    metaData.tdCls += " grid_value_inherited_locked";
                 } else if (inherited) {
-                    metaData.css += " grid_value_inherited";
+                    metaData.tdCls += " grid_value_inherited";
                 } else if (multivalent) {
-                    metaData.css += " grid_value_locked";
+                    metaData.tdCls += " grid_value_locked";
                 }
 
                 if (record.data["#kv-tr"][key] !== undefined) {
@@ -859,15 +859,15 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 var inherited = record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited;
 
                 if (inherited && multivalent) {
-                    metaData.css += " grid_value_inherited_locked";
+                    metaData.tdCls += " grid_value_inherited_locked";
                 } else if (inherited) {
-                    metaData.css += " grid_value_inherited";
+                    metaData.tdCls += " grid_value_inherited";
                 } else if (multivalent) {
-                    metaData.css += " grid_value_locked";
+                    metaData.tdCls += " grid_value_locked";
                 }
 
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                    metaData.css += " grid_value_inherited";
+                    metaData.tdCls += " grid_value_inherited";
                 }
                 return value;
             }.bind(this, field.key);
