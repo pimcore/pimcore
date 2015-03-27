@@ -108,7 +108,7 @@ pimcore.object.helpers.grid = Class.create({
         if(this.enableEditor) {
             proxy.writer = {
                 type: 'json',
-                writeAllFields: true,
+                //writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true',
                 listeners: {
