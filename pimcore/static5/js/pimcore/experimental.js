@@ -77,7 +77,6 @@ Ext.define('Ext.overrides.grid.View', {
                         }
                     }
                     else {
-                        console.log("refresh");
                         this.refresh();
                     }
 
@@ -121,7 +120,6 @@ Ext.define('Ext.overrides.grid.View', {
 
         renderRow: function(record, rowIdx, out) {
             var me = this;
-            console.log("renderRow " + record.id);
             if (record.needsPaging) {
                 me.queue[record.id] = record;
             }
@@ -130,8 +128,6 @@ Ext.define('Ext.overrides.grid.View', {
         },
 
         updatePaging: function() {
-            console.log("Update Paging");
-
             var me = this;
             var queue = me.queue;
 
@@ -206,7 +202,6 @@ Ext.define('Ext.overrides.grid.View', {
             //}
 
             node.addListener("expand", function(node) {
-                console.log("expand " + node.id);
                 var tree = node.getOwnerTree();
                 if (tree) {
                     var view = tree.getView();

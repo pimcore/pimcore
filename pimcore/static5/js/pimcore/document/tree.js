@@ -255,7 +255,6 @@ pimcore.document.tree = Class.create({
 
 
     onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
-        console.log("onTreeNodeMove " + node.data.id);
         var tree = node.getOwnerTree();
 
         // check for locks

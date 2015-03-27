@@ -116,8 +116,8 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                             try {
                                 var time = window[this.previewFrameId].document.getElementById("video").currentTime;
                                 var date = new Date();
-                                Ext.getCmp("pimcore_asset_video_imagepreview_"
-                                    + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/'
+                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_"  + this.id);
+                                cmp.update('<img align="center" src="/admin/asset/get-video-thumbnail/id/'
                                     + this.id  + '/width/265/aspectratio/true/time/' + time  + '/settime/true/?_dc='
                                     + date.getTime() + '" />');
                             } catch (e) {
@@ -129,7 +129,9 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         border:false,
                         bodyStyle: "padding: 10px 0 10px 0;",
                         html: t("or_specify_an_asset_image_below") + ":"
-                    },{
+                    }
+                        ,
+                        {
                         xtype: "textfield",
                         cls: "input_drop_target",
                         width: 265,
@@ -147,16 +149,16 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                                     },
 
                                     onNodeDrop : function (el, target, dd, e, data) {
-                                        if (data.node.attributes.elementType == "asset") {
-                                            el.setValue(data.node.attributes.path);
+                                        data = data.records[0].data;
+                                        if (data.elementType == "asset") {
+                                            el.setValue(data.path);
 
                                             var date = new Date();
-                                            Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id)
-                                                .update('<img align="center" src="/admin/asset/get-video-thumbnail/id/'
+                                            var cmp = Ext.get("pimcore_asset_video_imagepreview_" + this.id);
+                                            cmp.dom.innerHTML = '<img align="center" src="/admin/asset/get-video-thumbnail/id/'
                                                                 + this.id  + '/width/265/aspectratio/true/image/'
-                                                                + data.node.attributes.id  + '/setimage/true/?_dc='
-                                                                + date.getTime() + '" />');
-
+                                                                + data.id  + '/setimage/true/?_dc='
+                                                                + date.getTime() + '" />';
                                             return true;
                                         }
                                         return false;
@@ -164,16 +166,18 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                                 });
                             }.bind(this)
                         }
-                    }]
+                    }
+                    ]
                 }]
             });
 
             this.previewImagePanel.on("afterrender", function () {
                 this.checkVideoplayerInterval = window.setInterval(function () {
                     if(window[this.previewFrameId] && window[this.previewFrameId].document.getElementById("video")) {
-                        this.previewImagePanel.body.setStyle({
+                        this.previewImagePanel.setBodyStyle({
                             display: "block"
                         });
+                        this.previewImagePanel.doLayout();
                         clearInterval(this.checkVideoplayerInterval);
                     }
                 }.bind(this), 1000);
