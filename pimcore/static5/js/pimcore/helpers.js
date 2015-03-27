@@ -2079,8 +2079,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         fieldLabel: t('path'),
         value: data.path,
         name: "path",
-        width: 320,
-        cls: "pimcore_droptarget_input",
+        width: 420,
+        fieldCls: "pimcore_droptarget_input",
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
@@ -2097,8 +2097,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         fieldLabel: t('poster_image'),
         value: data.poster,
         name: "poster",
-        width: 320,
-        cls: "pimcore_droptarget_input",
+        width: 420,
+        fieldCls: "pimcore_droptarget_input",
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
@@ -2117,12 +2117,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             },
 
             onNodeOver : function(target, dd, e, data) {
-                if (target && target.getAttribute("name") == "poster") {
-                    if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "image") {
+                data = data.records[0].data;
+                if (target && target.getId() == poster.getId()) {
+                    if (data.elementType == "asset" && data.type == "image") {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
                 } else {
-                    if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "video") {
+                    if (data.elementType == "asset" && data.type == "video") {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
                 }
@@ -2131,15 +2132,17 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
             onNodeDrop : function (target, dd, e, data) {
                 if(target) {
-                    if(target.getAttribute("name") == "path") {
-                        if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "video") {
-                            fieldPath.setValue(data.node.attributes.path);
+                    data = data.records[0].data;
+
+                    if(target.getId() == fieldPath.getId()) {
+                        if (data.elementType == "asset" && data.type == "video") {
+                            fieldPath.setValue(data.path);
                             form.getComponent("type").setValue("asset");
                             return true;
                         }
-                    } else if (target.getAttribute("name") == "poster") {
-                        if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "image") {
-                            poster.setValue(data.node.attributes.path);
+                    } else if (target.getId() == poster.getId()) {
+                        if (data.elementType == "asset" && data.type == "image") {
+                            poster.setValue(data.path);
                             return true;
                         }
                     }
@@ -2172,7 +2175,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
     var updateType = function (type) {
         searchButton.enable();
-        var labelEl = form.getComponent("pathContainer").label;
+
+        var labelEl = form.getComponent("pathContainer").labelEl;
         labelEl.update(t("path"));
 
         if(type != "asset") {
@@ -2203,6 +2207,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             name: 'type',
             triggerAction: 'all',
             editable: true,
+            width: 270,
             mode: "local",
             store: ["asset","youtube","vimeo"],
             value: data.type,
@@ -2213,7 +2218,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
                 }.bind(this)
             }
         }, {
-            xtype: "fieldset",
+            xtype: "fieldcontainer",
             layout: 'hbox',
             border: false,
             itemId: "pathContainer",
@@ -2222,13 +2227,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             xtype: "textfield",
             name: "title",
             fieldLabel: t('title'),
-            width: 320,
+            width: 420,
             value: data.title
         },{
             xtype: "textarea",
             name: "description",
             fieldLabel: t('description'),
-            width: 320,
+            width: 420,
             height: 50,
             value: data.description
         }],
