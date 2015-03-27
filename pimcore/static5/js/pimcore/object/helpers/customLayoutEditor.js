@@ -110,17 +110,20 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     getNodeData: function (node) {
         var data = {};
 
-        if (node.attributes.object) {
-            if (typeof node.attributes.object.getData == "function") {
-                data = node.attributes.object.getData();
+        if (node.data.editor) {
+            if (typeof node.data.editor.getData == "function") {
+                data = node.data.editor.getData();
 
                 data.name = trim(data.name);
 
                 // field specific validation
                 var fieldValidation = true;
-                if(typeof node.attributes.object.isValid == "function") {
-                    fieldValidation = node.attributes.object.isValid();
+                if(typeof node.data.editor.isValid == "function") {
+                    fieldValidation = node.data.editor.isValid();
                 }
+
+                var view = this.selectionPanel.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(node));
 
                 // check if the name is unique, localizedfields can be used more than once
                 if ((fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false)
@@ -130,16 +133,20 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         this.usedFieldNames.push(data.name);
                     }
 
-                    node.getUI().removeClass("tree_node_error");
+                    if (nodeEl) {
+                        nodeEl.removeCls("tree_node_error");
+                    }
                 }
                 else {
-                    node.getUI().addClass("tree_node_error");
+                    if (nodeEl) {
+                        nodeEl.removeCls("tree_node_error");
+                    }
 
                     var invalidFieldsText = null;
 
-                    if(node.attributes.object.invalidFieldNames){
+                    if(node.data.editor.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
-                        +(implode(',',node.attributes.object.forbiddenNames));
+                        +(implode(',',node.data.editor.forbiddenNames));
                     }
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
                         invalidFieldsText);
@@ -253,7 +260,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         if(!this.languagePanel) {
             this.languagePanel = new Ext.form.FormPanel({
-                //layout: "pimcoreform",
                 region: "north",
                 bodyStyle: "padding: 5px;",
                 height: 35,
@@ -268,9 +274,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         if(!this.selectionPanel) {
 
             this.selectionPanel = Ext.create('Ext.tree.Panel', {
-                root: {
-                    hidden: true
-                },
+                rootVisible: true,
                 enableDD:true,
                 region:'center',
                 title: t('custom_layout'),
@@ -278,6 +282,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 width: 428,
                 split:true,
                 autoScroll:true,
+                disabled: true,
                 listeners:{
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this),
                     itemclick: this.onTreeNodeClick.bind(this)
@@ -329,7 +334,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             } else {
                 // save root node data
                 if (this.rootPanel) {
-                    var items = this.rootPanel.queryBy(function() {
+                    var panel = this.rootPanel;
+                    var items = panel.queryBy(function() {
                         return true;
                     });
 
@@ -472,7 +478,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     getRootPanel: function() {
 
 
-        this.rootPanel = new Ext.form.FormPanel({
+        this.rootPanel = new Ext.form.Panel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
             defaults: {
@@ -512,8 +518,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             width: 200,
             title: t('class_definitions'),
             region: "west",
-
-
             autoScroll: true,
             split: true,
             disabled: true,
@@ -565,6 +569,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         if (isCustom) {
             this.selectionPanel.setRootNode(rootNode);
+            this.selectionPanel.setDisabled(false);
             this.editPanel.add(this.getRootPanel());
             this.editPanel.doLayout();
             rootNode = this.selectionPanel.getRootNode();
@@ -642,10 +647,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         newNode = record.appendChild(newNode);
 
-        //if (addListener) {
-        //    newNode.addListener("click", this.onTreeNodeClick);
-        //}
-
         newNode.data.editor = new pimcore.object.classes.layout[type](newNode, initData);
 
         record.expand();
@@ -683,10 +684,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             iconCls: "pimcore_icon_" + type
         };
 
-        //if (addListener) {
-        //    newNode.addListener("click", this.onTreeNodeClick);
-        //}
-
         newNode = record.appendChild(newNode);
         newNode.data.editor = new pimcore.object.classes.data[type](newNode, initData);
 
@@ -698,30 +695,34 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+        try {
 
-        this.saveCurrentNode();
-        this.editPanel.removeAll();
+            this.saveCurrentNode();
+            this.editPanel.removeAll();
 
-        if (record.data.object) {
+            if (record.data.editor) {
 
-            if (record.data.object.datax.locked) {
-                return;
+                if (record.data.editor.datax.locked) {
+                    return;
+                }
+
+                if (typeof(record.data.editor.setInCustomLayoutEditor) == "function") {
+                    record.data.editor.setInCustomLayoutEditor(true);
+                }
+                this.editPanel.add(record.data.editor.getLayout());
+                this.setCurrentNode(record.data.editor);
             }
 
-            if (typeof(record.data.object.setInCustomLayoutEditor) == "function") {
-                record.data.object.setInCustomLayoutEditor(true);
+            if (record.data.root) {
+                var rootPanel = this.getRootPanel();
+                this.editPanel.add(rootPanel);
+                this.setCurrentNode("root");
             }
-            this.editPanel.add(this.attributes.object.getLayout());
-            this.setCurrentNode(this.attributes.object);
-        }
 
-        if (record.data.root) {
-            var rootPanel = this.getRootPanel();
-            this.editPanel.add(rootPanel);
-            this.setCurrentNode("root");
+            this.editPanel.doLayout();
+        } catch (e) {
+            console.log(e);
         }
-
-        this.editPanel.doLayout();
     },
 
     setCurrentNode: function (cn) {
@@ -815,9 +816,10 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
 
     clearSelectionPanel: function() {
+        this.selectionPanel.getStore().setDisabled(false);
         this.selectionPanel.setRootNode(new Ext.tree.TreeNode(
             {
-                hidden: true
+                //hidden: true
             }
         ));
     },
