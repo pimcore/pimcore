@@ -47,14 +47,14 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
      * @return $this|PimcoreNavigationController
      * @throws \Zend_View_Exception+
      */
-    public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null)
+    public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
     {
 
         $controller = self::getController();
 
         if($activeDocument) {
             // this is the new more convenient way of creating a navigation
-            $navContainer = $controller->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback);
+            $navContainer = $controller->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache);
             $this->navigation($navContainer);
             $this->setUseTranslator(false);
             $this->setInjectTranslator(false);
@@ -117,7 +117,7 @@ class PimcoreNavigationController
      * @throws \Exception
      * @throws \Zend_Navigation_Exception
      */
-    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null)
+    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
     {
         $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
 
@@ -130,9 +130,11 @@ class PimcoreNavigationController
             $site = Site::getCurrentSite();
             $siteSuffix = "__site_" . $site->getId();
         }
-        $cacheKey = "navigation_" . $navigationRootDocument->getId() . $siteSuffix;
 
-        if(!$navigation = CacheManager::load($cacheKey)) {
+        $cacheKey = "navigation_" . $navigationRootDocument->getId() . $siteSuffix;
+        $navigation = CacheManager::load($cacheKey);
+
+        if(!$navigation || !$cache) {
             $navigation = new \Zend_Navigation();
 
             if ($navigationRootDocument->hasChilds()) {
@@ -142,7 +144,9 @@ class PimcoreNavigationController
 
             // we need to force caching here, otherwise the active classes and other settings will be set and later
             // also written into cache (pass-by-reference) ... when serializing the data directly here, we don't have this problem
-            CacheManager::save($navigation, $cacheKey, ["output","navigation"], null, 999, true);
+            if($cache) {
+                CacheManager::save($navigation, $cacheKey, ["output","navigation"], null, 999, true);
+            }
         }
 
         // set active path
