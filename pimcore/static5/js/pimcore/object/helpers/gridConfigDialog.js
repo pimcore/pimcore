@@ -118,7 +118,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         if(!this.languagePanel) {
             this.languagePanel = new Ext.form.FormPanel({
-                layout: "pimcoreform",
                 region: "north",
                 bodyStyle: "padding: 5px;",
                 height: 35,
@@ -156,7 +155,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     id: "0",
                     root: true,
                     text: t("selected_grid_columns"),
-                    //reference: this,
                     leaf: false,
                     isTarget: true,
                     expanded: true,
@@ -210,8 +208,14 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     }.bind(this)
                 }]
             });
-
+            var store = this.selectionPanel.getStore();
+            var model = store.getModel();
+            model.setProxy({
+                type: 'memory'
+            });
         }
+
+
 
         return this.selectionPanel;
     },
