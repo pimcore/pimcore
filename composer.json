@@ -3,7 +3,6 @@
     "description": "The premier Open-Source Multi-Channel Experience and Engagement Management Platform",
     "keywords": ["CMS","PIM","DAM","E-Commerce","RAD","Product Information Management"],
     "homepage": "http://www.pimcore.org/",
-    "type": "pimcore-core",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -14,7 +13,12 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "pimcore/installer-core": ">=1"
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {"Pimcore\\": "pimcore/lib/Pimcore"}
+    },
+    "scripts": {
+        "post-create-project-cmd": "Pimcore\\Composer::postCreateProject"
     }
 }
