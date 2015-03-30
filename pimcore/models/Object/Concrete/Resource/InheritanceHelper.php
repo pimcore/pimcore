@@ -121,10 +121,12 @@ class InheritanceHelper {
 
     /**
      * @param $oo_id
+     * @param bool $createMissingChildrenRows
+     * @throws \Zend_Db_Adapter_Exception
      */
-    public function doUpdate($oo_id) {
+    public function doUpdate($oo_id, $createMissingChildrenRows = false) {
 
-        if(empty($this->fields) && empty($this->relations)) {
+        if(empty($this->fields) && empty($this->relations) && !$createMissingChildrenRows) {
             return;
         }
 
@@ -168,15 +170,43 @@ class InheritanceHelper {
             }
         }
 
+        // check for missing entries which can occur in object bricks and localized fields
+        // this happens especially in the following case:
+        // parent object has no brick, add child to parent, add brick to parent & click save
+        // without this code there will not be an entry in the query table for the child object
+        if($createMissingChildrenRows) {
+            $idsToUpdate = $this->extractObjectIdsFromTreeChildren($o->childs);
+            $idsInTable = $this->db->fetchCol("SELECT " . $this->idField . " FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $idsToUpdate) . ")");
+
+            $diff = array_diff($idsToUpdate, $idsInTable);
+
+            // create entries for children that don't have an entry yet
+            $originalEntry = $this->db->fetchRow("SELECT * FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
+            foreach ($diff as $id) {
+                $originalEntry[$this->idField] = $id;
+                $this->db->insert($this->querytable, $originalEntry);
+            }
+        }
+    }
+
+    /**
+     * @param $objectId
+     */
+    public function doDelete ($objectId) {
+
+        $treeChildren = $this->buildTree($objectId);
+        $idsToCheck = $this->extractObjectIdsFromTreeChildren($treeChildren);
+
+
     }
 
     /**
      * @param $currentParentId
-     * @param $fields
+     * @param string $fields
      * @return array
      */
-    private function buildTree($currentParentId, $fields) {
-        $result = $this->db->fetchAll("SELECT a." . $this->idField . " AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a." . $this->idField . " = b.o_id WHERE o_parentId = ? GROUP BY a." . $this->idField, $currentParentId);
+    protected function buildTree($currentParentId, $fields = "") {
+        $result = $this->db->fetchAll("SELECT b.o_id AS id $fields FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_parentId = ? GROUP BY b.o_id", $currentParentId);
 
         $objects = array();
 
@@ -219,10 +249,27 @@ class InheritanceHelper {
     }
 
     /**
+     * @param $treeChildren
+     * @return array
+     */
+    protected function extractObjectIdsFromTreeChildren($treeChildren)  {
+        $ids = [];
+
+        if(is_array($treeChildren)) {
+            foreach($treeChildren as $child) {
+                $ids[] = $child->id;
+                $ids = array_merge($ids, $this->extractObjectIdsFromTreeChildren($child));
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
      * @param $currentNode
      * @param $fieldname
      */
-    private function getIdsToUpdateForValuefields($currentNode, $fieldname) {
+    protected function getIdsToUpdateForValuefields($currentNode, $fieldname) {
         $value = $currentNode->values[$fieldname];
         if($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode->id;
@@ -238,7 +285,7 @@ class InheritanceHelper {
      * @param $currentNode
      * @param $fieldname
      */
-    private function getIdsToUpdateForRelationfields($currentNode, $fieldname) {
+    protected function getIdsToUpdateForRelationfields($currentNode, $fieldname) {
         $value = $currentNode->relations[$fieldname];
         if($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode->id;
@@ -256,7 +303,7 @@ class InheritanceHelper {
      * @param $fieldname
      * @throws \Zend_Db_Adapter_Exception
      */
-    private function updateQueryTable($oo_id, $ids, $fieldname) {
+    protected function updateQueryTable($oo_id, $ids, $fieldname) {
         if(!empty($ids)) {
             $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
             $this->db->update($this->querytable, array($fieldname => $value), $this->idField . " IN (" . implode(",", $ids) . ")");
