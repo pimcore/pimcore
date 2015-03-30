@@ -318,7 +318,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
         if(this.parent.multiselect) {
             this.selectionColumn = Ext.create('Ext.selection.CheckboxModel', {});
-            columns.unshift(this.selectionColumn);
             sm  = this.selectionColumn;
         } else {
             sm = Ext.create('Ext.selection.RowModel', {}); //  Ext.grid.RowSelectionModel({singleSelect:true});
@@ -331,12 +330,12 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             columns: columns,
             loadMask: true,
             columnLines: true,
-            //plugins: [gridfilters],
             stripeRows: true,
+            plugins: ['gridfilters'],
             viewConfig: {
                 forceFit: false
             },
-            sm: sm,
+            selModel: sm,
             bbar: this.pagingtoolbar,
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
