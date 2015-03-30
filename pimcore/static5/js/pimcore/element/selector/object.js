@@ -369,7 +369,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                     iconCls: "pimcore_icon_grid_column_config",
                     handler: this.openColumnConfig.bind(this, selectedClass, classId)
                 });
-                grid.getView().hmenu.add(columnConfig);
+                var menu = grid.headerCt.getMenu();
+                menu.add(columnConfig);
             }
         }.bind(this));
 
