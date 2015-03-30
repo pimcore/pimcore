@@ -176,15 +176,17 @@ class InheritanceHelper {
         // without this code there will not be an entry in the query table for the child object
         if($createMissingChildrenRows) {
             $idsToUpdate = $this->extractObjectIdsFromTreeChildren($o->childs);
-            $idsInTable = $this->db->fetchCol("SELECT " . $this->idField . " FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $idsToUpdate) . ")");
+            if(!empty($idsToUpdate)) {
+                $idsInTable = $this->db->fetchCol("SELECT " . $this->idField . " FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $idsToUpdate) . ")");
 
-            $diff = array_diff($idsToUpdate, $idsInTable);
+                $diff = array_diff($idsToUpdate, $idsInTable);
 
-            // create entries for children that don't have an entry yet
-            $originalEntry = $this->db->fetchRow("SELECT * FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
-            foreach ($diff as $id) {
-                $originalEntry[$this->idField] = $id;
-                $this->db->insert($this->querytable, $originalEntry);
+                // create entries for children that don't have an entry yet
+                $originalEntry = $this->db->fetchRow("SELECT * FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
+                foreach ($diff as $id) {
+                    $originalEntry[$this->idField] = $id;
+                    $this->db->insert($this->querytable, $originalEntry);
+                }
             }
         }
     }
