@@ -193,8 +193,8 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 },
                 {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                 {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
-                {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'},
-                {header: t("title"), width: 200, sortable: false, dataIndex: 'title', hidden: false},
+                {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
+                {header: t("title"), flex: 200, sortable: false, dataIndex: 'title', hidden: false},
                 {header: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
                 {header: t("keywords"), width: 200, sortable: false, dataIndex: 'keywords', hidden: true},
                 {header: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
@@ -204,7 +204,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
 
             if(this.parent.multiselect) {
                 this.selectionColumn = Ext.create('Ext.selection.CheckboxModel', {});
-                columns.unshift(this.selectionColumn);
                 sm  = this.selectionColumn;
             } else {
                 sm = Ext.create('Ext.selection.RowModel', {}); //  Ext.grid.RowSelectionModel({singleSelect:true});
@@ -222,7 +221,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 loadMask: true,
                 columnLines: true,
                 stripeRows: true,
-                sm: sm,
+                selModel: sm,
                 bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
