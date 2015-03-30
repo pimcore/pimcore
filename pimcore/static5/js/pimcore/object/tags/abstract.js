@@ -143,7 +143,8 @@ pimcore.object.tags.abstract = Class.create({
     addInheritanceSourceButton:function (metaData) {
 
         var el = this.getWrappingEl();
-        if (el) {
+        if (el && el.getFirstChild()) {
+            el = el.getFirstChild();
             el.setStyle({position:"relative"});
             el.insertHtml("afterBegin", '<div class="pimcore_open_inheritance_source"></div>');
             var button = Ext.get(el.query(".pimcore_open_inheritance_source")[0]);
