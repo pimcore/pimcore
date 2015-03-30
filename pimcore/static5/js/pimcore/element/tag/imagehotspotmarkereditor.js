@@ -42,7 +42,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             width: this.width + 100,
             height: this.height + 100,
             modal: this.modal,
-            closeAction: "close",
+            closeAction: "destroy",
+            autoDestroy: true,
             resizable: false,
             bodyStyle: "background: url(" + imageUrl + ") center center no-repeat; position:relative; ",
             tbar: [{
@@ -72,8 +73,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     var dataMarker = [];
 
                     var windowId = this.hotspotWindow.getId();
-                    var originalWidth = Ext.getCmp(windowId).getEl().getWidth(true);
-                    var originalHeight = Ext.getCmp(windowId).getEl().getHeight(true);
+                    var windowEl = Ext.getCmp(windowId).body;
+                    var originalWidth = windowEl.getWidth(true);
+                    var originalHeight = windowEl.getHeight(true);
 
 
                     for(var i=0; i<this.hotspotStore.length; i++) {
@@ -193,8 +195,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         if(typeof config == "object" && config["top"]) {
             var windowId = this.hotspotWindow.getId();
-            var originalWidth = Ext.getCmp(windowId).getEl().getWidth(true);
-            var originalHeight = Ext.getCmp(windowId).getEl().getWidth(true);
+            var windowEl = Ext.getCmp(windowId).body;
+            var originalWidth = windowEl.getWidth(true);
+            var originalHeight = windowEl.getHeight(true);
 
             markerEl.applyStyles({
                 top: (originalHeight * (config["top"]/100) - 35) + "px",
@@ -219,7 +222,28 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     addHotspot: function (config) {
         var hotspotId = "hotspot-" + (this.hotspotStore.length+1);
-        this.hotspotWindow.body.getFirstChild().insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_image_hotspot"></div>');
+
+        this.hotspotWindow.add(
+        {
+            xtype: 'component',
+            id: hotspotId,
+            resizable: {
+                target: hotspotId,
+                pinned: true,
+                minWidth: 50,
+                minHeight: 50,
+                preserveRatio: false,
+                dynamic: true,
+                handles: 'all'
+            },
+            style: "cursor:move;",
+            draggable: true,
+            cls: 'pimcore_image_hotspot'
+        });
+
+
+
+        //this.hotspotWindow.body.getFirstChild().insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_image_hotspot"></div>');
 
         var hotspotEl = Ext.get(hotspotId);
 
@@ -231,8 +255,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         if(typeof config == "object" && config["top"]) {
             var windowId = this.hotspotWindow.getId();
-            var originalWidth = Ext.getCmp(windowId).getEl().getWidth(true);
-            var originalHeight = Ext.getCmp(windowId).getEl().getHeight(true);
+            var windowEl = Ext.getCmp(windowId).body;
+            var originalWidth = windowEl.getWidth(true);
+            var originalHeight = windowEl.getHeight(true);
 
             hotspotEl.applyStyles({
                 top: (originalHeight * (config["top"]/100)) + "px",
