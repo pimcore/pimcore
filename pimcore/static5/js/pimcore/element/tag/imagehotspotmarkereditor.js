@@ -300,7 +300,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             width: 600,
             height: 440,
             modal: this.modal,
-            closeAction: "close",
             resizable: false,
             autoScroll: true,
             items: [{
@@ -423,7 +422,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     xtype: "textfield",
                     name: "value",
                     fieldLabel: t("value"),
-                    width: 400,
+                    width: 500,
                     value: data["value"]
                 };
             } else if(type == "textarea") {
@@ -431,7 +430,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     xtype: "textarea",
                     name: "value",
                     fieldLabel: t("value"),
-                    width: 400,
+                    width: 500,
                     value: data["value"]
                 };
             } else if(type == "checkbox") {
@@ -443,11 +442,11 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 };
             } else if(type == "object" || type == "asset" || type == "document") {
                 var textField = new Ext.form.TextField({
-                    cls: "pimcore_droptarget_input",
+                    fieldCls: "pimcore_droptarget_input",
                     name: "value",
                     fieldLabel: t("value"),
                     value: data["value"],
-                    width: 320,
+                    width: 420,
                     listeners: {
                         render: this.addDataDropTarget.bind(this, type)
                     }
@@ -468,9 +467,10 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     handler: this.openSearchEditor.bind(this, textField, type)
                 }];
 
-                valueField = new Ext.form.CompositeField({
+                valueField = new Ext.form.FieldContainer({
                     items: items,
-                    componentCls: "object_field"
+                    componentCls: "object_field",
+                    layout: 'hbox'
                 });
 
             } else {
@@ -478,24 +478,25 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 return;
             }
 
-            hotspotMetaDataWin.getComponent("form").add({
-                xtype: "fieldset",
-                style: "padding: 0;",
-                bodyStyle: "padding: 5px;",
-                itemId: id,
-                items: [{
-                    xtype: "hidden",
-                    name: "type",
-                    value: type
-                },{
-                    xtype: "textfield",
-                    name: "name",
-                    value: data["name"],
-                    fieldLabel: t("name")
-                }, valueField],
+            hotspotMetaDataWin.getComponent("form").add(
+                {
+                    xtype: 'panel',
+                    itemId: id,
+                    items: [
+                    {
+                        xtype: "hidden",
+                        name: "type",
+                        value: type
+                    },{
+                        xtype: "textfield",
+                        name: "name",
+                        value: data["name"],
+                        fieldLabel: t("name")
+                    }, valueField
+                    ],
                 tbar: ["->", {
                     iconCls: "pimcore_icon_delete",
-                    handler: function (hotspotMetaDataWin) {
+                    handler: function (hotspotMetaDataWin, subComponen) {
                         var form = hotspotMetaDataWin.getComponent("form");
                         form.remove(form.getComponent(id));
                         hotspotMetaDataWin.doLayout();
@@ -524,8 +525,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     addDataDropTarget: function (type, el) {
         var drop = function (el, target, dd, e, data) {
-            if(data.node.attributes.elementType == type) {
-                target.dom.value = data.node.attributes.path;
+            data = data.records[0].data;
+            if(data.elementType == type) {
+                target.component.setValue(data.path);
                 return true;
             } else {
                 return false;
@@ -533,7 +535,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         }.bind(this, el);
 
         var over = function (target, dd, e, data) {
-            if(data.node.attributes.elementType == type) {
+            data = data.records[0].data;
+            if(data.elementType == type) {
                 return Ext.dd.DropZone.prototype.dropAllowed;
             }
             return Ext.dd.DropZone.prototype.dropNotAllowed;
