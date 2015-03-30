@@ -258,8 +258,8 @@ class InheritanceHelper {
      */
     private function updateQueryTable($oo_id, $ids, $fieldname) {
         if(!empty($ids)) {
-            $value = $this->db->fetchCol("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
-            $this->db->update($this->querytable, array($fieldname => $value[0]), $this->idField . " IN (" . implode(",", $ids) . ")");
+            $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
+            $this->db->update($this->querytable, array($fieldname => $value), $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
 }
