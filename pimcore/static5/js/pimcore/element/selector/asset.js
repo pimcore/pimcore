@@ -188,7 +188,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     }
                 },
                 {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
-                {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'},
+                {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
                 {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
                 {header: t("preview"), width: 100, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
@@ -206,7 +206,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
             if(this.parent.multiselect) {
                 this.selectionColumn = Ext.create('Ext.selection.CheckboxModel', {});
-                columns.unshift(this.selectionColumn);
                 sm  = this.selectionColumn;
             } else {
                 sm = Ext.create('Ext.selection.RowModel', {}); //  Ext.grid.RowSelectionModel({singleSelect:true});
@@ -224,7 +223,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 viewConfig: {
                     forceFit: true
                 },
-                sm: sm,
+                plugins: ['gridfilters'],
+                selModel: sm,
                 bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
