@@ -73,7 +73,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
                     var windowId = this.hotspotWindow.getId();
                     var originalWidth = Ext.getCmp(windowId).getEl().getWidth(true);
-                    var originalHeight = Ext.getCmp(windowId).getEl().getWidth(true);
+                    var originalHeight = Ext.getCmp(windowId).getEl().getHeight(true);
 
 
                     for(var i=0; i<this.hotspotStore.length; i++) {
@@ -232,7 +232,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         if(typeof config == "object" && config["top"]) {
             var windowId = this.hotspotWindow.getId();
             var originalWidth = Ext.getCmp(windowId).getEl().getWidth(true);
-            var originalHeight = Ext.getCmp(windowId).getEl().getWidth(true);
+            var originalHeight = Ext.getCmp(windowId).getEl().getHeight(true);
 
             hotspotEl.applyStyles({
                 top: (originalHeight * (config["top"]/100)) + "px",
