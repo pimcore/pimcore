@@ -218,26 +218,31 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     updateImage: function () {
 
         // 5px padding (-10)
-        var width = this.getBody().getWidth()-10;
-        var height = this.getBody().getHeight()-10;
+        var body = this.getBody();
+        var width = body.getWidth()-10;
+        var height = body.getHeight()-10;
 
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + width + "/height/" + height
             + "/contain/true";
 
-        this.getBody().setStyle({
+        body = body.down('.x-autocontainer-innerCt');
+        body.setStyle({
             backgroundImage: "url(" + path + ")",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat"
         });
-        this.getBody().repaint();
+        body.repaint();
     },
 
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
+
         var elements = Ext.get(this.component.getEl().dom).query(".pimcore_image_container");
         var bodyId = elements[0].getAttribute("id");
-        return Ext.get(bodyId);
+        var body = Ext.get(bodyId);
+        return body;
+
     },
 
     onContextMenu: function (e) {
