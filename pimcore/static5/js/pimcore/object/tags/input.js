@@ -56,7 +56,8 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field"
+            componentCls: "object_field",
+            labelWidth: 100
         };
 
         if (this.data) {
@@ -68,6 +69,11 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         } else {
             input.width = 150;
         }
+
+        if (this.fieldConfig.labelWidth) {
+            input.labelWidth = this.fieldConfig.labelWidth;
+        }
+        input.width += input.labelWidth;
 
         if(this.fieldConfig.columnLength) {
             input.autoCreate = {tag: 'input', type: 'text', maxlength: this.fieldConfig.columnLength};

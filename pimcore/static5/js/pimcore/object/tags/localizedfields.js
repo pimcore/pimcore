@@ -166,7 +166,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
                 var panelConf = {
                     height: "auto",
-                    layout: "pimcoreform",
                     border: true,
                     padding: "10px",
                     title: pimcore.available_languages[this.frontendLanguages[i]],
@@ -261,10 +260,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
                 var editable =  (pimcore.currentuser.admin ||
                     this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
+                var items = this.getRecursiveLayout(this.fieldConfig, !editable);
 
                 var item = {
                     xtype: "panel",
-                    //layout: "pimcoreform",
                     border:false,
                     autoScroll: true,
                     padding: "10px",
@@ -272,7 +271,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     hideMode: "offsets",
                     iconCls: "pimcore_icon_language_" + this.frontendLanguages[i].toLowerCase(),
                     title: pimcore.available_languages[this.frontendLanguages[i]],
-                    items: this.getRecursiveLayout(this.fieldConfig, !editable).items
+                    items: items.items
                 };
 
                 if (this.fieldConfig.labelWidth) {
