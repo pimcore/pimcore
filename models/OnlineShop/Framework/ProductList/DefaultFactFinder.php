@@ -279,7 +279,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
     public function setCategory(\OnlineShop_Framework_AbstractCategory $category)
     {
-        throw new Exception('not yet implemented');
+//        throw new Exception('not yet implemented');
         $this->category = $category;
     }
 
@@ -289,7 +289,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
     public function setVariantMode($variantMode)
     {
-        throw new Exception('not yet implemented');
+//        throw new Exception('not yet implemented');
         $this->variantMode = $variantMode;
     }
 
@@ -323,6 +323,10 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
         // send request
         $data = $this->sendRequest( $params );
+        if(array_key_exists('error', $data))
+        {
+            throw new Exception($data['error']);
+        }
         $searchResult = $data['searchResult'];
 
 
@@ -347,7 +351,8 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
                     break;
             }
 
-            $product = $this->tenantConfig->getObjectMockupById( $item['record']['PimcoreObjectId'] );
+//            $product = $this->tenantConfig->getObjectMockupById( $item['record']['PimcoreObjectId'] );
+            $product = $this->tenantConfig->getObjectMockupById( $item['id'] );   // FIXME factfinder workaround
             if($product)
             {
                 $this->products[] = $product;
@@ -560,7 +565,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
-        // throw new Exception('not yet implemented');
+        throw new Exception('not yet implemented');
     }
 
 
@@ -629,8 +634,8 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         {
             $field = $this->groupedValues[ $fieldname ];
 
-            if($field['selectionType'] == 'multiSelectOr')
-            {
+//            if($field['selectionType'] == 'multiSelectOr')
+//            {
                 foreach($field['elements'] as $item)
                 {
                     $groups[] = [
@@ -638,7 +643,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
                         , 'count' => $item['recordCount']
                     ];
                 }
-            }
+//            }
 
         }
 
@@ -650,6 +655,47 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         return $this->getGroupByValues($fieldname, $countValues, $fieldnameShouldBeExcluded);
+    }
+
+    /**
+     * prepares all group by values for given field names and cache them in local variable
+     * considers both - normal values and relation values
+     *
+     * @param string $fieldname
+     *
+     * @return void
+     */
+    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
+        // nothing todo
+    }
+
+    /**
+     * prepares all group by values for given field names and cache them in local variable
+     * considers both - normal values and relation values
+     *
+     * @param string $fieldname
+     *
+     * @return void
+     */
+    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
+        // nothing todo
+    }
+
+    /**
+     * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
+     *
+     * @param      $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
+        throw new Exception('not yet implemented');
     }
 
 

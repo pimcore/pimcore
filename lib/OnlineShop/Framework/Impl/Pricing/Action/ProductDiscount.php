@@ -28,7 +28,8 @@ class OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount implements Online
     {
         $priceinfo = $environment->getPriceInfo();
         $amount = $this->getAmount() !== 0 ? $this->getAmount() : ($priceinfo->getAmount() * ($this->getPercent() / 100));
-        $priceinfo->setAmount( $priceinfo->getAmount() - $amount );
+        $amount = $priceinfo->getAmount() - $amount;
+        $priceinfo->setAmount( $amount > 0 ? $amount : 0);
 
         return $this;
     }

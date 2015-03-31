@@ -889,29 +889,33 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         /**
          * @var $esClient \Elasticsearch\Client
          */
-        //TODO
-//        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
-//        $result = $esClient->search($params);
 
-        // FIXME dummy
-        $esClient = new Zend_Http_Client(sprintf('http://elasticsearch:9200/%s/%s/_search?%s'
+        // ElasticSearch Client
+//        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
+
+
+        // Zend HTTP Client
+        $config =  $this->tenantConfig->getElasticSearchClientParams();
+        $esClient = new Zend_Http_Client(sprintf('http://%s:9200/%s/%s/_search?%s'
+            , $config['hosts'][0]
             , $params['index']
             , $params['type']
             , $params['search_type'] ?: ''
         ));
 
 
+        if($esClient instanceof \Elasticsearch\Client)
+        {
+            $result = $esClient->search($params);
+        }
+        else if($esClient instanceof Zend_Http_Client)
+        {
+            $esClient->setMethod( Zend_Http_Client::GET );
+            $esClient->setRawData( json_encode($params['body']) );
 
-        /* @var \Elasticsearch\Client $esClient */
-
-        $esClient->setMethod(Zend_Http_Client::GET);
-        $esClient->setRawData(json_encode( $params['body'] ));
-
-
-//        print_r(json_encode( $params['body'] ));
-
-        $result = $esClient->request();
-        $result = json_decode($result->getBody(), true);
+            $result = $esClient->request();
+            $result = json_decode($result->getBody(), true);
+        }
 
         return $result;
     }

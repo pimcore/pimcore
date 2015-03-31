@@ -11,10 +11,12 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
     protected $charge = 0;
 
     /**
-     * @param $config
+     * @param Zend_Config $config
      */
-    public function __construct($config) {
-        if($config->charge) {
+    public function __construct(Zend_Config $config = null)
+    {
+        if($config && $config->charge)
+        {
             $this->charge = floatval($config->charge);
         }
     }

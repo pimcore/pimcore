@@ -5,6 +5,12 @@
  */
 interface OnlineShop_Framework_Payment_IStatus
 {
+    const STATUS_PENDING = 'paymentPending';
+    const STATUS_AUTHORIZED = 'paymentAuthorized';
+    const STATUS_CANCELLED = 'cancelled';
+    const STATUS_CLEARED = 'committed';
+
+
     /**
      * payment reference from payment provider
      *
