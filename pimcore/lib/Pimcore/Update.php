@@ -193,6 +193,7 @@ class Update {
         $db = Resource::get();
         
         $db->query("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
+          `id` int(11) NULL DEFAULT NULL,
           `revision` int(11) NULL DEFAULT NULL,
           `path` varchar(255) NULL DEFAULT NULL,
           `action` varchar(50) NULL DEFAULT NULL
@@ -223,12 +224,12 @@ class Update {
                 
                 if($file->type == "file") {
                     if ($file->action == "update" || $file->action == "add") {
-                        $newPath = str_replace("/","~~~",$file->path);
-                        $newFile = $filesDir."/".$newPath;
+                        $newFile = $filesDir . "/" . $file->id . "-" . $file->revision;
                         File::put($newFile, base64_decode((string) $file->content));
                     }
                     
                     $db->insert(self::$tmpTable, array(
+                        "id" => $file->id,
                         "revision" => $revision,
                         "path" => (string) $file->path,
                         "action" => (string)$file->action
@@ -256,7 +257,16 @@ class Update {
                         File::mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]));
                     }
                 }
-                $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/","~~~",$file["path"]);
+
+                if(array_key_exists("id", $file) && $file["id"]) {
+                    // this is the new style, see https://www.pimcore.org/issues/browse/PIMCORE-2722
+                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . $file["id"] . "-" . $file["revision"];
+                } else {
+                    // this is the old style, which we still have to support here, otherwise there's the risk that the
+                    // running update cannot be finished
+                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/","~~~",$file["path"]);
+                }
+
                 $destFile = PIMCORE_DOCUMENT_ROOT . $file["path"];
                 
                 if(!self::$dryRun) {
