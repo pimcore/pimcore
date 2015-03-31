@@ -126,21 +126,22 @@ pimcore.element.selector.abstract = Class.create({
         return pagingToolbar;
     },
 
-    onRowContextmenu: function (grid, rowIndex, event) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
 
-        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( {
-            backgroundColor: '#fff' }, 400);
+        //$(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( {
+        //    backgroundColor: '#fff' }, 400);
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
-        var selectedRows = grid.getSelectionModel().getSelections();
-
+        var selModel = grid.getSelectionModel();
+        var selectedRows = selModel.getSelection();
 
         menu.add(new Ext.menu.Item({
             text: t('add_selected'),
             iconCls: "pimcore_icon_add",
             handler: function (data) {
-                var selectedRows = grid.getSelectionModel().getSelections();
+                var selModel = grid.getSelectionModel();
+                var selectedRows = selModel.getSelection();
                 for (var i = 0; i < selectedRows.length; i++) {
                     this.addToSelection(selectedRows[i].data);
                 }
@@ -148,8 +149,8 @@ pimcore.element.selector.abstract = Class.create({
             }.bind(this, data)
         }));
 
-        event.stopEvent();
-        menu.showAt(event.getXY());
+        e.stopEvent();
+        menu.showAt(e.getXY());
     }
 
 });
