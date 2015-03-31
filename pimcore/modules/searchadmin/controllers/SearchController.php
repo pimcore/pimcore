@@ -40,7 +40,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         $subtypes = explode(",", $this->getParam("subtype"));
         $classnames = explode(",", $this->getParam("class"));
 
-        if (is_array($classnames) and empty($classnames[0])) {
+        if ($this->getParam("type") == "object" && is_array($classnames) && empty($classnames[0])) {
             $subtypes = array("object","variant","folder");
         }
 
