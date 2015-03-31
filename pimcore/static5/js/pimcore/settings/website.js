@@ -230,7 +230,7 @@ pimcore.settings.website = Class.create({
                 renderer: function(d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
+                        return Ext.Date.format(date, "Y-m-d H:i:s");
                     } else {
                         return "";
                     }
@@ -242,7 +242,7 @@ pimcore.settings.website = Class.create({
                 renderer: function(d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
+                        return Ext.Date.format(date, "Y-m-d H:i:s");
                     } else {
                         return "";
                     }
@@ -252,29 +252,22 @@ pimcore.settings.website = Class.create({
             {
                 xtype:'actioncolumn',
                 width:30,
-                items:[
-                    {
-                        tooltip:t('empty'),
-                        icon: "/pimcore/static/img/icon/bin_empty.png",
-                        handler:function (grid, rowIndex) {
-                            grid.getStore().getAt(rowIndex).set("data","");
-                        }.bind(this)
-                    }
-                ]
+                tooltip:t('empty'),
+                icon: "/pimcore/static/img/icon/bin_empty.png",
+                handler:function (grid, rowIndex) {
+                    grid.getStore().getAt(rowIndex).set("data","");
+                }.bind(this)
+
             }
             ,
             {
                 xtype:'actioncolumn',
                 width:30,
-                items:[
-                    {
-                        tooltip:t('delete'),
-                        icon:"/pimcore/static/img/icon/cross.png",
-                        handler:function (grid, rowIndex) {
-                            grid.getStore().removeAt(rowIndex);
-                        }.bind(this)
-                    }
-                ]
+                tooltip:t('delete'),
+                icon:"/pimcore/static/img/icon/cross.png",
+                handler:function (grid, rowIndex) {
+                    grid.getStore().removeAt(rowIndex);
+                }.bind(this)
             }
         ];
 
@@ -331,11 +324,6 @@ pimcore.settings.website = Class.create({
             bbar:this.pagingtoolbar,
             plugins: [
                 this.cellEditing
-                //,
-                //{
-                //    ptype: 'datatip',
-                //    tpl: t('click_to_edit')
-                //}
             ],
             tbar:[
                 {
