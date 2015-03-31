@@ -102,7 +102,7 @@ pimcore.asset.metadata = Class.create({
                         fields: ['name', "type", {
                             name: "data",
                             convert: function (v, r) {
-                                if (r.type == "date") {
+                                if (r.data.type == "date") {
                                     var d = new Date(intval(v) * 1000);
                                     return d;
                                 }

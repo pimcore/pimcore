@@ -162,7 +162,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             this.selectionStore = new Ext.data.JsonStore({
                 data: [],
                 fields: ["id", "type", "filename", "fullpath", "subtype", {name:"classname",convert: function(v, rec){
-                    return ts(rec.classname);
+                    return ts(rec.data.classname);
                 }}]
             });
             
