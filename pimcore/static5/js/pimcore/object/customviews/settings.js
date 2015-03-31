@@ -101,79 +101,89 @@ pimcore.object.customviews.settings = Class.create({
             };
         }
 
-        this.panel.add({
-            xtype: "fieldset",
+        this.panel.add(
+            {
+            xtype: 'panel',
             id: "customviews_fieldset_" + this.entryCount,
             items: [
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("name"),
-                    name: "name_" + this.entryCount,
-                    width: 200,
-                    value: data.name
-                },
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("icon"),
-                    name: "icon_" + this.entryCount,
-                    width: 400,
-                    value: data.icon
-                }/*,{
-                 xtype: "textarea",
-                 fieldLabel: t("condition"),
-                 name: "condition_" + this.entryCount,
-                 width: 400,
-                 value: data.condition
-                 }*/,
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("root_folder"),
-                    name: "rootfolder_" + this.entryCount,
-                    width: 400,
-                    cls: "input_drop_target",
-                    value: data.rootfolder,
-                    listeners: {
-                        "render": function (el) {
-                            new Ext.dd.DropZone(el.getEl(), {
-                                reference: this,
-                                ddGroup: "element",
-                                getTargetFromEvent: function(e) {
-                                    return this.getEl();
-                                }.bind(el),
+            {
+                xtype: "fieldset",
+                border: false,
+                items: [
+                    {
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "name_" + this.entryCount,
+                        width: 300,
+                        value: data.name
+                    },
+                    {
+                        xtype: "textfield",
+                        fieldLabel: t("icon"),
+                        name: "icon_" + this.entryCount,
+                        width: 500,
+                        value: data.icon
+                    }/*,{
+                     xtype: "textarea",
+                     fieldLabel: t("condition"),
+                     name: "condition_" + this.entryCount,
+                     width: 400,
+                     value: data.condition
+                     }*/,
+                    {
+                        xtype: "textfield",
+                        fieldLabel: t("root_folder"),
+                        name: "rootfolder_" + this.entryCount,
+                        width: 500,
+                        cls: "input_drop_target",
+                        value: data.rootfolder,
+                        listeners: {
+                            "render": function (el) {
+                                new Ext.dd.DropZone(el.getEl(), {
+                                    reference: this,
+                                    ddGroup: "element",
+                                    getTargetFromEvent: function (e) {
+                                        return this.getEl();
+                                    }.bind(el),
 
-                                onNodeOver : function(target, dd, e, data) {
-                                    return Ext.dd.DropZone.prototype.dropAllowed;
-                                },
+                                    onNodeOver: function (target, dd, e, data) {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    },
 
-                                onNodeDrop : function (target, dd, e, data) {
-                                    if (data.node.attributes.elementType == "object") {
-                                        this.setValue(data.node.attributes.path);
-                                        return true;
-                                    }
-                                    return false;
-                                }.bind(el)
-                            });
+                                    onNodeDrop: function (target, dd, e, data) {
+                                        data = data.records[0].data;
+                                        if (data.elementType == "object") {
+                                            this.setValue(data.path);
+                                            return true;
+                                        }
+                                        return false;
+                                    }.bind(el)
+                                });
+                            }
                         }
+                    },
+                    {
+                        xtype: "checkbox",
+                        name: "showroot_" + this.entryCount,
+                        checked: data.showroot,
+                        fieldLabel: t("show_root_node")
+                    },
+                    {
+                        xtype: "multiselect",
+                        fieldLabel: t("allowed_classes"),
+                        name: "classes_" + this.entryCount,
+                        width: 'auto',
+                        height: 100,
+                        store: pimcore.globalmanager.get("object_types_store"),
+                        editable: false,
+                        value: data.classes,
+                        valueField: 'id',
+                        displayField: 'text'
                     }
-                },
-                {
-                    xtype: "checkbox",
-                    name: "showroot_" + this.entryCount,
-                    checked: data.showroot,
-                    fieldLabel: t("show_root_node")
-                },
-                {
-                    xtype: "multiselect",
-                    fieldLabel: t("allowed_classes"),
-                    name: "classes_" + this.entryCount,
-                    width: 'auto',
-                    store: pimcore.globalmanager.get("object_types_store"),
-                    editable: false,
-                    value: data.classes,
-                    valueField: 'id',
-                    displayField: 'text'
-                }
+                ]
+            }
             ],
+
             buttons: [
                 {
                     text: t("remove"),
