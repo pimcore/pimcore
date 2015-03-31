@@ -377,7 +377,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             }
 
         } else if (type == "document" && this.fieldConfig.documentsAllowed) {
-            subType = data.node.attributes.type;
+            subType = data.type;
             isAllowed = false;
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
