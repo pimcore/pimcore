@@ -27,10 +27,6 @@ class Composer
         $rootPath = dirname($config->get('vendor-dir'));
 
         // cleanup
-        @unlink($rootPath . '/build.xml');
-        @unlink($rootPath . '/phpdox.xml.dist');
-        @unlink($rootPath . '/phpunit.xml.dist');
-        @unlink($rootPath . '/phpunit-no-coverage.xml.dist');
         @unlink($rootPath . '/.scrutinizer.yml');
         @unlink($rootPath . '/.travis.yml');
 
