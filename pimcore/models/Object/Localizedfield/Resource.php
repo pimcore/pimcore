@@ -171,7 +171,7 @@ class Resource extends Model\Resource\AbstractResource {
 
             $queryTable = $this->getQueryTableName() . "_" . $language;
             $this->db->insertOrUpdate($queryTable, $data);
-            $this->inheritanceHelper->doUpdate($object->getId(), true);
+            $this->inheritanceHelper->doUpdate($object->getId());
             $this->inheritanceHelper->resetFieldsToCheck();
 
             Object\AbstractObject::setGetInheritedValues($inheritedValues);
