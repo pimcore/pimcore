@@ -113,11 +113,11 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     },
 
     getEditUrlPixlr: function (type) {
-        
+
         var parts = this.data.filename.split(".");
         var imageType = parts[parts.length-1].toLowerCase();
         var validImageTypes = ["png","jpg","gif"];
-        
+
         if(!in_array(imageType,validImageTypes)) {
             imageType = "png";
         }

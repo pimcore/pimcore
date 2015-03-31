@@ -1,3 +1,21 @@
+Ext.define('overrides.Component', {
+    override: 'Ext.Component',
+
+    initComponent: function() {
+        this.callParent(arguments);
+        this.on('enable', function(cmp) {
+            // workaround for http://www.sencha.com/forum/showthread.php?295910
+            // [5.1.0.107] setDisabled(true) on formpanel doesn't enable buttons
+            // ...
+            // Success! Looks like we've fixed this one. According to our records the fix was applied for EXTJS-16180 in 5.1.1.
+            //..
+            if (cmp.isMasked()) {
+                cmp.unmask();
+            }
+        })
+    }
+});
+
 Ext.define('Ext.overrides.grid.View', {
         extend: 'Ext.grid.View',
 
