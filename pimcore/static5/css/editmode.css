@@ -23,8 +23,8 @@
 }
 
 .pimcore_tag_image .x5-panel-body img {
-    max5-width: 100%;
-    max5-height: 100%;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .pimcore_tag_image_alt {
@@ -385,7 +385,7 @@
 }
 
 .x5-window-footer {
-    max5-width: 100%;
+    max-width: 100%;
     padding-top: 10px;
 }
 
@@ -449,7 +449,7 @@
     display: block;
 }
 
-.x5-btn-text {
+.pimcore_areablock_toolbar .x5-btn-text {
     display: inline-block;
     border:0;
     margin: 0;
@@ -472,34 +472,34 @@
     padding-left: 0;
 }
 
-.x5-btn-noicon {
+/*.x5-btn-noicon {*/
 
-}
+/*}*/
 
-.x5-btn .x5-btn-arrow {
-    padding-right: 10px;
-    position: relative;
-}
+/*.x5-btn .x5-btn-arrow {*/
+    /*padding-right: 10px;*/
+    /*position: relative;*/
+/*}*/
 
-.x5-btn .x5-btn-arrow:after {
-    position: absolute;
-    top: 4px;
-    right: 2px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 5px 3px 0 3px;
-    border-color: #ffffff transparent transparent transparent;
-    content: "";
-}
+/*.x5-btn .x5-btn-arrow:after {*/
+    /*position: absolute;*/
+    /*top: 4px;*/
+    /*right: 2px;*/
+    /*width: 0;*/
+    /*height: 0;*/
+    /*border-style: solid;*/
+    /*border-width: 5px 3px 0 3px;*/
+    /*border-color: #ffffff transparent transparent transparent;*/
+    /*content: "";*/
+/*}*/
 
-.x5-btn-text-icon {
-    padding-right: 5px;
-}
+/*.x5-btn-text-icon {*/
+    /*padding-right: 5px;*/
+/*}*/
 
-.x5-btn-text-icon .x5-btn-text {
-    padding-left: 25px;
-}
+/*.x5-btn-text-icon .x5-btn-text {*/
+    /*padding-left: 25px;*/
+/*}*/
 
 .x5-menu {
 
@@ -1009,6 +1009,7 @@
 .x5-form-date-trigger {
     background: #363636;
     background-image: url(/pimcore/static5/img/icon/calendar.png);
+    background-repeat: no-repeat;
 }
 
 .x5-form-trigger-default {
