@@ -144,7 +144,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setDocumentTypes($documentTypes) {
 
         // this is the new method with Ext.form.MultiSelect
-        if(is_string($documentTypes) && !empty($documentTypes)) {
+        if((is_string($documentTypes) && !empty($documentTypes)) || (\Pimcore\Tool\Admin::isExtJS5() && is_array($documentTypes))) {
             if (!\Pimcore\Tool\Admin::isExtJS5()) {
                 $parts = explode(",", $documentTypes);
             } else {
@@ -192,7 +192,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setAssetTypes($assetTypes) {
 
         // this is the new method with Ext.form.MultiSelect
-        if(is_string($assetTypes) && !empty($assetTypes)) {
+        if((is_string($assetTypes) && !empty($assetTypes)) || (\Pimcore\Tool\Admin::isExtJS5() && is_array($assetTypes))) {
             if (!\Pimcore\Tool\Admin::isExtJS5()) {
                 $parts = explode(",", $assetTypes);
             } else {

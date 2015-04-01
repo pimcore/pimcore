@@ -159,8 +159,13 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setDocumentTypes($documentTypes)
     {
         // this is the new method with Ext.form.MultiSelect
-        if(is_string($documentTypes) && !empty($documentTypes)) {
-            $parts = explode(",", $documentTypes);
+        if((is_string($documentTypes) && !empty($documentTypes)) || (\Pimcore\Tool\Admin::isExtJS5() && is_array($documentTypes))) {
+            if (!\Pimcore\Tool\Admin::isExtJS5()) {
+                $parts = explode(",", $documentTypes);
+            } else {
+                $parts = $documentTypes;
+            }
+
             $documentTypes = array();
             foreach ($parts as $type) {
                 $documentTypes[] = array("documentTypes" => $type);
@@ -206,8 +211,12 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setAssetTypes($assetTypes)
     {
         // this is the new method with Ext.form.MultiSelect
-        if(is_string($assetTypes) && !empty($assetTypes)) {
-            $parts = explode(",", $assetTypes);
+        if((is_string($assetTypes) && !empty($assetTypes)) || (\Pimcore\Tool\Admin::isExtJS5() && is_array($assetTypes))) {
+            if (!\Pimcore\Tool\Admin::isExtJS5()) {
+                $parts = explode(",", $assetTypes);
+            } else {
+                $parts = $assetTypes;
+            }
             $assetTypes = array();
             foreach ($parts as $type) {
                 $assetTypes[] = array("assetTypes" => $type);
