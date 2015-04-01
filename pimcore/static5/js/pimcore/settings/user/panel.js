@@ -106,7 +106,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
         });
 
         var resultTpl = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item" style="padding: 3px 10px 3px 10px; border: 1px solid #fff; border-bottom: 1px solid #eeeeee; color: #555;">',
+            '<tpl for="."><div class="x-boundlist-item" style="padding: 3px 10px 3px 10px; border: 1px solid #fff; border-bottom: 1px solid #eeeeee; color: #555;">',
             '<img style="float:left; padding-right: 10px; max-height:30px;" src="/admin/user/get-image?id={id}" />',
             '<h3>{name} - {firstname} {lastname}</h3>',
             '{email} <b>ID: </b> {id}',
@@ -132,7 +132,6 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 queryDelay: 100,
                 hideTrigger:true,
                 tpl: resultTpl,
-                itemSelector: 'div.search-item',
                 triggerAction: "all",
                 listeners: {
                     select: function(combo, record, index){
@@ -142,7 +141,8 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                         } catch (e) {
                             console.log(e)
                         }
-                    }.bind(this),
+                    }.bind(this)
+                    ,
                     afterrender: function () {
                         this.focus(true,500);
                     }
