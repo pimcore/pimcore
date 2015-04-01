@@ -162,7 +162,7 @@ class KeyValue extends Model\AbstractModel {
         $parent = Object\Service::hasInheritableParentObject($object);
         while ($parent) {
             $kv = $parent->getKeyvaluepairs();
-            $parentProperties = $kv->getInternalProperties();
+            $parentProperties = $kv ? $kv->getInternalProperties() : [];
 
             $addedKeys = array();
 
