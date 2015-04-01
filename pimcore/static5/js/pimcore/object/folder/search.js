@@ -317,6 +317,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 triggerAction: "all",
                 listeners: {
                     select: function (box, rec, index) {
+                        this.store.setPageSize(intval(rec.data.field1));
+                        this.store.getProxy().extraParams.limit = intval(rec.data.field1);
                         this.pagingtoolbar.pageSize = intval(rec.data.field1);
                         this.pagingtoolbar.moveFirst();
                     }.bind(this)

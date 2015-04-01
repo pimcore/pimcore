@@ -33,7 +33,7 @@ pimcore.asset.listfolder = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        var proxy = this.store.baseParams.filter = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
@@ -53,7 +53,6 @@ pimcore.asset.listfolder = Class.create({
             },
             extraParams: {
                 limit: itemsPerPage,
-                test: "test",
                 folderId: this.element.data.id
             }
         });
@@ -72,26 +71,26 @@ pimcore.asset.listfolder = Class.create({
 
         var typesColumns = [
             this.selectionColumn,
-            {header: t("id"), sortable: true, dataIndex: 'id', editable: false, width: 40},
-            {header: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100},
-            {header: t("type"), sortable: true, dataIndex: 'type', editable: false, width: 50}
+            {header: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40},
+            {header: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string'},
+            {header: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
 
         ];
 
 
-        typesColumns.push({header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+        typesColumns.push({header: t("creationDate"), width: 150, sortable: true, dataIndex: 'creationDate', editable: false, filter: 'date',
                                                                                 renderer: function(d) {
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         }});
-        typesColumns.push({header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+        typesColumns.push({header: t("modificationDate"), width: 150, sortable: true, dataIndex: 'modificationDate', editable: false, filter: 'date',
         renderer: function(d) {
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         }});
 
         typesColumns.push(
-            {header: t("size"), sortable: false, dataIndex: 'size', editable: false}
+            {header: t("size"), sortable: false, dataIndex: 'size', editable: false, filter: 'string'}
         );
 
         var itemsPerPage = 20;
@@ -131,8 +130,11 @@ pimcore.asset.listfolder = Class.create({
             triggerAction: "all",
             listeners: {
                 select: function (box, rec, index) {
+                    this.store.setPageSize(intval(rec.data.field1));
+                    this.store.getProxy().extraParams.limit = rec.data.field1;
                     this.pagingtoolbar.pageSize = intval(rec.data.field1);
                     this.pagingtoolbar.moveFirst();
+
                 }.bind(this)
             }
         }));
@@ -145,8 +147,7 @@ pimcore.asset.listfolder = Class.create({
                 "change" : function (field, checked) {
                     this.grid.filters.clearFilters();
 
-                    this.store.baseparams = {};
-                    this.store.setBaseParam("only_direct_children", checked);
+                    this.store.getProxy().setExtraParam("only_direct_children", checked);
 
                     this.onlyDirectChildren = checked;
                     this.pagingtoolbar.moveFirst();
@@ -154,8 +155,6 @@ pimcore.asset.listfolder = Class.create({
             }
         });
 
-        //TODO grid filters
-        //this.gridfilters = this.getGridFilters();
         this.grid = Ext.create('Ext.grid.Panel', {
             title: "List",
             iconCls: "pimcore_icon_table_tab",
@@ -165,7 +164,7 @@ pimcore.asset.listfolder = Class.create({
             columnLines: true,
             stripeRows: true,
             columns : typesColumns,
-            //plugins: [this.gridfilters],
+            plugins: ['gridfilters'],
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
             selModel: this.selectionColumn,
@@ -192,37 +191,6 @@ pimcore.asset.listfolder = Class.create({
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         return this.grid;
-    },
-
-    getGridFilters: function() {
-        var configuredFilters = [{
-            type: "date",
-            dataIndex: "creationDate"
-        },{
-            type: "date",
-            dataIndex: "modificationDate"
-        },{
-            type:"string",
-            dataIndex: "fullpath"
-        },{
-            type:"string",
-            dataIndex: "type"
-        },{
-            type:"string",
-            dataIndex: "size"
-        }
-        ];
-
-
-        // filters
-        var gridfilters = new Ext.ux.grid.GridFilters({
-            encode: true,
-            local: false,
-            filters: configuredFilters
-        });
-
-        return gridfilters;
-
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
