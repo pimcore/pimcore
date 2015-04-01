@@ -752,7 +752,7 @@ pimcore.settings.system = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 800},
+                        defaults: {width: 400},
                         items :[
                             {
                                 fieldLabel: t('adapter'),
@@ -1135,7 +1135,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "numberfield",
                                 name: 'cache.lifetime',
                                 value: this.getValue("cache.lifetime"),
-                                width: 600,
+                                width: 350,
                                 step: 100
                             },
                             {
@@ -1147,7 +1147,7 @@ pimcore.settings.system = Class.create({
                             ,
                             {
                                 xtype: 'tagfield',
-                                width: 800,
+                                width: "100%",
                                 //
                                 //queryDelay: 100,
                                 //triggerAction: 'all',
