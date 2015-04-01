@@ -64,7 +64,7 @@ pimcore.settings.website = Class.create({
             var url = '/admin/settings/website-settings?';
             Ext.define(this.modelName, {
                 extend: 'Ext.data.Model',
-                idProperty: 'key',
+                idProperty: 'id',
                 fields:
                     ["id", 'name','type',{name: "data", type: "string", convert: function (v, rec) {
                         return v;
@@ -222,6 +222,7 @@ pimcore.settings.website = Class.create({
                         var val = store.getAt(pos).get("domain");
                         return val;
                     }
+                    return null;
                 }
             }
             ,
