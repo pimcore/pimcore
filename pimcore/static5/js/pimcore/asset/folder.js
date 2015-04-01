@@ -264,7 +264,6 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 id: "asset_toolbar_" + this.id,
                 region: "north",
                 border: false,
-                height: 26,
                 cls: "document_toolbar",
                 items: buttons
             });
