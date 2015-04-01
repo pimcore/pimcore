@@ -9,8 +9,14 @@ Ext.define('overrides.Component', {
             // ...
             // Success! Looks like we've fixed this one. According to our records the fix was applied for EXTJS-16180 in 5.1.1.
             //..
-            if (cmp.isMasked()) {
-                cmp.unmask();
+            try {
+                if (typeof cmp.isMasked == "function") {
+                    if (cmp.isMasked()) {
+                        cmp.unmask();
+                    }
+                }
+            } catch (e) {
+
             }
         })
     }
