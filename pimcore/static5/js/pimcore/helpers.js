@@ -124,12 +124,17 @@ pimcore.helpers.openAsset = function (id, type, options) {
 
 pimcore.helpers.closeAsset = function (id) {
 
-    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-    var tabId = "asset_" + id;
-    tabPanel.remove(tabId);
+    try {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        var tabId = "asset_" + id;
+        var panel = Ext.getCmp(tabId);
+        panel.close();
 
-    pimcore.helpers.removeTreeNodeLoadingIndicator("asset", id);
-    pimcore.globalmanager.remove("asset_" + id);
+        pimcore.helpers.removeTreeNodeLoadingIndicator("asset", id);
+        pimcore.globalmanager.remove("asset_" + id);
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 pimcore.helpers.openDocument = function (id, type, options) {
@@ -153,20 +158,20 @@ pimcore.helpers.openDocument = function (id, type, options) {
 
 
 pimcore.helpers.closeDocument = function (id) {
+    try {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        var tabId = "document_" + id;
+        tabPanel.remove(tabId);
 
-    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-    var tabId = "document_" + id;
-    tabPanel.remove(tabId);
+        pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
+        pimcore.globalmanager.remove("document_" + id);
+    } catch (e) {
+        console.log(e);
+    }
 
-    pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
-    pimcore.globalmanager.remove("document_" + id);
 };
 
 pimcore.helpers.openObject = function (id, type, options) {
-    //TODO EXT5 if we currently attempt to open a folder the whole system breaks apart
-    //if (type == "folder") {
-    //    return;
-    //}
     if (pimcore.globalmanager.exists("object_" + id) == false) {
 
         if(type != "folder" && type != "variant" && type != "object") {
@@ -190,13 +195,17 @@ pimcore.helpers.openObject = function (id, type, options) {
 };
 
 pimcore.helpers.closeObject = function (id) {
+    try {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        var tabId = "object_" + id;
+        var panel = Ext.getCmp(tabId);
+        panel.close();
 
-    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-    var tabId = "object_" + id;
-    tabPanel.remove(tabId);
-
-    pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
-    pimcore.globalmanager.remove("object_" + id);
+        pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
+        pimcore.globalmanager.remove("object_" + id);
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 pimcore.helpers.getHistory = function() {
