@@ -16,9 +16,16 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     /**
      * index name of elastic search must be lower case
+     * the index name is an alias to indexname-versionnumber
      * @var string
      */
     protected $indexName;
+
+    /**
+     * The Version number of the Index (we increas the Version number if the mapping cant be changed (reindexing process))
+     * @var int
+     */
+    protected $indexVersion = 0;
 
     /**
      * @var OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch
@@ -27,9 +34,58 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     public function __construct(OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch $tenantConfig) {
         parent::__construct($tenantConfig);
-        $this->indexName = strtolower($this->name);
+        $generalSettings = $tenantConfig->getGeneralSettings();
+        if($generalSettings['indexName']){
+            $this->indexName = $generalSettings['indexName'];
+        }else{
+            $this->indexName = strtolower($this->name);
+        }
+        $this->determineAndSetCurrentIndexVersion();
     }
 
+    protected function getVersionFile(){
+        return PIMCORE_WEBSITE_VAR.'/plugins/OnlineShop/elasticsearch-index-version-' . $this->indexName.'.txt';
+    }
+
+    /**
+     * determines and sets the current index version
+     */
+    protected function determineAndSetCurrentIndexVersion(){
+        $version = $this->getIndexVersion();
+        if(is_readable($this->getVersionFile())){
+            $version = (int)trim(file_get_contents($this->getVersionFile()));
+        }else{
+            file_put_contents($this->getVersionFile(),$this->getIndexVersion());
+        }
+        $this->indexVersion = $version;
+    }
+
+    /**
+     * the versioned index-name
+     * @return string
+     */
+    public function getIndexNameVersion(){
+        return $this->indexName.'-'. $this->getIndexVersion();
+    }
+
+    /**
+     * @return int
+     */
+    public function getIndexVersion()
+    {
+        return $this->indexVersion;
+    }
+
+    /**
+     * @param int $indexVersion
+     *
+     * @return $this
+     */
+    public function setIndexVersion($indexVersion)
+    {
+        $this->indexVersion = $indexVersion;
+        return $this;
+    }
 
     /**
      * @return \Elasticsearch\Client|null
@@ -37,19 +93,6 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
     public function getElasticSearchClient() {
         if(empty($this->elasticSearchClient)) {
             require_once PIMCORE_DOCUMENT_ROOT . '/plugins/OnlineShop/vendor/autoload.php';
-
-            /*
-            $params = array();
-           $params['hosts'] = array('localhost');
-
-           if ($this->getParam('debug')) {
-
-                 $params['logging'] = true;
-                 $params['logPath'] = PIMCORE_DOCUMENT_ROOT . '/elasticsearch.log';
-                 $params['logLevel'] = Psr\Log\LogLevel::INFO;
-             }
-           */
-
             $this->elasticSearchClient = new Elasticsearch\Client($this->tenantConfig->getElasticSearchClientParams());
         }
         return $this->elasticSearchClient;
@@ -62,21 +105,21 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
      *
      * @return void
      */
-    public function createOrUpdateIndexStructures() {
+    public function createOrUpdateIndexStructures($breakOnFailure = false) {
         $this->createOrUpdateStoreTable();
 
         $esClient = $this->getElasticSearchClient();
 
-        $result = $esClient->indices()->exists(['index' => $this->indexName]);
+        $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()]);
         if(!$result) {
-            $result = $esClient->indices()->create(['index' => $this->indexName, 'body' => ['settings' => $this->tenantConfig->getIndexSettings()]]);
+            $result = $esClient->indices()->create(['index' => $this->getIndexNameVersion(), 'body' => ['settings' => $this->tenantConfig->getIndexSettings()]]);
             if(!$result['acknowledged']) {
-                throw new Exception("Index creation failed");
+                throw new Exception("Index creation failed. IndexName: " . $this->getIndexNameVersion());
             }
         }
 
         $params = [
-            'index' => $this->indexName,
+            'index' => $this->getIndexNameVersion(),
             'type' => 'product',
             'body' => [
                 'product' => [
@@ -88,9 +131,21 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
                 ]
             ]
         ];
+        try{
+            $result = $esClient->indices()->putMapping($params);
 
-        $result = $esClient->indices()->putMapping($params);
-        if(!$result['acknowledged']) {
+        }catch(\Exception $e){
+            if($breakOnFailure){
+                throw new Exception("Can't create Mapping - Exiting to prevent infinit loop");
+            }
+            $this->indexVersion++;
+            Logger::info("Could not put index Mapping -> creating new Index. Version Number: " . $this->indexVersion);
+            $this->createOrUpdateIndexStructures(true);
+            $this->resetPreparationQueue();
+        }
+
+        // index created return "true" and mapping creation returns array
+        if((is_array($result) && !$result['acknowledged']) || (is_bool($result) && !$result)) {
             throw new Exception("Index creation failed");
         }
     }
@@ -296,13 +351,16 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
         $esClient = $this->getElasticSearchClient();
         $responses = $esClient->bulk([
-            "index" => $this->indexName,
+            "index" => $this->getIndexNameVersion(),
             "type" => "product",
             "body" => $this->bulkIndexData
         ]);
 
 
         if($responses['errors']) {
+            foreach($responses as $e){
+                p_r($e);
+            }
             throw new Exception("Indexing threw an Exception");
         }
 
@@ -342,6 +400,40 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     protected function getMockupCachePrefix() {
         return self::MOCKUP_CACHE_PREFIX;
+    }
+
+    /**
+     * Sets the alias to the current index-version and deletes the old indices
+     *
+     * @throws Exception
+     */
+    public function doPostIndexingWork(){
+        $esClient = $this->getElasticSearchClient();
+        //set alias to current index version
+        $result = $esClient->indices()->putAlias(['index' => $this->getIndexNameVersion(),'name' => $this->indexName]);
+        if(!$result['acknowledged']) {
+            //set current index version
+            throw new Exception("Can't create the Alias '". $this->indexName."' for the Index: " . $this->getIndexNameVersion());
+        }else{
+            $result = file_put_contents($this->getVersionFile(),$this->indexVersion);
+            if(!$result){
+                throw new Exception("Can't write version file: " . $this->getVersionFile());
+            }
+        }
+
+        //delete old indices
+        $stats = $esClient->indices()->stats();
+        foreach($stats['indices'] as $key => $data){
+            preg_match("/".$this->indexName.'-(\d+)/',$key,$matches);
+            if(!is_null($matches[1])){
+                $version = (int)$matches[1];
+                if($version != $this->indexVersion){
+                    Logger::info("Delete old Index " . $this->indexName.'-'.$version);
+                    $esClient->indices()->delete(['index' => $this->indexName.'-'.$version]);
+                }
+            }
+        }
+
     }
 
 }

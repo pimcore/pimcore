@@ -400,7 +400,12 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         $queryFilters = $this->buildQueryConditions($queryFilters, array());
 
         $params = array();
-        $params['index'] = strtolower($this->tenantConfig->getTenantName());
+        $generalSettings = $this->tenantConfig->getGeneralSettings();
+        if($generalSettings['indexName']){
+            $params['index'] = $generalSettings['indexName'];
+        }else{
+            $params['index'] = strtolower($this->tenantConfig->getTenantName());
+        }
         $params['type'] = "product";
         $params['body']['size'] = $this->getLimit();
         $params['body']['from'] = $this->getOffset();
@@ -422,6 +427,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         $params = $this->buildQuery($params, $boolFilters, $queryFilters);
 
 
+        #p_r($params); exit;
         // send request
         $result = $this->sendRequest( $params );
 

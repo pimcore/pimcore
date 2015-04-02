@@ -3,6 +3,11 @@
 class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig implements OnlineShop_Framework_IndexService_Tenant_IMockupConfig, OnlineShop_Framework_IndexService_Tenant_IElasticSearchConfig {
 
     /**
+     *
+     */
+    protected $generalSettings = [];
+
+    /**
      * @var array
      */
     protected $indexSettings = null;
@@ -20,9 +25,33 @@ class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends Onli
     public function __construct($tenantName, $tenantConfigXml, $totalConfigXml = null) {
         parent::__construct($tenantName, $tenantConfigXml, $totalConfigXml);
 
+        if($tenantConfigXml->generalSettings){
+            $this->setGeneralSettings($tenantConfigXml->generalSettings->toArray());
+        }
+
         $this->indexSettings = json_decode($tenantConfigXml->indexSettingsJson, true);
         $this->elasticSearchClientParams = json_decode($tenantConfigXml->elasticSearchClientParamsJson, true);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getGeneralSettings()
+    {
+        return $this->generalSettings;
+    }
+
+    /**
+     * @param mixed $generalSettings
+     *
+     * @return $this
+     */
+    public function setGeneralSettings($generalSettings)
+    {
+        $this->generalSettings = $generalSettings;
+        return $this;
+    }
+
 
 
     /**
