@@ -1289,7 +1289,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 }
 
                 $assetList = new Asset\Listing();
-                $assetList->setCondition("path LIKE ?", $parentPath . "/%");
+                $assetList->setCondition("type != 'folder' AND path LIKE ?", $parentPath . "/%");
                 $assetList->setOrderKey("LENGTH(path) ASC, id ASC", false);
                 $assetList->setOffset((int)$this->getParam("offset"));
                 $assetList->setLimit((int)$this->getParam("limit"));
