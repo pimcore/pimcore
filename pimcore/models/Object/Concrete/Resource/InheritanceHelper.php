@@ -196,6 +196,7 @@ class InheritanceHelper {
      */
     public function doDelete ($objectId) {
 
+        // NOT FINSHED - NEEDS TO BE COMPLETED !!!
         $treeChildren = $this->buildTree($objectId);
         $idsToCheck = $this->extractObjectIdsFromTreeChildren($treeChildren);
 
