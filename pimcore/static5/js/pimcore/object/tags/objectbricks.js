@@ -193,7 +193,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
                 this.tabpanel.remove(blockElement);
                 this.addedTypes[blockElement.fieldtype] = false;
-                this.component.remove(this.component.get(0));
+                var cmp = this.component.getComponent(0);
+                this.component.remove(cmp);
                 this.component.insert(0, this.getControls());
                 this.component.doLayout();
 
@@ -231,7 +232,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         });
 
 
-        this.component.remove(this.component.items[0]);
+        this.component.remove(this.component.getComponent(0));
 
         this.addedTypes[type] = true;
 
