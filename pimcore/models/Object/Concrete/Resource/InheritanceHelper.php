@@ -58,6 +58,7 @@ class InheritanceHelper {
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();
+        $this->deletionFieldIds = array();
         $this->fieldDefinitions = [];
 
         if($storetable == null) {
@@ -92,7 +93,9 @@ class InheritanceHelper {
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();
+        $this->deletionFieldIds = array();
         $this->fieldDefinitions = [];
+
     }
 
     /**
@@ -195,10 +198,96 @@ class InheritanceHelper {
      * @param $objectId
      */
     public function doDelete ($objectId) {
+        // NOT FINISHED - NEEDS TO BE COMPLETED !!!
+        $fields = implode("`,`", $this->fields);
+        if(!empty($fields)) {
+            $fields = ", `" . $fields . "`";
+        }
 
-        // NOT FINSHED - NEEDS TO BE COMPLETED !!!
-        $treeChildren = $this->buildTree($objectId);
-        $idsToCheck = $this->extractObjectIdsFromTreeChildren($treeChildren);
+        $o = new \stdClass();
+        $o->id = $objectId;
+        $o->values = array();
+        $o->childs = $this->buildTree($objectId, $fields);
+
+        if(!empty($this->fields)) {
+            foreach($this->fields as $fieldname) {
+                foreach($o->childs as $c) {
+                    $this->getIdsToCheckForDeletionForValuefields($c, $fieldname);
+                }
+                $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
+            }
+        }
+
+        if(!empty($this->relations)) {
+            foreach($this->relations as $fieldname => $fields) {
+                foreach($o->childs as $c) {
+                    $this->getIdsToCheckForDeletionForRelationfields($c, $fieldname);
+                }
+            }
+        }
+
+        $affectedIds = array();
+
+        foreach ($this->deletionFieldIds as $fieldname => $ids) {
+            foreach ($ids as $id) {
+                $affectedIds[$id] = $id;
+            }
+        }
+
+        $systemFields = array("o_id", "fieldname");
+
+        $toBeRemovedItemIds = array();
+
+
+        if ($affectedIds) {
+
+            $objectsWithBrickIds = array();
+            $objectsWithBricks = $this->db->fetchAll("SELECT " . $this->idField . " FROM " . $this->storetable . " WHERE " . $this->idField . " IN (" . implode(",", $affectedIds) . ")");
+            foreach ($objectsWithBricks as $item) {
+                $objectsWithBrickIds[] = $item["id"];
+            }
+
+            $currentQueryItems = $this->db->fetchAll("SELECT * FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $affectedIds) . ")");
+
+            foreach ($currentQueryItems as $queryItem) {
+                $toBeRemoved = true;
+                foreach ($queryItem as $fieldname => $value) {
+                    if (!in_array($fieldname, $systemFields)) {
+                        if (!is_null($value)) {
+                            $toBeRemoved = false;
+                            break;
+                        }
+                    }
+                }
+                if ($toBeRemoved) {
+                    if (!in_array($queryItem["o_id"], $objectsWithBrickIds)) {
+                        $toBeRemovedItemIds[] = $queryItem["o_id"];
+                    }
+                }
+            }
+        }
+
+        if ($toBeRemovedItemIds) {
+            $this->db->delete($this->querytable, $this->idField . " IN (" . implode(",", $toBeRemovedItemIds) . ")");
+        }
+
+        if(!empty($this->fields)) {
+            foreach($this->fields as $fieldname) {
+                $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
+            }
+        }
+
+        if(!empty($this->relations)) {
+            foreach($this->relations as $fieldname => $fields) {
+                if(is_array($fields)) {
+                    foreach($fields as $f) {
+                        $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $f);
+                    }
+                } else {
+                    $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
+                }
+            }
+        }
 
 
     }
@@ -261,6 +350,27 @@ class InheritanceHelper {
      * @param $currentNode
      * @param $fieldname
      */
+    protected function getIdsToCheckForDeletionForValuefields($currentNode, $fieldname) {
+        $value = $currentNode->values[$fieldname];
+
+        if(!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
+            return;
+        }
+
+        $this->deletionFieldIds[$fieldname][] = $currentNode->id;
+
+        if(!empty($currentNode->childs)) {
+            foreach($currentNode->childs as $c) {
+                $this->getIdsToCheckForDeletionForValuefields($c, $fieldname);
+            }
+        }
+    }
+
+
+    /**
+     * @param $currentNode
+     * @param $fieldname
+     */
     protected function getIdsToUpdateForValuefields($currentNode, $fieldname) {
         $value = $currentNode->values[$fieldname];
         if($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
@@ -269,6 +379,24 @@ class InheritanceHelper {
                 foreach($currentNode->childs as $c) {
                     $this->getIdsToUpdateForValuefields($c, $fieldname);
                 }
+            }
+        }
+    }
+
+    /**
+     * @param $currentNode
+     * @param $fieldname
+     */
+    protected function getIdsToCheckForDeletionForRelationfields($currentNode, $fieldname) {
+        $value = $currentNode->relations[$fieldname];
+        if(!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
+            return;
+        }
+        $this->deletionFieldIds[$fieldname][] = $currentNode->id;
+
+        if(!empty($currentNode->childs)) {
+            foreach($currentNode->childs as $c) {
+                $this->getIdsToCheckForDeletionForRelationfields($c, $fieldname);
             }
         }
     }
@@ -301,4 +429,14 @@ class InheritanceHelper {
             $this->db->update($this->querytable, array($fieldname => $value), $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
+
+
+    protected function updateQueryTableOnDelete($oo_id, $ids, $fieldname) {
+        if(!empty($ids)) {
+            $value = null;
+            $this->db->update($this->querytable, array($fieldname => $value), $this->idField . " IN (" . implode(",", $ids) . ")");
+        }
+    }
+
+
 }

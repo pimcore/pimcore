@@ -170,10 +170,42 @@ class Resource extends Model\Resource\AbstractResource {
 
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
+
+        $oldData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE o_id = ?", $object->getId());
         $this->db->delete($queryTable, $this->db->quoteInto("o_id = ?", $object->getId()));
 
         //update data for relations table
         $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND position = '" . $this->model->getType() . "'");
+
+        $this->inheritanceHelper = new Object\Concrete\Resource\InheritanceHelper($object->getClassId(), "o_id", $storeTable, $queryTable);
+        $this->inheritanceHelper->resetFieldsToCheck();
+
+        $objectVars = get_object_vars($this->model);
+
+        foreach ($objectVars as $key => $value) {
+            $fd = $this->model->getDefinition()->getFieldDefinition($key);
+
+            if ($fd) {
+                if ($fd->getQueryColumnType()) {
+                    //exclude untouchables if value is not an array - this means data has not been loaded
+                    //get changed fields for inheritance
+                    if($fd->isRelationType()) {
+                        if($oldData[$key] != null) {
+                            $this->inheritanceHelper->addRelationToCheck($key, $fd);
+                        }
+                    } else {
+                        if($oldData[$key] != null) {
+                            $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        $this->inheritanceHelper->doDelete($object->getId());
+
+        $this->inheritanceHelper->resetFieldsToCheck();
     }
 
 
