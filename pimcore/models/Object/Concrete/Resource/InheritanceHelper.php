@@ -208,7 +208,7 @@ class InheritanceHelper {
      * @return array
      */
     protected function buildTree($currentParentId, $fields = "") {
-        $result = $this->db->fetchAll("SELECT b.o_id AS id $fields FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_parentId = ? GROUP BY b.o_id", $currentParentId);
+        $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_parentId = ? GROUP BY b.o_id", $currentParentId);
 
         $objects = array();
 
@@ -216,6 +216,7 @@ class InheritanceHelper {
             $o = new \stdClass();
             $o->id = $r['id'];
             $o->values = $r;
+            $o->type = $r["type"];
             $o->childs = $this->buildTree($r['id'], $fields);
 
             $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", $r['id']);
@@ -233,20 +234,6 @@ class InheritanceHelper {
             $objects[] = $o;
         }
 
-        //the inheritance shouldn't stop here, when a folder is between two inherited objects
-        $folderIds = $this->db->fetchAll("SELECT distinct o_id as id FROM " . self::OBJECTS_TABLE . " where o_parentId = ? and o_type='folder'", $currentParentId);
-
-        if(!empty($folderIds)) {
-            foreach($folderIds as $r) {
-                $o = new \stdClass();
-                $o->id = $r['id'];
-                $o->values = $r;
-                $o->childs = $this->buildTree($r['id'], $fields);
-
-                $objects[] = $o;
-            }
-        }
-
         return $objects;
     }
 
@@ -259,8 +246,10 @@ class InheritanceHelper {
 
         if(is_array($treeChildren)) {
             foreach($treeChildren as $child) {
-                $ids[] = $child->id;
-                $ids = array_merge($ids, $this->extractObjectIdsFromTreeChildren($child));
+                if($child->type != "folder") {
+                    $ids[] = $child->id;
+                }
+                $ids = array_merge($ids, $this->extractObjectIdsFromTreeChildren($child->childs));
             }
         }
 
