@@ -435,7 +435,7 @@ class ClassDefinition extends Model\AbstractModel {
     protected function deletePhpClasses() {
         // delete the class files
         @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php");
-        @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php");
+        @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/Listing.php");
         @rmdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
     }
 
