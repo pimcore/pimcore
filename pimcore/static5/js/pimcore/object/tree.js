@@ -1035,12 +1035,8 @@ pimcore.object.tree = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        if (pimcore.globalmanager.exists("object_" + this.id)) {
-                            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-                            var tabId = "object_" + record.data.id;
-                            tabPanel.remove(tabId);
-                            pimcore.globalmanager.remove("object_" + record.data.id);
-
+                        if (pimcore.globalmanager.exists("object_" + record.id)) {
+                            pimcore.helpers.closeObject(record.data.id);
                             pimcore.helpers.openObject(record.data.id, record.data.type);
                         }
                     }

@@ -161,7 +161,9 @@ pimcore.helpers.closeDocument = function (id) {
     try {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + id;
-        tabPanel.remove(tabId);
+        var panel = Ext.getCmp(tabId);
+        panel.close();
+
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
         pimcore.globalmanager.remove("document_" + id);

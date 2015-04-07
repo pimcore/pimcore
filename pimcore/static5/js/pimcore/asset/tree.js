@@ -1168,11 +1168,7 @@ pimcore.asset.tree = Class.create({
                             var rdata = Ext.decode(response.responseText);
 
                             if (rdata && rdata.success) {
-                                var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-                                var tabId = "asset_" + record.data.id;
-                                tabPanel.remove(tabId);
-                                pimcore.globalmanager.remove("asset_" + record.data.id);
-
+                                pimcore.helpers.closeAsset(record.data.id);
                                 pimcore.helpers.openAsset(record.data.id, record.data.type);
                             }
                             else {

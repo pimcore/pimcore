@@ -1191,13 +1191,9 @@ pimcore.document.tree = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        if (pimcore.globalmanager.exists("document_" + this.id)) {
-                            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-                            var tabId = "document_" + this.id;
-                            tabPanel.remove(tabId);
-                            pimcore.globalmanager.remove("document_" + this.id);
-
-                            pimcore.helpers.openDocument(this.id, this.attributes.type);
+                        if (pimcore.globalmanager.exists("document_" + record.data.id)) {
+                            pimcore.helpers.closeDocument(record.data.id);
+                            pimcore.helpers.openDocument(record.id, record.data.type);
                         }
                     }
                     else {
