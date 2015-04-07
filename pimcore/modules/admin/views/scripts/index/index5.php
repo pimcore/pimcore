@@ -56,28 +56,10 @@
 <?php // define stylesheets ?>
 <?php
 $styles = array(
-    "/admin/misc/admin-css",
+    "/admin/misc/admin-css?extjs5=1",
     "/pimcore/static5/css/icons.css",
-
-//    "/pimcore/static5/js/lib/ext/resources/css/ext-all.css",             //TODO
-//    "/pimcore/static5/js/lib/ext/resources/css/xtheme-gray.css",
-
-
     "/pimcore/static5/js/lib/ext/packages/ext-theme-gray/build/resources/ext-theme-gray-all.css",
     "/pimcore/static5/js/lib/ext/packages/sencha-charts/build/classic/resources/sencha-charts-all-debug.css",
-//    "/pimcore/static5/js/lib/ext-plugins/BoxSelect/BoxSelect.css",
-//    "/pimcore/static5/js/lib/ext-plugins/Notification/notification.css",
-//    "/pimcore/static5/js/lib/ext-plugins/SuperBoxSelect/superboxselect.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/css/RowEditor.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/css/Spinner.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/statusbar/css/statusbar.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/css/Portal.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/css/MultiSelect.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/treegrid/treegrid.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/css/ColumnHeaderGroup.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/gridfilters/css/GridFilters.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/gridfilters/css/RangeMenu.css",
-//    "/pimcore/static5/js/lib/ext-plugins/ux/fileuploadfield/css/fileuploadfield.css",
     "/pimcore/static5/css/ext-admin-overwrite.css",
     "/pimcore/static5/css/fontello.css"
 );

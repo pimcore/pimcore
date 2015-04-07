@@ -45,10 +45,22 @@
         background: url(<?= $iconFile ?>) left center no-repeat;
     }
 
+
+    <?php if (!\Pimcore\Tool\Admin::isExtJS5()) { ?>
     /* grid column header icon in translations [ <?= $language ?> ] */
     .x-grid3-hd-translation_column_<?= strtolower($language) ?> {
         background: url(<?= $iconFile ?>) no-repeat 3px 3px ! important;
         padding-left:22px !important;
     }
+    <?php } else { ?>
+        /* grid column header icon in translations [ <?= $language ?> ] */
+        .x-column-header_<?= strtolower($language) ?> {
+        background: url(<?= $iconFile ?>) no-repeat 3px 3px ! important;
+        padding-left:22px !important;
+        }
+    <?php } ?>
+
+
+
 
 <?php } ?>

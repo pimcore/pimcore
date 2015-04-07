@@ -1,5 +1,5 @@
 /**
- * @class Portal.view.PortalPanel
+ * @class   Portal.view.PortalPanel
  * @extends Ext.panel.Panel
  * A {@link Ext.panel.Panel Panel} class used for providing drag-drop-enabled portal layouts.
  */

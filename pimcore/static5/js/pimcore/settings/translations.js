@@ -150,7 +150,7 @@ pimcore.settings.translations = Class.create({
 
             readerFields.push({name: languages[i]});
             //TODO do we really need the id attribute?
-            var columnConfig = {header: pimcore.available_languages[languages[i]], sortable: false, dataIndex: languages[i],
+            var columnConfig = {cls: "x-column-header_" + languages[i].toLowerCase() , header: pimcore.available_languages[languages[i]], sortable: false, dataIndex: languages[i],
                 editor: new Ext.form.TextField({}), id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()};
             if (applyInitialSettings) {
                 var hidden = i >= maxLanguages;
