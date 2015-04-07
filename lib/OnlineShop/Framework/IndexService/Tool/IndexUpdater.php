@@ -142,7 +142,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
 
                     Pimcore::collectGarbage();
 
-                    if($maxRounds && $maxRounds = $round) {
+                    if($maxRounds && $maxRounds == $round) {
                         self::log($loggername, "skipping process after $round rounds.");
                         if(method_exists($worker,'doPostIndexingWork')){
                             $worker->doPostIndexingWork();
