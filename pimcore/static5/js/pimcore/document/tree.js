@@ -970,7 +970,7 @@ pimcore.document.tree = Class.create({
                     fieldLabel: t('key'),
                     itemId: "key",
                     name: 'key',
-                    width: '200px',
+                    width: 300,
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
@@ -985,13 +985,13 @@ pimcore.document.tree = Class.create({
                     itemId: "name",
                     fieldLabel: t('navigation'),
                     name: 'name',
-                    width: '200px'
+                    width: 300
                 },{
                     xtype: "textfield",
                     itemId: "title",
                     fieldLabel: t('title'),
                     name: 'title',
-                    width: '200px'
+                    width: 300
                 }]
             });
 
