@@ -4,12 +4,6 @@ pimcore.settings.languages = Class.create({
 
     initialize: function () {
 
-        this.downloadMask = new Ext.LoadMask(
-            {
-                target:Ext.getBody(),
-                msg:t('downloading_language')
-            });
-
         this.availableStore = new Ext.data.Store({
             autoDestroy: true,
             proxy: {
@@ -21,9 +15,9 @@ pimcore.settings.languages = Class.create({
                     idProperty: 'key'
                 }
             },
-            autoload:true,
+            autoLoad: true,
             listeners: {
-                load: this.getTabPanel.bind(this),
+                beforeload: this.getTabPanel.bind(this),
                 exception:function() {
                     pimcore.helpers.showNotification(t("error"), t("languages_download_error"), "error");
                     pimcore.globalmanager.remove("languages_overview");
@@ -35,12 +29,9 @@ pimcore.settings.languages = Class.create({
             }],
             fields: ['key', 'name', 'download','percent','exists']
         });
-
-        this.availableStore.load();
     },
 
     getTabPanel: function () {
-
         if (!this.panel) {
 
             this.layout = Ext.create('Ext.grid.Panel', {
@@ -48,17 +39,19 @@ pimcore.settings.languages = Class.create({
                 store: this.availableStore,
                 columns: [
                     {header: "", sortable: true, dataIndex: 'key', editable: false, width: 40},
-                    {header: "", sortable: true, dataIndex: 'key', editable: false, width: 40,
-                                    renderer: function(data){
-                                        return '<img src="/admin/misc/get-language-flag?language=' + data + '" alt="" />';
-                                    }
+                    {
+                        header: "", sortable: true, dataIndex: 'key', editable: false, width: 40,
+                        renderer: function (data) {
+                            return '<img src="/admin/misc/get-language-flag?language=' + data + '" alt="" />';
+                        }
                     },
 
                     {header: "", sortable: true, dataIndex: 'name', editable: false, width: 200},
-                    {header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150,
-                                    renderer: function(data){
-                                        return data+'% '+t('language_translation_percentage');
-                                    }
+                    {
+                        header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150,
+                        renderer: function (data) {
+                            return data + '% ' + t('language_translation_percentage');
+                        }
                     },
                     {
                         xtype: 'actioncolumn',
@@ -67,16 +60,16 @@ pimcore.settings.languages = Class.create({
                         items: [
                             {
 
-                                getClass: function(v, meta, rec) {
-                                                        if (rec.get('exists') > 0) {
-                                                            return 'pimcore_icon_language_update';
-                                                        } else {
-                                                            return 'pimcore_icon_language_download';
-                                                        }
-                                                    },
+                                getClass: function (v, meta, rec) {
+                                    if (rec.get('exists') > 0) {
+                                        return 'pimcore_icon_language_update';
+                                    } else {
+                                        return 'pimcore_icon_language_download';
+                                    }
+                                },
 
-                                handler: function(grid, rowIndex, colIndex) {
-                                        this.download(rowIndex);
+                                handler: function (grid, rowIndex, colIndex) {
+                                    this.download(rowIndex);
                                 }.bind(this)
                             }
                         ]
@@ -91,13 +84,20 @@ pimcore.settings.languages = Class.create({
                 iconCls: "pimcore_icon_languages",
                 border: false,
                 layout: "fit",
-                closable:true
+                closable: true
 
             });
+
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
             tabPanel.setActiveItem("languages_overview");
+
+            this.downloadMask = new Ext.LoadMask(
+                {
+                    target: this.panel,
+                    msg: t('downloading_language')
+                });
 
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("languages_overview");
@@ -107,7 +107,6 @@ pimcore.settings.languages = Class.create({
 
         }
         return this.panel;
-
     },
 
     activate: function () {
@@ -118,7 +117,7 @@ pimcore.settings.languages = Class.create({
 
     download: function(index) {
 
-        this.downloadMask.enable();
+        this.downloadMask.show();
         var downloadLink = this.availableStore.getAt(index).data.download;
         var language =  this.availableStore.getAt(index).data.key;
         
@@ -134,7 +133,7 @@ pimcore.settings.languages = Class.create({
 
     downloadcomplete: function(response) {
 
-        this.downloadMask.disable();
+        this.downloadMask.hide();
       
         var status = Ext.decode(response.responseText);
         if (status.success) {
