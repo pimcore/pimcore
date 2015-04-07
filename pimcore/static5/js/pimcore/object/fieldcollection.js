@@ -224,14 +224,14 @@ pimcore.object.fieldcollection = Class.create({
         Ext.getCmp("pimcore_panel_tabs").setActiveItem("pimcore_fieldcollections");
     },
 
-    deleteField: function () {
+    deleteField: function (tree, record) {
 
         Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: "/admin/class/fieldcollection-delete",
                     params: {
-                        id: this.id
+                        id: record.data.id
                     }
                 });
 
