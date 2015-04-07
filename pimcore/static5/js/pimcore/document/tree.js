@@ -832,11 +832,11 @@ pimcore.document.tree = Class.create({
             },
             success: function () {
                 pimcore.globalmanager.get("sites").reload();
-                this.parentNode.reload();
+                this.refresh(record.parentNode);
             }.bind(this)
         });
 
-        delete this.attributes.site;
+        delete record.data.site;
     },
 
     addUpdateSite: function (tree, record) {
@@ -932,11 +932,12 @@ pimcore.document.tree = Class.create({
                         params: data,
                         success: function (response) {
                             var site = Ext.decode(response.responseText);
-                            this.attributes.site = site;
-
-                            this.parentNode.reload();
+                            record.data.site = site;
+                            tree.getStore().load({
+                                node: record.parentNode
+                            });
                             pimcore.globalmanager.get("sites").reload();
-                        }.bind(this)
+                        }.bind(this, tree, record)
                     });
 
                     win.close();
@@ -1202,11 +1203,11 @@ pimcore.document.tree = Class.create({
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
                             t(rdata.message));
-                        this.parentNode.reload();
+                        this.refresh(record.parentNode);
                     }
                 } catch(e) {
                     pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error");
-                    this.parentNode.reload();
+                    this.refresh(record.parentNode);
                 }
             }.bind(this));
         }

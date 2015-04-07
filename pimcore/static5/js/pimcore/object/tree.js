@@ -881,7 +881,9 @@ pimcore.object.tree = Class.create({
                         record.pasteProgressBar = null;
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_object"), "error", t(message));
-                        this.parentNode.reload();
+
+                        this.refresh(record.parentNode);
+
                     }.bind(this),
                     jobs: res.pastejobs
                 });
