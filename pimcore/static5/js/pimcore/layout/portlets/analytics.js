@@ -36,10 +36,16 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
 
         }
 
-        var store = new Ext.data.JsonStore({
+        var store = new Ext.data.Store({
             autoDestroy: true,
-            url: '/admin/reports/analytics/chartmetricdata?metric[]=visits&metric[]=pageviews&site=' + site,
-            root: 'data',
+            proxy: {
+                type: 'ajax',
+                url: '/admin/reports/analytics/chartmetricdata?metric[]=visits&metric[]=pageviews&site=' + site,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                }
+            },
             fields: ['timestamp','datetext',"pageviews",'visits']
         });
 
@@ -47,7 +53,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
 
         var tbar = false;
 
-        if (pimcore.globalmanager.get("sites").totalLength > 0) {
+        if (pimcore.globalmanager.get("sites").getTotalCount() > 0) {
 
             tbar = [
                 "->",
@@ -60,11 +66,17 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                     autoSelect: true,
                     valueField: "id",
                     displayField: "site",
-                    store: new Ext.data.JsonStore({
+                    store: new Ext.data.Store({
                         autoDestroy: true,
-                        url: '/admin/portal/portlet-analytics-sites',
-                        root: 'data',
-                        baseParams: {
+                        proxy: {
+                            type: 'ajax',
+                            url: '/admin/portal/portlet-analytics-sites',
+                            reader: {
+                                type: 'json',
+                                rootProperty: 'data'
+                            }
+                        },
+                        extraParams: {
                             key: this.portal.key,
                             id: portletId
                         },
@@ -97,31 +109,87 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
             height: 275,
             tbar: tbar,
             items: {
-                xtype: 'linechart',
+                xtype: 'cartesian',
                 store: store,
                 xField: 'datetext',
+                interactions: ['itemhighlight'],
+                axes: [{
+                    type: 'numeric',
+                    fields: ['pageviews', 'visits' ],
+                    position: 'left',
+                    grid: true,
+                    minimum: 0
+                }
+                    , {
+                        type: 'category',
+                        fields: 'datetext',
+                        position: 'bottom',
+                        grid: true,
+                        label: {
+                            rotate: {
+                                degrees: -45
+                            }
+                        }
+                    }
+                ],
                 series: [
                     {
                         type: 'line',
-                        displayName: t('pageviews'),
+                        title: t('pageviews'),
+                        xField: 'datetext',
                         yField: 'pageviews',
                         style: {
                             color:0x01841c
+                        },
+                        marker: {
+                            radius: 4
+                        },
+                        highlight: {
+                            fillStyle: '#000',
+                            radius: 5,
+                            lineWidth: 2,
+                            strokeStyle: '#fff'
+                        },
+                        tooltip: {
+                            trackMouse: true,
+                            style: 'background: #01841c',
+                            renderer: function(storeItem, item) {
+                                var title = item.series.getTitle();
+                                this.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                            }
                         }
                     },
                     {
                         type:'line',
-                        displayName: t("visits"),
+                        title: t("visits"),
+                        xField: 'datetext',
                         yField: 'visits',
                         style: {
                             color: 0x15428B
+                        },
+                        marker: {
+                            radius: 4
+                        },
+                        highlight: {
+                            fillStyle: '#000',
+                            radius: 5,
+                            lineWidth: 2,
+                            strokeStyle: '#fff'
+                        },
+                        tooltip: {
+                            trackMouse: true,
+                            style: 'background: #0184ff',
+                            renderer: function(storeItem, item) {
+                                var title = item.series.getTitle();
+                                this.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                            }
                         }
                     }
                 ]
             }
         });
 
-        this.layout = new Ext.ux.Portlet(Object.extend(this.getDefaultConfig(), {
+        this.layout = Ext.create('Portal.view.Portlet', Object.extend(this.getDefaultConfig(), {
             title: this.getName(),
             iconCls: this.getIcon(),
             height: 275,
