@@ -102,8 +102,7 @@ pimcore.extensionmanager.admin = Class.create({
             {header: "ID", width: 100, sortable: true, dataIndex: 'id', flex: 1},
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name', flex: 2},
             {header: t("version"), width: 80, sortable: false, dataIndex: 'version'},
-            {header: t("description"), id: "extension_description", width: 200, sortable: true,
-                                                                dataIndex: 'description', flex: 4},
+            {header: t("description"), width: 200, sortable: true, dataIndex: 'description', flex: 4},
             {
                 header: t('enable') + " / " + t("disable"),
                 xtype: 'actioncolumn',
@@ -296,7 +295,6 @@ pimcore.extensionmanager.admin = Class.create({
                     flex: 0
                 }
             },
-            autoExpandColumn: "extension_description",
             trackMouseOver: true,
             columnLines: true,
             stripeRows: true,

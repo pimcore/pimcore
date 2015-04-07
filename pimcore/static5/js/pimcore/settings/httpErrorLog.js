@@ -80,7 +80,7 @@ pimcore.settings.httpErrorLog = Class.create({
             {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
             {header: t("path"), width: 400, sortable: true, dataIndex: 'path'},
             {header: t("amount"), width: 60, sortable: true, dataIndex: 'amount'},
-            {header: t("date"), id: "extension_description", width: 200, sortable: true, dataIndex: 'date',
+            {header: t("date"), width: 200, sortable: true, dataIndex: 'date',
                                                                     renderer: function(d) {
                 var date = new Date(d * 1000);
                 return Ext.Date.format(date, "Y-m-d H:i:s");
