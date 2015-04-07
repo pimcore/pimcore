@@ -36,6 +36,9 @@ pimcore.report.custom.item = Class.create({
 
         this.columnStore = new Ext.data.JsonStore({
             autoDestroy: false,
+            proxy: {
+                type: 'memory'
+            },
             data: [],
             fields: ["name", "filter", "filter_drilldown", "display", "export", "order", "width", "label"]
         });
@@ -148,7 +151,6 @@ pimcore.report.custom.item = Class.create({
         this.panel = new Ext.Panel({
             region: "center",
             id: "pimcore_sql_panel_" + this.data.name,
-            bodyStyle: "padding:10px",
             labelWidth: 150,
             autoScroll: true,
             border:false,
@@ -168,7 +170,7 @@ pimcore.report.custom.item = Class.create({
         });
 
         this.parentPanel.getEditPanel().add(this.panel);
-        this.parentPanel.getEditPanel().activate(this.panel);
+        this.parentPanel.getEditPanel().setActiveTab(this.panel);
 
         pimcore.layout.refresh();
     },
@@ -256,7 +258,6 @@ pimcore.report.custom.item = Class.create({
 
         this.chartDefinitionForm = new Ext.form.FormPanel({
             border:false,
-            layout: "pimcoreform",
             items: [{
                 xtype: 'fieldset',
                 itemId: "chartdefinitionFieldset",
@@ -301,7 +302,7 @@ pimcore.report.custom.item = Class.create({
                 name: 'pieLabelColumn',
                 value: this.data.pieLabelColumn,
                 mode: 'local',
-                width: 300,
+                width: 400,
                 fieldLabel: t('custom_report_labelcolumn'),
                 store: this.columnStore,
                 valueField: 'name',
@@ -313,7 +314,7 @@ pimcore.report.custom.item = Class.create({
                     name: 'pieColumn',
                     value: this.data.pieColumn,
                     mode: 'local',
-                    width: 300,
+                    width: 400,
                     fieldLabel: t('custom_report_datacolumn'),
                     store: this.columnStore,
                     valueField: 'name',
@@ -324,7 +325,7 @@ pimcore.report.custom.item = Class.create({
     },
 
     getLineChartDefinitionPanel: function() {
-        return new Ext.form.FieldSet({
+        return new Ext.form.FieldContainer({
             title: t("custom_report_chart_options"),
             hidden: true,
             style: "margin-top: 20px;margin-bottom: 20px",
@@ -344,23 +345,23 @@ pimcore.report.custom.item = Class.create({
                     lazyRender:true,
                     name: 'xAxis',
                     mode: 'local',
-                    width: 300,
+                    width: 400,
                     value: this.data.xAxis,
                     fieldLabel: t('custom_report_x_axis'),
                     store: this.columnStore,
                     valueField: 'name',
                     displayField: 'name'
                 }),{
-                    xtype: "fieldset",
+                    xtype: "fieldcontainer",
+                    layout: 'hbox',
                     fieldLabel: t("custom_report_y_axis"),
-                    width: 360,
                     items: [{
                         xtype: "combo",
                         triggerAction: 'all',
                         lazyRender:true,
                         name: 'yAxis',
                         mode: 'local',
-                        width: 300,
+                        width: 295,
                         store: this.columnStore,
                         value: this.data.yAxis ? this.data.yAxis[0] : null,
                         valueField: 'name',
@@ -379,16 +380,16 @@ pimcore.report.custom.item = Class.create({
 
     addAdditionalYAxis: function(value) {
         this.lineChartDefinitionPanel.add({
-            xtype: "compositefield",
+            xtype: "fieldcontainer",
+            layout: 'hbox',
             fieldLabel: t("custom_report_y_axis"),
-            width: 360,
             items: [{
                 xtype: "combo",
                 triggerAction: 'all',
                 lazyRender:true,
                 name: 'yAxis',
                 mode: 'local',
-                width: 300,
+                width: 295,
                 store: this.columnStore,
                 value: value ? value : null,
                 valueField: 'name',
@@ -397,7 +398,7 @@ pimcore.report.custom.item = Class.create({
                 xtype: "button",
                 iconCls: "pimcore_icon_delete",
                 handler: function (button) {
-                    this.lineChartDefinitionPanel.remove(button.findParentByType('compositefield'));
+                    this.lineChartDefinitionPanel.remove(button.findParentByType('fieldcontainer'));
                     this.lineChartDefinitionPanel.doLayout();
                 }.bind(this)
             }]
@@ -466,7 +467,7 @@ pimcore.report.custom.item = Class.create({
             }
         }
         this.currentElementCount--;
-        this.sourceDefinitionsItems.remove(this.sourceDefinitionsItems.get(0));
+        this.sourceDefinitionsItems.remove(this.sourceDefinitionsItems.getComponent(0));
         this.sourceDefinitionsItems.insert(0, this.getAddControl());
         this.sourceDefinitionsItems.doLayout();
     },
@@ -518,7 +519,7 @@ pimcore.report.custom.item = Class.create({
     },
 
     addSourceDefinition: function (sourceDefinitionData) {
-        this.sourceDefinitionsItems.remove(this.sourceDefinitionsItems.get(0));
+        this.sourceDefinitionsItems.remove(this.sourceDefinitionsItems.getComponent(0));
 
         var currentData = {};
 

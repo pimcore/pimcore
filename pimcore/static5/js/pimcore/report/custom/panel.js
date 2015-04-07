@@ -95,7 +95,8 @@ pimcore.report.custom.panel = Class.create({
     getEditPanel: function () {
         if (!this.editPanel) {
             this.editPanel = new Ext.TabPanel({
-                region: "center"
+                region: "center",
+                plugins: ['tabclosemenu']
             });
         }
 
@@ -124,7 +125,7 @@ pimcore.report.custom.panel = Class.create({
 
         var existingPanel = Ext.getCmp("pimcore_sql_panel_" + id);
         if(existingPanel) {
-            this.editPanel.activate(existingPanel);
+            this.editPanel.setActiveTab(existingPanel);
             return;
         }
 
@@ -184,7 +185,9 @@ pimcore.report.custom.panel = Class.create({
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
 
-                    this.tree.getRootNode().reload();
+                    this.tree.getStore().load({
+                        node: this.tree.getRootNode()
+                    });
 
                     if(!data || !data.success) {
                         Ext.Msg.alert(t('add_custom_report'), t('problem_creating_new_custom_report'));

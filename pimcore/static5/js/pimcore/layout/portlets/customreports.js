@@ -147,9 +147,9 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
                     this.layout.setTitle(t("portlet_customreport") + ": " + data.niceName);
                     if(data.iconClass) {
-                        this.layout.setIconClass(data.iconClass);
+                        this.layout.setIconCls(data.iconClass);
                     } else {
-                        this.layout.setIconClass(this.getIcon());
+                        this.layout.setIconCls(this.getIcon());
                     }
 
                     this.reportConfig = data;
@@ -224,7 +224,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 height: 350,
                 border: false,
                 items: [{
-                    xtype: (data.chartType == 'line' ? 'linechart' : 'columnchart'),
+                    xtype: (data.chartType == 'line' ? 'cartesian' : 'columnchart'),
                     store: chartStore,
                     xField: data.xAxis,
                     chartStyle: {

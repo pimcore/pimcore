@@ -31,7 +31,6 @@ pimcore.report.custom.definition.sql = Class.create({
         this.element = new Ext.form.FormPanel({
             key: key,
             bodyStyle: "padding:10px;",
-            layout: "pimcoreform",
             autoHeight: true,
             border: false,
             tbar: deleteControl,

@@ -40,11 +40,17 @@ pimcore.report.custom.definition.analytics = Class.create({
         var metricLoaded = false;
         var segmentLoaded = false;
 
-        this.dimensionStore = new Ext.data.JsonStore({
+        this.dimensionStore = new Ext.data.Store({
             autoDestroy: true,
-            url: "/admin/reports/analytics/get-dimensions",
-            root: "data",
-            idProperty: "id",
+            proxy: {
+                type: 'ajax',
+                url: "/admin/reports/analytics/get-dimensions",
+                reader: {
+                    type: 'json',
+                    rootProperty: "data",
+                    idProperty: "id"
+                }
+            },
             fields: ["name", "id"],
             listeners: {
                 load: function () {
@@ -58,7 +64,8 @@ pimcore.report.custom.definition.analytics = Class.create({
 
                         displayField: "name",
                         valueField: "id",
-                        width: 300,
+                        width: 400,
+                        height: 100,
                         value: sourceDefinitionData.dimension,
                         listeners: {
                             change: columnSettingsCallback
@@ -80,9 +87,15 @@ pimcore.report.custom.definition.analytics = Class.create({
 
         this.metricsStore = new Ext.data.JsonStore({
             autoDestroy: true,
-            url: "/admin/reports/analytics/get-metrics",
-            root: "data",
-            idProperty: "id",
+            proxy: {
+                type: 'ajax',
+                url: "/admin/reports/analytics/get-metrics",
+                reader: {
+                    type: 'json',
+                    rootProperty: "data",
+                    idProperty: "id"
+                }
+            },
             fields: ["name", "id"],
             listeners: {
                 load: function () {
@@ -96,7 +109,8 @@ pimcore.report.custom.definition.analytics = Class.create({
                         store: this.metricsStore,
                         displayField: "name",
                         valueField: "id",
-                        width: 300,
+                        width: 400,
+                        height: 100,
                         value: sourceDefinitionData.metric,
                         listeners: {
                             change: columnSettingsCallback
@@ -120,9 +134,14 @@ pimcore.report.custom.definition.analytics = Class.create({
         this.segementsStore = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
-            url: "/admin/reports/analytics/get-segments",
-            root: "data",
-            idProperty: "id",
+            proxy: {
+                type: 'ajax',
+                url: "/admin/reports/analytics/get-segments",
+                reader: {
+                    rootProperty: "data",
+                    idProperty: "id"
+                }
+            },
             fields: ["name", "id"],
             listeners: {
                 load: function () {
@@ -140,7 +159,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                         displayField: "name",
                         valueField: "id",
                         mode: "local",
-                        width: 300,
+                        width: 400,
                         value: sourceDefinitionData.segment,
                         listeners: {
                             change: columnSettingsCallback
@@ -170,7 +189,6 @@ pimcore.report.custom.definition.analytics = Class.create({
         this.element = new Ext.form.FormPanel({
             key: key,
             bodyStyle: "padding:10px;",
-            layout: "pimcoreform",
             autoHeight: true,
             border: false,
             tbar: deleteControl, //this.getDeleteControl("SQL", key),
@@ -188,9 +206,16 @@ pimcore.report.custom.definition.analytics = Class.create({
                     store: new Ext.data.JsonStore({
                         autoDestroy: true,
                         autoLoad: true,
-                        url: "/admin/reports/analytics/get-profiles",
-                        root: "data",
-                        idProperty: "id",
+                        proxy: {
+                            type: 'ajax',
+                            url: "/admin/reports/analytics/get-profiles",
+                            reader: {
+                                type: 'json',
+                                rootProperty: "data",
+                                idProperty: "id"
+                            }
+                        },
+
                         fields: ["name", "id"],
                         listeners: {
                             load: function () {
@@ -201,7 +226,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                     valueField: 'id',
                     forceSelection: true,
                     triggerAction: 'all',
-                    width: 300,
+                    width: 400,
                     value: sourceDefinitionData.profileId,
                     listeners: {
                         change: columnSettingsCallback
@@ -213,7 +238,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                     name: "filters",
                     fieldLabel: "Filters",
                     value: (sourceDefinitionData.filters ),
-                    width: 250,
+                    width: 350,
                     enableKeyEvents: true,
                     listeners: {
                         change: columnSettingsCallback
@@ -224,14 +249,14 @@ pimcore.report.custom.definition.analytics = Class.create({
                     name: "sort",
                     fieldLabel: "Sort",
                     value: (sourceDefinitionData.sort),
-                    width: 250,
+                    width: 350,
                     enableKeyEvents: true,
                     listeners: {
                         change: columnSettingsCallback
                     }
                 },
                 {
-                    xtype: 'spacer',
+                    xtype: 'tbspacer',
                     height: 30
                 },
                 {
@@ -239,7 +264,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                     name: "startDate",
                     fieldLabel: t("start_date"),
                     value: (sourceDefinitionData.startDate),
-                    width: 250,
+                    width: 350,
                     enableKeyEvents: true,
                     listeners: {
                         change: columnSettingsCallback
@@ -250,13 +275,13 @@ pimcore.report.custom.definition.analytics = Class.create({
                     name: "relativeStartDate",
                     fieldLabel: t("start_date_relative") + '<br/><small>'+t("relative_date_description")+"</small>",
                     value: (sourceDefinitionData.relativeStartDate),
-                    width: 250,
+                    width: 350,
                     enableKeyEvents: true,
                     listeners: {
                         change: columnSettingsCallback
                     }
                 },{
-                    xtype: 'spacer',
+                    xtype: 'tbspacer',
                     height: 30
                 },
                 {
@@ -264,7 +289,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                     name: "endDate",
                     fieldLabel: t("end_date"),
                     value: (sourceDefinitionData.endDate),
-                    width: 250,
+                    width: 350,
                     enableKeyEvents: true,
                     listeners: {
                         change: columnSettingsCallback
@@ -274,7 +299,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                     name: "relativeEndDate",
                     fieldLabel: t("end_date_relative") + '<br/><small>'+t("relative_date_description")+"</small>",
                     value: (sourceDefinitionData.relativeEndDate),
-                    width: 250,
+                    width: 350,
                     enableKeyEvents: true,
                     listeners: {
                         change: columnSettingsCallback
