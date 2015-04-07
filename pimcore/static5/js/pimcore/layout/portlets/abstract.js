@@ -31,8 +31,10 @@ pimcore.layout.portlets.abstract = Class.create({
         };
     },
 
-    remove: function (owner, tool, event) {
-        owner.ownerCt.remove(owner, true);
+    remove: function (event, tool, header, owner) {
+        var portlet = header.ownerCt;
+        var column = portlet.ownerCt;
+        column.remove(portlet, true);
 
         Ext.Ajax.request({
             url: "/admin/portal/remove-widget",

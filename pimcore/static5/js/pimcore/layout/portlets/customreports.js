@@ -34,20 +34,20 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
         defaultConf.tools = [
             {
-                id:'search',
+                type:'search',
                 handler: this.openReport.bind(this)
             },
             {
-                id:'gear',
+                type:'gear',
                 handler: this.editSettings.bind(this)
             },
             {
-                id:'close',
+                type:'close',
                 handler: this.remove.bind(this)
             }
         ];
 
-        this.layout = new Ext.ux.Portlet(Object.extend(defaultConf, {
+        this.layout = Ext.create('Portal.view.Portlet', Object.extend(defaultConf, {
             title: this.getName(),
             iconCls: this.getIcon(),
             height: 275,
@@ -67,7 +67,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             height: 100,
             modal: true,
             title: t('portlet_customreport_settings'),
-            closeAction: "close",
+            closeAction: "destroy",
             items: [
                 {
                     xtype: "form",
@@ -81,13 +81,19 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                             displayField: "text",
                             value: this.config,
                             fieldLabel: t("portlet_customreport"),
-                            store: new Ext.data.JsonStore({
+                            store: new Ext.data.Store({
                                 autoDestroy: true,
-                                url: '/admin/reports/custom-report/tree',
-                                baseParams: {
-                                    portlet: 1
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/admin/reports/custom-report/tree',
+                                    extraParams: {
+                                        portlet: 1
+                                    },
+                                    reader: {
+                                        type: 'json',
+                                        rootProperty: 'data'
+                                    }
                                 },
-                                root: 'data',
                                 fields: ['id','text']
                             }),
                             triggerAction: "all"
@@ -183,12 +189,18 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 storeFields.push(data.yAxis[i]);
             }
 
-            var chartStore = new Ext.data.JsonStore({
+            var chartStore = new Ext.data.Store({
                 autoDestroy: true,
-                url: "/admin/reports/custom-report/chart",
-                root: 'data',
-                baseParams: {
-                    name: this.config
+                proxy: {
+                    type: 'ajax',
+                    url: "/admin/reports/custom-report/chart",
+                    extraParams: {
+                        name: this.config
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'data'
+                    }
                 },
                 fields: storeFields
             });
@@ -225,12 +237,18 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 }]
             });
         } else if(data.chartType == 'pie') {
-            var chartStore = new Ext.data.JsonStore({
+            var chartStore = new Ext.data.Store({
                 autoDestroy: true,
-                url: "/admin/reports/custom-report/chart",
-                root: 'data',
-                baseParams: {
-                    name: this.config
+                proxy: {
+                    type: 'ajax',
+                    url: "/admin/reports/custom-report/chart",
+                    extraParams: {
+                        name: this.config
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'data'
+                    }
                 },
                 fields: [data.pieLabelColumn, data.pieColumn]
             });

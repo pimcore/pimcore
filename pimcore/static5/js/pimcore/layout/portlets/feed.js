@@ -30,7 +30,7 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
 
     getLayout: function (portletId) {
 
-        this.store = new Ext.data.JsonStore({
+        this.store = new Ext.data.Store({
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
