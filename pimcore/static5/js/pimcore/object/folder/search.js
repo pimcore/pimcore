@@ -209,7 +209,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     "change": function (field, checked) {
                         this.grid.filters.clearFilters();
 
-                        this.store.baseparams = {};
                         this.store.getProxy().setExtraParam("only_direct_children", checked);
 
                         this.onlyDirectChildren = checked;

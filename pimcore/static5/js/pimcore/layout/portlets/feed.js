@@ -32,12 +32,18 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
 
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
-            url: '/admin/portal/portlet-feed',
-            baseParams: {
-                key: this.portal.key,
-                id: portletId
+            proxy: {
+                type: 'ajax',
+                url: '/admin/portal/portlet-feed',
+                extraParams: {
+                    key: this.portal.key,
+                    id: portletId
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'entries'
+                }
             },
-            root: 'entries',
             fields: ['id','title',"description",'date',"link","content"]
         });
 
@@ -58,16 +64,16 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
 
         defaultConf.tools = [
             {
-                id:'gear',
+                type:'gear',
                 handler: this.editSettings.bind(this)
             },
             {
-                id:'close',
+                type:'close',
                 handler: this.remove.bind(this)
             }
         ];
 
-        this.layout = new Ext.ux.Portlet(Object.extend(defaultConf, {
+        this.layout = Ext.create('Portal.view.Portlet', Object.extend(defaultConf, {
             title: this.getName(),
             iconCls: this.getIcon(),
             height: 275,
@@ -84,7 +90,7 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
             width: 600,
             height: 100,
             modal: true,
-            closeAction: "close",
+            closeAction: "destroy",
             items: [
                 {
                     xtype: "form",
@@ -96,7 +102,7 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
                             id: "pimcore_portlet_feed_url",
                             fieldLabel: "Feed-URL",
                             value: this.config,
-                            width: 420
+                            width: 520
                         },
                         {
                             xtype: "button",
