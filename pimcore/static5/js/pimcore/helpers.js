@@ -738,7 +738,6 @@ pimcore.helpers.deleteAssetFromServer = function (id, r, callback, button) {
                         tree.getStore().load( {
                             node: node.parentNode
                         });
-
                     }
                 }
 
@@ -767,7 +766,9 @@ pimcore.helpers.deleteAssetFromServer = function (id, r, callback, button) {
 
                 var node = pimcore.globalmanager.get("layout_asset_tree").tree.getNodeById(id);
                 if(node) {
-                    node.parentNode.reload();
+                    tree.getStore().load( {
+                        node: node.parentNode
+                    });
                 }
             }.bind(this, id),
             jobs: r.deletejobs
@@ -906,7 +907,9 @@ pimcore.helpers.deleteDocumentFromServer = function (id, r, callback, button) {
 
                 var node = pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(id);
                 if(node) {
-                    node.parentNode.reload();
+                    tree.getStore().load( {
+                        node: node.parentNode
+                    });
                 }
             }.bind(this, id),
             jobs: r.deletejobs
@@ -1014,7 +1017,6 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
                         tree.getStore().load( {
                             node: node.parentNode
                         });
-
                     }
                 }
 
@@ -1042,7 +1044,9 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
 
                 var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
                 if(node) {
-                    node.parentNode.reload();
+                    tree.getStore().load( {
+                        node: node.parentNode
+                    });
                 }
             }.bind(this, id),
             jobs: r.deletejobs
@@ -1773,7 +1777,11 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
 
                 try {
                     var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.object.id);
-                    node.reload();
+                    if (node) {
+                        tree.getStore().load( {
+                            node: node
+                        });
+                    }
                 } catch (e) {
                     // node is not present
                 }
