@@ -194,11 +194,16 @@ class InheritanceHelper {
         }
     }
 
-    /**
+    /** Currently solely used for object bricks. If a brick is removed, this info must be propagated to all
+     * child elements.
      * @param $objectId
      */
     public function doDelete ($objectId) {
         // NOT FINISHED - NEEDS TO BE COMPLETED !!!
+
+        // as a first step, build an ID list of all child elements that are affected. Stop at the level
+        // which has a non-empty value.
+
         $fields = implode("`,`", $this->fields);
         if(!empty($fields)) {
             $fields = ", `" . $fields . "`";
@@ -223,6 +228,7 @@ class InheritanceHelper {
                 foreach($o->childs as $c) {
                     $this->getIdsToCheckForDeletionForRelationfields($c, $fieldname);
                 }
+                $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
             }
         }
 
@@ -239,6 +245,8 @@ class InheritanceHelper {
         $toBeRemovedItemIds = array();
 
 
+        // now iterate over all affected elements and check if the object even has a brick. If it doesn't, then
+        // remove the query row entirely ...
         if ($affectedIds) {
 
             $objectsWithBrickIds = array();
@@ -270,25 +278,6 @@ class InheritanceHelper {
         if ($toBeRemovedItemIds) {
             $this->db->delete($this->querytable, $this->idField . " IN (" . implode(",", $toBeRemovedItemIds) . ")");
         }
-
-        if(!empty($this->fields)) {
-            foreach($this->fields as $fieldname) {
-                $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
-            }
-        }
-
-        if(!empty($this->relations)) {
-            foreach($this->relations as $fieldname => $fields) {
-                if(is_array($fields)) {
-                    foreach($fields as $f) {
-                        $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $f);
-                    }
-                } else {
-                    $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
-                }
-            }
-        }
-
 
     }
 
