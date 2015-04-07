@@ -116,7 +116,9 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload",
                 handler: function (node) {
-                    node.reload();
+                    this.treePanel.getStore().load({
+                        node: node
+                    });
                 }.bind(this, record)
             }));
         } else if (record.data.type == "file") {
@@ -139,7 +141,9 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                                 Ext.Ajax.request({
                                     url: "/admin/misc/fileexplorer-add",
                                     success: function (node, response) {
-                                        node.reload();
+                                        this.treePanel.getStore().load({
+                                            node: node
+                                        });
                                     }.bind(this, node),
                                     params: {
                                         path: node.id,
@@ -156,7 +160,9 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                                 Ext.Ajax.request({
                                     url: "/admin/misc/fileexplorer-add-folder",
                                     success: function (node, response) {
-                                        node.reload();
+                                        this.treePanel.getStore().load({
+                                            node: node
+                                        });
                                     }.bind(this, node),
                                     params: {
                                         path: node.id,
