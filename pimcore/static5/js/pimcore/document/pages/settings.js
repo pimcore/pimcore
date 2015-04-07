@@ -272,7 +272,6 @@ pimcore.document.pages.settings = Class.create({
             this.layout = new Ext.FormPanel({
                 title: t('settings'),
                 bodyStyle:'padding:20px 5px 20px 5px;',
-                layout: "pimcoreform",
                 border: false,
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_settings",

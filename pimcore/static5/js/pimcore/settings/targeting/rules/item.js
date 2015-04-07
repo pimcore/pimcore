@@ -51,7 +51,6 @@ pimcore.settings.targeting.rules.item = Class.create({
 
     getActions: function () {
         this.actionsForm = new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             bodyStyle: "padding: 10px",
             title: t("actions"),
             autoScroll: true,
@@ -188,7 +187,6 @@ pimcore.settings.targeting.rules.item = Class.create({
     getSettings: function () {
 
         this.settingsForm = new Ext.form.FormPanel({
-            layout: "pimcoreform",
             title: t("settings"),
             bodyStyle: "padding:10px;",
             autoScroll: true,

@@ -220,7 +220,6 @@ pimcore.settings.videothumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.Panel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -271,7 +270,6 @@ pimcore.settings.videothumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.Panel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -305,7 +303,6 @@ pimcore.settings.videothumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.Panel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",

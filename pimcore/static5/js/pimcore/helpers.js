@@ -1152,7 +1152,6 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     });
 
     var uploadForm = new Ext.form.FormPanel({
-        layout: "pimcoreform",
         fileUpload: true,
         width: 400,
         bodyStyle: 'padding: 10px;',
@@ -1160,7 +1159,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
             xtype: 'fileuploadfield',
             emptyText: t("select_a_file"),
             fieldLabel: t("asset"),
-            width: 230,
+            width: 330,
             name: 'Filedata',
             buttonText: "",
             buttonConfig: {
@@ -1218,7 +1217,6 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
     });
 
     var uploadForm = new Ext.form.FormPanel({
-        layout: "pimcoreform",
         fileUpload: true,
         width: 400,
         bodyStyle: 'padding: 10px;',
@@ -1226,7 +1224,7 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
             xtype: 'fileuploadfield',
             emptyText: t("select_a_file"),
             fieldLabel: t("file"),
-            width: 230,
+            width: 330,
             name: filename,
             buttonText: "",
             buttonConfig: {
@@ -1809,7 +1807,6 @@ pimcore.helpers.sendTestEmail = function () {
         items: [{
             xtype: "form",
             bodyStyle: "padding:10px;",
-            layout: "pimcoreform",
             itemId: "form",
             items: [{
                 xtype: "textfield",

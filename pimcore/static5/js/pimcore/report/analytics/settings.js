@@ -26,7 +26,6 @@ pimcore.report.analytics.settings = Class.create({
     getLayout: function () {
 
         this.panel = new Ext.FormPanel({
-            //layout: "pimcoreform",
             title: "Google Analytics",
             bodyStyle: "padding: 10px;",
             autoScroll: true,

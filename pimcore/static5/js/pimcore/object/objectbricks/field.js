@@ -33,7 +33,6 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
-            //layout: "pimcoreform",
             items: [{
                 xtype: "textfield",
                 width: 250,

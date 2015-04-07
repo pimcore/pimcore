@@ -32,7 +32,6 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
             id: "pimcore_fieldcollection_editor_panel_" + this.getId(),
-            layout: "pimcoreform",
             items: [{
                 xtype: "textfield",
                 width: 250,

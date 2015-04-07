@@ -179,7 +179,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             this.downloadBox = new Ext.form.FormPanel({
                 title: t("convert_to") + " & " + t("download"),
                 bodyStyle: "padding: 10px;",
-                //layout: "pimcoreform",
                 style: "margin: 10px 0 10px 0",
                 items: [{
                     xtype: "combo",

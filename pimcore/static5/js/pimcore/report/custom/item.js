@@ -410,7 +410,6 @@ pimcore.report.custom.item = Class.create({
 
         this.sourceDefinitionsItems = new Ext.Panel({
             style: "margin-bottom: 20px",
-            layout: "pimcoreform",
             items: [
                 this.getAddControl()
             ]

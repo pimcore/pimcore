@@ -69,7 +69,6 @@ pimcore.object.helpers.edit = {
                 defaults: {
                     width: "auto"
                 },
-                //layout: "pimcoreform",
                 hideMode: "offsets",
                 listeners: panelListenerConfig
             },

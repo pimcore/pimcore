@@ -343,7 +343,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -390,7 +389,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -424,7 +422,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -458,7 +455,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -506,7 +502,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -631,7 +626,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -678,7 +672,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -714,7 +707,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -748,7 +740,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -783,7 +774,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -831,7 +821,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -883,7 +872,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -960,7 +948,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -994,7 +981,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -1023,7 +1009,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
@@ -1052,7 +1037,6 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
-            //layout: "pimcoreform",
             id: myId,
             //style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
