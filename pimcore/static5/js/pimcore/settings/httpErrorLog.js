@@ -110,7 +110,7 @@ pimcore.settings.httpErrorLog = Class.create({
                     if (key.getKey() == key.ENTER) {
                         var input = field;
                         var val = input.getValue();
-                        this.store.baseParams.filter = val ? val : "";
+                        this.store.getProxy().extraParams.filter = val ? val : "";
                         this.store.load();
                     }
                 }.bind(this)
@@ -190,7 +190,7 @@ pimcore.settings.httpErrorLog = Class.create({
                 iconCls: "pimcore_icon_groupby",
                 enableToggle: true,
                 handler: function (button) {
-                    this.store.baseParams.group = button.pressed ? 1 : 0;
+                    this.store.getProxy().extraParams.group = button.pressed ? 1 : 0;
                     this.store.load();
                 }.bind(this)
             }, "-",{
