@@ -177,7 +177,9 @@ pimcore.settings.fileexplorer.explorer = Class.create({
         Ext.Ajax.request({
             url: "/admin/misc/fileexplorer-delete",
             success: function (node, response) {
-                node.parentNode.reload();
+                this.treePanel.getStore().load({
+                    node: node.parentNode
+                });
             }.bind(this, node),
             params: {
                 path: node.id
