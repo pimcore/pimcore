@@ -439,8 +439,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     if (key.getKey() == key.ENTER) {
                         this.grid.filters.clearFilters();
 
-                        this.store.baseparams = {};
-                        this.store.setBaseParam("condition", field.getValue());
+                        var proxy = this.store.getProxy();
+                        proxy.extraParams = {};
+                        proxy.setExtraParam("condition", field.getValue());
 
                         this.pagingtoolbar.moveFirst();
                     }
@@ -459,8 +460,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 this.sqlEditor.setValue("");
 
                 // reset base params, because of the condition
-                this.store.baseparams = {};
-                this.store.setBaseParam("condition", null);
+                var proxy = this.store.getProxy();
+                proxy.extraParams = {};
+                proxy.setExtraParam("condition", null);
                 this.pagingtoolbar.moveFirst();
 
                 if(button.pressed) {
