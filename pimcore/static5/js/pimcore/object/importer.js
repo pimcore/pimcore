@@ -15,8 +15,9 @@
 pimcore.registerNS("pimcore.object.importer");
 pimcore.object.importer = Class.create({
 
-    initialize: function (parentNode, classId, className) {
+    initialize: function (tree, parentNode, classId, className) {
 
+        this.tree = tree;
         this.parentId = parentNode.id;
         this.parentNode = parentNode;
         this.classId = classId;
@@ -211,7 +212,8 @@ pimcore.object.importer = Class.create({
                     mode: "local",
                     triggerAction: "all",
                     fieldLabel: t("filename"),
-                    value: "default"
+                    value: "default",
+                    width: 300
                 },
                 {
                     xtype:'displayfield',
@@ -319,7 +321,6 @@ pimcore.object.importer = Class.create({
             width: 500
         });
 
-
         this.importProgressWin = new Ext.Window({
             items: [this.importProgressBar],
             modal: true,
@@ -335,9 +336,6 @@ pimcore.object.importer = Class.create({
         window.setTimeout(function() {
             this.importProcess();
         }.bind(this), 1000);
-
-
-        // get mapping
     },
 
     importProcess: function () {
@@ -355,7 +353,9 @@ pimcore.object.importer = Class.create({
                 Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobs.join(","));
             }
 
-            this.parentNode.reload();
+            this.tree.getStore().load({
+                node: this.parentNode
+            });
 
             return;
         }

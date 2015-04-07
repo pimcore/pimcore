@@ -911,7 +911,7 @@ pimcore.object.tree = Class.create({
     },
 
     importObjects: function (classId, className, tree, record) {
-        new pimcore.object.importer(record.parentNode, classId, className);
+        new pimcore.object.importer(tree, record.parentNode, classId, className);
     },
 
     addObject: function (classId, className, tree, record) {
