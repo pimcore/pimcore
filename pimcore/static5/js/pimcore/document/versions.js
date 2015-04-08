@@ -172,10 +172,10 @@ pimcore.document.versions = Class.create({
             var length = displayRecords.items.length;
             if (length > 0) {
                 if (length == 1) {
-                    this.showVersionPreview(displayRecords.get(0).data.id);
+                    this.showVersionPreview(displayRecords.getAt(0).data.id);
                 }
                 else if (length == 2) {
-                    this.compareVersions(displayRecords.get(0).data.id, displayRecords.get(1).data.id);
+                    this.compareVersions(displayRecords.getAt(0).data.id, displayRecords.getAt(1).data.id);
                 }
                 else {
                     Ext.MessageBox.alert(t("error"), t("maximum_2_versions"));
