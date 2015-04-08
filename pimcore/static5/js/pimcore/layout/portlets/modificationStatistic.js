@@ -69,13 +69,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                     , {
                     type: 'category',
                     fields: 'datetext',
-                    position: 'bottom',
-                    grid: true,
-                    label: {
-                        rotate: {
-                            degrees: -45
-                        }
-                    }
+                    position: 'bottom'
                 }
                 ],
                 series: [
