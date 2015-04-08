@@ -151,7 +151,8 @@ pimcore.document.pages.settings = Class.create({
                     }
                 };
 
-                var compositeField = new Ext.Container({
+                var compositeField = new Ext.form.FieldContainer({
+                    layout: 'hbox',
                     hideLabel: true,
                     style: "padding-bottom:5px;",
                     items: [{
@@ -271,7 +272,6 @@ pimcore.document.pages.settings = Class.create({
             // create layout
             this.layout = new Ext.FormPanel({
                 title: t('settings'),
-                bodyStyle:'padding:20px 5px 20px 5px;',
                 border: false,
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_settings",
