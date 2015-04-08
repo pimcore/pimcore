@@ -263,27 +263,10 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
 
                 try {
 
-                    $quotedData = array();
-                    $updateStatement = array();
-                    foreach($data as $key => $d) {
-                        $quotedData[$this->db->quoteIdentifier($key)] = $this->db->quote($d);
-                        $updateStatement[] = $this->db->quoteIdentifier($key) . "=" . $this->db->quote($d);
-                    }
-
-
-                    $this->db->update($this->tenantConfig->getTablename(), array("o_virtualProductActive" => $virtualProductActive), "o_virtualProductId = " . $virtualProductId);
-
-                    $insert = "INSERT INTO " . $this->tenantConfig->getTablename() . " (" . implode(",", array_keys($quotedData)) . ") VALUES (" . implode("," , $quotedData) . ")"
-                    . " ON DUPLICATE KEY UPDATE " . implode(",", $updateStatement);
-
-                    $this->db->query($insert);
+                    $this->doInsertData($data);
 
                 } catch (Exception $e) {
-                    try {
-                        $this->db->insert($this->tenantConfig->getTablename(), $data);
-                    } catch (Exception $ex) {
-                        Logger::warn("Error during updating index table: " . $ex->getMessage(), $ex);
-                    }
+                    Logger::warn("Error during updating index table: " . $e);
                 }
 
                 try {
@@ -321,6 +304,26 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
             }
             $this->tenantConfig->updateSubTenantEntries($object, $subObjectId);
         }
+    }
+
+    protected function doInsertData($data) {
+        //insert index data
+        $dataKeys = [];
+        $updateData = [];
+        $insertData = [];
+        $insertStatement = [];
+
+        foreach($data['data'] as $key => $d) {
+            $dataKeys[$this->db->quoteIdentifier($key)] = '?';
+            $updateData[] = $d;
+            $insertStatement[] = $this->db->quoteIdentifier($key) . " = ?";
+            $insertData[] = $d;
+        }
+
+        $insert = "INSERT INTO " . $this->tenantConfig->getTablename() . " (" . implode(",", array_keys($dataKeys)) . ") VALUES (" . implode("," , $dataKeys) . ")"
+            . " ON DUPLICATE KEY UPDATE " . implode(",", $insertStatement);
+
+        $this->db->query($insert, array_merge($updateData, $insertData));
     }
 
     protected function getSystemAttributes() {

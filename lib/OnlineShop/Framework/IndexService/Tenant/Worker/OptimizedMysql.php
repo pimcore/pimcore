@@ -89,18 +89,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
             try {
                 $this->db->beginTransaction();
 
-                //insert index data
-                $quotedData = array();
-                $updateStatement = array();
-                foreach($data['data'] as $key => $d) {
-                    $quotedData[$this->db->quoteIdentifier($key)] = $this->db->quote($d);
-                    $updateStatement[] = $this->db->quoteIdentifier($key) . "=" . $this->db->quote($d);
-                }
-
-                $insert = "INSERT INTO " . $this->tenantConfig->getTablename() . " (" . implode(",", array_keys($quotedData)) . ") VALUES (" . implode("," , $quotedData) . ")"
-                    . " ON DUPLICATE KEY UPDATE " . implode(",", $updateStatement);
-
-                $this->db->query($insert);
+                $this->doInsertData($data);
 
                 //insert relation data
                 $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($objectId));
