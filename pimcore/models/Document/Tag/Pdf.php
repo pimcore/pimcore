@@ -401,7 +401,7 @@ class Pdf extends Model\Document\Tag
                 foreach ($data as &$element) {
                     if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach($element["data"] as &$metaData) {
-                            if($metaData["value"] instanceof Document) {
+                            if($metaData["value"] instanceof Element\ElementInterface) {
                                 $metaData["value"] = $metaData["value"]->getFullPath();
                             }
                         }
