@@ -107,6 +107,10 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
             return;
         }
 
+        if(!Asset\Image\Thumbnail::getEmbedPicturePolyfill()) {
+            return;
+        }
+
         if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }

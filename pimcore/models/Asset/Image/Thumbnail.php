@@ -70,6 +70,11 @@ class Thumbnail {
     protected static $pictureElementInUse = false;
 
     /**
+     * @var bool
+     */
+    protected static $embedPicturePolyfill = true;
+
+    /**
      * @param $asset
      * @param null $config
      * @param bool $deferred
@@ -447,5 +452,21 @@ class Thumbnail {
      */
     public static function setPictureElementInUse($flag) {
     	self::$pictureElementInUse = (bool) $flag;
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function getEmbedPicturePolyfill()
+    {
+        return self::$embedPicturePolyfill;
+    }
+
+    /**
+     * @param boolean $embedPicturePolyfill
+     */
+    public static function setEmbedPicturePolyfill($embedPicturePolyfill)
+    {
+        self::$embedPicturePolyfill = $embedPicturePolyfill;
     }
 }
