@@ -85,12 +85,14 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                         title: t('documents'),
                         xField: 'datetext',
                         yField: 'documents',
+                        colors: ['#01841c'],
                         style: {
                             lineWidth: 2,
-                            color:0x01841c
+                            stroke: '#01841c'
                         },
                         marker: {
-                            radius: 4
+                            radius: 4,
+                            fillStyle: '#01841c'
                         },
                         highlight: {
                             fillStyle: '#000',
@@ -113,12 +115,14 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                         title: t('assets'),
                         xField: 'datetext',
                         yField: 'assets',
+                        colors: ['#15428B'],
                         style: {
                             lineWidth: 2,
-                            color: 0x15428B
+                            stroke: '#15428B'
                         },
                         marker: {
-                            radius: 4
+                            radius: 4,
+                            fillStyle: '#15428B'
                         },
                         highlight: {
                             fillStyle: '#000',
@@ -141,13 +145,15 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                         title: t('objects'),
                         xField: 'datetext',
                         yField: 'objects',
+                        colors: ['#ff6600'],
                         style: {
                             lineWidth: 2,
-                            color: 0xff6600
+                            stroke: '#ff6600'
                         },
                         marker: {
-
-                            radius: 4
+                            radius: 4,
+                            fillStyle: '#ff6600',
+                            strokeStyle: '#ff6600'
                         },
                         highlight: {
                             fillStyle: '#000',
