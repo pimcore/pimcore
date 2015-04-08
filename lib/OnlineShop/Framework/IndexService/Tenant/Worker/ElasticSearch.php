@@ -1,5 +1,7 @@
 <?php
 
+use \Pimcore\Model\Tool;
+
 class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends OnlineShop_Framework_IndexService_Tenant_Worker_Abstract implements OnlineShop_Framework_IndexService_Tenant_IBatchProcessingWorker {
     use OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
         OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing::processUpdateIndexQueue as traitProcessUpdateIndexQueue;
@@ -8,6 +10,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store_elastic";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_elastic";
+    const REINDEX_LOCK_KEY = "plugin_onlineshop_productindex_elastic_reindex";
 
     /**
      * @var Elasticsearch\Client
@@ -31,6 +34,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
      * @var OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch
      */
     protected $tenantConfig;
+
 
     public function __construct(OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch $tenantConfig) {
         parent::__construct($tenantConfig);
@@ -105,7 +109,15 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
      *
      * @return void
      */
-    public function createOrUpdateIndexStructures($breakOnFailure = false) {
+    public function createOrUpdateIndexStructures() {
+        $this->doCreateOrUpdateIndexStructures();
+    }
+
+    protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false) {
+        if($this->IsInReindexMode()) {
+            throw new Exception("Index currently in re index mode, update index structures not allowed!");
+        }
+
         $this->createOrUpdateStoreTable();
 
         $esClient = $this->getElasticSearchClient();
@@ -131,17 +143,17 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
                 ]
             ]
         ];
-        try{
+        try {
             $result = $esClient->indices()->putMapping($params);
+        } catch(\Exception $e) {
 
-        }catch(\Exception $e){
-            if($breakOnFailure){
+            if($exceptionOnFailure){
                 throw new Exception("Can't create Mapping - Exiting to prevent infinit loop");
+            } else {
+                //when update mapping fails, start reindex mode
+                $this->startReindexMode();
             }
-            $this->indexVersion++;
-            Logger::info("Could not put index Mapping -> creating new Index. Version Number: " . $this->indexVersion);
-            $this->createOrUpdateIndexStructures(true);
-            $this->resetPreparationQueue();
+
         }
 
         // index created return "true" and mapping creation returns array
@@ -338,7 +350,6 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
             $this->saveToMockupCache($objectId, $data);
         }
 
-
     }
 
 
@@ -367,6 +378,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
         // reset
         $this->bulkIndexData = [];
+
+        //check for eventual resetting re-index mode
+        $this->completeReindexMode();
     }
 
     /**
@@ -402,12 +416,85 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         return self::MOCKUP_CACHE_PREFIX;
     }
 
+
+
+
+    /**
+     * starts reindex mode for index
+     * - new index with new version is created
+     * - complete store table for current tenant is resetted in order to recreate a new index version
+     *
+     * while in reindex mode
+     * - all index updates are stored into the new index version
+     * - no index structure updates are allowed
+     *
+     */
+    protected function startReindexMode() {
+        // start reindex mode with pimcore lock
+        $success = Tool\Lock::lock(self::REINDEX_LOCK_KEY);
+        if(!$success) {
+            throw new Exception("Key " . self::REINDEX_LOCK_KEY . " already locked, should not be the case!");
+        }
+
+        // increment version and recreate index structures
+        $this->indexVersion++;
+        Logger::info("Could not put index Mapping -> creating new Index. Version Number: " . $this->indexVersion);
+        $this->createOrUpdateIndexStructures(true);
+
+        // reset indexing queue in order to initiate a full re-index to the new index version
+        $this->resetIndexingQueue();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isInReindexMode() {
+        return Tool\Lock::isLocked(self::REINDEX_LOCK_KEY);
+    }
+
+    /**
+     * resets the store table to initiate a re-indexing
+     */
+    protected function resetIndexingQueue() {
+        $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
+                        worker_id = null,
+                        preparation_worker_timestamp = 0,
+                        preparation_worker_id = null,
+                        crc_index = 0 WHERE tenant = ?';
+        $this->db->query($query, array($this->name));
+    }
+
+
+    /**
+     * checks if there are some entries in the store table left for indexing
+     * if not -> re-index is finished
+     *
+     * @throws Exception
+     */
+    protected function completeReindexMode() {
+        if($this->isInReindexMode()) {
+
+            // check if all entries are updated
+            $query = "SELECT count(*) FROM plugin_onlineshop_productindex_store WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
+            $result = $this->db->fetchOne($query, array($this->name));
+
+            if($result == 0) {
+                //no entries left --> re-index is finished
+                $this->switchIndexAlias();
+                Tool\Lock::release(self::REINDEX_LOCK_KEY);
+            } else {
+                //there are entries left --> re-index not finished yet
+                Logger::info("Re-Indexing is not finished, still re-indexing for version number: " . $this->indexVersion);
+            }
+        }
+    }
+
     /**
      * Sets the alias to the current index-version and deletes the old indices
      *
      * @throws Exception
      */
-    public function doPostIndexingWork(){
+    protected function switchIndexAlias(){
         $esClient = $this->getElasticSearchClient();
         //set alias to current index version
         $result = $esClient->indices()->putAlias(['index' => $this->getIndexNameVersion(),'name' => $this->indexName]);
@@ -435,6 +522,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         }
 
     }
+
+
+
 
 }
 

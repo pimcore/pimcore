@@ -4,7 +4,7 @@
 
         <!-- configure general settings -->
         <generalSettings>
-            <!-- name of the index (alias). the index is version in the format "indexName-versionnumber" -->
+            <!-- name of the index (alias). the index itself is versioned in the format "indexName-versionnumber" -->
             <indexName>products</indexName>
         </generalSettings>
 
@@ -58,16 +58,6 @@
             </column>
             <column name="herst" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects"/>
             <column name="marke" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects"/>
-            <!-- id's zum testen 42051,45641,45563,41966,45534,45575 -->
-            <!-- FEHLER object mapping [keywords] trying to serialize a value with no field associated with it -->
-            <!--<column name="keywords" fieldname="SearchKeywords">-->
-                <!--<json>-->
-                    <!--{-->
-                        <!--"type": "object",-->
-                        <!--"dynamic": true-->
-                    <!--}-->
-                <!--</json>-->
-            <!--</column>-->
             <column name="properties" fieldname="ESProperties">
                 <json>
                     {

@@ -427,7 +427,6 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         $params = $this->buildQuery($params, $boolFilters, $queryFilters);
 
 
-        #p_r($params); exit;
         // send request
         $result = $this->sendRequest( $params );
 

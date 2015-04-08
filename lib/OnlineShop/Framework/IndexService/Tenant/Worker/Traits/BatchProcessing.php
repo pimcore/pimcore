@@ -236,20 +236,6 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
         }
     }
 
-
-    /**
-     * resets the preparation queue to do a fill re-indexing
-     */
-    public function resetPreparationQueue() {
-        $query = 'update '. $this->getStoreTableName() .' set worker_timestamp = null,
-                        worker_id = null,
-                        in_preparation_queue=0,
-                        preparation_worker_timestamp = 0,
-                        preparation_worker_id = null,
-                        crc_index = 0';
-        $this->db->query($query);
-    }
-
     /**
      * processes elements in the queue for preparation of index data
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
