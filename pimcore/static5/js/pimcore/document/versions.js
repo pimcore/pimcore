@@ -86,8 +86,14 @@ pimcore.document.versions = Class.create({
                 width: 50
             });
 
+            this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit: 2
+            });
+
+
             this.grid = Ext.create('Ext.grid.Panel', {
                 store: this.store,
+                plugins: [this.cellEditing],
                 columns: [
                     checkShow,
                     {header: "ID", sortable: true, dataIndex: 'id', editable: false, width: 40},
@@ -101,6 +107,7 @@ pimcore.document.versions = Class.create({
                             var date = new Date(d * 1000);
                             return Ext.Date.format(date, "Y-m-d H:i:s");
                         }
+                        return d;
                     }, editable: false},
                     {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
                     checkPublic,
@@ -109,7 +116,6 @@ pimcore.document.versions = Class.create({
                 columnLines: true,
                 trackMouseOver: true,
                 stripeRows: true,
-                //plugins: [checkPublic,checkShow],
                 width:600,
                 title: t('available_versions'),
                 region: "west",
