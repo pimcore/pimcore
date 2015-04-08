@@ -168,6 +168,33 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                         //enableDrop: false,
                         //appendOnly: true,
                         ddGroup: "columnconfigelement"
+                    },
+                    listeners: {
+                        beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
+                            var target = eOpts.options.target;
+                            var source = data.view;
+
+                            if (target != source) {
+                                var record = data.records[0];
+
+                                if (this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
+                                    dropHandlers.cancelDrop();
+                                } else {
+                                    var copy = record.createNode(Ext.apply({}, record.data));
+
+                                    if (record.data.dataType == "keyValue") {
+                                        var ccd = new pimcore.object.keyvalue.columnConfigDialog();
+                                        ccd.getConfigDialog(copy, this.selectionPanel);
+                                        return;
+                                    }
+
+                                    data.records = [copy]; // assign the copy as the new dropNode
+                                }
+                            }
+                        }.bind(this),
+                        options: {
+                            target: this.selectionPanel
+                        }
                     }
                 },
                 id:'tree',
@@ -178,26 +205,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 split:true,
                 autoScroll:true,
                 listeners:{
-                    beforenodedrop: function(e) {
-                        if(e.source.tree.el != e.target.ownerTree.el) {
-                            if(this.selectionPanel.getRootNode().findChild("key", e.dropNode.attributes.key)) {
-                                e.cancel= true;
-                            } else {
-                                var n = e.dropNode; // the node that was dropped
-                                var copy = new Ext.tree.TreeNode( // copy it
-                                    Ext.apply({}, n.attributes)
-                                );
-                                e.dropNode = copy; // assign the copy as the new dropNode
-
-                                if (e.dropNode.attributes.dataType == "keyValue") {
-
-                                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                                    ccd.getConfigDialog(copy, this.selectionPanel);
-                                    return;
-                                }
-                            }
-                        }
-                    }.bind(this),
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 },
                 buttons: [{
