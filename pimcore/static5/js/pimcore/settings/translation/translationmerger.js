@@ -45,7 +45,7 @@ pimcore.settings.translation.translationmerger = Class.create({
             plugins: ['gridfilters'],
             columns: [
                 {header: t("language"), sortable: true, dataIndex: 'lgname', editable: false},
-                {header: "", sortable: true, dataIndex: 'icon', editable: false, width: 20,
+                {header: "&nbsp;", sortable: true, dataIndex: 'icon', editable: false, width: 20,
                                 renderer: function(data){
                                     return '<img src="'+data+'" alt="" />';
                                 }
