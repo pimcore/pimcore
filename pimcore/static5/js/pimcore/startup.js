@@ -384,7 +384,7 @@ Ext.onReady(function () {
     // STATUSBAR
     var statusbar = Ext.create('Ext.ux.StatusBar', {
         id:'pimcore_statusbar',
-        statusAlign:'right'
+        statusAlign:'left'
     });
     pimcore.globalmanager.add("statusbar", statusbar);
 
@@ -399,6 +399,13 @@ Ext.onReady(function () {
         statusbar.add('<div class="pimcore_statusbar_debug">' + t("debug_mode_on") + "</div>");
         statusbar.add("-");
     }
+
+    // check for debug
+    if (pimcore.settings.debug) {
+        statusbar.add('<div class="pimcore_statusbar_extjs5">ExtJS 5 - Beta Feauture</div>');
+        statusbar.add("-");
+    }
+
     // check for maintenance
     if (!pimcore.settings.maintenance_active) {
         statusbar.add('<div class="pimcore_statusbar_maintenance">'
