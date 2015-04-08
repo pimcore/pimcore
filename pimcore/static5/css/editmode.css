@@ -423,14 +423,23 @@
 .x5-btn {
     cursor: pointer;
     border-collapse: collapse;
-    padding: 0 3px 0 3px;
+    padding: 3px 3px 3px 3px;
     margin: 0;
     border-radius: 2px;
     text-decoration: none;
     display: inline-block;
-    color: #FFFFFF;
     background-color: #363636;
     display: inline-block;
+    background-image: none;
+}
+
+.x5-btn-default-small {
+    border-color: #363636;
+}
+
+
+.x5-btn-inner-default-small {
+    color: #fff;
 }
 
 .x5-btn-over {
@@ -501,9 +510,18 @@
     /*padding-left: 25px;*/
 /*}*/
 
-.x5-menu {
-
+.x5-menu-body {
+    background-color: #000;
 }
+
+.x5-menu-item-text-default {
+    color: #fff;
+}
+
+.x5-menu-item-text-default.x5-menu-item-indent {
+    margin-left: 5px;
+}
+
 
 .x5-menu-list {
     padding: 5px;
@@ -532,11 +550,12 @@
     position: relative;
 }
 
-.x5-menu-item-active {
-    background: #fff;
-    color: #000;
-    cursor: pointer;
-}
+/*.x5-menu-list-item-active {*/
+    /*background: #fff;*/
+    /*color: #000;*/
+    /*cursor: pointer;*/
+/*}*/
+
 
 .x5-menu-item:link, .x5-menu-item:visited, .x5-menu-item:focus, .x5-menu-item:active, .x5-menu-item:hover {
     outline: 0 none;
@@ -569,9 +588,6 @@
     border-radius: 2px;
     width: auto !important;
     box-shadow: 0px 0px 20px 5px #fff;
-
-    /*display: block !important;
-    visibility: visible !important;*/
 }
 
 .x5-tip-anchor {
@@ -1006,15 +1022,6 @@
     background: #000;
 }
 
-.x5-form-date-trigger {
-    background: #363636;
-    background-image: url(/pimcore/static5/img/icon/calendar.png);
-    background-repeat: no-repeat;
-}
-
-.x5-form-trigger-default {
-    border-color: #000000;
-}
 
 /*
 .x5-menu-body {
