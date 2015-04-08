@@ -20,7 +20,7 @@ pimcore.layout.portlets.abstract = Class.create({
         var tools = [
             {
                 type:'close',
-                callback: this.remove.bind(this)
+                handler: this.remove.bind(this)
             }
         ];
 

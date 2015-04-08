@@ -402,7 +402,7 @@ Ext.onReady(function () {
 
     // check for debug
     if (pimcore.settings.debug) {
-        statusbar.add('<div class="pimcore_statusbar_extjs5">ExtJS 5 - Beta Feauture</div>');
+        statusbar.add('<div class="pimcore_statusbar_extjs5">ExtJS 5 - Beta Feauture </div>');
         statusbar.add("-");
     }
 
