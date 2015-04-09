@@ -176,10 +176,12 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             var tree = pimcore.globalmanager.get("layout_document_tree").tree;
             var store = tree.getStore();
             var record = store.getById(this.data.id);
-            var view = tree.getView();
-            var nodeEl = Ext.fly(view.getNodeByRecord(record));
-            if (nodeEl) {
-                nodeEl.removeCls("pimcore_unpublished");
+            if (record) {
+                var view = tree.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                if (nodeEl) {
+                    nodeEl.removeCls("pimcore_unpublished");
+                }
             }
         } catch (e) {
             console.log(e);
@@ -204,12 +206,13 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             var tree = pimcore.globalmanager.get("layout_document_tree").tree;
             var store = tree.getStore();
             var record = store.getById(this.data.id);
-            var view = tree.getView();
-            var nodeEl = Ext.fly(view.getNodeByRecord(record));
-            if (nodeEl) {
-                nodeEl.addCls("pimcore_unpublished");
+            if (record) {
+                var view = tree.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                if (nodeEl) {
+                    nodeEl.addCls("pimcore_unpublished");
+                }
             }
-
         } catch (e) {
             console.log(e);
         }
