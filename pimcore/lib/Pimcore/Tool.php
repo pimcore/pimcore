@@ -130,11 +130,23 @@ class Tool {
      */
     public static function getSupportedLocales() {
 
+        // List of locales that are no longer part of CLDR
+        // this was also changed in the Zend Framework, but here we need to provide an appropriate alternative
+        // since this information isn't public in \Zend_Locale :-(
+        $aliases = ['az_AZ' => true, 'bs_BA' => true, 'ha_GH' => true, 'ha_NE' => true, 'ha_NG' => true,
+            'kk_KZ' => true, 'ks_IN' => true, 'mn_MN' => true, 'ms_BN' => true, 'ms_MY' => true,
+            'ms_SG' => true, 'pa_IN' => true, 'pa_PK' => true, 'shi_MA' => true, 'sr_BA' => true, 'sr_ME' => true,
+            'sr_RS' => true, 'sr_XK' => true, 'tg_TJ' => true, 'tzm_MA' => true, 'uz_AF' => true, 'uz_UZ' => true,
+            'vai_LR' => true, 'zh_CN' => true, 'zh_HK' => true, 'zh_MO' => true, 'zh_SG' => true, 'zh_TW' => true,];
+
         $locale = \Zend_Locale::findLocale();
         $cacheKey = "system_supported_locales_" . strtolower((string) $locale);
         if(!$languageOptions = Cache::load($cacheKey)) {
             // we use the locale here, because \Zend_Translate only supports locales not "languages"
             $languages = \Zend_Locale::getLocaleList();
+
+            $languages = array_merge($languages, $aliases);
+
             $languageOptions = array();
             foreach ($languages as $code => $active) {
                 if($active) {
