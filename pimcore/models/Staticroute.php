@@ -84,6 +84,12 @@ class Staticroute extends AbstractModel {
      */
     public $modificationDate;
 
+    /**
+     * Associative array filled on match() that holds matched path values
+     * for given variable names.
+     * @var array
+     */
+    public $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
@@ -97,7 +103,7 @@ class Staticroute extends AbstractModel {
      *
      * @var Staticroute
      */
-    private static $_currentRoute;
+    protected static $_currentRoute;
 
     /**
      * @static
@@ -388,7 +394,9 @@ class Staticroute extends AbstractModel {
 
     /**
      * @param array $urlOptions
-     * @return string
+     * @param bool $reset
+     * @param bool $encode
+     * @return mixed|string
      */
     public function assemble (array $urlOptions = array(), $reset=false, $encode=true) {
 
@@ -408,7 +416,18 @@ class Staticroute extends AbstractModel {
             }
         }
 
-        $urlParams = array_merge($requestParameters, $this->getDefaultsArray(), $urlOptions);
+        $defaultValues = $this->getDefaultsArray();
+
+        // apply values (controller,action,module, ... ) from previous match if applicable (only when )
+        if($reset) {
+            if( self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName()) ) {
+                $defaultValues = array_merge( $defaultValues, self::$_currentRoute->_values );
+            }
+        }
+
+        // merge with defaults
+        $urlParams = array_merge($requestParameters, $defaultValues, $urlOptions );
+
         $parametersInReversePattern = array();
         $parametersGet = array();
         $parametersNotNamed = array();
@@ -539,6 +558,8 @@ class Staticroute extends AbstractModel {
             if(!empty($module)){
                 $params["module"] = $module;
             }
+            // remember for reverse assemble
+            $this->_values = $params;
 
             return $params;
         }
