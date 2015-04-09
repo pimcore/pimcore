@@ -84,12 +84,6 @@ class Staticroute extends AbstractModel {
      */
     public $modificationDate;
 
-    /**
-     * Associative array filled on match() that holds matched path values
-     * for given variable names.
-     * @var array
-     */
-    public $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
@@ -103,7 +97,7 @@ class Staticroute extends AbstractModel {
      *
      * @var Staticroute
      */
-    protected static $_currentRoute;
+    private static $_currentRoute;
 
     /**
      * @static
@@ -192,20 +186,6 @@ class Staticroute extends AbstractModel {
         $route->save();
 
         return $route;
-    }
-
-    /**
-     * Get values from previous match, by default only applicable if currentRoute matches this route
-     * Different routes may have different defaults, therefore previous match may not always be applied
-     * @param bool $routeMatchRequired  Whether current-route must match this route
-     * @return array
-     */
-    protected function _getMatchedValues( $routeMatchRequired = true ) {
-        if( self::$_currentRoute != null && (self::$_currentRoute->getName() == $this->getName() || !$routeMatchRequired ) ) {
-            return self::$_currentRoute->_values;
-        } else {
-            return $this->_values;
-        }
     }
 
     /**
@@ -408,9 +388,7 @@ class Staticroute extends AbstractModel {
 
     /**
      * @param array $urlOptions
-     * @param bool $reset
-     * @param bool $encode
-     * @return mixed|string
+     * @return string
      */
     public function assemble (array $urlOptions = array(), $reset=false, $encode=true) {
 
@@ -430,11 +408,7 @@ class Staticroute extends AbstractModel {
             }
         }
 
-        // apply values (controller,action,module, ... ) from previous match if applicable
-        $defaultValues = $reset ? $this->getDefaultsArray() : array_merge( $this->getDefaultsArray(), $this->_getMatchedValues() );
-        // merge with defaults
-        $urlParams = array_merge($requestParameters, $defaultValues, $urlOptions );
-
+        $urlParams = array_merge($requestParameters, $this->getDefaultsArray(), $urlOptions);
         $parametersInReversePattern = array();
         $parametersGet = array();
         $parametersNotNamed = array();
@@ -565,8 +539,6 @@ class Staticroute extends AbstractModel {
             if(!empty($module)){
                 $params["module"] = $module;
             }
-            // remember for reverse assemble
-            $this->_values = $params;
 
             return $params;
         }
