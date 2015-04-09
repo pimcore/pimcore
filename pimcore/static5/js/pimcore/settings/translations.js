@@ -300,10 +300,6 @@ pimcore.settings.translations = Class.create({
             }
         }));
 
-        //var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-        //    clicksToMoveEditor: 1,
-        //    autoCancel: false
-        //});
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1

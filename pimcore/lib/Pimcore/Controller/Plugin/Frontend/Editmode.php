@@ -85,7 +85,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
             $editmodeStylesheets = array(
                 "/pimcore/static5/css/icons.css",
                 "/pimcore/static5/js/lib/ext/packages/ext-theme-classic-sandbox/build/resources/ext-theme-classic-sandbox-all-debug.css",
-                "/pimcore/static5/css/editmode.css?asd=" . time()
+                "/pimcore/static5/css/editmode-classic.css?asd=" . time()
             );
 
 
