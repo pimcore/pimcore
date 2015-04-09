@@ -67,7 +67,6 @@ Ext.require([
 var dndManager;
 
 Ext.onReady(function () {
-    console.log("Ext ready");
     var body = Ext.getBody();
 
     /* Drag an Drop from Tree panel */
