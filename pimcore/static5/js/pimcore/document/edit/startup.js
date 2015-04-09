@@ -27,6 +27,7 @@ if (!console) {
 
 // some globals
 var editables = [];
+var editablesReady = false;
 var editableNames = [];
 var editWindow;
 
@@ -66,6 +67,7 @@ Ext.require([
 var dndManager;
 
 Ext.onReady(function () {
+    console.log("Ext ready");
     var body = Ext.getBody();
 
     /* Drag an Drop from Tree panel */
@@ -135,6 +137,8 @@ Ext.onReady(function () {
                 window.scrollTo(editWindow.lastScrollposition.left, editWindow.lastScrollposition.top);
             }
         }
+
+        editablesReady = true;
 
         // add lazyload styles
         // this is necessary, because otherwise ext will overwrite many default styles (reset.css)

@@ -28,6 +28,7 @@ if (!console) {
 
 // some globals
 var editables = [];
+var editablesReady = false;
 var editableNames = [];
 var editWindow;
 
@@ -115,6 +116,8 @@ Ext.onReady(function () {
                 window.scrollTo(editWindow.lastScrollposition.left, editWindow.lastScrollposition.top);
             }
         }
+
+        editablesReady = true;
 
         // add lazyload styles
         // this is necessary, because otherwise ext will overwrite many default styles (reset.css)

@@ -294,7 +294,7 @@ pimcore.document.edit = Class.create({
 
         var values = {};
         
-        if (!this.frame || !this.frame.editables) {
+        if (!this.frame || !this.frame.editablesReady) {
             throw "edit not available";
         }
 
