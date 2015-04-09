@@ -30,8 +30,8 @@
                         }
                         ?>
 
-                        <h1><?= $this->input("cHeadline_".$i, ["width" => 900]); ?></h1>
-                        <div class="caption"><?= $this->textarea("cText_".$i, ["width" => 900]); ?></div>
+                        <h1><?= $this->input("cHeadline_".$i); ?></h1>
+                        <div class="caption"><?= $this->textarea("cText_".$i); ?></div>
                         <div class="margin-bottom-10"><?= $this->link("cLink_".$i, ["class" => "btn btn-large btn-default"]); ?></div>
                     </div>
                 </div>
