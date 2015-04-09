@@ -408,7 +408,7 @@ class Staticroute extends AbstractModel {
             }
         }
 
-        $urlParams = array_merge($requestParameters, $urlOptions);
+        $urlParams = array_merge($requestParameters, $this->getDefaultsArray(), $urlOptions);
         $parametersInReversePattern = array();
         $parametersGet = array();
         $parametersNotNamed = array();
