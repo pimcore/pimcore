@@ -313,7 +313,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
         $insertData = [];
         $insertStatement = [];
 
-        foreach($data['data'] as $key => $d) {
+        foreach($data as $key => $d) {
             $dataKeys[$this->db->quoteIdentifier($key)] = '?';
             $updateData[] = $d;
             $insertStatement[] = $this->db->quoteIdentifier($key) . " = ?";

@@ -89,7 +89,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
             try {
                 $this->db->beginTransaction();
 
-                $this->doInsertData($data);
+                $this->doInsertData($data['data']);
 
                 //insert relation data
                 $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($objectId));
