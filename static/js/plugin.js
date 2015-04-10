@@ -2,6 +2,8 @@ pimcore.registerNS("pimcore.plugin.OnlineShop.plugin");
 
 pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
+    menuItems: null,
+
     getClassName: function (){
         return "pimcore.plugin.OnlineShop";
     },
@@ -28,6 +30,9 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
         var searchButton = Ext.get("pimcore_menu_settings");
 
+
+
+        // pricing rules
         if(user.isAllowed("plugin_onlineshop_pricing_rules")) {
             // add pricing rules to menu
             // create item
@@ -47,6 +52,31 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
             // add to menu
             menuItems.add(item);
         }
+
+
+        // order backend
+        if(user.isAllowed("plugin_onlineshop_back-office_order")) {
+            // create item
+            var panelId = "plugin_onlineshop_back-office_order";
+            var item = {
+                text: t("plugin_onlineshop_back-office_order"),
+                iconCls: "plugin_onlineshop_back-office_order",
+                handler: function () {
+                    try {
+                        pimcore.globalmanager.get(panelId).activate();
+                    }
+                    catch (e) {
+                        pimcore.globalmanager.add(panelId, new pimcore.tool.genericiframewindow("backoffice-order", "/plugin/OnlineShop/admin-order/list", "plugin_onlineshop_back-office_order", t('backoffice-order')));
+                    }
+                }
+            };
+
+            // add to menu
+            menuItems.add(item);
+        }
+
+
+
 
         if(user.admin) {
 

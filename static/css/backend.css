@@ -16,3 +16,7 @@
 .plugin_onlineshop_clear_config_cache {
     background: url(/pimcore/static/img/icon/lightning.png) no-repeat !important;
 }
+
+.plugin_onlineshop_back-office_order {
+    background: url("/pimcore/static/img/icon/cart_full.png") no-repeat scroll left center transparent !important;
+}
