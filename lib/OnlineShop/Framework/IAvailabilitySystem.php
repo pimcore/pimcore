@@ -1,10 +1,7 @@
 <?php
+
 /**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 28.10.11
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
+ * Interface OnlineShop_Framework_IAvailabilitySystem
  */
 interface OnlineShop_Framework_IAvailabilitySystem {
 

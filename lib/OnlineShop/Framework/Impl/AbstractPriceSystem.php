@@ -1,12 +1,10 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 12.01.12
- * Time: 11:27
- * To change this template use File | Settings | File Templates.
- */
 
+/**
+ * Class OnlineShop_Framework_Impl_AbstractPriceSystem
+ *
+ * abstract implementation for price systems
+ */
 abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineShop_Framework_IPriceSystem {
 
     protected $config;
@@ -29,7 +27,7 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineSh
 
 
     /**
-     * returns shop-instance specific implementation of priceInfo, override this method in your own pricesystem to
+     * returns shop-instance specific implementation of priceInfo, override this method in your own price system to
      * set any price values
      * @param $quantityScale
      * @param $product

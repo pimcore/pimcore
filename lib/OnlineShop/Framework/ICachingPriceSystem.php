@@ -1,16 +1,26 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 11.01.12
- * Time: 11:08
- * To change this template use File | Settings | File Templates.
- */
 
+/**
+ * Interface OnlineShop_Framework_ICachingPriceSystem
+ */
 interface OnlineShop_Framework_ICachingPriceSystem extends OnlineShop_Framework_IPriceSystem {
 
+    /**
+     * load price infos once for gives product entries and caches them
+     *
+     * @param $productEntries
+     * @param $options
+     * @return mixed
+     */
     public function loadPriceInfos($productEntries, $options);
 
+    /**
+     * clears cached price infos
+     *
+     * @param $productEntries
+     * @param $options
+     * @return mixed
+     */
     public function clearPriceInfos($productEntries,$options);
 
 }

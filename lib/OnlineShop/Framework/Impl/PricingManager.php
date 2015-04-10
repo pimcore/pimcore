@@ -1,12 +1,8 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: tballmann
- * Date: 05.04.13
- * Time: 13:04
- * To change this template use File | Settings | File Templates.
- */
 
+/**
+ * Class OnlineShop_Framework_Impl_PricingManager
+ */
 class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_IPricingManager
 {
 

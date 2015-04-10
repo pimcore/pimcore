@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_Impl_CommitOrderProcessor
+ */
 class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Framework_ICommitOrderProcessor {
 
     /**

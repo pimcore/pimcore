@@ -1,23 +1,19 @@
 <?php
+
 /**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 12.01.12
- * Time: 14:19
- * To change this template use File | Settings | File Templates.
+ * Class OnlineShop_Framework_Impl_LazyLoadingPriceInfo
+ *
+ * Base implementation for a lazy loading price info
+ *
  */
-
-
 class OnlineShop_Framework_Impl_LazyLoadingPriceInfo extends OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo
 {
-
-
     public static function getInstance()
     {
         return parent::getInstance();
     }
 
-    private $priceRegistry = array();
+    protected $priceRegistry = array();
 
 
     public function getPrice()
@@ -25,9 +21,9 @@ class OnlineShop_Framework_Impl_LazyLoadingPriceInfo extends OnlineShop_Framewor
         parent::getPrice();
     }
 
-    function __call($name, $bla)
+    function __call($name, $arg)
     {
-        if (key_exists($name, $this->priceRegistry)) {
+        if (array_key_exists($name, $this->priceRegistry)) {
             return $this->priceRegistry[$name];
         } else {
             if (method_exists($this, "_" . $name)) {
@@ -47,9 +43,5 @@ class OnlineShop_Framework_Impl_LazyLoadingPriceInfo extends OnlineShop_Framewor
         }
 
         return $this->priceRegistry[$name];
-
-
     }
-
-
 }

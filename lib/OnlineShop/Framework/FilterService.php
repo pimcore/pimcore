@@ -1,12 +1,8 @@
 <?php
+
 /**
- * Created by JetBrains PhpStorm.
- * User: Christian
- * Date: 14.09.11
- * Time: 20:53
- * To change this template use File | Settings | File Templates.
+ * Class OnlineShop_Framework_FilterService
  */
- 
 class OnlineShop_Framework_FilterService {
 
     protected $config;

@@ -1,11 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tballmann
- * Date: 03.10.2014
- * Time: 16:45
- */
 
+/**
+ * Class OnlineShop_Framework_Impl_PaymentManager
+ */
 class OnlineShop_Framework_Impl_PaymentManager implements OnlineShop_Framework_IPaymentManager
 {
     /**

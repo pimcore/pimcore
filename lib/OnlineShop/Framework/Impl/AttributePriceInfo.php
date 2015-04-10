@@ -1,76 +1,46 @@
 <?php
+
 /**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 12.01.12
- * Time: 14:19
- * To change this template use File | Settings | File Templates.
+ * Class OnlineShop_Framework_Impl_AttributePriceInfo
+ *
+ * attribute info for attribute price system
  */
-
-
 class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo {
 
-
-    private $config;
-    private $priceClass = 'OnlineShop_Framework_Impl_Price';
-
-    public function __construct($params) {
-        if (is_array($params)) {
-            $params = current($params);
-
-            if($params["product"]) {
-                $this->product = $params["product"];
-                $this->products = $params["products"];
-                $this->quantityScale = $params["quantityScale"];
-                $this->config = $params["config"];
-                if($this->config->priceclass) {
-                    $this->priceClass = $this->config->priceclass;
-                }
-            } else {
-                $this->product = current($params);
-            }
-
-        } else {
-            $this->product = $params;
-        }
-
-    }
-
-    protected function getDefaultCurrency() {
-        return new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
-    }
+    /**
+     * @var OnlineShop_Framework_IPrice
+     */
+    protected $price;
 
     /**
-     * @return OnlineShop_Framework_Impl_Price
+     * @var OnlineShop_Framework_IPrice
      */
+    protected $totalPrice;
+
+
+    public function __construct(OnlineShop_Framework_IPrice $price, $quantity, OnlineShop_Framework_IPrice $totalPrice) {
+        $this->price = $price;
+        $this->totalPrice = $totalPrice;
+        $this->quantity = $quantity;
+    }
+
     public function getPrice() {
-
-        $getter = "get" . ucfirst($this->config->attributename);
-        if(method_exists($this->product, $getter)) {
-
-            if(!empty($this->products)) {
-                $sum = 0;
-                foreach($this->products as $p) {
-
-                    if($p instanceof OnlineShop_Framework_AbstractSetProductEntry) {
-                        $sum += $p->getProduct()->$getter() * $p->getQuantity();
-                    } else {
-                        $sum += $p->$getter();
-                    }
-                }
-                return new $this->priceClass($sum, $this->getDefaultCurrency(), false);
-
-            } else {
-                return new $this->priceClass($this->product->$getter(), $this->getDefaultCurrency(), false);
-            }
-        }
+        return $this->price;
     }
 
     public function getTotalPrice() {
-        return new $this->priceClass($this->getPrice()->getAmount() * $this->getQuantity(), ($this->getPrice()->getCurrency()), false);
+        return $this->totalPrice;
     }
 
+    /**
+     * try to delegate all other functions to the product
+     *
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
     public function __call($name, $arguments) {
         return $this->product->$name($arguments);
     }
+
 }
