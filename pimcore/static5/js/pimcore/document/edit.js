@@ -67,12 +67,15 @@ pimcore.document.edit = Class.create({
                     var editables = this.frame.Ext.getBody().query(".pimcore_editable");
                     var ed;
                     for(var i=0; i<editables.length; i++) {
-                        ed = Ext.get(editables[i]);
+                        var ed = this.frame.Ext.get(editables[i]);
+
                         if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
                             && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
                             if(el.pressed) {
                                 var mask = ed.mask();
                                 mask.setStyle("background-color","#f5d833");
+                                mask.setStyle("opacity","0.5");
+                                mask.setStyle("pointer-events","none");
                             } else {
                                 ed.unmask();
                             }
