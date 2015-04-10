@@ -1,5 +1,7 @@
 <?php
 
+use OnlineShop\Framework\IOrderManager;
+
 class OnlineShop_Framework_Factory {
 
     /**
@@ -41,6 +43,11 @@ class OnlineShop_Framework_Factory {
      * @var OnlineShop_Framework_IPricingManager
      */
     private $pricingManager;
+
+    /**
+     * @var IOrderManager
+     */
+    private $orderManager;
 
     /**
      * @var OnlineShop_OfferTool_IService
@@ -120,6 +127,7 @@ class OnlineShop_Framework_Factory {
         $this->configureCheckoutManager($config);
         $this->configurePricingManager($config);
         $this->configurePaymentManager($config);
+        $this->configureOrderManager($config);
 
         $this->configureOfferToolService($config);
     }
@@ -263,6 +271,11 @@ class OnlineShop_Framework_Factory {
     }
 
 
+    /**
+     * @param Zend_Config $config
+     *
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
     private function configurePaymentManager(Zend_Config $config)
     {
         if (!empty($config->onlineshop->paymentmanager->class))
@@ -278,6 +291,31 @@ class OnlineShop_Framework_Factory {
             else
             {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " not found.");
+            }
+        }
+    }
+
+
+    /**
+     * @param Zend_Config $config
+     *
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    private function configureOrderManager(Zend_Config $config)
+    {
+        if (!empty($config->onlineshop->ordermanager->class))
+        {
+            if (class_exists($config->onlineshop->ordermanager->class))
+            {
+                $this->orderManager = new $config->onlineshop->ordermanager->class( $config->onlineshop->ordermanager->config );
+                if (!($this->orderManager instanceof OnlineShop\Framework\IOrderManager))
+                {
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " does not implement OnlineShop\\Framework\\IOrderManager.");
+                }
+            }
+            else
+            {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " not found.");
             }
         }
     }
@@ -447,5 +485,14 @@ class OnlineShop_Framework_Factory {
     public function getPaymentManager()
     {
         return $this->paymentManager;
+    }
+
+
+    /**
+     * @return IOrderManager
+     */
+    public function getOrderManager()
+    {
+        return $this->orderManager;
     }
 }
