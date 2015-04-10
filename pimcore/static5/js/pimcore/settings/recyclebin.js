@@ -257,10 +257,12 @@ pimcore.settings.recyclebin = Class.create({
     },
 
     onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelected();
-        if (!rec) {
+        var selections = this.grid.getSelectionModel().getSelected();
+        if (!selections || selections.getCount() == 0 ) {
             return false;
         }
+        var rec = selections.getAt(0);
+
         this.grid.store.remove(rec);
 
         Ext.getCmp("pimcore_recyclebin_button_restore").disable();
@@ -270,11 +272,12 @@ pimcore.settings.recyclebin = Class.create({
     onRestore: function () {
         
         pimcore.helpers.loadingShow();
-        
-        var rec = this.grid.getSelectionModel().getSelected();
-        if (!rec) {
+
+        var selections = this.grid.getSelectionModel().getSelected();
+        if (!selections || selections.getCount() == 0 ) {
             return false;
         }
+        var rec = selections.getAt(0);
 
         Ext.Ajax.request({
             url: "/admin/recyclebin/restore",
