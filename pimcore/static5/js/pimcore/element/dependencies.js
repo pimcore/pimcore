@@ -154,7 +154,6 @@ pimcore.element.dependencies = Class.create({
         this.requiredByStore = new Ext.data.JsonStore({
             autoDestroy: true,
             data: this.requiredByData,
-            //rootProperty: 'requiredBy',
             fields: ['id', 'path', 'type', 'subtype'],
             proxy: {
                 type: 'memory',
@@ -164,8 +163,6 @@ pimcore.element.dependencies = Class.create({
                 }
             }
         });
-        
-                        
                                 
         this.requiredByGrid = Ext.create('Ext.grid.Panel', {
             store: this.requiredByStore,
@@ -199,9 +196,9 @@ pimcore.element.dependencies = Class.create({
         this.requiredByLoaded = true;        
     },
 
-    click: function ( grid, index) {
+    click: function ( grid, record, tr, rowIndex, e, eOpts ) {
         
-        var d = grid.getStore().getAt(index).data;
+        var d = record.data;
 
         if (d.type == "object") {
             pimcore.helpers.openObject(d.id, d.subtype);
