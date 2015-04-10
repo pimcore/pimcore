@@ -58,7 +58,7 @@ pimcore.document.tag = Class.create({
                 target: mask,
                 showDelay: 100,
                 trackMouse:true,
-                title: t("click_right_to_overwrite")
+                html: t("click_right_to_overwrite")
             });
             mask.on("contextmenu", function (e) {
                 var menu = new Ext.menu.Menu();
