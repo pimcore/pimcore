@@ -312,5 +312,13 @@
             <orderstorage offerClass="Object_OfferToolOffer" offerItemClass="Object_OfferToolOfferItem" parentFolderPath="/offertool/offers/%Y/%m"/>
         </offertool>
 
+        <!-- order manager -->
+        <ordermanager class="OnlineShop\Framework\Impl\OrderManager">
+            <config>
+                <orderList class="OnlineShop\Framework\Impl\OrderManager\Order\Listing" classItem="OnlineShop\Framework\Impl\OrderManager\Order\Listing\Item"/>
+                <orderAgent class="OnlineShop\Framework\Impl\OrderManager\Order\Agent" />
+            </config>
+        </ordermanager>
+
     </onlineshop>
 </zend-config>
