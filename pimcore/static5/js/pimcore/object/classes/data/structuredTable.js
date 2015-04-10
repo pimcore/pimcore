@@ -237,10 +237,11 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
     onDelete: function (store, title) {
         if(store.getCount() > 1) {
-            var rec = this.grids[title].getSelectionModel().getSelected();
-            if (!rec) {
+            var selections = this.grids[title].getSelectionModel().getSelected();
+            if (!selections || selections.getCount() == 0) {
                 return false;
             }
+            var rec = selections.getAt(0);
             store.remove(rec);
         }
     },
