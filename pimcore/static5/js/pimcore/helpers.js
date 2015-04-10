@@ -1574,7 +1574,10 @@ pimcore.helpers.getMainTabMenuItems = function () {
     items = [{
         text: t('close_others'),
         iconCls: "",
-        handler: function (item) {
+        handler: function (menuItem) {
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            var plugin = tabPanel.getPlugin("tabclosemenu");
+            el = plugin.item;
             pimcore.helpers.closeAllElements(el);
             // clear the opentab store, so that also non existing elements are flushed
             pimcore.helpers.clearOpenTab();
