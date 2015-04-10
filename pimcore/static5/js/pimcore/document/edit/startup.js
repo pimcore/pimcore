@@ -164,7 +164,7 @@ Ext.onReady(function () {
                         target: tmpEl,
                         showDelay: 100,
                         anchor: "left",
-                        title: t("click_right_for_more_options")
+                        html: t("click_right_for_more_options")
                     });
                 }
 
