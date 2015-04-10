@@ -42,7 +42,7 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
                 $columnGroup = "";
                 $filterGroups = $indexService->getAllFilterGroups();
                 foreach($filterGroups as $filterGroup) {
-                    $fields = $indexService->getIndexColumnsByFilterGroup($filterGroup);
+                    $fields = $indexService->getIndexAttributesByFilterGroup($filterGroup);
                     foreach($fields as $field) {
                         if($field == $this->getParam("field")) {
                             $columnGroup = $filterGroup;
@@ -75,14 +75,14 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
 
             $indexColumns = array();
             foreach($filtergroups as $filtergroup) {
-                $indexColumns = array_merge($indexColumns, $indexService->getIndexColumnsByFilterGroup($filtergroup, $this->getParam("tenant")));
+                $indexColumns = array_merge($indexColumns, $indexService->getIndexAttributesByFilterGroup($filtergroup, $this->getParam("tenant")));
             }
 
         } else {
             if($this->getParam("show_all_fields") == "true") {
-                $indexColumns = $indexService->getIndexColumns(false, $this->getParam("tenant"));
+                $indexColumns = $indexService->getIndexAttributes(false, $this->getParam("tenant"));
             } else {
-                $indexColumns = $indexService->getIndexColumns(true, $this->getParam("tenant"));
+                $indexColumns = $indexService->getIndexAttributes(true, $this->getParam("tenant"));
             }
         }
 

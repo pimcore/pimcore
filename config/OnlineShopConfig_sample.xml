@@ -259,7 +259,12 @@
 
         </productindex>
 
-        <!-- assign backend implementations and views to filter type field collections -->
+        <!--
+            assign backend implementations and views to filter type field collections
+
+            helper = tool for pimcore backend controller to get possible group by values for a certain field
+                     (used by object data type IndexFieldSelection, e.g. in filter definitions)
+        -->
         <filtertypes helper="OnlineShop_Framework_FilterService_FilterGroupHelper">
             <FilterNumberRange class="OnlineShop_Framework_FilterService_NumberRange" script="/shop/filters/range.php"/>
             <FilterNumberRangeSelection class="OnlineShop_Framework_FilterService_NumberRangeSelection" script="/shop/filters/numberrange.php"/>

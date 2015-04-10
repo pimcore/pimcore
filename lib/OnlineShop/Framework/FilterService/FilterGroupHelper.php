@@ -1,9 +1,25 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_FilterService_FilterGroupHelper
+ *
+ * Helper for getting possible group by values based on different column groups
+ *
+ * one or more column groups can be mapped to one column type - which defines the logic for retrieving data
+ *
+ * available column types are
+ *  - relation
+ *  - multiselect
+ *  - category
+ *  - other
+ *
+ */
 class OnlineShop_Framework_FilterService_FilterGroupHelper
 {
 
     /**
+     * its possible to combine more different column groups to one column type (which has one logic for retrieving data)
+     *
      * might be overwritten, if new column groups are necessary
      *
      * @param $columnGroup
@@ -13,6 +29,14 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
         return $columnGroup;
     }
 
+    /**
+     * returns all possible group by values for given column group, product list and field combination
+     *
+     * @param $columnGroup
+     * @param $productList
+     * @param $field
+     * @return array
+     */
     public static function getGroupByValuesForFilterGroup($columnGroup, $productList, $field) {
         $columnType = self::getColumnTypeForColumnGroup($columnGroup);
 
