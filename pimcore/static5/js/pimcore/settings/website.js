@@ -175,7 +175,9 @@ pimcore.settings.website = Class.create({
             triggerAction:"all",
             listeners:{
                 select:function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
+                    var limit = intval(rec.data.field1);
+                    this.store.getProxy().extraParams.limit = limit;
+                    this.pagingtoolbar.pageSize = limit;
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
