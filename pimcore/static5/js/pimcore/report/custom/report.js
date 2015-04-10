@@ -56,8 +56,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 header: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
                 hidden: !colConfig["display"],
                 sortable: colConfig["order"],
-                dataIndex: colConfig["name"],
-                filterable: false
+                dataIndex: colConfig["name"]
             };
 
             if(colConfig["width"]) {
@@ -65,12 +64,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             if(colConfig["filter"]) {
-                filters.push({
-                    dataIndex: colConfig["name"],
-                    type: colConfig["filter"]
-                });
-
-                gridColConfig["filterable"] = true;
+                gridColConfig["filter"] = colConfig["filter"];
             }
 
 
@@ -83,12 +77,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
         }
-
-        this.gridFilters = new Ext.ux.grid.GridFilters({
-            filters: filters,
-            encode: true,
-            local: false
-        });
 
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
@@ -207,7 +195,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             bbar: this.pagingtoolbar,
             columns: gridColums,
             columnLines: true,
-            plugins: [this.gridFilters],
+            plugins: ['gridfilters'],
             stripeRows: true,
             trackMouseOver: true,
             viewConfig: {
