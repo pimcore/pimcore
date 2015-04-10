@@ -293,11 +293,27 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             $list->setOrder("asc");
             $list->setOrderKey("key");
 
-            if($this->getParam("dir")) {
-                $list->setOrder($this->getParam("dir"));
-            }
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
+            if (\Pimcore\Tool\Admin::isExtJS5()) {
+                $sortParam = $this->getParam("sort");
+                if ($sortParam) {
+                    $sortParam = json_decode($sortParam, true);
+                    $sortParam = $sortParam[0];
+                    $orderKey = $sortParam["property"];
+                    $order = $sortParam["direction"];
+
+                    $list->setOrderKey($orderKey);
+                    $list->setOrder($order);
+
+                }
+            } else {
+
+                if($this->getParam("dir")) {
+                    $list->setOrder($this->getParam("dir"));
+                }
+
+                if($this->getParam("sort")) {
+                    $list->setOrderKey($this->getParam("sort"));
+                }
             }
 
             $list->setLimit($this->getParam("limit"));
