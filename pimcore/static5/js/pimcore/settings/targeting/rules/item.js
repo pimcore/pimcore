@@ -195,14 +195,14 @@ pimcore.settings.targeting.rules.item = Class.create({
                 xtype: "textfield",
                 fieldLabel: t("name"),
                 name: "name",
-                width: 250,
+                width: 350,
                 disabled: true,
                 value: this.data.name
             }, {
                 name: "description",
                 fieldLabel: t("description"),
                 xtype: "textarea",
-                width: 400,
+                width: 500,
                 height: 100,
                 value: this.data.description
             }, {
