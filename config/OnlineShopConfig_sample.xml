@@ -234,8 +234,9 @@
 
             <!-- configuration of different tenants -->
             <tenants>
-                <!--  <sampletenant class="OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig" file="/website/var/plugins/OnlineShop/sampletenant.xml">
+                <!--  <elasticsearch class="OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch" file="/website/var/plugins/OnlineShop/assortment-tenant-elasticsearch.xml"> -->
 
+                <!-- <sampletenant class="OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig">
                       <generalSearchColumns>
                           <column name="name"/>
                           <column name="shortDescription"/>
@@ -253,8 +254,6 @@
                           </column>
                       </columns>
                   </sampletenant>-->
-                <!--<testtenant2 class="OnlineShop_Framework_IndexService_Tenant_DefaultConfigInheritColumnConfig">
-                </testtenant2>-->
             </tenants>
 
         </productindex>
