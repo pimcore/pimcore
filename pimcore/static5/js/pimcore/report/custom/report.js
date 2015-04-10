@@ -45,6 +45,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         var filters = [];
         var drillDownFilterDefinitions = [];
         this.columnLabels = {};
+        this.gridfilters = {};
 
         for(var f=0; f<data.columnConfiguration.length; f++) {
             colConfig = data.columnConfiguration[f];
@@ -65,6 +66,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             if(colConfig["filter"]) {
                 gridColConfig["filter"] = colConfig["filter"];
+                this.gridfilters[colConfig["name"]] = colConfig["filter"];
             }
 
 
@@ -90,7 +92,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             remoteSort: true,
             listeners: {
                 load: function() {
-                    var filterData = this.gridFilters.getFilterData();
+                    var filterData = this.store.getFilters();
 
                     if(this.chartStore) {
                         this.chartStore.load({
@@ -164,7 +166,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             iconCls: "pimcore_icon_export",
             handler: function () {
                 var query = "";
-                var filterData = this.gridFilters.getFilterData();
+                var filterData = this.store.getFilters();
+
                 if(filterData.length > 0) {
                     query = "filter=" + encodeURIComponent(this.gridFilters.buildQuery(filterData).filter);
                 } else {
