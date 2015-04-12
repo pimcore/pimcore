@@ -117,7 +117,6 @@ class OnlineShop_Framework_ProductList_DefaultMockup {
             }
 
         }
-
         Logger::warn("Method $method not in Mockup implemented, delegating to object with id {$this->id}.");
 
         $object = $this->getOriginalObject();

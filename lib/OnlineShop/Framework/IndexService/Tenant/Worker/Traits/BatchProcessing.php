@@ -48,7 +48,6 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
             /**
              * @var OnlineShop_Framework_ProductInterfaces_IIndexable $object
              */
-
             if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = Pimcore::inAdmin();
                 $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
