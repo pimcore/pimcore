@@ -38,7 +38,11 @@
                     </config>
                 </pricecalculator>
 
-                <!-- special configuration for specific checkout tenants -->
+                <!--
+                    special configuration for specific checkout tenants
+                    - for not specified elements the default configuration is used as fallback
+                    - active tenant is set at OnlineShop_Framework_IEnvironment::setCurrentCheckoutTenant()
+                -->
                 <tenants>
                     <noShipping>
                         <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
@@ -167,13 +171,18 @@
             <generalSearchColumns>
                 <column name="name"/>
                 <column name="seoname"/>
-                <column name="color" />
             </generalSearchColumns>
 
             <!-- column definition for product index -->
             <columns>
                 <column name="name" type="varchar(255)" locale="en_GB" filtergroup="string"/>
                 <column name="seoname" type="varchar(255)" filtergroup="string"/>
+
+               <!--
+
+                SAMPLE FOR FURTHER ATTRIBUTES
+
+
                 <column name="color" type="varchar(255)" filtergroup="multiselect" />
                 <column name="gender" type="varchar(100)" filtergroup="multiselect"/>
                 <column name="features" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" filtergroup="relation" />
@@ -229,7 +238,7 @@
                 <column name="simularity_feature" fieldname="features" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
                 <column name="simularity_technolgy" fieldname="technologies" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
                 <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-
+                -->
             </columns>
 
             <!-- configuration of different tenants -->
@@ -279,6 +288,8 @@
         <!-- pricing manager -->
         <pricingmanager class="OnlineShop_Framework_Impl_PricingManager">
             <config>
+                <!--<disabled>true</disabled>-->
+
                 <!-- rule and priceinfo -->
                 <rule class="OnlineShop_Framework_Impl_Pricing_Rule" />
                 <priceInfo class="OnlineShop_Framework_Impl_Pricing_PriceInfo" />

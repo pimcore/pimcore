@@ -8,6 +8,10 @@ interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_ICompon
     /**
      * returns cart class name configured in the xml
      *
+     * Is also responsible for checking if guest cart class should be used or not,
+     * by calling OnlineShop_Framework_IEnvironment::getUseGuestCart();
+     *
+     *
      * @return string
      */
     public function getCartClassName();
