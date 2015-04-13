@@ -38,22 +38,22 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig:function (field) {
         return {header:ts(field.label), width:150, sortable:true, dataIndex:field.key,
-                                                            renderer:function (key, value, metaData, record) {
+            renderer:function (key, value, metaData, record) {
 
-            this.applyPermissionStyle(key, value, metaData, record);
+                this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.tdCls += " grid_value_inherited";
-            }
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
 
-            if (value) {
-                var timestamp = intval(value) * 1000;
-                var date = new Date(timestamp);
+                if (value) {
+                    var timestamp = intval(value) * 1000;
+                    var date = new Date(timestamp);
 
-                return Ext.Date.format(date, "Y-m-d");
-            }
-            return "";
-        }.bind(this, field.key)};
+                    return Ext.Date.format(date, "Y-m-d");
+                }
+                return "";
+            }.bind(this, field.key)};
     },
 
     getGridColumnFilter:function (field) {
@@ -68,6 +68,11 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
             componentCls:"object_field",
             width:100
         };
+
+        if (this.fieldConfig.labelWidth) {
+            date.labelWidth = this.fieldConfig.labelWidth;
+        }
+        date.width += date.labelWidth;
 
         if (this.data) {
             var tmpDate = new Date(intval(this.data) * 1000);
