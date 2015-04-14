@@ -393,7 +393,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             },
             viewConfig: {
                 markDirty: false,
-                forceFit: true
+                forceFit: true,
+                xtype: 'patchedgridview'
             },
             componentCls: cls,
             //width: gridWidth,
@@ -832,8 +833,12 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         metaData.tdCls += " grid_value_locked";
                     }
 
-                    metaData.tdCls += ' x-grid3-check-col-td';
-                    return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
+                    if (value) {
+                        return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+
+                    } else {
+                        return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                    }
                 }.bind(this, field.key)
             });
         } else if (field.layout.gridType == "translated") {
