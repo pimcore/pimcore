@@ -488,8 +488,12 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     return data.translated;
                 }
             } else if (type == "bool") {
-                metaData.tdCls += ' x-grid3-check-col-td';
-                return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+                if (value) {
+                    return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+
+                } else {
+                    return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                }
             } else if (type == "range") {
                 // render range value for list view [YouWe]
                 var rangeObject = Ext.util.JSON.decode(value);

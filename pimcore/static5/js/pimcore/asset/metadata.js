@@ -358,9 +358,12 @@ pimcore.asset.metadata = Class.create({
                 return value.format("Y-m-d");
             }
         } else if (type == "checkbox") {
-            metaData.css += ' x-grid3-check-col-td';
-            return String.format('<div class="x-grid3-check-col{0}" '
-            + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+            if (value) {
+                return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+
+            } else {
+                return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+            }
         }
 
         return value;

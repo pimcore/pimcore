@@ -394,9 +394,12 @@ pimcore.element.properties = Class.create({
                 return '<div class="pimcore_property_droptarget">&nbsp;</div>';
             }
         } else if (type == "bool" && data.inherited == false) {
-            metaData.css += ' x-grid3-check-col-td';
-            return String.format('<div class="x-grid3-check-col{0}" '
-                        + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+            if (value) {
+                return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+
+            } else {
+                return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+            }
         }
  
         return value;
@@ -620,7 +623,7 @@ pimcore.element.properties = Class.create({
 
         store.add(newRecord);
  
-        this.propertyGrid.getStore().groupBy("inherited", true);
+        this.propertyGrid.getStore().group("inherited");
         this.propertyGrid.getView().refresh();
     },
  

@@ -353,7 +353,8 @@ pimcore.settings.website = Class.create({
                     rowupdated: this.updateRows.bind(this, "rowupdated"),
                     refresh: this.updateRows.bind(this, "refresh")
                 },
-                forceFit:true
+                forceFit:true,
+                xtype: 'patchedgridview'
             }
         });
 
@@ -483,10 +484,12 @@ pimcore.settings.website = Class.create({
         if (type == "document" || type == "asset" || type == "object") {
             return '<div class="pimcore_property_droptarget">' + value + '</div>';
         } else if (type == "bool") {
-            metaData.css += ' x-grid3-check-col-td';
-            return String.format(
-                '<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>',
-                value ? '-on' : '');
+            if (value) {
+                return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+
+            } else {
+                return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+            }
         }
 
         return value;

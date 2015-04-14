@@ -152,12 +152,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 });
             } else if(this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    metaData.tdCls += ' x-grid3-check-col-td';
-                    if(!value || value == "0") {
-                        value = false;
+                    if (value) {
+                        return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+
+                    } else {
+                        return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
                     }
-                    return String.format('<div class="x-grid3-check-col{0}"'
-                    + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
                 };
                 editor = new Ext.form.Checkbox({});
 
