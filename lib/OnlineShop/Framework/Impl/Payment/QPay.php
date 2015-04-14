@@ -170,7 +170,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         $fingerprint = '';
         foreach($fields as $field)
         {
-            $fingerprint .= $field == 'secret' ? $this->secret : utf8_encode($response[ $field ]);
+            $fingerprint .= $field == 'secret' ? $this->secret : $response[ $field ];
         }
 
         $fingerprint = md5($fingerprint);
