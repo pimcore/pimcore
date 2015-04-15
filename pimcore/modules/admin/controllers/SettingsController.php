@@ -349,7 +349,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         }
 
         $cacheExcludePatterns = $values["cache.excludePatterns"];
-        if (\Pimcore\Tool\Admin::isExtJS5()) {
+        if (is_array($cacheExcludePatterns)) {
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
 
@@ -365,6 +365,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 "defaultLanguage" => $values["general.defaultLanguage"],
                 "theme" => $values["general.theme"],
                 "contactemail" => $values["general.contactemail"],
+                "extjs5" => $values["general.extjs5"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
                 "debug" => $values["general.debug"],

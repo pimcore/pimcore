@@ -192,6 +192,18 @@ pimcore.settings.system = Class.create({
                                 width: 450
                             },
                             {
+                                fieldLabel: t("extjs_version"),
+                                xtype: "combo",
+                                name: "general.extjs5",
+                                value: this.getValue("general.extjs5"),
+                                store: [
+                                    ["0",t("extjs_34")],
+                                    ["1",t("extjs_5")]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
+                            },
+                            {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
                                 name: "general.loginscreencustomimage",

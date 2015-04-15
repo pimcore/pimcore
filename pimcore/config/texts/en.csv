@@ -1556,3 +1556,6 @@
 "next_page","Next Page",
 "last_page","Last Page"
 "no_data_to_display","No data to display"
+"extjs_version","Ext JS Version <span style='color:red'>(experimental)</span>"
+"extjs_34","Ext JS 3.4 (default)"
+"extjs_5","Ext JS 5 (experimental)"

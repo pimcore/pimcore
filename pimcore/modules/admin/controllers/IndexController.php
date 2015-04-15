@@ -107,6 +107,12 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin {
 
         if ($this->getParam("extjs5")) {
             $this->forward("index5");
+        } else {
+            $config = \Pimcore\Config::getSystemConfig();
+            if ($config->general->extjs5) {
+                $this->forward("index5");
+            }
+
         }
     }
 

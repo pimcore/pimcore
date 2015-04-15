@@ -214,7 +214,14 @@ class Admin {
             return true;
         }
 
-        if(isset($_REQUEST["extjs5"]) && $_REQUEST["extjs5"]) {
+        $config = \Pimcore\Config::getSystemConfig();
+
+        if(isset($_REQUEST["extjs5"])) {
+            return (bool) $_REQUEST["extjs5"];
+        }
+
+        $mainSwitch = $config->general->extjs5;
+        if ($mainSwitch) {
             return true;
         }
 
