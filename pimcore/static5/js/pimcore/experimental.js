@@ -159,7 +159,7 @@ Ext.define('Ext.overrides.grid.View', {
 
             for (i = 0; i < names.length; i++) {
                 var node = queue[names[i]];
-                console.log("create toolbar for " + node.id + " " + node.data.expanded);
+                //console.log("create toolbar for " + node.id + " " + node.data.expanded);
 
                 if (node.data.expanded) {
                     node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {

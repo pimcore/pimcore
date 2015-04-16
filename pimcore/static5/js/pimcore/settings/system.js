@@ -490,7 +490,7 @@ pimcore.settings.system = Class.create({
                             items: [
                                 {
                                     xtype: 'textfield',
-                                    width: 400,
+                                    width: 650,
                                     fieldLabel: t("email_debug_addresses") + "(CSV)" + ' <span style="color:red;">*</span>',
                                     name: 'email.debug.emailAddresses',
                                     value: this.getValue("email.debug.emailaddresses"),
