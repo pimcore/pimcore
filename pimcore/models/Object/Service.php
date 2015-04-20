@@ -553,6 +553,7 @@ class Service extends Model\Element\Service {
         $conditionPartsFilters = array();
 
         if ($filterJson) {
+            $db = \Pimcore\Resource::get();
             $filters = \Zend_Json::decode($filterJson);
             foreach ($filters as $filter) {
 
@@ -643,9 +644,9 @@ class Service extends Model\Element\Service {
                 } else if (in_array("o_".$filter["field"], $systemFields)) {
                     // system field
                     if ($filter["field"] == "fullpath") {
-                        $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " '%" . $filter["value"] . "%' ";
+                        $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " " . $db->quote("%" . $filter["value"] . "%");
                     } else {
-                        $conditionPartsFilters[] = "`o_" . $filter["field"] . "` " . $operator . " '" . $filter["value"] . "' ";
+                        $conditionPartsFilters[] = "`o_" . $filter["field"] . "` " . $operator . " " . $db->quote($filter["value"]);
                     }
                 }
             }
