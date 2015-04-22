@@ -21,7 +21,8 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Fram
     }
 
     /**
-     * commits step and sets delivered data
+     * sets delivered data and commits step
+     *
      * @param  $data
      * @return bool
      */
@@ -31,6 +32,8 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Fram
     }
 
     /**
+     * returns saved data of step
+     *
      * @return mixed
      */
     public function getData() {
