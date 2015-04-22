@@ -104,10 +104,12 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      * @param string $fieldname
      */
     public function addCondition($condition, $fieldname = "") {
+        $this->products = null;
         $this->conditions[$fieldname][] = $condition;
     }
 
     public function resetCondition($fieldname) {
+        $this->products = null;
         unset($this->conditions[$fieldname]);
     }
 
@@ -116,6 +118,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      * @param string $condition
      */
     public function addRelationCondition($fieldname, $condition) {
+        $this->products = null;
         $this->relationConditions[$fieldname][] = "`fieldname` = " . $this->quote($fieldname) . " AND "  . $condition;
     }
 
@@ -128,6 +131,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
         $this->queryConditions = array();
         $this->conditionPriceFrom = null;
         $this->conditionPriceTo = null;
+        $this->products = null;
     }
 
 
@@ -141,6 +145,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      */
     public function addQueryCondition($condition, $fieldname = "")
     {
+        $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
     }
 
@@ -152,6 +157,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      */
     public function resetQueryCondition($fieldname)
     {
+        $this->products = null;
         unset($this->queryConditions[$fieldname]);
     }
 
@@ -160,6 +166,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      * @param null|float $to
      */
     public function addPriceCondition($from = null, $to = null) {
+        $this->products = null;
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
     }
@@ -169,6 +176,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      * @param boolean $inProductList
      */
     public function setInProductList($inProductList) {
+        $this->products = null;
         $this->inProductList = $inProductList;
     }
 
@@ -188,6 +196,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
     protected $orderByPrice = false;
 
     public function setOrder($order) {
+        $this->products = null;
         $this->order = $order;
     }
 
@@ -199,6 +208,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
      * @param $orderKey string | array  - either single field name, or array of field names or array of arrays (field name, direction)
      */
     public function setOrderKey($orderKey) {
+        $this->products = null;
         if($orderKey == OnlineShop_Framework_IProductList::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
         } else {
@@ -236,6 +246,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
 
 
     public function setCategory(OnlineShop_Framework_AbstractCategory $category) {
+        $this->products = null;
         $this->category = $category;
     }
 
@@ -244,6 +255,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
     }
 
     public function setVariantMode($variantMode) {
+        $this->products = null;
         $this->variantMode = $variantMode;
     }
 

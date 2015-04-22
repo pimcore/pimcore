@@ -138,6 +138,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function addCondition($condition, $fieldname = '')
     {
+        $this->products = null;
         $this->conditions[ $fieldname ][] = $condition;
     }
 
@@ -148,6 +149,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function resetCondition($fieldname)
     {
+        $this->products = null;
         unset($this->conditions[$fieldname]);
     }
 
@@ -162,6 +164,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function addQueryCondition($condition, $fieldname = "")
     {
+        $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
     }
 
@@ -173,6 +176,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function resetQueryCondition($fieldname)
     {
+        $this->products = null;
         unset($this->queryConditions[$fieldname]);
     }
 
@@ -187,6 +191,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         $this->queryConditions = array();
         $this->conditionPriceFrom = null;
         $this->conditionPriceTo = null;
+        $this->products = null;
     }
 
 
@@ -196,6 +201,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function addRelationCondition($fieldname, $condition)
     {
+        $this->products = null;
         $this->addCondition($condition, $fieldname);
     }
 
@@ -205,6 +211,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function addPriceCondition($from = null, $to = null)
     {
+        $this->products = null;
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
     }
@@ -215,6 +222,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function setInProductList($inProductList)
     {
+        $this->products = null;
         $this->inProductList = (bool)$inProductList;
     }
 
@@ -231,6 +239,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function setOrder($order)
     {
+        $this->products = null;
         $this->order = $order;
     }
 
@@ -247,6 +256,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function setOrderKey($orderKey)
     {
+        $this->products = null;
         $this->orderKey = $orderKey;
     }
 
@@ -279,7 +289,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
     public function setCategory(\OnlineShop_Framework_AbstractCategory $category)
     {
-//        throw new Exception('not yet implemented');
+        $this->products = null;
         $this->category = $category;
     }
 
@@ -289,7 +299,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
     public function setVariantMode($variantMode)
     {
-//        throw new Exception('not yet implemented');
+        $this->products = null;
         $this->variantMode = $variantMode;
     }
 
@@ -655,47 +665,6 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         return $this->getGroupByValues($fieldname, $countValues, $fieldnameShouldBeExcluded);
-    }
-
-    /**
-     * prepares all group by values for given field names and cache them in local variable
-     * considers both - normal values and relation values
-     *
-     * @param string $fieldname
-     *
-     * @return void
-     */
-    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
-    {
-        // nothing todo
-    }
-
-    /**
-     * prepares all group by values for given field names and cache them in local variable
-     * considers both - normal values and relation values
-     *
-     * @param string $fieldname
-     *
-     * @return void
-     */
-    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
-    {
-        // nothing todo
-    }
-
-    /**
-     * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
-     *
-     * @param      $fieldname
-     * @param bool $countValues
-     * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
-    {
-        throw new Exception('not yet implemented');
     }
 
 

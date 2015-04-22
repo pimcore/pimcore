@@ -136,6 +136,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function addCondition($condition, $fieldname = "") {
         $this->filterConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
@@ -147,6 +148,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function resetCondition($fieldname) {
         unset($this->filterConditions[$fieldname]);
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
@@ -158,6 +160,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function addRelationCondition($fieldname, $condition) {
         $this->relationConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
@@ -168,6 +171,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         $this->filterConditions = array();
         $this->queryConditions = array();
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
 
@@ -182,6 +186,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function addQueryCondition($condition, $fieldname = "") {
         $this->queryConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
@@ -193,6 +198,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function resetQueryCondition($fieldname) {
         unset($this->queryConditions[$fieldname]);
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
 
@@ -206,6 +212,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
@@ -215,6 +222,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function setInProductList($inProductList) {
         $this->inProductList = $inProductList;
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
@@ -232,6 +240,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      */
     public function setOrder($order) {
         $this->order = $order;
+        $this->products = null;
     }
 
     /**
@@ -250,6 +259,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @return void
      */
     public function setOrderKey($orderKey) {
+        $this->products = null;
         if($orderKey == OnlineShop_Framework_IProductList::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
         } else {
@@ -271,6 +281,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @return void
      */
     public function setLimit($limit) {
+        $this->products = null;
         $this->limit = $limit;
     }
 
@@ -286,6 +297,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @return void
      */
     public function setOffset($offset) {
+        $this->products = null;
         $this->offset = $offset;
     }
 
@@ -303,6 +315,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function setCategory(OnlineShop_Framework_AbstractCategory $category) {
         $this->category = $category;
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
@@ -319,6 +332,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     public function setVariantMode($variantMode) {
         $this->variantMode = $variantMode;
         $this->preparedGroupByValuesLoaded = false;
+        $this->products = null;
     }
 
     /**
