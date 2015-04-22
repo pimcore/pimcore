@@ -16,7 +16,8 @@ interface OnlineShop_Framework_IPayment
      * @param OnlineShop_Framework_IPrice $price
      * @param array                       $config
      *
-     * @return mixed
+     * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
+     *                 an zend form which needs to submitted (e.g. datatrans and wirecard)
      */
     public function initPayment(OnlineShop_Framework_IPrice $price, array $config);
 
