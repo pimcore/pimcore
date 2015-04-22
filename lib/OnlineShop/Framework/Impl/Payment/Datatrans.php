@@ -31,6 +31,11 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      */
     protected $paymentStatus;
 
+    /**
+     * @var Zend_Locale
+     */
+    protected $currencyLocale;
+
 
     /**
      * @param Zend_Config $xml
@@ -61,6 +66,8 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
             $this->endpoint['xmlAuthorize'] = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
             $this->endpoint['xmlProcessor'] = 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp';
         }
+
+        $this->currencyLocale = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale();
     }
 
 
@@ -81,7 +88,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         $required = [  'successUrl' => null
                        , 'errorUrl' => null
                        , 'cancelUrl' => null
-                       , 'internal_id' => null
+                       , 'refno' => null
                        , 'useAlias' => null
                        , 'reqtype' => null
                        , 'language' => null
@@ -123,7 +130,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         // order data
         $form->addElement( 'hidden', 'amount', ['value' => $paymentData['amount']] );
         $form->addElement( 'hidden', 'currency', ['value' => $paymentData['currency']] );
-        $form->addElement( 'hidden', 'refno', ['value' => $config['internal_id']] );
+        $form->addElement( 'hidden', 'refno', ['value' => $config['refno']] );
         $form->addElement( 'hidden', 'reqtype', ['value' => $paymentData['reqtype']] );
 
         if($config['useAlias'])

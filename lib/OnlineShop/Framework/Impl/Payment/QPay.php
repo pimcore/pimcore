@@ -27,6 +27,10 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      */
     protected $authorizedData;
 
+    /**
+     * @var Zend_Locale
+     */
+    protected $currencyLocale;
 
 
     /**
@@ -50,6 +54,8 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         {
             $this->paymenttype = $settings->paymenttype;
         }
+
+        $this->currencyLocale = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale();
     }
 
 
@@ -187,7 +193,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
 
         // restore price object for payment status
-        $price = new OnlineShop_Framework_Impl_Price($authorizedData['amount'], new Zend_Currency($authorizedData['currency']));
+        $price = new OnlineShop_Framework_Impl_Price($authorizedData['amount'], new Zend_Currency($authorizedData['currency'], OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
 
 
         return new OnlineShop_Framework_Impl_Payment_Status(
@@ -277,6 +283,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         else
         {
             // default clearing auth
+            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'], new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             $request = [
                 'customerId' => $this->customer
@@ -293,7 +300,6 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
             // add fingerprint
             $request['requestFingerprint'] = $this->computeFingerprint(
                 $request['customerId']
-//                , '' // shopId
                 , $request['toolkitPassword']
                 , $this->secret
                 , $request['command']

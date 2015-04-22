@@ -138,13 +138,22 @@
 
                 <provider name="qpay" class="OnlineShop_Framework_Impl_Payment_QPay" mode="sandbox">
                     <config>
+                        <!-- https://integration.wirecard.at/doku.php/wcp:integration -->
+                        <!-- https://integration.wirecard.at/doku.php/demo:demo_data -->
                         <sandbox>
                             <secret>B8AKTPWBRMNBV455FG6M2DANE99WU2</secret>
                             <customer>D200001</customer>
+                            <toolkitPassword>jcv45z</toolkitPassword>
                         </sandbox>
+                        <test>
+                            <secret>CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ</secret>
+                            <customer>D200411</customer>
+                            <toolkitPassword>2g4fq2m</toolkitPassword>
+                        </test>
                         <live>
                             <secret></secret>
                             <customer></customer>
+                            <toolkitPassword></toolkitPassword>
                         </live>
                     </config>
                 </provider>
