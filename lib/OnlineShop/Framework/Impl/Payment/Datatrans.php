@@ -215,7 +215,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
         // restore price object for payment status
-        $price = new OnlineShop_Framework_Impl_Price($response['amount'] / 100, new Zend_Currency($response['currency']));
+        $price = new OnlineShop_Framework_Impl_Price($response['amount'] / 100, new Zend_Currency($response['currency'], $this->currencyLocale));
 
 
         $paymentState = null;
@@ -266,7 +266,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
             // restore price object for payment status
-            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency']));
+            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
@@ -350,7 +350,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
             // restore price object for payment status
-            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency']));
+            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
