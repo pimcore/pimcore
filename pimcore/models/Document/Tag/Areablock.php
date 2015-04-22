@@ -205,10 +205,10 @@ class Areablock extends Model\Document\Tag {
                 $actionClassFound = true;
 
                 $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . ucfirst($this->currentIndex["type"]);
-                if(!Tool::classExists($actionClassname, false)) {
+                if(!class_exists($actionClassname, false)) {
                     // also check the legacy prefixed class name, as this is used by some plugins
                     $actionClassname = "\\Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);
-                    if(!Tool::classExists($actionClassname, false)) {
+                    if(!class_exists($actionClassname, false)) {
                         $actionClassFound = false;
                     }
                 }
@@ -771,11 +771,11 @@ class Areablock extends Model\Document\Tag {
         $doc = Model\Document\Page::getById( $this->getDocumentId() );
 
         $list = array();
-        foreach($this->getData() as $item)
+        foreach($this->getData() as $index => $item)
         {
             if($item['type'] == $name)
             {
-                $list[] = new Areablock\Item($doc, $this->getName(), $item['key']);
+                $list[ $index ] = new Areablock\Item($doc, $this->getName(), $item['key']);
             }
         }
 
