@@ -414,13 +414,9 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         $queryFilters = $this->buildQueryConditions($queryFilters, array());
 
         $params = array();
-        $generalSettings = $this->tenantConfig->getGeneralSettings();
-        if($generalSettings['indexName']){
-            $params['index'] = $generalSettings['indexName'];
-        }else{
-            $params['index'] = strtolower($this->tenantConfig->getTenantName());
-        }
+        $params['index'] = $this->getIndexName();
         $params['type'] = "product";
+        $params['body']['_source'] = false;
         $params['body']['size'] = $this->getLimit();
         $params['body']['from'] = $this->getOffset();
 
@@ -856,15 +852,16 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
 
         if($aggregations) {
             $params = array();
-            $params['index'] = strtolower($this->tenantConfig->getTenantName());
+            $params['index'] = $this->getIndexName();
             $params['type'] = "product";
             $params['search_type'] = "count";
             $params['body']['size'] = $this->getLimit();
             $params['body']['from'] = $this->getOffset();
-            $params['body']['query']['filtered']['query']['bool']['must'] = $queryFilters;
-            $params['body']['query']['filtered']['filter']['bool']['must'] = $boolFilters;
             $params['body']['aggs'] = $aggregations;
 
+
+            // build query for request
+            $params = $this->buildQuery($params, $boolFilters, $queryFilters);
 
             // send request
             $result = $this->sendRequest( $params );
@@ -937,6 +934,22 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         }
 
         return $result;
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getIndexName()
+    {
+        $generalSettings = $this->tenantConfig->getGeneralSettings();
+        if($generalSettings['indexName']){
+            $index = $generalSettings['indexName'];
+        }else{
+            $index = strtolower($this->tenantConfig->getTenantName());
+        }
+
+        return $index;
     }
 
 
