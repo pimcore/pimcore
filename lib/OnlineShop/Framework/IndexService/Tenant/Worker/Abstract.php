@@ -75,5 +75,19 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Worker_Abstract implemen
         return array();
     }
 
+    /**
+     * cleans up all old zombie data
+     *
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param array $subObjectIds
+     */
+    protected function doCleanupOldZombieData(OnlineShop_Framework_ProductInterfaces_IIndexable $object, array $subObjectIds) {
+        $cleanupIds = $this->tenantConfig->getSubIdsToCleanup($object, $subObjectIds);
+        foreach($cleanupIds as $idToCleanup) {
+            $this->doDeleteFromIndex($idToCleanup);
+        }
+    }
+
+    abstract protected function doDeleteFromIndex($subObjectId);
 
 }

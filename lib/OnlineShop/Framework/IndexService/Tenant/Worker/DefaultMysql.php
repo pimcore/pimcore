@@ -122,13 +122,20 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach($subObjectIds as $subObjectId => $object) {
-            $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
-            $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
-            if($this->tenantConfig->getTenantRelationTablename()) {
-                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
-            }
+            $this->doDeleteFromIndex($subObjectId);
         }
 
+        //cleans up all old zombie data
+        $this->doCleanupOldZombieData($object, $subObjectIds);
+
+    }
+
+    protected function doDeleteFromIndex($subObjectId) {
+        $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
+        $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+        if($this->tenantConfig->getTenantRelationTablename()) {
+            $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
+        }
     }
 
     public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
@@ -304,6 +311,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
             }
             $this->tenantConfig->updateSubTenantEntries($object, $subObjectId);
         }
+
+        //cleans up all old zombie data
+        $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
     protected function doInsertData($data) {

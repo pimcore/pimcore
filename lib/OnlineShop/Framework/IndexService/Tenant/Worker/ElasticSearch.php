@@ -265,6 +265,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
             $this->doDeleteFromIndex($subObjectId);
         }
 
+        //cleans up all old zombie data
+        $this->doCleanupOldZombieData($object, $subObjectIds);
+
     }
 
     protected function doDeleteFromIndex($objectId) {

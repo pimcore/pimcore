@@ -84,6 +84,17 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
     }
 
     /**
+     * checks if there are some zombie subIds around and returns them for cleanup
+     *
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param array $subIds
+     * @return mixed
+     */
+    public function getSubIdsToCleanup(OnlineShop_Framework_ProductInterfaces_IIndexable $object, array $subIds) {
+        return array();
+    }
+
+    /**
      * creates virtual parent id for given sub id
      * default is getOSParentId
      *
@@ -97,12 +108,13 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
 
     /**
      * Gets object by id, can consider subIds and therefore return e.g. an array of values
-     * always returns object itself - see als getObjectMockupById
+     * always returns object itself - see also getObjectMockupById
      *
      * @param $objectId
-     * @return \Pimcore\Model\Object\AbstractObject | array
+     * @param $onlyMainObject - only returns main object
+     * @return mixed
      */
-    public function getObjectById($objectId) {
+    public function getObjectById($objectId, $onlyMainObject = false) {
         return \Pimcore\Model\Object\AbstractObject::getById($objectId);
     }
 

@@ -34,6 +34,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
             $this->doDeleteFromIndex($subObjectId);
         }
 
+        //cleans up all old zombie data
+        $this->doCleanupOldZombieData($object, $subObjectIds);
+
     }
 
     protected function doDeleteFromIndex($objectId) {
@@ -64,6 +67,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
 
         $this->prepareDataForIndex($object);
 
+        //updates data for all subentries
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         foreach($subObjectIds as $subObjectId => $object) {
             $this->doUpdateIndex($subObjectId);

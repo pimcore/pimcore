@@ -203,6 +203,9 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
             }
         }
 
+        //cleans up all old zombie data
+        $this->doCleanupOldZombieData($object, $subObjectIds);
+
     }
 
 
@@ -256,7 +259,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
             foreach($entries as $objectId) {
                 Logger::info("Worker $workerId preparing data for index for element " . $objectId);
 
-                $object = \Pimcore\Model\Object\AbstractObject::getById($objectId);
+                $object = $this->tenantConfig->getObjectById($objectId, true);
                 if($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
                     $this->prepareDataForIndex($object);
                 } else {
