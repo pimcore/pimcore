@@ -218,6 +218,7 @@ class KeyValue extends Model\AbstractModel {
                     $parentPair["source"] = $parent->getId();
                     $parentPair["altSource"] = $parent->getId();
                     $parentPair["altValue"] = $parentPair["value"];
+                    $parentPair["groupId"] = Object\KeyValue\KeyConfig::getById($parentPair['key'])->getGroup();
                     $result[] = $parentPair;
                 }
             }
