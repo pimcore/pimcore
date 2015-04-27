@@ -660,4 +660,16 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
 
         return array_slice($index, 0, $count);
     }
+
+
+    /**
+     * sorts all items in cart according to a given callback function
+     *
+     * @param $value_compare_func
+     * @return OnlineShop_Framework_ICartItem[]
+     */
+    public function sortItems(callable $value_compare_func)
+    {
+
+    }
 }

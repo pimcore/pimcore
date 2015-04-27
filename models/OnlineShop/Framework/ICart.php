@@ -223,6 +223,14 @@ interface OnlineShop_Framework_ICart {
     public function setModificationDate(Zend_Date $modificationDate = null);
 
     /**
+     * sorts all items in cart according to a given callback function
+     *
+     * @param callable $value_compare_func
+     * @return OnlineShop_Framework_ICart
+     */
+    public function sortItems(callable $value_compare_func);
+
+    /**
      * saves cart
      *
      * @abstract

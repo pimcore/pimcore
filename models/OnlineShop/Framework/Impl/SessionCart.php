@@ -54,6 +54,18 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
 
     }
 
+    /**
+     * @param callable $value_compare_func
+     *
+     * @return $this
+     */
+    public function sortItems(callable $value_compare_func)
+    {
+        uasort($this->items, $value_compare_func);
+
+        return $this;
+    }
+
 
 
     protected static $unserializedCarts = null;

@@ -44,6 +44,25 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
     }
 
 
+    /**
+     * @param callable $value_compare_func
+     *
+     * @return $this
+     */
+    public function sortItems(callable $value_compare_func)
+    {
+        uasort($this->items, $value_compare_func);
+
+        $arrayKeys = array_keys($this->items);
+        foreach ($arrayKeys as $index => $key) {
+            $ite = $this->items[$key];
+            $ite->setSortIndex($index);
+        }
+
+        return $this;
+    }
+
+
 
     /**
      * @param int $id
@@ -65,8 +84,8 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
 
                 $itemList = new OnlineShop_Framework_Impl_CartItem_List();
                 $itemList->setCartItemClassName( $cart->getCartItemClassName() );
-                $db = \Pimcore\Resource::get();
-                $itemList->setCondition("cartId = " . $db->quote($cart->getId()) . " AND parentItemKey = ''");
+                $itemList->setCondition("cartId = " . $itemList->quote($cart->getId()) . " AND parentItemKey = ''");
+                $itemList->setOrderKey('sortIndex');
                 $items = array();
                 foreach ($itemList->getCartItems() as $item) {
                     if ($item->getProduct() != null) {
@@ -80,7 +99,7 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
                 $cart->setModificationDate( $mod );
 
                 $dataList = new OnlineShop_Framework_Impl_CartCheckoutData_List();
-                $dataList->setCondition("cartId = " . $db->quote($cart->getId()));
+                $dataList->setCondition("cartId = " . $dataList->quote($cart->getId()));
 
 
                 foreach ($dataList->getCartCheckoutDataItems() as $data) {
@@ -112,9 +131,4 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
         $list->setCartClass( get_called_class() );
         return $list->getCarts();
     }
-
-
-
-
-
 }

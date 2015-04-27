@@ -11,7 +11,10 @@ class OnlineShop_Framework_Impl_CartItem_Resource extends \Pimcore\Model\Resourc
      */
     protected $validColumns = array();
 
-    protected $fieldsToSave = array("cartId", "productId", "count", "itemKey", "parentItemKey", "comment", "addedDateTimestamp");
+    /**
+     * @var array
+     */
+    protected $fieldsToSave = array("cartId", "productId", "count", "itemKey", "parentItemKey", "comment", "addedDateTimestamp", "sortIndex");
 
     /**
      * Get the valid columns from the database

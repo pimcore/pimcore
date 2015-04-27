@@ -2,6 +2,27 @@
 
 class OnlineShop_Framework_Impl_CartItem extends OnlineShop_Framework_AbstractCartItem implements OnlineShop_Framework_ICartItem {
 
+    /**
+     * @var int
+     */
+    protected $sortIndex = 0;
+
+
+    /**
+     * @param int $sortIndex
+     */
+    public function setSortIndex($sortIndex)
+    {
+        $this->sortIndex = (int)$sortIndex;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSortIndex()
+    {
+        return $this->sortIndex;
+    }
 
 
     public function getCart() {
