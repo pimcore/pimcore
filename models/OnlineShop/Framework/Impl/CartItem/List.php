@@ -15,14 +15,14 @@ class OnlineShop_Framework_Impl_CartItem_List extends \Pimcore\Model\Listing\Abs
     /**
      * @var array
      */
-    protected $orderKey = array('`addedDateTimestamp`');
+    protected $orderKey = array('`sortIndex`', '`addedDateTimestamp`');
 
     /**
      * @var array
      * @return boolean
      */
     public function isValidOrderKey($key) {
-        if($key == "productId" || $key == "cartId" || $key == "count" || $key == "itemKey" || $key == "addedDateTimestamp") {
+        if(in_array($key, ['productId', 'cartId', 'count', 'itemKey', 'addedDateTimestamp', 'sortIndex'])) {
             return true;
         }
         return false;
