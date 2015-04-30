@@ -15,12 +15,21 @@
 pimcore.registerNS("pimcore.settings.staticroutes");
 pimcore.settings.staticroutes = Class.create({
 
-    initialize:function () {
+    preconfiguredFilter: "",
+
+    initialize:function (filter) {
+        if(filter)
+            this.preconfiguredFilter = filter;
 
         this.getTabPanel();
     },
 
-    activate:function () {
+    activate:function (filter) {
+        if(filter) {
+            this.filterField.setValue(filter);
+            this.store.baseParams.filter = filter;
+            this.store.load();
+        }
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         tabPanel.activate("pimcore_staticroutes");
     },
@@ -91,7 +100,7 @@ pimcore.settings.staticroutes = Class.create({
             remoteSort:true,
             baseParams:{
                 limit:itemsPerPage,
-                filter:""
+                filter:this.preconfiguredFilter
             },
             listeners:{
                 write:function (store, action, result, response, rs) {
@@ -105,6 +114,7 @@ pimcore.settings.staticroutes = Class.create({
             xtype:"textfield",
             width:200,
             style:"margin: 0 10px 0 0;",
+            value: this.preconfiguredFilter,
             enableKeyEvents:true,
             listeners:{
                 "keydown":function (field, key) {
