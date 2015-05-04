@@ -33,16 +33,17 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
      * returns all possible group by values for given column group, product list and field combination
      *
      * @param $columnGroup
-     * @param $productList
-     * @param $field
+     * @param OnlineShop_Framework_IProductList $productList
+     * @param string $field
      * @return array
      */
-    public static function getGroupByValuesForFilterGroup($columnGroup, $productList, $field) {
+    public static function getGroupByValuesForFilterGroup($columnGroup, OnlineShop_Framework_IProductList $productList, $field) {
         $columnType = self::getColumnTypeForColumnGroup($columnGroup);
 
         $data = array();
 
         if($columnType == "relation") {
+            $productList->prepareGroupByRelationValues($field);
             $values = $productList->getGroupByRelationValues($field);
 
             foreach($values as $v) {
