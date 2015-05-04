@@ -54,6 +54,8 @@ class Imagick extends Adapter {
             $tmpFilename = "imagick_auto_download_" . md5($imagePath) . "." . File::getFileExtension($imagePath);
             $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
 
+            $this->tmpFiles[] = $tmpFilePath;
+
             File::put($tmpFilePath, \Pimcore\Tool::getHttpData($imagePath));
             $imagePath = $tmpFilePath;
         }
