@@ -226,7 +226,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         return $mappingAttributes;
     }
 
-    public function getSystemAttributes($includeTypes) {
+    public function getSystemAttributes($includeTypes = false) {
         $systemAttributes = array(
             "o_id" => "long",
             "o_classId" => "string",
