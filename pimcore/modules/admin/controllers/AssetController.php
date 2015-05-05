@@ -214,7 +214,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $newRealPath = PIMCORE_ASSET_DIRECTORY . $newPath;
             $newRealPath= realpath($newRealPath);
             if (strpos($newRealPath, PIMCORE_ASSET_DIRECTORY) !== 0) {
-                throw new Exception("not allowed");
+                throw new \Exception("not allowed");
             }
 
             $maxRetries = 5;
