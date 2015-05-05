@@ -117,7 +117,7 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
 
     /**
      * @param string $orderState
-     * @return void
+     * @return $this
      */
     public function setOrderState ($orderState) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setOrderState is not implemented for " . get_class($this));
@@ -155,6 +155,310 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
         throw new OnlineShop_Framework_Exception_UnsupportedException("setPaymentInfo is not implemented for " . get_class($this));
     }
 
+    /**
+     * @return mixed
+     */
+    public function getComment()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
 
+    /**
+     * @param string $comment
+     *
+     * @return $this
+     */
+    public function setComment($comment)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerEMail()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerEMail
+     *
+     * @return $this
+     */
+    public function setCustomerEMail($customerEMail)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerCountry()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerCountry
+     *
+     * @return $this
+     */
+    public function setCustomerCountry($customerCountry)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerCity()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerCity
+     *
+     * @return $this
+     */
+    public function setCustomerCity($customerCity)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerZip()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerZip
+     *
+     * @return $this
+     */
+    public function setCustomerZip($customerZip)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerStreet()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerStreet
+     *
+     * @return $this
+     */
+    public function setCustomerStreet($customerStreet)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerCompany()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerCompany
+     *
+     * @return $this
+     */
+    public function setCustomerCompany($customerCompany)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomerName()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerName
+     *
+     * @return $this
+     */
+    public function setCustomerName($customerName)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryEMail()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryEMail
+     *
+     * @return $this
+     */
+    public function setDeliveryEMail($deliveryEMail)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryCountry()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryCountry
+     *
+     * @return $this
+     */
+    public function setDeliveryCountry($deliveryCountry)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryCity()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryCity
+     *
+     * @return $this
+     */
+    public function setDeliveryCity($deliveryCity)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryZip()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryZip
+     *
+     * @return $this
+     */
+    public function setDeliveryZip($deliveryZip)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryStreet()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryStreet
+     *
+     * @return $this
+     */
+    public function setDeliveryStreet($deliveryStreet)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryCompany()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryCompany
+     *
+     * @return $this
+     */
+    public function setDeliveryCompany($deliveryCompany)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryName()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryName
+     *
+     * @return $this
+     */
+    public function setDeliveryName($deliveryName)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+
+    /**
+     * @return bool
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function hasDeliveryAddress()
+    {
+        return
+            $this->getDeliveryName() != ''
+            && $this->getDeliveryStreet()
+            && $this->getDeliveryCity()
+            && $this->getDeliveryZip()
+        ;
+    }
+
+
+
+
+    /**
+     * @return $this
+     */
+    public function setCurrency(Zend_Currency $currency)
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setPaymentInfo is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return Zend_Currency
+     */
+    public function getCurrency()
+    {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setPaymentInfo is not implemented for " . get_class($this));
+//        return new \Zend_Currency($this->getOrder()->getCurrency(), $this->factory->getEnvironment()->getCurrencyLocale());
+    }
 
 }

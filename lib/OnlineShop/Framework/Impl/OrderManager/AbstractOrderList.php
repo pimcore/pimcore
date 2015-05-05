@@ -113,6 +113,8 @@ abstract class AbstractOrderList implements IOrderList
 
             $this->list = new \ArrayIterator($conn->fetchAll( $this->getQuery() ));
             $this->rowCount = (int)$conn->fetchCol( 'SELECT FOUND_ROWS() as "cnt"')[0];
+//
+//            p_r($this->getQuery()->__toString());
         }
 
         return $this;
@@ -142,24 +144,10 @@ abstract class AbstractOrderList implements IOrderList
     {
         // load
         return $this
-            ->setOffset( $offset )
-            ->setLimit( $itemCountPerPage )
+            ->setLimit( $itemCountPerPage, $offset )
             ->load();
     }
 
-
-    /**
-     * @param $offset
-     *
-     * @return $this
-     */
-    public function setOffset($offset)
-    {
-        $this->offset = (int)$offset;
-        $this->list = null;
-
-        return $this;
-    }
 
     /**
      * @return int
@@ -174,9 +162,10 @@ abstract class AbstractOrderList implements IOrderList
      *
      * @return $this
      */
-    public function setLimit($limit)
+    public function setLimit($limit, $offset = 0)
     {
         $this->limit = (int)$limit;
+        $this->offset = (int)$offset;
         $this->list = null;
 
         return $this;

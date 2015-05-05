@@ -30,7 +30,6 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
      * @param string $type
      *
      * @return IOrderList
-     * @todo richtig so?
      */
     public function setListType($type)
     {
@@ -46,7 +45,6 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
     /**
      * get select query
      * @return Zend_Db_Select
-     * @todo richtig so?
      */
     public function getQuery()
     {
@@ -79,9 +77,6 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
                 , ['OrderItemId' => 'orderItem.oo_id']
             );
 
-            // where
-//            $select->where('`order`.orderState = ?', 'committed');
-
 
             // group by list type
             if($this->getListType() == self::LIST_TYPE_ORDER_ITEM)
@@ -96,16 +91,44 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
             }
 
 
-            // default order
-            $select->order('order.orderDate asc');
+            // only commited orders
+            $select->where('`order`.orderState = ?', 'committed');
 
-            // limit
-            $select->limit($this->getLimit(), $this->getOffset());
 
             $this->query = $select;
         }
 
         return $this->query;
+    }
+
+
+    /**
+     * @param int $limit
+     *
+     * @return $this
+     */
+    public function setLimit($limit, $offset = 0)
+    {
+        parent::setLimit($limit, $offset);
+
+        $this->getQuery()->limit( $this->getLimit(), $this->getOffset() );
+
+        return $this;
+    }
+
+
+    /**
+     * @param array|string $order
+     *
+     * @return $this
+     */
+    public function setOrder($order)
+    {
+        $this->getQuery()->order( $order );
+
+//        $this->getQuery()->reset(Zend_Db_Select::WHERE)
+
+        return $this;
     }
 
 

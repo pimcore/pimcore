@@ -104,4 +104,83 @@ class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concr
     public function setSubItems($subItems) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setSubItems is not implemented for " . get_class($this));
     }
+
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return \Pimcore\Model\Object\Fieldcollection
+     */
+    public function getPricingRules() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param \Pimcore\Model\Object\Fieldcollection $pricingRules
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return $this
+     */
+    public function setPricingRules ($pricingRules) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return string
+     */
+    public function getOrderState() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $orderState
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return $this
+     */
+    public function setOrderState ($orderState) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+
+    /**
+     * is the order item cancel able
+     * @return bool
+     */
+    public function isCancelAble()
+    {
+        return true && !$this->isCanceled();
+    }
+
+    /**
+     * is the order item edit able
+     * @return bool
+     */
+    public function isEditAble()
+    {
+        return true && !$this->isCanceled();
+    }
+
+
+    /**
+     * ist eine rückerstattung erlaubt
+     * @return bool
+     */
+    public function isRefundAble()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCanceled()
+    {
+        return $this->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED;
+    }
+
+    /**
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function getOrder()
+    {
+        return $this->getParent();
+    }
 }

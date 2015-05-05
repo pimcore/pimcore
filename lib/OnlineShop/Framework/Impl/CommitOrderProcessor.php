@@ -56,7 +56,11 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
     /**
+     * @param OnlineShop_Framework_ICart $cart
+     *
      * @return OnlineShop_Framework_AbstractOrder
+     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function getOrCreateOrder(OnlineShop_Framework_ICart $cart) {
 
@@ -115,10 +119,17 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
         //sets customer to order - if available
+        // TODO refactor
         if(@\Pimcore\Tool::classExists("\\Pimcore\\Model\\Object\\Customer")) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
             $order->setCustomer($customer);
         }
+
+
+        // set order currency
+        $currency = $cart->getPriceCalculator()->getGrandTotal()->getCurrency();
+        $order->setCurrency( $currency->getShortName() );
+
 
         $order->save();
 

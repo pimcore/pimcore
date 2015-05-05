@@ -38,6 +38,37 @@
 				"permissions":"",
 				"childs":[
 					{
+						"fieldtype":"select",
+						"options":[
+						  {
+							"key":"Committed",
+							"value":"committed"
+						  },
+						  {
+							"key":"Cancelled",
+							"value":"cancelled"
+						  }
+						],
+						"width":"",
+						"queryColumnType":"varchar(255)",
+						"columnType":"varchar(255)",
+						"phpdocType":"string",
+						"name":"orderState",
+						"title":"orderState",
+						"tooltip":"",
+						"mandatory":false,
+						"noteditable":false,
+						"index":false,
+						"locked":null,
+						"style":"",
+						"permissions":null,
+						"datatype":"data",
+						"relationType":false,
+						"invisible":false,
+						"visibleGridView":false,
+						"visibleSearch":false
+					},
+				  	{
 						"fieldtype":"href",
 						"width":"",
 						"assetUploadPath":"",

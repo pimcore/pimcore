@@ -32,10 +32,11 @@ interface IOrderList extends SeekableIterator, Countable, Zend_Paginator_Adapter
 
     /**
      * @param int $limit
+     * @param int $offset
      *
      * @return IOrderList
      */
-    public function setLimit($limit);
+    public function setLimit($limit, $offset = 0);
 
     /**
      * @return int
@@ -43,16 +44,16 @@ interface IOrderList extends SeekableIterator, Countable, Zend_Paginator_Adapter
     public function getLimit();
 
     /**
-     * @param int $offset
-     *
-     * @return IOrderList
-     */
-    public function setOffset($offset);
-
-    /**
      * @return int
      */
     public function getOffset();
+
+    /**
+     * @param string $order
+     *
+     * @return IOrderList
+     */
+    public function setOrder($order);
 
     /**
      * @param string $type

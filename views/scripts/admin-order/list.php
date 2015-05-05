@@ -93,8 +93,9 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
     <thead>
     <tr>
         <th width="180">Best.-Nr.</th>
-        <th width="180">Buchungsdatum</th>
-        <th>Payment</th>
+        <th width="180">Eingegangen</th>
+        <th width="80">Artikel</th>
+        <th></th>
         <th width="100">Preis</th>
     </tr>
     </thead>
@@ -102,13 +103,13 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
     <?php
     $totalSum = new Zend_Currency( OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale() );
     foreach($paginator as $item):
-        /* @var OnlineShop\Framework\OrderManager\IOrderListItem $item */
+        /* @var \OnlineShop\Framework\OrderManager\IOrderListItem $item */
         $totalSum->add( $item->getTotalPrice() );
         ?>
         <tr>
             <td>
                 <?php
-                $urlDetail = $this->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'BackOffice', 'id' => $item->getOrderId()], null, true);
+                $urlDetail = $this->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $item->getOrderId()], null, true);
                 ?>
                 <a href="<?= $urlDetail ?>"><?= $item->getOrderNumber() ?></a>
             </td>
@@ -119,14 +120,16 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                     : new Zend_Date( $item->getOrderDate() );
                 ?>
             </td>
-            <td><?= $item->getPaymentReference() ?></td>
+            <td><?= $item->getItems() ?></td>
+            <td>
+            </td>
             <td class="text-right"><?= $totalSum->toCurrency($item->getTotalPrice()) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
     <tfoot>
     <tr>
-        <td colspan="3"></td>
+        <td colspan="4"></td>
         <td class="text-right">
             <strong><?= $totalSum ?></strong>
         </td>

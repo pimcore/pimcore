@@ -29,7 +29,7 @@
     <div class="container">
 
         <div class="navbar-header">
-            <a href="#" class="navbar-brand dropdown-toggle"><span class="glyphicon glyphicon glyphicon-inbox"></span> Back-Office</span></a>
+            <a href="#" class="navbar-brand dropdown-toggle"><span class="glyphicon glyphicon-inbox"></span> Online-Shop</span></a>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -52,6 +52,23 @@
                     </li>
                     <?php endforeach; ?>
                 <?php endforeach; ?>
+
+                <li class="hidden-xs">
+                    <a class="dropdown-toggle" href="#" data-toggle="dropdown" title="Notifications">
+                        <span class="glyphicon glyphicon-inbox fa fa-bell fa-lg">
+<!--                            <span class="count-circle count-circle-middle slide-up">1</span>-->
+                        </span>
+                    </a>
+                    <div class="dropdown-menu spacer5" style="min-width:250px;">
+                        <div class="list-group margin-bottom-5">
+                            <a href="#" class="list-group-item small"><span class="badge bg-warning pulse">5</span> Logging overages in sector C.</a>
+                            <a href="#" class="list-group-item small"><span class="badge bg-danger">14</span> <span class="text-warning">Users with request timed out.</span></a>
+                            <a href="#" class="list-group-item small"><span class="badge bg-success">0</span> Service errors since 12:01AM.</a>
+                            <a href="#" class="list-group-item small"><span class="badge">1</span> Blade server pending backup.</a>
+                        </div>
+                        <p class="text-center"><a href="/user-profile" class="small">All notifications</a></p>
+                    </div>
+                </li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -77,5 +94,8 @@
 </script>
 
 <?= $this->headScript() ?>
+
+<!--<script src="/plugins/OnlineShop/static/js/back-office.js"></script>-->
+
 </body>
 </html>

@@ -207,6 +207,28 @@
 								"visibleSearch":false
 							},
 							{
+								"fieldtype":"textarea",
+								"width":"",
+								"height":"",
+								"queryColumnType":"longtext",
+								"columnType":"longtext",
+								"phpdocType":"string",
+								"name":"comment",
+								"title":"comment",
+								"tooltip":"",
+								"mandatory":false,
+								"noteditable":false,
+								"index":false,
+								"locked":null,
+								"style":"",
+								"permissions":null,
+								"datatype":"data",
+								"relationType":false,
+								"invisible":false,
+								"visibleGridView":false,
+								"visibleSearch":false
+							},
+							{
 								"fieldtype":"fieldcollections",
 								"phpdocType":"Object_Fieldcollection",
 								"allowedTypes":[
