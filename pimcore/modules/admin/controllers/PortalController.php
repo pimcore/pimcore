@@ -52,6 +52,9 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin {
     }
 
     public function createDashboardAction() {
+
+        $this->protectCSRF();
+
         $dashboards = $this->dashboardHelper->getAllDashboards();
         $key = trim($this->getParam("key"));
 
