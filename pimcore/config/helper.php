@@ -24,13 +24,16 @@ function gzcompressfile($source,$level=null, $target = null){
 
     $mode='wb'.$level;
     $error=false;
-    if ($fp_out=gzopen($dest,$mode)) {
-        if($fp_in=fopen($source,'rb')) {
-            while(!feof($fp_in))
-                gzwrite($fp_out,fread($fp_in,1024*512));
-            fclose($fp_in);
+
+    $fp_out = gzopen($dest,$mode);
+    $fp_in = fopen($source,'rb');
+
+    if($fp_out && $fp_in) {
+        while(!feof($fp_in)) {
+            gzwrite($fp_out, fread($fp_in,1024*512));
         }
-        else $error=true;
+
+        fclose($fp_in);
         gzclose($fp_out);
     } else {
         $error=true;
@@ -38,7 +41,7 @@ function gzcompressfile($source,$level=null, $target = null){
 
     if ($error) {
         return false;
-    }  else {
+    } else {
         return $dest;
     }
 }
