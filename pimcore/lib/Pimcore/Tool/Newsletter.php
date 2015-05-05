@@ -73,6 +73,10 @@ class Newsletter {
                     $links = $html->find("a");
                     foreach($links as $link) {
 
+                        if(preg_match("/^(mailto)/", trim(strtolower($link->href)))) {
+                            continue;
+                        }
+
                         $glue = "?";
                         if(strpos($link->href, "?")) {
                             $glue = "&";
