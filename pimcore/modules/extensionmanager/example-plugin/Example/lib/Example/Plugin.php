@@ -7,6 +7,9 @@ use Pimcore\API\Plugin as PluginLib;
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
 
     public function init() {
+
+        parent::init();
+
         // register your events here
 
         // using anonymous function
