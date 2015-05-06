@@ -52,6 +52,8 @@ class Service extends Model\Element\Service {
      */
     public static function render(Document $document, $params = array(), $useLayout = false)
     {
+        $layout = null;
+        $existingActionHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("layout");
         $layoutInCurrentAction = (\Zend_Layout::getMvcInstance() instanceof \Zend_Layout) ? \Zend_Layout::getMvcInstance()->getLayout() : false;
         
         $viewHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
@@ -127,6 +129,18 @@ class Service extends Model\Element\Service {
                     $layout->setViewSuffix(View::getViewScriptSuffix()); // set pimcore specifiy view suffix
                     $layout->setLayout($layoutInCurrentAction);
                     $view->getHelper("Layout")->setLayout($layout);
+
+                    if($existingActionHelper) {
+                        \Zend_Controller_Action_HelperBroker::removeHelper("layout");
+                        \Zend_Controller_Action_HelperBroker::addHelper($existingActionHelper);
+
+                        $pluginClass = $layout->getPluginClass();
+                        $front = $existingActionHelper->getFrontController();
+                        if ($front->hasPlugin($pluginClass)) {
+                            $plugin = $front->getPlugin($pluginClass);
+                            $plugin->setLayoutActionHelper($existingActionHelper);
+                        }
+                    }
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
 
