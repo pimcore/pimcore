@@ -22,6 +22,8 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
           `in_preparation_queue` tinyint(1) DEFAULT NULL,
           `preparation_worker_timestamp` int(11) DEFAULT NULL,
           `preparation_worker_id` varchar(20) DEFAULT NULL,
+          `update_status` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
+          `update_error` CHAR(255) NULL DEFAULT NULL,
           PRIMARY KEY (`id`,`tenant`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
     }
