@@ -855,6 +855,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
             $params['index'] = $this->getIndexName();
             $params['type'] = "product";
             $params['search_type'] = "count";
+            $params['body']['_source'] = false;
             $params['body']['size'] = $this->getLimit();
             $params['body']['from'] = $this->getOffset();
             $params['body']['aggs'] = $aggregations;
