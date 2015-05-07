@@ -321,7 +321,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
             // Ext.form.Action.Submit and mark the submission as failed
-            $this->getResponse()->setHeader("Content-Type", "text/html");
+            $this->getResponse()->setHeader("Content-Type", "text/html", true);
 
         } else {
             throw new \Exception("missing permission");
