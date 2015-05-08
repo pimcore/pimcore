@@ -41,6 +41,6 @@ after_script:
   - cat $TRAVIS_BUILD_DIR/apache-error.log
   - cat $TRAVIS_BUILD_DIR/apache-access.log
   - cat /tmp/hhvm.log
-  - cat $TRAVIS_BUILD_DIR/website/var/log/debug.log
-  - cat $TRAVIS_BUILD_DIR/website/var/log/php.log
+  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
+  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log
 
