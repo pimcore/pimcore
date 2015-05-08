@@ -28,7 +28,9 @@ class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framewor
         $value = $params[$field];
 
         if(empty($value) && !$params['is_reload']) {
-            $value = explode(",", $preSelect);
+            if(!empty($preSelect) || $preSelect == '0') {
+                $value = explode(",", $preSelect);
+            }
         } else if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
