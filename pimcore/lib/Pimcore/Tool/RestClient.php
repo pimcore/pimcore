@@ -361,11 +361,16 @@ class RestClient
         }
 
         if ($result->getHeader('content-type') != 'application/json') {
-            throw new Exception("No JSON response " . $statusCode . " " . $uri);
+            throw new Exception("No JSON response header " . $statusCode . " " . $uri);
         }
 
-        $body = json_decode($body);
-        return $body;
+        $bodyObj = json_decode($body);
+
+        if($bodyObj === NULL) {
+            throw new \Exception("No valid JSON data: '" . $body . "'");
+        }
+
+        return $bodyObj;
     }
 
     /**
