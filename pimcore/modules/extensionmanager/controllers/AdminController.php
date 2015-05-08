@@ -191,7 +191,7 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin 
         $examplePluginPath = realpath(PIMCORE_PATH . "/modules/extensionmanager/example-plugin");
         $pluginDestinationPath = realpath(PIMCORE_PLUGINS_PATH) . DIRECTORY_SEPARATOR . $name;
 
-        if (preg_match("/^[a-zA-Z0-9]+$/", $name, $matches) && !is_dir($pluginDestinationPath)) {
+        if (preg_match("/^[a-zA-Z0-9_]+$/", $name, $matches) && !is_dir($pluginDestinationPath)) {
             $pluginExampleFiles = rscandir($examplePluginPath);
             foreach ($pluginExampleFiles as $pluginExampleFile) {
                 if(!is_file($pluginExampleFile)) continue;
