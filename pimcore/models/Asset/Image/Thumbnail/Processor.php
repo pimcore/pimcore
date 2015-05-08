@@ -39,6 +39,7 @@ class Processor {
         "roundCorners" => array("width","height"),
         "setBackgroundImage" => array("path"),
         "addOverlay" => array("path", "x", "y", "alpha", "composite", "origin"),
+        "addOverlayFit" => array("path", "composite"),
         "applyMask" => array("path"),
         "cropPercent" => array("width","height","x","y"),
         "grayscale" => array(),

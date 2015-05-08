@@ -926,6 +926,55 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
+
+    itemAddOverlayFit: function (panel, data, getName) {
+
+        var niceName = t("addoverlay_fit") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+
+        if(typeof data.composite == "undefined" || data.composite == "") {
+            data.composite = "COMPOSITE_DEFAULT";
+        }
+
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'textfield',
+                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                name: "path",
+                value: data.path,
+                width: 350
+            },{
+                xtype: "combo",
+                name: "composite",
+                fieldLabel: t("composite"),
+                value: data.composite,
+                triggerAction: 'all',
+                editable: false,
+                store: ["COMPOSITE_DEFAULT", "COMPOSITE_HARDLIGHT", "COMPOSITE_EXCLUSION"],
+                width: 200
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "addOverlayFit"
+            }]
+        });
+
+        return item;
+    },
+
     itemApplyMask: function (panel, data, getName) {
 
         var niceName = t("applymask") + " (Imagick)";

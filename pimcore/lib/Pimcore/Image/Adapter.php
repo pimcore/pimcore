@@ -316,6 +316,15 @@ abstract class Adapter {
     }
 
     /**
+     * @param $image
+     * @param string $composite
+     * @return $this
+     */
+    public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT") {
+        return $this;
+    }
+
+    /**
      * @param  $image
      * @return self
      */

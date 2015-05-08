@@ -568,9 +568,6 @@ class Imagick extends Adapter {
 
         $this->preModify();
 
-        $image = ltrim($image,"/");
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
-
         // 100 alpha is default
         if(empty($alpha)) {
             $alpha = 100;
@@ -582,10 +579,20 @@ class Imagick extends Adapter {
             $composite = "COMPOSITE_DEFAULT";
         }
 
-        if(is_file($image)) {
+        $newImage = null;
+
+        if(is_string($image)) {
+
+            $image = ltrim($image,"/");
+            $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
             $newImage = new \Imagick();
             $newImage->readimage($image);
+        } else if ($image instanceof \Imagick) {
+            $newImage = $image;
+        }
 
+        if($newImage) {
             if($origin == 'top-right') {
                 $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
             } elseif($origin == 'bottom-left') {
@@ -607,6 +614,24 @@ class Imagick extends Adapter {
         return $this;
     }
 
+    /**
+     * @param $image
+     * @param string $composite
+     * @return $this
+     */
+    public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT") {
+
+        $image = ltrim($image,"/");
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
+        $newImage = new \Imagick();
+        $newImage->readimage($image);
+        $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+
+        $this->addOverlay($newImage, 0, 0, 100, $composite);
+
+        return $this;
+    }
 
     /**
      * @param  $image
