@@ -59,6 +59,9 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersio
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 5) {
     $supported = true;
 }
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 15) {
+    $supported = true;
+}
 
 $config = \Pimcore\Config::getSystemConfig();
 
