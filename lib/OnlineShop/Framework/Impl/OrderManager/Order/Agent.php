@@ -19,6 +19,8 @@ use OnlineShop\Framework\Impl\OrderManager;
 use OnlineShop_Framework_AbstractOrder as Order;
 use OnlineShop_Framework_AbstractOrderItem as OrderItem;
 
+use Pimcore\Model\Element\Note;
+use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Fieldcollection;
 use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
 
@@ -57,10 +59,10 @@ class Agent implements IOrderAgent
     }
 
 
-    public function addHook($event, callable $callback)
-    {
-        $this->eventManager->attach($event, $callback);
-    }
+//    public function addHook($event, callable $callback)
+//    {
+//        $this->eventManager->attach($event, $callback);
+//    }
 
 
     /**
@@ -82,73 +84,125 @@ class Agent implements IOrderAgent
      */
     public function itemCancel(OrderItem $item)
     {
-        $item->setOrderState( Order::ORDER_STATE_CANCELLED )->save();
+        // add log note
+        $note = $this->createNote( $item );
+        $note->setTitle( __FUNCTION__ );
+
+
+        // change item
+        $item->setOrderState( Order::ORDER_STATE_CANCELLED );
 
 
         // cancel complete order if all items are canceled
-        $cancel = true;
-        foreach($this->getOrder()->getItems() as $i)
-        {
-            /* @var OrderItem $i */
-            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
-            {
-                $cancel = false;
-                break;
-            }
-        }
+//        $cancel = true;
+//        foreach($this->getOrder()->getItems() as $i)
+//        {
+//            /* @var OrderItem $i */
+//            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
+//            {
+//                $cancel = false;
+//                break;
+//            }
+//        }
+//
+//
+//        // cancel complete order
+//        if($cancel)
+//        {
+//            $this->getOrder()->setOrderState( Order::ORDER_STATE_CANCELLED )->save();
+//        }
 
 
-        // cancel complete order
-        if($cancel)
-        {
-            $this->getOrder()->setOrderState( Order::ORDER_STATE_CANCELLED )->save();
-        }
+        // commit changes
+        $item->save();
+        $note->save();
 
-        return $this;
+        return $note;
     }
+
 
     /**
      * change order item
      *
      * @param OrderItem $item
-     * @param int $amount
+     * @param float $amount
+     *
+     * @return $this
+     */
+    public function itemChangeAmount(OrderItem $item, $amount)
+    {
+        // init
+        $amount = floatval($amount);
+
+        // add log note
+        $note = $this->createNote( $item );
+        $note->setTitle( __FUNCTION__ );
+        $oldAmount = $item->getAmount();
+        $note->addData('amount.old', 'text', $oldAmount);
+        $note->addData('amount.new', 'text', $amount);
+
+
+        // change
+        $item->setAmount( $amount );
+
+
+        // save
+        $item->save();
+        $note->save();
+
+        return $note;
+    }
+
+
+    /**
+     * start item complaint
+     *
+     * @param OrderItem $item
+     * @param float     $quantity
      *
      * @return $this
      * @todo
      */
-    public function itemChangeAmount(OrderItem $item, $amount)
+    public function itemComplaint(OrderItem $item, $quantity)
     {
-        $oldAmount = $item->getAmount();
-        $item->setAmount( floatval($amount) );
-
-
-        // general
-        $note = new \Pimcore\Model\Element\Note();
-        $note->setElement( $item );
-        $note->setDate( time() );
-        $note->setType( 'back-office' );
-        $note->setTitle( 'itemChangeAmount' );
-        $note->setDescription( '' );
-//        $note->setUser( $this->getUser()->getId() );
-
-        $note->addData('amount_old', 'number', $oldAmount);
-        $note->addData('amount_new', 'number', $amount);
-
-
-        // event hook
-        $context = new \stdClass;
-        $context->orderItem = $item;
-        $context->note = $note;
-
-        $this->eventManager->trigger('item.change.amount', $context);
-//        $note->addData('comment', 'text', 'Some Text');
-
-
-        // save
-//        $item->save();
-//        $note->save();
+        // TODO: Implement itemComplaint() method.
     }
-    
+
+
+    /**
+     * set a item status
+     *
+     * @param OrderItem $item
+     * @param string    $status
+     *
+     * @return $this
+     * @todo
+     */
+    public function itemSetStatus(OrderItem $item, $status)
+    {
+        // TODO: Implement itemSetStatus() method.
+    }
+
+
+    /**
+     * @param Concrete $object
+     *
+     * @return Note
+     */
+    protected function createNote(Concrete $object)
+    {
+        // general
+        $note = new Note();
+        $note->setElement( $object );
+        $note->setDate( time() );
+
+        $note->setType( 'order-agent' );
+//        $note->setTitle( 'itemChangeAmount' );
+//        $note->setDescription( '' );
+
+        return $note;
+    }
+
 
 
     /**

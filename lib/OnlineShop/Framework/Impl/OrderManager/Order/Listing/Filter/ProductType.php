@@ -25,11 +25,19 @@ class ProductType implements IOrderListFilter
      */
     public function apply(IOrderList $orderList)
     {
+        // init
         $orderList->joinOrderItemObjects();
+
+        // quote
+        $types = [];
+        foreach($this->getTypes() as $t)
+        {
+            $types[] = $orderList->getQuery()->getAdapter()->quote( $t );
+        }
 
         $orderList->getQuery()->where(
             sprintf('orderItemObjects.o_className in("%s")'
-                , implode('","', $this->getTypes())
+                , implode('","', $types)
             )
         );
     }

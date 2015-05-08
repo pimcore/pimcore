@@ -10,7 +10,7 @@
 namespace OnlineShop\Framework;
 
 use OnlineShop\Framework\OrderManager;
-use Pimcore\Model\Object\OnlineShopOrder;
+use OnlineShop_Framework_AbstractOrder as Order;
 
 interface IOrderManager
 {
@@ -21,9 +21,9 @@ interface IOrderManager
 
 
     /**
-     * @param OnlineShopOrder $order
+     * @param Order $order
      *
      * @return OrderManager\IOrderAgent
      */
-    public function createOrderAgent(OnlineShopOrder $order);
+    public function createOrderAgent(Order $order);
 }

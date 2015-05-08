@@ -7,13 +7,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Online-Shop BackOffice</title>
+    <title>Online-Shop Back Office</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/plugins/OnlineShop/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/plugins/OnlineShop/static/css/backoffice.css" rel="stylesheet">
+    <link href="/plugins/OnlineShop/static/css/back-office.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
     <div class="container">
 
         <div class="navbar-header">
-            <a href="#" class="navbar-brand dropdown-toggle"><span class="glyphicon glyphicon-inbox"></span> Online-Shop</span></a>
+            <a href="#" class="navbar-brand dropdown-toggle"><span class="glyphicon glyphicon-shopping-cart"></span> Online-Shop Back Office</span></a>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -40,7 +40,7 @@
                 $currentController = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
                 $arrActions = [];
 
-                if($user->isAllowed('plugin_onlineShop_backOffice_order'))
+                if($user->isAllowed('plugin_onlineshop_back-office_order'))
                 {
                     $arrActions['order'][] = 'list';
                 }
@@ -48,18 +48,20 @@
                 foreach($arrActions as $controller => $actions):
                     foreach($actions as $action): ?>
                     <li class="<?= $currentController == 'admin-' . $controller && $currentAction == $action ? 'active' : '' ?>">
-                        <a href="<?= $this->url(['action' => $action, 'controller' => 'admin-' . $controller, 'module' => 'BackOffice'], null, true); ?>"><?= $this->translate('onlineShop.backOffice.' . $controller.'-'.$action) ?></a>
+                        <a href="<?= $this->url(['action' => $action, 'controller' => 'admin-' . $controller, 'module' => 'OnlineShop'], null, true); ?>"><?= $this->translate('online-shop.back-office.' . $controller.'-'.$action) ?></a>
                     </li>
                     <?php endforeach; ?>
                 <?php endforeach; ?>
 
+                <!-- notifications -->
+                <!--
                 <li class="hidden-xs">
                     <a class="dropdown-toggle" href="#" data-toggle="dropdown" title="Notifications">
-                        <span class="glyphicon glyphicon-inbox fa fa-bell fa-lg">
-<!--                            <span class="count-circle count-circle-middle slide-up">1</span>-->
+                        <span class="glyphicon glyphicon-inbox" style="position: static; font-size: 1.33333333em; line-height: 0.75em; vertical-align: -15%;">
+                            <span class="count-circle count-circle-middle slide-up">1</span>
                         </span>
                     </a>
-                    <div class="dropdown-menu spacer5" style="min-width:250px;">
+                    <div class="dropdown-menu" style="min-width:250px; padding: 5px;">
                         <div class="list-group margin-bottom-5">
                             <a href="#" class="list-group-item small"><span class="badge bg-warning pulse">5</span> Logging overages in sector C.</a>
                             <a href="#" class="list-group-item small"><span class="badge bg-danger">14</span> <span class="text-warning">Users with request timed out.</span></a>
@@ -69,6 +71,7 @@
                         <p class="text-center"><a href="/user-profile" class="small">All notifications</a></p>
                     </div>
                 </li>
+                -->
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -78,7 +81,7 @@
 
     <?= $this->layout()->content ?>
 
-</div><!-- /.container -->
+</div>
 
 
 <?= $this->headLink() ?>

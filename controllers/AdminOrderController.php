@@ -100,6 +100,9 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         // set list type
         $list->setListType( $this->getParam('type', $list::LIST_TYPE_ORDER) );
 
+        // set order state
+        $list->setOrderState( OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED );
+
 
         // add select fields
         $list->addSelectField('order.OrderDate');
@@ -123,25 +126,23 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             $search = $this->getParam('search');
             switch($search)
             {
-                case 'paymentReference':
-//                    $list->setFilterPaymentReference( $this->getParam('q') );
+//                case 'product':
+//                    $filterProduct = new Filter\Product();
+//                    $filterProduct->getClassId();
+//                    $list->addFilter( $filterProduct );
 //                    break;
 
-                case 'email':
-                case 'customer':
+                case 'productType':
+                    $filterProductType = new Filter\ProductType();
+                    $filterProductType->setTypes( [$q] );
+                    $list->addFilter( $filterProductType );
+                    break;
+
+                case 'order':
                 default:
-                    $filterCustomer = new Filter\Customer();
-
-                    if($search == 'customer')
-                    {
-                        $filterCustomer->setName( $q );
-                    }
-                    if($search == 'email')
-                    {
-                        $filterCustomer->setEmail( $q );
-                    }
-
-                    $list->addFilter( $filterCustomer );
+                    $filterOrder = new Filter\Order();
+                    $filterOrder->setQuery( $q );
+                    $list->addFilter( $filterOrder );
                     break;
             }
         }
@@ -173,14 +174,12 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             $from = new Zend_Date();
             $from->setDay(1);
 
-//            $filterDate->setFrom( $from );
-//            $this->setParam('from', $from->get(Zend_Date::DATE_MEDIUM));
         }
         $list->addFilter( $filterDate );
 
 
+        // set default order
         $list->setOrder( 'order.orderDate desc' );
-
 
 
         // create paging
@@ -195,12 +194,12 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
     /**
      * details der bestellung anzeigen
-     * @todo
      */
     public function detailAction()
     {
         // init
         $order = Object_OnlineShopOrder::getById( $this->getParam('id') );
+        /* @var OnlineShop_Framework_AbstractOrder $order */
         $this->view->orderAgent = $this->orderManager->createOrderAgent( $order );
 
 
@@ -230,63 +229,152 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         {
             $this->view->geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
         }
+
+
+
+        // load order events
+        $noteList = new Element_Note_List();
+        /* @var \Pimcore\Model\Element\Note\Listing $noteList */
+
+        $cid = [ $order->getId() ];
+        foreach($order->getItems() as $item)
+        {
+            $cid[] = $item->getId();
+        }
+
+        $noteList->addConditionParam('type = ?', 'order-agent');
+        $noteList->addConditionParam(sprintf('cid in(%s)', implode(',', $cid)), '');
+
+        $noteList->setOrderKey('date');
+        $noteList->setOrder('desc');
+
+
+        // create timeline
+        $arrIcons = [
+            'itemChangeAmount' => 'glyphicon glyphicon-pencil'
+            , 'itemCancel' => 'glyphicon glyphicon-remove'
+        ];
+        $arrTimeline = [];
+        $date = new Zend_Date();
+        foreach($noteList->load() as $note)
+        {
+            /* @var \Pimcore\Model\Element\Note $note */
+
+            // get avatar
+            $user = Pimcore_Model_User::getById( $note->getUser() );
+            /* @var \Pimcore\Model\User $user */
+            $avatar = sprintf('/admin/user/get-image?id=%d', $user->getId());
+
+
+            // group events
+            $group = $date
+                ->setTimestamp( $note->getDate() )
+                ->get(Zend_Date::DATE_MEDIUM)
+            ;
+
+
+            // add
+            $arrTimeline[ $group ][] = [
+                'icon' => $arrIcons[ $note->getTitle() ]
+                , 'context' => 'default'
+                , 'type' => $note->getTitle()
+                , 'date' => $date->setTimestamp( $note->getDate() )->get(Zend_Date::DATETIME_MEDIUM)
+                , 'avatar' => $avatar
+                , 'user' => $user->getName()
+                , 'title' => $note->getTitle()
+                , 'message' => $note->getData()['message']['data']
+            ];
+        }
+        $this->view->timeLine = $arrTimeline;
     }
 
 
     /**
      * cancel order item
      */
-    public function cancelItemAction()
+    public function itemCancelAction()
     {
         // init
         $this->view->orderItem = $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
-//        $this->view->orderItem = $orderItem;
-//        $order = $orderItem->getOrder();
-//
-//
-//        if($this->getParam('confirmed') && $orderItem->isCancelAble())
-//        {
-//            $orderManager = Website_Shop_Order_Manager::getInstance( $orderItem->getPaymentOrder() );
-//            $orderManager->cancelItem( $orderItem );
-//
-//
-//            // redir
-//            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'BackOffice', 'id' => $order->getId()], 'plugin', true);
-//            $this->redirect( $url );
-//        }
+        /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
+        $order = $orderItem->getOrder();
+
+
+        if($this->getParam('confirmed') && $orderItem->isCancelAble())
+        {
+            // init
+            $agent = $this->orderManager->createOrderAgent( $order );
+
+            // cancel
+            $note = $agent->itemCancel( $orderItem );
+
+            // extend log
+            $note->addData('message', 'text', $this->getParam('message'));
+            $note->save();
+
+
+            // redir
+            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $order->getId()], 'plugin', true);
+            $this->redirect( $url );
+        }
     }
 
 
     /**
      * edit item
      */
-    public function editItemAction()
+    public function itemEditAction()
     {
+        // init
         $this->view->orderItem = $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
         /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
+        $order = $orderItem->getOrder();
 
 
         if($this->getParam('confirmed'))
         {
-            // TODO change item
-            $agent = $this->orderManager->createOrderAgent( $orderItem->getOrder() );
+            // change item
+            $agent = $this->orderManager->createOrderAgent( $order );
+            $note = $agent->itemChangeAmount($orderItem, $this->getParam('quantity'));
 
-            $agent->addHook('item.change.amount', function ($event) {
-
-                $a = $event->getTarget();
-                $note = $a->note;
-
-                /* @var \Pimcore\Model\Element\Note $note */
-                $note->addData('comment', 'text', 'telefonisch geändert');
-
-            });
-
-            $agent->itemChangeAmount($orderItem, 5);
+            // extend log
+            $note->addData('message', 'text', $this->getParam('message')); # 'text','date','document','asset','object','bool'
+            $note->setUser(3);
+            $note->save();
 
 
-            // TODO redir
-//            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'BackOffice', 'id' => $order->getId()], 'plugin', true);
-//            $this->redirect( $url );
+            // redir
+            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $order->getId()], 'plugin', true);
+            $this->redirect( $url );
+        }
+    }
+
+
+    /**
+     * complaint item
+     */
+    public function itemComplaintAction()
+    {
+        // init
+        $this->view->orderItem = $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
+        /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
+        $order = $orderItem->getOrder();
+
+
+        if($this->getParam('confirmed'))
+        {
+            // change item
+            $agent = $this->orderManager->createOrderAgent( $order );
+            $note = $agent->itemComplaint($orderItem, $this->getParam('quantity'));
+
+            // extend log
+            $note->addData('message', 'text', $this->getParam('message'));
+            $note->save();
+
+
+            // redir
+            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $order->getId()], 'plugin', true);
+            $this->redirect( $url );
         }
     }
 }

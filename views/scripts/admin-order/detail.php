@@ -17,37 +17,169 @@ $currency = $orderAgent->getCurrency();
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2 class="panel-title">
-                    <strong>Bestellung: <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a></strong>
+                    <strong><?= $this->translate('online-shop.back-office.order') ?>: <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a></strong>
                     <small><?= $order->getOrderDate() ?></small>
                 </h2>
             </div>
         </div>
         <ul class="well well-sm nav nav-justified">
             <li class="col-md-12">
-                <a class="text-center" href="#"><span class="glyphicon glyphicon-envelope"></span> <br>Nachricht</a>
+                <a class="text-center text-muted" href="#"><span class="glyphicon glyphicon-envelope"></span> <br>Nachricht</a>
             </li>
             <li class="col-md-12">
-                <a class="text-center" href="#"><span class="glyphicon glyphicon-print"></span> <br>Tasks</a>
+                <a class="text-center text-muted" href="#"><span class="glyphicon glyphicon-print"></span> <br>Tasks</a>
             </li>
             <li class="col-md-12">
-                <a class="text-center" href="#"><span class="glyphicon glyphicon-print"></span> <br>Retoure</a>
+                <a class="text-center text-muted" href="javascript:window.print();"><span class="glyphicon glyphicon-print"></span> <br>Drucken</a>
             </li>
             <li class="col-md-12">
                 <a class="text-center text-danger" href="#"><span class="glyphicon glyphicon-remove"></span> <br>Storno</a>
             </li>
         </ul>
 
+        <!-- order items -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-list-alt"></span> <?= $this->translate('online-shop.back-office.order.order-items') ?>
+
+                <?php if($order->getComment()): ?>
+                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="<?= $this->translate('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($order->getComment()) ?>">
+                        <span class="glyphicon glyphicon-comment"></span>
+                    </button>
+                <?php endif; ?>
+            </div>
+            <table class="table table-order-items">
+                <thead>
+                <tr>
+                    <th width="70">ID</th>
+                    <th><?= $this->translate('online-shop.back-office.order.product') ?></th>
+                    <th class="text-right"><?= $this->translate('online-shop.back-office.order.price.unit') ?></th>
+                    <th width="60" class="text-center"><?= $this->translate('online-shop.back-office.order.quantity') ?></th>
+                    <th class="text-right" width="110"><?= $this->translate('online-shop.back-office.order.price.total') ?></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr class="active">
+                    <td colspan="6"></td>
+                </tr>
+                <?php foreach($order->getPriceModifications() as $modification): /* @var \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications $modification */ ?>
+                    <tr>
+                        <td colspan="4" class="text-right"><?= $modification->getName() ?></td>
+                        <th class="text-right"><?= $currency->toCurrency($modification->getAmount()) ?: '-' ?></th>
+                        <th></th>
+                    </tr>
+                <?php endforeach; ?>
+                <tr class="active">
+                    <td colspan="4" class="text-right">Total</td>
+                    <th class="text-right"><?= $currency->toCurrency($order->getTotalPrice()) ?></th>
+                    <th></th>
+                </tr>
+                </tfoot>
+                <tbody>
+                <?php foreach($order->getItems() as $item):
+                    /* @var Pimcore\Model\Object\OnlineShopOrderItem $item */
+                    ?>
+                    <tr>
+                        <td>
+                            <a href="#" data-action="open" data-id="<?= $item->getId() ?>"><?= $item->getId() ?></a>
+                        </td>
+                        <td>
+                            <?php
+                            echo $item->isCanceled()
+                                ? sprintf('<s>%s</s>', $item->getProductName())
+                                : $item->getProductName()
+                            ?>
+                        </td>
+                        <td class="text-right"><?= $currency->toCurrency($item->getTotalPrice() / $item->getAmount()) ?></td>
+                        <td class="text-center"><?= $item->getAmount() ?></td>
+                        <td class="text-right"><?= $currency->toCurrency($item->getTotalPrice()) ?></td>
+                        <td>
+                            <?php if($item->getComment()): ?>
+                                <button type="button" class="btn btn-xs btn-default" data-container="body" data-toggle="popover" title="<?= $this->translate('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($item->getComment()) ?>">
+                                    <span class="glyphicon glyphicon-comment"></span>
+                                </button>
+                            <?php endif; ?>
+
+                            <!-- item actions -->
+                            <?php if($item->isEditAble()):
+                                $urlEdit = $this->url([
+                                    'action' => 'item-edit'
+                                    , 'controller' => 'admin-order'
+                                    , 'module' => 'OnlineShop'
+                                    , 'id' => $item->getId()
+                                ]);
+                                ?>
+                                <div class="btn-group">
+                                    <a href="<?= $urlEdit ?>" data-toggle="modal" data-target="#popup" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
+                                    <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <span class="caret"></span>
+                                        <span class="sr-only"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <?php if($item->isCancelAble()):
+                                                $urlCancel = $this->url([
+                                                    'action' => 'item-cancel'
+                                                    , 'controller' => 'admin-order'
+                                                    , 'module' => 'OnlineShop'
+                                                    , 'id' => $item->getId()
+                                                ]);
+                                                ?>
+                                                <a href="<?= $urlCancel ?>" data-toggle="modal" data-target="#popup" class="text-danger">
+                                                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                                                    <?= $this->translate('online-shop.back-office.order.cancel.item') ?>
+                                                </a>
+                                            <?php endif; ?>
+                                            <?php if($item->isComplaintAble()):
+                                                $urlComplaint = $this->url([
+                                                    'action' => 'item-complaint'
+                                                    , 'controller' => 'admin-order'
+                                                    , 'module' => 'OnlineShop'
+                                                    , 'id' => $item->getId()
+                                                ]);
+                                                ?>
+                                                <a href="<?= $urlComplaint ?>" data-toggle="modal" data-target="#popup" class="text-danger">
+                                                    <span class="glyphicon glyphicon-share-alt"></span>
+                                                    <?= $this->translate('online-shop.back-office.order.complaint.item') ?>
+                                                </a>
+                                            <?php endif; ?>
+                                            <?php if(true):
+                                                $urlSetStatus = $this->url([
+                                                    'action' => 'item-set-status'
+                                                    , 'controller' => 'admin-order'
+                                                    , 'module' => 'OnlineShop'
+                                                    , 'id' => $item->getId()
+                                                ]);
+                                                ?>
+                                                <a href="<?= $urlSetStatus ?>" data-toggle="modal" data-target="#popup" class="text-danger">
+                                                    <span class="glyphicon glyphicon-flash"></span>
+                                                    <?= $this->translate('online-shop.back-office.order.set-status.item') ?>
+                                                </a>
+                                            <?php endif; ?>
+                                        </li>
+                                    </ul>
+                                </div>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
         <?php if($orderAgent->hasPayment()): ?>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <span class="glyphicon glyphicon-credit-card"></span> Zahlungsvorgänge
+                    <span class="glyphicon glyphicon-credit-card"></span> <?= $this->translate('online-shop.back-office.order.payment.history') ?>
                 </div>
                 <table class="table table-condensed">
                     <tbody>
                     <?php foreach($order->getPaymentInfo() as $item):
+                        /* @var \Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo $item */
+
                         if(!$item->getPaymentFinish())
                         {
-
                             continue;
                         }
 
@@ -101,115 +233,26 @@ $currency = $orderAgent->getCurrency();
                 </table>
             </div>
         <?php endif; ?>
-
-        <!-- order items -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <span class="glyphicon glyphicon-list-alt"></span> <?//= $this->translate('online-shop.back-office.order.order-items') ?> Bestellte Artikel
-
-                <?php if($order->getComment()): ?>
-                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="User Kommentar" data-content="<?= nl2br($order->getComment()) ?>">
-                        <span class="glyphicon glyphicon-comment"></span>
-                    </button>
-                <?php endif; ?>
-            </div>
-            <table class="table table-order-items">
-                <thead>
-                <tr>
-                    <th width="70">ID</th>
-                    <th>Artikel</th>
-                    <th class="text-right">Preis</th>
-                    <th width="60" class="text-center">Anz</th>
-                    <th class="text-right" width="110">Gesamt</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tfoot>
-                <tr class="active">
-                    <td colspan="6"></td>
-                </tr>
-                <?php foreach($order->getPriceModifications() as $modification): /* @var \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications $modification */ ?>
-                    <tr>
-                        <td colspan="4" class="text-right"><?= $modification->getName() ?></td>
-                        <th class="text-right"><?= $currency->toCurrency($modification->getAmount()) ?: '-' ?></th>
-                    </tr>
-                <?php endforeach; ?>
-                <tr class="active">
-                    <td colspan="4" class="text-right">Total</td>
-                    <th class="text-right"><?= $currency->toCurrency($order->getTotalPrice()) ?></th>
-                    <th></th>
-                </tr>
-                </tfoot>
-                <tbody>
-                <?php foreach($order->getItems() as $item):
-                    /* @var Pimcore\Model\Object\OnlineShopOrderItem $item */
-                    ?>
-                    <tr class="">
-                        <td>
-                            <a href="#" data-action="open" data-id="<?= $item->getId() ?>"><?= $item->getId() ?></a>
-                        </td>
-                        <td>
-                            <?php
-                            echo $item->getOrderState() == 'cancelled'
-                                ? sprintf('<s>%s</s>', $item->getProductName())
-                                : $item->getProductName()
-                            ?>
-                        </td>
-                        <td class="text-right"><?= $currency->toCurrency($item->getTotalPrice() / $item->getAmount()) ?></td>
-                        <td class="text-center"><?= $item->getAmount() ?></td>
-                        <td class="text-right"><?= $currency->toCurrency($item->getTotalPrice()) ?></td>
-                        <td>
-                            <?php if($item->getComment()): ?>
-                                <button type="button" class="btn btn-xs btn-default" data-container="body" data-toggle="popover" title="User Kommentar" data-content="<?= nl2br($item->getComment()) ?>">
-                                    <span class="glyphicon glyphicon-comment"></span>
-                                </button>
-                            <?php endif; ?>
-
-                            <?php if($item->isEditAble() && !$item->isCanceled()):
-                                $urlCancel = $this->url([
-                                    'action' => 'edit-item'
-                                    , 'controller' => 'admin-order'
-                                    , 'module' => 'OnlineShop'
-                                    , 'id' => $item->getId()
-                                ]);
-                                ?>
-                                <a href="<?= $urlCancel ?>" data-toggle="modal" data-target="#popup" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
-                            <?php endif; ?>
-
-                            <?php if($item->isCancelAble()):
-                                $urlCancel = $this->url([
-                                    'action' => 'cancel-item'
-                                    , 'controller' => 'admin-order'
-                                    , 'module' => 'OnlineShop'
-                                    , 'id' => $item->getId()
-                                ]);
-                                ?>
-                                <a href="<?= $urlCancel ?>" data-toggle="modal" data-target="#popup" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
     </div>
 
     <div class="col-xs-5">
         <!-- customer infos -->
         <div role="tabpanel" class="tabpanel-customer-info">
-            <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active">
-                    <a href="#addressInvoice" aria-controls="addressInvoice" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> Rechnungsanschrift</a>
+                    <a href="#addressInvoice" aria-controls="addressInvoice" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> <?= $this->translate('online-shop.back-office.order.address.invoice') ?></a>
                 </li>
                 <?php if($order->hasDeliveryAddress()) :?>
                     <li role="presentation">
-                        <a href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-home"></span> Lieferanschrift</a>
+                        <a href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-home"></span> <?= $this->translate('online-shop.back-office.order.address.delivery') ?></a>
                     </li>
                 <?php endif; ?>
-                <li role="presentation" class="pull-right">
-                    <a href="#customerDetail" aria-controls="customerDetail" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span></a>
-                </li>
+
+                <?php if($order->getCustomer()): ?>
+                    <li role="presentation" class="pull-right">
+                        <a href="#customerDetail" aria-controls="customerDetail" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span></a>
+                    </li>
+                <?php endif; ?>
             </ul>
 
             <!-- Tab panes -->
@@ -289,78 +332,55 @@ $currency = $orderAgent->getCurrency();
                 </div>
                 <?php endif; ?>
 
+                <?php if($order->getCustomer()): ?>
                 <div role="tabpanel" class="tab-pane" id="customerDetail">
 
-                    <h4>Kundenkonto</h4>
-                    E-Mail: sag@ag.ag <br/>
-                    Registriert Seite: 14.12.2014 <br/>
-                    Bestellungen: 147
+                    <h4><?= $this->translate('online-shop.back-office.order.customer.account') ?></h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="well text-center" style="margin-bottom: 0;">
+                                <span class="glyphicon glyphicon-user" style="font-size: 400%;"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <table class="table table-condensed">
+                                <tbody>
+                                <?php
+                                $customer = $order->getCustomer();
 
+                                if(method_exists($customer, 'getEMail'))
+                                {
+                                    $register = new Zend_Date($order->getCreationDate());
+                                    echo sprintf('<tr><th>Registriert</th><td><span class="glyphicon glyphicon-certificate"> %1$s</td></tr>', $register->get(Zend_Date::DATE_MEDIUM));
+                                }
+                                if(method_exists($customer, 'getEMail'))
+                                {
+                                    echo sprintf('<tr><th>E-Mail</th><td><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:%1$s">%1$s</a></td></tr>', $customer->getEMail());
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- timeline -->
-        <?php
-        $arrTimeline = [
-            [
-                'icon' => 'glyphicon glyphicon-credit-card'
-                , 'type' => 'success'
-                , 'date' => '27.03.2015'
-                , 'user' => 'http://api.randomuser.me/portraits/women/11.jpg'
-                , 'message' => 'Geldeingang: 2.000,39 €'
-            ]
-            , [
-                'icon' => 'glyphicon glyphicon-plane'
-                , 'type' => 'success'
-                , 'date' => '27.03.2015'
-                , 'user' => 'http://api.randomuser.me/portraits/women/11.jpg'
-                , 'message' => 'Bestellung versendet'
-            ]
-            , [
-                'icon' => 'glyphicon glyphicon-remove'
-                , 'type' => 'info'
-                , 'date' => '30.03.2015'
-                , 'user' => 'http://api.randomuser.me/portraits/women/11.jpg'
-                , 'message' => 'Storniert: Wandgarderobe'
-            ]
-            , [
-                'icon' => 'glyphicon glyphicon-share-alt'
-                , 'type' => 'warning'
-                , 'date' => '30.03.2015'
-                , 'user' => 'http://api.randomuser.me/portraits/women/11.jpg'
-                , 'message' => 'Retoure gestartet'
-            ]
-        ];
-
-        uasort($arrTimeline, function ($a, $b) {
-
-            $date1 = new Zend_Date($a['date']);
-            $date2 = new Zend_Date($b['date']);
-
-            return $date1->isEarlier( $date2 );
-        });
-
-        $arrTimelineGrouped = [];
-        foreach($arrTimeline as $item)
-        {
-            $arrTimelineGrouped[ $item['date'] ][] = $item;
-        }
-        ?>
         <div class="timeline">
 
             <!-- Line component -->
             <div class="line text-muted"></div>
 
-
-            <?php foreach($arrTimelineGrouped as $group): ?>
+            <?php foreach($this->timeLine as $name => $group): ?>
                 <!-- Separator -->
                 <div class="separator text-muted">
-                    <time><?= $item['date'] ?></time>
+                    <time><?= $name ?></time>
                 </div>
                 <?php foreach($group as $item): ?>
                     <!-- Panel -->
-                    <article class="panel panel-<?= $item['type'] ?>">
+                    <article class="panel panel-<?= $item['context'] ?>">
 
                         <!-- Icon -->
                         <div class="panel-heading icon">
@@ -371,12 +391,13 @@ $currency = $orderAgent->getCurrency();
                         <!-- Body -->
                         <div class="panel-body">
                             <div class="media ng-scope">
-                                <img src="<?= $item['user'] ?>" width="40" class="img-circle pull-left">
+                                <img src="<?= $item['avatar'] ?>" width="40" class="img-circle pull-left" title="<?= $item['user'] ?>">
                                 <div class="media-body">
                                     <h4 class="media-heading">
-                                        <div class="ng-binding"><?= $item['message'] ?></div>
+                                        <?= $item['title'] ?>
                                     </h4>
-                                    <small class="ng-binding">2 minutes ago</small>
+                                    <p><?= nl2br($item['message']) ?></p>
+<!--                                    <small>--><?//= $item['type'] ?><!--</small>-->
                                 </div>
                             </div>
                         </div>
@@ -390,40 +411,29 @@ $currency = $orderAgent->getCurrency();
 
             <!-- Separator -->
             <div class="separator text-muted">
-                <time>25.03.2015</time>
+                <time><?= $order->getOrderdate()->get(Zend_Date::DATETIME_MEDIUM) ?></time>
             </div>
             <!-- /Separator -->
 
-            <!-- Panel -->
             <article class="panel panel-default panel-outline">
-
-                <!-- Icon -->
                 <div class="panel-heading icon">
                     <i class="glyphicon glyphicon-shopping-cart"></i>
                 </div>
-                <!-- /Icon -->
-
-                <!-- Body -->
                 <div class="panel-body">
-                    Bestellung eingegangen
+                    <?= $this->translate('online-shop.back-office.order.commit') ?>
                 </div>
-                <!-- /Body -->
-
             </article>
-            <!-- /Panel -->
         </div>
     </div>
 </div>
 
-
-<!-- Modal -->
+<!-- Modal / Popup -->
 <div class="modal" id="popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         </div>
     </div>
 </div>
-
 
 <script type="text/javascript">
     <?php $this->headScript()->captureStart(); ?>
@@ -441,8 +451,10 @@ $currency = $orderAgent->getCurrency();
         $('[data-toggle="popover"]').popover({html: true});
 
 
+        // remove modal on close
         $('body').on('hidden.bs.modal', '.modal', function () {
             $(this).removeData('bs.modal');
+            $(this).find('.modal-content').html("");
         });
 
     });

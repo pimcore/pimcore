@@ -11,7 +11,7 @@ namespace OnlineShop\Framework\Impl;
 use OnlineShop\Framework\IOrderManager;
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderAgent;
-use Pimcore\Model\Object\OnlineShopOrder;
+use OnlineShop_Framework_AbstractOrder as Order;
 use Zend_Config;
 
 class OrderManager implements IOrderManager
@@ -43,11 +43,11 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param OnlineShopOrder $order
+     * @param Order $order
      *
      * @return IOrderAgent
      */
-    public function createOrderAgent(OnlineShopOrder $order)
+    public function createOrderAgent(Order $order)
     {
         return new $this->config->orderAgent->class( $order );
     }

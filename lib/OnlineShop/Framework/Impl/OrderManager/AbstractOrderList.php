@@ -11,6 +11,9 @@ namespace OnlineShop\Framework\Impl\OrderManager;
 use Zend_Paginator_Adapter_Interface;
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListItem;
+
+use OnlineShop_Framework_AbstractOrder;
+
 use Pimcore\Resource;
 
 
@@ -35,6 +38,11 @@ abstract class AbstractOrderList implements IOrderList
      * @var string
      */
     protected $listType = self::LIST_TYPE_ORDER;
+
+    /**
+     * @var string
+     */
+    protected $orderState = OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
      * @var \ArrayIterator
@@ -100,6 +108,25 @@ abstract class AbstractOrderList implements IOrderList
         return $this->listType;
     }
 
+    /**
+     * @return string
+     */
+    public function getOrderState()
+    {
+        return $this->orderState;
+    }
+
+    /**
+     * @param string $orderState
+     *
+     * @return $this
+     */
+    public function setOrderState($orderState)
+    {
+        $this->orderState = $orderState;
+        return $this;
+    }
+
 
     /**
      * @return IOrderListItem[]
@@ -113,8 +140,6 @@ abstract class AbstractOrderList implements IOrderList
 
             $this->list = new \ArrayIterator($conn->fetchAll( $this->getQuery() ));
             $this->rowCount = (int)$conn->fetchCol( 'SELECT FOUND_ROWS() as "cnt"')[0];
-//
-//            p_r($this->getQuery()->__toString());
         }
 
         return $this;

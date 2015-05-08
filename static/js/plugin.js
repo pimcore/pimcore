@@ -66,7 +66,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                         pimcore.globalmanager.get(panelId).activate();
                     }
                     catch (e) {
-                        pimcore.globalmanager.add(panelId, new pimcore.tool.genericiframewindow("backoffice-order", "/plugin/OnlineShop/admin-order/list", "plugin_onlineshop_back-office_order", t('backoffice-order')));
+                        pimcore.globalmanager.add(panelId, new pimcore.tool.genericiframewindow("backoffice-order", "/plugin/OnlineShop/admin-order/list", "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
                     }
                 }
             };

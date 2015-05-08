@@ -11,12 +11,12 @@ namespace OnlineShop\Framework\OrderManager;
 use OnlineShop_Framework_IPayment;
 use OnlineShop_Framework_Payment_IStatus;
 
-use Exception;
 use Zend_Currency;
 
 use OnlineShop_Framework_AbstractOrder as Order;
 use OnlineShop_Framework_AbstractOrderItem as OrderItem;
 use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
+use Pimcore\Model\Element\Note;
 
 
 interface IOrderAgent
@@ -38,27 +38,43 @@ interface IOrderAgent
      *
      * @param OrderItem $item
      *
-     * @return $this
-     * @throws \Exception
+     * @return Note
      */
     public function itemCancel(OrderItem $item);
 
-//
-//    public function itemReturn(OrderItem $item);
-//
+
+    /**
+     * start item complaint
+     *
+     * @param OrderItem $item
+     * @param float $quantity
+     *
+     * @return Note
+     */
+    public function itemComplaint(OrderItem $item, $quantity);
+
 
     /**
      * change order item
      *
      * @param OrderItem $item
-     * @param int $amount
+     * @param float $amount
      *
-     * @return $this
+     * @return Note
      */
     public function itemChangeAmount(OrderItem $item, $amount);
 
-//
-//    public function itemSetStatus(OrderItem $item, $amount);
+
+    /**
+     * set a item status
+     *
+     * @param OrderItem $item
+     * @param string $status
+     *
+     * @return Note
+     */
+    public function itemSetStatus(OrderItem $item, $status);
+
 
 
     /**

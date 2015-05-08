@@ -19,7 +19,7 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.v3.5.3
 $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v3.5.3.js');
 ?>
 <div class="page-header">
-    <h1><?= $this->translate('backoffice.accounting-list') ?></h1>
+    <h1><?= $this->translate('online-shop.back-office.order-list') ?></h1>
 </div>
 
 <div class="panel panel-default">
@@ -29,14 +29,14 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                 <div class="form-group col-sm-4">
 
                     <div class="input-group">
-                        <div class="input-group-btn" id="customer-search">
+                        <div class="input-group-btn" id="search-filter">
                             <?php
                             $arrFields = [
-                                'customer' => 'Name'
-                                , 'email' => 'E-Mail'
-                                , 'paymentReference' => 'Payment Referenz'
+                                'order' => $this->translate('online-shop.back-office.order-list.filter-order')
+//                                , 'product' => $this->translate('online-shop.back-office.order-list.filter-product')
+                                , 'productType' => $this->translate('online-shop.back-office.order-list.filter-product-type')
                             ];
-                            $selected = $this->getParam('search', 'customer');
+                            $selected = $this->getParam('search', 'order');
                             ?>
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-target="#">
                                 <span data-bind="label"><?= $arrFields[$selected] ?></span> <span class="caret"></span>
@@ -47,7 +47,7 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                                 <?php endforeach; ?>
                             </ul>
                         </div>
-                        <input type="hidden" id="customer-search-value" name="search" value="<?= $selected ?>" />
+                        <input type="hidden" id="search-query" name="search" value="<?= $selected ?>" />
                         <input type="text" class="form-control" name="q" placeholder="Suche" value="<?= $this->getParam('q') ?>">
                     </div>
                 </div>
@@ -64,15 +64,15 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                     </div>
                 </div>
                 <?php
-//                $listPricingRule = OnlineShop_Framework_Factory::getInstance()->getPricingManager();
                 $listPricingRule = new OnlineShop_Framework_Impl_Pricing_Rule_List();
-                if(count($listPricingRule) > 0): ?>
+                $list = $listPricingRule->load();
+                if(count($list) > 0): ?>
                     <div class="form-group col-sm-4">
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></div>
                             <select class="form-control" name="pricingRule">
                                 <option value="">Pricing Rules</option>
-                                <?php foreach($listPricingRule->load() as $item): ?>
+                                <?php foreach($list as $item): ?>
                                     <option value="<?= $item->getId() ?>" <?= $item->getId() == $this->getParam('pricingRule') ? 'selected':'' ?>><?= $item->getLabel('de_DE') ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -156,14 +156,14 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
         });
 
 
-        $('#customer-search .dropdown-menu li').on('click', function (e) {
+        $('#search-filter .dropdown-menu li').on('click', function (e) {
 
             $(this).closest( '.input-group-btn' )
                 .find( '[data-bind="label"]' ).text( $(this).text() )
                 .end()
                 .children( '.dropdown-toggle' ).dropdown( 'toggle' );
 
-            $('#customer-search-value').val( $(this).find('[data-value]').data('value') );
+            $('#search-query').val( $(this).find('[data-value]').data('value') );
 
             return false;
         });

@@ -163,9 +163,9 @@ class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concr
      * ist eine rückerstattung erlaubt
      * @return bool
      */
-    public function isRefundAble()
+    public function isComplaintAble()
     {
-        return false;
+        return true;
     }
 
     /**

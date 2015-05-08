@@ -91,8 +91,8 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
             }
 
 
-            // only commited orders
-            $select->where('`order`.orderState = ?', 'committed');
+            // TODO only commited orders
+            $select->where('`order`.orderState = ?', $this->getOrderState());
 
 
             $this->query = $select;

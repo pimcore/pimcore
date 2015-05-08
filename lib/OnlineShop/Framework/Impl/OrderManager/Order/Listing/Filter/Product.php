@@ -85,13 +85,4 @@ class Product implements IOrderListFilter
         $this->classId = $classId;
         return $this;
     }
-
-
-
-
-
-    public function setProducts(array $products)
-    {
-
-    }
 }

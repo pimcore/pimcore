@@ -56,6 +56,17 @@ interface IOrderList extends SeekableIterator, Countable, Zend_Paginator_Adapter
     public function setOrder($order);
 
     /**
+     * @param string $state
+     *
+     * @return IOrderList
+     */
+    public function setOrderState($state);
+
+    /**
+     * @return string
+     */
+    public function getOrderState();
+    /**
      * @param string $type
      *
      * @return IOrderList
