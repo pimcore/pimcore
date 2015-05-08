@@ -291,11 +291,6 @@ class Thumbnail {
         // build html tag
         $htmlImgTag = '<img '.implode(' ', $attr).' />';
 
-        $attrCleanedForPicture = $attr;
-        unset($attrCleanedForPicture["width"]);
-        unset($attrCleanedForPicture["height"]);
-        $htmlImgTagForpicture = '<img '.implode(' ', $attrCleanedForPicture).' />';
-
         // $this->getConfig() can be empty, the original image is returned
         if(!$this->getConfig() || !$this->getConfig()->hasMedias()) {
             return $htmlImgTag;
@@ -305,6 +300,9 @@ class Thumbnail {
             // set this variable so that Pimcore_Controller_Plugin_Thumbnail::dispatchLoopShutdown() knows that
             // the picture polyfill script needs to be included
             self::$pictureElementInUse = true;
+
+            // mobile first => fallback image is the smallest possible image
+            $fallBackImageThumb = null;
 
             $html = '<picture ' . implode(" ", $pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
                 $mediaConfigs = $thumbConfig->getMedias();
@@ -321,6 +319,10 @@ class Thumbnail {
                         $thumbConfigRes->setHighResolution($highRes);
                         $thumb = $image->getThumbnail($thumbConfigRes, true);
                         $srcSetValues[] = $thumb . " " . $highRes . "x";
+
+                        if(!$fallBackImageThumb) {
+                            $fallBackImageThumb = $thumb;
+                        }
                     }
 
                     $html .= "\t" . '<source srcset="' . implode(", ", $srcSetValues) .'"';
@@ -334,7 +336,15 @@ class Thumbnail {
                 }
 
                 //$html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
+
+                $attrCleanedForPicture = $attr;
+                unset($attrCleanedForPicture["width"]);
+                unset($attrCleanedForPicture["height"]);
+                $attrCleanedForPicture["src"] = 'src="' . (string) $fallBackImageThumb . '"';
+                $htmlImgTagForpicture = '<img '.implode(' ', $attrCleanedForPicture).' />';
+
                 $html .= $htmlImgTagForpicture . "\n";
+
             $html .= '</picture>' . "\n";
 
             return $html;
