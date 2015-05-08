@@ -112,13 +112,15 @@ class PimcoreNavigationController
      * @param $activeDocument
      * @param null $navigationRootDocument
      * @param null $htmlMenuIdPrefix
-     * @param callable $pageCallback
+     * @param null $pageCallback
+     * @param bool|string $cache
      * @return mixed|\Zend_Navigation
      * @throws \Exception
      * @throws \Zend_Navigation_Exception
      */
     public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
     {
+        $cacheEnabled = (bool) $cache;
         $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
 
         if (!$navigationRootDocument) {
@@ -131,10 +133,16 @@ class PimcoreNavigationController
             $siteSuffix = "__site_" . $site->getId();
         }
 
-        $cacheKey = "navigation_" . $navigationRootDocument->getId() . $siteSuffix;
+
+        $cacheId = $navigationRootDocument->getId();
+        if(is_string($cache)) {
+            $cacheId .= "_" . $cache;
+        }
+
+        $cacheKey = "navigation_" . $cacheId . $siteSuffix;
         $navigation = CacheManager::load($cacheKey);
 
-        if(!$navigation || !$cache) {
+        if(!$navigation || !$cacheEnabled) {
             $navigation = new \Zend_Navigation();
 
             if ($navigationRootDocument->hasChilds()) {
@@ -144,7 +152,7 @@ class PimcoreNavigationController
 
             // we need to force caching here, otherwise the active classes and other settings will be set and later
             // also written into cache (pass-by-reference) ... when serializing the data directly here, we don't have this problem
-            if($cache) {
+            if($cacheEnabled) {
                 CacheManager::save($navigation, $cacheKey, ["output","navigation"], null, 999, true);
             }
         }
