@@ -42,12 +42,22 @@ if($newsletter) {
         if($class && $class->getFieldDefinition("persona")) {
             $personas = array();
             $p = explode(",", $newsletter->getPersonas());
-            foreach ($p as $value) {
-                if(!empty($value)) {
-                    $personas[] = $list->quote($value);
+
+            if($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Persona) {
+                foreach ($p as $value) {
+                    if(!empty($value)) {
+                        $personas[] = $list->quote($value);
+                    }
                 }
+                $conditions[] = "persona IN (" . implode(",", $personas) . ")";
+            } else if ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect) {
+                $personasCondition = array();
+                foreach ($p as $value) {
+                    $personasCondition[] = "persona LIKE " . $list->quote("%," . $value .  ",%");
+
+                }
+                $conditions[] = "(" . implode(" OR ", $personasCondition). ")";
             }
-            $conditions[] = "persona IN (" . implode(",", $personas) . ")";
         }
     }
 
