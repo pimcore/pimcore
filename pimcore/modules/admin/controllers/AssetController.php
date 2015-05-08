@@ -475,11 +475,13 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     }
 
     /**
-     * @param Asset $asset
-     * @return array|string
+     * @param $element
+     * @return array
      */
-    protected function getTreeNodeConfig($asset)
+    protected function getTreeNodeConfig($element)
     {
+        $asset = $element;
+
         $tmpAsset = array(
             "id" => $asset->getId(),
             "text" => $asset->getFilename(),

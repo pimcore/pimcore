@@ -223,8 +223,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @return string
      * @throws \Exception
      */
-    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
-    {
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null) {
         if(!$language) {
             try {
                 $language = (string) \Zend_Registry::get('Zend_Locale');

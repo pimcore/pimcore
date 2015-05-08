@@ -859,9 +859,13 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $this->removeViewRenderer();
     }
 
-
-    protected function getTreeNodeConfig($childDocument)
+    /**
+     * @param $element
+     * @return array
+     */
+    protected function getTreeNodeConfig($element)
     {
+        $childDocument = $element;
 
         $tmpDocument = array(
             "id" => $childDocument->getId(),

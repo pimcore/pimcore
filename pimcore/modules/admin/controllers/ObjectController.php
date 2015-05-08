@@ -141,9 +141,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param Object\AbstractObject $child
      * @return array
      */
-    protected function getTreeNodeConfig($child)
-    {
+    protected function getTreeNodeConfig($element) {
 
+        $child = $element;
 
         $tmpObject = array(
             "id" => $child->getId(),

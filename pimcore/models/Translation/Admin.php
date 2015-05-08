@@ -23,17 +23,15 @@ use Pimcore\Tool;
 class Admin extends AbstractTranslation {
 
     /**
-     * Static Helper to get the translation of the current logged in user
-     *
-     * @static
-     * @param $id - translation key
-     * @param bool $create - creates an empty translation entry if the key doesn't exists
-     * @param bool $returnIdIfEmpty - returns $id if no translation is available
-     * @return string
+     * @param $id
+     * @param bool $create
+     * @param bool $returnIdIfEmpty
+     * @param null $language
+     * @return array
      * @throws \Exception
+     * @throws \Zend_Exception
      */
-    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false)
-    {
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null) {
         if($user = Tool\Admin::getCurrentUser()) {
             $language = $user->getLanguage();
         } else if ($user = Tool\Authentication::authenticateSession()) {
