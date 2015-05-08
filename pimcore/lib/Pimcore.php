@@ -653,6 +653,7 @@ class Pimcore {
         $autoloader->registerNamespace('Search');
         $autoloader->registerNamespace('Whoops');
         $autoloader->registerNamespace('Google');
+        $autoloader->registerNamespace('Symfony');
 
         // these are necessary to be backward compatible
         // so if e.g. plugins use the namespace Object but do not include them in their own autoloader definition (plugin.xml)

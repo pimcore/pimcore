@@ -18,6 +18,7 @@ namespace Pimcore\Helper;
 use Pimcore\Mail as MailClient;
 use Pimcore\Tool;
 use Pimcore\Model;
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class Mail
 {
@@ -243,10 +244,12 @@ CSS;
             throw new \Exception('$document has to be an instance of Document');
         }
 
-
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"']([^http].*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
         if (!empty($matches[0])) {
+
+            $css = "";
+
             foreach ($matches[0] as $key => $value) {
                 $fullMatch = $matches[0][$key];
                 $path = $matches[1][$key];
@@ -262,11 +265,24 @@ CSS;
                         }
                         if ($fileContent) {
                             $fileContent = self::normalizeCssContent($fileContent, $fileInfo);
-                            $string = str_replace($fullMatch, '<style type="text/css">' . $fileContent . '</style>', $string);
+
+                            $css .= "\n\n\n";
+                            $css .= $fileContent;
+
+                            // remove <link> tag
+                            $string = str_replace($fullMatch, '', $string);
                         }
                     }
                 }
             }
+
+            $autoloader = \Zend_Loader_Autoloader::getInstance();
+            $autoloader->registerNamespace('TijsVerkoyen');
+
+            $cssToInlineStyles = new CssToInlineStyles();
+            $cssToInlineStyles->setHTML($string);
+            $cssToInlineStyles->setCSS($css);
+            $string = $cssToInlineStyles->convert();
         }
 
         return $string;

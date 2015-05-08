@@ -53,7 +53,11 @@ class Service extends Model\Element\Service {
     public static function render(Document $document, $params = array(), $useLayout = false)
     {
         $layout = null;
-        $existingActionHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("layout");
+        $existingActionHelper = null;
+
+        if(\Zend_Controller_Action_HelperBroker::hasHelper("layout")) {
+            $existingActionHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("layout");
+        }
         $layoutInCurrentAction = (\Zend_Layout::getMvcInstance() instanceof \Zend_Layout) ? \Zend_Layout::getMvcInstance()->getLayout() : false;
         
         $viewHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
