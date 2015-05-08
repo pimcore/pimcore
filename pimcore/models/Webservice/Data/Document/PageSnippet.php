@@ -42,8 +42,8 @@ class PageSnippet extends Model\Webservice\Data\Document {
      */
     public $elements;
 
-    
-    public function map ($object) {
+
+    public function map($object, $options = null) {
 
         $originalElements = array();
         if(is_array($object->getElements())){

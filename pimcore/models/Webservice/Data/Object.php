@@ -63,7 +63,11 @@ class Object extends Model\Webservice\Data {
      */
     public $properties;
 
-    public function map ($object) {
+    /**
+     * @param $object
+     * @param null $options
+     */
+    public function map($object, $options = null) {
 
         parent::map($object);
 

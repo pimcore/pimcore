@@ -33,8 +33,11 @@ class Concrete extends Model\Webservice\Data\Object {
      */
     public $className;
 
-
-    public function map($object) {
+    /**
+     * @param $object
+     * @param null $options
+     */
+    public function map($object, $options = null) {
         parent::map($object);
 
         $this->className = $object->getClassName();

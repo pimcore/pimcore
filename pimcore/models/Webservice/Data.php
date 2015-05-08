@@ -26,6 +26,7 @@ abstract class Data {
     /**
      * @param $object
      * @param null $options
+     * @throws \Exception
      */
     public function map($object, $options = null) {
         $keys = get_object_vars($this);

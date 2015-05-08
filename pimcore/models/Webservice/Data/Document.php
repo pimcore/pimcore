@@ -64,8 +64,9 @@ abstract class Document extends Model\Webservice\Data {
 
     /**
      * @param $object
+     * @param null $options
      */
-    public function map($object) {
+    public function map($object, $options = null) {
         parent::map($object);
 
         $keys = get_object_vars($this);
