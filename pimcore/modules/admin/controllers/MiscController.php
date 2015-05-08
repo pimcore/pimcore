@@ -325,8 +325,8 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $db = Resource::get();
 
-        $limit = $this->getParam("limit");
-        $offset = $this->getParam("start");
+        $limit = intval($this->getParam("limit"));
+        $offset = intval($this->getParam("start"));
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
         $filter = $this->getParam("filter");

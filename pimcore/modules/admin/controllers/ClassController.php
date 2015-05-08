@@ -484,10 +484,12 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
     public function exportClassAction() {
 
         $this->removeViewRenderer();
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+
+        $id = intval($this->getParam("id"));
+        $class = Object\ClassDefinition::getById($id);
 
         if (!$class instanceof Object\ClassDefinition) {
-            $errorMessage = ": Class with id [ " . $this->getParam("id") . " not found. ]";
+            $errorMessage = ": Class with id [ " . $id . " not found. ]";
             \Logger::error($errorMessage);
             echo $errorMessage;
         } else {
@@ -496,14 +498,13 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
             header("Content-Disposition: attachment; filename=\"class_" . $class->getName() . "_export.json\"");
             echo $json;
         }
-
     }
 
 
     public function exportCustomLayoutDefinitionAction() {
 
         $this->removeViewRenderer();
-        $id = $this->getParam("id");
+        $id = intval($this->getParam("id"));
 
         if ($id) {
             $customLayout = Object\ClassDefinition\CustomLayout::getById($id);
