@@ -253,6 +253,17 @@ class Translate extends \Zend_Translate_Adapter {
     }
 
     /**
+     * @param string $messageId
+     * @param bool $original
+     * @param null $locale
+     * @return bool
+     */
+    public function isTranslated($messageId, $original = false, $locale = null) {
+        $messageId = mb_strtolower($messageId);
+        return parent::isTranslated($messageId, $original, $locale);
+    }
+
+    /**
      * @static
      * @param $backend
      */
