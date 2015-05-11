@@ -318,9 +318,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $values = \Zend_Json::decode($this->getParam("data"));
 
-        // convert all special characters to their entities so the xml writer can put it into the file
-        $values = array_htmlspecialchars($values);
-
         // email settings
         $oldConfig = Config::getSystemConfig();
         $oldValues = $oldConfig->toArray();
@@ -509,6 +506,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             }
         }
         $settings["newsletter"]["usespecific"] = $values["newsletter.usespecific"];
+
+        // convert all special characters to their entities so the xml writer can put it into the file
+        $settings = array_htmlspecialchars($settings);
 
         $config = new \Zend_Config($settings, true);
         $writer = new \Zend_Config_Writer_Xml(array(

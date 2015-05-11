@@ -100,7 +100,9 @@ class Setup extends Model\AbstractModel {
 			);
 		}
 
-        $settings = array_replace_recursive($settings, $config);		
+        $settings = array_replace_recursive($settings, $config);
+
+        // convert all special characters to their entities so the xml writer can put it into the file
         $settings = array_htmlspecialchars($settings);
 
         // create initial /website/var folder structure
