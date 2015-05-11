@@ -513,8 +513,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $children->setLimit(35);
 
             foreach ($children as $child) {
-                if ($thumbnailUrl = $this->getThumbnailUrl($child)) {
-                    $folderThumbs[] = $thumbnailUrl;
+                if($child->isAllowed("list")) {
+                    if ($thumbnailUrl = $this->getThumbnailUrl($child)) {
+                        $folderThumbs[] = $thumbnailUrl;
+                    }
                 }
             }
 
