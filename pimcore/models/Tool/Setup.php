@@ -101,6 +101,7 @@ class Setup extends Model\AbstractModel {
 		}
 
         $settings = array_replace_recursive($settings, $config);		
+        $settings = array_htmlspecialchars($settings);
 
         // create initial /website/var folder structure
         // @TODO: should use values out of startup.php (Constants)
