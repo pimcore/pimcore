@@ -661,7 +661,10 @@ class Tool {
 
         while (@ob_end_flush());
 
-        header('HTTP/1.1 503 Service Temporarily Unavailable');
+        if(php_sapi_name() != "cli") {
+            header('HTTP/1.1 503 Service Temporarily Unavailable');
+        }
+
         die($message);
     }
 
