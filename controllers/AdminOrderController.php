@@ -223,6 +223,49 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         }
 
 
+        // get customer info
+        if($order->getCustomer())
+        {
+            // init
+            $arrCustomerAccount = [];
+            $customer = $order->getCustomer();
+            
+
+            // register
+            $register = new Zend_Date($order->getCreationDate());
+            $arrCustomerAccount['created'] = $register->get(Zend_Date::DATE_MEDIUM);
+
+
+            // mail
+            if(method_exists($customer, 'getEMail'))
+            {
+                $arrCustomerAccount['email'] = $customer->getEMail();
+            }
+
+
+            // order count
+            $order = new Object_OnlineShopOrder();
+            $field = $order->getClass()->getFieldDefinition('customer');
+            if($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href)
+            {
+                if(count($field->getClasses()) == 1)
+                {
+                    $class = 'Pimcore\Model\Object\\' . reset($field->getClasses())['classes'];
+                    /* @var \Pimcore\Model\Object\Concrete $class */
+
+                    $orderList = $this->orderManager->createOrderList();
+                    $orderList->joinCustomer( $class::classId() );
+
+                    $orderList->getQuery()->where('customer.o_id = ?', $customer->getId());
+
+                    $arrCustomerAccount['orderCount'] = $orderList->count();
+                }
+            }
+            
+            $this->view->arrCustomerAccount = $arrCustomerAccount;
+        }
+
+
 
         // load order events
         $noteList = new Element_Note_List();
@@ -273,7 +316,6 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
                 , 'date' => $date->setTimestamp( $note->getDate() )->get(Zend_Date::DATETIME_MEDIUM)
                 , 'avatar' => $avatar
                 , 'user' => $user->getName()
-                , 'title' => $note->getTitle()
                 , 'message' => $note->getData()['message']['data']
             ];
         }

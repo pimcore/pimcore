@@ -22,6 +22,8 @@ $currency = $orderAgent->getCurrency();
                 </h2>
             </div>
         </div>
+        <!--
+        TODO primary options
         <ul class="well well-sm nav nav-justified">
             <li class="col-md-12">
                 <a class="text-center text-muted" href="#"><span class="glyphicon glyphicon-envelope"></span> <br>Nachricht</a>
@@ -36,6 +38,7 @@ $currency = $orderAgent->getCurrency();
                 <a class="text-center text-danger" href="#"><span class="glyphicon glyphicon-remove"></span> <br>Storno</a>
             </li>
         </ul>
+        -->
 
         <!-- order items -->
         <div class="panel panel-default">
@@ -346,16 +349,18 @@ $currency = $orderAgent->getCurrency();
                             <table class="table table-condensed">
                                 <tbody>
                                 <?php
-                                $customer = $order->getCustomer();
-
-                                if(method_exists($customer, 'getEMail'))
+                                $arrIcon = [
+                                    'created' => 'glyphicon glyphicon-certificate'
+                                    , 'email' => 'glyphicon glyphicon-envelope'
+                                    , 'orderCount' => 'glyphicon glyphicon-shopping-cart'
+                                ];
+                                foreach($this->arrCustomerAccount as $field => $value)
                                 {
-                                    $register = new Zend_Date($order->getCreationDate());
-                                    echo sprintf('<tr><th>Registriert</th><td><span class="glyphicon glyphicon-certificate"> %1$s</td></tr>', $register->get(Zend_Date::DATE_MEDIUM));
-                                }
-                                if(method_exists($customer, 'getEMail'))
-                                {
-                                    echo sprintf('<tr><th>E-Mail</th><td><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:%1$s">%1$s</a></td></tr>', $customer->getEMail());
+                                    echo sprintf('<tr><th>%1$s</th><td><span class="%3$s"></span> %2$s</td></tr>'
+                                        , $this->translate('online-shop.back-office.order.customer-account.' . $field)
+                                        , $value
+                                        , '' #$arrIcon[ $field ]
+                                    );
                                 }
                                 ?>
                                 </tbody>
@@ -394,10 +399,9 @@ $currency = $orderAgent->getCurrency();
                                 <img src="<?= $item['avatar'] ?>" width="40" class="img-circle pull-left" title="<?= $item['user'] ?>">
                                 <div class="media-body">
                                     <h4 class="media-heading">
-                                        <?= $item['title'] ?>
+                                        <?= $this->translate('online-shop.back-office.order.history.' . $item['type']) ?>
                                     </h4>
                                     <p><?= nl2br($item['message']) ?></p>
-<!--                                    <small>--><?//= $item['type'] ?><!--</small>-->
                                 </div>
                             </div>
                         </div>
