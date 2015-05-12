@@ -3,6 +3,23 @@
  * @extends Ext.draw.sprite.Path
  * 
  * A sprite representing a pie slice.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'sector',
+ *            centerX: 100,
+ *            centerY: 100,
+ *            startAngle: -2.355,
+ *            endAngle: -.785,
+ *            endRho: 50,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Sector', {
     extend: 'Ext.draw.sprite.Path',

@@ -45,13 +45,17 @@ Ext.define('Ext.chart.axis.layout.Discrete', {
         this.fireEvent('datachange', this.labels);
     },
 
-    // @inheritdoc
+    /**
+     * @inheritdoc
+     */
     calculateLayout: function (context) {
         context.data = this.labels;
         this.callParent([context]);
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     calculateMajorTicks: function (context) {
         var me = this,
             attr = context.attr,
@@ -69,7 +73,9 @@ Ext.define('Ext.chart.axis.layout.Discrete', {
         }
     },
 
-    // @inheritdoc
+    /**
+     * @inheritdoc
+     */
     snapEnds: function (context, min, max, estStepSize) {
         estStepSize = Math.ceil(estStepSize);
         var steps = Math.floor((max - min) / estStepSize),
@@ -91,7 +97,9 @@ Ext.define('Ext.chart.axis.layout.Discrete', {
         };
     },
 
-    // @inheritdoc
+    /**
+     * @inheritdoc
+     */
     trimByRange: function (context, out, trimMin, trimMax) {
         var unit = out.unit,
             beginIdx = Math.ceil((trimMin - out.from) / unit) * unit,

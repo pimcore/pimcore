@@ -220,7 +220,7 @@ function () {
      * @method dataIdentifier
      * Returns an instance of an ID generator based on the ID you pass in.
      * @param {string} id
-     * @return {Ext.data.identifier}
+     * @return {Object} Ext.data.identifier.* The data identifier
      */
     Factory.dataIdentifier = function (config) {
         var id = Ext.isString(config) ? config : (config && config.id),

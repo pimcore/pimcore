@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * WebStorageProxy is simply a superclass for the {@link Ext.data.proxy.LocalStorage LocalStorage} and {@link
  * Ext.data.proxy.SessionStorage SessionStorage} proxies. It uses the new HTML5 key/value client-side storage objects to
  * save {@link Ext.data.Model model instances} for offline use.
@@ -61,7 +59,9 @@ Ext.define('Ext.data.proxy.WebStorage', {
         this.initialize();
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     create: function(operation) {
         var me = this,
             records = operation.getRecords(),
@@ -103,7 +103,9 @@ Ext.define('Ext.data.proxy.WebStorage', {
         operation.setSuccessful(true);
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     read: function(operation) {
         var me = this,
             allRecords,
@@ -186,7 +188,9 @@ Ext.define('Ext.data.proxy.WebStorage', {
         }
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     update: function(operation) {
         var records = operation.getRecords(),
             length  = records.length,
@@ -209,7 +213,9 @@ Ext.define('Ext.data.proxy.WebStorage', {
         operation.setSuccessful(true);
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     erase: function(operation) {
         var me = this,
             records = operation.getRecords(),

@@ -182,7 +182,6 @@ Ext.define('Ext.scroll.Indicator', {
         cacheStyles: function() {
             var me = this,
                 el = me.element,
-                axis = me.getAxis(),
                 names = me.names;
 
             /**

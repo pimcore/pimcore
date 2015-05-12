@@ -19,7 +19,7 @@ Ext.define('Ext.util.sizemonitor.Scroll', {
                     className: 'shrink'
                 }
             ]
-        }
+        };
     },
 
     constructor: function(config) {

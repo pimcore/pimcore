@@ -1,4 +1,5 @@
 /**
+ * @extends Ext.ux.event.Driver
  * This class manages the playback of an array of "event descriptors". For details on the
  * contents of an "event descriptor", see {@link Ext.ux.event.Recorder}. The events recorded by the
  * {@link Ext.ux.event.Recorder} class are designed to serve as input for this class.
@@ -882,16 +883,16 @@ return {
          * @param {int} [options.detail=1] The number of times the mouse button has been
          * used.
          * @param {int} [options.screenX=0] The x-coordinate on the screen at which point
-         * the event occured.
+         * the event occurred.
          * @param {int} [options.screenY=0] The y-coordinate on the screen at which point
-         * the event occured.
+         * the event occurred.
          * @param {int} [options.clientX=0] The x-coordinate on the client at which point
-         * the event occured.
+         * the event occurred.
          * @param {int} [options.clientY=0] The y-coordinate on the client at which point
-         * the event occured.
+         * the event occurred.
          * @param {int} [options.button=0] The button being pressed while the event is
          * executing. The value should be 0 for the primary mouse button (typically the
-         * left button), 1 for the terciary mouse button (typically the middle button),
+         * left button), 1 for the tertiary mouse button (typically the middle button),
          * and 2 for the secondary mouse button (typically the right button).
          * @param {HTMLElement} [options.relatedTarget=null] For `mouseout` events, this
          * is the element that the mouse has moved to. For `mouseover` events, this is
@@ -1001,7 +1002,7 @@ return {
          * DOM Level 2 specifies that all mouse events bubble by default.
          * @param {Boolean} [options.cancelable=true] `true` if the event can be canceled
          * using `preventDefault`. DOM Level 2 specifies that all mouse events except
-         * `mousemove` can be cancelled. This defaults to `false` for `mousemove`.
+         * `mousemove` can be canceled. This defaults to `false` for `mousemove`.
          * @param {int} [options.detail=1] The number of times the mouse button has been
          * used.
          * @param {Window} [view=window] The view containing the target. This is typically

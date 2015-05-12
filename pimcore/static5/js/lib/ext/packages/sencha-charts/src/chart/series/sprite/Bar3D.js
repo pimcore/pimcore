@@ -13,11 +13,23 @@ Ext.define('Ext.chart.series.sprite.Bar3D', {
     inheritableStatics: {
         def: {
             processors: {
-                depthWidthRatio: 'number'
+                depthWidthRatio: 'number',
+                /**
+                 * @cfg {Number} [saturationFactor=1]
+                 * The factor applied to the saturation of the bars.
+                 */
+                saturationFactor: 'number',
+                /**
+                 * @cfg {Number} [brightnessFactor=1]
+                 * The factor applied to the brightness of the bars.
+                 */
+                brightnessFactor: 'number'
             },
 
             defaults: {
                 depthWidthRatio: 1/3,
+                saturationFactor: 1,
+                brightnessFactor: 1,
                 transformFillStroke: true
             },
 
@@ -71,6 +83,8 @@ Ext.define('Ext.chart.series.sprite.Bar3D', {
         itemCfg.height = bottom - top;
         itemCfg.depth = depth = itemCfg.width * attr.depthWidthRatio;
         itemCfg.orientation = attr.flipXY ? 'horizontal' : 'vertical';
+        itemCfg.saturationFactor = attr.saturationFactor;
+        itemCfg.brightnessFactor = attr.brightnessFactor;
 
         if (depth !== me.depth) {
             me.depth = depth;

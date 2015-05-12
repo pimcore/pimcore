@@ -68,7 +68,7 @@ Ext.define('Ext.chart.series.sprite.Cartesian', {
                 selectionTolerance: 'number',
 
                 /**
-                 * @cfg {Boolean} If flipXY is 'true', the series is flipped.
+                 * @cfg {Boolean} flipXY If flipXY is 'true', the series is flipped.
                  */
                 flipXY: 'bool',
 

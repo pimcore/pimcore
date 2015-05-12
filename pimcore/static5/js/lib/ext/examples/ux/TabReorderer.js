@@ -47,7 +47,7 @@ Ext.define('Ext.ux.TabReorderer', {
         // Move the associated card to match the tab order
         if (me.dragCmp) {
             me.container.tabPanel.setActiveTab(me.dragCmp.card);
-            me.container.tabPanel.move(me.startIndex, me.curIndex);
+            me.container.tabPanel.move(me.dragCmp.card, me.curIndex);
         }
     }
 });

@@ -997,11 +997,11 @@ pimcore.layout.toolbar = Class.create({
 
     showSubMenu: function (e, el) {
         if(this.hidden) {
+            e.stopEvent();
             el = Ext.get(el);
             var offsets = el.getOffsetsTo(Ext.getBody());
             offsets[0] = 70;
             this.showAt(offsets);
-            e.stopEvent();
         } else {
             this.hide();
         }

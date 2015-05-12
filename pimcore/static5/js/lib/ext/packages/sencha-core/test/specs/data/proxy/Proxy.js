@@ -35,6 +35,12 @@ describe("Ext.data.proxy.Proxy", function() {
         Ext.data.Model.schema.clear();
         Ext.undefine('spec.Alien');
         Ext.undefine('spec.Human');
+        
+        if (proxy) {
+            proxy.destroy();
+        }
+        
+        proxy = null;
     });
     
 
@@ -163,6 +169,50 @@ describe("Ext.data.proxy.Proxy", function() {
 
         it("should return the meta data as the second arg", function () {
             expect(args[1]).toBe(metaArg);
+        });
+    });
+    
+    describe("pending operations", function() {
+        var op1, op2;
+        
+        beforeEach(function() {
+            op1 = new Ext.data.operation.Operation();
+            op2 = new Ext.data.operation.Operation();
+            
+            spyOn(op1, 'abort');
+            spyOn(op2, 'abort');
+            
+            proxy.pendingOperations[op1._internalId] = op1;
+            proxy.pendingOperations[op2._internalId] = op2;
+        });
+        
+        afterEach(function() {
+            op1 = op2 = proxy = null;
+        });
+        
+        describe("aborting", function() {
+            beforeEach(function() {
+                op1.execute();
+                proxy.destroy();
+            });
+            
+            it("should abort running operations", function() {
+                expect(op1.abort).toHaveBeenCalled();
+            });
+            
+            it("should not abort non-running operations", function() {
+                expect(op2.abort).not.toHaveBeenCalled();
+            });
+        });
+        
+        describe("cleanup", function() {
+            beforeEach(function() {
+                proxy.destroy();
+            });
+            
+            it("should null pendingOperations", function() {
+                expect(proxy.pendingOperations).toBe(null);
+            });
         });
     });
 });

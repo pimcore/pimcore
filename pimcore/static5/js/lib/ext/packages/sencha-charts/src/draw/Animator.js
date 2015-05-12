@@ -106,9 +106,9 @@ Ext.define('Ext.draw.Animator', {
 
     /**
      * Register a one-time callback that will be called at the next frame.
-     * @param {Function} callback
+     * @param {Function/String} callback
      * @param {Object} scope
-     * @return {String}
+     * @return {String} The ID of the scheduled callback.
      */
     schedule: function (callback, scope) {
         scope = scope || this;
@@ -121,6 +121,30 @@ Ext.define('Ext.draw.Animator', {
         this.scheduled++;
         Ext.draw.Animator.ignite();
         return id;
+    },
+
+    /**
+     * Register a one-time callback that will be called at the next frame,
+     * if that callback (with a matching function and scope) isn't already scheduled.
+     * @param {Function/String} callback
+     * @param {Object} scope
+     * @return {String/null} The ID of the scheduled callback or null, if that callback has already been scheduled.
+     */
+    scheduleIf: function (callback, scope) {
+        scope = scope || this;
+        var frameCallbacks = Ext.draw.Animator.frameCallbacks,
+            cb, id;
+
+        if (Ext.isString(callback)) {
+            callback = scope[callback];
+        }
+        for (id in frameCallbacks) {
+            cb = frameCallbacks[id];
+            if (cb.once && cb.fn === callback && cb.scope === scope) {
+                return null;
+            }
+        }
+        return this.schedule(callback, scope);
     },
 
     /**

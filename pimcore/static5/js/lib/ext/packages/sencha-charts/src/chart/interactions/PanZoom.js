@@ -8,81 +8,108 @@
  * {@link #modeToggleButton} provides a button to indicate and toggle between two modes.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
+ *     Ext.create({
+ *         renderTo: document.body,
+ *         xtype: 'cartesian',
  *         width: 600,
  *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             interactions: [{
- *                 type: 'panzoom',
- *                 zoomOnPanGesture: true
- *             }],
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 0
+ *         insetPadding: 40,            
+ *         interactions: [{
+ *             type: 'panzoom',
+ *             zoomOnPanGesture: true
+ *         }],
+ *         store: {
+ *             fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
+ *             data: [{
+ *                 'name': 'metric one',
+ *                 'data1': 10,
+ *                 'data2': 12,
+ *                 'data3': 14,
+ *                 'data4': 8,
+ *                 'data5': 13
  *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             }],
- *             series: [{
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 style: {
- *                     stroke: 'rgb(143,203,203)'
- *                 },
- *                 xField: 'name',
- *                 yField: 'data1',
- *                 marker: {
- *                     type: 'path',
- *                     path: ['M', -2, 0, 0, 2, 2, 0, 0, -2, 'Z'],
- *                     stroke: 'blue',
- *                     lineWidth: 0
- *                 }
+ *                 'name': 'metric two',
+ *                 'data1': 7,
+ *                 'data2': 8,
+ *                 'data3': 16,
+ *                 'data4': 10,
+ *                 'data5': 3
  *             }, {
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 fill: true,
- *                 xField: 'name',
- *                 yField: 'data3',
- *                 marker: {
- *                     type: 'circle',
- *                     radius: 4,
- *                     lineWidth: 0
- *                 }
+ *                 'name': 'metric three',
+ *                 'data1': 5,
+ *                 'data2': 2,
+ *                 'data3': 14,
+ *                 'data4': 12,
+ *                 'data5': 7
+ *             }, {
+ *                 'name': 'metric four',
+ *                 'data1': 2,
+ *                 'data2': 14,
+ *                 'data3': 6,
+ *                 'data4': 1,
+ *                 'data5': 23
+ *             }, {
+ *                 'name': 'metric five',
+ *                 'data1': 27,
+ *                 'data2': 38,
+ *                 'data3': 36,
+ *                 'data4': 13,
+ *                 'data5': 33
  *             }]
- *         }
+ *         },
+ *         axes: [{
+ *             type: 'numeric',
+ *             position: 'left',
+ *             fields: ['data1'],
+ *             title: {
+ *                 text: 'Sample Values',
+ *                 fontSize: 15
+ *             },
+ *             grid: true,
+ *             minimum: 0
+ *         }, {
+ *             type: 'category',
+ *             position: 'bottom',
+ *             fields: ['name'],
+ *             title: {
+ *                 text: 'Sample Values',
+ *                 fontSize: 15
+ *             }
+ *         }],
+ *         series: [{
+ *             type: 'line',
+ *             highlight: {
+ *                 size: 7,
+ *                 radius: 7
+ *             },
+ *             style: {
+ *                 stroke: 'rgb(143,203,203)'
+ *             },
+ *             xField: 'name',
+ *             yField: 'data1',
+ *             marker: {
+ *                 type: 'path',
+ *                 path: ['M', - 2, 0, 0, 2, 2, 0, 0, - 2, 'Z'],
+ *                 stroke: 'blue',
+ *                 lineWidth: 0
+ *             }
+ *         }, {
+ *             type: 'line',
+ *             highlight: {
+ *                 size: 7,
+ *                 radius: 7
+ *             },
+ *             fill: true,
+ *             xField: 'name',
+ *             yField: 'data3',
+ *             marker: {
+ *                 type: 'circle',
+ *                 radius: 4,
+ *                 lineWidth: 0
+ *             }
+ *         }]
  *     });
- *
+ * 
  * The configuration object for the `panzoom` interaction type should specify which axes
  * will be made navigable via the `axes` config. See the {@link #axes} config documentation
  * for details on the allowed formats. If the `axes` config is not specified, it will default
@@ -241,6 +268,10 @@ Ext.define('Ext.chart.interactions.PanZoom', {
     applyModeToggleButton: function (button, oldButton) {
         var me = this,
             result = Ext.factory(button, 'Ext.button.Segmented', oldButton);
+
+        if (!result && oldButton) {
+            oldButton.destroy();
+        }
         if (result && !oldButton) {
             result.addListener('toggle', function (segmentedButton) {
                 me.setZoomOnPanGesture(segmentedButton.getValue() === 1);
@@ -539,4 +570,5 @@ Ext.define('Ext.chart.interactions.PanZoom', {
         this.setModeToggleButton(null);
         this.callParent();
     }
+
 });

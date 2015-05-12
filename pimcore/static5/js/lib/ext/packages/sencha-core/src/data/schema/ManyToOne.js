@@ -113,32 +113,42 @@ Ext.define('Ext.data.schema.ManyToOne', {
             }
         },
 
-        findRecords: function(session, rightRecord, leftRecords) {
+        findRecords: function(session, rightRecord, leftRecords, allowInfer) {
             var ret = leftRecords,
                 refs = session.getRefs(rightRecord, this, true),
+                field = this.association.field,
+                fieldName = field.name,
                 leftRecord, id, i, len, seen;
 
             if (!rightRecord.phantom) {
                 ret = [];
-                if (refs) {
+                if (refs || allowInfer) {
                     if (leftRecords) {
                         seen = {};
                         // Loop over the records returned by the server and
-                        // check they all still belong
+                        // check they all still belong. If the session doesn't have any prior knowledge
+                        // and we're allowed to infer the parent id (via nested loading), only do so if
+                        // we explicitly have an id specified
                         for (i = 0, len = leftRecords.length; i < len; ++i) {
                             leftRecord = leftRecords[i];
                             id = leftRecord.id;
-                            if (refs[id]) {
+                            if (refs && refs[id]) {
                                 ret.push(leftRecord);
+                            } else if (allowInfer && leftRecord.data[fieldName] === undefined) {
+                                ret.push(leftRecord);
+                                leftRecord.data[fieldName] = rightRecord.id;
+                                session.updateReference(leftRecord, field, rightRecord.id, undefined);
                             }
                             seen[id] = true;
                         }
                     }
 
                     // Loop over the expected set and include any missing records.
-                    for (id in refs) {
-                        if (!seen || !seen[id]) {
-                            ret.push(refs[id]);
+                    if (refs) {
+                        for (id in refs) {
+                            if (!seen || !seen[id]) {
+                                ret.push(refs[id]);
+                            }
                         }
                     }
                 }
@@ -176,7 +186,9 @@ Ext.define('Ext.data.schema.ManyToOne', {
                     hadRecords = !!leftRecords;
 
                 if (session) {
-                    leftRecords = me.findRecords(session, this, leftRecords);
+                    // allowInfer is true here because the only time we get records passed
+                    // here is via nested loading
+                    leftRecords = me.findRecords(session, this, leftRecords, true);
                     if (!hadRecords && (!leftRecords || !leftRecords.length)) {
                         leftRecords = null;
                     }
@@ -225,13 +237,12 @@ Ext.define('Ext.data.schema.ManyToOne', {
                 // We use the inverse role here since we're setting ourselves
                 // on the other record
                 instanceName = me.inverse.getInstanceName(),
-                result = me.callParent([ rightRecord, node, fromReader, readOptions ]),
-                store, leftRecords, len, i;
+                leftRecords = me.callParent([rightRecord, node, fromReader, readOptions]),
+                store, len, i;
             
-            // Did the root exist in the data?
-            if (result.getReadRoot()) {
+            if (leftRecords) {
                 // Create the store and dump the data
-                store = rightRecord[me.getterName](null, null, result.getRecords());
+                store = rightRecord[me.getterName](null, null, leftRecords);
                 // Inline associations should *not* arrive on the "data" object:
                 delete rightRecord.data[me.role];
 
@@ -250,15 +261,18 @@ Ext.define('Ext.data.schema.ManyToOne', {
             // our inverse role.
 
             var foreignKeyName = this.association.getFieldName(),
-                setter = this.inverse.setterName, // setTicket
+                inverse = this.inverse,
+                setter = inverse.setterName, // setTicket
+                instanceName = inverse.getInstanceName(),
                 i = leftRecords.length,
                 id = rightRecord.getId(),
-                different, leftRecord;
+                different, leftRecord, val;
 
             while (i-- > 0) {
                 leftRecord = leftRecords[i];
                 different = !leftRecord.isEqual(id, leftRecord.get(foreignKeyName));
 
+                val = clearing ? null : rightRecord;
                 if (different !== clearing) {
                     // clearing === true
                     //      different === true  :: leave alone (not associated anymore)
@@ -269,12 +283,11 @@ Ext.define('Ext.data.schema.ManyToOne', {
                     //      different === false :: leave alone (already associated)
                     //
                     leftRecord.changingKey = true;
-                    if (setter) {
-                        leftRecord[setter](clearing ? null : rightRecord);
-                    } else {
-                        leftRecord.set(foreignKeyName, clearing ? null : id);
-                    }
+                    leftRecord[setter](val);
                     leftRecord.changingKey = false;
+                } else {
+                    // Ensure we set the instance, we may only have the key
+                    leftRecord[instanceName] = val;
                 }
             }
         }
@@ -404,12 +417,15 @@ Ext.define('Ext.data.schema.ManyToOne', {
         },
         
         read: function(leftRecord, node, fromReader, readOptions) {
-            var result = this.callParent([ leftRecord, node, fromReader, readOptions ]),
-                rightRecord = result.getRecords()[0];
+            var rightRecords = this.callParent([leftRecord, node, fromReader, readOptions]),
+                rightRecord;
 
-            if (rightRecord) {
-                leftRecord[this.getInstanceName()] = rightRecord;
-                delete leftRecord.data[this.role];
+            if (rightRecords) {
+                rightRecord = rightRecords[0];
+                if (rightRecord) {
+                    leftRecord[this.getInstanceName()] = rightRecord;
+                    delete leftRecord.data[this.role];
+                }
             }
         }
     })

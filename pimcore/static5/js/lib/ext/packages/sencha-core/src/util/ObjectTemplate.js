@@ -123,7 +123,7 @@ Ext.define('Ext.util.ObjectTemplate', {
                         return template.apply(context);
                     };
                 }
-            } else if (Ext.isPrimitive(template) || Ext.isFunction(template)) {
+            } else if (!template || Ext.isPrimitive(template) || Ext.isFunction(template)) {
                 fn = function () {
                     return template;
                 };

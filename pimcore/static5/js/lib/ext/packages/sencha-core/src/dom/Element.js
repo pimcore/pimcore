@@ -30,9 +30,9 @@
  * There are 3 methods that can be used for this purpose, each with a slightly different
  * twist:
  *
- * - {@link #query}
- * - {@link #selectNode}
- * - {@link #select}
+ * - {@link #method-query}
+ * - {@link #method-selectNode}
+ * - {@link #method-select}
  *
  * These methods can accept any valid CSS selector since they all use
  * [querySelectorAll](http://www.w3.org/TR/css3-selectors/) under the hood. The primary
@@ -78,6 +78,52 @@
  * {@link Ext#fly}:
  *
  *     Ext.fly(document).query('.foo');
+ *
+ * # Animations
+ *
+ * When an element is manipulated, by default there is no animation.
+ *
+ *     var el = Ext.get("my-div");
+ *
+ *     // no animation
+ *     el.setWidth(100);
+ *
+ * specified as boolean (true) for default animation effects.
+ *
+ *     // default animation
+ *     el.setWidth(100, true);
+ *
+ * To configure the effects, an object literal with animation options to use as the Element animation configuration
+ * object can also be specified. Note that the supported Element animation configuration options are a subset of the
+ * {@link Ext.fx.Anim} animation options specific to Fx effects. The supported Element animation configuration options
+ * are:
+ *
+ *     Option    Default   Description
+ *     --------- --------  ---------------------------------------------
+ *     {@link Ext.fx.Anim#duration duration}  350       The duration of the animation in milliseconds
+ *     {@link Ext.fx.Anim#easing easing}    easeOut   The easing method
+ *     {@link Ext.fx.Anim#callback callback}  none      A function to execute when the anim completes
+ *     {@link Ext.fx.Anim#scope scope}     this      The scope (this) of the callback function
+ *
+ * Usage:
+ *
+ *     // Element animation options object
+ *     var opt = {
+ *         {@link Ext.fx.Anim#duration duration}: 1000,
+ *         {@link Ext.fx.Anim#easing easing}: 'elasticIn',
+ *         {@link Ext.fx.Anim#callback callback}: this.foo,
+ *         {@link Ext.fx.Anim#scope scope}: this
+ *     };
+ *     // animation with some options set
+ *     el.setWidth(100, opt);
+ *
+ * The Element animation object being used for the animation will be set on the options object as "anim", which allows
+ * you to stop or manipulate the animation. Here is an example:
+ *
+ *     // using the "anim" property to get the Anim object
+ *     if(opt.anim.isAnimated()){
+ *         opt.anim.stop();
+ *     }
  */
 Ext.define('Ext.dom.Element', function(Element) {
     var WIN = window,
@@ -108,6 +154,7 @@ Ext.define('Ext.dom.Element', function(Element) {
         classNameSplitRegex = /[\s]+/,
         transparentRe = /^(?:transparent|(?:rgba[(](?:\s*\d+\s*[,]){3}\s*0\s*[)]))$/i,
         adjustDirect2DTableRe = /table-row|table-.*-group/,
+        topRe = /top/i,
         borders = {
             t: 'border-top-width',
             r: 'border-right-width',
@@ -132,7 +179,7 @@ Ext.define('Ext.dom.Element', function(Element) {
         unitRe = /\d+(px|em|%|en|ex|pt|in|cm|mm|pc)$/i,
         defaultUnit = 'px',
         camelRe = /(-[a-z])/gi,
-        cssRe = /([a-z0-9-]+)\s*:\s*([^;\s]+(?:\s*[^;\s]+)*);?/gi,
+        cssRe = /([a-z0-9\-]+)\s*:\s*([^;\s]+(?:\s*[^;\s]+)*);?/gi,
         pxRe = /^\d+(?:\.\d*)?px$/i,
         propertyCache = {},
         camelReplaceFn = function(m, a) {
@@ -141,6 +188,9 @@ Ext.define('Ext.dom.Element', function(Element) {
         visibilityCls = Ext.baseCSSPrefix + 'hidden-visibility',
         displayCls = Ext.baseCSSPrefix + 'hidden-display',
         offsetsCls = Ext.baseCSSPrefix + 'hidden-offsets',
+        sizedCls = Ext.baseCSSPrefix + 'sized',
+        unsizedCls = Ext.baseCSSPrefix + 'unsized',
+        stretchedCls = Ext.baseCSSPrefix + 'stretched',
         noTouchScrollCls = Ext.baseCSSPrefix + 'no-touch-scroll',
         CREATE_ATTRIBUTES = {
             style: 'style',
@@ -191,7 +241,7 @@ Ext.define('Ext.dom.Element', function(Element) {
         validIdRe: Ext.validIdRe,
 
         blockedEvents: Ext.supports.EmulatedMouseOver ? {
-            // mobile safari emulates a mouseover event on clickable elmements such as
+            // mobile safari emulates a mouseover event on clickable elements such as
             // anchors. This event is useless because it runs after touchend. We block
             // this event to prevent mouseover handlers from running after tap events. It
             // is up to the individual component to determine if it has an analog for
@@ -738,7 +788,10 @@ Ext.define('Ext.dom.Element', function(Element) {
                 }
             },
 
-            // private
+            /**
+             * @static
+             * @private
+             */
             detach: function() {
                 var dom = this.dom;
 
@@ -914,6 +967,7 @@ Ext.define('Ext.dom.Element', function(Element) {
              * Returns the active element in the DOM. If the browser supports activeElement
              * on the document, this is returned. If not, the focus is tracked and the active
              * element is maintained internally.
+             * @static
              * @return {HTMLElement} The active (focused) element in the document.
              */
             getActiveElement: function () {
@@ -1086,6 +1140,7 @@ Ext.define('Ext.dom.Element', function(Element) {
              * {@link Ext.dom.Element Element} methods to be applied to many related
              * elements in one statement through the returned
              * {@link Ext.dom.CompositeElementLite CompositeElementLite} object.
+             * @static
              * @param {String/HTMLElement[]} selector The CSS selector or an array of
              * elements
              * @param {Boolean} [composite=false] Return a CompositeElement as opposed to
@@ -1100,7 +1155,6 @@ Ext.define('Ext.dom.Element', function(Element) {
 
             /**
              * Selects child nodes of a given root based on the passed CSS selector.
-             * For details on selectors see {@link #method-query}.
              * @static
              * @param {String} selector The CSS selector.
              * @param {Boolean} [asDom=true] `false` to return an array of Ext.dom.Element
@@ -1175,11 +1229,12 @@ Ext.define('Ext.dom.Element', function(Element) {
 
             /**
              * Returns the common ancestor of the two passed elements.
+             * @static
              *
-             * @param {Ext.dom.Element/HtmlElement} nodeA
-             * @param {Ext.dom.Element/HtmlElement} nodeB
+             * @param {Ext.dom.Element/HTMLElement} nodeA
+             * @param {Ext.dom.Element/HTMLElement} nodeB
              * @param {Boolean} returnDom Pass `true` to return a DOM element. Otherwise An {@link Ext.dom.Element Element} will be returned.
-             * @return {Ext.dom.Element/HtmlElement} The common ancestor.
+             * @return {Ext.dom.Element/HTMLElement} The common ancestor.
              */
             getCommonAncestor: function(nodeA, nodeB, returnDom) {
                 caFly = caFly || new Ext.dom.Fly();
@@ -1202,13 +1257,16 @@ Ext.define('Ext.dom.Element', function(Element) {
          * Adds the given CSS class(es) to this Element.
          * @param {String/String[]} names The CSS classes to add separated by space,
          * or an array of classes
-         * @param {String} [prefix] (optional) Prefix to prepend to each class.
-         * @param {String} [suffix] (optional) Suffix to append to each class.
+         * @param {String} [prefix] Prefix to prepend to each class. The separator `-` will be 
+         * appended to the prefix.
+         * @param {String} [suffix] Suffix to append to each class. The separator `-` will be 
+         * prepended to the suffix.
+         * @return {Ext.dom.Element} this
          */
         addCls: function(names, prefix, suffix) {
             var me = this,
-                hasNewCls, dom, map, classList, i, ln, name,
-                elementData = me.getData();
+                elementData = me.getData(),
+                hasNewCls, dom, map, classList, i, ln, name;
 
             if (!names) {
                 return me;
@@ -1230,12 +1288,16 @@ Ext.define('Ext.dom.Element', function(Element) {
             }
 
             for (i = 0, ln = names.length; i < ln; i++) {
-                name = prefix + names[i] + suffix;
+                name = names[i];
+                // Check name here, we may have a leading/trailing space in a string or an empty value
+                if (name) {
+                    name = prefix + name + suffix;
 
-                if (!map[name]) {
-                    map[name] = true;
-                    classList.push(name);
-                    hasNewCls = true;
+                    if (!map[name]) {
+                        map[name] = true;
+                        classList.push(name);
+                        hasNewCls = true;
+                    }
                 }
             }
 
@@ -1333,7 +1395,7 @@ Ext.define('Ext.dom.Element', function(Element) {
         },
 
         getActiveAnimation: function() {
-            return this._activeAnimation
+            return this._activeAnimation;
         },
 
         append: function() {
@@ -1346,7 +1408,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * or a DomHelper config
          * @param {Boolean} [returnDom=false] True to return the raw DOM element instead
          * of Ext.dom.Element
-         * @return {Ext.dom.Element} The inserted Element.
+         * @return {Ext.dom.Element/HTMLElement} The inserted Ext.dom.Element (or 
+         * HTMLElement if _returnDom_ is _true_).
          */
         appendChild: function(el, returnDom) {
             var me = this,
@@ -1436,7 +1499,7 @@ Ext.define('Ext.dom.Element', function(Element) {
          *     myOtherContainer.add(myPanel);
          *     restoreScroll();
          *
-         * @return {Function} A function which will restore all descentant elements of this Element to their scroll
+         * @return {Function} A function which will restore all descendant elements of this Element to their scroll
          * positions recorded when this function was executed. Be aware that the returned function is a closure which has
          * captured the scope of `cacheScrollValues`, so take care to derefence it as soon as not needed - if is it is a `var`
          * it will drop out of scope, and the reference will be freed.
@@ -1476,6 +1539,7 @@ Ext.define('Ext.dom.Element', function(Element) {
          * Centers the Element in either the viewport, or another Element.
          * @param {String/HTMLElement/Ext.dom.Element} centerIn element in
          * which to center the element.
+         * @return {Ext.dom.Element} This element
          */
         center: function(centerIn){
             return this.alignTo(centerIn || DOC, 'c-c');
@@ -1515,7 +1579,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {HTMLElement} [insertBefore] a child element of this element
          * @param {Boolean} [returnDom=false] true to return the dom node instead of creating
          * an Element
-         * @return {Ext.dom.Element} The new child element
+         * @return {Ext.dom.Element/HTMLElement} The new child element (or HTMLElement if 
+         * _returnDom_ is _true_)
          */
         createChild: function(config, insertBefore, returnDom) {
             config = config || {tag:'div'};
@@ -1635,7 +1700,7 @@ Ext.define('Ext.dom.Element', function(Element) {
         disableTouchScroll: function() {
             // The x-no-touch-scroll cls disables touch scrolling on IE10+
             this.addCls(noTouchScrollCls);
-            // Some browsers (e.g. Chrome on Win8 with touch-sreen) don't yet support
+            // Some browsers (e.g. Chrome on Win8 with touch-screen) don't yet support
             // touch-action:none, and so require cancellation of touchmove to prevent
             // the default scrolling action
             this.on({
@@ -1646,15 +1711,19 @@ Ext.define('Ext.dom.Element', function(Element) {
             });
         },
 
-        // private
+        /**
+         * @private
+         */
         doReplaceWith: function(element) {
             var dom = this.dom;
             dom.parentNode.replaceChild(Ext.getDom(element), dom);
         },
 
-        // a scrollIntoView implementation for scrollIntoView/rtlScrollIntoView to call after
-        // current scrollX has been determined
-        // private
+        /**
+         * @private
+         * A scrollIntoView implementation for scrollIntoView/rtlScrollIntoView to call 
+         * after current scrollX has been determined.
+         */
         doScrollIntoView: function(container, hscroll, animate, highlight, getScrollX, scrollTo) {
             scrollFly = scrollFly || new Ext.dom.Fly();
 
@@ -1785,7 +1854,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * The max depth to search as a number or an element which causes the upward traversal to stop
          * and is **not** considered for inclusion as the result. (defaults to 50 || document.documentElement)
          * @param {Boolean} [returnEl=false] True to return a Ext.dom.Element object instead of DOM node
-         * @return {HTMLElement} The matching DOM node (or null if no match was found)
+         * @return {HTMLElement/Ext.dom.Element} The matching DOM node (or 
+         * Ext.dom.Element if _returnEl_ is _true_).  Or null if no match was found.
          */
         findParent: function(simpleSelector, limit, returnEl) {
             var me = this,
@@ -1817,10 +1887,12 @@ Ext.define('Ext.dom.Element', function(Element) {
          * Looks at parent nodes for a match of the passed simple selector.
          * @param {String} selector The simple selector to test. See {@link Ext.dom.Query} for information about simple selectors.
          * @param {Number/String/HTMLElement/Ext.dom.Element} [limit]
-         * The max depth to search as a number or an element which causes the upward traversal to stop
-         * and is not</b> considered for inclusion as the result. (defaults to 50 || document.documentElement)
+         * The max depth to search as a number or an element which causes the upward
+         * traversal to stop and is **not</** considered for inclusion as the result.
+         * (defaults to 50 || document.documentElement)
          * @param {Boolean} [returnEl=false] True to return a Ext.dom.Element object instead of DOM node
-         * @return {HTMLElement} The matching DOM node (or null if no match was found)
+         * @return {HTMLElement/Ext.dom.Element} The matching DOM node (or 
+         * Ext.dom.Element if _returnEl_ is _true_).  Or null if no match was found.
          */
         findParentNode: function(simpleSelector, limit, returnEl) {
             var p = Ext.fly(this.dom.parentNode);
@@ -1873,9 +1945,10 @@ Ext.define('Ext.dom.Element', function(Element) {
                 shim = me.shim;
 
             if (!me.isFly) {
-                me.clearListeners();
+                me.mixins.observable.destroy.call(me);
                 delete Ext.cache[me.id];
                 me.isDestroyed = true;
+                me.el = null;
             }
 
             if (dom) {
@@ -1947,6 +2020,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {String} id The id of the desired child element.
          * @param {Boolean} [asDom=false] True to return the DOM element, false to return a
          * wrapped Element object.
+         * @return {Ext.dom.Element/HTMLElement} The child element (or HTMLElement if 
+         * _asDom_ is _true_).  Or null if no match was found.
          */
         getById: function (id, asDom) {
             // for normal elements getElementById is the best solution, but if the el is
@@ -1965,6 +2040,20 @@ Ext.define('Ext.dom.Element', function(Element) {
                 afterX: (parseFloat(bordersWidth[borders.r]) || 0) + (parseFloat(paddingWidth[paddings.r]) || 0),
                 beforeY: (parseFloat(bordersWidth[borders.t]) || 0) + (parseFloat(paddingWidth[paddings.t]) || 0),
                 afterY: (parseFloat(bordersWidth[borders.b]) || 0) + (parseFloat(paddingWidth[paddings.b]) || 0)
+            };
+        },
+
+        /**
+         * @private
+         */
+        getBorders: function() {
+            var bordersWidth = this.getStyle(bordersTLRB);
+
+            return {
+                beforeX: (parseFloat(bordersWidth[borders.l]) || 0),
+                afterX: (parseFloat(bordersWidth[borders.r]) || 0),
+                beforeY: (parseFloat(bordersWidth[borders.t]) || 0),
+                afterY: (parseFloat(bordersWidth[borders.b]) || 0)
             };
         },
 
@@ -2352,7 +2441,7 @@ Ext.define('Ext.dom.Element', function(Element) {
             if (inline) {
                 style = domStyle;
             } else {
-                // Caution: Firefox will not render "presentation" (ie. computed styles) in
+                // Caution: Firefox will not render "presentation" (i.e. computed styles) in
                 // iframes that are display:none or those inheriting display:none. Similar
                 // issues with legacy Safari.
                 //
@@ -2623,7 +2712,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * or a DomHelper config to create and insert
          * @param {Boolean} [returnDom=false] True to return the raw DOM element instead
          * of Ext.dom.Element
-         * @return {Ext.dom.Element} The new child
+         * @return {Ext.dom.Element/HTMLElement} The new child element (or HTMLElement if 
+         * _returnDom_ is _true_).
          */
         insertFirst: function(el, returnDom) {
             el = el || {};
@@ -2656,7 +2746,9 @@ Ext.define('Ext.dom.Element', function(Element) {
          * to create and insert *or* an array of any of those.
          * @param {String} [where='before'] 'before' or 'after'
          * @param {Boolean} [returnDom=false] True to return the raw DOM element instead of Ext.dom.Element
-         * @return {Ext.dom.Element} The inserted Element. If an array is passed, the last inserted element is returned.
+         * @return {Ext.dom.Element/HTMLElement} The inserted Ext.dom.Element (or 
+         * HTMLElement if _returnDom_ is _true_). If an array is passed, the last 
+         * inserted element is returned.
          */
         insertSibling: function(el, where, returnDom) {
             var me        = this,
@@ -2822,7 +2914,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {String} [selector] Find the previous sibling that matches the passed simple selector.
          * See {@link Ext.dom.Query} for information about simple selectors.
          * @param {Boolean} [returnDom=false] `true` to return a raw DOM node instead of an Ext.dom.Element
-         * @return {Ext.dom.Element/HTMLElement} The last child or null
+         * @return {Ext.dom.Element/HTMLElement} The last child Ext.dom.Element (or 
+         * HTMLElement if _returnDom_ is _true_).  Or null if no match is found.
          */
         last: function(selector, returnDom) {
             return this.matchNode('previousSibling', 'lastChild', selector, returnDom);
@@ -2851,7 +2944,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {String} [selector] Find the next sibling that matches the passed simple selector.
          * See {@link Ext.dom.Query} for information about simple selectors.
          * @param {Boolean} [returnDom=false] `true` to return a raw dom node instead of an Ext.dom.Element
-         * @return {Ext.dom.Element/HTMLElement} The next sibling or null
+         * @return {Ext.dom.Element/HTMLElement} The next sibling Ext.dom.Element (or 
+         * HTMLElement if _asDom_ is _true_).  Or null if no match is found.
          */
         next: function(selector, returnDom) {
             return this.matchNode('nextSibling', 'nextSibling', selector, returnDom);
@@ -2862,7 +2956,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {String} [selector] Find a parent node that matches the passed simple selector.
          * See {@link Ext.dom.Query} for information about simple selectors.
          * @param {Boolean} [returnDom=false] True to return a raw dom node instead of an Ext.dom.Element
-         * @return {Ext.dom.Element/HTMLElement} The parent node or null
+         * @return {Ext.dom.Element/HTMLElement} The parent node (Ext.dom.Element or 
+         * HTMLElement if _returnDom_ is _true_).  Or null if no match is found.
          */
         parent: function(selector, returnDom) {
             return this.matchNode('parentNode', 'parentNode', selector, returnDom);
@@ -2879,16 +2974,18 @@ Ext.define('Ext.dom.Element', function(Element) {
         position: function(pos, zIndex, x, y) {
             var me = this;
 
-            if (!pos && me.isStyle(POSITION, STATIC)) {
-                me.setStyle(POSITION, RELATIVE);
-            } else if (pos) {
-                me.setStyle(POSITION, pos);
-            }
-            if (zIndex) {
-                me.setStyle(ZINDEX, zIndex);
-            }
-            if (x || y) {
-                me.setXY([x || false, y || false]);
+            if (me.dom.tagName !== 'BODY') {
+                if (!pos && me.isStyle(POSITION, STATIC)) {
+                    me.setStyle(POSITION, RELATIVE);
+                } else if (pos) {
+                    me.setStyle(POSITION, pos);
+                }
+                if (zIndex) {
+                    me.setStyle(ZINDEX, zIndex);
+                }
+                if (x || y) {
+                    me.setXY([x || false, y || false]);
+                }
             }
         },
 
@@ -2897,7 +2994,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {String} [selector] Find the previous sibling that matches the passed simple selector.
          * See {@link Ext.dom.Query} for information about simple selectors.
          * @param {Boolean} [returnDom=false] `true` to return a raw DOM node instead of an Ext.dom.Element
-         * @return {Ext.dom.Element/HTMLElement} The previous sibling or null
+         * @return {Ext.dom.Element/HTMLElement} The previous sibling (Ext.dom.Element or 
+         * HTMLElement if _returnDom_ is _true_).  Or null if no match is found.
          */
         prev: function(selector, returnDom) {
             return this.matchNode('previousSibling', 'previousSibling', selector, returnDom);
@@ -2964,8 +3062,9 @@ Ext.define('Ext.dom.Element', function(Element) {
          *
          * @param {String} selector The CSS selector.
          * @param {Boolean} [asDom=true] `false` to return an array of Ext.dom.Element
-         * @return {HTMLElement[]/Ext.dom.Element[]} An Array of elements that match
-         * the selector.  If there are no matches, an empty Array is returned.
+         * @return {HTMLElement[]/Ext.dom.Element[]} An Array of elements (
+         * HTMLElement or Ext.dom.Element if _asDom_ is _false_) that match the selector.  
+         * If there are no matches, an empty Array is returned.
          */
         query: function(selector, asDom, /* private */ single) {
             var dom = this.dom,
@@ -3050,13 +3149,16 @@ Ext.define('Ext.dom.Element', function(Element) {
          * Removes the given CSS class(es) from this Element.
          * @param {String/String[]} names The CSS classes to remove separated by space,
          * or an array of classes
-         * @param {String} [prefix=''] Prefix to prepend to each class to be removed.
-         * @param {String} [suffix=''] Suffix to append to each class to be removed.
+         * @param {String} [prefix] Prefix to prepend to each class. The separator `-` will be 
+         * appended to the prefix.
+         * @param {String} [suffix] Suffix to append to each class. The separator `-` will be 
+         * prepended to the suffix.
+         * return {Ext.dom.Element} this
          */
         removeCls: function(names, prefix, suffix) {
             var me = this,
-                hasNewCls, dom, map, classList, i, ln, name,
-                elementData = me.getData();
+                elementData = me.getData(),
+                hasNewCls, dom, map, classList, i, ln, name;
 
             if (!names) {
                 return me;
@@ -3064,10 +3166,6 @@ Ext.define('Ext.dom.Element', function(Element) {
 
             if (!elementData.isSynchronized) {
                 me.synchronize();
-            }
-
-            if (!suffix) {
-                suffix = '';
             }
 
             dom = me.dom;
@@ -3082,12 +3180,15 @@ Ext.define('Ext.dom.Element', function(Element) {
             }
 
             for (i = 0, ln = names.length; i < ln; i++) {
-                name = prefix + names[i] + suffix;
+                name = names[i];
+                if (name) {
+                    name = prefix + name + suffix;
 
-                if (map[name]) {
-                    delete map[name];
-                    Ext.Array.remove(classList, name);
-                    hasNewCls = true;
+                    if (map[name]) {
+                        delete map[name];
+                        Ext.Array.remove(classList, name);
+                        hasNewCls = true;
+                    }
                 }
             }
 
@@ -3423,7 +3524,7 @@ Ext.define('Ext.dom.Element', function(Element) {
          */
         scrollTo: function(side, value, animate) {
             //check if we're scrolling top or left
-            var top = /top/i.test(side),
+            var top = topRe.test(side),
                 me = this,
                 prop = top ? 'scrollTop' : 'scrollLeft',
                 dom = me.dom,
@@ -3432,10 +3533,7 @@ Ext.define('Ext.dom.Element', function(Element) {
             if (!animate || !me.anim) {
                 // just setting the value, so grab the direction
                 dom[prop] = value;
-                // corrects IE, other browsers will ignore
-                dom[prop] = value;
-            }
-            else {
+            } else {
                 animCfg = {
                     to: {}
                 };
@@ -3491,8 +3589,9 @@ Ext.define('Ext.dom.Element', function(Element) {
          * Selects a single descendant element of this element using a CSS selector
          * (see {@link #query}).
          * @param {String} selector The selector query
-         * @param {Boolean} [asDom=true] `false` to return an array of Ext.dom.Element
-         * @return {HTMLElement} The DOM element which matched the selector.
+         * @param {Boolean} [asDom=true] `false` to return an Ext.dom.Element
+         * @return {HTMLElement/Ext.dom.Element} The DOM element (or Ext.dom.Element if 
+         * _asDom_ is _false_) which matched the selector.
          */
         selectNode: function(selector, asDom) {
             return this.query(selector, asDom, true);
@@ -3569,9 +3668,13 @@ Ext.define('Ext.dom.Element', function(Element) {
         setCls: function(className) {
             var me = this,
                 elementData = me.getData(),
-                map = elementData.classMap,
-                i, ln, name;
+                i, ln, name, map;
 
+            if (!elementData.isSynchronized) {
+                me.synchronize();
+            }
+
+            map = elementData.classMap;
             if (typeof className === 'string') {
                 className = className.split(spacesRe);
             }
@@ -3802,7 +3905,7 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {Number} left The left scroll position
          * @return {Ext.dom.Element} this
          */
-        setScrollLeft: function(left){
+        setScrollLeft: function(left) {
             this.dom.scrollLeft = left;
             return this;
         },
@@ -3854,19 +3957,25 @@ Ext.define('Ext.dom.Element', function(Element) {
 
         setSizeState: function(state) {
             var me = this,
-                classes = [Ext.baseCSSPrefix + 'sized', Ext.baseCSSPrefix + 'unsized', Ext.baseCSSPrefix + 'stretched'],
-                states = [true, false, null],
-                index = states.indexOf(state),
-                addedClass;
+                add, remove;
 
-            if (index !== -1) {
-                addedClass = classes[index];
-                classes.splice(index, 1);
-                me.addCls(addedClass);
+            if (state === true) {
+                add = sizedCls;
+                remove = [unsizedCls, stretchedCls];
+            } else if (state === false) {
+                    add = unsizedCls;
+                    remove = [sizedCls, stretchedCls];
+            } else if (state === null) {
+                add = stretchedCls;
+                remove = [sizedCls, unsizedCls];
+            } else {
+                remove = [sizedCls, unsizedCls, stretchedCls];
             }
 
-            me.removeCls(classes);
-
+            if (add) {
+                me.addCls(add);
+            }
+            me.removeCls(remove);
             return me;
         },
 
@@ -3967,7 +4076,9 @@ Ext.define('Ext.dom.Element', function(Element) {
             }
         },
 
-        // private
+        /**
+         * @private
+         */
         setVisibility: function(isVisible) {
             var domStyle = this.dom.style;
 
@@ -3980,7 +4091,13 @@ Ext.define('Ext.dom.Element', function(Element) {
         },
 
         /**
-         * Use this to change the visibility mode between {@link #VISIBILITY}, {@link #DISPLAY} or {@link #OFFSETS}.
+         * Use this to change the visibility mode between {@link #VISIBILITY}, 
+         * {@link #DISPLAY} or {@link #OFFSETS}.
+         * @param {Ext.dom.Element.VISIBILITY/Ext.dom.Element.DISPLAY/Ext.dom.Element.OFFSETS} 
+         * mode The method by which the element will be {@link #hide hidden} (you can 
+         * also use the {@link #setVisible} or {@link #toggle} method to toggle element 
+         * visibility).
+         * @return {Ext.dom.Element} this
          */
         setVisibilityMode: function(mode) {
             //<debug>
@@ -4243,12 +4360,21 @@ Ext.define('Ext.dom.Element', function(Element) {
             };
         }(),
 
-        // private
+        /**
+         * @private
+         */
         unwrap: function() {
             var dom = this.dom,
                 parentNode = dom.parentNode,
-                grandparentNode;
+                grandparentNode,
+                activeElement = Ext.fly(Ext.Element.getActiveElement()),
+                resumeFocus;
 
+            if (this.contains(activeElement)) {
+                Ext.GlobalEvents.suspendEvent('focus');
+                activeElement.suspendEvent('focus', 'blur');
+                resumeFocus = true;
+            }
             if (parentNode) {
                 grandparentNode = parentNode.parentNode;
                 grandparentNode.insertBefore(dom, parentNode);
@@ -4257,6 +4383,11 @@ Ext.define('Ext.dom.Element', function(Element) {
             else {
                 grandparentNode = document.createDocumentFragment();
                 grandparentNode.appendChild(dom);
+            }
+            if (resumeFocus) {
+                activeElement.focus();
+                Ext.GlobalEvents.resumeEvent('focus');
+                activeElement.resumeEvent('focus', 'blur');
             }
 
             return this;
@@ -4270,7 +4401,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * The max depth to search as a number or an element which causes the upward traversal to stop
          * and is **not** considered for inclusion as the result. (defaults to 50 || document.documentElement)
          * @param {Boolean} [returnDom=false] True to return the DOM node instead of Ext.dom.Element
-         * @return {Ext.dom.Element} The matching DOM node (or null if no match was found)
+         * @return {Ext.dom.Element/HTMLElement} The matching DOM node (or HTMLElement if 
+         * _returnDom_ is _true_).  Or null if no match was found.
          */
         up: function(simpleSelector, limit, returnDom) {
             return this.findParentNode(simpleSelector, limit, !returnDom);
@@ -4295,13 +4427,25 @@ Ext.define('Ext.dom.Element', function(Element) {
             var me = this,
                 dom = me.dom,
                 newEl = Ext.DomHelper.insertBefore(dom, config || {tag: "div"}, !returnDom),
-                target = newEl;
+                target = newEl,
+                activeElement = Ext.fly(Ext.Element.getActiveElement()),
+                resumeFocus;
 
             if (selector) {
                 target = newEl.selectNode(selector, returnDom);
             }
 
+            if (me.contains(activeElement)) {
+                Ext.GlobalEvents.suspendEvent('focus');
+                activeElement.suspendEvent('focus', 'blur');
+                resumeFocus = true;
+            }
             target.appendChild(dom);
+            if (resumeFocus) {
+                activeElement.focus();
+                activeElement.resumeEvent('focus', 'blur');
+                Ext.GlobalEvents.resumeEvent('focus');
+            }
             return newEl;
         },
 
@@ -4310,6 +4454,11 @@ Ext.define('Ext.dom.Element', function(Element) {
                 var me = this,
                     observableDoAddListener, additiveEventName,
                     translatedEventName;
+
+                // Even though the superclass method does conversion to lowercase, we need
+                // to do it here because we need to use the lowercase name for lookup
+                // in the event translation map.
+                eventName = Ext.canonicalEventName(eventName);
 
                 // Blocked events (such as emulated mouseover in mobile webkit) are prevented
                 // from firing
@@ -4879,13 +5028,15 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @method
          */
         removeNode: function(node) {
+            node = node.dom || node;
+
             var id = node && node.id,
                 el = Ext.cache[id],
                 parent;
 
             if (el) {
                 el.destroy();
-            } else if(node && node.tagName.toUpperCase() !== 'BODY'){
+            } else if(node && (node.nodeType === 3 || node.tagName.toUpperCase() !== 'BODY')) {
                 parent = node.parentNode;
                 if (parent) {
                     parent.removeChild(node);

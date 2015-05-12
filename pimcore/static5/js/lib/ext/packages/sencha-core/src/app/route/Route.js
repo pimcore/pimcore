@@ -5,7 +5,6 @@
  * This is a private internal class that should not need to be used by end-developer code.
  * Its API and existence are subject to change so use at your own risk.
  *
- * @author Mitchell Simoens
  * @private
  */
 Ext.define('Ext.app.route.Route', {

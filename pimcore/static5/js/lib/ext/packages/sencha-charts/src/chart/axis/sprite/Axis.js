@@ -153,7 +153,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                 totalAngle: 'number',
 
                 /**
-                 * @cfg {Number} The starting rotation of the angular axis.
+                 * @cfg {Number} baseRotation The starting rotation of the angular axis.
                  */
                 baseRotation: 'number',
 
@@ -585,23 +585,6 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                     if (labelText === undefined) {
                         return;
                     }
-                    // TODO: When a custom renderer is used, the labels don't go through the segmenter.renderer
-                    // TODO: and so if they are numbers they don't get rounded, we have to take care of it in our
-                    // TODO: custom renderer. It may appear that they have the precision we want already, so
-                    // TODO: for our custom renderer we could just use function (v) { return v + '%'; }, but this is
-                    // TODO: deceiving, as the min/max values are not aligned by the Numeric (or Time) segmenter
-                    // TODO: (see layout.Continuous#snapEnds) since segmenter.from simply returns the passed value.
-                    // TODO: So what we get is sever jittering during axis range animation because the min/max
-                    // TODO: labels (typically max, since min is often 0) will have varying mantissa during animation.
-                    // TODO: The min/max should always be aligned as well as intermidiate ticks, because who really
-                    // TODO: wants to have axis with values like this [-13.5233, -10, -5, 0, 5, 10, 12.2352]?
-                    // TODO: Granted, it will only look this way if we defined our own custom render and don't do
-                    // TODO: the rounding there, like in the example above. But even without a custom renderer
-                    // TODO: the labels will look like this [-13, -10, -5, 0, 5, 10, 12]. The spacing between the
-                    // TODO: ticks and the grid lines is still inconsistent, which doesn't look right to most everybody.
-                    // TODO: Alternatively, alignMaximum/MinimumByMajorUnit configs should be implemented
-                    // TODO: and set to 'true' by default.
-                    // TODO: For now taking care of rounding in custom renderers is the way to go.
                     text = renderer ? renderer.call(this, labelText, layout, lastLabelText) : segmenter.renderer(labelText, layout, lastLabelText);
                     lastLabelText = labelText;
                     label.setAttributes({

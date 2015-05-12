@@ -1,5 +1,4 @@
 /**
- * @author Jacky Nguyen <jacky@sencha.com>
  * @private
  */
 Ext.define('Ext.fx.runner.CssTransition', {

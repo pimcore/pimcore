@@ -88,7 +88,7 @@ Ext.define('Ext.TaskQueue', {
             fn = task[0];
             scope = task[1];
 
-            if (typeof fn == 'string') {
+            if (typeof fn === 'string') {
                 fn = scope[fn];
             }
 

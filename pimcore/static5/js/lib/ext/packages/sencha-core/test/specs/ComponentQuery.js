@@ -563,6 +563,22 @@ describe("Ext.ComponentQuery", function() {
             expect(diffIds[0]).toEqual(child6.id);
         });
         
+        describe("focusable", function() {
+            // https://sencha.jira.com/browse/EXTJS-16758
+            it("should not blow up when card item is not a component", function() {
+                var container = new Ext.container.Container({
+                    renderTo: Ext.getBody(),
+                    items: [new Ext.Widget()]
+                });
+                
+                expect(function() {
+                    container.query(':focusable');
+                }).not.toThrow();
+                
+                container.destroy();
+            });
+        });
+        
         describe("first/last", function() {
             var items;
             beforeEach(function(){

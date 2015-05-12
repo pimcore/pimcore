@@ -90,9 +90,16 @@ Ext.define('Ext.mixin.Bindable', {
 
         /**
          * @cfg {String/String[]/Object} publishes
-         * One or more names of config properties that this component should publish to
-         * its `ViewModel`. Some components override this and publish their most useful
-         * configs by default.
+         * One or more names of config properties that this component should publish 
+         * to its ViewModel. Generally speaking, only properties defined in a class config
+         * block (including ancestor config blocks and mixins) are eligible for publishing 
+         * to the viewModel. Some components override this and publish their most useful 
+         * configs by default. 
+         * 
+         * **Note:** We'll discuss publishing properties **not** found in the config block below. 
+         * 
+         * Values determined to be invalid by component (often form fields and model validations) 
+         * will not be published to the ViewModel.
          *
          * This config uses the `{@link #cfg-reference}` to determine the name of the data
          * object to place in the `ViewModel`. If `reference` is not set then this config
@@ -150,6 +157,17 @@ Ext.define('Ext.mixin.Bindable', {
          *          }
          *      }
          *
+         * In some cases, users may want to publish a property to the viewModel that is not found in a class 
+         * config block. In these situations, you may utilize {@link #publishState} if the property has a 
+         * setter method.  Let's use {@link Ext.form.Labelable#setFieldLabel setFieldLabel} as an example:
+         *
+         *       setFieldLabel: function(fieldLabel) {
+         *           this.callParent(arguments);
+         *           this.publishState('fieldLabel', fieldLabel);
+         *       }        
+         * 
+         * With the above chunk of code, fieldLabel may now be published to the viewModel.
+         * 
          * @since 5.0.0
          */
         publishes: {

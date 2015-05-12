@@ -12,10 +12,6 @@
  * * {@link Ext.event.gesture.Rotate}
  * * {@link Ext.event.gesture.EdgeSwipe}
  *
- * TODO: more docs on howto here
- * If you want to create custom recognizers, or disable recognizers in your application,
- * please refer to the documentation in {@link Ext#setup}.
- *
  * @abstract
  * @private
  */

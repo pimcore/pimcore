@@ -374,7 +374,7 @@ Ext.define('Ext.util.Format', function () {
          *
          * @param {Number} value The number to format in hex.
          * @param {Number} digits
-         * @returns {string}
+         * @return {string}
          */
         hex: function (value, digits) {
             var s = parseInt(value || 0, 10).toString(16);
@@ -754,13 +754,36 @@ Ext.define('Ext.util.Format', function () {
         },
 
         /**
-         * Selectively do a plural form of a word based on a numeric value. For example, in a template,
-         * `{commentCount:plural("Comment")}`  would result in `"1 Comment"` if commentCount was 1 or
-         * would be `"x Comments"` if the value is 0 or greater than 1.
+         * Selectively return the plural form of a word based on a numeric value.
+         * 
+         * For example, the following template would result in "1 Comment".  If the 
+         * value of `count` was 0 or greater than 1, the result would be "x Comments".
+         * 
+         *     var data = {
+         *         count: 1
+         *     };
+         *     
+         *     var cmp = Ext.create('Ext.Component', {
+         *         renderTo: document.body,
+         *         tpl: '{count:plural("Comment")}'
+         *     });
+         *     
+         *     cmp.update(data);
+         *     // resulting HTML is "1 Comment"
+         * 
+         * Examples using the static `plural` method call:
+         * 
+         *     Ext.util.Format.plural(2, 'Comment');
+         *     // returns "2 Comments"
+         * 
+         *     Ext.util.Format.plural(4, 'person', 'people');
+         *     // returns "4 people"
          *
          * @param {Number} value The value to compare against
          * @param {String} singular The singular form of the word
-         * @param {String} [plural] The plural form of the word (defaults to the singular with an "s")
+         * @param {String} [plural] The plural form of the word (defaults to the 
+         * singular form with an "s" appended)
+         * @return {String} output The pluralized output of the passed singular form
          */
         plural : function(v, s, p) {
             return v +' ' + (v === 1 ? s : (p ? p : s+'s'));

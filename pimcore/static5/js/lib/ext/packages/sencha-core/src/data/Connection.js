@@ -335,12 +335,7 @@ Ext.define('Ext.data.Connection', {
             scope = options.scope || window,
             username = options.username || me.getUsername(),
             password = options.password || me.getPassword() || '',
-            async,
-            requestOptions,
-            request,
-            headers,
-            xdr,
-            xhr;
+            async, requestOptions, request, headers, xdr, xhr;
 
         if (me.fireEvent('beforerequest', me, options) !== false) {
 
@@ -631,11 +626,15 @@ Ext.define('Ext.data.Connection', {
             extraParams = me.getExtraParams(),
             urlParams = options.urlParams,
             url = options.url || me.getUrl(),
+            cors = options.cors,
             jsonData = options.jsonData,
             method,
             disableCache,
             data;
 
+        if (cors !== undefined) {
+            me.setCors(cors);
+        }
 
         // allow params to be a method that returns the params object
         if (Ext.isFunction(params)) {
@@ -847,11 +846,12 @@ Ext.define('Ext.data.Connection', {
                 // catch all for all other browser types
                 xhr = new Ext.data.flash.BinaryXhr();
             }
-        } else  if ((options.cors || me.getCors()) && Ext.isIE && Ext.ieVersion <= 9) {
+        } else  if (me.getCors() && Ext.isIE && Ext.ieVersion <= 9) {
             xhr = me.getXdrInstance();
             me.setIsXdr(true);
         } else {
             xhr = me.getXhrInstance();
+            me.setIsXdr(false);
         }
 
         return xhr;
@@ -929,11 +929,11 @@ Ext.define('Ext.data.Connection', {
         var options = [function() {
             return new XMLHttpRequest();
         }, function() {
-            return new ActiveXObject('MSXML2.XMLHTTP.3.0');
+            return new ActiveXObject('MSXML2.XMLHTTP.3.0'); // jshint ignore:line
         }, function() {
-            return new ActiveXObject('MSXML2.XMLHTTP');
+            return new ActiveXObject('MSXML2.XMLHTTP'); // jshint ignore:line
         }, function() {
-            return new ActiveXObject('Microsoft.XMLHTTP');
+            return new ActiveXObject('Microsoft.XMLHTTP'); // jshint ignore:line
         }], i = 0,
             len = options.length,
             xhr;
@@ -1042,8 +1042,8 @@ Ext.define('Ext.data.Connection', {
         var me = this,
             globalEvents = Ext.GlobalEvents;
 
-        // Using CORS with IE doesn't support readyState so we fake it
-        if ((request.xhr && request.xhr.readyState == 4) || me.isXdr) {
+        // Using CORS with IE doesn't support readyState so we fake it.
+        if ((request.xhr && request.xhr.readyState == 4) || me.getIsXdr()) {
             me.clearTimeout(request);
             me.onComplete(request, xdrResult);
             me.cleanup(request);
@@ -1104,7 +1104,7 @@ Ext.define('Ext.data.Connection', {
             };
 
         }
-        success = me.isXdr ? xdrResult : result.success;
+        success = me.getIsXdr() ? xdrResult : result.success;
 
         if (success) {
             response = me.createResponse(request);
@@ -1259,7 +1259,7 @@ Ext.define('Ext.data.Connection', {
             // In IE9p we can get the bytes by constructing a VBArray
             // using the responseBody and then converting it to an Array.
             try {
-                byteArray = new VBArray(responseBody).toArray();
+                byteArray = new VBArray(responseBody).toArray(); // jshint ignore:line
             } catch(e) {
                 // If the binary response is empty, the VBArray constructor will
                 // choke on the responseBody.  We can't simply do a null check
@@ -1276,7 +1276,7 @@ Ext.define('Ext.data.Connection', {
             if (!this.self.vbScriptInjected) {
                 this.injectVBScript();
             }
-            getIEByteArray(xhr.responseBody, byteArray = []);
+            getIEByteArray(xhr.responseBody, byteArray = []); // jshint ignore:line
         } else {
             // in other older browsers make a best-effort attempt to read the
             // bytes from responseText

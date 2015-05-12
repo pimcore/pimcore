@@ -70,8 +70,8 @@ Ext.feature = {
         var elementStyle = this.getTestElement(tag).style,
             cName = Ext.String.capitalize(name);
 
-        if (typeof elementStyle[name] !== 'undefined'
-            || typeof elementStyle[Ext.browser.getStylePrefix(name) + cName] !== 'undefined') {
+        if (typeof elementStyle[name] !== 'undefined' ||
+            typeof elementStyle[Ext.browser.getStylePrefix(name) + cName] !== 'undefined') {
             return true;
         }
 
@@ -118,9 +118,9 @@ Ext.feature = {
     // use this instead of element references to check for styling info
     getStyle: function (element, styleName) {
         var view = element.ownerDocument.defaultView,
-            style = (view ? view.getComputedStyle(element, null) : element.currentStyle) 
-                        || element.style;
-        return style[styleName];
+            style = (view ? view.getComputedStyle(element, null) : element.currentStyle);
+
+        return (style || element.style)[styleName];
     },
 
     getSupportedPropertyName: function(object, name) {
@@ -576,7 +576,7 @@ Ext.feature = {
             try {
                 // IE10/Win8 throws "Access Denied" accessing window.localStorage, so
                 // this test needs to have a try/catch
-                if ('localStorage' in window && window['localStorage'] !== null) {
+                if ('localStorage' in window && window['localStorage'] !== null) { // jshint ignore:line
                     //this should throw an error in private browsing mode in iOS as well
                     localStorage.setItem('sencha-localstorage-test', 'test success');
                     //clean up if setItem worked
@@ -599,7 +599,7 @@ Ext.feature = {
         name: 'XHR2',
         fn: function() {
           return window.ProgressEvent && window.FormData && window.XMLHttpRequest &&
-              ('withCredentials' in new XMLHttpRequest);
+              ('withCredentials' in new XMLHttpRequest());
         }
     }, {
         /**
@@ -667,10 +667,9 @@ Ext.feature = {
 
             return el[w3] ? w3 : el[wk] ? wk : el[ms] ? ms : el[mz] ? mz : null;
         }
-    }
+    },
 
     //<feature legacyBrowser>
-    ,
     /**
      * @property RightMargin `true` if the device supports right margin.
      * See https://bugs.webkit.org/show_bug.cgi?id=13343 for why this is needed.
@@ -683,7 +682,7 @@ Ext.feature = {
         ready: true,
         fn: function(doc, div) {
             var view = doc.defaultView;
-            return !(view && view.getComputedStyle(div.firstChild.firstChild, null).marginRight != '0px');
+            return !(view && view.getComputedStyle(div.firstChild.firstChild, null).marginRight !== '0px');
         }
     },
 
@@ -755,7 +754,7 @@ Ext.feature = {
         ready: true,
         fn: function(doc, div, view) {
             view = doc.defaultView;
-            return !(view && view.getComputedStyle(div.lastChild, null).backgroundColor != 'transparent');
+            return !(view && view.getComputedStyle(div.lastChild, null).backgroundColor !== 'transparent');
         }
     },
 
@@ -873,7 +872,7 @@ Ext.feature = {
                 return false;
             }
             div.firstChild.style.cssText = 'opacity:0.73';
-            return div.firstChild.style.opacity == '0.73';
+            return div.firstChild.style.opacity == '0.73'; // jshint ignore:line
         }
     },
 
@@ -972,14 +971,14 @@ Ext.feature = {
         name: 'IncludePaddingInWidthCalculation',
         ready: true,
         fn: function(doc, div){
-            return div.childNodes[1].firstChild.offsetWidth == 210;
+            return div.childNodes[1].firstChild.offsetWidth === 210;
         }
     },
     {
         name: 'IncludePaddingInHeightCalculation',
         ready: true,
         fn: function(doc, div){
-            return div.childNodes[1].firstChild.offsetHeight == 210;
+            return div.childNodes[1].firstChild.offsetHeight === 210;
         }
     },
 
@@ -1007,7 +1006,7 @@ Ext.feature = {
         name: 'GetPositionPercentage',
         ready: true,
         fn: function(doc, div){
-           return Ext.feature.getStyle(div.childNodes[2], 'left') == '10%';
+           return Ext.feature.getStyle(div.childNodes[2], 'left') === '10%';
         }
     },
     /**
@@ -1192,9 +1191,9 @@ Ext.feature = {
             }
 
             // Apply a polyfill:
-            XMLHttpRequest = function() {
+            XMLHttpRequest = function() { // jshint ignore:line
                 try {
-                    return new ActiveXObject('MSXML2.XMLHTTP.3.0');
+                    return new ActiveXObject('MSXML2.XMLHTTP.3.0'); // jshint ignore:line
                 }
                 catch (ex) {
                     return null;
@@ -1282,7 +1281,7 @@ Ext.feature = {
             document.body.appendChild(outer);
 
             // must poke offsetWidth to trigger a reflow before setting width
-            outer.offsetWidth;
+            outer.offsetWidth; // jshint ignore:line
 
             outer.style.width = '25px';
 
@@ -1314,11 +1313,14 @@ Ext.feature = {
         fn: function() {
             return !Ext.isGecko;
         }
-    }
-    
+    },
+
     //</feature>
-    ]
+
+    0] // placeholder so legacy browser detectors can come/go cleanly
 };
+
+Ext.feature.tests.pop(); // remove the placeholder
 
 Ext.supports = {};
 

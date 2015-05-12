@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * Readers are used to interpret data to be loaded into a {@link Ext.data.Model Model} instance or a {@link
  * Ext.data.Store Store} - often in response to an AJAX request. In general there is usually no need to create
  * a Reader instance directly, since a Reader is almost always used together with a {@link Ext.data.proxy.Proxy Proxy},
@@ -141,7 +139,7 @@
  *                 //iterate over the OrderItems for each Order
  *                 order.orderItems().each(function(orderItem) {
  *                     //we know that the Product data is already loaded, so we can use the synchronous getProduct
- *                     //usually, we would use the asynchronous version (see {@link Ext.data.Model#BelongsTo})
+ *                     //usually, we would use the asynchronous version (see {@link Ext.data.Model#belongsTo})
  *                     var product = orderItem.getProduct();
  *
  *                     console.log(orderItem.get('quantity') + ' orders of ' + product.get('name'));
@@ -162,7 +160,8 @@ Ext.define('Ext.data.reader.Reader', {
 
     requires: [
         'Ext.data.ResultSet',
-        'Ext.XTemplate'
+        'Ext.XTemplate',
+        'Ext.util.LruCache'
     ],
 
     mixins: [
@@ -190,19 +189,60 @@ Ext.define('Ext.data.reader.Reader', {
         * {@link Ext.data.proxy.Server}.{@link Ext.data.proxy.Server#exception exception} for additional information.
         */
         successProperty: 'success',
-
+       
         /**
-        * @cfg {String} [rootProperty]
-        * The name of the property which contains the data items corresponding to the Model(s) for which this
-        * Reader is configured.  For JSON reader it's a property name (or a dot-separated list of property names
-        * if the root is nested).  For XML reader it's a CSS selector.  For Array reader the root is not applicable
-        * since the data is assumed to be a single-level array of arrays.
-        * 
-        * By default the natural root of the data will be used: the root JSON array, the root XML element, or the array.
-        *
-        * The data packet value for this property should be an empty array to clear the data or show no data.
-        */
-        rootProperty: '',
+         * @cfg {String} [rootProperty]
+         * The property that contains data items corresponding to the 
+         * Model(s) of the configured Reader. rootProperty varies by Reader type.
+         * 
+         * ##JSON Reader 
+         * rootProperty is a property name. It may also be a dot-separated 
+         * list of property names if the root is nested. The root JSON array will be used
+         * by default.
+         * 
+         * ##XML Reader 
+         * rootProperty is a CSS selector. The root XML element will be used
+         * by default.
+         * 
+         * ##Array Reader 
+         * rootProperty is not applicable since the data is assumed to be a
+         * single-level array of arrays.
+         * 
+         * **Note:** The rootProperty may also be a function that returns the root node from 
+         * the dataset. For example:
+         *
+         *     var store = Ext.create('Ext.data.TreeStore', {
+         *         proxy: {
+         *             type: 'memory',
+         *             reader: {
+         *                 type: 'json',
+         *                 rootProperty: function(data){
+         *                     // Extract child nodes from the items or children property in the dataset
+         *                     return data.items || data.children;
+         *                 }
+         *             }
+         *         }, 
+         *         data: {
+         *             items: [{
+         *                 text: 'item 1',
+         *                 children: [{
+         *                     text: 'child A',
+         *                     leaf: true
+         *                 }]
+         *             }]
+         *         }
+         *     });
+         *
+         *     Ext.create('Ext.tree.Panel', {
+         *         title: 'rootProperty as a function',
+         *         width: 200,
+         *         height:150,
+         *         store: store,
+         *         rootVisible: false,
+         *         renderTo: Ext.getBody()
+         *     });
+         */
+         rootProperty: '',
     
         /**
         * @cfg {String} messageProperty
@@ -249,7 +289,7 @@ Ext.define('Ext.data.reader.Reader', {
 
        /**
         * @cfg {String} [typeProperty]
-        * The name of the property in a node raw data block which indicates the type of the model to be created from that raw data. Useful for heterogenous trees.
+        * The name of the property in a node raw data block which indicates the type of the model to be created from that raw data. Useful for heterogeneous trees.
         *
         * For example, hierarchical geographical data may look like this:
         *
@@ -325,7 +365,21 @@ Ext.define('Ext.data.reader.Reader', {
          *     });
          *
          */ 
-        transform: null
+        transform: null,
+        
+        /**
+         * @cfg {Boolean} [keepRawData=true] Determines if the Reader will keep raw data
+         * received from the server in the {@link #rawData} property.
+         *
+         * While this might seem useful to do additional data processing, keeping raw data
+         * might cause adverse effects such as memory leaks. It is recommended to set
+         * `keepRawData` to `false` if you do not need the raw data.
+         *
+         * If you need to process data packet to extract additional data such as row summaries,
+         * it is recommended to use {@link #transform} function for that purpose.
+         * @since 5.1.1
+         */
+        keepRawData: true
     },
     
     /**
@@ -453,7 +507,7 @@ Ext.define('Ext.data.reader.Reader', {
 
     /**
      * Returns the shared null result set.
-     * @return {Ext.data.Result} The null result set.
+     * @return {Ext.data.ResultSet} The null result set.
      * 
      * @private
      */
@@ -483,8 +537,10 @@ Ext.define('Ext.data.reader.Reader', {
      * @param {Object} [readOptions] See {@link #read} for details.
      * @return {Ext.data.ResultSet} A ResultSet object
      */
-    readRecords: function(data, readOptions) {
+    readRecords: function(data, readOptions, /* private */ internalReadOptions) {
         var me = this,
+            recordsOnly = internalReadOptions && internalReadOptions.recordsOnly,
+            asRoot = internalReadOptions && internalReadOptions.asRoot,
             success,
             recordCount,
             records,
@@ -503,9 +559,18 @@ Ext.define('Ext.data.reader.Reader', {
         
         /**
          * @property {Object} rawData
-         * The raw data object that was last passed to {@link #readRecords}. Stored for further processing if needed.
+         * The raw data object that was last passed to {@link #readRecords}. rawData is populated 
+         * based on the results of {@link Ext.data.proxy.Server#processResponse}. rawData will 
+         * maintain a cached copy of the last successfully returned records. In other words, 
+         * if processResponse is unsuccessful, the records from the last successful response 
+         * will remain cached in rawData.
+         *
+         * Since Ext JS 5.1.1 you can use the {@link #keepRawData} config option to
+         * control this behavior.
          */
-        me.rawData = data;
+        if (me.getKeepRawData()) {
+            me.rawData = data;
+        }
 
         data = me.getData(data);
         
@@ -526,10 +591,10 @@ Ext.define('Ext.data.reader.Reader', {
 
         
         // Only try and extract other data if call was successful
-        if (me.getReadRecordsOnFailure() || success) {
-            // If we pass an array as the data, we dont use getRoot on the data.
+        if (success || me.getReadRecordsOnFailure()) {
+            // If we pass an array as the data, we don't use getRoot on the data.
             // Instead the root equals to the data.
-            root = Ext.isArray(data) ? data : me.getRoot(data);
+            root = (asRoot || Ext.isArray(data)) ? data : me.getRoot(data);
             
             if (root) {
                 total = root.length;
@@ -548,19 +613,24 @@ Ext.define('Ext.data.reader.Reader', {
             }
         }
 
-        return new Ext.data.ResultSet({
+        return recordsOnly ? records : new Ext.data.ResultSet({
             total  : total || recordCount,
             count  : recordCount,
             records: records,
             success: success,
-            message: message,
-            readRoot: !!root
+            message: message
         });
     },
 
     /**
      * Returns extracted, type-cast rows of data.
      * @param {Object[]/Object} root from server response
+     * @param {Object} [readOptions] An object containing extra options.
+     * @param {Function} [readOptions.model] The Model constructor to use.
+     * @param {Function} [readOptions.recordCreator] A function to use to create and initialize records. By default a function
+     * is supplied which creates *non-phantom* records on the assumnption that a Reader is going to be used to read server-supplied data.
+     * @param {Object} [readOptions.recordCreator.data] The raw data used to create a record.
+     * @param {Function} [readOptions.recordCreator.Model] The Model constructor to use to create the record.
      * @return {Array} An array of records containing the extracted data
      * @private
      */
@@ -604,9 +674,13 @@ Ext.define('Ext.data.reader.Reader', {
                     record = me.extractRecord(node, readOptions, entityType, includes,
                                               fieldExtractorInfo);
                 }
-
-                if (record.isModel) {
-                    // Trees need to be able to access the raw data (the XML node) in order to process its children.
+                
+                // Generally we don't want to have references to XML documents
+                // or XML nodes to hang around in memory but Trees need to be able
+                // to access the raw XML node data in order to process its children.
+                // See https://sencha.jira.com/browse/EXTJS-15785 and
+                // https://sencha.jira.com/browse/EXTJS-14286
+                if (record.isModel && record.isNode) {
                     record.raw = node;
                 }
             }
@@ -850,27 +924,51 @@ Ext.define('Ext.data.reader.Reader', {
      * @param {Boolean} [force=false] True to automatically remove existing extractor functions first
      */
     buildExtractors: function(force) {
-        var me          = this,
-            totalProp   = me.getTotalProperty(),
-            successProp = me.getSuccessProperty(),
-            messageProp = me.getMessageProperty(); 
+        var me = this,
+            totalProp, successProp, messageProp;
             
         if (force || !me.hasExtractors) {
+            totalProp = me.getTotalProperty();
+            successProp = me.getSuccessProperty();
+            messageProp = me.getMessageProperty(); 
+
             //build the extractors for all the meta data
             if (totalProp) {
-                me.getTotal = me.createAccessor(totalProp);
+                me.getTotal = me.getAccessor(totalProp);
             }
 
             if (successProp) {
-                me.getSuccess = me.createAccessor(successProp);
+                me.getSuccess = me.getAccessor(successProp);
             }
 
             if (messageProp) {
-                me.getMessage = me.createAccessor(messageProp);
+                me.getMessage = me.getAccessor(messageProp);
             }
             me.hasExtractors = true;
             return true;
         }
+    },
+
+    getAccessor: function(prop) {
+        var me = this,
+            cache = me.extractorCache,
+            ret, key;
+
+        if (typeof prop === 'string') {
+            key = me.getAccessorKey(prop);
+            ret = cache.get(key);
+            if (!ret) {
+                ret = me.createAccessor(prop);
+                cache.add(key, ret);
+            }
+        } else {
+            ret = me.createAccessor(prop);
+        }
+        return ret;
+    },
+
+    getAccessorKey: function(prop) {
+        return this.$className + prop;
     },
     
     createAccessor: Ext.emptyFn,
@@ -879,10 +977,8 @@ Ext.define('Ext.data.reader.Reader', {
 
     destroy: function() {
         var me = this;
-        delete me.model;
-        delete me.getTotal;
-        delete me.getSuccess;
-        delete me.getMessage;
+        
+        me.model = me.getTotal = me.getSuccess = me.getMessage = me.rawData = null;
     },
 
     privates: {
@@ -890,20 +986,18 @@ Ext.define('Ext.data.reader.Reader', {
             var me = this;
 
             reader.buildExtractors();
-            me.setModel(reader.getModel());
             me.getTotal = reader.getTotal;
             me.getSuccess = reader.getSuccess;
             me.getMessage = reader.getMessage;
             ++me.duringInit;
-            me.setTotalProperty(reader.getTotalProperty());
-            me.setSuccessProperty(reader.getSuccessProperty());
-            me.setMessageProperty(reader.getMessageProperty());
+            me.setConfig(reader.getConfig());
             --me.duringInit;
+            me.hasExtractors = true;
 
         }
     }
-}, function() {
-    var proto = this.prototype;
+}, function(Cls) {
+    var proto = Cls.prototype;
     Ext.apply(proto, {
         // Private. Empty ResultSet to return when response is falsy (null|undefined|empty string)
         nullResultSet: new Ext.data.ResultSet({
@@ -914,4 +1008,6 @@ Ext.define('Ext.data.reader.Reader', {
             message: ''
         })
     });
+
+    proto.extractorCache = new Ext.util.LruCache();
 });

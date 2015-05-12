@@ -9,6 +9,9 @@ Ext.define('Ext.chart.MarkerHolder', {
         after: {
             constructor: 'constructor',
             preRender: 'preRender'
+        },
+        before: {
+            destroy: 'destroy'
         }
     },
 
@@ -86,6 +89,19 @@ Ext.define('Ext.chart.MarkerHolder', {
             id = this.getId();
         if (boundMarker) {
             return boundMarker[0].getMarkerBBoxFor(id, index, isWithoutTransform);
+        }
+    },
+
+    destroy: function () {
+        var boundMarkers = this.boundMarkers,
+            name, markers, i, marker;
+
+        for (name in boundMarkers) {
+            markers = boundMarkers[name];
+            for (i = 0; i < markers.length; i++) {
+                marker = markers[i];
+                marker.clear(this.getId());
+            }
         }
     }
 

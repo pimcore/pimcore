@@ -55,9 +55,12 @@ Ext.define('Ext.chart.series.Series', {
         'Ext.tip.ToolTip'
     ],
 
-    mixins: {
-        observable: 'Ext.mixin.Observable'
-    },
+    mixins: [
+        'Ext.mixin.Observable',
+        'Ext.mixin.Bindable'
+    ],
+
+    defaultBindProperty: 'store',
 
     /**
      * @property {String} type
@@ -539,18 +542,19 @@ Ext.define('Ext.chart.series.Series', {
         if (!chart || chart.isInitializing) {
             return;
         }
-        var newTitle = Ext.Array.from(newTitle),
-            series = chart.getSeries(),
+        newTitle = Ext.Array.from(newTitle);
+        var series = chart.getSeries(),
             seriesIndex = Ext.Array.indexOf(series, me),
             legendStore = chart.getLegendStore(),
-            ln = Math.min(newTitle.length, me.getYField().length),
-            i, item, title;
+            yField = me.getYField(),
+            i, item, title, ln;
 
-        if (seriesIndex !== -1) {
+        if (legendStore.getCount() && seriesIndex !== -1) {
+            ln = yField ? Math.min(newTitle.length, yField.length) : newTitle.length;
             for (i = 0; i < ln; i++) {
                 title = newTitle[i];
-                if (title) {
-                    item = legendStore.getAt(seriesIndex + i);
+                item = legendStore.getAt(seriesIndex + i);
+                if (title && item) {
                     item.set('name', title);
                 }
             }
@@ -640,6 +644,12 @@ Ext.define('Ext.chart.series.Series', {
         }
 
         me.mixins.observable.constructor.call(me, config);
+        me.initBindable();
+    },
+
+    lookupViewModel: function (skipThis) {
+        var chart = this.getChart();
+        return chart ? chart.lookupViewModel(skipThis) : null;
     },
 
     applyTooltip: function (tooltip, oldTooltip) {
@@ -655,13 +665,15 @@ Ext.define('Ext.chart.series.Series', {
             offsetY: 10
         });
         for (i = 0; i < interactions.length; i++) {
-            if (interactions[i].type === 'itemhightlight') {
+            if (interactions[i].type === 'itemhighlight') {
                 hasItemHighlight = true;
                 break;
             }
         }
         if (!hasItemHighlight) {
-            interactions.push('itemhighlight');
+            interactions.push({
+                type: 'itemhighlight'
+            });
             chart.setInteractions(interactions);
         }
         return new Ext.tip.ToolTip(config);
@@ -726,14 +738,13 @@ Ext.define('Ext.chart.series.Series', {
 
     updateStore: function (newStore, oldStore) {
         var me = this,
-            chartStore = this.getChart() && this.getChart().getStore(),
-            sprites = me.getSprites(),
-            ln = sprites.length,
-            i, sprite;
-        newStore = newStore || chartStore;
+            chart = this.getChart(),
+            chartStore = chart && chart.getStore(),
+            sprites, sprite, len, i;
+
         oldStore = oldStore || chartStore;
 
-        if (oldStore) {
+        if (oldStore && oldStore !== newStore) {
             oldStore.un({
                 datachanged: 'onDataChanged',
                 update: 'onDataChanged',
@@ -746,7 +757,8 @@ Ext.define('Ext.chart.series.Series', {
                 update: 'onDataChanged',
                 scope: me
             });
-            for (i = 0; i < ln; i++) {
+            sprites = me.getSprites();
+            for (i = 0, len = sprites.length; i < len; i++) {
                 sprite = sprites[i];
                 if (sprite.setStore) {
                     sprite.setStore(newStore);
@@ -910,7 +922,9 @@ Ext.define('Ext.chart.series.Series', {
     },
 
     updateChart: function (newChart, oldChart) {
-        var me = this;
+        var me = this,
+            store = me._store;
+
         if (oldChart) {
             oldChart.un('axeschange', 'onAxesChange', me);
             // TODO: destroy them
@@ -918,6 +932,9 @@ Ext.define('Ext.chart.series.Series', {
             me.setSurface(null);
             me.setOverlaySurface(null);
             me.onChartDetached(oldChart);
+            if (!store) {
+                me.updateStore(null);
+            }
         }
         if (newChart) {
             me.setSurface(newChart.getSurface('series'));
@@ -933,9 +950,10 @@ Ext.define('Ext.chart.series.Series', {
                 me.onAxesChange(newChart);
             }
             me.onChartAttached(newChart);
+            if (!store) {
+                me.updateStore(newChart.getStore());
+            }
         }
-
-        me.updateStore(me._store, null);
     },
 
     onAxesChange: function (chart) {
@@ -1203,7 +1221,7 @@ Ext.define('Ext.chart.series.Series', {
     },
 
     applyMarkerSubStyle: function (marker, oldMarker) {
-        var type = (marker && marker.type) || (oldMarker && oldMarker.type) || 'circle',   // TODO:ps Should use marker theme instead of 'circle'
+        var type = (marker && marker.type) || (oldMarker && oldMarker.type) || 'circle',
             cls = Ext.ClassManager.get(Ext.ClassManager.getNameByAlias('sprite.' + type));
         if (cls && cls.def) {
             marker = cls.def.batchedNormalize(marker, true);
@@ -1212,12 +1230,50 @@ Ext.define('Ext.chart.series.Series', {
     },
 
     updateHidden: function (hidden) {
-        // TODO: remove this when jacky fix the problem.
-        this.getColors();
-        this.getSubStyle();
-        this.setSubStyle({hidden: hidden});
-        this.processData();
-        this.doUpdateStyles();
+        var me = this;
+
+        me.getColors();
+        me.getSubStyle();
+        me.setSubStyle({hidden: hidden});
+        me.processData();
+        me.doUpdateStyles();
+
+        if (!Ext.isArray(hidden)) {
+            me.updateLegendStore(hidden);
+        }
+    },
+
+    /**
+     * @private
+     * Updates chart's legend store when the value of the series' {@link #hidden} config
+     * changes or when the {@link #setHiddenByIndex} method is called.
+     * @param hidden Whether series (or its component) should be hidden or not.
+     * @param index Used for stacked series.
+     *              If present, only the component with the specified index will change visibility.
+     */
+    updateLegendStore: function (hidden, index) {
+        var me = this,
+            chart = me.getChart(),
+            legendStore = chart.getLegendStore(),
+            id = me.getId(),
+            record;
+
+        if (legendStore) {
+            if (arguments.length > 1) {
+                record = legendStore.findBy(function (rec) {
+                    return rec.get('series') === id &&
+                           rec.get('index') === index;
+                });
+                if (record !== -1) {
+                    record = legendStore.getAt(record);
+                }
+            } else {
+                record = legendStore.findRecord('series', id);
+            }
+            if (record && record.get('disabled') !== hidden) {
+                record.set('disabled', hidden);
+            }
+        }
     },
 
     /**
@@ -1226,11 +1282,14 @@ Ext.define('Ext.chart.series.Series', {
      * @param {Boolean} value
      */
     setHiddenByIndex: function (index, value) {
-        if (Ext.isArray(this.getHidden())) {
-            this.getHidden()[index] = value;
-            this.updateHidden(this.getHidden());
+        var me = this;
+
+        if (Ext.isArray(me.getHidden())) {
+            me.getHidden()[index] = value;
+            me.updateHidden(me.getHidden());
+            me.updateLegendStore(value, index);
         } else {
-            this.setHidden(value);
+            me.setHidden(value);
         }
     },
 
@@ -1499,6 +1558,31 @@ Ext.define('Ext.chart.series.Series', {
         this.fireEvent('animationend', this, sprite);
     },
 
+    // Override the Observable's method to redirect listener scope
+    // resolution to the chart.
+    resolveListenerScope: function (defaultScope) {
+        var me = this,
+            namedScope = Ext._namedScopes[defaultScope],
+            chart = me.getChart(),
+            scope;
+
+        if (!namedScope) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : (defaultScope || me);
+        } else if (namedScope.isThis) {
+            scope = me;
+        } else if (namedScope.isController) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+        } else if (namedScope.isSelf) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+            // Class body listener. No chart controller, nor chart container controller.
+            if (scope === chart && !chart.getInheritedConfig('defaultListenerScope')) {
+                scope = me;
+            }
+        }
+
+        return scope;
+    },
+
     /**
      * Provide legend information to target array.
      *
@@ -1523,15 +1607,26 @@ Ext.define('Ext.chart.series.Series', {
 
     destroy: function () {
         var me = this,
-            store = me.getStore(),
+            store = me._store,
             // Peek at the config so we don't create one just to destroy it
-            tooltip = me.getConfig('tooltip', true);
+            tooltip = me.getConfig('tooltip', true),
+            sprites = me.getSprites(),
+            sprite, i, ln;
+
+        for (i = 0, ln = sprites.length; i < ln; i++) {
+            sprite = sprites[i];
+            if (sprite && sprite.isSprite) {
+                sprite.destroy();
+            }
+        }
+        me.sprites = null;
 
         me.clearListeners();
         Ext.ComponentManager.unregister(me);
         if (store && store.getAutoDestroy()) {
             Ext.destroy(store);
         }
+        me.updateStore(null);
         me.setStore(null);
         if (tooltip) {
             Ext.destroy(tooltip);

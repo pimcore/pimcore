@@ -1,3 +1,6 @@
+/**
+ * Category 3D Axis
+ */
 Ext.define('Ext.chart.axis.Category3D', {
     requires: [
         'Ext.chart.axis.layout.CombineDuplicate',

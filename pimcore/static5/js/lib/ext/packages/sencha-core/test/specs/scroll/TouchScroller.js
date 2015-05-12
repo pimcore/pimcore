@@ -1216,19 +1216,19 @@ describe('Ext.scroll.TouchScroller', function() {
     describe("interaction", function() {
         var helper = Ext.testHelper;
 
-        function start(cfg) {
+        function start(cfg, element) {
             cfg.id = 1;
-            helper.touchStart(el, cfg);
+            helper.touchStart(element || el, cfg);
         }
 
-        function move(cfg) {
+        function move(cfg, element) {
             cfg.id = 1;
-            helper.touchMove(el, cfg);
+            helper.touchMove(element || el, cfg);
         }
 
-        function end(cfg) {
+        function end(cfg, element) {
             cfg.id = 1;
-            helper.touchEnd(el, cfg);
+            helper.touchEnd(element || el, cfg);
         }
 
         function expectScrollPosition(position) {
@@ -2030,6 +2030,31 @@ describe('Ext.scroll.TouchScroller', function() {
                 });
 
                 waitsForAnimation();
+            });
+        });
+
+        it("should end scrolling when the touchend occurs outside the scroller", function() {
+            var scrollEnded = false;
+
+            makeScroller();
+
+            scroller.on('scrollend', function() {
+                scrollEnded = true;
+            });
+
+            runs(function() {
+                start({x: 50, y: 50});
+                move({x: 60, y: 40});
+                move({ x: 150, y: 150 });
+                end({ x: 150, y: 150 }, document.body);
+            });
+
+            waitsFor(function() {
+                return scrollEnded;
+            });
+
+            runs(function() {
+                expect(scrollEnded).toBe(true);
             });
         });
     });

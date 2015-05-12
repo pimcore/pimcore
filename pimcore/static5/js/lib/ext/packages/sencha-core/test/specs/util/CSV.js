@@ -30,6 +30,22 @@ describe("Ext.util.CSV", function() {
                     '3.141592653589793,1,false');
         });
 
+        it("should quote lines with \\n", function() {
+            expect(CSV.encode([['foo\nbar']])).toEqual('"foo\nbar"');
+        });
+
+        it("should quote lines with \\r\\n", function() {
+            expect(CSV.encode([['foo\r\nbar']])).toEqual('"foo\r\nbar"');
+        });
+
+        it("should quote lines with the delimiter", function() {
+            expect(CSV.encode([['foo,bar']])).toEqual('"foo,bar"');
+        });
+
+        it("should quote quoted lines", function() {
+            expect(CSV.encode([['foo"bar']])).toEqual('"foo""bar"');
+        });
+
         it('should handle empty rows', function () {
             expect(CSV.encode([[]])).toBe('');
         });

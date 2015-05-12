@@ -99,6 +99,8 @@ Ext.define('Ext.draw.sprite.Sprite', {
                  * Note that while this is supported in IE8 (VML engine), the behavior is
                  * different from Canvas and SVG. Please refer to this document for details:
                  * http://msdn.microsoft.com/en-us/library/bb264085(v=vs.85).aspx
+                 * Although IE9 and IE10 have Canvas support, the 'lineDash'
+                 * attribute is not supported in those browsers.
                  */
                 lineDash: "data",
 

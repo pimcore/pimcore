@@ -20,7 +20,7 @@ Ext.define('Ext.data.LocalStore', {
         // Add the extra keys to the data collection
         data.setExtraKeys(extraKeys);
 
-        // Pluck the extra keyts out so that we can keep them by index name
+        // Pluck the extra keys out so that we can keep them by index name
         extraKeys = data.getExtraKeys();
 
         for (indexName in extraKeys) {
@@ -52,21 +52,9 @@ Ext.define('Ext.data.LocalStore', {
     },
 
     constructDataCollection: function() {
-        var data = new Ext.util.Collection({
-            rootProperty: 'data',
-            extraKeys: {
-                byInternalId: {
-                    property: 'internalId',
-                    rootProperty: ''
-                }
-            }
-        }),
-        sorters;
- 
-        this.byInternalId = data.byInternalId;
-        sorters = data.getSorters();
-        sorters.setSorterConfigure(this.addFieldTransform, this);
-        return data;
+        return new Ext.util.Collection({
+            rootProperty: 'data'
+        });
     },
 
     /**
@@ -76,9 +64,11 @@ Ext.define('Ext.data.LocalStore', {
      * @return {Ext.data.Model}
      */
     createModel: function(record) {
-        var session = this.getSession();
+        var session = this.getSession(),
+            Model;
+
         if (!record.isModel) {
-            var Model = this.getModel();
+            Model = this.getModel();
             record = new Model(record, session);
         }
         return record;
@@ -89,7 +79,9 @@ Ext.define('Ext.data.LocalStore', {
     },
 
     createSortersCollection: function() {
-        return this.getData().getSorters();
+        var sorters = this.getData().getSorters();
+        sorters.setSorterConfigure(this.addFieldTransform, this);
+        return sorters;
     },
 
     // When the collection informs us that it has sorted, this LocalStore must react.
@@ -181,17 +173,36 @@ Ext.define('Ext.data.LocalStore', {
      * @private
      * Get the Record with the specified internalId.
      *
-     * This method is not effected by filtering, lookup will be performed from all records
+     * This method is not affected by filtering, lookup will be performed from all records
      * inside the store, filtered or not.
      *
      * @param {Mixed} internalId The id of the Record to find.
      * @return {Ext.data.Model} The Record with the passed internalId. Returns null if not found.
      */
     getByInternalId: function(internalId) {
-        var data = this.getData();
+        var data = this.getData(),
+            keyCfg;
+
+        // Defer the creation until we need it
+        if (!this.hasInternalKeys) {
+            keyCfg = {
+                byInternalId: {
+                    property: 'internalId',
+                    rootProperty: ''
+                }
+            };
+            this.hasInternalKeys = true;
+        }
         
         if (data.filtered) {
+            if (keyCfg) {
+                data.setExtraKeys(keyCfg);
+            }
             data = data.getSource();
+        }
+
+        if (keyCfg) {
+            data.setExtraKeys(keyCfg);
         }
         
         return data.byInternalId.get(internalId) || null;
@@ -222,7 +233,7 @@ Ext.define('Ext.data.LocalStore', {
     },
 
     /**
-     * Inserts Model instances into the Store at the given index and fires the {@link #event-add} event.
+     * Inserts Model instances into the Store at the given index and fires the add event.
      * See also {@link #method-add}.
      *
      * @param {Number} index The start index at which to insert the passed Records.
@@ -563,6 +574,12 @@ Ext.define('Ext.data.LocalStore', {
             }
         }
         return matches;
+    },
+
+    privates: {
+        isLast: function(record) {
+            return record === this.last();
+        }
     }
 
 });

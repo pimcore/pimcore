@@ -1,5 +1,4 @@
 /**
- * @author Jacky Nguyen <jacky@sencha.com>
  * @private
  */
 Ext.define('Ext.fx.runner.CssAnimation', {
@@ -37,7 +36,8 @@ Ext.define('Ext.fx.runner.CssAnimation', {
             elementEndState = elementEndStates[elementId],
             data = {};
 
-        console.log("START============= " + name);
+        //console.log("START============= " + name);
+
         if (elementEndState) {
             delete elementEndStates[elementId];
 
@@ -62,7 +62,7 @@ Ext.define('Ext.fx.runner.CssAnimation', {
             runningAnimations = runningAnimationsMap[elementId],
             animation = runningAnimations[name];
 
-        console.log("END============= " + name);
+        //console.log("END============= " + name);
 
         if (animation.onBeforeEnd) {
             animation.onBeforeEnd.call(animation.scope || this, element);

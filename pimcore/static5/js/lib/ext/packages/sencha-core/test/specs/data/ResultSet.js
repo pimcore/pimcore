@@ -36,7 +36,7 @@ describe("Ext.data.ResultSet", function() {
         it("should have count equal to records.length", function(){
             resultset = new ResultSet(config);
             expect(resultset.getLoaded()).toBe(true);
-            expect(resultset.getCount()).toEqual(2);
+            expect(resultset.getCount()).toBe(2);
             expect(resultset.getTotal()).toBeNull();
             expect(resultset.getSuccess()).toBe(false);
         });
@@ -49,7 +49,7 @@ describe("Ext.data.ResultSet", function() {
         it("should have correct configuration options", function(){
             resultset = new ResultSet(config);
             expect(resultset.getLoaded()).toBe(true);
-            expect(resultset.getCount()).toEqual(16);
+            expect(resultset.getCount()).toBe(16);
             expect(resultset.getTotal()).toBeNull();
             expect(resultset.getSuccess()).toBe(false);
         });

@@ -295,7 +295,7 @@ Ext.define('Ext.app.Application', {
      * @param {Object} [config] Config object.
      */
     constructor: function(config) {
-        var me = this
+        var me = this;
 
         Ext.app.route.Router.application = me;
 
@@ -423,7 +423,7 @@ Ext.define('Ext.app.Application', {
         }
         token = History.getToken();
         if (token) {
-            me.redirectTo(token, true);
+            Ext.app.route.Router.onStateChange(token);
         } else if (defaultToken) {
             History.add(defaultToken);
         }
@@ -570,7 +570,7 @@ Ext.define('Ext.app.Application', {
         var me = this;
         return Ext.Array.map(profiles, function(profile) {
             return me.getModuleClassName(profile, "profile");
-        })
+        });
     },
 
     /**

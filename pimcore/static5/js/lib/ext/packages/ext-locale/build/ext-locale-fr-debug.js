@@ -79,7 +79,7 @@ Ext.define("Ext.locale.fr.grid.plugin.DragDrop", {
 
 Ext.define("Ext.locale.fr.tab.Tab", {
     override: "Ext.tab.Tab",
-    closeText: "Fermer cette onglet"
+    closeText: "Fermer cet onglet"
 });
 
 // changing the msg text below will affect the LoadMask

@@ -12,6 +12,7 @@ Ext.define('Ext.draw.overrides.Path', {
      * @param {Number} x
      * @param {Number} y
      * @return {Boolean}
+     * @member Ext.draw.Path
      */
     isPointInPath: function (x, y) {
         var me = this,
@@ -73,7 +74,8 @@ Ext.define('Ext.draw.overrides.Path', {
      * Tests whether the given point is on the path.
      * @param {Number} x
      * @param {Number} y
-     * @returns {Boolean}
+     * @return {Boolean}
+     * @member Ext.draw.Path
      */
     isPointOnPath: function (x, y) {
         var me = this,
@@ -144,7 +146,8 @@ Ext.define('Ext.draw.overrides.Path', {
      * @param y3
      * @param x4
      * @param y4
-     * @returns {Array}
+     * @return {Array}
+     * @member Ext.draw.Path
      */
     getSegmentIntersections: function (x1, y1, x2, y2, x3, y3, x4, y4) {
         var me = this,

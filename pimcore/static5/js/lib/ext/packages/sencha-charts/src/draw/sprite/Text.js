@@ -5,22 +5,19 @@
  * A sprite that represents text.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'text',
- *                 x: 50,
- *                 y: 50,
- *                 text: 'Sencha',
- *                 fontSize: 18,
- *                 fillStyle: 'blue'
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'text',
+ *            x: 50,
+ *            y: 50,
+ *            text: 'Sencha',
+ *            fontSize: 30,
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Text', {

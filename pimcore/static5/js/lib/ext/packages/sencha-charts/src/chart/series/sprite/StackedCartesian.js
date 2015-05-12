@@ -39,7 +39,9 @@ Ext.define('Ext.chart.series.sprite.StackedCartesian', {
         }
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     getIndexNearPoint: function (x, y) {
         var sprite = this,
             mat = sprite.attr.matrix,

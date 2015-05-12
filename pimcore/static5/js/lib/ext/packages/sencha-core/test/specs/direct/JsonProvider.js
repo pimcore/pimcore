@@ -22,6 +22,14 @@ describe("Ext.direct.JsonProvider", function() {
         provider = new Ext.direct.JsonProvider({ id: 'foo' });
     });
     
+    afterEach(function() {
+        if (provider) {
+            provider.destroy();
+        }
+        
+        Ext.direct.Manager.clearAllMethods();
+    });
+    
     it("should parse encoded responses", function() {
         var text, events,
             result = [];

@@ -17,7 +17,11 @@ Ext.define('Ext.chart.SpaceFillingChart', {
     performLayout: function () {
         try {
             this.resizing++;
-            this.callParent();
+            if (this.callParent() === false) {
+                // Resizing will still be decremented
+                return;
+            }
+
             var me = this,
                 chartRect = me.getSurface('chart').getRect(),
                 padding = me.getInsetPadding(),

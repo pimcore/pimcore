@@ -57,7 +57,8 @@ Ext.define('Ext.event.publisher.Publisher', {
     },
 
     /**
-     * Registers all {@link #handledEvents} in the {@link #publishersByEvent} map.
+     * Registers all {@link #handledEvents} in the
+     * {@link Ext.event.publisher.Publisher#publishersByEvent} map.
      * @param {String[]} [events] optional events to register instead of handledEvents.
      * @protected
      */

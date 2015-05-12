@@ -18,9 +18,9 @@
  *      });
  *
  * In this case we created a draw container and added a sprite to it.
- * The *type* of the sprite is *circle*, so if you run this code you'll see a green-ish circle.
+ * The *type* of the sprite is *circle*, so if you run this code you'll see a green circle.
  *
- * One can attach sprite event listners to the draw container with the help of the
+ * One can attach sprite event listeners to the draw container with the help of the
  * {@link Ext.draw.plugin.SpriteEvents} plugin.
  *
  * For more information on Sprites, the core elements added to a draw container's surface,
@@ -118,8 +118,6 @@ Ext.define('Ext.draw.Container', {
          * to prevent double rendering.
          */
         resizeHandler: null,
-
-        background: null,
 
         /**
          * @cfg {Object[]} sprites
@@ -283,13 +281,19 @@ Ext.define('Ext.draw.Container', {
     onPlaceWatermark: Ext.emptyFn,
 
     onBodyResize: function () {
-        if (!this.element) {
+        var el = this.element;
+
+        if (!el) {
             return;
         }
+        this.setBodySize(el.getSize());
+    },
+
+    setBodySize: function(size) {
         var me = this,
-            size = me.element.getSize(),
             resizeHandler = me.getResizeHandler(),
             result;
+
         me.fireEvent('resize', me, size);
         result = resizeHandler.call(me, size);
         if (result !== false) {
@@ -389,7 +393,7 @@ Ext.define('Ext.draw.Container', {
      * @param {Object} [config] The following config options are supported:
      *
      * @param {String} config.url The url to post the data to. Defaults to
-     * the {@link #defaultUrl} configuration on the class.
+     * the {@link #defaultDownloadServerUrl} configuration on the class.
      *
      * @param {String} config.format The format of image to export. See the
      * {@link #supportedFormats}. Defaults to 'png' on the Sencha IO server.

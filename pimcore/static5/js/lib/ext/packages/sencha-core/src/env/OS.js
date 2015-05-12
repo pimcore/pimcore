@@ -33,10 +33,10 @@ Ext.env.OS = function(userAgent, platform, browserScope) {
 
                 // This is here because some HTC android devices show an OSX Snow Leopard userAgent by default.
                 // And the Kindle Fire doesn't have any indicator of Android as the OS in its User Agent
-                if (match1 && match1 == "HTC_") {
+                if (match1 && match1 === "HTC_") {
                     version = new Ext.Version("2.3");
                 }
-                else if (match1 && match1 == "Silk/") {
+                else if (match1 && match1 === "Silk/") {
                     version = new Ext.Version("2.3");
                 }
                 else {
@@ -78,13 +78,13 @@ Ext.env.OS = function(userAgent, platform, browserScope) {
     }
 
     // Detect if the device is the iPhone 5.
-    if (this.name == "iOS" && window.screen.height == 568) {
+    if (this.name === "iOS" && window.screen.height === 568) {
         this.setFlag('iPhone5');
     }
 
     if (browserScope.is.Safari || browserScope.is.Silk) {
         // Ext.browser.version.shortVersion == 501 is for debugging off device
-        if (this.is.Android2 || this.is.Android3 || browserScope.version.shortVersion == 501) {
+        if (this.is.Android2 || this.is.Android3 || browserScope.version.shortVersion === 501) {
             browserScope.setFlag("AndroidStock");
             browserScope.setFlag("AndroidStock2");
         }
@@ -195,8 +195,8 @@ Ext.env.OS.prototype = {
      */
     version: null,
 
-    setFlag: function(name, value) {
-        if (typeof value == 'undefined') {
+    setFlag: function (name, value) {
+        if (value === undefined) {
             value = true;
         }
 
@@ -269,7 +269,9 @@ Ext.env.OS.prototype = {
             // always set it to false when you are on a desktop not using Ripple Emulation
             Ext.browser.is.WebView = !!Ext.browser.is.Ripple;
         }
-        else if (osEnv.is.iPad || osEnv.is.RIMTablet || osEnv.is.Android3 || Ext.browser.is.Silk || (osEnv.is.Android4 && userAgent.search(/mobile/i) == -1)) {
+        else if (osEnv.is.iPad || osEnv.is.RIMTablet || osEnv.is.Android3 ||
+                 Ext.browser.is.Silk ||
+                (osEnv.is.Android4 && userAgent.search(/mobile/i) === -1)) {
             deviceType = 'Tablet';
         }
         else {

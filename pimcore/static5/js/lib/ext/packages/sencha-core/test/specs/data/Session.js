@@ -1929,6 +1929,20 @@ describe("Ext.data.Session", function() {
                         session.update(wrapBlock('D', [100]));
                     }).toThrow();
                 });
+
+                it("should handle a writer with writeAllFields: true", function() {
+                    User.getProxy().getWriter().setWriteAllFields(true);
+                    var user = getAndComplete('User', 100, session, {
+                        name: 'Foo',
+                        age: 100
+                    });
+                    session.update(wrapBlock('D', [{
+                        id: 100,
+                        name: 'Foo',
+                        age: 100
+                    }]));
+                    expect(user.dropped).toBe(true);
+                });
             });
 
             describe("update", function() {
@@ -2331,9 +2345,31 @@ describe("Ext.data.Session", function() {
                             expect(posts.getCount()).toBe(2);
                         });
 
-                        it("should exclude local records where the FK does not match", function() {
+                        it("should infer the key when one is not specified", function() {
                             var user = getAndComplete('User', 1),
                                 post1 = getAndComplete('Post', 101);
+
+                            // Post exists, but doesn't have a FK to the user
+                            session.update({
+                                User: {
+                                    posts: {
+                                        R: {
+                                            1: [101]
+                                        }
+                                    }
+                                }
+                            });
+
+                            var posts = user.posts();
+                            expect(posts.getCount()).toBe(1);
+                            expect(posts.getAt(0)).toBe(post1);
+                        });
+
+                        it("should exclude local records where the FK does not match", function() {
+                            var user = getAndComplete('User', 1),
+                                post1 = getAndComplete('Post', 101, null, {
+                                    userId: 2
+                                });
 
                             // Post exists, but doesn't have a FK to the user
                             session.update({

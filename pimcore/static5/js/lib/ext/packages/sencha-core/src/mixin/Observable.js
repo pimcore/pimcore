@@ -4,17 +4,25 @@
  * expected to have a property "events" which is populated as event listeners register,
  * and, optionally, a property "listeners" with configured listeners defined.
  *
+ * *Note*: This mixin requires the constructor to be called, which is typically done
+ * during the construction of your object. The Observable constructor will call 
+ * {@link #initConfig}, so it does not need to be called a second time.
+ *
  * For example:
  *
  *     Ext.define('Employee', {
- *         mixins: ['Ext.mixin.Observable']
+ *         mixins: ['Ext.mixin.Observable'],
+ *
+ *         config: {
+ *             name: ''
+ *         },
  *
  *         constructor: function (config) {
- *             // The Observable constructor copies all of the properties of `config` on
- *             // to `this` using {@link Ext#apply}. Further, the `listeners` property is
- *             // processed to add listeners.
- *             //
+ *             // The `listeners` property is processed to add listeners and the config
+ *             // is applied to the object.
  *             this.mixins.observable.constructor.call(this, config);
+ *             // Config has been initialized
+ *             console.log(this.getEmployeeName());
  *         }
  *     });
  *
@@ -25,7 +33,7 @@
  *         listeners: {
  *             quit: function() {
  *                 // By default, "this" will be the object that fired the event.
- *                 alert(this.name + " has quit!");
+ *                 alert(this.getName() + " has quit!");
  *             }
  *         }
  *     });
@@ -297,7 +305,17 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         constructor: function(config) {
             var me = this,
                 self = me.self,
-                declaredListeners, listeners, bubbleEvents;
+                declaredListeners, listeners, 
+                bubbleEvents, len, i;
+
+            // Observable can be extended and/or mixed in at multiple levels in a Class
+            // hierarchy, and may have its constructor invoked multiple times for a given
+            // instance.  The following ensures we only perform initialization the first
+            // time the constructor is called.
+            if (me.$observableInitialized) {
+                return;
+            }
+            me.$observableInitialized = true;
 
             me.hasListeners = new me.HasListeners();
 
@@ -321,9 +339,11 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                     //         { foo: fooHandler },
                     //         { bar: barHandler }
                     //     ]
-                    Ext.each(listeners, me.on, me);
+                    for (i = 0, len = listeners.length; i < len; ++i) {
+                        me.addListener(listeners[i]);
+                    }
                 } else {
-                    me.on(listeners);
+                    me.addListener(listeners);
                 }
             }
 
@@ -342,7 +362,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             }
 
             if (listeners) {
-                // Set as an instance property to pre-empt the prototype in case any are set there.
+                // Set as an instance property to preempt the prototype in case any are set there.
                 // Prevents listeners from being added multiple times if this constructor
                 // is called more than once by multiple parties in the inheritance hierarchy
                 me.listeners = null;
@@ -406,7 +426,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         *
         *     Ext.define('Foo', {
         *         extend: 'Ext.Component',
-        *
+        *     
         *         initComponent: function () {
         *             this.addManagedListener(MyApp.SomeGlobalSharedMenu, 'show', this.doSomething);
         *             this.callParent();
@@ -424,7 +444,9 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         *
         * @param {Ext.util.Observable/Ext.dom.Element} item The item to which to add a listener/listeners.
         * @param {Object/String} ename The event name, or an object containing event name properties.
-        * @param {Function} fn (optional) If the `ename` parameter was an event name, this is the handler function.
+        * @param {Function/String} fn (optional) If the `ename` parameter was an event 
+        * name, this is the handler function or the name of a method on the specified 
+        * `scope`.
         * @param {Object} scope (optional) If the `ename` parameter was an event name, this is the scope (`this` reference)
         * in which the handler function is executed.
         * @param {Object} options (optional) If the `ename` parameter was an event name, this is the
@@ -456,7 +478,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             if (typeof ename !== 'string') {
                 // When creating listeners using the object form, allow caller to override the default of
                 // using the listeners object as options.
-                // This is used by relayEvents, when adding its relayer so that it does not contibute
+                // This is used by relayEvents, when adding its relayer so that it does not contribute
                 // a spurious options param to the end of the arg list.
                 passedOptions = arguments.length > 4 ? options : ename;
 
@@ -608,7 +630,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
          * @param {Function} fn The action function.
          * @param {Object} [scope] The scope (`this` reference) in which the handler function is
          * executed. **If omitted, defaults to the object which fired the event.**
-         * @param {Object} options Event options for the action function.  Accepts any
+         * @param {Object} [options] Event options for the action function.  Accepts any
          * of the options of `{@link #addListener}`
          * @param {String} [order='before'] The order to call the action function relative
          * too the event handlers (`'before'` or `'after'`).  Note that this option is
@@ -674,156 +696,241 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         },
 
         /**
-        * The {@link #on} method is shorthand for {@link #addListener}.
-        *
-        * Appends an event handler to this object.  For example:
-        *
-        *     myGridPanel.on("mouseover", this.onMouseOver, this);
-        *
-        * The method also allows for a single argument to be passed which is a config object
-        * containing properties which specify multiple events. For example:
-        *
-        *     myGridPanel.on({
-        *         cellClick: this.onCellClick,
-        *         mouseover: this.onMouseOver,
-        *         mouseout: this.onMouseOut,
-        *         scope: this // Important. Ensure "this" is correct during handler execution
-        *     });
-        *
-        * One can also specify options for each event handler separately:
-        *
-        *     myGridPanel.on({
-        *         cellClick: {fn: this.onCellClick, scope: this, single: true},
-        *         mouseover: {fn: panel.onMouseOver, scope: panel}
-        *     });
-        *
-        * *Names* of methods in a specified scope may also be used. Note that
-        * `scope` MUST be specified to use this option:
-        *
-        *     myGridPanel.on({
-        *         cellClick: {fn: 'onCellClick', scope: this, single: true},
-        *         mouseover: {fn: 'onMouseOver', scope: panel}
-        *     });
-        *
-        * @param {String/Object} eventName The name of the event to listen for.
-        * May also be an object who's property names are event names.
-        *
-        * @param {Function} [fn] The method the event invokes, or *if `scope` is specified, the *name* of the method within
-        * the specified `scope`.  Will be called with arguments
-        * given to {@link Ext.util.Observable#fireEvent} plus the `options` parameter described below.
-        *
-        * @param {Object} [scope] The scope (`this` reference) in which the handler function is
-        * executed. **If omitted, defaults to the object which fired the event.**
-        *
-        * @param {Object} [options] An object containing handler configuration.
-        *
-        * **Note:** Unlike in ExtJS 3.x, the options object will also be passed as the last
-        * argument to every event handler.
-        *
-        * This object may contain any of the following properties:
-        *
-        * @param {Object} options.scope
-        *   The scope (`this` reference) in which the handler function is executed. **If omitted,
-        *   defaults to the object which fired the event.**
-        *
-        * @param {Number} options.delay
-        *   The number of milliseconds to delay the invocation of the handler after the event fires.
-        *
-        * @param {Boolean} options.single
-        *   True to add a handler to handle just the next firing of the event, and then remove itself.
-        *
-        * @param {Number} options.buffer
-        *   Causes the handler to be scheduled to run in an {@link Ext.util.DelayedTask} delayed
-        *   by the specified number of milliseconds. If the event fires again within that time,
-        *   the original handler is _not_ invoked, but the new handler is scheduled in its place.
-        *
-        * @param {Number} options.onFrame
-        *   Causes the handler to be scheduled to run at the next animation frame event. If the
-        *   event fires again before that time, the handler is not rescheduled - the handler
-        *   will only be called once when the next animation frame is fired, with the last set
-        *   of arguments passed.
-        *
-        * @param {Ext.util.Observable} options.target
-        *   Only call the handler if the event was fired on the target Observable, _not_ if the event
-        *   was bubbled up from a child Observable.
-        *
-        * @param {String} options.element
-        *   **This option is only valid for listeners bound to {@link Ext.Component Components}.**
-        *   The name of a Component property which references an element to add a listener to.
-        *
-        *   This option is useful during Component construction to add DOM event listeners to elements of
-        *   {@link Ext.Component Components} which will exist only after the Component is rendered.
-        *   For example, to add a click listener to a Panel's body:
-        *
-        *       new Ext.panel.Panel({
-        *           title: 'The title',
-        *           listeners: {
-        *               click: this.handlePanelClick,
-        *               element: 'body'
-        *           }
-        *       });
-        *
-        * @param {Array} [options.args]
-        *   Optional arguments to pass to the handler function. Any additional arguments
-        *   passed to {@link #fireEvent} will be appended to these arguments.
-        *
-        * @param {Boolean} [options.destroyable=false]
-        *   When specified as `true`, the function returns A `Destroyable` object. An object which implements the `destroy` method which removes all listeners added in this call.
-        *   
-        * @param {Number} [options.priority]
-        *   An optional numeric priority that determines the order in which event handlers
-        *   are run. Event handlers with no priority will be run as if they had a priority
-        *   of 0. Handlers with a higher priority will be prioritized to run sooner than
-        *   those with a lower priority.  Negative numbers can be used to set a priority
-        *   lower than the default. Internally, the framework uses a range of 1000 or
-        *   greater, and -1000 or lesser for handlers that are intended to run before or
-        *   after all others, so it is recommended to stay within the range of -999 to 999
-        *   when setting the priority of event handlers in application-level code.
-        *   A priority must be an integer to be valid.  Fractional values are reserved for
-        *   internal framework use.
-        *
-        * @param {String} [options.order='current']
-        *   A legacy option that is provided for backward compatibility.
-        *   It is recommended to use the `priority` option instead.  Available options are:
-        *
-        *   - `'before'`: equal to a priority of `100`
-        *   - `'current'`: equal to a priority of `0` or default priority
-        *   - `'after'`: equal to a priority of `-100`
-        *
-        * @param {String} [order='current']
-        *   A shortcut for the `order` event option.  Provided for backward compatibility.
-        *   Please use the `priority` event option instead.
-        *
-        * **Combining Options**
-        *
-        * Using the options argument, it is possible to combine different types of listeners:
-        *
-        * A delayed, one-time listener.
-        *
-        *     myPanel.on('hide', this.handleClick, this, {
-        *         single: true,
-        *         delay: 100
-        *     });
-        *
-        * @return {Object} **Only when the `destroyable` option is specified. **
-        *
-        *  A `Destroyable` object. An object which implements the `destroy` method which removes all listeners added in this call. For example:
-        *
-        *     this.btnListeners =  = myButton.on({
-        *         destroyable: true
-        *         mouseover:   function() { console.log('mouseover'); },
-        *         mouseout:    function() { console.log('mouseout'); },
-        *         click:       function() { console.log('click'); }
-        *     });
-        *
-        * And when those listeners need to be removed:
-        *
-        *     Ext.destroy(this.btnListeners);
-        *
-        * or
-        *
-        *     this.btnListeners.destroy();
-        */
+         * The {@link #on} method is shorthand for {@link #addListener}.
+         *
+         * Appends an event handler to this object.  For example:
+         *
+         *     myGridPanel.on("itemclick", this.onItemClick, this);
+         *
+         * The method also allows for a single argument to be passed which is a config object
+         * containing properties which specify multiple events. For example:
+         *
+         *     myGridPanel.on({
+         *         cellclick: this.onCellClick,
+         *         select: this.onSelect,
+         *         viewready: this.onViewReady,
+         *         scope: this // Important. Ensure "this" is correct during handler execution
+         *     });
+         *
+         * One can also specify options for each event handler separately:
+         *
+         *     myGridPanel.on({
+         *         cellclick: {fn: this.onCellClick, scope: this, single: true},
+         *         viewready: {fn: panel.onViewReady, scope: panel}
+         *     });
+         *
+         * *Names* of methods in a specified scope may also be used:
+         *
+         *     myGridPanel.on({
+         *         cellclick: {fn: 'onCellClick', scope: this, single: true},
+         *         viewready: {fn: 'onViewReady', scope: panel}
+         *     });
+         *
+         * @param {String/Object} eventName The name of the event to listen for.
+         * May also be an object who's property names are event names.
+         *
+         * @param {Function/String} [fn] The method the event invokes or the *name* of 
+         * the method within the specified `scope`.  Will be called with arguments
+         * given to {@link Ext.util.Observable#fireEvent} plus the `options` parameter described 
+         * below.
+         *
+         * @param {Object} [scope] The scope (`this` reference) in which the handler function is
+         * executed. **If omitted, defaults to the object which fired the event.**
+         *
+         * @param {Object} [options] An object containing handler configuration.
+         *
+         * **Note:** The options object will also be passed as the last argument to every 
+         * event handler.
+         *
+         * This object may contain any of the following properties:
+         *
+         * @param {Object} options.scope
+         *   The scope (`this` reference) in which the handler function is executed. **If omitted,
+         *   defaults to the object which fired the event.**
+         *
+         * @param {Number} options.delay
+         *   The number of milliseconds to delay the invocation of the handler after the event 
+         *   fires.
+         *
+         * @param {Boolean} options.single
+         *   True to add a handler to handle just the next firing of the event, and then remove 
+         *   itself.
+         *
+         * @param {Number} options.buffer
+         *   Causes the handler to be scheduled to run in an {@link Ext.util.DelayedTask} delayed
+         *   by the specified number of milliseconds. If the event fires again within that time,
+         *   the original handler is _not_ invoked, but the new handler is scheduled in its place.
+         *
+         * @param {Number} options.onFrame
+         *   Causes the handler to be scheduled to run at the next 
+         *   {@link Ext.Function#requestAnimationFrame animation frame event}. If the
+         *   event fires again before that time, the handler is not rescheduled - the handler
+         *   will only be called once when the next animation frame is fired, with the last set
+         *   of arguments passed.
+         *
+         * @param {Ext.util.Observable} options.target
+         *   Only call the handler if the event was fired on the target Observable, _not_ if the 
+         *   event was bubbled up from a child Observable.
+         *
+         * @param {String} options.element
+         *   **This option is only valid for listeners bound to {@link Ext.Component Components}.**
+         *   The name of a Component property which references an {@link Ext.dom.Element element} 
+         *   to add a listener to.
+         *
+         *   This option is useful during Component construction to add DOM event listeners to 
+         *   elements of {@link Ext.Component Components} which will exist only after the 
+         *   Component is rendered.
+         *   
+         *   For example, to add a click listener to a Panel's body:
+         *
+         *       var panel = new Ext.panel.Panel({
+         *           title: 'The title',
+         *           listeners: {
+         *               click: this.handlePanelClick,
+         *               element: 'body'
+         *           }
+         *       });
+         *       
+         * In order to remove listeners attached using the element, you'll need to reference
+         * the element itself as seen below.  
+         *
+         *      panel.body.un(...)
+         * 
+         * @param {String} [options.delegate]
+         *   A simple selector to filter the event target or look for a descendant of the target.  
+         *   
+         *   The "delegate" option is only available on Ext.dom.Element instances (or 
+         *   when attaching a listener to a Ext.dom.Element via a Component using the 
+         *   element option). 
+         *   
+         *   See the *delegate* example below.
+         *
+         * @param {Boolean} [options.stopPropagation]
+         *   **This option is only valid for listeners bound to {@link Ext.dom.Element Elements}.**
+         *   `true` to call {@link Ext.event.Event#stopPropagation stopPropagation} on the event object
+         *   before firing the handler.
+         *
+         * @param {Boolean} [options.preventDefault]
+         *   **This option is only valid for listeners bound to {@link Ext.dom.Element Elements}.**
+         *   `true` to call {@link Ext.event.Event#preventDefault preventDefault} on the event object
+         *   before firing the handler.
+         *
+         * @param {Boolean} [options.stopEvent]
+         *   **This option is only valid for listeners bound to {@link Ext.dom.Element Elements}.**
+         *   `true` to call {@link Ext.event.Event#stopEvent stopEvent} on the event object
+         *   before firing the handler.
+         *
+         * @param {Array} [options.args]
+         *   Optional arguments to pass to the handler function. Any additional arguments
+         *   passed to {@link #fireEvent} will be appended to these arguments.
+         *
+         * @param {Boolean} [options.destroyable=false]
+         *   When specified as `true`, the function returns a `destroyable` object. An object 
+         *   which implements the `destroy` method which removes all listeners added in this call.
+         *   This syntax can be a helpful shortcut to using {@link #un}; particularly when 
+         *   removing multiple listeners.  *NOTE* - not compatible when using the _element_
+         *   option.  See {@link #un} for the proper syntax for removing listeners added using the
+         *   _element_ config.
+         *   
+         * @param {Number} [options.priority]
+         *   An optional numeric priority that determines the order in which event handlers
+         *   are run. Event handlers with no priority will be run as if they had a priority
+         *   of 0. Handlers with a higher priority will be prioritized to run sooner than
+         *   those with a lower priority.  Negative numbers can be used to set a priority
+         *   lower than the default. Internally, the framework uses a range of 1000 or
+         *   greater, and -1000 or lesser for handlers that are intended to run before or
+         *   after all others, so it is recommended to stay within the range of -999 to 999
+         *   when setting the priority of event handlers in application-level code.
+         *   A priority must be an integer to be valid.  Fractional values are reserved for
+         *   internal framework use.
+         *
+         * @param {String} [options.order='current']
+         *   A legacy option that is provided for backward compatibility.
+         *   It is recommended to use the `priority` option instead.  Available options are:
+         *
+         *   - `'before'`: equal to a priority of `100`
+         *   - `'current'`: equal to a priority of `0` or default priority
+         *   - `'after'`: equal to a priority of `-100`
+         *
+         * @param {String} [order='current']
+         *   A shortcut for the `order` event option.  Provided for backward compatibility.
+         *   Please use the `priority` event option instead.
+         *
+         * **Combining Options**
+         *
+         * Using the options argument, it is possible to combine different types of listeners:
+         *
+         * A delayed, one-time listener.
+         *
+         *     myPanel.on('hide', this.handleClick, this, {
+         *         single: true,
+         *         delay: 100
+         *     });
+         *
+         * **Attaching multiple handlers in 1 call**
+         *
+         * The method also allows for a single argument to be passed which is a config object 
+         * containing properties which specify multiple handlers and handler configs.
+         *
+         *     grid.on({
+         *         itemclick: 'onItemClick',
+         *         itemcontextmenu: grid.onItemContextmenu,
+         *         destroy: {
+         *             fn: function () {
+         *                 // function called within the 'altCmp' scope instead of grid
+         *             },
+         *             scope: altCmp // unique scope for the destroy handler
+         *         },
+         *         scope: grid       // default scope - provided for example clarity
+         *     });
+         *
+         * **Delegate**
+         *
+         * This is a configuration option that you can pass along when registering a handler for 
+         * an event to assist with event delegation. By setting this configuration option 
+         * to a simple selector, the target element will be filtered to look for a 
+         * descendant of the target. For example:
+         *
+         *     var panel = Ext.create({
+         *         xtype: 'panel',
+         *         renderTo: document.body,
+         *         title: 'Delegate Handler Example',
+         *         frame: true,
+         *         height: 220,
+         *         width: 220,
+         *         html: '<h1 class="myTitle">BODY TITLE</h1>Body content'
+         *     });
+         *
+         *     // The click handler will only be called when the click occurs on the
+         *     // delegate: h1.myTitle ("h1" tag with class "myTitle")
+         *     panel.on({
+         *         click: function (e) {
+         *             console.log(e.getTarget().innerHTML);
+         *         },
+         *         element: 'body',
+         *         delegate: 'h1.myTitle'
+         *      });
+         *
+         * @return {Object} **Only when the `destroyable` option is specified. **
+         *
+         *  A `Destroyable` object. An object which implements the `destroy` method which removes 
+         *  all listeners added in this call. For example:
+         *
+         *     this.btnListeners =  = myButton.on({
+         *         destroyable: true
+         *         mouseover:   function() { console.log('mouseover'); },
+         *         mouseout:    function() { console.log('mouseout'); },
+         *         click:       function() { console.log('click'); }
+         *     });
+         *
+         * And when those listeners need to be removed:
+         *
+         *     Ext.destroy(this.btnListeners);
+         *
+         * or
+         *
+         *     this.btnListeners.destroy();
+         */  
         addListener: function(ename, fn, scope, options, order, /* private */ caller) {
             var me = this,
                 namedScopes = Ext._namedScopes,
@@ -883,14 +990,51 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         },
 
         /**
-        * Removes an event handler.
-        *
-        * @param {String} eventName The type of event the handler was associated with.
-        * @param {Function} fn The handler to remove. **This must be a reference to the function passed into the
-        * {@link Ext.util.Observable#addListener} call.**
-        * @param {Object} scope (optional) The scope originally specified for the handler. It must be the same as the
-        * scope argument specified in the original call to {@link Ext.util.Observable#addListener} or the listener will not be removed.
-        */
+         * Removes an event handler.
+         *
+         * @param {String} eventName The type of event the handler was associated with.
+         * @param {Function} fn The handler to remove. **This must be a reference to the function 
+         * passed into the
+         * {@link #addListener} call.**
+         * @param {Object} scope (optional) The scope originally specified for the handler. It 
+         * must be the same as the scope argument specified in the original call to 
+         * {@link Ext.util.Observable#addListener} or the listener will not be removed.
+         * 
+         * **Convenience Syntax**
+         *
+         * You can use the {link #addListener addListener destroyable: true} config option in
+         * place of calling un().  For example:
+         *
+         *     var listeners = cmp.on({
+         *         scope: cmp,
+         *         afterrender: cmp.onAfterrender,
+         *         beforehide: cmp.onBeforeHide,
+         *         destroyable: true
+         *     });
+         *
+         *     // Remove listeners
+         *     listeners.destroy();
+         *     // or
+         *     cmp.un(
+         *         scope: cmp,
+         *         afterrender: cmp.onAfterrender,
+         *         beforehide: cmp.onBeforeHide
+         *     );
+         *
+         * **Exception - DOM event handlers using the element config option**
+         *
+         * You must go directly through the element to detach an event handler attached using
+         * the {@link #addListener} _element_ option.
+         *
+         *     panel.on({
+         *         element: 'body',
+         *         click: 'onBodyCLick'
+         *     });
+         *
+         *     panel.body.un({
+         *         click: 'onBodyCLick'
+         *     });
+         */
         removeListener: function(ename, fn, scope, /* private */ eventOptions) {
             var me = this,
                 config, options;
@@ -1170,10 +1314,10 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
 
         /**
         * @private
-        * Creates an event handling function which refires the event from this object as the passed event name.
-        * @param {String} newName The name under which to refire the passed parameters.
+        * Creates an event handling function which re-fires the event from this object as the passed event name.
+        * @param {String} newName The name under which to re-fire the passed parameters.
         * @param {Array} beginEnd (optional) The caller can specify on which indices to slice.
-        * @returns {Function}
+        * @return {Function}
         */
         createRelayer: function(newName, beginEnd) {
             var me = this;

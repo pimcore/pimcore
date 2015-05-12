@@ -79,6 +79,27 @@
  *
  * @member Global_CSS
  */
+/**
+ * adds a css outline to an element with compatibility for IE8/outline-offset
+ * NOTE: the element receiving the outline must be positioned (either relative or absolute)
+ * in order for the outline to work in IE8
+ *
+ * @param {number} [$width=1px]
+ * The width of the outline
+ *
+ * @param {string} [$style=solid]
+ * The style of the outline
+ *
+ * @param {color} [$color=#000]
+ * The color of the outline
+ *
+ * @param {number} [$offset=0]
+ * The offset of the outline
+ *
+ * @param {number/list} [$border-width=0]
+ * The border-width of the element receiving the outline.
+ * Required in order for outline-offset to work in IE8
+ */
 /* including package ext-theme-neutral */
 /* including package ext-theme-classic */
 /* including package sencha-charts */
@@ -113,6 +134,7 @@
  *
  * This defaults to `true`. It is required if either grid fields are being used,
  * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * @member Ext.view.Table
  */
 /** @class Ext.grid.feature.Grouping */
 /** @class Ext.menu.Menu */
@@ -122,6 +144,7 @@
  *
  * This defaults to `true`. It is required if either grid fields are being used,
  * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * @member Ext.view.Table
  */
 /** @class Ext.grid.plugin.RowEditing */
 /** @class Ext.grid.plugin.RowExpander */
@@ -431,6 +454,22 @@
  * The opacity of the collapse tool on the active Splitter (the Splitter currently being dragged)
  */
 /**
+ * @var {color}
+ * The color of the outline around the splitter when it is focused
+ */
+/**
+ * @var {string}
+ * The outline-style of the splitter when it is focused
+ */
+/**
+ * @var {number}
+ * The outline-width of the splitter when it is focused
+ */
+/**
+ * @var {number}
+ * The outline-offset of the splitter when it is focused
+ */
+/**
  * @var {string}
  * The the type of cursor to display when the cursor is over the collapse tool
  */
@@ -618,17 +657,17 @@
 /**
  * @var {number}
  * The opacity of Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
@@ -982,6 +1021,12 @@
 /**
  * @var {color} $form-field-focus-border-color
  * Border color for focused form fields.
+ *
+ * In the default Neptune color scheme this is the same as $base-highlight-color
+ * but it does not change automatically when one changes the $base-color.  This is because
+ * checkboxes and radio buttons have this focus color hard coded into their background
+ * images.  If this color is changed, you should also modify checkbox and radio button
+ * background images to match
  */
 /**
  * @var {color} $form-field-invalid-border-color
@@ -1476,10 +1521,11 @@
 /**
  * @var {boolean}
  * True to use vertically oriented triggers. False to use horizontally oriented triggers.
- * Themes that set this property to true must also override the {@link #triggerVertical}
- * config to match. Defaults to true.  When 'vertical' orientation is used, the background image
- * for both triggers is 'form/spinner'.  When 'horizontal' is used, the triggers use separate
- * background images - 'form/spinner-up', and 'form/spinner-down'.
+ * Themes that set this property to true must also override the
+ * {@link Ext.form.trigger.Spinner#vertical} config to match. Defaults to true.  When
+ * 'vertical' orientation is used, the background image for both triggers is
+ * 'form/spinner'.  When 'horizontal' is used, the triggers use separate background
+ * images - 'form/spinner-up', and 'form/spinner-down'.
  */
 /**
  * @var {string}
@@ -3134,10 +3180,6 @@
  * The default icon size for a grid cell button
  */
 /**
- * @var {number}
- * The space between a grid cell button's icon and text
- */
-/**
  * @var {color}
  * The border-color for the `cell` button UI
  */
@@ -3345,11 +3387,11 @@
  * The opacity of the {@link #glyph} icon for the `cell` button UI
  */
 /**
- * @var {number} $button-opacity-disabled
+ * @var {number} $button-grid-cell-opacity-disabled
  * opacity to apply to the button's main element when the button is disabled
  */
 /**
- * @var {number} $button-inner-opacity-disabled
+ * @var {number} $button-grid-cell-inner-opacity-disabled
  * opacity to apply to the button's inner elements (icon and text) when the buton is disabled
  */
 /**
@@ -5141,6 +5183,12 @@
 /**
  * @var {color} $form-field-focus-border-color
  * Border color for focused form fields.
+ *
+ * In the default Neptune color scheme this is the same as $base-highlight-color
+ * but it does not change automatically when one changes the $base-color.  This is because
+ * checkboxes and radio buttons have this focus color hard coded into their background
+ * images.  If this color is changed, you should also modify checkbox and radio button
+ * background images to match
  */
 /**
  * @var {color} $form-field-invalid-border-color
@@ -5635,10 +5683,11 @@
 /**
  * @var {boolean}
  * True to use vertically oriented triggers. False to use horizontally oriented triggers.
- * Themes that set this property to true must also override the {@link #triggerVertical}
- * config to match. Defaults to true.  When 'vertical' orientation is used, the background image
- * for both triggers is 'form/spinner'.  When 'horizontal' is used, the triggers use separate
- * background images - 'form/spinner-up', and 'form/spinner-down'.
+ * Themes that set this property to true must also override the
+ * {@link Ext.form.trigger.Spinner#vertical} config to match. Defaults to true.  When
+ * 'vertical' orientation is used, the background image for both triggers is
+ * 'form/spinner'.  When 'horizontal' is used, the triggers use separate background
+ * images - 'form/spinner-up', and 'form/spinner-down'.
  */
 /**
  * @var {string}
@@ -6072,8 +6121,10 @@
  * @var {boolean}
  * True to include the "grid-cell" form field UIs input fields rendered in the context of a grid cell.
  *
- * This defaults to `true`. It is required if either {@link Ext.grid.plugin.Editor grid editors} are being used,
- * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * This defaults to `true`. It is required if either grid editors
+ * ({@link Ext.grid.plugin.CellEditing cell} or {@link Ext.grid.plugin.RowEditing row})
+ * are being used, or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to
+ * house an input field.
  */
 /**
  *  @class Ext.form.field.Text
@@ -6100,11 +6151,11 @@
  */
 /**
  * @var {color}
- * The background color of a text field's input element when endered in the context of a grid cell
+ * The background color of a text field's input element when entered in the context of a grid cell
  */
 /**
  * @var {number/list}
- * The border width of text fields endered in the context of a grid cell
+ * The border width of text fields entered in the context of a grid cell
  */
 /**
  * @var {string/list}
@@ -6413,6 +6464,10 @@
  * The style of cursor to display when the cursor is over a {@link Ext.menu.Item Menu Item}
  */
 /**
+ * @var {string}
+ * The style of cursor to display when the cursor is over a disabled {@link Ext.menu.Item Menu Item}
+ */
+/**
  * @var {color}
  * The background-color of the active {@link Ext.menu.Item Menu Item}
  */
@@ -6551,17 +6606,17 @@
 /**
  * @var {number}
  * The opacity of Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
@@ -6646,8 +6701,10 @@
  * @var {boolean}
  * True to include the "grid-cell" form field UIs input fields rendered in the context of a grid cell.
  *
- * This defaults to `true`. It is required if either {@link Ext.grid.plugin.Editor grid editors} are being used,
- * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * This defaults to `true`. It is required if either grid editors
+ * ({@link Ext.grid.plugin.CellEditing cell} or {@link Ext.grid.plugin.RowEditing row})
+ * are being used, or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to
+ * house an input field.
  */
 /**
  *  @class Ext.form.field.Text
@@ -6674,11 +6731,11 @@
  */
 /**
  * @var {color}
- * The background color of a text field's input element when endered in the context of a grid cell
+ * The background color of a text field's input element when entered in the context of a grid cell
  */
 /**
  * @var {number/list}
- * The border width of text fields endered in the context of a grid cell
+ * The border width of text fields entered in the context of a grid cell
  */
 /**
  * @var {string/list}
@@ -7230,17 +7287,17 @@
 /**
  * @var {number}
  * The opacity of Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
@@ -7274,11 +7331,11 @@
  */
 /**
  * @var {number}
- * The width of breadcrumb arrows when {@link #split} is `false`
+ * The width of breadcrumb arrows when {@link #useSplitButtons} is `false`
  */
 /**
  * @var {number}
- * The width of breadcrumb arrows when {@link #split} is `true`
+ * The width of breadcrumb arrows when {@link #useSplitButtons} is `true`
  */
 /**
  * @var {string}
@@ -7341,22 +7398,22 @@
 /**
  * @var {number}
  * The opacity of Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of disabled Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {boolean}

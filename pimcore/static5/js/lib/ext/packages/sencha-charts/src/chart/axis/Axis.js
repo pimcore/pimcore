@@ -71,7 +71,7 @@ Ext.define('Ext.chart.axis.Axis', {
 
     /**
      * @event rangechange
-     * Fires when the {@link #range} of the axis  changes.
+     * Fires when the {@link Ext.chart.axis.Axis#range range} of the axis changes.
      * @param {Ext.chart.axis.Axis} axis
      * @param {Array} range
      */
@@ -146,7 +146,7 @@ Ext.define('Ext.chart.axis.Axis', {
         limits: null,
 
         /**
-         * @cfg {Function} renderer Allows direct customisation of rendered axis sprites.
+         * @cfg {Function} renderer Allows direct customization of rendered axis sprites.
          * @param {String} label The label.
          * @param {Object|Ext.chart.axis.layout.Layout} layout The layout configuration used by the axis.
          * @param {String} lastLabel The last label.
@@ -398,8 +398,9 @@ Ext.define('Ext.chart.axis.Axis', {
 
     /**
      * @private
-     * @property {Array} The full data range of the axis. Should not be set directly,
-     * clear it to `null` and use `getRange` to update.
+     * @property {Array} range
+     * The full data range of the axis. Should not be set directly.  Clear it to `null` 
+     * and use `getRange` to update.
      */
     range: null,
 
@@ -472,9 +473,9 @@ Ext.define('Ext.chart.axis.Axis', {
         // Maps IDs of the axes that float along this axis to their floating values.
         me.floatingAxes = {};
 
+        config = config || {};
         if (config.position === 'angular') {
             config.style = config.style || {};
-            // TODO: try to get rid of the estStepSize
             config.style.estStepSize = 1;
         }
         if ('id' in config) {
@@ -664,14 +665,12 @@ Ext.define('Ext.chart.axis.Axis', {
     },
 
     applyLayout: function (layout, oldLayout) {
-        // TODO: finish this
         layout = Ext.factory(layout, null, oldLayout, 'axisLayout');
         layout.setAxis(this);
         return layout;
     },
 
     applySegmenter: function (segmenter, oldSegmenter) {
-        // TODO: finish this
         segmenter = Ext.factory(segmenter, null, oldSegmenter, 'segmenter');
         segmenter.setAxis(this);
         return segmenter;
@@ -807,7 +806,7 @@ Ext.define('Ext.chart.axis.Axis', {
         var me = this;
         function link(action, slave, master) {
             master.getLayout()[action]('datachange', 'onDataChange', slave);
-            master[action]('rangechange', 'onRangeChange', slave);
+            master[action]('rangechange', 'onMasterAxisRangeChange', slave);
         }
         if (me.masterAxis) {
             link('un', me, me.masterAxis);
@@ -819,7 +818,7 @@ Ext.define('Ext.chart.axis.Axis', {
             }
             link('on', me, masterAxis);
             me.onDataChange(masterAxis.getLayout().labels);
-            me.onRangeChange(masterAxis, masterAxis.range);
+            me.onMasterAxisRangeChange(masterAxis, masterAxis.range);
             me.setStyle(Ext.apply({}, me.config.style, masterAxis.config.style));
             me.setTitle(Ext.apply({}, me.config.title, masterAxis.config.title));
             me.setLabel(Ext.apply({}, me.config.label, masterAxis.config.label));
@@ -831,7 +830,7 @@ Ext.define('Ext.chart.axis.Axis', {
         this.getLayout().labels = data;
     },
 
-    onRangeChange: function (axis, range) {
+    onMasterAxisRangeChange: function (masterAxis, range) {
         this.range = range;
     },
 
@@ -965,7 +964,10 @@ Ext.define('Ext.chart.axis.Axis', {
             }
         }
 
-        me.fireEvent('rangechange', me, me.range);
+        if (!Ext.Array.equals(me.range, me.oldRange || []) ) {
+            me.fireEvent('rangechange', me, me.range);
+            me.oldRange = me.range;
+        }
         return me.range;
     },
 
@@ -1245,6 +1247,31 @@ Ext.define('Ext.chart.axis.Axis', {
 
     isXType: function (xtype) {
         return xtype === 'axis';
+    },
+
+    // Override the Observable's method to redirect listener scope
+    // resolution to the chart.
+    resolveListenerScope: function (defaultScope) {
+        var me = this,
+            namedScope = Ext._namedScopes[defaultScope],
+            chart = me.getChart(),
+            scope;
+
+        if (!namedScope) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : (defaultScope || me);
+        } else if (namedScope.isThis) {
+            scope = me;
+        } else if (namedScope.isController) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+        } else if (namedScope.isSelf) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+            // Class body listener. No chart controller, nor chart container controller.
+            if (scope === chart && !chart.getInheritedConfig('defaultListenerScope')) {
+                scope = me;
+            }
+        }
+
+        return scope;
     },
 
     destroy: function () {

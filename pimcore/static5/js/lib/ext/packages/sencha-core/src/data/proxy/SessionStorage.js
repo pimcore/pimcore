@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * Proxy which uses HTML5 session storage as its data storage/retrieval mechanism. If this proxy is used in a browser
  * where session storage is not supported, the constructor will throw an error. A session storage proxy requires a
  * unique ID which is used as a key in which all record data are stored in the session storage object.

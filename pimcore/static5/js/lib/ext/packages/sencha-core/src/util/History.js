@@ -53,7 +53,7 @@ Ext.define('Ext.util.History', {
      * Gets the actual hash from the url. This shouldn't need to be used directly but use the
      * {@link #getToken} method instead.
      *
-     * @returns {String} The hash from the window object.
+     * @return {String} The hash from the window object.
      * @private
      */
     getHash: function() {
@@ -137,7 +137,7 @@ Ext.define('Ext.util.History', {
         }
 
         if (!Ext.isReady) {
-            Ext.onReady(function() {
+            Ext.onInternalReady(function() {
                 me.init(onReady, scope);
             });
             return;

@@ -24,13 +24,13 @@ Ext.JSON = (new(function() {
 // @require Ext.Error
 
 var me = this,
-    hasNative = window.JSON && JSON.toString() == '[object JSON]',
+    hasNative = window.JSON && JSON.toString() === '[object JSON]',
     useHasOwn = !! {}.hasOwnProperty,
     pad = function(n) {
         return n < 10 ? "0" + n : n;
     },
     doDecode = function(json) {
-        return eval("(" + json + ')');
+        return eval("(" + json + ')'); // jshint ignore:line
     },
     doEncode = function(o, newline) {
         // http://jsperf.com/is-undefined
@@ -44,7 +44,7 @@ var me = this,
             } else {
                 return me.encodeString(o);
             }
-        } else if (typeof o == "number") {
+        } else if (typeof o === "number") {
             //don't use isNumber here, since finite checks happen inside isNumber
             return isFinite(o) ? String(o) : "null";
         } else if (Ext.isBoolean(o)) {
@@ -207,12 +207,12 @@ var me = this,
      * @return {String} The string literal to use in a JSON string.
      */
     me.encodeDate = function(o) {
-        return '"' + o.getFullYear() + "-"
-        + pad(o.getMonth() + 1) + "-"
-        + pad(o.getDate()) + "T"
-        + pad(o.getHours()) + ":"
-        + pad(o.getMinutes()) + ":"
-        + pad(o.getSeconds()) + '"';
+        return '"' + o.getFullYear() + "-" +
+            pad(o.getMonth() + 1) + "-" +
+            pad(o.getDate()) + "T" +
+            pad(o.getHours()) + ":" +
+            pad(o.getMinutes()) + ":" +
+            pad(o.getSeconds()) + '"';
     };
 
     /**

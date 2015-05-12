@@ -7,12 +7,12 @@
  * explicitly defined on the field. The sortType will make any necessary
  * modifications to the value and return it.
  *
- *  - **`asText`** - Removes any tags and converts the value to a string</li>
- *  - **`asUCText`** - Removes any tags and converts the value to an uppercase string</li>
- *  - **`asUCText`** - Converts the value to an uppercase string</li>
- *  - **`asDate`** - Converts the value into Unix epoch time</li>
- *  - **`asFloat`** - Converts the value to a floating point number</li>
- *  - **`asInt`** - Converts the value to an integer number</li>
+ *  - **`asText`** - Removes any tags and converts the value to a string
+ *  - **`asUCText`** - Removes any tags and converts the value to an uppercase string
+ *  - **`asUCText`** - Converts the value to an uppercase string
+ *  - **`asDate`** - Converts the value into Unix epoch time
+ *  - **`asFloat`** - Converts the value to a floating point number
+ *  - **`asInt`** - Converts the value to an integer number
  *
  * It is also possible to create a custom sortType that can be used throughout
  * an application.

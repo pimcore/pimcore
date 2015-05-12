@@ -173,7 +173,7 @@
  *
  * #### Models, Stores and Associations
  *
- * A {@link Ext.data.Session `Session`} manages model instances and their associations. 
+ * A {@link Ext.data.Session Session} manages model instances and their associations.
  * The `ViewModel` may be used with or without a `Session`. When a `Session` is attached, the
  * `ViewModel` will always consult the `Session` to ask about records and stores. The `Session`
  * ensures that only a single instance of each model Type/Id combination is created. This is 
@@ -199,7 +199,7 @@
  *         name: 'Foo'
  *     });
  *     
- *     var viewModel new Ext.app.ViewModel({
+ *     var viewModel = new Ext.app.ViewModel({
  *         links: {
  *             theUser: {
  *                 type: 'User',
@@ -231,7 +231,7 @@
  *         links: {
  *             theUser: {
  *                 type: 'User',
- *                 type: 22
+ *                 id: 22
  *             }
  *         }
  *     });
@@ -428,6 +428,18 @@ Ext.define('Ext.app.ViewModel', {
          *         }
          *     } 
          *
+         * `create` can also be an object containing initial data for the record.
+         *
+         *     links: {
+         *         newUser: {
+         *             type: 'User',
+         *             create: {
+         *                 firstName: 'John',
+         *                 lastName: 'Smith'
+         *             }
+         *         }
+         *     } 
+         *
          * While that is the typical use, the value of each property in `links` may also be
          * a bind descriptor (see `{@link #method-bind}` for the various forms of bind
          * descriptors).
@@ -581,14 +593,23 @@ Ext.define('Ext.app.ViewModel', {
             stores = me.storeInfo,
             parent = me.getParent(),
             task = me.collectTask,
+            children = me.children,
             key, store, autoDestroy;
-
-        me.destroy = Ext.emptyFn;
 
         me.destroying = true;
         if (task) {
             task.cancel();
             me.collectTask = null;
+        }
+
+        // When used with components, they are destroyed bottom up
+        // so this scenario is only likely to happen in the case where
+        // we're using the VM without any component attachment, in which case
+        // we need to clean up here.
+        if (children) {
+            for (key in children) {
+                children[key].destroy();
+            }
         }
 
         if (stores) {
@@ -617,7 +638,7 @@ Ext.define('Ext.app.ViewModel', {
         me.hadValue = me.children = me.storeInfo = me._session = me._view = me._scheduler =
                       me._root = me._parent = me.formulaFn = me.$formulaData = null;
 
-        me.destroying = false;
+        me.callParent();
     },
 
     /**
@@ -688,6 +709,11 @@ Ext.define('Ext.app.ViewModel', {
         }
         return store || null;
     },
+    
+    /**
+     * @method getStores
+     * @hide
+     */
 
     /**
      * Create a link to a reference. See the {@link #links} configuration.
@@ -697,7 +723,7 @@ Ext.define('Ext.app.ViewModel', {
     linkTo: function (key, reference) {
         var me = this,
             stub = me.getStub(key),
-            id, modelType, linkStub;
+            create, id, modelType, linkStub, rec;
 
         //<debug>
         if (stub.depth - me.getRoot().depth > 1) {
@@ -713,6 +739,7 @@ Ext.define('Ext.app.ViewModel', {
         }
         // reference is backwards compat, type is preferred.
         modelType = reference.type || reference.reference;
+        create = reference.create;
         if (modelType) {
             // It's a record
             id = reference.id;
@@ -721,10 +748,16 @@ Ext.define('Ext.app.ViewModel', {
                 Ext.Error.raise('No id specified. To create a phantom model, specify "create: true" as part of the reference.');
             }
             //</debug>
-            if (reference.create) {
+            if (create) {
                 id = undefined;
             }
-            stub.set(me.getRecord(modelType, id));
+            rec = me.getRecord(modelType, id);
+            if (Ext.isObject(create)) {
+                rec.set(create);
+                rec.commit();
+                rec.phantom = true;
+            }
+            stub.set(rec);
         } else {
             if (!stub.isLinkStub) {
                 // Pass parent=null since we will graft in this new stub to replace us:
@@ -736,7 +769,10 @@ Ext.define('Ext.app.ViewModel', {
         }
     },
 
-
+    /**
+     * Forces all bindings in this ViewModel hierarchy to evaluate immediately. Use this to do a synchronous flush
+     * of all bindings.
+     */
     notify: function () {
         this.getScheduler().notify();
     },
@@ -807,7 +843,9 @@ Ext.define('Ext.app.ViewModel', {
         
         unregisterChild: function(child) {
             var children = this.children;
-            if (children) {
+            // If we're destroying we'll be wiping this collection shortly, so
+            // just ignore it here
+            if (!this.destroying && children) {
                 delete children[child.getId()];
             }
         },

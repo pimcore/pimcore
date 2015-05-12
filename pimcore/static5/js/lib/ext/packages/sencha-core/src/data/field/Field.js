@@ -130,19 +130,40 @@
  *
  * ### Updating
  *
- * Historically `{@link #method-convert convert}` methods were executed for each field by
- * the `{@link Ext.data.Model#set set}` method and determine the value actually stored.
- *
+ * Fields modified with the {@link Ext.data.Model#set set} method will have their stored 
+ * value set using the convert / calculate method when present.
+ * 
  * For example:
  *
- *     ed.set('age', 25.4); // stores 25 because "age" is an "int" not a "float"
- *     console.log(ed.get('age')); // logs 25 (no decimals allowed for "int" fields)
+ *     Ext.define('MyApp.model.Employee', {
+ *         extend: 'Ext.data.Model',
+ *         fields: [{
+ *             name: 'salary',
+ *             convert: function (val) {
+ *                 var startingBonus = val * .1;
+ *                 return val + startingBonus;
+ *             }
+ *         }],
+ *         convertOnSet: false
+ *     });
+ *     
+ *     var tina = Ext.create('MyApp.model.Employee', {
+ *         salary: 50000
+ *     });
+ *     
+ *     console.log(tina.get('salary')); // logs 55000
+ *     
+ *     tina.set('salary', 60000);
+ *     console.log(tina.get('salary')); // logs 60000
+ * 
+ * This default behavior can be disabled by setting the Model's 
+ * `{@link Ext.data.Model#cfg-convertOnSet}` config to `false`.
+ * 
+ * **Note:** convertOnSet `false` only prevents the convert / calculate call when the 
+ * set `fieldName` param matches the field's `{@link #name}`.  See 
+ * {@link Ext.data.Model#convertOnSet convertOnSet} for additional details.
  *
- * This behavior can be enabled using `{@link Ext.data.Model#cfg-convertOnSet}` but is off
- * by default. By default the `{@link #method-convert convert}` method is only called when
- * processing raw data or when calculating fields.
- *
- * #### Dependencies
+ * ### Dependencies
  *
  * When a field's `{@link #method-convert convert}` method processes values from the record
  * (vs. just the field's value), it is best to also provide a `depends` config as shown
@@ -281,7 +302,7 @@ Ext.define('Ext.data.field.Field', {
     allowNull: false,
 
     /**
-     * @cfg {Function} [calculate]
+     * @cfg {Function} calculate
      * This config defines a simple field calculation function. A calculate method only
      * has access to the record data and should return the value of the calculated field.
      * When provided in this way, the `depends` config is automatically determined by
@@ -314,15 +335,26 @@ Ext.define('Ext.data.field.Field', {
      * values must match the following regular expression (case insensitive):
      *
      *      data.([a-z_][a-z0-9_]*)
+     *      // where 'data' is the param passed to the calculate method
      *
      * The only advantage of a `calculate` method over a `convert` method is automatic
      * determination of `depends`.
+     * 
+     * **Note:** The use of calculate and {@link #convert} are exclusive.  The calculate 
+     * method will override the convert method if both are configured.
+     * 
+     * @param {Object} data An object with all values for each field in the parent 
+     * model.  See {@link Ext.data.Model#getData getData}.
+     * @return {Mixed} value The value of the calculated field
      */
 
     /**
-     * @cfg {Function} [convert]
+     * @cfg {Function} convert
      * If specified this config overrides the `{@link #method-convert convert}` method. See
      * also `{@link #cfg-calculate calculate}` for simple field calculations.
+     * 
+     * **Note:** The use of {@link #calculate} and convert are exclusive.  The calculate 
+     * method will override the convert method if both are configured.
      */
 
     /**
@@ -414,18 +446,18 @@ Ext.define('Ext.data.field.Field', {
      * For example, to display a person's full name, using two separate `firstName` and
      * `lastName` fields, configure the name field like this:
      *
-     *    {
-     *        name: 'name',
-     *
-     *        // Will be called whenever forename or surname fields are set
-     *        convert: function (v, rec) {
-     *            return rec.get('firstName') + ' ' + rec.get('lastName');
-     *        },
-     *
-     *        depends: [ 'firstName', 'lastName' ],
-     *
-     *        // It should not be returned to the server - it's not a database field
-     *        persist: false
+     *     {
+     *         name: 'name',
+     *     
+     *         // Will be called whenever forename or surname fields are set
+     *         convert: function (v, rec) {
+     *             return rec.get('firstName') + ' ' + rec.get('lastName');
+     *         },
+     *     
+     *         depends: [ 'firstName', 'lastName' ],
+     *     
+     *         // It should not be returned to the server - it's not a database field
+     *         persist: false
      *     }
      *
      * Note that if you do not want the calculated field to be part of the field set sent
@@ -598,7 +630,7 @@ Ext.define('Ext.data.field.Field', {
      * instead.
      *
      * @cfg {String} [reference.association]
-     * The name of the association. By default, the name of the assocation is the
+     * The name of the association. By default, the name of the association is the
      * capitalized `inverse` plus "By" plus the capitalized `role`.
      *
      * @cfg {String} [reference.child]
@@ -626,8 +658,8 @@ Ext.define('Ext.data.field.Field', {
     reference: null,
 
     /**
-     * @cfg {Function} [serialize]
-     * See the {@link #method-serialize} method.
+     * @cfg {Function} serialize
+     * @inheritdoc #method-serialize
      */
 
     /**
@@ -817,18 +849,12 @@ Ext.define('Ext.data.field.Field', {
 
         defaultValue = me.defaultValue;
         if (me.convert) {
-            if (defaultValue !== undefined) {
-                // If this field has a convert and a defaultValue, run the defaultValue
-                // through convert:
-                me.defaultValue = defaultValue = me.convert(defaultValue);
-            }
-
             me.calculated = calculated = me.convert.length > 1;
             me.evil = calculated && !depends;
         }
 
         if (me.persist === null) {
-            me.persist = !calculated;
+            me.persist = !calculate;
         }
 
         sortType = me.sortType;
@@ -983,7 +1009,7 @@ Ext.define('Ext.data.field.Field', {
      *           city: 'Boston',  state: 'MA'
      *         }
      *     ];
-     *
+     * 
      * @method
      * @param {Mixed} value The data value as read by the Reader, if undefined will use
      * the configured `defaultValue`.

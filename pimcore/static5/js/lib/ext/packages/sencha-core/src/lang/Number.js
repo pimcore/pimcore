@@ -4,7 +4,7 @@
  * A collection of useful static methods to deal with numbers
  * @singleton
  */
-Ext.Number = new function() {
+Ext.Number = (new function() { // jshint ignore:line
 // @define Ext.lang.Number
 // @define Ext.Number
 // @require Ext
@@ -78,7 +78,7 @@ Ext.Number = new function() {
          * "exclusive" bound.
          * @param {Boolean} [options.wrap=true] Wraps negative numbers backwards from the
          * end of the array. Passing `false` simply clips negative index values at 0.
-         * @returns {Number[]} The normalized `[begin, end]` array where `end` is now
+         * @return {Number[]} The normalized `[begin, end]` array where `end` is now
          * exclusive such that `length = end - begin`. Both values are between 0 and the
          * given `length` and `end` will not be less-than `begin`.
          */
@@ -288,7 +288,7 @@ Ext.Number = new function() {
         /**
          * Returns a random integer between the specified range (inclusive)
          * @param {Number} from Lowest value to return.
-         * @param {Number} to Highst value to return.
+         * @param {Number} to Highest value to return.
          * @return {Number} A random integer within the specified range.
          */
         randomInt: function (from, to) {
@@ -318,4 +318,4 @@ Ext.Number = new function() {
     Ext.num = function() {
         return ExtNumber.from.apply(this, arguments);
     };
-};
+}());

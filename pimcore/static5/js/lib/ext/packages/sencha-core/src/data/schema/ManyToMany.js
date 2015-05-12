@@ -289,12 +289,11 @@ Ext.define('Ext.data.schema.ManyToMany', {
 
         read: function(rightRecord, node, fromReader, readOptions) {
             var me = this,
-                result = me.callParent([ rightRecord, node, fromReader, readOptions ]);
+                leftRecords = me.callParent([rightRecord, node, fromReader, readOptions]);
             
-            // Did the root exist in the data?
-            if (result.getReadRoot()) {
+            if (leftRecords) {
                 // Create the store and dump the data
-                rightRecord[me.getterName](null, null, result.getRecords());
+                rightRecord[me.getterName](null, null, leftRecords);
                 // Inline associations should *not* arrive on the "data" object:
                 delete rightRecord.data[me.role];
             }

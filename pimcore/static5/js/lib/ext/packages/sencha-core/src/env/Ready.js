@@ -73,7 +73,7 @@ Ext.env.Ready = {
 // @require Ext.env.Feature
 
     /**
-     * @property {Number} The number of Framework readiness blocks.
+     * @property {Number} blocks The number of Framework readiness blocks.
      * @private
      */
     blocks: (location.search || '').indexOf('ext-pauseReadyFire') > 0 ? 1 : 0,
@@ -167,7 +167,7 @@ Ext.env.Ready = {
 
         if (!me.bound) {
             // Test scenario where load is dynamic AFTER window.load
-            if (doc.readyState == 'complete') {
+            if (doc.readyState === 'complete') {
                 // Firefox4+ got support for this state, others already do.
                 me.onReadyEvent({
                     type: doc.readyState || 'body'
@@ -574,7 +574,7 @@ Ext.env.Ready = {
                     return;
                 }
 
-                if (doc.readyState == 'complete')  {
+                if (doc.readyState === 'complete')  {
                     // Loaded AFTER initial document write/load...
                     Ready.onReadyEvent({
                         type: 'already ' + (doc.readyState || 'body')
@@ -676,6 +676,13 @@ Ext.env.Ready = {
     Ext.onReady = function (fn, scope, options) {
         Ready.on(fn, scope, options);
     };
+
+    // A shortcut method for onReady with a high priority
+    Ext.onInternalReady = function(fn, scope, options) {
+        Ready.on(fn, scope, Ext.apply({
+            priority: 1000
+        }, options));
+    }
 
     Ready.bind();
 }());

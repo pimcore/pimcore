@@ -1,4 +1,9 @@
 // @define Ext.draw.engine.excanvas
+/**
+ * @class Ext.draw.engine.excanvas
+ * @private
+ * @define Ext.draw.engine.excanvas
+ */
 Ext.draw || (Ext.draw = {});
 Ext.draw.engine || (Ext.draw.engine = {});
 Ext.draw.engine.excanvas = true;
@@ -56,7 +61,7 @@ if (!document.createElement('canvas').getContext) {
   var IE_VERSION = +navigator.userAgent.match(/MSIE ([\d.]+)?/)[1];
 
   /**
-   * This funtion is assigned to the <canvas> elements as element.getContext().
+   * This funtion is assigned to the <canvas></canvas> elements as element.getContext().
    * @this {HTMLElement}
    * @return {CanvasRenderingContext2D_}
    */
@@ -569,11 +574,15 @@ if (!document.createElement('canvas').getContext) {
   }
 
   /**
+   * @class CanvasRenderingContext2D_
    * This class implements CanvasRenderingContext2D interface as described by
    * the WHATWG.
    * @param {HTMLElement} canvasElement The element that the 2D context should
    * be associated with
+   * @private
    */
+  //
+
   function CanvasRenderingContext2D_(canvasElement) {
     this.m_ = createMatrixIdentity();
 

@@ -181,7 +181,7 @@ Ext.define('Ext.draw.Color', {
      *
      * @param {String/String[]} color The color value (i.e 'rgb(255, 255, 255)', 'color: #ffffff').
      * Can also be an Array, in this case the function handles the first member.
-     * @returns {String} The color in hexadecimal format.
+     * @return {String} The color in hexadecimal format.
      * @static
      */
     toHex: function(color) {
@@ -222,7 +222,7 @@ Ext.define('Ext.draw.Color', {
      * **Note:** This method is both static and instance.
      *
      * @param {String} str Color in string.
-     * @returns Ext.draw.Color
+     * @return Ext.draw.Color
      * @static
      */
     fromString: function(str) {
@@ -269,7 +269,7 @@ Ext.define('Ext.draw.Color', {
      *
      * The gray value is calculated using the formula r*0.3 + g*0.59 + b*0.11.
      *
-     * @returns {Number}
+     * @return {Number}
      */
     getGrayscale: function() {
         // http://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
@@ -284,7 +284,7 @@ Ext.define('Ext.draw.Color', {
      * @param {Number} h Hue component [0..360)
      * @param {Number} s Saturation component [0..1]
      * @param {Number} l Lightness component [0..1]
-     * @returns Ext.draw.Color
+     * @return Ext.draw.Color
      * @static
      */
     fromHSL: function(h, s, l) {
@@ -339,7 +339,7 @@ Ext.define('Ext.draw.Color', {
      * @param {Number} h Hue component [0..360)
      * @param {Number} s Saturation component [0..1]
      * @param {Number} v Value component [0..1]
-     * @returns Ext.draw.Color
+     * @return Ext.draw.Color
      * @static
      */
     fromHSV: function (h, s, v) {

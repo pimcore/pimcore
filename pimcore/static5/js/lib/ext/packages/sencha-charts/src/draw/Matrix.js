@@ -1,16 +1,15 @@
 /**
  * Utility class to calculate [affine transformation](http://en.wikipedia.org/wiki/Affine_transformation) matrix.
  *
- * This class is compatible with SVGMatrix (http://www.w3.org/TR/SVG11/coords.html#InterfaceSVGMatrix) except:
+ * This class is compatible with [SVGMatrix](http://www.w3.org/TR/SVG11/coords.html#InterfaceSVGMatrix) except:
  *
  *   1. Ext.draw.Matrix is not read only.
  *   2. Using Number as its components rather than floats.
  *
- * Using this class to reduce the severe numeric problem with HTML Canvas and SVG transformation:
- * http://stackoverflow.com/questions/8784405/large-numbers-in-html-canvas-translate-result-in-strange-behavior
- * There's also no way to get current transformation matrix in Canvas:
- * http://stackoverflow.com/questions/7395813/html5-canvas-get-transform-matrix
- *
+ * Using this class helps to reduce the severe numeric 
+ * [problem with HTML Canvas and SVG transformation](http://stackoverflow.com/questions/8784405/large-numbers-in-html-canvas-translate-result-in-strange-behavior)
+ * 
+ * There's also no way to get current transformation matrix [in Canvas](http://stackoverflow.com/questions/7395813/html5-canvas-get-transform-matrix).
  */
 Ext.define('Ext.draw.Matrix', {
 

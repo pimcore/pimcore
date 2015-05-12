@@ -391,4 +391,49 @@ describe("Ext.Element.insertion", function() {
             node.destroy();
         });
     });
+
+    describe('Wrapping a Component', function() {
+        var container,
+            cmp,
+            newEl;
+
+        afterEach(function() {
+            container.destroy();
+            newEl.destroy();
+        });
+        it('should not call onFocusLeave on a Component which is wrapped', function() {
+            container = new Ext.Container({
+                items: {
+                    xtype: 'textfield'
+                },
+                renderTo: document.body
+            }),
+            cmp = container.child(),
+            newEl;
+
+            spyOn(container, 'onFocusLeave').andCallThrough();
+
+            cmp.focus();
+
+            waitsFor(function() {
+                return container.containsFocus;
+            });
+
+            runs(function() {
+                expect(Ext.Element.getActiveElement() === cmp.inputEl.dom).toBe(true);
+                newEl = container.el.wrap();
+            });
+
+            // Wait for a possible (it would be a bug) focus leave of the component
+            // we can't wait for anything, because we want NOTHING to happen.
+            waits(10);
+
+            // The Component must have retained focus
+            runs(function() {
+                expect(container.onFocusLeave).not.toHaveBeenCalled();
+                expect(container.containsFocus).toBe(true);
+                expect(Ext.Element.getActiveElement() === cmp.inputEl.dom).toBe(true);
+            });
+        });
+    });
 }, "/src/dom/Element.insertion.js");

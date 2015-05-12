@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * Base class for any client-side storage. Used as a superclass for {@link Ext.data.proxy.Memory Memory} and
  * {@link Ext.data.proxy.WebStorage Web Storage} proxies. Do not use directly, use one of the subclasses instead.
  * @private

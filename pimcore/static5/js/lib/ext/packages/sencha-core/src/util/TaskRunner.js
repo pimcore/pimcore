@@ -1,29 +1,49 @@
 // @tag core
 /**
- * Provides the ability to execute one or more arbitrary tasks in a asynchronous manner.
- * Generally, you can use the singleton {@link Ext.TaskManager} instead, but if needed,
- * you can create separate instances of TaskRunner. Any number of separate tasks can be
- * started at any time and will run independently of each other.
+ * Provides the ability to execute one or more arbitrary tasks in an asynchronous manner.
+ *
+ * Generally, you can use the singleton {@link Ext.TaskManager}.  Or you can create 
+ * separate TaskRunner instances to start and stop unique tasks independent of one 
+ * another.
  * 
  * Example usage:
  *
- *      // Start a simple clock task that updates a div once per second
- *      var updateClock = function () {
- *          Ext.fly('clock').setHtml(Ext.Date.format(new Date(), 'g:i:s A'));
- *      };
- *
- *      var runner = new Ext.util.TaskRunner(),
- *          task = runner.start({
- *              run: updateClock,
- *              interval: 1000
- *          });
+ *     @example
+ *     var runner = new Ext.util.TaskRunner(),
+ *         clock, updateClock, task;
+ *     
+ *     clock = Ext.getBody().appendChild({
+ *         id: 'clock'
+ *     });
+ *     
+ *     // Start a simple clock task that updates a div once per second
+ *     updateClock = function() {
+ *         clock.setHtml(Ext.Date.format(new Date(), 'g:i:s A'));
+ *     };
+ *     
+ *     task = runner.start({
+ *         run: updateClock,
+ *         interval: 1000
+ *     });
  *
  * The equivalent using TaskManager:
  *
- *      var task = Ext.TaskManager.start({
- *          run: updateClock,
- *          interval: 1000
- *      });
+ *     @example
+ *     var clock, updateClock, task;
+ *     
+ *     clock = Ext.getBody().appendChild({
+ *         id: 'clock'
+ *     });
+ *     
+ *     // Start a simple clock task that updates a div once per second
+ *     updateClock = function() {
+ *         clock.setHtml(Ext.Date.format(new Date(), 'g:i:s A'));
+ *     };
+ *     
+ *     var task = Ext.TaskManager.start({
+ *         run: updateClock,
+ *         interval: 1000
+ *     });
  *
  * To end a running task:
  * 
@@ -32,45 +52,56 @@
  * If a task needs to be started and stopped repeated over time, you can create a
  * {@link Ext.util.TaskRunner.Task Task} instance.
  *
- *      var task = runner.newTask({
- *          run: function () {
- *              // useful code
- *          },
- *          interval: 1000
- *      });
- *      
- *      task.start();
- *      
- *      // ...
- *      
- *      task.stop();
- *      
- *      // ...
- *      
- *      task.start();
+ *     var runner = new Ext.util.TaskRunner(),
+ *         task;
+ *     
+ *     task = runner.newTask({
+ *         run: function() {
+ *             // useful code
+ *         },
+ *         interval: 1000
+ *     });
+ *     
+ *     task.start();
+ *     
+ *     // ...
+ *     
+ *     task.stop();
+ *     
+ *     // ...
+ *     
+ *     task.start();
  *
- * A re-usable, one-shot task can be managed similar to the above:
+ * A re-usable, single-run task can be managed similar to the above:
  *
- *      var task = runner.newTask({
- *          run: function () {
- *              // useful code to run once
- *          },
- *          repeat: 1
- *      });
- *      
- *      task.start();
- *      
- *      // ...
- *      
- *      task.start();
+ *     var runner = new Ext.util.TaskRunner(),
+ *         task;
+ *     
+ *     task = runner.newTask({
+ *         run: function() {
+ *             // useful code
+ *         },
+ *         interval: 1000,
+ *         repeat: 1
+ *     });
+ *     
+ *     task.start();
+ *     
+ *     // ...
+ *     
+ *     task.stop();
+ *     
+ *     // ...
+ *     
+ *     task.start();
  *
- * See the {@link #start} method for details about how to configure a task object.
+ * See the {@link #start} method for details about how to configure a Task.
  *
- * Also see {@link Ext.util.DelayedTask}. 
+ * Also see {@link Ext.util.DelayedTask}.
  * 
  * @constructor
- * @param {Number/Object} [interval=10] The minimum precision in milliseconds supported by this
- * TaskRunner instance. Alternatively, a config object to apply to the new instance.
+ * @param {Number/Object} [interval=10] The minimum precision in milliseconds supported by 
+ * this TaskRunner instance. Alternatively, a config object to apply to the new instance.
  */
 Ext.define('Ext.util.TaskRunner', {
 // @require Ext.Function
@@ -159,14 +190,15 @@ Ext.define('Ext.util.TaskRunner', {
      * @param {Number} [task.repeat] The number of times to invoke the task before stopping
      * automatically (defaults to indefinite).
      *
-     * @param {Number} [task.fireIdleEvent=true] If all tasks in a TaskManager's execution sweep
-     * are configured with `fireIdleEvent: false`, then the {@link Ext.GlobalEvents#idle idleEvent}
-     * is not fired
-     * when the TaskManager's execution sweep finishes.
+     * @param {Number} [task.fireIdleEvent=true] If all tasks in a TaskRunner's execution 
+     * sweep are configured with `fireIdleEvent: false`, then the 
+     * {@link Ext.GlobalEvents#idle idleEvent} is not fired when the TaskRunner's execution 
+     * sweep finishes.
      *
-     * @return {Object} The task
+     * @param {Boolean} [task.fireOnStart=false] True to run the task immediately instead of 
+     * waiting for the _interval's_ initial pass to call the _run_ function.
      */
-    start: function(task) {
+     start: function(task) {
         var me = this,
             now = Ext.Date.now();
 
@@ -256,7 +288,7 @@ Ext.define('Ext.util.TaskRunner', {
                     if (task.hasOwnProperty('fireIdleEvent')) {
                         fireIdleEvent = task.fireIdleEvent;
                     } else {
-                        fireIdleEvent = me.fireIdleEvent
+                        fireIdleEvent = me.fireIdleEvent;
                     }
 
                     try {
@@ -265,6 +297,9 @@ Ext.define('Ext.util.TaskRunner', {
                         try {
                             // <debug>
                             Ext.log({
+                                fn: task.run,
+                                prefix: 'Error while running task',
+                                stack: taskError.stack,
                                 msg: taskError,
                                 level: 'error'
                             });
@@ -384,9 +419,6 @@ function () {
          */
         stopped: true, // this avoids the odd combination of !stopped && !pending
 
-        /**
-         * Override default behavior
-         */
         fireOnStart: false,
 
         constructor: function (config) {

@@ -8,47 +8,63 @@
  * scale will auto-adjust to the values.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name': 1, 'data1': 10, 'data2': 12, 'data3': 14, 'data4': 8, 'data5': 13},
- *                   {'name': 2, 'data1': 7, 'data2': 8, 'data3': 16, 'data4': 10, 'data5': 3},
- *                   {'name': 3, 'data1': 5, 'data2': 2, 'data3': 14, 'data4': 12, 'data5': 7},
- *                   {'name': 4, 'data1': 2, 'data2': 14, 'data3': 6, 'data4': 1, 'data5': 23},
- *                   {'name': 5, 'data1': 27, 'data2': 38, 'data3': 36, 'data4': 13, 'data5': 33}
- *               ]
- *             },
- *             axes: {
- *                 type: 'numeric',
- *                 position: 'left',
- *                 minimum: 0,
- *                 fields: ['data1', 'data2', 'data3', 'data4', 'data5'],
- *                 title: 'Sample Values',
- *                 grid: {
- *                     odd: {
- *                         opacity: 1,
- *                         fill: '#ddd',
- *                         stroke: '#bbb',
- *                         'lineWidth': 1
- *                     }
- *                 }
- *             },
- *             series: {
- *                 type: 'area',
- *                 subStyle: {
- *                     fill: ['blue', 'green', 'red']
- *                 },
- *                 xField: 'name',
- *                 yField: ['data1', 'data2', 'data3']
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['name', 'data1', 'data2', 'data3'],
+ *            data: [{
+ *                'name': 1,
+ *                'data1': 10,
+ *                'data2': 12,
+ *                'data3': 14
+ *            }, {
+ *                'name': 2,
+ *                'data1': 7,
+ *                'data2': 8,
+ *                'data3': 16
+ *            }, {
+ *                'name': 3,
+ *                'data1': 5,
+ *                'data2': 2,
+ *                'data3': 14
+ *            }, {
+ *                'name': 4,
+ *                'data1': 2,
+ *                'data2': 14,
+ *                'data3': 6
+ *            }, {
+ *                'name': 5,
+ *                'data1': 27,
+ *                'data2': 38,
+ *                'data3': 36
+ *            }]
+ *        },
+ *        axes: {
+ *            type: 'numeric',
+ *            position: 'left',
+ *            minimum: 0,
+ *            fields: ['data1', 'data2', 'data3'],
+ *            title: 'Sample Values',
+ *            grid: {
+ *                odd: {
+ *                    opacity: 1,
+ *                    fill: '#F2F2F2',
+ *                    stroke: '#DDD',
+ *                    'lineWidth': 1
+ *                }
+ *            }
+ *        },
+ *        series: {
+ *            type: 'area',
+ *            subStyle: {
+ *                fill: ['#0A3F50', '#30BDA7', '#96D4C6']
+ *            },
+ *            xField: 'name',
+ *            yField: ['data1', 'data2', 'data3']
+ *        }
  *     });
  *
  * In this example we create an axis of Numeric type. We set a minimum value so that

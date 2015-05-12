@@ -362,7 +362,7 @@ Ext.define('Ext.app.ViewController', {
             this.view = view;
 
             if (!this.beforeInit.$nullFn) {
-                this.beforeInit();
+                this.beforeInit(view);
             }
         }
     }

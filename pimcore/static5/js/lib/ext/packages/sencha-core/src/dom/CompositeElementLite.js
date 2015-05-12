@@ -36,10 +36,27 @@ Ext.define('Ext.dom.CompositeElementLite', {
     // We use the @mixins tag above to document that CompositeElement has
     // all the same methods as Element, but the @mixins tag also pulls in
     // configs and properties which we don't want, so hide them explicitly:
-    /** @cfg bubbleEvents @hide */
-    /** @cfg listeners @hide */
-    /** @property dom @hide */
-    /** @property id @hide */
+
+    /**
+     * @cfg bubbleEvents
+     * @hide
+     */
+
+    /**
+     * @cfg listeners
+     * @hide
+     */
+
+    /**
+     * @property dom
+     * @hide
+     */
+
+    /**
+     * @property id
+     * @hide
+     */
+
     statics: {
         // this method is called once in the class creation callback to import all methods
         // from Ext.dom.Element into CompositeElementLite.  It is important to remember

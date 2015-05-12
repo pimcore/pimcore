@@ -39,16 +39,18 @@ Ext.define('Ext.data.ChainedStore', {
     unblockLoad: Ext.emptyFn,
 
     //<debug>
-    updateRemoteFilter: function(value) {
-        if (value) {
+    updateRemoteFilter: function(remoteFilter, oldRemoteFilter) {
+        if (remoteFilter) {
             Ext.Error.raise('Remote filtering cannot be used with chained stores.');
         }
+        this.callParent([remoteFilter, oldRemoteFilter]);
     },
 
-    updateRemoteSort: function(value) {
-        if (value) {
+    updateRemoteSort: function(remoteSort, oldRemoteSort) {
+        if (remoteSort) {
             Ext.Error.raise('Remote sorting cannot be used with chained stores.');
         }
+        this.callParent([remoteSort, oldRemoteSort]);
     },
     //</debug>
     
@@ -81,7 +83,7 @@ Ext.define('Ext.data.ChainedStore', {
             //<debug>
             if (!source) {
                 s = 'Invalid source {0}specified for Ext.data.ChainedStore';
-                s = Ext.String.format(s, typeof original === 'string' ? '"' + original + '" ' : '')
+                s = Ext.String.format(s, typeof original === 'string' ? '"' + original + '" ' : '');
                 Ext.Error.raise(s);
             }
             //</debug>

@@ -14,7 +14,7 @@ Ext.define('Ext.util.Scheduler', {
     ],
 
     requires: [
-        'Ext.util.Collection'
+        'Ext.util.Bag'
     ],
 
     busyCounter: 0,
@@ -73,7 +73,7 @@ Ext.define('Ext.util.Scheduler', {
 
         this.mixins.observable.constructor.call(this, config);
 
-        this.items = new Ext.util.Collection();
+        this.items = new Ext.util.Bag();
     },
 
     destroy: function () {
@@ -182,7 +182,7 @@ Ext.define('Ext.util.Scheduler', {
         //</debug>
 
         if (preSort) {
-            items.sortItems(preSort);
+            items.sort(preSort);
         }
 
         items = items.items; // grab the items array

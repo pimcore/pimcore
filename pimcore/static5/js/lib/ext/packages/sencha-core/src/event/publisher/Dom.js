@@ -111,7 +111,7 @@ Ext.define('Ext.event.publisher.Dom', {
 
         me.initHandlers();
 
-        Ext.onReady(me.onReady, me);
+        Ext.onInternalReady(me.onReady, me);
 
         me.callParent();
     },
@@ -350,7 +350,7 @@ Ext.define('Ext.event.publisher.Dom', {
                 } else if (capture) {
                     event = event.captures;
                 } else if (direct) {
-                    event = event.directs
+                    event = event.directs;
                 }
 
                 // yes, this second null check for event is necessary - one of the
@@ -428,8 +428,7 @@ Ext.define('Ext.event.publisher.Dom', {
     doDirectEvent: function(e, capture) {
         var me = this,
             currentTarget = e.currentTarget,
-            timeStamp = e.timeStamp,
-            currentTarget;
+            timeStamp = e.timeStamp;
 
         e = new Ext.event.Event(e);
 
@@ -523,16 +522,15 @@ Ext.define('Ext.event.publisher.Dom', {
 
         // prevent emulated pointerover, pointerout, pointerenter, and pointerleave
         // events from firing when triggered by touching the screen.
-        return (me.blockedPointerEvents[type] && e.pointerType !== 'mouse')
-        ||
+        return (me.blockedPointerEvents[type] && e.pointerType !== 'mouse') ||
             // prevent compatibility mouse events from firing on devices with pointer
             // events - see comment on blockedCompatibilityMouseEvents for more details
             // The time from when the last pointer event fired until when compatibility
             // events are received varies depending on the browser, device, and application
             // so we use 1 second to be safe
             (me.blockedCompatibilityMouseEvents[type] &&
-                (now - self.lastScreenPointerEventTime < 1000))
-        ||
+                (now - self.lastScreenPointerEventTime < 1000)) ||
+
             (Ext.supports.TouchEvents && e.self.mouseEvents[e.type] &&
             // some browsers (e.g. webkit on Windows 8 with touch screen) emulate mouse
             // events after touch events have fired.  This only seems to happen when there
@@ -558,6 +556,7 @@ Ext.define('Ext.event.publisher.Dom', {
             // side because the difference in coordinates can sometimes be up to 6px.
             Math.abs(e.pageX - self.lastTouchStartX) < 15 &&
             Math.abs(e.pageY - self.lastTouchStartY) < 15 &&
+
             // in the majority of cases, the emulated mousedown is observed within
             // 5ms of touchend, however, to be certain we avoid a situation where a
             // gesture handler gets executed twice we use a threshold of 1000ms.  The

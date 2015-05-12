@@ -149,7 +149,6 @@ Ext.define('Ext.chart.series.Cartesian', {
         }
 
         if (animation) {
-            me.getLabel().getTemplate().fx.setConfig(animation);
             if (itemInstancing) {
                 sprite.itemsMarker.getTemplate().fx.setConfig(animation);
             }

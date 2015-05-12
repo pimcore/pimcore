@@ -344,6 +344,8 @@ Ext.define('Ext.data.Model', {
     // Record ids are more flexible.
     validIdRe: null,
 
+    erasing: false,
+
     observableType: 'record',
 
     constructor: function (data, session) {
@@ -355,7 +357,12 @@ Ext.define('Ext.data.Model', {
             idProperty = me.idField.name,
             array, id, initializeFn, internalId, len, i, fields;
 
-        me.data = data || (data = {});
+        // Yes, this is here on purpose. See EXTJS-16494. The second
+        // assignment seems to work around a strange JIT issue that prevents
+        // this.data being assigned in random scenarios, even though the data
+        // is passed into the constructor. The issue occurs on 4th gen iPads and
+        // lower, possibly other older iOS devices.
+        me.data = me.data = data || (data = {});
         me.session = session || null;
         me.internalId = internalId = modelIdentifier.generate();
 
@@ -569,6 +576,14 @@ Ext.define('Ext.data.Model', {
     idProperty: 'id',
 
     /**
+     * @cfg {Object} manyToMany
+     * A config object for a {@link Ext.data.schema.ManyToMany ManyToMany} association.
+     * See the class description for {@link Ext.data.schema.ManyToMany ManyToMany} for
+     * configuration examples.
+     */
+    manyToMany: null,
+
+    /**
      * @cfg {String/Object} identifier
      * The id generator to use for this model. The `identifier` generates values for the
      * {@link #idProperty} when no value is given. Records with client-side generated
@@ -749,7 +764,49 @@ Ext.define('Ext.data.Model', {
 
     /**
      * @cfg {Boolean} [convertOnSet=true]
-     * Set to `false` to  prevent any converters from being called during a set operation.
+     * Set to `false` to prevent any converters from being called on fields specified in 
+     * a {@link Ext.data.Model#set set} operation.
+     * 
+     * **Note:** Setting the config to `false` will only prevent the convert / calculate 
+     * call when the set `fieldName` param matches the field's `{@link #name}`.  In the 
+     * following example the calls to set `salary` will not execute the convert method 
+     * on `set` while the calls to set `vested` will execute the convert method on the 
+     * initial read as well as on `set`.
+     * 
+     * Example model definition:
+     * 
+     *     Ext.define('MyApp.model.Employee', {
+     *         extend: 'Ext.data.Model',
+     *         fields: ['yearsOfService', {
+     *             name: 'salary',
+     *             convert: function (val) {
+     *                 var startingBonus = val * .1;
+     *                 return val + startingBonus;
+     *             }
+     *         }, {
+     *             name: 'vested',
+     *             convert: function (val, record) {
+     *                 return record.get('yearsOfService') >= 4;
+     *             },
+     *             depends: 'yearsOfService'
+     *         }],
+     *         convertOnSet: false
+     *     });
+     *     
+     *     var tina = Ext.create('MyApp.model.Employee', {
+     *         salary: 50000,
+     *         yearsOfService: 3
+     *     });
+     *     
+     *     console.log(tina.get('salary')); // logs 55000
+     *     console.log(tina.get('vested')); // logs false
+     *     
+     *     tina.set({
+     *         salary: 60000,
+     *         yearsOfService: 4
+     *     });
+     *     console.log(tina.get('salary')); // logs 60000
+     *     console.log(tina.get('vested')); // logs true
      */
      convertOnSet: true,
 
@@ -937,23 +994,41 @@ Ext.define('Ext.data.Model', {
 
     _rejectOptions: {
         convert: false,
-        commit: true,
         silent: true
     },
 
     /**
-     * Sets the given field to the given value, marks the instance as dirty
-     * @param {String/Object} fieldName The field to set, or an object containing key/value pairs
+     * Sets the given field to the given value. For example:
+     * 
+     *      record.set('name', 'value');
+     * 
+     * This method can also be passed an object containing multiple values to set at once.
+     * For example:
+     * 
+     *      record.set({
+     *          name: 'value',
+     *          age: 42
+     *      });
+     * 
+     * The following store events are fired when the modified record belongs to a store:
+     *
+     *  - {@link Ext.data.Store#event-beginupdate beginupdate}
+     *  - {@link Ext.data.Store#event-update update}
+     *  - {@link Ext.data.Store#event-endupdate endupdate}
+     * 
+     * @param {String/Object} fieldName The field to set, or an object containing key/value 
+     * pairs.
      * @param {Object} newValue The value for the field (if `fieldName` is a string).
      * @param {Object} [options] Options for governing this update.
      * @param {Boolean} [options.convert=true] Set to `false` to  prevent any converters from 
-     * being called during the set operation. This may be useful when setting a large bunch of raw values.
+     * being called during the set operation. This may be useful when setting a large bunch of 
+     * raw values.
      * @param {Boolean} [options.dirty=true] Pass `false` if the field values are to be
      * understood as non-dirty (fresh from the server). When `true`, this change will be
      * reflected in the `modified` collection.
-     * @param {Boolean} [options.commit=false] Pass `true` to call the {@link #commit} method after
-     * setting fields. If this option is passed, the usual after change processing will be
-     * bypassed. {@link #commit Commit} will be called even if there are no field changes.
+     * @param {Boolean} [options.commit=false] Pass `true` to call the {@link #commit} method 
+     * after setting fields. If this option is passed, the usual after change processing will 
+     * be bypassed. {@link #commit Commit} will be called even if there are no field changes.
      * @param {Boolean} [options.silent=false] Pass `true` to suppress notification of any
      * changes made by this call. Use with caution.
      * @return {String[]} The array of modified field names or null if nothing was modified.
@@ -1161,12 +1236,17 @@ Ext.define('Ext.data.Model', {
         var me = this,
             modified = me.modified;
 
-        me.rejecting = true;
+        //<debug>
+        if (me.erased) {
+            Ext.Error.raise('Cannot reject once a record has been erased.');
+        }
+        //</debug>
+
         if (modified) {
             me.set(modified, me._rejectOptions);
         }
-        delete me.rejecting;
 
+        me.dropped = false;
         me.clearState();
 
         if (!silent) {
@@ -1194,13 +1274,10 @@ Ext.define('Ext.data.Model', {
             erased;
 
         me.clearState();
-
-        if (!me.rejecting) {
-            if (versionProperty && !me.phantom && !isNaN(data[versionProperty])) {
-                ++data[versionProperty];
-            }
-            me.phantom = false;
+        if (versionProperty && !me.phantom && !isNaN(data[versionProperty])) {
+            ++data[versionProperty];
         }
+        me.phantom = false;
 
         if (me.dropped) {
             me.erased = erased = true;
@@ -1272,7 +1349,7 @@ Ext.define('Ext.data.Model', {
             Ext.Array.include(joined, item);
         }
 
-        if (item.isStore) {
+        if (item.isStore && !me.store) {
             /**
             * @property {Ext.data.Store} store
             * The {@link Ext.data.Store Store} to which this instance belongs.
@@ -1280,7 +1357,7 @@ Ext.define('Ext.data.Model', {
             * **Note:** If this instance is bound to multiple stores, this property
             * will reference only the first.
             */
-            me.store = me.store || item;
+            me.store = item;
         }
     },
 
@@ -1353,7 +1430,7 @@ Ext.define('Ext.data.Model', {
      *     var rec = record.copy(null); // clone the record but no id (one is generated)
      *
      * @param {String} [newId] A new id, defaults to the id of the instance being copied.
-     * See `{@link Ext.data.Model#id id}`.
+     * See `{@link Ext.data.Model#idProperty idProperty}`.
      * @param {Ext.data.Session} [session] The session to which the new record
      * belongs.
      *
@@ -1428,8 +1505,7 @@ Ext.define('Ext.data.Model', {
      * @return {Boolean} True if the model is valid.
      */
     isValid: function () {
-        var val = this.getValidation();
-        return !val.dirty;
+        return this.getValidation().isValid();
     },
 
     /**
@@ -1445,9 +1521,52 @@ Ext.define('Ext.data.Model', {
     },
 
     /**
-     * Destroys the model using the configured proxy.
-     * @param {Object} options Options to pass to the proxy. Config object for {@link Ext.data.operation.Operation}.
-     * @return {Ext.data.operation.Operation} The operation
+     * @localdoc Destroys the model using the configured proxy.  The erase action is
+     * asynchronous.  Any processing of the erased record should be done in a callback.
+     *
+     *     Ext.define('MyApp.model.User', {
+     *         extend: 'Ext.data.Model',
+     *         fields: [
+     *             {name: 'id', type: 'int'},
+     *             {name: 'name', type: 'string'}
+     *         ],
+     *         proxy: {
+     *             type: 'ajax',
+     *             url: 'server.url'
+     *         }
+     *     });
+     *
+     *     var user = new MyApp.model.User({
+     *         name: 'Foo'
+     *     });
+     *
+     *     // pass the phantom record data to the server to be saved
+     *     user.save({
+     *         success: function(record, operation) {
+     *             // do something if the save succeeded
+     *             // erase the created record
+     *             record.erase({
+     *                 failure: function(record, operation) {
+     *                     // do something if the erase failed
+     *                 },
+     *                 success: function(record, operation) {
+     *                     // do something if the erase succeeded
+     *                 },
+     *                 callback: function(record, operation, success) {
+     *                     // do something if the erase succeeded or failed
+     *                 }
+     *             });
+     *         }
+     *     });
+     *
+     * **NOTE:** If a {@link #phantom} record is erased it will not be processed via the
+     * proxy.  However, any passed `success` or `callback` functions will be called.
+     *
+     * The options param is an {@link Ext.data.operation.Destroy} config object
+     * containing success, failure and callback functions, plus optional scope.
+     *
+     * @inheritdoc #method-load
+     * @return {Ext.data.operation.Destroy} The destroy operation
      */
     erase: function(options) {
         var me = this;
@@ -1459,7 +1578,7 @@ Ext.define('Ext.data.Model', {
         // flag unless the above "erasing" flag is set.
         me.drop();
 
-        delete me.erasing;
+        me.erasing = false;
         return me.save(options);
     },
     
@@ -1525,16 +1644,37 @@ Ext.define('Ext.data.Model', {
      *
      * @param {Object} [result] The object on to which the associations will be added. If
      * no object is passed one is created. This object is then returned.
+     * @param {Boolean/Object} [options] An object containing options describing the data
+     * desired.
+     * @param {Boolean} [options.associated=true] Pass `true` to include associated data from
+     * other associated records.
+     * @param {Boolean} [options.changes=false] Pass `true` to only include fields that
+     * have been modified. Note that field modifications are only tracked for fields that
+     * are not declared with `persist` set to `false`. In other words, only persistent
+     * fields have changes tracked so passing `true` for this means `options.persist` is
+     * redundant.
+     * @param {Boolean} [options.critical] Pass `true` to include fields set as `critical`.
+     * This is only meaningful when `options.changes` is `true` since critical fields may
+     * not have been modified.
+     * @param {Boolean} [options.persist] Pass `true` to only return persistent fields.
+     * This is implied when `options.changes` is set to `true`.
+     * @param {Boolean} [options.serialize=false] Pass `true` to invoke the `serialize`
+     * method on the returned fields.
      * @return {Object} The nested data set for the Model's loaded associations.
      */
-    getAssociatedData: function (result) {
+    getAssociatedData: function (result, options) {
         var me = this,
             associations = me.associations,
-            deep, i, item, items, itemData, length, record, role, roleName;
+            deep, i, item, items, itemData, length, 
+            record, role, roleName, opts, clear, associated;
 
         result = result || {};
 
         me.$gathering = 1;
+
+        if (options) {
+            options = Ext.Object.chain(options);
+        }
 
         for (roleName in associations) {
             role = associations[roleName];
@@ -1558,13 +1698,34 @@ Ext.define('Ext.data.Model', {
                     record = items[i];
                     deep = !record.$gathering;
                     record.$gathering = 1;
-                    itemData.push(record.getData(deep));
+                    if (options) {
+                        associated = options.associated;
+                        if (associated === undefined) {
+                            options.associated = deep;
+                            clear = true;
+                        } else if (!deep) {
+                            options.associated = false;
+                            clear = true;
+                        }
+                        opts = options;
+                    } else {
+                        opts = deep ? me._getAssociatedOptions: me._getNotAssociatedOptions;
+                    }
+                    itemData.push(record.getData(opts));
+                    if (clear) {
+                        options.associated = associated;
+                        clear = false;
+                    }
                     delete record.$gathering;
                 }
 
                 delete item.$gathering;
             } else {
-                itemData = item.getData(true);
+                opts = options || me._getAssociatedOptions;
+                if (options && options.associated === undefined) {
+                    opts.associated = true;
+                }
+                itemData = item.getData(opts);
             }
 
             result[roleName] = itemData;
@@ -1654,7 +1815,7 @@ Ext.define('Ext.data.Model', {
         }
 
         if (associated) {
-            me.getAssociatedData(ret); // pass ret so new data is added to our object
+            me.getAssociatedData(ret, opts); // pass ret so new data is added to our object
         }
 
         return ret;
@@ -1696,54 +1857,63 @@ Ext.define('Ext.data.Model', {
     },
 
     /**
-     * Load the model instance using the configured proxy.
+     * @localdoc Loads the model instance using the configured proxy.  The load action
+     * is asynchronous.  Any processing of the loaded record should be done in a
+     * callback.
      *
-     *     Ext.define('MyApp.User', {
+     *     Ext.define('MyApp.model.User', {
      *         extend: 'Ext.data.Model',
      *         fields: [
      *             {name: 'id', type: 'int'},
      *             {name: 'name', type: 'string'}
-     *         ]
-     *     });
-     *
-     *     var user = new MyApp.User();
-     *     user.load({
-     *         scope: this,
-     *         failure: function(record, operation) {
-     *             //do something if the load failed
-     *         },
-     *         success: function(record, operation) {
-     *             //do something if the load succeeded
-     *         },
-     *         callback: function(record, operation, success) {
-     *             //do something whether the load succeeded or failed
+     *         ],
+     *         proxy: {
+     *             type: 'ajax',
+     *             url: 'server.url'
      *         }
      *     });
      *
-     * @param {Object} [options] Config options for this load.
+     *     var user = new MyApp.model.User();
+     *     user.load({
+     *         scope: this,
+     *         failure: function(record, operation) {
+     *             // do something if the load failed
+     *         },
+     *         success: function(record, operation) {
+     *             // do something if the load succeeded
+     *         },
+     *         callback: function(record, operation, success) {
+     *             // do something whether the load succeeded or failed
+     *         }
+     *     });
+     *
+     * The options param is an {@link Ext.data.operation.Read} config object containing
+     * success, failure and callback functions, plus optional scope.
+     *
+     * @param {Object} [options] Options to pass to the proxy.
      * @param {Function} options.success A function to be called when the
-     * model is loaded successfully.
+     * model is processed by the proxy successfully.
      * The callback is passed the following parameters:
      * @param {Ext.data.Model} options.success.record The record.
      * @param {Ext.data.operation.Operation} options.success.operation The operation.
      * 
      * @param {Function} options.failure A function to be called when the
-     * model is unable to be loadedy.
+     * model is unable to be processed by the server.
      * The callback is passed the following parameters:
-     * @param {Ext.data.Model} options.failure.record The record (`null` for a failure). 
+     * @param {Ext.data.Model} options.failure.record The record.
      * @param {Ext.data.operation.Operation} options.failure.operation The operation.
      * 
-     * @param {Function} options.callback A function to be called after a load,
-     * whether it was successful or not.
+     * @param {Function} options.callback A function to be called whether the proxy
+     * transaction was successful or not.
      * The callback is passed the following parameters:
-     * @param {Ext.data.Model} options.callback.record The record (`null` for a failure). 
+     * @param {Ext.data.Model} options.callback.record The record.
      * @param {Ext.data.operation.Operation} options.callback.operation The operation.
-     * @param {Boolean} options.callback.success `true` if the operation was successful
-     * and the model was loaded.
+     * @param {Boolean} options.callback.success `true` if the operation was successful.
      * 
-     * @param {Object} options.scope The scope in which to execute the callback functions.
+     * @param {Object} options.scope The scope in which to execute the callback
+     * functions.  Defaults to the model instance.
      *
-     * @return {Ext.data.Operation} The operation object for loading this model.
+     * @return {Ext.data.operation.Read} The read operation.
      */
     load: function(options) {
         options = Ext.apply({}, options);
@@ -1837,9 +2007,140 @@ Ext.define('Ext.data.Model', {
     },
 
     /**
-     * Saves the model instance using the configured proxy.
-     * @param {Object} [options] Options to pass to the proxy. Config object for {@link Ext.data.operation.Operation}.
-     * @return {Ext.data.operation.Operation} The operation
+     * @localdoc Saves the model instance using the configured proxy.  The save action
+     * is asynchronous.  Any processing of the saved record should be done in a callback.
+     *
+     * Create example:
+     *
+     *     Ext.define('MyApp.model.User', {
+     *         extend: 'Ext.data.Model',
+     *         fields: [
+     *             {name: 'id', type: 'int'},
+     *             {name: 'name', type: 'string'}
+     *         ],
+     *         proxy: {
+     *             type: 'ajax',
+     *             url: 'server.url'
+     *         }
+     *     });
+     *
+     *     var user = new MyApp.model.User({
+     *         name: 'Foo'
+     *     });
+     *
+     *     // pass the phantom record data to the server to be saved
+     *     user.save({
+     *         failure: function(record, operation) {
+     *             // do something if the save failed
+     *         },
+     *         success: function(record, operation) {
+     *             // do something if the save succeeded
+     *         },
+     *         callback: function(record, operation, success) {
+     *             // do something whether the save succeeded or failed
+     *         }
+     *     });
+     *
+     * The response from a create operation should include the ID for the newly created
+     * record:
+     *
+     *     // sample response
+     *     {
+     *         success: true,
+     *         id: 1
+     *     }
+     *
+     *     // the id may be nested if the proxy's reader has a rootProperty config
+     *     Ext.define('MyApp.model.User', {
+     *         extend: 'Ext.data.Model',
+     *         proxy: {
+     *             type: 'ajax',
+     *             url: 'server.url',
+     *             reader: {
+     *                 type: 'ajax',
+     *                 rootProperty: 'data'
+     *             }
+     *         }
+     *     });
+     *
+     *     // sample nested response
+     *     {
+     *         success: true,
+     *         data: {
+     *             id: 1
+     *         }
+     *     }
+     *
+     * (Create + ) Update example:
+     *
+     *     Ext.define('MyApp.model.User', {
+     *         extend: 'Ext.data.Model',
+     *         fields: [
+     *             {name: 'id', type: 'int'},
+     *             {name: 'name', type: 'string'}
+     *         ],
+     *         proxy: {
+     *             type: 'ajax',
+     *             url: 'server.url'
+     *         }
+     *     });
+     *
+     *     var user = new MyApp.model.User({
+     *         name: 'Foo'
+     *     });
+     *     user.save({
+     *         success: function(record, operation) {
+     *             record.set('name', 'Bar');
+     *             // updates the remote record via the proxy
+     *             record.save();
+     *         }
+     *     });
+     *
+     * (Create + ) Destroy example - see also {@link #erase}:
+     *
+     *     Ext.define('MyApp.model.User', {
+     *         extend: 'Ext.data.Model',
+     *         fields: [
+     *             {name: 'id', type: 'int'},
+     *             {name: 'name', type: 'string'}
+     *         ],
+     *         proxy: {
+     *             type: 'ajax',
+     *             url: 'server.url'
+     *         }
+     *     });
+     *
+     *     var user = new MyApp.model.User({
+     *         name: 'Foo'
+     *     });
+     *     user.save({
+     *         success: function(record, operation) {
+     *             record.drop();
+     *             // destroys the remote record via the proxy
+     *             record.save();
+     *         }
+     *     });
+     *
+     * **NOTE:** If a {@link #phantom} record is {@link #drop dropped} and subsequently
+     * saved it will not be processed via the proxy.  However, any passed `success`
+     * or `callback` functions will be called.
+     *
+     * The options param is an Operation config object containing success, failure and
+     * callback functions, plus optional scope.  The type of Operation depends on the
+     * state of the model being saved.
+     *
+     *  - {@link #phantom} model - {@link Ext.data.operation.Create}
+     *  - {@link #isModified modified} model - {@link Ext.data.operation.Update}
+     *  - {@link #dropped} model - {@link Ext.data.operation.Destroy}
+     *
+     * @inheritdoc #method-load
+     * @return {Ext.data.operation.Create/Ext.data.operation.Update/Ext.data.operation.Destroy}
+     * The operation instance for saving this model.  The type of operation returned
+     * depends on the model state at the time of the action.
+     *
+     *  - {@link #phantom} model - {@link Ext.data.operation.Create}
+     *  - {@link #isModified modified} model - {@link Ext.data.operation.Update}
+     *  - {@link #dropped} model - {@link Ext.data.operation.Destroy}
      */
     save: function(options) {
         options = Ext.apply({}, options);
@@ -2091,7 +2392,10 @@ Ext.define('Ext.data.Model', {
         },
 
         /**
-         * Asynchronously loads a model instance by id. Sample usage:
+         * Asynchronously loads a model instance by id. Any processing of the loaded
+         * record should be done in a callback.
+         *
+         * Sample usage:
          *
          *     Ext.define('MyApp.User', {
          *         extend: 'Ext.data.Model',
@@ -2114,35 +2418,44 @@ Ext.define('Ext.data.Model', {
          *         }
          *     });
          *
-         * @param {Number/String} id The id of the model to load
-         * @param {Object} [options] Config options for this load.
+         * @param {Number/String} id The ID of the model to load.
+         * **NOTE:** The model returned must have an ID matching the param in the load
+         * request.
+         *
+         * @param {Object} [options] The options param is an
+         * {@link Ext.data.operation.Read} config object containing success, failure and
+         * callback functions, plus optional scope.
+         *
          * @param {Function} options.success A function to be called when the
-         * model is loaded successfully.
+         * model is processed by the proxy successfully.
          * The callback is passed the following parameters:
          * @param {Ext.data.Model} options.success.record The record.
          * @param {Ext.data.operation.Operation} options.success.operation The operation.
          * 
          * @param {Function} options.failure A function to be called when the
-         * model is unable to be loadedy.
+         * model is unable to be processed by the server.
          * The callback is passed the following parameters:
-         * @param {Ext.data.Model} options.failure.record The record (`null` for a failure). 
+         * @param {Ext.data.Model} options.failure.record The record.
          * @param {Ext.data.operation.Operation} options.failure.operation The operation.
          * 
-         * @param {Function} options.callback A function to be called after a load,
-         * whether it was successful or not.
+         * @param {Function} options.callback A function to be called whether the proxy
+         * transaction was successful or not.
          * The callback is passed the following parameters:
-         * @param {Ext.data.Model} options.callback.record The record (`null` for a failure). 
-         * @param {Ext.data.operation.Operation} options.callback.operation The operation.
-         * @param {Boolean} options.callback.success `true` if the operation was successful
-         * and the model was loaded.
+         * @param {Ext.data.Model} options.callback.record The record.
+         * @param {Ext.data.operation.Operation} options.callback.operation The
+         * operation.
+         * @param {Boolean} options.callback.success `true` if the operation was
+         * successful.
          * 
-         * @param {Object} options.scope The scope in which to execute the callback functions.
+         * @param {Object} options.scope The scope in which to execute the callback
+         * functions.  Defaults to the model instance.
          *
-         * @param {Ext.data.Session} session The session for this record.
+         * @param {Ext.data.Session} [session] The session for this record.
          *
-         * @return {Ext.data.Model} The newly created model. Note that the model will (probably) still
-         * be loading once it is returned from this method. To do any post-processing on the data, the
-         * appropriate place to do see is in the callback.
+         * @return {Ext.data.Model} The newly created model. Note that the model will
+         * (probably) still be loading once it is returned from this method. To do any
+         * post-processing on the data, the appropriate place to do see is in the
+         * callback.
          * 
          * @static
          * @inheritable
@@ -2234,6 +2547,9 @@ Ext.define('Ext.data.Model', {
         },
         _getAssociatedOptions: {
             associated: true
+        },
+        _getNotAssociatedOptions: {
+            associated: false
         },
 
         /**
@@ -2554,7 +2870,7 @@ Ext.define('Ext.data.Model', {
                     versionProperty = data.versionProperty || proto.versionProperty,
                     idProperty = cls.idProperty,
                     idField, field, i, length, name, ordinal, 
-                    reference, superIdField, idDeclared;
+                    reference, superIdField, superIdFieldName, idDeclared;
 
                 // Process any inherited fields to produce a fields [] and ordinals {} for
                 // this class:
@@ -2578,6 +2894,7 @@ Ext.define('Ext.data.Model', {
 
                         if (field.generated) {
                             superIdField = field;
+                            superIdFieldName = field.name;
                         }
                     }
                 }
@@ -2609,7 +2926,7 @@ Ext.define('Ext.data.Model', {
                         field.definedBy = field.owner = cls;
                         field.ordinal = ordinal;
                         if (name === idProperty) {
-                            idDeclared = true;
+                            idDeclared = field;
                         }
                     }
                 }
@@ -2623,6 +2940,8 @@ Ext.define('Ext.data.Model', {
                     } else {
                         ordinal = fields.length;
                     }
+                    delete fieldsMap[superIdFieldName];
+                    delete fieldOrdinals[superIdFieldName]
                     idField = new Field(idProperty);
                     fields[ordinal] = idField;
                     fieldOrdinals[idProperty] = ordinal;
@@ -2636,8 +2955,9 @@ Ext.define('Ext.data.Model', {
                     // likely won't happen often, to do it earlier we would need to know the contents of the fields
                     // which would mean iterating over them twice.
                     Ext.Array.remove(fields, superIdField);
-                    delete fieldsMap[superIdField.name];
-                    delete fieldOrdinals[superIdField.name];
+                    delete fieldsMap[superIdFieldName];
+                    delete fieldOrdinals[superIdFieldName];
+                    fieldsMap[idProperty] = idDeclared;
                     for (i = 0, length = fields.length; i < length; ++i) {
                         field = fields[i];
                         fields.ordinal = i;
@@ -2992,9 +3312,11 @@ Ext.define('Ext.data.Model', {
                 code.push('}');
                 code = code.join('');
 
-                factory = new Function('$fields', code);
+                // Ensure that Ext in the function code refers to the same Ext that we are using here.
+                // If we are in a sandbox, global.Ext might be different.
+                factory = new Function('$fields', 'Ext', code);
 
-                return factory(fields);
+                return factory(fields, Ext);
             }
         } // static
     } // privates

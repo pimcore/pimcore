@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * The JsonP proxy is useful when you need to load data from a domain other than the one your application is running on. If
  * your application is running on http://domainA.com it cannot use {@link Ext.data.proxy.Ajax Ajax} to load its data
  * from http://domainB.com because cross-domain ajax requests are prohibited by the browser.

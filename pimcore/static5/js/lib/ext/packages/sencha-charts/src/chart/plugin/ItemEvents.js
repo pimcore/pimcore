@@ -126,13 +126,13 @@ Ext.define('Ext.chart.plugin.ItemEvents', {
         item = chart.getItemForPoint(chartXY[0], chartXY[1]);
 
         if (isMouseMoveEvent && !Ext.Object.equals(item, lastItem)) {
-            if (item) {
-                chart.fireEvent('itemmouseover', chart, item, e);
-                item.series.fireEvent('itemmouseover', item.series, item, e);
-            }
             if (lastItem) {
                 chart.fireEvent('itemmouseout', chart, lastItem, e);
                 lastItem.series.fireEvent('itemmouseout', lastItem.series, lastItem, e);
+            }
+            if (item) {
+                chart.fireEvent('itemmouseover', chart, item, e);
+                item.series.fireEvent('itemmouseover', item.series, item, e);
             }
         }
 

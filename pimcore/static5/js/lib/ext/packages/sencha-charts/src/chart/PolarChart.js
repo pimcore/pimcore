@@ -42,11 +42,7 @@ Ext.define('Ext.chart.PolarChart', {
     },
 
     getDirectionForAxis: function (position) {
-        if (position === 'radial') {
-            return 'Y';
-        } else {
-            return 'X';
-        }
+        return position === 'radial' ? 'Y' : 'X';
     },
 
     applyCenter: function (center, oldCenter) {
@@ -58,9 +54,10 @@ Ext.define('Ext.chart.PolarChart', {
 
     updateCenter: function (center) {
         var me = this,
-            axes = me.getAxes(), axis,
-            series = me.getSeries(), seriesItem,
-            i, ln;
+            axes = me.getAxes(),
+            series = me.getSeries(),
+            i, ln, axis, seriesItem;
+
         for (i = 0, ln = axes.length; i < ln; i++) {
             axis = axes[i];
             axis.setCenter(center);
@@ -115,7 +112,10 @@ Ext.define('Ext.chart.PolarChart', {
     performLayout: function () {
         try {
             this.resizing++;
-            this.callParent();
+            if (this.callParent() === false) {
+                // Resizing will still be decremented
+                return;
+            }
             this.suspendThicknessChanged();
             var me = this,
                 chartRect = me.getSurface('chart').getRect(),
@@ -181,7 +181,7 @@ Ext.define('Ext.chart.PolarChart', {
 
             for (i = 0, ln = radialAxes.length; i < ln; i++) {
                 axis = radialAxes[i];
-                me.doSetSurfaceRect(axis.getSurface(), mainRect);
+                me.doSetSurfaceRect(axis.getSurface(), chartRect);
                 axis.setMinimum(0);
                 axis.setLength(seriesRadius);
                 axis.getSprites();

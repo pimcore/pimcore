@@ -47,25 +47,136 @@ describe("Ext.data.reader.Xml", function() {
     
     afterEach(function() {
         Ext.DomQuery = DQ;
+        
+        if (reader) {
+            reader.destroy();
+        }
+        
+        reader = null;
     });
     
-    it('should set a reference to the raw data in the .raw property on the record', function () {
-        Ext.define('spec.DogXmlTest', {
-            extend: 'Ext.data.Model',
-            fields: ['name']
-        });
+    describe("raw data", function() {
+        var Model, xml, rec;
+        
+        beforeEach(function() {
+            Model = Ext.define('spec.Xml', {
+                extend: 'Ext.data.Model',
+                fields: ['name']
+            });
             
-        var xml = getXml('<dog><name>Utley</name></dog><dog><name>Molly</name></dog>');
+            xml = getXml('<dog><name>Utley</name></dog><dog><name>Molly</name></dog>');
 
-        reader = new Ext.data.reader.Xml({
-            model: 'spec.DogXmlTest',
-            record: 'dog'
+            reader = new Ext.data.reader.Xml({
+                model: 'spec.Xml',
+                record: 'dog'
+            });
+        });
+        
+        afterEach(function() {
+            Ext.data.Model.schema.clear(true);
+            Ext.undefine('spec.Xml');
+            
+            rec = xml = Model = null;
+        });
+        
+        it("should not set raw data reference by default", function() {
+            rec = reader.readRecords(xml).getRecords()[0];
+            
+            expect(rec.raw).not.toBeDefined();
+        });
+        
+        it("should set raw data reference for a TreeStore record", function () {
+            // Simulate TreeStore node
+            spec.Xml.prototype.isNode = true;
+            
+            rec = reader.readRecords(xml).getRecords()[0];
+            
+            expect(rec.raw).toBe(xml.firstChild.firstChild);
+        });
+    });
+
+    describe("copyFrom", function() {
+        var Model = Ext.define(null, {
+            extend: 'Ext.data.Model'
         });
 
-        expect(reader.readRecords(xml).getRecords()[0].raw).toBe(xml.firstChild.firstChild);
+        it("should copy the model", function() {
+            var reader = new Ext.data.reader.Xml({
+                model: Model
+            });
+            var copy = new Ext.data.reader.Xml();
+            copy.copyFrom(reader);
+            expect(copy.getModel()).toBe(Model);
+        });
 
-        Ext.data.Model.schema.clear();
-        Ext.undefine('spec.DogXmlTest');
+        it("should copy the record", function() {
+            var reader = new Ext.data.reader.Xml({
+                model: Model,
+                record: 'foo'
+            });
+            var copy = new Ext.data.reader.Xml();
+            copy.copyFrom(reader);
+            expect(copy.getRecord()).toBe('foo');
+
+            var result = reader.read(getXml('<foo /><foo /><foo /><bar />'));
+            expect(result.getCount()).toBe(3);
+        });
+
+        it("should copy the totalProperty", function() {
+            var reader = new Ext.data.reader.Xml({
+                model: Model,
+                totalProperty: 'aTotal',
+                record: 'foo'
+            });
+            var copy = new Ext.data.reader.Xml();
+            copy.copyFrom(reader);
+            expect(copy.getTotalProperty()).toBe('aTotal');
+
+            var result = reader.read(getXml('<aTotal>1000</aTotal>'));
+            expect(result.getTotal()).toBe(1000);
+        });
+
+        it("should copy the successProperty", function() {
+            var reader = new Ext.data.reader.Xml({
+                model: Model,
+                successProperty: 'aSuccess',
+                record: 'foo'
+            });
+            var copy = new Ext.data.reader.Xml();
+            copy.copyFrom(reader);
+            expect(copy.getSuccessProperty()).toBe('aSuccess');
+
+            var result = reader.read(getXml('<aSuccess>false</aSuccess>'));
+            expect(result.getSuccess()).toBe(false);
+        });
+
+        it("should copy the messageProperty", function() {
+            var reader = new Ext.data.reader.Xml({
+                model: Model,
+                messageProperty: 'aMessage',
+                record: 'foo'
+            });
+            var copy = new Ext.data.reader.Xml();
+            copy.copyFrom(reader);
+            expect(copy.getMessageProperty()).toBe('aMessage');
+
+            var result = reader.read(getXml('<aMessage>Some Message</aMessage>'));
+            expect(result.getMessage()).toBe('Some Message');
+        });
+
+        it("should copy the rootProperty", function() {
+            var reader = new Ext.data.reader.Xml({
+                model: Model,
+                rootProperty: 'aRoot',
+                record: 'foo'
+            });
+            var copy = new Ext.data.reader.Xml();
+            copy.copyFrom(reader);
+            expect(copy.getRootProperty()).toBe('aRoot');
+
+            var result = reader.read(getXml('<notRoot><foo /><foo /><foo /></notRoot><aRoot><foo /></aRoot>'));
+            expect(result.getCount()).toBe(1);
+        });
     });
 
     describe("extractors", function(){

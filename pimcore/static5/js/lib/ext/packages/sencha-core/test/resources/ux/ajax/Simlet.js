@@ -1,6 +1,4 @@
 /**
- * @author Don Griffin
- *
  * This is a base class for more advanced "simlets" (simulated servers). A simlet is asked
  * to provide a response given a {@link Ext.ux.ajax.SimXhr} instance.
  */
@@ -84,7 +82,7 @@ Ext.define('Ext.ux.ajax.Simlet', function () {
          * this is delegated to `doMethod` methods on this class, such as `doGet`.
          *
          * @param {Ext.ux.ajax.SimXhr} xhr The simulated XMLHttpRequest instance.
-         * @returns {Object} The response properties to add to the XMLHttpRequest.
+         * @return {Object} The response properties to add to the XMLHttpRequest.
          */
         exec: function (xhr) {
             var me = this,

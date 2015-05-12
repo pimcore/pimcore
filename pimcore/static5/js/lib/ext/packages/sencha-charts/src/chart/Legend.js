@@ -5,7 +5,7 @@ Ext.define('Ext.chart.Legend', {
     xtype: 'legend',
     extend: 'Ext.chart.LegendBase',
     config: {
-        baseCls: 'x-legend',
+        baseCls: Ext.baseCSSPrefix + 'legend',
         padding: 5,
 
         /**
@@ -16,6 +16,11 @@ Ext.define('Ext.chart.Legend', {
 
         disableSelection: true,
 
+        /**
+         * @cfg {Boolean} toggleable
+         * `true` to allow series items to have their visibility
+         * toggled by interaction with the legend items.
+         */
         toggleable: true
     },
 

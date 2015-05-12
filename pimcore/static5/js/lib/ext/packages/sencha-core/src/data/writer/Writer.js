@@ -206,7 +206,7 @@ Ext.define('Ext.data.writer.Writer', {
         /**
          * @cfg {Function|Object} [transform]
          * If a transform function is set, it will be invoked just before {@link #writeRecords} 
-         * executes. It is passed the unserialized data object and the {@link #Ext.data.Request request} 
+         * executes. It is passed the unserialized data object and the {@link Ext.data.Request request}
          * object. The transform function returns a data object, which can be a modified version of the original 
          * data object, or a completely new data object. The transform can be a function, or an object 
          * with a 'fn' key and an optional 'scope' key. Example usage:

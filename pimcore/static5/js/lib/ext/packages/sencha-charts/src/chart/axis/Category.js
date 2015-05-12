@@ -10,48 +10,63 @@
  * As with other axis you can set the position of the axis and its title. For example:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             innerPadding: '0 40 0 40',
- *             store: {
- *                 fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *                 data: [
- *                     {'name': 'metric one', 'data1': 10, 'data2': 12, 'data3': 14, 'data4': 8, 'data5': 13},
- *                     {'name': 'metric two', 'data1': 7, 'data2': 8, 'data3': 16, 'data4': 10, 'data5': 3},
- *                     {'name': 'metric three', 'data1': 5, 'data2': 2, 'data3': 14, 'data4': 12, 'data5': 7},
- *                     {'name': 'metric four', 'data1': 2, 'data2': 14, 'data3': 6, 'data4': 1, 'data5': 23},
- *                     {'name': 'metric five', 'data1': 27, 'data2': 38, 'data3': 36, 'data4': 13, 'data5': 33}
- *                 ]
- *             },
- *             axes: {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             },
- *             series: {
- *                 type: 'area',
- *                 subStyle: {
- *                     fill: ['blue', 'green', 'red']
- *                 },
- *                 xField: 'name',
- *                 yField: ['data1', 'data2', 'data3']
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        innerPadding: '0 40 0 40',
+ *        store: {
+ *            fields: ['name', 'data1', 'data2', 'data3'],
+ *            data: [{
+ *                'name': 'metric one',
+ *                'data1': 10,
+ *                'data2': 12,
+ *                'data3': 14
+ *            }, {
+ *                'name': 'metric two',
+ *                'data1': 7,
+ *                'data2': 8,
+ *                'data3': 16
+ *            }, {
+ *                'name': 'metric three',
+ *                'data1': 5,
+ *                'data2': 2,
+ *                'data3': 14
+ *            }, {
+ *                'name': 'metric four',
+ *                'data1': 2,
+ *                'data2': 14,
+ *                'data3': 6
+ *            }, {
+ *                'name': 'metric five',
+ *                'data1': 27,
+ *                'data2': 38,
+ *                'data3': 36
+ *            }]
+ *        },
+ *        axes: {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            fields: ['name'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            }
+ *        },
+ *        series: {
+ *            type: 'area',
+ *            subStyle: {
+ *                fill: ['#0A3F50', '#30BDA7', '#96D4C6']
+ *            },
+ *            xField: 'name',
+ *            yField: ['data1', 'data2', 'data3']
+ *        }
  *     });
  *
  * In this example with set the category axis to the bottom of the surface, bound the axis to
  * the `name` property and set as title "Sample Values".
  */
-
 Ext.define('Ext.chart.axis.Category', {
     requires: [
         'Ext.chart.axis.layout.CombineDuplicate',

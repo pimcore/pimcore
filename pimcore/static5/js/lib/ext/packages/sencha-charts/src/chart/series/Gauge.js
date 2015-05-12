@@ -5,21 +5,27 @@
  * Creates a Gauge Chart.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'polar',
- *             series: {
- *                 type: 'gauge',
- *                 minimum: 100,
- *                 maximum: 800,
- *                 value: 400,
- *                 donut: 30
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'polar', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['mph', 'fuel', 'temp', 'rpm'],
+ *            data: [{
+ *                mph: 65,
+ *                fuel: 50,
+ *                temp: 150,
+ *                rpm: 6000
+ *            }]
+ *        },
+ *        series: {
+ *            type: 'gauge',
+ *            colors: ['#1F6D91', '#90BCC9'],
+ *            field: 'mph',
+ *            needle: true,
+ *            donut: 30
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.Gauge', {

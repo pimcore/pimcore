@@ -14,7 +14,7 @@ Ext.define('Ext.util.Region', {
          * @static
          * Retrieves an Ext.util.Region for a particular element.
          * @param {String/HTMLElement/Ext.dom.Element} el An element ID, htmlElement or Ext.Element representing an element in the document.
-         * @returns {Ext.util.Region} region
+         * @return {Ext.util.Region} region
          */
         getRegion: function(el) {
             return Ext.fly(el).getRegion();

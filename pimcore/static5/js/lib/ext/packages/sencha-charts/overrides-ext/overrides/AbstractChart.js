@@ -6,7 +6,7 @@ Ext.define('Ext.chart.overrides.AbstractChart', {
 
     updateLegend: function (legend, oldLegend) {
         var dock;
-        this.callParent(arguments);
+        this.callParent([legend, oldLegend]);
         if (legend) {
             dock = legend.docked;
             this.addDocked({
@@ -22,5 +22,18 @@ Ext.define('Ext.chart.overrides.AbstractChart', {
                 cls: Ext.baseCSSPrefix + 'legend-panel'
             });
         }
+    },
+
+    performLayout: function() {
+        if (this.isVisible(true)) {
+            return this.callParent();
+        }
+        this.cancelLayout();
+        return false;
+    },
+
+    afterComponentLayout: function(width, height, oldWidth, oldHeight) {
+        this.callParent([width, height, oldWidth, oldHeight]);
+        this.scheduleLayout();
     }
 });

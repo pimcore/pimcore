@@ -1,10 +1,105 @@
 /** 
  * This class is used as a set of methods that are applied to the prototype of a
- * Model to decorate it with a Node API. This means that models used in conjunction with a tree
- * will have all of the tree related methods available on the model. In general this class will
- * not be used directly by the developer. This class also creates extra fields on the model if
- * they do not exist, to help maintain the tree state and UI. These fields are documented as
+ * {@link Ext.data.Model Model} to decorate it with a Node API. This means that models
+ * used in conjunction with a tree will have all of the tree related methods available
+ * on the model. In general, this class will not be used directly by the developer.
+ *
+ * This class also creates extra {@link Ext.data.Field fields} on the model, if they do
+ * not exist, to help maintain the tree state and UI. These fields are documented as
  * config options.
+ *
+ * The data fields used to render a tree node are: {@link #text}, {@link #leaf},
+ * {@link #children}, and {@link #expanded}.  Once a node is loaded to the tree store
+ * you can use {@link Ext.data.Model#get get()} to fetch the value of a given field
+ * name (provided there is not a convenience accessor on the Node for that field).
+ *
+ *     @example
+ *     Ext.tip.QuickTipManager.init(); // not required when using Ext.application()
+ *
+ *     var root = {
+ *         expanded: true,
+ *         children: [{
+ *             text: "Leaf node (<i>no folder/arrow icon</i>)",
+ *             leaf: true,
+ *             qtitle: 'Sample Tip Title',
+ *             qtip: 'Tip body'
+ *         }, {
+ *             text: "Parent node expanded",
+ *             expanded: true,
+ *             children: [{
+ *                 text: "Expanded leaf node 1",
+ *                 leaf: true
+ *             }, {
+ *                 text: "Expanded leaf node 2",
+ *                 leaf: true
+ *             }]
+ *         }, {
+ *             text: "Parent node collapsed",
+ *             children: [{
+ *                 text: "Collapsed leaf node 1",
+ *                 leaf: true
+ *             }, {
+ *                 text: "Collapsed leaf node 2",
+ *                 leaf: true
+ *             }]
+ *         }]
+ *     };
+ *
+ *     var tree = Ext.create('Ext.tree.Panel', {
+ *         title: 'TreePanel',
+ *         width: 260,
+ *         height: 200,
+ *         root: root,
+ *         rootVisible: false,
+ *         renderTo: document.body,
+ *         bbar: ['The first node ', {
+ *             text: 'is a leaf?',
+ *             handler: function () {
+ *                 var firstChild = tree.getRootNode().getChildAt(0);
+ *                 Ext.Msg.alert('Is Leaf?', firstChild.isLeaf());
+ *             }
+ *         }, {
+ *             text: 'has text?',
+ *             handler: function () {
+ *                 var firstChild = tree.getRootNode().getChildAt(0);
+ *                 Ext.Msg.alert('Has Text:', firstChild.get('text'));
+ *             }
+ *         }]
+ *     });
+ *
+ * The following configs have methods used to set the value / state of the node at
+ * runtime:
+ *
+ * **{@link #children} / {@link #leaf}**
+ *
+ *  - {@link #appendChild}
+ *  - {@link #hasChildNodes}
+ *  - {@link #insertBefore}
+ *  - {@link #insertChild}
+ *  - {@link #method-remove}
+ *  - {@link #removeAll}
+ *  - {@link #removeChild}
+ *  - {@link #replaceChild}
+ *
+ * **{@link #expanded}**
+ *
+ *  - {@link #method-expand}
+ *  - {@link #expandChildren}
+ *  - {@link #method-collapse}
+ *  - {@link #collapseChildren}
+ *
+ * The remaining configs may be set using {@link Ext.data.Model#method-set set()}.
+ *
+ *     node.set('text', 'Changed Text'); // example showing how to change the node label
+ *
+ * The {@link #qtip}, {@link #qtitle}, and {@link #qshowDelay} use QuickTips and
+ * requires initializing {@link Ext.tip.QuickTipManager} unless the application is
+ * created using {@link Ext#method-application}.
+ *
+ *     Ext.tip.QuickTipManager.init();
+ *
+ * For additional information and examples see the description for
+ * {@link Ext.tree.Panel}.
  */
 Ext.define('Ext.data.NodeInterface', {
     requires: [
@@ -16,45 +111,41 @@ Ext.define('Ext.data.NodeInterface', {
     ],
 
     /**
-     * @cfg {String} parentId
-     * ID of parent node.
-     */
-
-    /**
-     * @cfg {Number} index
-     * The position of the node inside its parent. When parent has 4 children and the node is third amongst them,
-     * index will be 2.
-     */
-
-    /**
-     * @cfg {Number} depth
-     * The number of parents this node has. A root node has depth 0, a child of it depth 1, and so on...
-     */
-
-    /**
      * @cfg {Boolean} [expanded=false]
      * True if the node is expanded.
+     *
+     * When the tree is asynchronously remote loaded, expanding a collapsed node loads
+     * the children of that node (if the node has not already been loaded previously).
+     *
+     * See also: {@link #isExpanded}.
      */
 
     /**
-     * @cfg {Boolean} [expandable=false]
-     * Set to true to allow for expanding/collapsing of this node.
+     * @cfg {Boolean} [expandable=true]
+     * False to prevent expanding/collapsing of this node.
+     *
+     * See also: {@link #isExpandable}.
      */
 
     /**
      * @cfg {Boolean} [checked=null]
      * Set to true or false to show a checkbox alongside this node.
+     *
+     * To fetch an array of checked nodes use {@link Ext.tree.Panel#method-getChecked
+     * getChecked()}.
      */
 
     /**
      * @cfg {Boolean} [leaf=false]
      * Set to true to indicate that this child can have no children. The expand icon/arrow will then not be
      * rendered for this node.
+     *
+     * See also: {@link #isLeaf}.
      */
 
     /**
      * @cfg {String} cls
-     * CSS class to apply for this node.
+     * CSS class to apply to this node.
      */
 
     /**
@@ -62,6 +153,8 @@ Ext.define('Ext.data.NodeInterface', {
      * CSS class to apply for this node's icon.
      *
      * There are no default icon classes that come with Ext JS.
+     *
+     * Use {@link #icon} to set the icon directly.
      */
 
     /**
@@ -69,78 +162,144 @@ Ext.define('Ext.data.NodeInterface', {
      * URL for this node's icon.
      *
      * There are no default icons that come with Ext JS.
-     */
-
-    /**
-     * @cfg {Boolean} root
-     * True if this is the root node.
-     */
-
-    /**
-     * @cfg {Boolean} isLast
-     * True if this is the last node.
-     */
-
-    /**
-     * @cfg {Boolean} isFirst
-     * True if this is the first node.
+     *
+     * * Use {@link #iconCls} to set the icon via CSS.
      */
 
     /**
      * @cfg {Boolean} [allowDrop=true]
      * Set to false to deny dropping on this node.
+     *
+     * Applicable when using the {@link Ext.tree.plugin.TreeViewDragDrop
+     * TreeViewDragDrop} plugin.
      */
 
     /**
      * @cfg {Boolean} [allowDrag=true]
      * Set to false to deny dragging of this node.
-     */
-
-    /**
-     * @cfg {Boolean} [loaded=false]
-     * True if the node has finished loading.
-     */
-
-    /**
-     * @cfg {Boolean} [loading=false]
-     * True if the node is currently loading.
+     *
+     * Applicable when using the {@link Ext.tree.plugin.TreeViewDragDrop
+     * TreeViewDragDrop} plugin.
      */
 
     /**
      * @cfg {String} href
-     * An URL for a link that's created when this config is specified.
+     * A URL for a link that's created when this config is specified.
+     *
+     * See also {@link #hrefTarget}.
      */
 
     /**
      * @cfg {String} hrefTarget
-     * Target for link. Only applicable when {@link #href} also specified.
+     * Target for link. Only applicable when {@link #href} is also specified.
      */
 
     /**
      * @cfg {String} qtip
      * Tooltip text to show on this node.
+     *
+     * See also {@link #qtitle}.
+     * See also {@link #qshowDelay}.
      */
 
     /**
      * @cfg {String} qtitle
      * Tooltip title.
+     *
+     * See also {@link #qtip}.
+     * See also {@link #qshowDelay}.
      */
 
     /**
      * @cfg {Number} qshowDelay
      * Tooltip showDelay.
+     *
+     * See also {@link #qtip}.
+     * See also {@link #qtitle}.
      */
 
     /**
      * @cfg {String} text
-     * The text to show on node label.
+     * The text to show on node label (_html tags are accepted_).
+     * The default text for the root node is `ROOT`.  All other nodes default to ''.
+     *
+     * **Note:** By default the node label is `text`, but can be set using the tree's
+     * {@link Ext.tree.Panel#cfg-displayField displayField} config.
      */
 
     /**
      * @cfg {Ext.data.NodeInterface[]} children
      * Array of child nodes.
+     *
+     * **Note:** By default the child nodes root is `children`, but can be set using the
+     * reader {@link Ext.data.reader.Reader#cfg-rootProperty rootProperty} config on the
+     * {@link Ext.data.TreeStore TreeStore's} {@link Ext.data.TreeStore#cfg-proxy proxy}.
      */
 
+    /**
+     * @cfg {Boolean} [loaded=false]
+     * @private
+     * True if the node has finished loading.
+     *
+     * See {@link #isLoaded}.
+     */
+
+    /**
+     * @cfg {Boolean} [loading=false]
+     * @private
+     * True if the node is currently loading.
+     *
+     * See {@link #isLoading}.
+     */
+
+    /**
+     * @cfg {Boolean} root
+     * @private
+     * True if this is the root node.
+     *
+     * See {@link #isRoot}.
+     */
+
+    /**
+     * @cfg {Boolean} isLast
+     * @private
+     * True if this is the last node.
+     *
+     * See {@link #method-isLast}.
+     */
+
+    /**
+     * @cfg {Boolean} isFirst
+     * @private
+     * True if this is the first node.
+     *
+     * See {@link #method-isFirst}.
+     */
+
+    /**
+     * @cfg {String} parentId
+     * @private
+     * ID of parent node.
+     *
+     * See {@link #parentNode}.
+     */
+
+    /**
+     * @cfg {Number} index
+     * @private
+     * The position of the node inside its parent. When parent has 4 children and the node is third amongst them,
+     * index will be 2.
+     *
+     * See {@link #indexOf} and {@link #indexOfId}.
+     */
+
+    /**
+     * @cfg {Number} depth
+     * @private
+     * The number of parents this node has. A root node has depth 0, a child of it depth 1, and so on...
+     *
+     * See {@link #getDepth}.
+     */
 
     /**
      * @property {Ext.data.NodeInterface} nextSibling
@@ -169,7 +328,7 @@ Ext.define('Ext.data.NodeInterface', {
 
     /**
      * @property {Ext.data.NodeInterface[]} childNodes
-     * An array of this nodes children.  Array will be empty if this node has no chidren.
+     * An array of this nodes children.  Array will be empty if this node has no children.
      */
 
     statics: {
@@ -276,8 +435,9 @@ Ext.define('Ext.data.NodeInterface', {
                     me.callParent(arguments);
                     me.childNodes = [];
 
-                    // These events are fired on this node, and programatically bubble up the parentNode axis, ending up 
-                    // walking off the top and firing on the owning Ext.data.TreeStore
+                    // These events are fired on this node, and programmatically bubble 
+                    // up the parentNode axis, ending up walking off the top and firing 
+                    // on the owning Ext.data.TreeStore
                     /**
                      * @event append
                      * Fires when a new child node is appended
@@ -291,6 +451,10 @@ Ext.define('Ext.data.NodeInterface', {
                      * @param {Ext.data.NodeInterface} this This node
                      * @param {Ext.data.NodeInterface} node The removed node
                      * @param {Boolean} isMove `true` if the child node is being removed so it can be moved to another position in the tree.
+                     * @param {Object} context An object providing information about where the removed node came from. It contains the following properties:
+                     * @param {Ext.data.NodeInterface} context.parentNode The node from which the removed node was removed.
+                     * @param {Ext.data.NodeInterface} context.previousSibling The removed node's former previous sibling.
+                     * @param {Ext.data.NodeInterface} context.nextSibling The removed node's former next sibling.
                      * (a side effect of calling {@link Ext.data.NodeInterface#appendChild appendChild} or
                      * {@link Ext.data.NodeInterface#insertBefore insertBefore} with a node that already has a parentNode)
                      */
@@ -453,6 +617,7 @@ Ext.define('Ext.data.NodeInterface', {
                  * method is internally called after a node is moved. This shouldn't
                  * have to be called by the developer unless they are creating custom
                  * Tree plugins.
+                 * @protected
                  * @param {Boolean} commit
                  * @param {Object} info The info to update. May contain any of the following
                  *  @param {Object} info.isFirst
@@ -605,7 +770,8 @@ Ext.define('Ext.data.NodeInterface', {
                  * If the node was previously a child node of another parent node, it will be removed from that node first.
                  *
                  * @param {Ext.data.NodeInterface/Ext.data.NodeInterface[]/Object} node The node or Array of nodes to append
-                 * @param {Boolean} [suppressEvents=false] True to suppress firering of events.
+                 * @param {Boolean} [suppressEvents=false] True to suppress firing of 
+                 * events.
                  * @param {Boolean} [commit=false]
                  * @return {Ext.data.NodeInterface} The appended node if single append, or null if an array was passed
                  */
@@ -644,6 +810,7 @@ Ext.define('Ext.data.NodeInterface', {
                         node = me.createNode(node);
 
                         if (suppressEvents !== true && me.fireEventArgs('beforeappend', [me, node]) === false) {
+                            Ext.resumeLayouts(true);
                             return false;
                         }
 
@@ -652,8 +819,13 @@ Ext.define('Ext.data.NodeInterface', {
 
                         // it's a move, make sure we move it cleanly
                         if (oldParent) {
+                            if (suppressEvents !== true && node.fireEventArgs('beforemove', [node, oldParent, me, index]) === false) {
+                                Ext.resumeLayouts(true);
+                                return false;
+                            }
                             // Return false if a beforeremove listener vetoed the remove
                             if (oldParent.removeChild(node, false, suppressEvents, oldParent.getTreeStore() === treeStore) === false) {
+                                Ext.resumeLayouts(true);
                                 return false;
                             }
                         }
@@ -794,7 +966,8 @@ Ext.define('Ext.data.NodeInterface', {
                         i, childCount,
                         previousSibling,
                         treeStore = me.getTreeStore(),
-                        bulkUpdate = treeStore && treeStore.bulkUpdate;
+                        bulkUpdate = treeStore && treeStore.bulkUpdate,
+                        removeContext;
 
                     if (index === -1 || (suppressEvents !== true && me.fireEventArgs('beforeremove', [me, node, !!isMove]) === false)) {
                         return false;
@@ -862,7 +1035,8 @@ Ext.define('Ext.data.NodeInterface', {
                         }
                     }
 
-                    // If this node suddenly doesnt have childnodes anymore, update myself
+                    // If this node suddenly doesn't have child nodes anymore, update 
+                    // myself
                     if (!me.childNodes.length && !bulkUpdate) {
                         me.triggerUIUpdate();
                     }
@@ -871,13 +1045,18 @@ Ext.define('Ext.data.NodeInterface', {
                     Ext.resumeLayouts(true);
 
                     if (suppressEvents !== true) {
-
+                        // Context argument to events.
+                        removeContext = {
+                            parentNode: node.parentNode,
+                            previousSibling: node.previousSibling,
+                            nextSibling: node.nextSibling
+                        };
                         // Inform the TreeStore so that descendant nodes can be removed.
                         me.callTreeStore('beforeNodeRemove', [[node], !!isMove]);
 
                         node.previousSibling = node.nextSibling = node.parentNode = null;
 
-                        me.fireEventArgs('remove', [me, node, !!isMove]);
+                        me.fireEventArgs('remove', [me, node, !!isMove, removeContext]);
 
                         // Inform the TreeStore so that the node unregistered and unjoined.
                         me.callTreeStore('onNodeRemove', [[node], !!isMove]);
@@ -893,7 +1072,7 @@ Ext.define('Ext.data.NodeInterface', {
 
                     // Must clear the parentNode silently upon remove from the TreeStore.
                     // Any subsequent append to any node will trigger dirtiness
-                    // (It may be added to a deifferent node of the same ID, eg "root").
+                    // (It may be added to a different node of the same ID, e.g. "root").
                     // lastParentId still needed for TreeStore's clearRemovedOnLoad functionality to be able to link
                     // nodes in the removed array to nodes under the reloading node's tree.
                     // to be able to 
@@ -921,7 +1100,7 @@ Ext.define('Ext.data.NodeInterface', {
                  */
                 copy: function(newId, deep) {
                     var me = this,
-                        result = me.callParent([newId, deep]),
+                        result = me.callParent([newId]),
                         len = me.childNodes ? me.childNodes.length : 0,
                         i;
 
@@ -1067,6 +1246,9 @@ Ext.define('Ext.data.NodeInterface', {
 
                     // it's a move, make sure we move it cleanly
                     if (oldParent) {
+                        if (suppressEvents !== true && node.fireEventArgs('beforemove', [node, oldParent, me, index, refNode]) === false) {
+                            return false;
+                        }
                         // Return false if a beforeremove listener vetoed the remove
                         if (oldParent.removeChild(node, false, suppressEvents, oldParent.getTreeStore() === treeStore) === false) {
                             return false;
@@ -1120,7 +1302,7 @@ Ext.define('Ext.data.NodeInterface', {
                             me.set('loaded', true);
                         }
                     }
-                    // If this node didnt have any childnodes before, update myself
+                    // If this node didn't have any child nodes before, update myself
                     else if (me.childNodes.length === 1 && !bulkUpdate) {
                         me.triggerUIUpdate();
                     }
@@ -1239,10 +1421,8 @@ Ext.define('Ext.data.NodeInterface', {
                     // getting rid of everything
                     var me = this,
                         childNodes = me.childNodes,
-                        i = 0,
                         len = childNodes.length,
-                        node,
-                        treeStore;
+                        node, treeStore, i;
 
                     // Avoid all this if nothing to remove
                     if (!len) {
@@ -1253,18 +1433,20 @@ Ext.define('Ext.data.NodeInterface', {
                     if (!fromParent) {
                         treeStore = me.getTreeStore();
 
-                        // Coalesce sync operations across this operation
-                        treeStore && treeStore.beginUpdate();
+                        if (treeStore) {
+                            // Coalesce sync operations across this operation
+                            treeStore.beginUpdate();
 
-                        // The remove of visible descendants is handled by the top level
-                        // call to onNodeRemove, so suspend firing the remove event so
-                        // that every descendant remove does not update the UI.
-                        treeStore.suspendEvent('remove');
+                            // The remove of visible descendants is handled by the top level
+                            // call to onNodeRemove, so suspend firing the remove event so
+                            // that every descendant remove does not update the UI.
+                            treeStore.suspendEvent('remove');
 
-                        me.callTreeStore('beforeNodeRemove', [childNodes, false]);
+                            me.callTreeStore('beforeNodeRemove', [childNodes, false]);
+                        }
                     }
 
-                    for (; i < len; ++i) {
+                    for (i = 0; i < len; ++i) {
                         node = childNodes[i];
 
                         node.previousSibling = node.nextSibling = node.parentNode = null;
@@ -1281,17 +1463,17 @@ Ext.define('Ext.data.NodeInterface', {
                     }
 
                     // Inform the TreeStore so that all descendants are unregistered and unjoined.
-                    if (!fromParent) {
+                    if (!fromParent && treeStore) {
                         treeStore.resumeEvent('remove');
                         me.callTreeStore('onNodeRemove', [childNodes, false]);
 
                         // Coalesce sync operations across this operation
-                        treeStore && treeStore.endUpdate();
+                        treeStore.endUpdate();
                     }
 
                     me.firstChild = me.lastChild = null;
 
-                    me.childNodes.length = 0;
+                    childNodes.length = 0;
                     if (!fromParent) {
                         me.triggerUIUpdate();
                     }
@@ -1444,12 +1626,16 @@ Ext.define('Ext.data.NodeInterface', {
                 },
 
                 /**
-                 * Interates the child nodes of this node, calling the specified function with each node. The arguments to the function
-                 * will be the args provided or the current node. If the function returns false at any point,
-                 * the iteration stops.
+                 * Iterates the child nodes of this node, calling the specified function 
+                 * with each node. The arguments to the function will be the args 
+                 * provided or the current node. If the function returns false at any 
+                 * point, the iteration stops.
                  * @param {Function} fn The function to call
-                 * @param {Object} [scope] The scope (this reference) in which the function is executed. Defaults to the current Node in iteration.
-                 * @param {Array} [args] The args to call the function with. Defaults to passing the current Node.
+                 * @param {Object} [scope] The scope (_this_ reference) in which the 
+                 * function is executed. Defaults to the Node on which eachChild is 
+                 * called.
+                 * @param {Array} [args] The args to call the function with. Defaults to 
+                 * passing the current Node.
                  */
                 eachChild: function(fn, scope, args) {
                     var childNodes = this.childNodes,
@@ -1598,8 +1784,9 @@ Ext.define('Ext.data.NodeInterface', {
                 /**
                  * Returns true if this node is a branch node, and the entire branch is fully loaded.
                  *
-                 * Using this method, it is possible to ascertain whether an {@link #expandAll} call
-                 * will have access to all descendant nodes without incurring a store load.
+                 * Using this method, it is possible to ascertain whether an
+                 * {@link Ext.tree.Panel#expandAll} call will have access to all
+                 * descendant nodes without incurring a store load.
                  * @return {Boolean}
                  */
                 isBranchLoaded: function() {
@@ -1777,7 +1964,7 @@ Ext.define('Ext.data.NodeInterface', {
                             }
                         }
 
-                        // Expand the topmost collapeed one.
+                        // Expand the topmost collapsed one.
                         // The correctly set expanded states all the way down will ensure that
                         // All nodes needed are inserted into the Store.
                         collapsedAncestors[0].expand();
@@ -2054,18 +2241,20 @@ Ext.define('Ext.data.NodeInterface', {
                 /**
                  * Creates an object representation of this node including its children.
                  */
-                serialize: function() {
-                    var result = Ext.data.writer.Json.prototype.getRecordData(this),
+                serialize: function(writerParam) {
+                    var writer = writerParam || new Ext.data.writer.Json({
+                            writeAllFields: true
+                        }),
+                        result = writer.getRecordData(this),
                         childNodes = this.childNodes,
                         len = childNodes.length,
                         children, i;
 
                     if (len > 0) {
-                        children = [];
+                        result.children = children = [];
                         for (i = 0; i < len; i++) {
-                            children.push(childNodes[i].serialize());
+                            children.push(childNodes[i].serialize(writer));
                         }
-                        result.children = children;
                     }
                     return result;
                 },

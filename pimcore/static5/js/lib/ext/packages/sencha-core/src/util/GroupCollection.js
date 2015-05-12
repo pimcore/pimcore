@@ -1,5 +1,6 @@
 /**
  * @private
+ * A collection containing the result of applying grouping to the records in the store.
  */
 Ext.define('Ext.util.GroupCollection', {
     extend: 'Ext.util.Collection',
@@ -103,15 +104,17 @@ Ext.define('Ext.util.GroupCollection', {
     onCollectionSort: function (source) {
         // sorting the collection effectively sorts the items in each group...
         var me = this,
-            sorters = source.getSorters(),
-            items = me.items,
-            length = me.length,
-            i, group;
+            sorters = source.getSorters(false),
+            items, length, i, group;
 
-        for (i = 0; i < length; ++i) {
-            group = items[i];
-            if (group.getSorters() !== sorters) {
-                group.setSorters(sorters);
+        if (sorters) {
+            items = me.items;
+            length = me.length;
+            for (i = 0; i < length; ++i) {
+                group = items[i];
+                if (group.getSorters() !== sorters) {
+                    group.setSorters(sorters);
+                }
             }
         }
     },
@@ -272,9 +275,14 @@ Ext.define('Ext.util.GroupCollection', {
 
     updateGrouper: function(grouper) {
         var me = this;
-        me.grouped = !!grouper;
+        me.grouped = !!(grouper && me.$groupable.getAutoGroup());
         me.onSorterChange();
         me.onEndUpdateSorters(me.getSorters());
+    },
+
+    destroy: function() {
+        this.$groupable = null;
+        this.callParent();
     },
 
     privates: {

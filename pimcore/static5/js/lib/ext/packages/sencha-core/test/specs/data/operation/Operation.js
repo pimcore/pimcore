@@ -103,7 +103,7 @@ describe("Ext.data.operation.Operation", function() {
             
             it("should have no exception", function() {
                 expect(op.hasException()).toBe(false);    
-            });    
+            });
         });
         
         describe("completing with failure", function() {
@@ -137,6 +137,38 @@ describe("Ext.data.operation.Operation", function() {
                 expect(op.hasException()).toBe(true);    
             });    
         });
+        
+        describe("completeOperation", function() {
+            var proxy;
+            
+            beforeEach(function() {
+                proxy = {
+                    completeOperation: jasmine.createSpy('completeOperation')
+                };
+            });
+            
+            afterEach(function() {
+                proxy = null;
+            });
+            
+            it("should be called when completed successfully", function() {
+                makeOperation({ proxy: proxy });
+                
+                op.execute();
+                op.setSuccessful(true);
+                
+                expect(proxy.completeOperation).toHaveBeenCalledWith(op);
+            });
+            
+            it("should be called when failed", function() {
+                makeOperation({ proxy: proxy });
+                
+                op.execute();
+                op.setException('Fail!');
+                
+                expect(proxy.completeOperation).toHaveBeenCalledWith(op);
+            });
+        });
     });
     
     describe("aborting", function() {
@@ -152,6 +184,7 @@ describe("Ext.data.operation.Operation", function() {
                 return request;    
             };
             spyOn(proxy, 'abort');
+            spyOn(proxy, 'completeOperation');
         });
         
         afterEach(function() {
@@ -170,10 +203,17 @@ describe("Ext.data.operation.Operation", function() {
             expect(proxy.abort).not.toHaveBeenCalled();
         });
         
-        it("should padss the request for this operation to abort", function() {
+        it("should pass the request for this operation to abort", function() {
             op.execute();
             op.abort();
             expect(proxy.abort).toHaveBeenCalledWith(request);    
+        });
+        
+        it("should not call completeOperation", function() {
+            op.execute();
+            op.abort();
+            
+            expect(proxy.completeOperation).not.toHaveBeenCalled();
         });
     });
     

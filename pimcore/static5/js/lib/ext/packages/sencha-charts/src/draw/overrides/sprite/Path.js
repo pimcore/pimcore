@@ -1,3 +1,6 @@
+/**
+ * @class Ext.draw.overrides.sprite.Path
+ */
 Ext.define('Ext.draw.overrides.sprite.Path', {
     override: 'Ext.draw.sprite.Path',
     requires: ['Ext.draw.Color'],
@@ -6,7 +9,8 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
      * Tests whether the given point is inside the path.
      * @param x
      * @param y
-     * @returns {Boolean}
+     * @return {Boolean}
+     * @member Ext.draw.sprite.Path
      */
     isPointInPath: function (x, y) {
         var attr = this.attr;
@@ -36,7 +40,8 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
      * Tests whether the given point is on the path.
      * @param x
      * @param y
-     * @returns {Boolean}
+     * @return {Boolean}
+     * @member Ext.draw.sprite.Path
      */
     isPointOnPath: function (x, y) {
         var attr = this.attr,
@@ -57,7 +62,9 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
         return result;
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     hitTest: function (point, options) {
         var me = this,
             attr = me.attr,
@@ -68,8 +75,8 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
             y = point[1],
             hasFill = attr.fillStyle !== Ext.draw.Color.NONE &&
                 attr.fillStyle !== Ext.draw.Color.RGBA_NONE,
-            bboxHit = bbox && x >= bbox.left && x <= bbox.right &&
-                              y >= bbox.top && y <= bbox.bottom,
+            bboxHit = bbox && x >= bbox.x && x <= (bbox.x + bbox.width) &&
+                              y >= bbox.y && y <= (bbox.y + bbox.height),
             result = null,
             params;
 
@@ -123,7 +130,8 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
      * The given sprite must be an instance of the {@link Ext.draw.sprite.Path} class
      * or its subclass.
      * @param path
-     * @returns {Array}
+     * @return {Array}
+     * @member Ext.draw.sprite.Path
      */
     getIntersections: function (path) {
         if (!(path.isSprite && path.isPath)) {

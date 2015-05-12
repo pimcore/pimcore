@@ -1,5 +1,4 @@
 /**
- * @author Ed Spencer
  * @class Ext.data.reader.Array
  * 
  * <p>Data reader class to create an Array of {@link Ext.data.Model} objects from an Array.
@@ -53,8 +52,9 @@ Ext.define('Ext.data.reader.Array', {
         successProperty: undefined
         
         /**
-        * @cfg {Boolean} preserveRawData @hide
-        */
+         * @cfg {Boolean} preserveRawData
+         * @hide
+         */
     },
     
     createFieldAccessor: function(field) {

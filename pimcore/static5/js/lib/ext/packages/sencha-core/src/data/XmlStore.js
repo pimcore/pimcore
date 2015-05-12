@@ -1,5 +1,4 @@
 /**
- * @author Ed Spencer
  * <p>Small helper class to make creating {@link Ext.data.Store}s from XML data easier.
  * A XmlStore will be automatically configured with a {@link Ext.data.reader.Xml}.</p>
  * <p>A store configuration would be something like:<pre><code>

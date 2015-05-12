@@ -80,7 +80,7 @@
  * 
  *      var ver = new Version('^4.2'); // NOTE: the '^' prefix used
  *
- *      n = ver.compreTo('4.3'); // == -1  (less than 4.3)
+ *      n = ver.compareTo('4.3'); // == -1  (less than 4.3)
  *      
  *      n = ver.compareTo('4.2'); // == 1   (greater than all 4.2's)
  *      n = ver.compareTo('4.2.1'); // == 1
@@ -91,7 +91,7 @@
  * 
  *      var ver = new Version('~4.2'); // NOTE: the '~' prefix used
  *
- *      n = ver.compreTo('4.3'); // == -1
+ *      n = ver.compareTo('4.3'); // == -1
  *      
  *      n = ver.compareTo('4.2'); // == 0
  *      n = ver.compareTo('4.2.1'); // == 0
@@ -113,6 +113,8 @@
  * In the above example, '4.2.1.2' compares as equal to '4.2.1' because digits beyond the
  * given "4.2.1" are ignored. However, '4.2' is less than the '4.2.1' prefix; its missing
  * digit is filled with 0.
+ *
+ * **Note:** You may use `Ext.getVersion` as a shortcut to retrieve the version of a particular package.
  */
 (function() {
 // @define Ext.Version

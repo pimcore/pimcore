@@ -43,7 +43,7 @@ Ext.define('Ext.dom.Underlay', {
 
     /**
      * @protected
-     * @return {Ext.dom.ElementPool}
+     * @return {Ext.dom.UnderlayPool}
      */
     getPool: function() {
         return this.pool ||
@@ -101,8 +101,8 @@ Ext.define('Ext.dom.Underlay', {
             }
 
             if (offsets) {
-                x = max(x + offsets.x, 0);
-                y = max(y + offsets.y, 0);
+                x = x + offsets.x;
+                y = y + offsets.y;
                 width = max(width + offsets.w, 0);
                 height = max(height + offsets.h, 0);
             }

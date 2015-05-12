@@ -60,7 +60,7 @@ Ext.define('Ext.data.Validation', {
             me.refresh();
         }
 
-        return me.dirty;
+        return !me.dirty;
     },
 
     /**

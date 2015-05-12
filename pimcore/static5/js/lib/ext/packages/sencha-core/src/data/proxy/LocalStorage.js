@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * The LocalStorageProxy uses the new HTML5 localStorage API to save {@link Ext.data.Model Model} data locally on the
  * client browser. HTML5 localStorage is a key-value store (e.g. cannot save complex objects like JSON), so
  * LocalStorageProxy automatically serializes and deserializes data when saving and retrieving it.

@@ -30,13 +30,15 @@ Ext.define('Ext.app.BaseController', {
          * @accessor
          */
         id: null,
-
+       
         /**
          * @cfg {Object} control
          * @accessor
          *
          * Adds listeners to components selected via {@link Ext.ComponentQuery}. Accepts an
-         * object containing component paths mapped to a hash of listener functions.
+         * object containing component paths mapped to a hash of listener functions.  
+         * The function value may also be a string matching the name of a method on the 
+         * controller.
          *
          * In the following example the `updateUser` function is mapped to to the `click`
          * event on a button component, which is a child of the `useredit` component.
@@ -44,12 +46,10 @@ Ext.define('Ext.app.BaseController', {
          *      Ext.define('MyApp.controller.Users', {
          *          extend: 'Ext.app.Controller',
          *
-         *          config: {
-         *              control: {
-         *                  'useredit button[action=save]': {
-         *                      click: 'updateUser'
-         *                  }
-         *               }
+         *          control: {
+         *              'useredit button[action=save]': {
+         *                  click: 'updateUser'
+         *              }
          *          },
          *
          *          updateUser: function(button) {
@@ -63,6 +63,7 @@ Ext.define('Ext.app.BaseController', {
          *
          * See {@link Ext.ComponentQuery} for more information on component selectors.
          */
+
         control: null,
 
         /**
@@ -72,23 +73,21 @@ Ext.define('Ext.app.BaseController', {
          * Adds listeners to different event sources (also called "event domains"). The
          * primary event domain is that of components, but there are also other event domains:
          * {@link Ext.app.domain.Global Global} domain that intercepts events fired from
-         * {@link Ext.GlobalEvents} Observable instance, {@link Ext.app.domain.Controller Controller}
-         * domain can be used to listen to events fired by other Controllers,
-         * {@link Ext.app.domain.Store Store} domain gives access to Store events, and
-         * {@link Ext.app.domain.Direct Direct} domain can be used with Ext.Direct Providers
-         * to listen to their events.
+         * {@link Ext.GlobalEvents} Observable instance, 
+         * {@link Ext.app.domain.Controller Controller} domain can be used to listen to events 
+         * fired by other Controllers, {@link Ext.app.domain.Store Store} domain gives access to 
+         * Store events, and {@link Ext.app.domain.Direct Direct} domain can be used with 
+         * Ext.Direct Providers to listen to their events.
          *
          * To listen to "bar" events fired by a controller with id="foo":
          *
          *      Ext.define('AM.controller.Users', {
          *          extend: 'Ext.app.Controller',
          *
-         *          config: {
-         *              listen: {
-         *                  controller: {
-         *                      '#foo': {
-         *                         bar: 'onFooBar'
-         *                      }
+         *          listen: {
+         *              controller: {
+         *                  '#foo': {
+         *                      bar: 'onFooBar'
          *                  }
          *              }
          *          }
@@ -100,17 +99,15 @@ Ext.define('Ext.app.BaseController', {
          *      Ext.define('AM.controller.Users', {
          *          extend: 'Ext.app.Controller',
          *
-         *          config: {
-         *              listen: {
-         *                  controller: {
-         *                      '*': {
-         *                         bar: 'onAnyControllerBar'
-         *                      }
-         *                  },
-         *                  store: {
-         *                      '#baz': {
-         *                          baz: 'onStoreBaz'
-         *                      }
+         *          listen: {
+         *              controller: {
+         *                  '*': {
+         *                      bar: 'onAnyControllerBar'
+         *                  }
+         *              },
+         *              store: {
+         *                  '#baz': {
+         *                      baz: 'onStoreBaz'
          *                  }
          *              }
          *          }
@@ -122,12 +119,10 @@ Ext.define('Ext.app.BaseController', {
          *      Ext.define('AM.controller.Users', {
          *          extend: 'Ext.app.Controller',
          *
-         *          config: {
-         *              listen: {
-         *                  global: {            // Global events are always fired
-         *                      idle: 'onIdle'   // from the same object, so there
-         *                  }                    // are no selectors
-         *              }
+         *          listen: {
+         *              global: {            // Global events are always fired
+         *                  idle: 'onIdle'   // from the same object, so there
+         *              }                    // are no selectors
          *          }
          *      });
          *
@@ -136,12 +131,10 @@ Ext.define('Ext.app.BaseController', {
          *      Ext.define('AM.controller.Users', {
          *          extend: 'Ext.app.Controller',
          *
-         *          config: {
-         *              listen: {
-         *                  component: {
-         *                      'useredit button[action=save]': {
-         *                         click: 'updateUser'
-         *                      }
+         *          listen: {
+         *              component: {
+         *                  'useredit button[action=save]': {
+         *                      click: 'updateUser'
          *                  }
          *              }
          *          }
@@ -152,11 +145,9 @@ Ext.define('Ext.app.BaseController', {
          *      Ext.define('AM.controller.Users', {
          *          extend: 'Ext.app.Controller',
          *
-         *          config: {
-         *              control: {
-         *                  'useredit button[action=save]': {
-         *                     click: 'updateUser'
-         *                  }
+         *          control: {
+         *              'useredit button[action=save]': {
+         *                  click: 'updateUser'
          *              }
          *          }
          *      });
@@ -167,28 +158,26 @@ Ext.define('Ext.app.BaseController', {
          *      Ext.define('AM.controller.Users', {
          *          extend: 'Ext.app.Controller',
          *
-         *          config: {
-         *              listen: {
-         *                  global: {
-         *                      idle: 'onIdle'
+         *          listen: {
+         *              global: {
+         *                  idle: 'onIdle'
+         *              },
+         *              controller: {
+         *                  '*': {
+         *                      foobar: 'onAnyFooBar'
          *                  },
-         *                  controller: {
-         *                      '*': {
-         *                         foobar: 'onAnyFooBar'
-         *                      },
-         *                      '#foo': {
-         *                         bar: 'onFooBar'
-         *                      }
-         *                  },
-         *                  component: {
-         *                      'useredit button[action=save]': {
-         *                         click: 'updateUser'
-         *                      }
-         *                  },
-         *                  store: {
-         *                      '#qux': {
-         *                          load: 'onQuxLoad'
-         *                      }
+         *                  '#foo': {
+         *                      bar: 'onFooBar'
+         *                  }
+         *              },
+         *              component: {
+         *                  'useredit button[action=save]': {
+         *                      click: 'updateUser'
+         *                  }
+         *              },
+         *              store: {
+         *                  '#qux': {
+         *                      load: 'onQuxLoad'
          *                  }
          *              }
          *          }
@@ -600,14 +589,15 @@ Ext.define('Ext.app.BaseController', {
     /**
      * Update the hash. By default, it will not execute the routes if the current token and the
      * token passed are the same.
+     * 
      * @param {String/Ext.data.Model} token The token to redirect to.  Can be either a String
      * or a {@link Ext.data.Model Model} instance - if a Model instance is passed it will
      * internally be converted into a String token by calling the Model's
      * {@link Ext.data.Model#toUrl toUrl} function.
      *
-     * @param {String} token The token to update.
      * @param {Boolean} force Force the update of the hash regardless of the current token.
-     * @return {Boolean} Will return a`true` if the token was updated.
+     * 
+     * @return {Boolean} Will return `true` if the token was updated.
      */
     redirectTo: function(token, force) {
         if (token.isModel) {

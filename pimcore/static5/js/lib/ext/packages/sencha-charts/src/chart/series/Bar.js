@@ -6,46 +6,56 @@
  * {@link Ext.chart.CartesianChart#flipXY flipXY} config).
  * 
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *                 fields: ['name', 'value'],
- *                 data: [
- *                     {name: 'metric one', value: 10},
- *                     {name: 'metric two', value: 7},
- *                     {name: 'metric three', value: 5},
- *                     {name: 'metric four', value: 2},
- *                     {name: 'metric five', value: 27}
- *                 ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 fields: 'value'
- *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 fields: 'name'
- *             }],
- *             series: {
- *                 type: 'bar',
- *                 xField: 'name',
- *                 yField: 'value'
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['name', 'value'],
+ *            data: [{
+ *                name: 'metric one',
+ *                value: 10
+ *            }, {
+ *                name: 'metric two',
+ *                value: 7
+ *            }, {
+ *                name: 'metric three',
+ *                value: 5
+ *            }, {
+ *                name: 'metric four',
+ *                value: 2
+ *            }, {
+ *                name: 'metric five',
+ *                value: 27
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            fields: 'value'
+ *        }, {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            fields: 'name'
+ *        }],
+ *        series: {
+ *            type: 'bar',
+ *            subStyle: {
+ *                fill: ['#388FAD'],
+ *                stroke: '#1F6D91'
+ *            },
+ *            xField: 'name',
+ *            yField: 'value'
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.Bar', {

@@ -1767,6 +1767,7 @@ Ext.define('Ext.ux.colorpick.SliderController', {
         dragHandle.dd.dragEnded = true;
     }
 });
+// work around DragTracker bug
 
 /**
  * Parent view for the 4 sliders seen on the color picker window.

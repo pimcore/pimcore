@@ -3,7 +3,7 @@
  * Ext.dom.Element Element}.
  * 
  * Not meant to be used directly. To apply a shadow to an Element use the 
- * {@link Ext.dom.Element#createShadow createShadow} method.
+ * {@link Ext.dom.Element#enableShadow enableShadow} method.
  * 
  * @private
  */

@@ -5,19 +5,16 @@
  * A sprite that represents a path.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'path',
- *                 path: 'M75,75 c0,-25 50,25 50,0 c0,-25 -50,25 -50,0',
- *                 fillStyle: 'blue'
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'path',
+ *            path: 'M20,30 c0,-50 75,50 75,0 c0,-50 -75,50 -75,0',
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Path', {

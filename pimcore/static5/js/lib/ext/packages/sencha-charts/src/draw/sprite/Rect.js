@@ -5,22 +5,19 @@
  * A sprite that represents a rectangle.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'rect',
- *                 x: 50,
- *                 y: 50,
- *                 width: 50,
- *                 height: 50,
- *                 fillStyle: 'blue'
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'rect',
+ *            x: 50,
+ *            y: 50,
+ *            width: 100,
+ *            height: 100,
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Rect', {

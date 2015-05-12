@@ -93,15 +93,18 @@ Ext.define('Ext.data.schema.OneToOne', {
 
         read: function(rightRecord, node, fromReader, readOptions) {
             var me = this,
-                result = me.callParent([ rightRecord, node, fromReader, readOptions ]),
-                leftRecord = result.getRecords()[0];
+                leftRecords = me.callParent([rightRecord, node, fromReader, readOptions]),
+                leftRecord;
 
-            if (leftRecord) {
-                leftRecord[me.inverse.getInstanceName()] = rightRecord;
+            if (leftRecords) {
+                leftRecord = leftRecords[0];
+                if (leftRecord) {
+                    leftRecord[me.inverse.getInstanceName()] = rightRecord;
 
-                rightRecord[me.getInstanceName()] = leftRecord;
-                // Inline associations should *not* arrive on the "data" object:
-                delete rightRecord.data[me.role];
+                    rightRecord[me.getInstanceName()] = leftRecord;
+                    // Inline associations should *not* arrive on the "data" object:
+                    delete rightRecord.data[me.role];
+                }
             }
         }
     }),
@@ -166,7 +169,7 @@ Ext.define('Ext.data.schema.OneToOne', {
         onValueChange: function(leftRecord, session, newValue) {
             // Important to get the record before changing the key.
             var me = this,
-                rightRecord = me.getAssociatedItem(leftRecord),
+                rightRecord = leftRecord[me.getOldInstanceName()] || me.getAssociatedItem(leftRecord),
                 hasNewValue = newValue || newValue === 0,
                 instanceName = me.getInstanceName(),
                 cls = me.cls;
@@ -195,29 +198,46 @@ Ext.define('Ext.data.schema.OneToOne', {
         
         read: function(leftRecord, node, fromReader, readOptions) {
             var me = this,
-                result = me.callParent([ leftRecord, node, fromReader, readOptions ]),
-                rightRecord = result.getRecords()[0],
-                field = this.association.field,
-                session = leftRecord.session,
-                oldId;
+                rightRecords = me.callParent([leftRecord, node, fromReader, readOptions]),
+                rightRecord, field, fieldName, session, 
+                refs, id, oldId, setKey, data;
 
-            if (rightRecord) {
-                rightRecord[me.inverse.getInstanceName()] = leftRecord;
+            if (rightRecords) {
+                rightRecord = rightRecords[0];
+                field = me.association.field;
+                fieldName = field.name;
+                session = leftRecord.session;
+                data = leftRecord.data;
+                if (rightRecord) {
 
-                leftRecord[me.getInstanceName()] = rightRecord;
-                // Inline associations should *not* arrive on the "data" object:
-                delete leftRecord.data[me.role];
-
-                // We want to poke the inferred key onto record if it exists, but we don't
-                // want to mess with the dirty or modified state of the record.
-                if (field) {
-                    oldId = leftRecord.data[field.name];
-                    if (oldId !== rightRecord.id) {
-                        leftRecord.data[field.name] = rightRecord.id;
-                        if (session) {
-                            session.updateReference(leftRecord, field, rightRecord.id, oldId);
-                        }
+                    if (session) {
+                        refs = session.getRefs(rightRecord, this.inverse, true);
+                        // If we have an existing reference in the session, or we don't and the data is
+                        // undefined, allow the nested load to go ahead
+                        setKey = (refs && refs[leftRecord.id]) || (data[fieldName] === undefined);
+                    } else {
+                        setKey = true;
                     }
+
+                    
+                    if (setKey) {
+                        // We want to poke the inferred key onto record if it exists, but we don't
+                        // want to mess with the dirty or modified state of the record.
+                        if (field) {
+                            oldId = data[fieldName];
+                            id = rightRecord.id;
+                            if (oldId !== id) {
+                                data[fieldName] = id;
+                                if (session) {
+                                    session.updateReference(leftRecord, field, id, oldId);
+                                }
+                            }
+                        }
+                        rightRecord[me.inverse.getInstanceName()] = leftRecord;
+                        leftRecord[me.getInstanceName()] = rightRecord;
+                    }
+                    // Inline associations should *not* arrive on the "data" object:
+                    delete data[me.role];
                 }
             }
         }

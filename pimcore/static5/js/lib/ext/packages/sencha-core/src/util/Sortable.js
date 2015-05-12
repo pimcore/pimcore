@@ -1,6 +1,4 @@
 /**
- * @docauthor Tommy Maintz <tommy@sencha.com>
- *
  * A mixin which allows a data component to be sorted. This is used by e.g. {@link Ext.data.Store} and {@link Ext.data.TreeStore}.
  *
  * **NOTE**: This mixin is mainly for internal use and most users should not need to use it directly. It

@@ -8,67 +8,85 @@
  * Category class for axis instead.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *                 fields: ['time', 'open', 'high', 'low', 'close'],
- *                 data: [
- *                     {'time': new Date('Jan 1 2010').getTime(), 'open': 600, 'high': 614, 'low': 578, 'close': 590},
- *                     {'time': new Date('Jan 2 2010').getTime(), 'open': 590, 'high': 609, 'low': 580, 'close': 580},
- *                     {'time': new Date('Jan 3 2010').getTime(), 'open': 580, 'high': 602, 'low': 578, 'close': 602},
- *                     {'time': new Date('Jan 4 2010').getTime(), 'open': 602, 'high': 614, 'low': 586, 'close': 586}
- *                 ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['open', 'high', 'low', 'close'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 560,
- *                 maximum: 640
- *             }, {
- *                 type: 'time',
- *                 position: 'bottom',
- *                 fields: ['time'],
- *                 fromDate: new Date('Dec 31 2009'),
- *                 toDate: new Date('Jan 5 2010'),
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 style: {
- *                     axisLine: false
- *                 }
- *             }],
- *             series: {
- *                 type: 'candlestick',
- *                 xField: 'time',
- *                 openField: 'open',
- *                 highField: 'high',
- *                 lowField: 'low',
- *                 closeField: 'close',
- *                 style: {
- *                 ohlcType: 'ohlc',
- *                     dropStyle: {
- *                         fill: 'rgb(237, 123, 43)',
- *                         stroke: 'rgb(237, 123, 43)'
- *                     },
- *                     raiseStyle: {
- *                         fill: 'rgb(55, 153, 19)',
- *                         stroke: 'rgb(55, 153, 19)'
- *                     }
- *                 }
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['time', 'open', 'high', 'low', 'close'],
+ *            data: [{
+ *                'time': new Date('Jan 1 2010').getTime(),
+ *                'open': 600,
+ *                'high': 614,
+ *                'low': 578,
+ *                'close': 590
+ *            }, {
+ *                'time': new Date('Jan 2 2010').getTime(),
+ *                'open': 590,
+ *                'high': 609,
+ *                'low': 580,
+ *                'close': 580
+ *            }, {
+ *                'time': new Date('Jan 3 2010').getTime(),
+ *                'open': 580,
+ *                'high': 602,
+ *                'low': 578,
+ *                'close': 602
+ *            }, {
+ *                'time': new Date('Jan 4 2010').getTime(),
+ *                'open': 602,
+ *                'high': 614,
+ *                'low': 586,
+ *                'close': 586
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['open', 'high', 'low', 'close'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            grid: true,
+ *            minimum: 560,
+ *            maximum: 640
+ *        }, {
+ *            type: 'time',
+ *            position: 'bottom',
+ *            fields: ['time'],
+ *            fromDate: new Date('Dec 31 2009'),
+ *            toDate: new Date('Jan 5 2010'),
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            style: {
+ *                axisLine: false
+ *            }
+ *        }],
+ *        series: {
+ *            type: 'candlestick',
+ *            xField: 'time',
+ *            openField: 'open',
+ *            highField: 'high',
+ *            lowField: 'low',
+ *            closeField: 'close',
+ *            style: {
+ *                ohlcType: 'ohlc',
+ *                dropStyle: {
+ *                    fill: 'rgb(255, 128, 128)',
+ *                    stroke: 'rgb(255, 128, 128)',
+ *                    lineWidth: 3
+ *                },
+ *                raiseStyle: {
+ *                    fill: 'rgb(48, 189, 167)',
+ *                    stroke: 'rgb(48, 189, 167)',
+ *                    lineWidth: 3
+ *                }
+ *            }
+ *        }
  *     });
  */
 Ext.define('Ext.chart.axis.Time', {

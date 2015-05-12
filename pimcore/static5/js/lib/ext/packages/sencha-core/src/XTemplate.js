@@ -1,7 +1,7 @@
 /**
  * A template class that supports advanced functionality like:
  *
- * - Autofilling arrays using templates and sub-templates
+ * - Auto-filling arrays using templates and sub-templates
  * - Conditional processing with basic comparison operators
  * - Basic math function support
  * - Execute arbitrary inline code with special built-in template variables
@@ -299,6 +299,21 @@ Ext.define('Ext.XTemplate', {
      * @cfg {String/Array} definitions
      * Optional. A statement, or array of statements which set up `var`s which may then
      * be accessed within the scope of the generated function.
+     * 
+     *     var data = {
+     *         name: 'Don Griffin',
+     *         isWizard: true,
+     *         title: 'Senior Technomage',
+     *         company: 'Sencha Inc.'
+     *     };
+     *     
+     *     var tpl = new Ext.XTemplate('{[values.isWizard ? wizard : notSoWizard]}' +
+     *         ' {name}', {
+     *         definitions: 'var wizard = "Wizard", notSoWizard = "Townsperson";'
+     *     });
+     *     
+     *     console.log(tpl.apply(data));
+     *     // LOGS: Wizard Don Griffin
      */
 
     /**

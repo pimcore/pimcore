@@ -1,6 +1,37 @@
 describe("Ext.data.reader.Reader", function() {
     var reader, proxy;
     
+    afterEach(function() {
+        Ext.data.Model.schema.clear();
+        Ext.undefine('spec.User');
+    });
+    
+    function makeReader(cfg) {
+        Ext.define('spec.User', {
+            extend: 'Ext.data.Model',
+            fields: ['id']
+        });
+
+        proxy = {
+            setModel: Ext.emptyFn
+        };
+        
+        cfg = Ext.apply({
+            rootProperty: null,
+            totalProperty: null,
+            messageProperty: null,
+            successProperty: null,
+            proxy: proxy
+        }, cfg);
+        
+        reader = new Ext.data.reader.Reader(cfg);
+        
+        reader.buildExtractors = Ext.emptyFn;
+        reader.setModel(spec.User);
+        
+        return reader;
+    }
+    
     it("should have the nullResultSet defined on the prototype", function() {
         expect(Ext.data.reader.Reader.prototype.nullResultSet).toBeDefined();    
     });
@@ -9,29 +40,9 @@ describe("Ext.data.reader.Reader", function() {
         var response, responseData;
 
         beforeEach(function() {
-            Ext.define('spec.User', {
-                extend: 'Ext.data.Model',
-                fields: ['id']
-            });
-
-            proxy = {
-                setModel: Ext.emptyFn
-            };
-
-            reader = new Ext.data.reader.Reader({
-                proxy: proxy
-            });
-            reader.buildExtractors = Ext.emptyFn;
-            reader.setModel(spec.User);
-
-            spyOn(reader, 'readRecords').andReturn({});
+            makeReader();
         });
 
-        afterEach(function() {
-            Ext.data.Model.schema.clear();
-            Ext.undefine('spec.User');
-        });
-        
         function doRead() {
             return reader.read(response);
         }
@@ -46,6 +57,7 @@ describe("Ext.data.reader.Reader", function() {
                     something: 'else'
                 };
 
+                spyOn(reader, 'readRecords').andReturn({});
                 spyOn(reader, 'getResponseData').andCallFake(function() {
                     return responseData;
                 });
@@ -60,6 +72,7 @@ describe("Ext.data.reader.Reader", function() {
 
         describe("if there is no responseText property", function() {
             beforeEach(function() {
+                spyOn(reader, 'readRecords').andReturn({});
                 spyOn(reader, 'getResponseData').andCallFake(function() {
                     return responseData;
                 });
@@ -80,6 +93,7 @@ describe("Ext.data.reader.Reader", function() {
 
         describe("if the response was falsy", function() {
             var nullSet = Ext.data.reader.Reader.prototype.nullResultSet;
+            
             it("should return the nullResultSet if the response is undefined", function() {
                 response = undefined;
 
@@ -98,63 +112,74 @@ describe("Ext.data.reader.Reader", function() {
                 expect(doRead()).toBe(nullSet);
             });
         });
+    });
         
-        describe("transform", function() {
-            it("should invoke the transform function", function() {
-                var o = {
-                    id: 1
-                };
-                
-                var transformFn = function(data) {
-                    data[0] = {id: 2};
-                    return data;
-                };
-                
-                var readerWithTransform = new Ext.data.reader.Reader({
-                    rootProperty: null,
-                    totalProperty: null,
-                    messageProperty: null,
-                    successProperty: null,
-                    model: 'spec.User',
-                    transform: transformFn
-                });
-                
-                readerWithTransform.extractData = function(root, readOptions) {return root;};
-                var rec = readerWithTransform.readRecords([o]).getRecords()[0];
-                expect(rec.id).not.toEqual(o.id);
-                expect(rec.id).toEqual(2);
+    describe("transform", function() {
+        it("should invoke the transform function", function() {
+            var o = {
+                id: 1
+            };
+            
+            var transformFn = function(data) {
+                data[0] = {id: 2};
+                return data;
+            };
+            
+            makeReader({
+                transform: transformFn
             });
             
-            it("should invoke the transform function with the specified scope", function() {
-                var o = {
-                    id: 1
-                };
-                
-                var mockScope = {};
-                
-                var transformFn = function(data) {
-                    expect(this).toEqual(mockScope);
-                    data[0] = {id: 2}
-                    return data;
-                };
-                
-                var readerWithTransform = new Ext.data.reader.Reader({
-                    rootProperty: null,
-                    totalProperty: null,
-                    messageProperty: null,
-                    successProperty: null,
-                    model: 'spec.User',
-                    transform: {
-                        fn: transformFn,
-                        scope: mockScope
-                    }
-                });
-                
-                readerWithTransform.extractData = function(root, readOptions) {return root;};
-                var rec = readerWithTransform.readRecords([o]).getRecords()[0];
-                expect(rec.id).not.toEqual(o.id);
-                expect(rec.id).toEqual(2);
+            reader.extractData = function(root, readOptions) {return root;};
+            var rec = reader.readRecords([o]).getRecords()[0];
+            
+            expect(rec.id).not.toEqual(o.id);
+            expect(rec.id).toEqual(2);
+        });
+        
+        it("should invoke the transform function with the specified scope", function() {
+            var o = {
+                id: 1
+            };
+            
+            var mockScope = {};
+            
+            var transformFn = function(data) {
+                expect(this).toEqual(mockScope);
+                data[0] = {id: 2}
+                return data;
+            };
+            
+            makeReader({
+                transform: {
+                    fn: transformFn,
+                    scope: mockScope
+                }
             });
+            
+            reader.extractData = function(root, readOptions) {return root;};
+            var rec = reader.readRecords([o]).getRecords()[0];
+            
+            expect(rec.id).not.toEqual(o.id);
+            expect(rec.id).toEqual(2);
+        });
+    });
+        
+    describe("raw data", function() {
+        beforeEach(function() {
+            makeReader();
+        });
+        
+        it("should keep rawData by default", function() {
+            reader.readRecords([{ foo: 'bar' }]);
+            
+            expect(reader.rawData).toEqual([{ foo: 'bar' }]);
+        });
+        
+        it("should not keep rawData when told to", function() {
+            reader.setKeepRawData(false);
+            reader.readRecords([{ foo: 'bar' }]);
+            
+            expect(reader.rawData).not.toBeDefined();
         });
     });
 
@@ -162,21 +187,8 @@ describe("Ext.data.reader.Reader", function() {
         var meta;
 
         beforeEach(function() {
-            Ext.define('spec.User', {
-                extend: 'Ext.data.Model',
-                fields: ['id']
-            });
-
-            proxy = {
-                setModel: Ext.emptyFn
-            };
-
-            reader = new Ext.data.reader.Reader({
-                proxy: proxy
-            });
-            reader.buildExtractors = Ext.emptyFn;
-            reader.setModel(spec.User);
-
+            makeReader();
+            
             meta = {
                 root           : 'someRootProperty',
                 totalProperty  : 'someTotalProperty',

@@ -223,7 +223,13 @@ describe("Ext.direct.RemotingProvider", function() {
     });
     
     afterEach(function() {
-        provider = undefined;
+        if (provider) {
+            provider.destroy();
+        }
+        
+        Ext.direct.Manager.clearAllMethods();
+        
+        provider = null;
         
         try {
             delete window.Direct;

@@ -329,18 +329,6 @@ describe("Ext.data.schema.OneToOne", function() {
             defineUser();
         });
 
-        it("should infer the key from the parent", function() {
-            var user = User.load(1);
-            complete({
-                id: 1,
-                address: {
-                    id: 101
-                }
-            });
-            expect(user.get('addressId')).toBe(101);
-            expect(user.dirty).toBe(false);
-        });
-
         it("should delete the non-key holder from the data collection", function() {
             var user = User.load(1);
             complete({
@@ -363,6 +351,88 @@ describe("Ext.data.schema.OneToOne", function() {
             });
             expect(address.get('user')).toBeUndefined();
             expect(address.getUser().getId()).toBe(1);
+        });
+
+        describe("key inference", function() {
+            describe("without session", function() {
+                it("should infer the key from the parent", function() {
+                    var user = User.load(1);
+                    complete({
+                        id: 1,
+                        address: {
+                            id: 101
+                        }
+                    });
+                    expect(user.getAddress().getId()).toBe(101);
+                    expect(user.get('addressId')).toBe(101);
+                    expect(user.dirty).toBe(false);
+                });
+            });
+
+            describe("with session", function() {
+                var session;
+
+                beforeEach(function() {
+                    session = new Ext.data.Session();
+                });
+
+                afterEach(function() {
+                    session.destroy();
+                    session = null;
+                });
+
+                it("should favour an existing reference", function() {
+                    var user = session.createRecord('User', {
+                        id: 1,
+                        addressId: 201
+                    });
+
+                    user.load();
+                    complete({
+                        id: 1,
+                        address: {
+                            id: 101
+                        }
+                    });
+
+                    var address101 = session.peekRecord('Address', 101);
+
+                    expect(user.getAddress().getId()).toBe(201);
+                    expect(user.get('addressId')).toBe(201);
+                    expect(user.dirty).toBe(false);
+                    expect(address101).not.toBeNull();
+                    expect(user.getAddress()).not.toBe(address101);
+                });
+
+                it("should infer the key from the parent if not specified", function() {
+                    var user = User.load(1, null, session);
+                    complete({
+                        id: 1,
+                        address: {
+                            id: 101
+                        }
+                    });
+                    expect(user.getAddress().getId()).toBe(101);
+                    expect(user.get('addressId')).toBe(101);
+                    expect(user.dirty).toBe(false);
+                });
+
+                it("should not infer the key from the parent if a key is specified", function() {
+                    var user = User.load(1, null, session);
+                    complete({
+                        id: 1,
+                        // Essentially the same as favour an existing reference, just at load time
+                        addressId: 201,
+                        address: {
+                            id: 101
+                        }
+                    });
+
+                    expect(user.getAddress().getId()).toBe(201);
+                    expect(user.get('addressId')).toBe(201);
+                    expect(user.dirty).toBe(false);
+                });
+            });
         });
     });
     
@@ -837,59 +907,185 @@ describe("Ext.data.schema.OneToOne", function() {
                                 address = new Address({
                                     id: 3
                                 }, session);
-                                user.setAddress(address);
                             });
 
-                            it("should have the same record reference", function() {
-                                expect(user.getAddress()).toBe(address);
-                            });
+                            describe("with nothing existing", function() {
+                                beforeEach(function() {
+                                    user.setAddress(address);
+                                });
+
+                                it("should have the same record reference", function() {
+                                    expect(user.getAddress()).toBe(address);
+                                });
                             
-                            it("should set the underlying key value", function() {
-                                expect(user.get('addressId')).toBe(3);  
+                                it("should set the underlying key value", function() {
+                                    expect(user.get('addressId')).toBe(3);  
+                                });
+
+                                it("should clear the instance and foreign key when setting to null", function() {
+                                    user.setAddress(null);
+                                    expect(user.getAddress()).toBeNull();
+                                    expect(user.get('addressId')).toBeNull();
+                                });
                             });
 
-                            it("should clear the instance and foreign key when setting to null", function() {
-                                user.setAddress(null);
-                                expect(user.getAddress()).toBeNull();
-                                expect(user.get('addressId')).toBeNull();
+                            describe("with an existing key, but no instance", function() {
+                                beforeEach(function() {
+                                    user.setAddress(1000);
+                                    user.setAddress(address);
+                                });
+
+                                it("should have the new record reference", function() {
+                                    expect(user.getAddress()).toBe(address);
+                                });
+
+                                it("should set the underlying key value", function() {
+                                    expect(user.get('addressId')).toBe(3);  
+                                });
+
+                                it("should clear the instance and foreign key when setting to null", function() {
+                                    user.setAddress(null);
+                                    expect(user.getAddress()).toBeNull();
+                                    expect(user.get('addressId')).toBeNull();
+                                });
+                            });
+
+                            describe("with an existing instance", function() {
+                                beforeEach(function() {
+                                    user.setAddress(new Address({
+                                        id: 1000
+                                    }, session));
+                                    user.setAddress(address);
+                                });
+
+                                it("should have the new record reference", function() {
+                                    expect(user.getAddress()).toBe(address);
+                                });
+
+                                it("should set the underlying key value", function() {
+                                    expect(user.get('addressId')).toBe(3);  
+                                });
+
+                                it("should clear the instance and foreign key when setting to null", function() {
+                                    user.setAddress(null);
+                                    expect(user.getAddress()).toBeNull();
+                                    expect(user.get('addressId')).toBeNull();
+                                });
                             });
                         });
                         
                         describe("value", function() {
-                            it("should set the underlying key", function() {
-                                user.setAddress(16);
-                                expect(user.get('addressId')).toBe(16);    
-                            });  
-                            
-                            it("should keep the same reference if setting the value with a matching id", function() {
-                                var address = new Address({
-                                    id: 3
-                                }, session);
-                                user.setAddress(address);
-                                user.setAddress(3);
-                                expect(user.getAddress()).toBe(address);
-                            });
-                            
-                            it("should clear the reference if a model is already set and a new id is passed", function() {
-                                var address = new Address({
-                                    id: 3
-                                }, session);
-                                user.setAddress(address);
-                                user.setAddress(13);
-                                spy = spyOn(Address.getProxy(), 'read');
-                                // Reference doesn't exist, so need to grab it again here
-                                user.getAddress();
-                                expect(spy.mostRecentCall.args[0].getId()).toBe(13);
+                            describe("with nothing existing", function() {
+                                it("should set the underlying key", function() {
+                                    user.setAddress(16);
+                                    expect(user.get('addressId')).toBe(16);    
+                                });
+
+                                it("should return a new record object that loads", function() {
+                                    user.setAddress(16);
+                                    spy = spyOn(Address.getProxy(), 'read');
+                                    // Reference doesn't exist, so need to grab it again here
+                                    expect(user.getAddress().getId()).toBe(16);
+                                    expect(spy.mostRecentCall.args[0].getId()).toBe(16);
+                                });
+
+                                it("should do nothing if the key is null", function() {
+                                    user.setAddress(null);
+                                    expect(user.getAddress()).toBeNull();
+                                });
                             });
 
-                            it("should set the foreign key when setting to null", function() {
-                                user.setAddress(13);
+                            describe("with an existing key, but no instance", function() {
+                                beforeEach(function() {
+                                    user.setAddress(1000);
+                                });
+
+                                it("should set the underlying key", function() {
+                                    user.setAddress(16);
+                                    expect(user.get('addressId')).toBe(16);    
+                                });
+
+                                it("should return a new record object that loads", function() {
+                                    user.setAddress(16);
+                                    spy = spyOn(Address.getProxy(), 'read');
+                                    // Reference doesn't exist, so need to grab it again here
+                                    expect(user.getAddress().getId()).toBe(16);
+                                    expect(spy.mostRecentCall.args[0].getId()).toBe(16);
+                                });
+
+                                it("should clear the key", function() {
+                                    user.setAddress(null);
+                                    expect(user.get('addressId')).toBeNull();
+                                    expect(user.getAddress()).toBeNull();
+                                });
+                            });
+
+                            describe("with an existing instance", function() {
+                                beforeEach(function() {
+                                    user.setAddress(new Address({
+                                        id: 1000
+                                    }, session));
+                                });
+
+                                it("should set the underlying key", function() {
+                                    user.setAddress(16);
+                                    expect(user.get('addressId')).toBe(16);    
+                                });
+
+                                it("should return a new record object that loads", function() {
+                                    user.setAddress(16);
+                                    spy = spyOn(Address.getProxy(), 'read');
+                                    // Reference doesn't exist, so need to grab it again here
+                                    expect(user.getAddress().getId()).toBe(16);
+                                    expect(spy.mostRecentCall.args[0].getId()).toBe(16);
+                                });
+
+                                it("should clear the key", function() {
+                                    user.setAddress(null);
+                                    expect(user.get('addressId')).toBeNull();
+                                    expect(user.getAddress()).toBeNull();
+                                });
+                            });
+                        });
+
+                        describe("timing", function() {
+                            var address, joiner, fn;
+
+                            beforeEach(function() {
+                                joiner = {
+                                    afterEdit: function() {
+                                        fn();
+                                    }
+                                };
+                                address = new Address({
+                                    id: 101
+                                }, session);
+                            });
+
+                            afterEach(function() {
+                                fn = joiner = null;
+                            });
+
+                            it("should have the record instances set in afterEdit", function() {
+                                var val;
+                                fn = function() {
+                                    val = user.getAddress();
+                                };
+                                user.join(joiner);
+                                user.setAddress(address);
+                                expect(val).toBe(address);
+                            });
+
+                            it("should have the value cleared in afterEdit", function() {
+                                var val;
+                                user.setAddress(address);
+
+                                fn = function() {
+                                    val = user.getAddress();
+                                };
+                                user.join(joiner);
                                 user.setAddress(null);
-                                expect(user.get('addressId')).toBeNull();
-
-                                spy = spyOn(Address.getProxy(), 'read');
-                                user.getAddress();
-                                expect(spy).not.toHaveBeenCalled();
+                                expect(val).toBeNull();
                             });
                         });
                         

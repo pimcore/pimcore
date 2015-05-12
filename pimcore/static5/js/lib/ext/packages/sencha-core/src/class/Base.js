@@ -914,7 +914,7 @@ var noArgs = [],
          * overrides defined that target the class.
          * 
          * @param {Object} config
-         * @param {Class} [mixinClass] The mixin class if the configs are from a mixin.
+         * @param {Ext.Class} [mixinClass] The mixin class if the configs are from a mixin.
          * @private
          * @static
          * @inheritable

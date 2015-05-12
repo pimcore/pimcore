@@ -95,6 +95,8 @@ Ext.define('Ext.chart.AbstractChart', {
         'Ext.data.Store'
     ],
 
+    isChart: true,
+
     defaultBindProperty: 'store',
 
     /**
@@ -205,8 +207,60 @@ Ext.define('Ext.chart.AbstractChart', {
     config: {
 
         /**
-         * @cfg {Ext.data.Store} store
-         * The store that supplies data to this chart.
+         * @cfg {Ext.data.Store/String/Object} store
+         * The data source to which the chart is bound. Acceptable values for this property are:
+         *
+         *   - **any {@link Ext.data.Store Store} class / subclass**
+         *   - **an {@link Ext.data.Store#storeId ID of a store}**
+         *   - **a {@link Ext.data.Store Store} config object**.  When passing a config you can 
+         *     specify the store type by alias.  Passing a config object with a store type will 
+         *     dynamically create a new store of that type when the chart is instantiated.
+         *
+         * For example:
+         * 
+         *     Ext.define('MyApp.store.Customer', {
+         *         extend: 'Ext.data.Store',
+         *         alias: 'store.customerstore',
+         *     
+         *         fields: ['name', 'value']
+         *     });
+         *     
+         *     
+         *     Ext.create({
+         *         xtype: 'cartesian',
+         *         renderTo: document.body,
+         *         height: 400,
+         *         width: 400,
+         *         store: {
+         *             type: 'customerstore',
+         *             data: [{
+         *                 name: 'metric one',
+         *                 value: 10
+         *             }]
+         *         },
+         *         axes: [{
+         *             type: 'numeric',
+         *             position: 'left',
+         *             title: {
+         *                 text: 'Sample Values',
+         *                 fontSize: 15
+         *             },
+         *             fields: 'value'
+         *         }, {
+         *             type: 'category',
+         *             position: 'bottom',
+         *             title: {
+         *                 text: 'Sample Values',
+         *                 fontSize: 15
+         *             },
+         *             fields: 'name'
+         *         }],
+         *         series: {
+         *             type: 'bar',
+         *             xField: 'name',
+         *             yField: 'value'
+         *         }
+         *     });
          */
         store: 'ext-empty-store',
 
@@ -229,11 +283,22 @@ Ext.define('Ext.chart.AbstractChart', {
         style: null,
 
         /**
-         * @cfg {Boolean/Object} shadow (optional) `true` for the default shadow configuration 
+         * @cfg {Boolean/Object} shadow (optional) `true` for the default shadow configuration
          * `{shadowOffsetX: 2, shadowOffsetY: 2, shadowBlur: 3, shadowColor: '#444'}`
          * or a standard shadow config object to be used for default chart shadows.
+         * @hide
          */
         shadow: false,
+
+        /**
+         * @cfg shadowOffset
+         * @hide
+         */
+
+        /**
+         * @cfg animateShadow
+         * @hide
+         */
 
         /**
          * @cfg {Boolean/Object} animation (optional) `true` for the default animation (easing: 'ease' and duration: 500)
@@ -702,6 +767,12 @@ Ext.define('Ext.chart.AbstractChart', {
         }
     },
 
+    /**
+     * @method getAxis Returns an axis instance based on the type of data passed. 
+     * @param {String/Number/Ext.chart.axis.Axis} axis You may request an axis by passing
+     * an id, the number of the array key returned by {@link #getAxes}, or an axis instance.
+     * @return {Ext.chart.axis.Axis} The axis requested
+     */
     getAxis: function (axis) {
         if (axis instanceof Ext.chart.axis.Axis) {
             return axis;
@@ -734,50 +805,61 @@ Ext.define('Ext.chart.AbstractChart', {
     },
 
     applyAxes: function (newAxes, oldAxes) {
-        this.resizing++;
+        var me = this,
+            positions = {left: 'right', right: 'left'},
+            result = [],
+            axis, oldAxis,
+            linkedTo, id,
+            i, ln, oldMap;
 
-        this.getStore();
+        me.resizing++;
+
+        me.getStore();
+
         if (!oldAxes) {
             oldAxes = [];
             oldAxes.map = {};
         }
-        var result = [], i, ln, axis, oldAxis, linkedTo, id,
-            positions = {left: 'right', right: 'left'},
-            oldMap = oldAxes.map;
+        oldMap = oldAxes.map;
         result.map = {};
+
         newAxes = Ext.Array.from(newAxes, true);
         for (i = 0, ln = newAxes.length; i < ln; i++) {
-            axis = Ext.Object.chain(newAxes[i]);
+            axis = newAxes[i];
             if (!axis) {
                 continue;
             }
-
-            linkedTo = axis.linkedTo;
-            id = axis.id;
-            if (Ext.isNumber(linkedTo)) {
-                axis = Ext.merge({}, newAxes[linkedTo], axis);
-            } else if (Ext.isString(linkedTo)) {
-                Ext.Array.each(newAxes, function (item) {
-                    if (item.id === axis.linkedTo) {
-                        axis = Ext.merge({}, item, axis);
-                        return false;
-                    }
-                });
+            if (axis instanceof Ext.chart.axis.Axis) {
+                oldAxis = oldMap[axis.getId()];
+            } else {
+                axis = Ext.Object.chain(axis);
+                linkedTo = axis.linkedTo;
+                id = axis.id;
+                if (Ext.isNumber(linkedTo)) {
+                    axis = Ext.merge({}, newAxes[linkedTo], axis);
+                } else if (Ext.isString(linkedTo)) {
+                    Ext.Array.each(newAxes, function (item) {
+                        if (item.id === axis.linkedTo) {
+                            axis = Ext.merge({}, item, axis);
+                            return false;
+                        }
+                    });
+                }
+                axis.id = id;
+                if (me.getInherited().rtl) {
+                    axis.position = positions[axis.position] || axis.position;
+                }
+                id = axis.getId && axis.getId() || axis.id;
+                axis = Ext.factory(axis, null, oldAxis = oldMap[id], 'axis');
             }
-            axis.id = id;
 
-            if (this.getInherited().rtl) {
-                axis.position = positions[axis.position] || axis.position;
-            }
-            id = axis.getId && axis.getId() || axis.id;
-            axis = Ext.factory(axis, null, oldAxis = oldMap[id], 'axis');
             if (axis) {
-                axis.setChart(this);
+                axis.setChart(me);
                 result.push(axis);
                 result.map[axis.getId()] = axis;
                 if (!oldAxis) {
-                    axis.on('animationstart', 'onAnimationStart', this);
-                    axis.on('animationend', 'onAnimationEnd', this);
+                    axis.on('animationstart', 'onAnimationStart', me);
+                    axis.on('animationend', 'onAnimationEnd', me);
                 }
             }
         }
@@ -788,7 +870,7 @@ Ext.define('Ext.chart.AbstractChart', {
             }
         }
 
-        this.resizing--;
+        me.resizing--;
 
         return result;
     },
@@ -879,14 +961,14 @@ Ext.define('Ext.chart.AbstractChart', {
     updateTheme: function (theme) {
         var me = this,
             axes = me.getAxes(),
-            series = me.getSeries(),
+            seriesList = me.getSeries(),
             colors = me.getColors(),
-            seriesItem, seriesTheme,
-            colorIndex = 0,
-            markerIndex = 0,
-            markerCount,
-            colorCount,
-            i;
+            series, i;
+            //seriesStyle,
+            //colorIndex = 0,
+            //markerIndex = 0,
+            //markerCount,
+            //colorCount,
 
         me.updateChartTheme(theme);
 
@@ -894,32 +976,42 @@ Ext.define('Ext.chart.AbstractChart', {
             axes[i].updateTheme(theme);
         }
 
-        for (i = 0; i < series.length; i++) {
-            series[i].updateTheme(theme);
+        for (i = 0; i < seriesList.length; i++) {
+            series = seriesList[i];
 
-            seriesItem = series[i];
-            seriesTheme = {};
+            // TODO: This may look like it belongs to the theme, but there we don't know what
+            // TODO: series the chart will be using and thus the color count is unknown.
+            // TODO: It could also be moved to the series.updateTheme method, if not for the
+            // TODO: circular copying that starts from the previous index.
+            // TODO: Finally, keeping it here is not really an option either, since theme
+            // TODO: is a singleton, so we shouldn't modify it before passing it
+            // TODO: to the series.updateTheme.
+            // seriesStyle = {};
+            //
+            //if (theme.getSeriesThemes) {
+            //    colorCount = series.themeColorCount();
+            //    seriesStyle.subStyle = me.circularCopyObject(theme.getSeriesThemes(), colorIndex, colorCount);
+            //    colorIndex += colorCount;
+            //} else {
+            //    seriesStyle.subStyle = {};
+            //}
+            //
+            //if (theme.getMarkerThemes) {
+            //    markerCount = series.themeMarkerCount();
+            //    seriesStyle.markerSubStyle = me.circularCopyObject(theme.getMarkerThemes(), markerIndex, markerCount);
+            //    markerIndex += markerCount;
+            //} else {
+            //    seriesStyle.markerSubStyle = {};
+            //}
 
-            if (theme.getSeriesThemes) {
-                colorCount = seriesItem.themeColorCount();
-                seriesTheme.subStyle = me.circularCopyObject(theme.getSeriesThemes(), colorIndex, colorCount);
-                colorIndex += colorCount;
-            } else {
-                seriesTheme.subStyle = {};
-            }
-
-            if (theme.getMarkerThemes) {
-                markerCount = seriesItem.themeMarkerCount();
-                seriesTheme.markerSubStyle = me.circularCopyObject(theme.getMarkerThemes(), markerIndex, markerCount);
-                markerIndex += markerCount;
-            } else {
-                seriesTheme.markerSubStyle = {};
-            }
+            series.updateTheme(theme);
         }
 
         me.updateSpriteTheme(theme);
 
         me.updateColors(colors);
+
+        me.redraw();
     },
 
     themeOnlyIfConfigured: {
@@ -987,6 +1079,62 @@ Ext.define('Ext.chart.AbstractChart', {
         }
     },
 
+    /**
+     * Adds a {@link Ext.chart.series.Series Series} to this chart.
+     *
+     * The Series (or array) passed will be added to the existing series. If an `id` is specified
+     * in a new Series, any existing Series of that `id` will be updated.
+     *
+     * The chart will be redrawn in response to the change.
+     *
+     * @param {Object/Object[]/Ext.chart.series.Series/Ext.chart.series.Series[]} newSeries A config object
+     * describing the Series to add, or an instantiated Series object. Or an array of these.
+     */
+    addSeries: function(newSeries) {
+        var series = this.getSeries();
+
+        Ext.Array.push(series, newSeries);
+        this.setSeries(series);
+    },
+
+    /**
+     * Remove a {@link Ext.chart.series.Series Series} from this chart.
+     * The Series (or array) passed will be removed from the existing series.
+     *
+     * The chart will be redrawn in response to the change.
+     *
+     * @param {Ext.chart.series.Series/String} series The Series or the `id` of the Series to remove. May be an array.
+     */
+    removeSeries: function(series) {
+        series = Ext.Array.from(series);
+
+        var existingSeries = this.getSeries(),
+            newSeries = [],
+            len = series.length,
+            removeMap = {},
+            i, s;
+
+        // Build a map of the Series IDs that are to be removed
+        for (i = 0; i < len; i++) {
+            s = series[i];
+
+            // If they passed a Series Object
+            if (typeof s !== 'string') {
+                s = s.getId();
+            }
+            removeMap[s] = true;
+        }
+
+        // Build a new Series array that excludes those Series scheduled for removal
+        for (i = 0, len = existingSeries.length; i < len; i++) {
+            if (!removeMap[existingSeries[i].getId()]) {
+                newSeries.push(existingSeries[i]);
+            }
+        }
+
+        this.setSeries(newSeries);
+    },
+
     applySeries: function (newSeries, oldSeries) {
         var me = this,
             result = [],
@@ -996,7 +1144,9 @@ Ext.define('Ext.chart.AbstractChart', {
         me.resizing++;
 
         me.getAxes();
-        if (!oldSeries) {
+        if (oldSeries) {
+            oldMap = oldSeries.map;
+        } else {
             oldSeries = [];
             oldMap = oldSeries.map = {};
         }
@@ -1007,28 +1157,34 @@ Ext.define('Ext.chart.AbstractChart', {
             if (!series) {
                 continue;
             }
-            oldSeriesItem = oldSeries.map[series.getId && series.getId() || series.id];
+            oldSeriesItem = oldMap[series.getId && series.getId() || series.id];
+
+            // New Series instance passed in
             if (series instanceof Ext.chart.series.Series) {
-                if (oldSeriesItem !== series) {
-                    // Replacing
-                    if (oldSeriesItem) {
-                        oldSeriesItem.destroy();
-                    }
+                // Replacing
+                if (oldSeriesItem && oldSeriesItem !== series) {
+                    oldSeriesItem.destroy();
                 }
                 series.setChart(me);
-            } else if (Ext.isObject(series)) {
+            }
+            // Series config object passed in
+            else if (Ext.isObject(series)) {
+
+                // Config object matched an existing Series item by id;
+                // update its configuration
                 if (oldSeriesItem) {
-                    // Update
                     oldSeriesItem.setConfig(series);
                     series = oldSeriesItem;
-                } else {
-                    // Create a series.
+                }
+                // Create a new Series
+                else {
                     if (Ext.isString(series)) {
-                        series = Ext.create(series.xclass || ('series.' + series), {chart: me});
-                    } else {
-                        series.chart = me;
-                        series = Ext.create(series.xclass || ('series.' + series.type), series);
+                        series = {
+                            type: series
+                        };
                     }
+                    series.chart = me;
+                    series = Ext.create(series.xclass || ('series.' + series.type), series);
                     series.on('animationstart', 'onAnimationStart', me);
                     series.on('animationend', 'onAnimationEnd', me);
                 }
@@ -1345,13 +1501,25 @@ Ext.define('Ext.chart.AbstractChart', {
     // @private remove gently.
     destroy: function () {
         var me = this,
-            emptyArray = [],
-            legend = me.getLegend();
+            legend = me.getLegend(),
+            axes = me.getAxes(),
+            series = me.getSeries(),
+            interactions = me.getInteractions(),
+            i, ln;
+
         me.surfaceMap = null;
         me.setHighlightItem(null);
-        me.setSeries(emptyArray);
-        me.setAxes(emptyArray);
-        me.setInteractions(emptyArray);
+
+        for (i = 0, ln = interactions.length; i < ln; i++) {
+            interactions[i].destroy();
+        }
+        for (i = 0, ln = axes.length; i < ln; i++) {
+            axes[i].destroy();
+        }
+        for (i = 0, ln = series.length; i < ln; i++) {
+            series[i].destroy();
+        }
+        
         if (legend) {
             legend.destroy();
             me.setLegend(null);
@@ -1359,7 +1527,8 @@ Ext.define('Ext.chart.AbstractChart', {
         me.legendStore = null;
         me.setStore(null);
         me.cancelLayout();
-        this.callParent(arguments);
+
+        me.callParent(arguments);
     },
 
     /* ---------------------------------

@@ -46,7 +46,7 @@ Ext.define('Ext.util.Event', function() {
         }
         //</debug>
 
-        if (!me.isListening(fn, scope)) {
+        if (me.findListener(fn, scope) === -1) {
             listener = me.createListener(fn, scope, options, caller, manager);
             if (me.firing) {
                 // if we are currently firing this event, don't disturb the listener loop
@@ -56,7 +56,7 @@ Ext.define('Ext.util.Event', function() {
             index = length = listeners.length;
             priority = options && options.priority;
             highestNegativePriorityIndex = me._highestNegativePriorityIndex;
-            hasNegativePriorityIndex = (highestNegativePriorityIndex !== undefined);
+            hasNegativePriorityIndex = highestNegativePriorityIndex !== undefined;
             if (priority) {
                 // Find the index at which to insert the listener into the listeners array,
                 // sorted by priority highest to lowest.
@@ -94,9 +94,9 @@ Ext.define('Ext.util.Event', function() {
                 me._highestNegativePriorityIndex ++;
             }
             if (index === length) {
-                me.listeners[length] = listener;
+                listeners[length] = listener;
             } else {
-                arrayInsert(me.listeners, index, [listener]);
+                arrayInsert(listeners, index, [listener]);
             }
 
             if (observable.isElement) {
@@ -122,7 +122,7 @@ Ext.define('Ext.util.Event', function() {
 
     createListener: function(fn, scope, o, caller, manager) {
         var me = this,
-            namedScope = (Ext._namedScopes[scope]),
+            namedScope = Ext._namedScopes[scope],
             listener = {
                 fn: fn,
                 scope: scope,
@@ -190,10 +190,6 @@ Ext.define('Ext.util.Event', function() {
         }
 
         return - 1;
-    },
-
-    isListening: function(fn, scope) {
-        return this.findListener(fn, scope) !== -1;
     },
 
     removeListener: function(fn, scope, index) {
@@ -373,6 +369,18 @@ Ext.define('Ext.util.Event', function() {
                             } else {
                                 continue;
                             }
+                        }
+
+                        if (options.preventDefault) {
+                            e.preventDefault();
+                        }
+
+                        if (options.stopPropagation) {
+                            e.stopPropagation();
+                        }
+
+                        if (options.stopEvent) {
+                            e.stopEvent();
                         }
                     }
 

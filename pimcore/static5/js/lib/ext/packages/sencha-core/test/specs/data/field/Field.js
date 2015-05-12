@@ -143,14 +143,14 @@ describe("Ext.data.field.Field", function() {
                 expect(field.getDefaultValue()).toBe(true);
             });
             
-            it("should run the through the converter if it exists", function() {
+            it("should not pass the value through the converter", function() {
+                var spy = jasmine.createSpy().andReturn(8);
                 make({
                     defaultValue: 7,
-                    convert: function(v) {
-                        return v + 1;
-                    }
+                    convert: spy
                 });
-                expect(field.getDefaultValue()).toBe(8);
+                expect(field.getDefaultValue()).toBe(7);
+                expect(spy).not.toHaveBeenCalled();
             });
         });
         
@@ -192,19 +192,87 @@ describe("Ext.data.field.Field", function() {
                 expect(field.getPersist()).toBe(false);
             });
             
-            it("should configure persist: false if it's a calculated field", function() {
-                make({
-                    convert: function(a, b){}
-                });    
-                expect(field.getPersist()).toBe(false);
+            describe("with a convert method", function() {
+                describe("single arg", function() {
+                    function fn(v) {}
+
+                    it("should default to true", function() {
+                        make({
+                            convert: fn
+                        });
+                        expect(field.getPersist()).toBe(true);
+                    });
+
+                    it("should configure a true value", function() {
+                        make({
+                            persist: true,
+                            convert: fn
+                        });
+                        expect(field.getPersist()).toBe(true);
+                    });
+
+                    it("should configure a false value", function() {
+                        make({
+                            persist: false,
+                            convert: fn
+                        });
+                        expect(field.getPersist()).toBe(false);
+                    });
+                });
+
+                describe("multi arg", function() {
+                    function fn(v, rec) {}
+
+                    it("should default to true", function() {
+                        make({
+                            convert: fn
+                        });
+                        expect(field.getPersist()).toBe(true);
+                    });
+
+                    it("should configure a true value", function() {
+                        make({
+                            persist: true,
+                            convert: fn
+                        });
+                        expect(field.getPersist()).toBe(true);
+                    });
+
+                    it("should configure a false value", function() {
+                        make({
+                            persist: false,
+                            convert: fn
+                        });
+                        expect(field.getPersist()).toBe(false);
+                    });
+                });
             });
-            
-            it("should always favour a persist config over calculated", function() {
-                make({
-                    persist: true,
-                    convert: function(){}
-                });    
-                expect(field.getPersist()).toBe(true);
+
+            describe("with a calculate method", function() {
+                function fn() {}
+
+                it("should default to false", function() {
+                    make({
+                        calculate: fn
+                    });
+                    expect(field.getPersist()).toBe(false);
+                });
+
+                it("should configure a true value", function() {
+                    make({
+                        persist: true,
+                        calculate: fn
+                    });
+                    expect(field.getPersist()).toBe(true);
+                });
+
+                it("should configure a false value", function() {
+                    make({
+                        persist: false,
+                        calculate: fn
+                    });
+                    expect(field.getPersist()).toBe(false);
+                });
             });
         });
 

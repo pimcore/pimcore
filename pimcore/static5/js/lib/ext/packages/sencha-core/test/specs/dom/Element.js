@@ -81,7 +81,7 @@ describe("Ext.dom.Element", function() {
             var domEl, element;
 
             function addElement(tag) {
-                domEl = document.createElement(tag);
+                domEl = document.createElement(tag || 'div');
                 document.body.appendChild(domEl);
                 return fly ? Ext.fly(domEl) : Ext.get(domEl);
             }
@@ -93,6 +93,591 @@ describe("Ext.dom.Element", function() {
                     element.destroy();
                     element = null;
                 }
+            });
+
+            describe("classes", function() {
+                describe("addCls", function() {
+                    beforeEach(function() {
+                        element = addElement();
+                        domEl = element.dom;
+                    });
+
+                    it("should not throw an exception when className is null", function() {
+                        expect(function() {
+                            element.addCls(null);
+                        }).not.toThrow();
+                    });
+
+                    describe("return type", function() {
+                        it("should return the element when the class is null", function() {
+                            expect(element.addCls(null)).toBe(element);
+                        });
+
+                        it("should return the element when the class is a string", function() {
+                            expect(element.addCls('foo')).toBe(element);
+                        });
+
+                        it("should return the element when the class is an array", function() {
+                            expect(element.addCls(['foo', 'bar'])).toBe(element);
+                        });
+                    });
+
+                    describe("argument types", function() {
+                        describe("with a string", function() {
+                            describe("without spaces", function() {
+                                it("should add a class to the element", function() {
+                                    element.addCls('foo');
+                                    expect(domEl.className).toBe('foo');
+                                });
+
+                                it("should add a class when another class already exists", function() {
+                                    domEl.className = 'foo';
+                                    element.addCls('bar');
+                                    expect(domEl.className).toBe('foo bar');
+                                });
+
+                                it("should not duplicate the class if it exists on the element", function() {
+                                    domEl.className = 'foo';
+                                    element.addCls('foo');
+                                    expect(domEl.className).toBe('foo');
+                                });
+
+                                describe("prefix & suffix", function() {
+                                    describe("prefix only", function() {
+                                        it("should attach the prefix to the class", function() {
+                                            element.addCls('foo', 'a');
+                                            expect(domEl.className).toBe('a-foo');
+                                        });
+
+                                        it("should use the prefix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.addCls('foo', 'a');
+                                            expect(domEl.className).toBe('foo a-foo');
+                                        });
+                                    });
+
+                                    describe("suffix only", function() {
+                                        it("should attach the suffix to the class", function() {
+                                            element.addCls('foo', null, 'b');
+                                            expect(domEl.className).toBe('foo-b');
+                                        });
+
+                                        it("should use the suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.addCls('foo', null, 'b');
+                                            expect(domEl.className).toBe('foo foo-b');
+                                        });
+                                    });
+
+                                    describe("prefix and suffix", function() {
+                                        it("should attach the prefix & suffix to the class", function() {
+                                            element.addCls('foo', 'a', 'b');
+                                            expect(domEl.className).toBe('a-foo-b');
+                                        });
+
+                                        it("should use the prefix & suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.addCls('foo', 'a', 'b');
+                                            expect(domEl.className).toBe('foo a-foo-b');
+                                        });
+                                    });
+                                });
+                            });
+
+                            describe("with spaces", function() {
+                                it("should split class names by string and add them separately", function() {
+                                    element.addCls('foo bar');
+                                    expect(domEl.className).toBe('foo bar');
+                                });
+
+                                it("should split by multiple spaces", function() {
+                                    element.addCls('foo    bar           baz');
+                                    expect(domEl.className).toBe('foo bar baz');
+                                });
+
+                                it("should trim leading spaces", function() {
+                                    expect(element.addCls('     foo bar'));
+                                    expect(domEl.className).toBe('foo bar');
+                                });
+
+                                it("should trim trailing spaces", function() {
+                                    expect(element.addCls('foo bar           '));
+                                    expect(domEl.className).toBe('foo bar');
+                                });
+
+                                it("should only add new classes to the element", function() {
+                                    element.dom.className = 'bar';
+                                    element.addCls('foo bar');
+                                    expect(domEl.className).toBe('bar foo');  
+                                });
+
+                                describe("prefix & suffix", function() {
+                                    describe("prefix only", function() {
+                                        it("should attach the prefix to the class", function() {
+                                            element.addCls('foo bar', 'a');
+                                            expect(domEl.className).toBe('a-foo a-bar');
+                                        });
+
+                                        it("should use the prefix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.addCls('foo bar', 'a');
+                                            expect(domEl.className).toBe('foo a-foo a-bar');
+                                        });
+                                    });
+
+                                    describe("suffix only", function() {
+                                        it("should attach the suffix to the class", function() {
+                                            element.addCls('foo bar', null, 'b');
+                                            expect(domEl.className).toBe('foo-b bar-b');
+                                        });
+
+                                        it("should use the suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.addCls('foo bar', null, 'b');
+                                            expect(domEl.className).toBe('foo foo-b bar-b');
+                                        });
+                                    });
+
+                                    describe("prefix and suffix", function() {
+                                        it("should attach the prefix & suffix to the class", function() {
+                                            element.addCls('foo bar', 'a', 'b');
+                                            expect(domEl.className).toBe('a-foo-b a-bar-b');
+                                        });
+
+                                        it("should use the prefix & suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.addCls('foo bar', 'a', 'b');
+                                            expect(domEl.className).toBe('foo a-foo-b a-bar-b');
+                                        });
+                                    });
+                                });
+                            });
+                        });
+
+                        describe("with an array", function() {
+                            it("should add all classes to the element", function() {
+                                element.addCls(['foo', 'bar']);
+                                expect(domEl.className).toBe('foo bar');
+                            });
+
+                            it("should only add new classes to the element", function() {
+                                element.dom.className = 'bar';
+                                element.addCls(['foo', 'bar']);
+                                expect(domEl.className).toBe('bar foo');  
+                            });
+
+                            describe("prefix & suffix", function() {
+                                describe("prefix only", function() {
+                                    it("should attach the prefix to the class", function() {
+                                        element.addCls(['foo', 'bar'], 'a');
+                                        expect(domEl.className).toBe('a-foo a-bar');
+                                    });
+
+                                    it("should use the prefix when comparing if the class exists", function() {
+                                        domEl.className = 'foo';
+                                        element.addCls(['foo', 'bar'], 'a');
+                                        expect(domEl.className).toBe('foo a-foo a-bar');
+                                    });
+                                });
+
+                                describe("suffix only", function() {
+                                    it("should attach the suffix to the class", function() {
+                                        element.addCls(['foo', 'bar'], null, 'b');
+                                        expect(domEl.className).toBe('foo-b bar-b');
+                                    });
+
+                                    it("should use the suffix when comparing if the class exists", function() {
+                                        domEl.className = 'foo';
+                                        element.addCls(['foo', 'bar'], null, 'b');
+                                        expect(domEl.className).toBe('foo foo-b bar-b');
+                                    });
+                                });
+
+                                describe("prefix and suffix", function() {
+                                    it("should attach the prefix & suffix to the class", function() {
+                                        element.addCls(['foo', 'bar'], 'a', 'b');
+                                        expect(domEl.className).toBe('a-foo-b a-bar-b');
+                                    });
+
+                                    it("should use the prefix & suffix when comparing if the class exists", function() {
+                                        domEl.className = 'foo';
+                                        element.addCls(['foo', 'bar'], 'a', 'b');
+                                        expect(domEl.className).toBe('foo a-foo-b a-bar-b');
+                                    });
+                                });
+                            });
+                        });
+                    });
+
+                    describe("matching", function() {
+                        it("should not match a leading substring as an existing class", function() {
+                            domEl.className = 'foobar';
+                            element.addCls('foo');
+                            expect(domEl.className).toBe('foobar foo');
+                        });
+
+                        it("should not match a trailing substring as an existing class", function() {
+                            domEl.className = 'barfoo';
+                            element.addCls('foo');
+                            expect(domEl.className).toBe('barfoo foo');
+                        });
+
+                        it("should not match a substring as an existing class", function() {
+                            domEl.className = 'xfooy';
+                            element.addCls('foo');
+                            expect(domEl.className).toBe('xfooy foo');
+                        });
+                    });
+                });
+
+                describe("removeCls", function() {
+                    beforeEach(function() {
+                        element = addElement();
+                        domEl = element.dom;
+                    });
+
+                    it("should not throw an exception when className is null", function() {
+                        expect(function() {
+                            element.removeCls(null);
+                        }).not.toThrow();
+                    });
+
+                    describe("return type", function() {
+                        it("should return the element when the class is null", function() {
+                            expect(element.removeCls(null)).toBe(element);
+                        });
+
+                        it("should return the element when the class is a string", function() {
+                            expect(element.removeCls('foo')).toBe(element);
+                        });
+
+                        it("should return the element when the class is an array", function() {
+                            expect(element.removeCls(['foo', 'bar'])).toBe(element);
+                        });
+                    });
+
+                    describe("argument types", function() {
+                        describe("with a string", function() {
+                            describe("without spaces", function() {
+                                it("should remove a class from the element", function() {
+                                    domEl.className = 'foo bar';
+                                    element.removeCls('foo');
+                                    expect(domEl.className).toBe('bar');
+                                });
+
+                                it("should do nothing when the class is empty", function() {
+                                    domEl.className = '';
+                                    element.removeCls('bar');
+                                    expect(domEl.className).toBe('');
+                                });
+
+                                it("should only remove the specified class", function() {
+                                    domEl.className = 'foo bar baz';
+                                    element.removeCls('bar');
+                                    expect(domEl.className).toBe('foo baz');
+                                });
+
+                                describe("prefix & suffix", function() {
+                                    describe("prefix only", function() {
+                                        it("should attacj the prefix to the class", function() {
+                                            domEl.className = 'a-foo'
+                                            element.removeCls('foo', 'a');
+                                            expect(domEl.className).toBe('');
+                                        });
+
+                                        it("should use the prefix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.removeCls('foo', 'a');
+                                            expect(domEl.className).toBe('foo');
+                                        });
+                                    });
+
+                                    describe("suffix only", function() {
+                                        it("should attach the suffix to the class", function() {
+                                            domEl.className = 'foo-b';
+                                            element.removeCls('foo', null, 'b');
+                                            expect(domEl.className).toBe('');
+                                        });
+
+                                        it("should use the suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.removeCls('foo', null, 'b');
+                                            expect(domEl.className).toBe('foo');
+                                        });
+                                    });
+
+                                    describe("prefix and suffix", function() {
+                                        it("should attach the prefix & suffix to the class", function() {
+                                            domEl.className = 'a-foo-b';
+                                            element.removeCls('foo', 'a', 'b');
+                                            expect(domEl.className).toBe('');
+                                        });
+
+                                        it("should use the prefix & suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo';
+                                            element.removeCls('foo', 'a', 'b');
+                                            expect(domEl.className).toBe('foo');
+                                        });
+                                    });
+                                });
+                            });
+
+                            describe("with spaces", function() {
+                                it("should split class names by string and remove them separately", function() {
+                                    domEl.className = 'bar foo';
+                                    element.removeCls('foo bar');
+                                    expect(domEl.className).toBe('');
+                                });
+
+                                it("should split by multiple spaces", function() {
+                                    domEl.className = 'foo bar baz';
+                                    element.removeCls('foo    bar           baz');
+                                    expect(domEl.className).toBe('');
+                                });
+
+                                it("should trim leading spaces", function() {
+                                    domEl.className = 'foo bar baz';
+                                    expect(element.removeCls('     foo bar'));
+                                    expect(domEl.className).toBe('baz');
+                                });
+
+                                it("should trim trailing spaces", function() {
+                                    domEl.className = 'foo bar baz';
+                                    expect(element.removeCls('foo bar           '));
+                                    expect(domEl.className).toBe('baz');
+                                });
+
+                                it("should only remove matching classes to the element", function() {
+                                    element.dom.className = 'foo bar baz';
+                                    element.removeCls('foo');
+                                    expect(domEl.className).toBe('bar baz');  
+                                });
+
+                                describe("prefix & suffix", function() {
+                                    describe("prefix only", function() {
+                                        it("should attach the prefix to the class", function() {
+                                            domEl.className = 'a-foo a-bar';
+                                            element.removeCls('foo bar', 'a');
+                                            expect(domEl.className).toBe('');
+                                        });
+
+                                        it("should use the prefix when comparing if the class exists", function() {
+                                            domEl.className = 'a-foo bar';
+                                            element.removeCls('foo bar', 'a');
+                                            expect(domEl.className).toBe('bar');
+                                        });
+                                    });
+
+                                    describe("suffix only", function() {
+                                        it("should attach the suffix to the class", function() {
+                                            domEl.className = 'foo-b bar-b';
+                                            element.removeCls('foo bar', null, 'b');
+                                            expect(domEl.className).toBe('');
+                                        });
+
+                                        it("should use the suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo-b bar';
+                                            element.removeCls('foo bar', null, 'b');
+                                            expect(domEl.className).toBe('bar');
+                                        });
+                                    });
+
+                                    describe("prefix and suffix", function() {
+                                        it("should attach the prefix & suffix to the class", function() {
+                                            domEl.className = 'a-foo-b a-bar-b';
+                                            element.removeCls('foo bar', 'a', 'b');
+                                            expect(domEl.className).toBe('');
+                                        });
+
+                                        it("should use the prefix & suffix when comparing if the class exists", function() {
+                                            domEl.className = 'foo a-bar-b';
+                                            element.removeCls('foo bar', 'a', 'b');
+                                            expect(domEl.className).toBe('foo');
+                                        });
+                                    });
+                                });
+                            });
+                        });
+
+                        describe("with an array", function() {
+                            it("should remove all classes from the element", function() {
+                                domEl.className = 'foo bar baz';
+                                element.removeCls(['foo', 'bar']);
+                                expect(domEl.className).toBe('baz');
+                            });
+
+                            it("should only remove specified classes from the element", function() {
+                                domEl.className = 'foo bar baz';
+                                element.removeCls(['foo', 'baz']);
+                                expect(domEl.className).toBe('bar');  
+                            });
+
+                            describe("prefix & suffix", function() {
+                                describe("prefix only", function() {
+                                    it("should attach the prefix to the class", function() {
+                                        domEl.className = 'a-foo a-bar';
+                                        element.removeCls(['foo', 'bar'], 'a');
+                                        expect(domEl.className).toBe('');
+                                    });
+
+                                    it("should use the prefix when comparing if the class exists", function() {
+                                        domEl.className = 'a-foo bar';
+                                        element.removeCls(['foo', 'bar'], 'a');
+                                        expect(domEl.className).toBe('bar');
+                                    });
+                                });
+
+                                describe("suffix only", function() {
+                                    it("should attach the suffix to the class", function() {
+                                        domEl.className = 'foo-b bar-b';
+                                        element.removeCls(['foo', 'bar'], null, 'b');
+                                        expect(domEl.className).toBe('');
+                                    });
+
+                                    it("should use the suffix when comparing if the class exists", function() {
+                                        domEl.className = 'foo-b bar';
+                                        element.removeCls(['foo', 'bar'], null, 'b');
+                                        expect(domEl.className).toBe('bar');
+                                    });
+                                });
+
+                                describe("prefix and suffix", function() {
+                                    it("should attach the prefix & suffix to the class", function() {
+                                        domEl.className = 'a-foo-b a-bar-b';
+                                        element.removeCls(['foo', 'bar'], 'a', 'b');
+                                        expect(domEl.className).toBe('');
+                                    });
+
+                                    it("should use the prefix & suffix when comparing if the class exists", function() {
+                                        domEl.className = 'foo a-bar-b';
+                                        element.removeCls(['foo', 'bar'], 'a', 'b');
+                                        expect(domEl.className).toBe('foo');
+                                    });
+                                });
+                            });
+                        });
+                    });
+
+                    describe("matching", function() {
+                        it("should not match a leading substring as an existing class", function() {
+                            domEl.className = 'foobar';
+                            element.removeCls('foo');
+                            expect(domEl.className).toBe('foobar');
+                        });
+
+                        it("should not match a trailing substring as an existing class", function() {
+                            domEl.className = 'barfoo';
+                            element.removeCls('foo');
+                            expect(domEl.className).toBe('barfoo');
+                        });
+
+                        it("should not match a substring as an existing class", function() {
+                            domEl.className = 'xfooy';
+                            element.removeCls('foo');
+                            expect(domEl.className).toBe('xfooy');
+                        });
+                    });
+                });
+
+                describe("setCls", function() {
+                    beforeEach(function() {
+                        element = addElement();
+                        domEl = element.dom;
+                        domEl.className = 'some cls';
+                    });
+
+                    describe("argument types", function() {
+                        describe("with a string", function() {
+                            describe("without spaces", function() {
+                                it("should set the className", function() {
+                                    element.setCls('foo');
+                                    expect(domEl.className).toBe('foo');
+                                });
+                            });
+
+                            describe("with spaces", function() {
+                                it("should split on spaces", function() {
+                                    element.setCls('foo bar baz');
+                                    expect(domEl.className).toBe('foo bar baz');
+                                });
+                            });
+                        });
+
+                        describe("with an array", function() {
+                            it("should set all classes", function() {
+                                element.setCls(['foo', 'bar', 'baz']);
+                                expect(domEl.className).toBe('foo bar baz');
+                            });
+                        });
+                    });
+                });
+
+                describe("hasCls", function() {
+                    beforeEach(function() {
+                        element = addElement();
+                        domEl = element.dom;
+                    });
+
+                    it("should match if the class name is the first item", function() {
+                        domEl.className = 'foo bar baz';
+                        expect(element.hasCls('foo')).toBe(true);
+                    });
+
+                    it("should match if the class name is the last item", function() {
+                        domEl.className = 'foo bar baz';
+                        expect(element.hasCls('baz')).toBe(true);
+                    });
+
+                    it("should match if the class name is a middle item", function() {
+                        domEl.className = 'foo bar baz qux';
+                        expect(element.hasCls('baz')).toBe(true);
+                    });
+
+                    it("should match if there is only 1 class name", function() {
+                        domEl.className = 'foo';
+                        expect(element.hasCls('foo')).toBe(true);
+                    });
+
+                    it("should not match if there is only 1 class that is not the same", function() {
+                        domEl.className = 'foo';
+                        expect(element.hasCls('bar')).toBe(false);
+                    });
+
+                    it("should not match if none of the classes match", function() {
+                        domEl.className = 'foo bar baz';
+                        expect(element.hasCls('asdf')).toBe(false);
+                    });
+
+                    it("should not match a leading substring", function() {
+                        domEl.className = 'foobar';
+                        expect(element.hasCls('foo')).toBe(false);
+                    });
+
+                    it("should not match a trailing substring", function() {
+                        domEl.className = 'barfoo';
+                        expect(element.hasCls('foo')).toBe(false);
+                    });
+
+                    it("should not match a substring as an existing class", function() {
+                        domEl.className = 'xfooy';
+                        expect(element.hasCls('foo')).toBe(false);
+                    });
+
+                    it("should be able to match when there's a class that matches both the class & a leading subtring", function() {
+                        domEl.className = 'foobar foo';
+                        expect(element.hasCls('foo')).toBe(true);
+                    });
+
+                    it("should be able to match when there's a class that matches both the class & a trailing subtring", function() {
+                        domEl.className = 'barfoo foo';
+                        expect(element.hasCls('foo')).toBe(true);
+                    });
+
+                    it("should be able to match when there's a class that matches both the class & a subtring", function() {
+                        domEl.className = 'xfooy foo';
+                        expect(element.hasCls('foo')).toBe(true);
+                    });
+                });
             });
 
             describe("set", function() {
@@ -1831,12 +2416,24 @@ describe("Ext.dom.Element", function() {
             expectBox(300, 150, 200, 100);
         });
 
+        it("should not constrain the shadow when the element left position is < 0", function() {
+            element.enableShadow();
+            element.setLeft(-100);
+            expectBox(-100, 150, 200, 100);
+        });
+
         it("should realign the shadow in response to setTop()", function() {
             element.enableShadow();
 
             element.setTop(300);
 
             expectBox(250, 300, 200, 100);
+        });
+
+        it("should not constrain the shadow when the element top position is < 0", function() {
+            element.enableShadow();
+            element.setTop(-100);
+            expectBox(250, -100, 200, 100);
         });
 
         it("should realign the shadow in response to setLocalX()", function() {
@@ -3653,6 +4250,125 @@ describe("Ext.dom.Element", function() {
             }
 
             parent.destroy();
+        });
+
+        it("should lowercase the event name before adding it to hasListeners", function() {
+            var el = Ext.getBody().createChild({});
+
+            el.on('foO', 'onFoo');
+            expect(el.hasListeners.foO).toBeUndefined();
+            expect(el.hasListeners.foo).toBe(1);
+
+            el.destroy();
+        });
+
+        it("should translate the event name before adding it to hasListeners", function() {
+            var el = Ext.getBody().createChild({});
+
+            el.eventMap = {
+                click: 'tap'
+            };
+
+            el.on('click', 'onClick');
+            expect(el.hasListeners.click).toBeUndefined();
+            expect(el.hasListeners.tap).toBe(1);
+
+            el.destroy();
+        });
+
+        it("should translate and lowercase the event name before adding it to hasListeners", function() {
+            var el = Ext.getBody().createChild({});
+
+            el.eventMap = {
+                click: 'tap'
+            };
+
+            el.on('cLicK', 'onClick');
+            expect(el.hasListeners.cLicK).toBeUndefined();
+            expect(el.hasListeners.click).toBeUndefined();
+            expect(el.hasListeners.tap).toBe(1);
+
+            el.destroy();
+        });
+
+        it("should fire a translated event", function() {
+            var el = Ext.getBody().createChild({}),
+                handler = jasmine.createSpy();
+
+            el.eventMap = {
+                click: 'tap'
+            };
+
+            el.on('click', handler);
+            jasmine.fireMouseEvent(el, 'mousedown');
+            jasmine.fireMouseEvent(el, 'mouseup');
+            expect(handler).toHaveBeenCalled();
+
+            el.destroy();
+        });
+
+        it("should fire a lowercased event", function() {
+            var el = Ext.getBody().createChild({}),
+                handler = jasmine.createSpy();
+
+            el.on('cLicK', handler);
+            jasmine.fireMouseEvent(el, 'click');
+            expect(handler).toHaveBeenCalled();
+
+            el.destroy();
+        });
+
+        it("should fire a translated and lowercased event", function() {
+            var el = Ext.getBody().createChild({}),
+                handler = jasmine.createSpy();
+
+            el.eventMap = {
+                click: 'tap'
+            };
+
+            el.on('cLicK', handler);
+            jasmine.fireMouseEvent(el, 'mousedown');
+            jasmine.fireMouseEvent(el, 'mouseup');
+            expect(handler).toHaveBeenCalled();
+
+            el.destroy();
+        });
+
+        describe("options", function() {
+            var el;
+
+            beforeEach(function() {
+                el = Ext.getBody().createChild({});
+            });
+
+            afterEach(function() {
+                el.destroy();
+                el = null;
+            });
+
+            it("should call preventDefault if the preventDefault option is passed", function() {
+                var spy = spyOn(Ext.event.Event.prototype, 'preventDefault');
+
+                el.on('click', function() {}, null, {preventDefault: true});
+                jasmine.fireMouseEvent(el, 'click');
+                expect(spy.callCount).toBe(1);
+            });
+
+            it("should call stopPropagation if the stopPropagation option is passed", function() {
+                var spy = spyOn(Ext.event.Event.prototype, 'stopPropagation');
+
+                el.on('click', function() {}, null, {stopPropagation: true});
+                jasmine.fireMouseEvent(el, 'click');
+                expect(spy.callCount).toBe(1);
+            });
+
+            it("should call stopEvent if the stopEvent option is passed", function() {
+                var spy = spyOn(Ext.event.Event.prototype, 'stopEvent');
+
+                el.on('click', function() {}, null, {stopEvent: true});
+                jasmine.fireMouseEvent(el, 'click');
+                expect(spy.callCount).toBe(1);
+            });
         });
     });
 

@@ -248,8 +248,10 @@ Ext.define('Ext.draw.Color', {
      * @return {Ext.draw.Color}
      */
     createLighter: function (factor) {
+        if (!factor && factor !== 0) {
+            factor = this.lightnessFactor;
+        }
         var hsl = this.getHSL();
-        factor = factor || this.lightnessFactor;
         hsl[2] = Ext.Number.constrain(hsl[2] + factor, 0, 1);
         return Ext.draw.Color.fromHSL(hsl[0], hsl[1], hsl[2]);
     },
@@ -260,12 +262,16 @@ Ext.define('Ext.draw.Color', {
      * @return {Ext.draw.Color}
      */
     createDarker: function (factor) {
-        factor = factor || this.lightnessFactor;
+        if (!factor && factor !== 0) {
+            factor = this.lightnessFactor;
+        }
         return this.createLighter(-factor);
     },
 
     /**
-     * Return the color in the hex format, i.e. '#rrggbb'.
+     * toString() returns a color in hex format ('#rrggbb') if the alpha is 1. If the 
+     * alpha is less than one, toString() returns the color in RGBA format ('rgba(255,0,0,0.3)').
+     * 
      * @return {String}
      */
     toString: function () {
@@ -327,13 +333,18 @@ Ext.define('Ext.draw.Color', {
     },
 
     /**
-     * Parse the string and set current color.
+     * Parse the string and set the current color.
      *
-     * Supported formats: '#rrggbb', '#rgb', and 'rgb(r,g,b)'.
+     * Supported formats: 
+     * 
+     * + '#rrggbb'
+     * + '#rgb', 'rgb(r,g,b)'
+     * + 'rgba(r,g,b,a)'
+     * + supported CSS color names (e.g., 'black', 'white', etc).
      *
-     * If the string is not recognized, an `undefined` will be returned instead.
+     * If the string is not recognized, setFromString returns rgba(0,0,0,0).
      *
-     * @param {String} str Color in string.
+     * @param {String} Color Color as string.
      * @return this
      */
     setFromString: function (str) {
@@ -586,12 +597,17 @@ Ext.define('Ext.draw.Color', {
         /**
          * Parse the string and create a new color.
          *
-         * Supported formats: '#rrggbb', '#rgb', and 'rgb(r,g,b)'.
+         * Supported formats: 
+         * 
+         * + '#rrggbb'
+         * + '#rgb', 'rgb(r,g,b)'
+         * + 'rgba(r,g,b,a)'
+         * + supported CSS color names (e.g., 'black', 'white', etc).
          *
-         * If the string is not recognized, an undefined will be returned instead.
+         * If the string is not recognized, fromString returns rgba(0,0,0,0).
          *
-         * @param {String} string Color in string.
-         * @returns {Ext.draw.Color}
+         * @param {String} Color Color as string.
+         * @return {Ext.draw.Color}
          * @static
          */
         fromString: function (string) {

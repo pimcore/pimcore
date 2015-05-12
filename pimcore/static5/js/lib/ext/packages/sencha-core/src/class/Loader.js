@@ -131,7 +131,7 @@
  *
  * @singleton
  */
-Ext.Loader = new function() {
+Ext.Loader = (new function() {  // jshint ignore:line
 // @define Ext.Loader
 // @require Ext.Base
 // @require Ext.Class
@@ -608,7 +608,7 @@ Ext.Loader = new function() {
                 }
 
                 return callback.apply(this, classes);
-            }
+            };
         },
         
         onLoadFailure: function () {
@@ -961,7 +961,7 @@ Ext.Loader = new function() {
      */
     Class.registerPreprocessor('loader', function(cls, data, hooks, continueFn) {
         //<debug>
-        Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.Loader#loaderPreprocessor', arguments);
+        Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.Loader#loaderPreprocessor', arguments); // jshint ignore:line
         //</debug>
         
         var me = this,
@@ -997,24 +997,24 @@ Ext.Loader = new function() {
             if (data.hasOwnProperty(propertyName)) {
                 propertyValue = data[propertyName];
 
-                if (typeof propertyValue == 'string') {
+                if (typeof propertyValue === 'string') {
                     dependencies.push(propertyValue);
                 }
                 else if (propertyValue instanceof Array) {
                     for (j = 0, subLn = propertyValue.length; j < subLn; j++) {
                         value = propertyValue[j];
 
-                        if (typeof value == 'string') {
+                        if (typeof value === 'string') {
                             dependencies.push(value);
                         }
                     }
                 }
-                else if (typeof propertyValue != 'function') {
+                else if (typeof propertyValue !== 'function') {
                     for (j in propertyValue) {
                         if (propertyValue.hasOwnProperty(j)) {
                             value = propertyValue[j];
 
-                            if (typeof value == 'string') {
+                            if (typeof value === 'string') {
                                 dependencies.push(value);
                             }
                         }
@@ -1081,24 +1081,24 @@ Ext.Loader = new function() {
                 if (data.hasOwnProperty(propertyName)) {
                     propertyValue = data[propertyName];
 
-                    if (typeof propertyValue == 'string') {
+                    if (typeof propertyValue === 'string') {
                         data[propertyName] = Manager.get(propertyValue);
                     }
                     else if (propertyValue instanceof Array) {
                         for (j = 0, subLn = propertyValue.length; j < subLn; j++) {
                             value = propertyValue[j];
 
-                            if (typeof value == 'string') {
+                            if (typeof value === 'string') {
                                 data[propertyName][j] = Manager.get(value);
                             }
                         }
                     }
-                    else if (typeof propertyValue != 'function') {
+                    else if (typeof propertyValue !== 'function') {
                         for (var k in propertyValue) {
                             if (propertyValue.hasOwnProperty(k)) {
                                 value = propertyValue[k];
 
-                                if (typeof value == 'string') {
+                                if (typeof value === 'string') {
                                     data[propertyName][k] = Manager.get(value);
                                 }
                             }
@@ -1133,7 +1133,7 @@ Ext.Loader = new function() {
      */
     Manager.registerPostprocessor('uses', function(name, cls, data) {
         //<debug>
-        Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.Loader#usesPostprocessor', arguments);
+        Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.Loader#usesPostprocessor', arguments); // jshint ignore:line
         //</debug>
         
         var manifest = Ext.manifest,
@@ -1171,7 +1171,7 @@ Ext.Loader = new function() {
 
     Loader.init();
     
-};
+}());
 
 //-----------------------------------------------------------------------------
 

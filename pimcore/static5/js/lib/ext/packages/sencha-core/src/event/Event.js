@@ -131,6 +131,12 @@ Ext.define('Ext.event.Event', {
 
     isStopped: false,
 
+    /**
+     * @property {Boolean}
+     * Indicates whether or not {@link #preventDefault preventDefault()} was called on the event.
+     */
+    defaultPrevented: false,
+
     isEvent: true,
 
     statics: {
@@ -243,6 +249,16 @@ Ext.define('Ext.event.Event', {
         me.altKey = event.altKey;
         me.charCode = event.charCode;
         me.keyCode = event.keyCode;
+
+        me.buttons = event.buttons;
+        // When invoking synthetic events, current APIs do not
+        // have the ability to specify the buttons config, which
+        // defaults to button. For buttons, 0 means no button
+        // is pressed, whereas for button, 0 means left click.
+        // Normalize that here
+        if (me.button === 0 && me.buttons === 0) {
+            me.buttons = 1;
+        }
         
         if (self.forwardTab !== undefined && self.focusEvents[type]) {
             me.forwardTab = self.forwardTab;
@@ -551,8 +567,20 @@ Ext.define('Ext.event.Event', {
      * @chainable
      */
     preventDefault: function() {
-        this.browserEvent.preventDefault();
-        return this;
+        var me = this,
+            parentEvent = me.parentEvent;
+
+        me.defaultPrevented = true;
+
+        // if the event was created by prototype-chaining a new object to an existing event
+        // instance, we need to make sure the parent event is defaultPrevented as well.
+        if (parentEvent) {
+            parentEvent.defaultPrevented = true;
+        }
+
+        me.browserEvent.preventDefault();
+
+        return me;
     },
 
     setCurrentTarget: function(target) {

@@ -6,7 +6,6 @@
  * manage this class. When a {@link Ext.app.route.Route} is executed,it will automatically
  * keep running the queue until the queue is empty.
  * 
- * @author Mitchell Simoens
  * @private
  */
 Ext.define('Ext.app.route.Queue', {

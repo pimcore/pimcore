@@ -179,6 +179,32 @@ describe("Ext.Date", function() {
             expect(date).toEqual(expectedDate);
         });
 
+        describe('y (year parse code)', function () {
+            var d;
+
+            afterEach(function () {
+                d = null;
+            });
+
+            it('should parse a 2-digit year', function () {
+                d = Ext.Date.parse('09', 'y');
+                expect(d.getFullYear()).toBe(2009);
+            });
+
+            it('should parse a 2-digit year as part of a larger format string', function () {
+                d = Ext.Date.parse('720122', 'ymd');
+                expect(d.getFullYear()).toBe(1972);
+            });
+
+            it('should not parse a 1-digit year', function () {
+                expect(Ext.Date.parse('1', 'y')).toBe(null);
+            });
+
+            it('should not parse a 1-digit year as part of a larger format string', function () {
+                expect(Ext.Date.parse('10122', 'ymd')).toBe(null);
+            });
+        });
+
         it("should parse year-month-date hour:minute:second am/pm", function() {
             var date = Ext.Date.parse("2011-01-20 6:28:33 PM", "Y-m-d g:i:s A"),
                 expectedDate = new Date();
@@ -195,7 +221,6 @@ describe("Ext.Date", function() {
         it("should return null when parsing an invalid date like Feb 31st in strict mode", function() {
            expect(Ext.Date.parse("2011-02-31", "Y-m-d", true)).toBeNull();
         });
-
 
         it("should read am/pm", function() {
             var date = Ext.Date.parse('2010/01/01 12:45 am', 'Y/m/d G:i a'),
@@ -583,8 +608,8 @@ describe("Ext.Date", function() {
         // which TZ this runs, the date/time will always be the same
         // Around the world where tests may be run, the default toString
         // rendition of this may change, so testers beware.
-        var baseline = 1262382332004,
-            tzOffset = (new Date()).getTimezoneOffset(),
+        var baseline = Date.UTC(2010, 0, 1, 21, 45, 32, 4),
+            tzOffset = (new Date(baseline)).getTimezoneOffset(),
             ms = baseline + (tzOffset * 60000), // ms in 1 minute
             date = new Date(ms),
             format = Ext.Date.format;
@@ -779,15 +804,15 @@ describe("Ext.Date", function() {
         describe("dates", function () {
             describe("W - week", function () {
                 it("should parse with the W option", function () {
-                    expect(ExtDate.parse('40', 'W')).not.toBe(undefined);
+                    expect(ExtDate.parse('40', 'W')).not.toBe(null);
                 });
 
                 it("should only parse weeks 1 - 9 when prefixed by a zero (0)", function () {
-                    expect(ExtDate.parse('01', 'W')).not.toBe(undefined);
+                    expect(ExtDate.parse('01', 'W')).not.toBe(null);
                 });
 
                 it("should not parse weeks 1 - 9 when not prefixed by a zero (0)", function () {
-                    expect(ExtDate.parse('1', 'W')).toBe(undefined);
+                    expect(ExtDate.parse('1', 'W')).toBe(null);
                 });
 
                 it("should start with Monday", function () {
@@ -798,7 +823,7 @@ describe("Ext.Date", function() {
 
             describe("o - year", function () {
                 it("should parse with the o option", function () {
-                    expect(ExtDate.parse('2012', 'o')).not.toBe(undefined);
+                    expect(ExtDate.parse('2012', 'o')).not.toBe(null);
                 });
 
                 it("should behave the same as Y when not parsed with another option", function(){

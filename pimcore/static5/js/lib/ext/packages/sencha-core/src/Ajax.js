@@ -1,7 +1,6 @@
 /**
  * @class Ext.Ajax
  * @singleton
- * @markdown
 
 A singleton instance of an {@link Ext.data.Connection}. This class
 is used to communicate with your server side code. It can be used as follows:
@@ -42,22 +41,33 @@ Ext.define('Ext.Ajax', {
     singleton: true,
 
     /**
-     * @cfg {Object} extraParams @hide
+     * @cfg {Object} extraParams
+     * @hide
      */
+
     /**
-     * @cfg {Object} defaultHeaders @hide
+     * @cfg {Object} defaultHeaders
+     * @hide
      */
+
     /**
-     * @cfg {String} method @hide
+     * @cfg {String} method
+     * @hide
      */
+
     /**
-     * @cfg {Number} timeout @hide
+     * @cfg {Number} timeout
+     * @hide
      */
+
     /**
-     * @cfg {Boolean} autoAbort @hide
+     * @cfg {Boolean} autoAbort
+     * @hide
      */
+
     /**
-     * @cfg {Boolean} disableCaching @hide
+     * @cfg {Boolean} disableCaching
+     * @hide
      */
 
     /**

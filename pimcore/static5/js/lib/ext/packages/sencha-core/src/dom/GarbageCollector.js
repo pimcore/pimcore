@@ -14,7 +14,7 @@ Ext.define('Ext.dom.GarbageCollector', {
      * The interval at which to run Element garbage collection. Set this property directly
      * to tune the interval.
      *
-     *     Ext.dom.GarbageCollector = 60000; // run garbage collection every one minute
+     *     Ext.dom.GarbageCollector.interval = 60000; // run garbage collection every one minute
      */
     interval: 30000,
 
@@ -103,7 +103,7 @@ Ext.define('Ext.dom.GarbageCollector', {
                     t[eid] = cache[eid];
                 }
             }
-            Ext.cache = t;
+            Ext.cache = Ext.dom.Element.cache = t;
         }
         //</feature>
 

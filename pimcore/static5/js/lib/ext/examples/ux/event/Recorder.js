@@ -286,7 +286,7 @@ Ext.define('Ext.ux.event.Recorder', function (Recorder) {
 
         onEvent: function (ev) {
             var me = this,
-                e = Ext.EventObject.setEvent(ev),
+                e = new Ext.event.Event(ev),
                 info = me.eventsToRecord[e.type],
                 root,
                 modKeys, elXY,
@@ -328,14 +328,8 @@ Ext.define('Ext.ux.event.Recorder', function (Recorder) {
             if (info.button) {
                 if ('buttons' in ev) {
                     rec.button = ev.buttons; // LEFT=1, RIGHT=2, MIDDLE=4, etc.
-                } else if (ev.which == null) {
-                    // IE case
-                    rec.button = (ev.button < 2) ? 1 : ((ev.button == 4) ? 4 : 2);
-                } else if (ev.which) {
-                    // All others
-                    rec.button = (ev.which < 2) ? 1 : ((ev.which == 2) ? 4 : 2);
                 } else {
-                    rec.button = 0;
+                    rec.button = ev.button;
                 }
 
                 if (!rec.button && info.whileDrag) {

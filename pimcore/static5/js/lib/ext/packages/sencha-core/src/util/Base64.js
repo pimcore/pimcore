@@ -1,3 +1,5 @@
+/* jshint bitwise:false */
+
 /**
  * @class Ext.util.Base64
  *
@@ -19,7 +21,7 @@ Ext.define('Ext.util.Base64', {
     /**
      * Encodes given string in to base64 formatted string
      * @param input
-     * @returns {string}
+     * @return {string}
      */
     encode : function (input) {
         var me = this;
@@ -58,7 +60,7 @@ Ext.define('Ext.util.Base64', {
     /**
      * Decodes given base64 formatted string
      * @param input
-     * @returns {string}
+     * @return {string}
      */
     decode : function (input) {
         var me = this;
@@ -84,10 +86,10 @@ Ext.define('Ext.util.Base64', {
 
             output = output + String.fromCharCode(chr1);
 
-            if (enc3 != 64) {
+            if (enc3 !== 64) {
                 output = output + String.fromCharCode(chr2);
             }
-            if (enc4 != 64) {
+            if (enc4 !== 64) {
                 output = output + String.fromCharCode(chr3);
             }
 

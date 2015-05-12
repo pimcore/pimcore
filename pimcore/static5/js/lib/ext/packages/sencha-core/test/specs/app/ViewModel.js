@@ -1181,7 +1181,11 @@ describe("Ext.app.ViewModel", function() {
                 beforeEach(function() {
                     User = Ext.define('spec.User', {
                         extend: 'Ext.data.Model',
-                        fields: ['id', 'name', 'age', 'group']
+                        fields: ['id', 'name', 'age', 'group', {
+                            name: 'addressId',
+                            reference: 'Address',
+                            unique: true
+                        }]
                     });
                 });
 
@@ -1486,39 +1490,88 @@ describe("Ext.app.ViewModel", function() {
                         }).toThrow();
                     });
 
-                    describe("with create: true", function() {
-                        it("should create a phantom record with create: true", function() {
-                            bindNotify('{theUser}', spy);
-                            viewModel.linkTo('theUser', {
-                                type: 'spec.User',
-                                create: true
-                            });
-                            notify();
-                            expect(spy.mostRecentCall.args[0].phantom).toBe(true);
-                        });
-
-                        it("should not load from the server", function() {
-                            spy = spyOn(User.getProxy(), 'read');
-                            viewModel.linkTo('theUser', {
-                                type: 'spec.User',
-                                create: true
-                            });
-                            notify();
-                            expect(spy).not.toHaveBeenCalled();
-                        });
-
-                        if (withSession) {
-                            it("should push the phantom into the session", function() {
+                    describe("with the create option", function() {
+                        describe("with create: true", function() {
+                            it("should create a phantom record", function() {
                                 bindNotify('{theUser}', spy);
                                 viewModel.linkTo('theUser', {
                                     type: 'spec.User',
                                     create: true
                                 });
                                 notify();
-                                user = spy.mostRecentCall.args[0];
-                                expect(user.session).toBe(session);
+                                expect(spy.mostRecentCall.args[0].phantom).toBe(true);
                             });
-                        }
+
+                            it("should not load from the server", function() {
+                                spy = spyOn(User.getProxy(), 'read');
+                                viewModel.linkTo('theUser', {
+                                    type: 'spec.User',
+                                    create: true
+                                });
+                                notify();
+                                expect(spy).not.toHaveBeenCalled();
+                            });
+
+                            if (withSession) {
+                                it("should push the phantom into the session", function() {
+                                    bindNotify('{theUser}', spy);
+                                    viewModel.linkTo('theUser', {
+                                        type: 'spec.User',
+                                        create: true
+                                    });
+                                    notify();
+                                    user = spy.mostRecentCall.args[0];
+                                    expect(user.session).toBe(session);
+                                });
+                            }
+                        });
+
+                        describe("with create as an object", function() {
+                            it("should create a phantom record with the passed data", function() {
+                                bindNotify('{theUser}', spy);
+                                viewModel.linkTo('theUser', {
+                                    type: 'spec.User',
+                                    create: {
+                                        name: 'Foo',
+                                        group: 'Bar'
+                                    }
+                                });
+                                notify();
+                                user = spy.mostRecentCall.args[0];
+                                expect(user.phantom).toBe(true);
+                                expect(user.get('name')).toBe('Foo');
+                                expect(user.get('group')).toBe('Bar');
+                            });
+
+                            it("should not load from the server", function() {
+                                spy = spyOn(User.getProxy(), 'read');
+                                viewModel.linkTo('theUser', {
+                                    type: 'spec.User',
+                                    create: {
+                                        name: 'Foo',
+                                        group: 'Bar'
+                                    }
+                                });
+                                notify();
+                                expect(spy).not.toHaveBeenCalled();
+                            });
+
+                            if (withSession) {
+                                it("should push the phantom into the session", function() {
+                                    bindNotify('{theUser}', spy);
+                                    viewModel.linkTo('theUser', {
+                                        type: 'spec.User',
+                                        create: { 
+                                            name: 'Foo',
+                                            group: 'Bar'
+                                        }
+                                    });
+                                    notify();
+                                    user = spy.mostRecentCall.args[0];
+                                    expect(user.session).toBe(session);
+                                });
+                            }
+                        });
                     });
 
                     it("should request the data from the server", function() {
@@ -1603,7 +1656,7 @@ describe("Ext.app.ViewModel", function() {
                     });
 
                     describe("associations", function() {
-                        var Comment;
+                        var Comment, Address;
 
                         beforeEach(function() {
                             Comment = Ext.define('spec.Comment', {
@@ -1613,11 +1666,17 @@ describe("Ext.app.ViewModel", function() {
                                     reference: 'User'
                                 }]
                             });
+
+                            Address = Ext.define('spec.Address', {
+                                extend: 'Ext.data.Model',
+                                fields: ['id', 'street']
+                            });
                         });
 
                         afterEach(function() {
                             Ext.undefine('spec.Comment');
-                            Comment = null;
+                            Ext.undefine('spec.Address');
+                            Address = Comment = null;
                         });
 
                         it("should be able to set association keys", function() {
@@ -1648,6 +1707,31 @@ describe("Ext.app.ViewModel", function() {
                             // We set the key, but the user itself is not available
                             expect(spy).toHaveBeenCalled();
                             expectArgs(user);
+                        });
+
+                        it("should be able to set an association field", function() {
+                            var comment = makeRecord(Comment, 101, {
+                                userId: 1
+                            });
+                            makeUser(3);
+                            comment.setUser(user);
+                            var binding = viewModel.bind('{comment.user.name}', spy);
+                            setNotify('comment', comment);
+                            spy.reset();
+                            binding.setValue('aNewName');
+                            notify();
+                            expect(user.get('name')).toBe('aNewName');
+
+                            binding.destroy();
+                            spy.reset();
+
+                            var address = makeRecord(Address, 201);
+                            user.setAddress(address);
+                            binding = viewModel.bind('{comment.user.address.street}', spy);
+                            spy.reset();
+                            binding.setValue('newStreet');
+                            notify();
+                            expect(address.get('street')).toBe('newStreet');
                         });
                     });
                 });
@@ -5024,6 +5108,18 @@ describe("Ext.app.ViewModel", function() {
             var binding = bindNotify('{foo}', Ext.emptyFn);
             binding.destroy();
             expect(peekStub('foo')).toBeNull();
+        });
+    });
+
+    describe("destruction", function() {
+        it("should destroy any child view models", function() {
+            createViewModel();
+            var child = new Ext.app.ViewModel({
+                parent: viewModel
+            });
+
+            viewModel.destroy();
+            expect(child.isDestroyed).toBe(true);
         });
     });
 });

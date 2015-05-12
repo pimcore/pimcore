@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * A Profile represents a range of devices that fall under a common category. For the vast majority of apps that use
  * device profiles, the app defines a Phone profile and a Tablet profile. Doing this enables you to easily customize
  * the experience for the different sized screens offered by those device types.
@@ -62,7 +60,7 @@
  * was not injected.
  *
  * For a fuller understanding of the ideas behind Profiles and how best to use them in your app, we suggest you read
- * the [device profiles guide](#!/guide/profiles).
+ * the [device profiles guide](/touch/2.4/core_concepts/device_profiles.html).
  * 
  */
 Ext.define('Ext.app.Profile', {
@@ -106,7 +104,7 @@ Ext.define('Ext.app.Profile', {
 
         // @cmd-auto-dependency {aliasPrefix: "controller.", profile: true, blame: "all"}
         /**
-         * @cfg {Array} controllers Any additional {@link Ext.app.Application#controllers Controllers} to load for this
+         * @cfg {Array} controllers Any additional {@link Ext.app.Controller Controllers} to load for this
          * profile. Note that each item here will be prepended with the Profile namespace when loaded. Example usage:
          *
          *     controllers: [
@@ -235,7 +233,7 @@ Ext.define('Ext.app.Profile', {
             Controller.processDependencies(proto, requires, namespace, 'controller', data.controllers);
 
             Ext.require(requires, Ext.Function.pass(onBeforeClassCreated, arguments, this));
-        }
+        };
     },
 
     /**

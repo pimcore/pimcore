@@ -1,4 +1,4 @@
-xdescribe('Ext.data.NodeInterface', function() {
+describe('Ext.data.NodeInterface', function() {
     function spyOnEvent(object, eventName, fn) {
         var obj = {
             fn: fn || Ext.emptyFn
@@ -29,163 +29,163 @@ xdescribe('Ext.data.NodeInterface', function() {
         var fields;
 
         beforeEach(function() {
-            fields = spec.TreeNode.prototype.fields;
+            fields = spec.TreeNode.prototype.fieldsMap;
         });
 
         it('should decorate the Model with a parentId field that has the same type as the idProperty', function() {
-            var field = fields.get('parentId'),
-                type = spec.TreeNode.prototype.fields.get(spec.TreeNode.prototype.idProperty).getType().type;
+            var field = fields.parentId,
+                type = fields[spec.TreeNode.idProperty].getType();
 
             expect(field.getPersist()).toBe(true);
-            expect(field.getType().type).toBe(type);
+            expect(field.getType()).toBe(type);
             expect(field.getDefaultValue()).toBeNull();
         });
         it('should decorate the Model with an index field', function() {
-            var field = fields.get('index');
+            var field = fields.index;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('int');
+            expect(field.getType()).toBe('int');
             expect(field.getDefaultValue()).toBe(-1);
         });
         it('should decorate the Model with a depth field', function() {
-            var field = fields.get('depth');
+            var field = fields.depth;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('int');
+            expect(field.getType()).toBe('int');
             expect(field.getDefaultValue()).toBe(0);
         });
         it('should decorate the Model with an expanded field', function() {
-            var field = fields.get('expanded');
+            var field = fields.expanded;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(false);
         });
         it('should decorate the Model with an expandable field', function() {
-            var field = fields.get('expandable');
+            var field = fields.expandable;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(true);
         });
         it('should decorate the Model with a checked field', function() {
-            var field = fields.get('checked');
+            var field = fields.checked;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('auto');
+            expect(field.getType()).toBe('auto');
             expect(field.getDefaultValue()).toBe(null);
         });
         it('should decorate the Model with a leaf field', function() {
-            var field = fields.get('leaf');
+            var field = fields.leaf;
 
             expect(field.getPersist()).toBe(true);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(false);
         });
         it('should decorate the Model with a cls field', function() {
-            var field = fields.get('cls');
+            var field = fields.cls;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('string');
+            expect(field.getType()).toBe('string');
             expect(field.getDefaultValue()).toBe('');
         });
         it('should decorate the Model with an iconCls field', function() {
-            var field = fields.get('iconCls');
+            var field = fields.iconCls;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('string');
+            expect(field.getType()).toBe('string');
             expect(field.getDefaultValue()).toBe('');
         });
         it('should decorate the Model with an icon field', function() {
-            var field = fields.get('icon');
+            var field = fields.icon;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('string');
+            expect(field.getType()).toBe('string');
             expect(field.getDefaultValue()).toBe('');
         });
         it('should decorate the Model with a root field', function() {
-            var field = fields.get('root');
+            var field = fields.root;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(false);
         });
         it('should decorate the Model with an isLast field', function() {
-            var field = fields.get('isLast');
+            var field = fields.isLast;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(false);
         });
         it('should decorate the Model with an isFirst field', function() {
-            var field = fields.get('isFirst');
+            var field = fields.isFirst;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(false);
         });
         it('should decorate the Model with an allowDrop field', function() {
-            var field = fields.get('allowDrop');
+            var field = fields.allowDrop;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(true);
         });
 
         it('should decorate the Model with an allowDrag field', function() {
-            var field = fields.get('allowDrag');
+            var field = fields.allowDrag;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(true);
         });
         it('should decorate the Model with a loaded field', function() {
-            var field = fields.get('loaded');
+            var field = fields.loaded;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(false);
         });
         it('should decorate the Model with a loading field', function() {
-            var field = fields.get('loading');
+            var field = fields.loading;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('bool');
+            expect(field.getType()).toBe('bool');
             expect(field.getDefaultValue()).toBe(false);
         });
         it('should decorate the Model with an href field', function() {
-            var field = fields.get('href');
+            var field = fields.href;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('string');
+            expect(field.getType()).toBe('string');
             expect(field.getDefaultValue()).toBe('');
         });
         it('should decorate the Model with an hrefTarget field', function() {
-            var field = fields.get('hrefTarget');
+            var field = fields.hrefTarget;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('string');
+            expect(field.getType()).toBe('string');
             expect(field.getDefaultValue()).toBe('');
         });
         it('should decorate the Model with a qtip field', function() {
-            var field = fields.get('qtip');
+            var field = fields.qtip;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('string');
+            expect(field.getType()).toBe('string');
             expect(field.getDefaultValue()).toBe('');
         });
         it('should decorate the Model with a qtitle field', function() {
-            var field = fields.get('qtitle');
+            var field = fields.qtitle;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('string');
+            expect(field.getType()).toBe('string');
             expect(field.getDefaultValue()).toBe('');
         });
         it('should decorate the Model with a children field', function() {
-            var field = fields.get('children');
+            var field = fields.children;
 
             expect(field.getPersist()).toBe(false);
-            expect(field.getType().type).toBe('auto');
+            expect(field.getType()).toBe('auto');
             expect(field.getDefaultValue()).toBe(null);
         });
         it('should decorate Model class of a given record', function() {
@@ -222,7 +222,6 @@ xdescribe('Ext.data.NodeInterface', function() {
         function insertDefaultChildren() {
             rootNode.appendChild(leftChild);
             rootNode.appendChild(rightChild);
-            // call updateInfo because Ext.data.Tree does this in setRootNode()
             rootNode.updateInfo(false, {
                 isFirst: true,
                 isLast: true,
@@ -314,17 +313,6 @@ xdescribe('Ext.data.NodeInterface', function() {
 
         describe("append", function(){
             describe("appending children", function() {
-
-                it('Tree should fire beforeappend when root set', function() {
-                    var tree = new Ext.data.Tree(),
-                        rootNode = new spec.TreeNode({
-                            id: 'root'
-                        });
-
-                    spy = spyOnEvent(tree, "beforeappend").andCallThrough();
-                    tree.setRootNode(rootNode);
-                    expect(spy).toHaveBeenCalledWith(null, rootNode);
-                });
                 
                 it("should fire beforeappend", function() {
                     spy = spyOnEvent(rootNode, "beforeappend").andCallThrough();
@@ -420,7 +408,7 @@ xdescribe('Ext.data.NodeInterface', function() {
         
                     rootNode.appendChild(spareNode);
         
-                    expect(spy).toHaveBeenCalledWith(spareNode, false, false, true);
+                    expect(spy).toHaveBeenCalledWith(spareNode, false, undefined, true);
                 });
         
                 it("should fire beforeremove event", function(){
@@ -435,8 +423,9 @@ xdescribe('Ext.data.NodeInterface', function() {
                     spy = spyOnEvent(oldParent, "remove").andCallThrough();
         
                     rootNode.appendChild(spareNode);
-        
-                    expect(spy).toHaveBeenCalledWith(oldParent, spareNode, true);                    
+
+                    // Just use the context argumemt from the args as the last arg
+                    expect(spy).toHaveBeenCalledWith(oldParent, spareNode, true, spy.mostRecentCall.args[3]);
                 });
 
                 it("should fire beforemove event", function() {
@@ -599,8 +588,9 @@ xdescribe('Ext.data.NodeInterface', function() {
                 spy = spyOnEvent(rootNode, "remove").andCallThrough();
         
                 rootNode.removeChild(leftChild);
-        
-                expect(spy).toHaveBeenCalledWith(rootNode, leftChild, false);
+
+                // Just use the context argumemt from the args as the last arg
+                expect(spy).toHaveBeenCalledWith(rootNode, leftChild, false, spy.mostRecentCall.args[3]);
             });
         
             it("should remove child from childNodes", function() {
@@ -630,10 +620,10 @@ xdescribe('Ext.data.NodeInterface', function() {
                 expect(spareNode.previousSibling, leftChild);
             });
         
-            it("should destroy node if asked", function() {
+            it("should erase node if asked", function() {
                 insertDefaultChildren.call(this);
         
-                spy = spyOn(leftChild, "destroy").andCallThrough();
+                spy = spyOn(leftChild, "erase").andCallThrough();
         
                 rootNode.removeChild(leftChild, true);
         
@@ -713,41 +703,33 @@ xdescribe('Ext.data.NodeInterface', function() {
 
         describe("silent destroy", function() {
             it("should purge node listeners", function() {
-                spy = spyOn(leftChild, "clearListeners").andCallThrough();
+                spy = spyOn(leftChild.mixins.observable, "clearListeners").andCallThrough();
         
                 leftChild.destroy(true);
         
                 expect(spy).toHaveBeenCalled();
             });
-        
-            it("should clear node", function() {
-                spy = spyOn(leftChild, "clear").andCallThrough();
-        
-                leftChild.destroy(true);
-        
-                expect(spy).toHaveBeenCalled();
-            });
-        
-            it("should destroy children", function() {
+
+            it("should erase children", function() {
                 var spy2;
         
                 insertDefaultChildren.call(this);
         
-                spy = spyOn(leftChild, "destroy").andCallThrough();
-                spy2 = spyOn(rightChild, "destroy").andCallThrough();
+                spy = spyOn(leftChild, "erase").andCallThrough();
+                spy2 = spyOn(rightChild, "erase").andCallThrough();
         
-                rootNode.destroy(true);
+                rootNode.erase();
         
-                expect(spy).toHaveBeenCalledWith(true);
-                expect(spy2).toHaveBeenCalledWith(true);
+                expect(spy).toHaveBeenCalled();
+                expect(spy2).toHaveBeenCalled();
             });
         
-            it("should nullifies childNodes", function() {
+            it("should nullify childNodes", function() {
                 insertDefaultChildren.call(this);
         
                 expect(rootNode.childNodes).not.toBeNull();
         
-                rootNode.destroy(true);
+                rootNode.erase(true);
         
                 expect(rootNode.childNodes).toBeNull();
             });
@@ -759,7 +741,7 @@ xdescribe('Ext.data.NodeInterface', function() {
         
                spy = spyOn(leftChild, "remove").andCallThrough();
         
-               leftChild.destroy(false);
+               leftChild.erase(false);
         
                expect(spy).toHaveBeenCalled();
             });
@@ -783,8 +765,9 @@ xdescribe('Ext.data.NodeInterface', function() {
         
         describe("removeAll", function() {
             it("should remove all children", function() {
+                rootNode.appendChild([leftChild, rightChild, spareNode]);
                 rootNode.removeAll();
-                expect(rootNode.childNodes.length).toEqual(0);
+                expect(rootNode.childNodes.length).toBe(0);
             });
         });
 
@@ -825,22 +808,6 @@ xdescribe('Ext.data.NodeInterface', function() {
         
             it("should have a depth of 2 for spareNode", function(){
                 expect(spareNode.getDepth()).toEqual(2);                
-            });
-        });
-
-        describe("setting ID", function() {
-            var tree;
-        
-            beforeEach(function() {
-                tree = new Ext.data.Tree();
-                tree.setRootNode(rootNode);
-            });
-       
-            it("should change id field", function() {
-                rootNode.setId("yhwh");
-        
-                expect(rootNode.getId()).toEqual("yhwh");
-                expect(rootNode.get('id')).toEqual("yhwh");
             });
         });
 
@@ -1325,12 +1292,72 @@ xdescribe('Ext.data.NodeInterface', function() {
     });
     
     describe("serialize", function(){
+        it('should create an object representation of the node', function() {
+            var node = new spec.TreeNode({
+                text: 'Root',
+                id: 1
+            }),
+            c1 = node.appendChild(new spec.TreeNode({
+                text: 'C1',
+                id: 2
+            })),
+            c2 = node.appendChild(new spec.TreeNode({
+                text: 'C1',
+                id: 3
+            }));
+            c1.appendChild( new spec.TreeNode({
+                text: 'c1.1',
+                id: 4
+            }));
+            c2.appendChild( new spec.TreeNode({
+                text: 'c2.1',
+                id: 5
+            }));
+
+            expect(node.serialize()).toEqual({
+                "text": "Root",
+                "id": 1,
+                "parentId": null,
+                "leaf": false,
+                "children": [
+                    {
+                        "text": "C1",
+                        "id": 2,
+                        "parentId": 1,
+                        "leaf": false,
+                        "children": [
+                            {
+                                "text": "c1.1",
+                                "id": 4,
+                                "parentId": 2,
+                                "leaf": false
+                            }
+                        ]
+                    },
+                    {
+                        "text": "C1",
+                        "id": 3,
+                        "parentId": 1,
+                        "leaf": false,
+                        "children": [
+                            {
+                                "text": "c2.1",
+                                "id": 5,
+                                "parentId": 3,
+                                "leaf": false
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+
         it("should not include children if there are none", function(){
             var o = new spec.TreeNode({
                 text: 'foo'
             }),  s = o.serialize();
                 
-            expect(s.text).toBe('foo')
+            expect(s.text).toBe('foo');
             expect(s.children).toBeUndefined();
         });
         
@@ -1344,7 +1371,7 @@ xdescribe('Ext.data.NodeInterface', function() {
             }));
                 
             s = o.serialize();
-            expect(s.text).toBe('foo')
+            expect(s.text).toBe('foo');
             expect(s.children[0].text).toBe('bar');
         });  
     });
@@ -1399,7 +1426,7 @@ xdescribe('Ext.data.NodeInterface', function() {
 
             // Clears modified
             node.commit();
-            expect(node.modified).toEqual({});
+            expect(node.modified).toBeNull();
 
             // Move from parent "TestRoot", index 0 to parent "OtherTestRoot", index 0
             // Index should appear in modified object because it has moved parent
@@ -1417,7 +1444,10 @@ xdescribe('Ext.data.NodeInterface', function() {
             // Mainly because TreeStore.clearRemovedOnLoad uses these values to determine whether
             // nodes in the removed list are descendants of a loading node so that tey can be evicted from the removed list.
             root1.removeChild(node);
-            expect(node.modified).toEqual({});
+            expect(node.modified).toEqual({
+                lastParentId: undefined,
+                parentId: 'OtherTestRoot'
+            });
 
             node = new spec.PersistentIndexTreeNode({
                 id: 'node'

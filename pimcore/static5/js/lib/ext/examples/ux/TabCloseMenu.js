@@ -54,8 +54,6 @@ Ext.define('Ext.ux.TabCloseMenu', {
      */
     extraItemsTail: null,
 
-    // TODO - doc this.addEvents('aftermenu','beforemenu');
-
     //public
     constructor: function (config) {
         this.callParent([config]);

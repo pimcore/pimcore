@@ -12,7 +12,9 @@ Ext.define('Ext.chart.interactions.ItemHighlight', {
     alias: 'interaction.itemhighlight',
 
     config: {
-        //@inheritdoc
+        /**
+         * @inheritdoc
+         */
         gestures: {
             tap: 'onHighlightGesture',
             mousemove: 'onMouseMoveGesture',

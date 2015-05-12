@@ -60,9 +60,10 @@
  *                  date-time granularity which are supported, or see                         2000-02-13T21:25:33
  *                  http://www.w3.org/TR/NOTE-datetime for more info.                         2001-01-12 22:26:34
  *        C         An ISO date string as implemented by the native Date object's             1962-06-17T09:21:34.125Z
- *                  {@link Date#toISOString} method. This outputs the numeric part
- *                  with *UTC* hour and minute values, and indicates this by 
- *                  appending the `'Z'` timezone indentifier.
+ *                  [Date.toISOString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+ *                  method. This outputs the numeric part with *UTC* hour and minute
+ *                  values, and indicates this by appending the `'Z'` timezone
+ *                  indentifier.
  *        U         Seconds since the Unix Epoch (January 1 1970 00:00:00 GMT)                1193432466 or -2138434463
  *        MS        Microsoft AJAX serialized dates                                           \/Date(1238606590509)\/ (i.e. UTC milliseconds since epoch) or
  *                                                                                            \/Date(1238606590509+0800)\/
@@ -148,19 +149,19 @@ Ext.Date = (function () {
                 "m = from(m, from(def.m - 1, dt.getMonth()));",
                 "dayMatched = d !== undefined;",
                 "d = from(d, from(def.d, dt.getDate()));",
-                
+
                 // Attempt to validate the day. Since it defaults to today, it may go out
                 // of range, for example parsing m/Y where the value is 02/2000 on the 31st of May.
                 // It will attempt to parse 2000/02/31, which will overflow to March and end up
                 // returning 03/2000. We only do this when we default the day. If an invalid day value
                 // was set to be parsed by the user, continue on and either let it overflow or return null
                 // depending on the strict value. This will be in line with the normal Date behaviour.
-                
-                "if (!dayMatched) {", 
+
+                "if (!dayMatched) {",
                     "dt.setDate(1);",
                     "dt.setMonth(m);",
                     "dt.setFullYear(y);",
-                
+
                     "daysInMonth = me.getDaysInMonth(dt);",
                     "if (d > daysInMonth) {",
                         "d = daysInMonth;",
@@ -202,7 +203,7 @@ Ext.Date = (function () {
                         // 2. Subtracting that by one.
                         // 3. Multiplying that by 86400000 (one day in ms).
                         // 4. Subtracting this number of days (in ms) from the January 4 date (represented in ms).
-                        // 
+                        //
                         // Example #1 ...
                         //
                         //       January 2012
@@ -226,7 +227,7 @@ Ext.Date = (function () {
                         //   12 13 14 15 16 17 18
                         //   19 20 21 22 23 24 25
                         //   26 27 28 29 30 31
-                        // 
+                        //
                         // 1. January 4th is a Saturday.
                         // 2. Its day number is 6.
                         // 3. Simply subtract 5 days from Saturday.
@@ -236,7 +237,7 @@ Ext.Date = (function () {
                         // (This is essentially doing the same thing as above but for the week rather than the day)
                         "year = y || (new Date()).getFullYear();",
                         "jan4 = new Date(year, 0, 4, 0, 0, 0);",
-                        "d = jan4.getDay();", 
+                        "d = jan4.getDay();",
                         // If the 1st is a Thursday, then the 4th will be a Sunday, so we need the appropriate
                         // day number here, which is why we use the day === checks.
                         "week1monday = new Date(jan4.getTime() - ((d === 0 ? 6 : d - 1) * 86400000));",
@@ -265,7 +266,7 @@ Ext.Date = (function () {
             "}",
         "}",
 
-        "return v;"
+        "return (v != null) ? v : null;"
       ].join('\n');
 
     // Polyfill Date's toISOString instance method where not implemented.
@@ -1011,7 +1012,7 @@ return utilDate = {
             c:null,
             s:"(?:1|0)"
         },
-        o: { 
+        o: {
             g: 1,
             c: "y = parseInt(results[{0}], 10);\n",
             s: "(\\d{4})" // ISO-8601 year number (with leading zero)
@@ -1026,7 +1027,7 @@ return utilDate = {
             g:1,
             c:"var ty = parseInt(results[{0}], 10);\n"
                 + "y = ty > me.y2kYear ? 1900 + ty : 2000 + ty;\n", // 2-digit year
-            s:"(\\d{1,2})"
+            s:"(\\d{2})"
         },
         /*
          * In the am/pm parsing routines, we allow both upper and lower case
@@ -1710,9 +1711,8 @@ return utilDate = {
                 est = (max.getFullYear() * 12 + max.getMonth()) - (min.getFullYear() * 12 + min.getMonth());
                 if (utilDate.add(min, unit, est) > max) {
                     return est - 1;
-                } else {
-                    return est;
                 }
+                return est;
             case utilDate.YEAR:
                 est = max.getFullYear() - min.getFullYear();
                 if (utilDate.add(min, unit, est) > max) {
@@ -1731,28 +1731,25 @@ return utilDate = {
      */
     align: function (date, unit, step) {
         var num = new nativeDate(+date);
+
         switch (unit.toLowerCase()) {
             case utilDate.MILLI:
                 return num;
-                break;
             case utilDate.SECOND:
                 num.setUTCSeconds(num.getUTCSeconds() - num.getUTCSeconds() % step);
                 num.setUTCMilliseconds(0);
                 return num;
-                break;
             case utilDate.MINUTE:
                 num.setUTCMinutes(num.getUTCMinutes() - num.getUTCMinutes() % step);
                 num.setUTCSeconds(0);
                 num.setUTCMilliseconds(0);
                 return num;
-                break;
             case utilDate.HOUR:
                 num.setUTCHours(num.getUTCHours() - num.getUTCHours() % step);
                 num.setUTCMinutes(0);
                 num.setUTCSeconds(0);
                 num.setUTCMilliseconds(0);
                 return num;
-                break;
             case utilDate.DAY:
                 if (step === 7 || step === 14){
                     num.setUTCDate(num.getUTCDate() - num.getUTCDay() + 1);
@@ -1762,7 +1759,6 @@ return utilDate = {
                 num.setUTCSeconds(0);
                 num.setUTCMilliseconds(0);
                 return num;
-                break;
             case utilDate.MONTH:
                 num.setUTCMonth(num.getUTCMonth() - (num.getUTCMonth() - 1) % step,1);
                 num.setUTCHours(0);
@@ -1770,7 +1766,6 @@ return utilDate = {
                 num.setUTCSeconds(0);
                 num.setUTCMilliseconds(0);
                 return num;
-                break;
             case utilDate.YEAR:
                 num.setUTCFullYear(num.getUTCFullYear() - num.getUTCFullYear() % step, 1, 1);
                 num.setUTCHours(0);
@@ -1778,7 +1773,6 @@ return utilDate = {
                 num.setUTCSeconds(0);
                 num.setUTCMilliseconds(0);
                 return date;
-                break;
         }
     }
 };

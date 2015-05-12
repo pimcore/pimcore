@@ -325,8 +325,9 @@ Ext.String = (function() {
          *      var regex2 = /world/;
          *
          * @param {String/RegExp} value The String to convert to a `RegExp`.
-         * @param {Boolean} [startsWith=true] Pass `false` to allow a match start anywhere
-         * in the string. By default the `value` will match only at the start of the string.
+         * @param {Boolean} [startsWith=true] Pass `false` to allow a match to start 
+         * anywhere in the string. By default the `value` will match only at the start 
+         * of the string.
          * @param {Boolean} [endsWith=true] Pass `false` to allow the match to end before
          * the end of the string. By default the `value` will match only at the end of the
          * string.

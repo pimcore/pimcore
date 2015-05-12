@@ -406,7 +406,7 @@ Ext.define('Ext.direct.Manager', {
             return;
         }
         
-        if (event.name && event.name != 'event' && event.name != 'exception') {
+        if (event.name && event.name !== 'event' && event.name !== 'exception') {
             me.fireEvent(event.name, event);
         }
         else if (event.status === false) {
@@ -497,6 +497,11 @@ Ext.define('Ext.direct.Manager', {
         
         registerMethod: function(name, method) {
             this.remotingMethods[name] = method;
+        },
+        
+        // Used for testing
+        clearAllMethods: function() {
+            this.remotingMethods = {};
         }
     }
 }, function() {

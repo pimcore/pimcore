@@ -25,6 +25,8 @@ describe("Ext.direct.Provider", function() {
             provider.destroy();
         }
         
+        Ext.direct.Manager.clearAllMethods();
+        
         provider = connectSpy = disconnectSpy = null;
     });
     

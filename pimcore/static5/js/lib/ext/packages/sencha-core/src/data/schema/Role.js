@@ -57,6 +57,11 @@ Ext.define('Ext.data.schema.Role', {
 
     defaultReaderType: 'json',
 
+    _internalReadOptions: {
+        recordsOnly: true,
+        asRoot: true
+    },
+
     constructor: function (association, config) {
         var me = this,
             extra = config.extra;
@@ -314,6 +319,11 @@ Ext.define('Ext.data.schema.Role', {
                (me.instanceName = me.association.schema.getNamer().instanceName(me.role));
     },
 
+    getOldInstanceName: function() {
+        return this.oldInstanceName ||
+            (this.oldInstanceName = '$old' + this.getInstanceName());
+    },
+
     getStoreName: function () {
         var me = this;
         return me.storeName ||
@@ -345,16 +355,18 @@ Ext.define('Ext.data.schema.Role', {
                     rootProperty: root
                 });
             }
-            me.reader = reader
+            me.reader = reader;
         }
         return reader;
     },
     
     read: function (record, data, fromReader, readOptions) {
-        var me = this,
-            reader = this.constructReader(fromReader);
-            
-        return reader.read(data, readOptions);
+        var reader = this.constructReader(fromReader),
+            root = reader.getRoot(data);
+
+        if (root) {            
+            return reader.readRecords(root, readOptions, this._internalReadOptions);
+        }
     },
 
     getCallbackOptions: function(options, scope, defaultScope) {
@@ -458,19 +470,24 @@ Ext.define('Ext.data.schema.Role', {
         var me = this,
             foreignKey = me.association.getFieldName(),  // "managerId"
             instanceName = me.getInstanceName(),  // "manager"
-            ret = leftRecord[instanceName],
+            current = leftRecord[instanceName],
             inverse = me.inverse,
             inverseSetter = inverse.setterName,  // setManagerDepartment for User
             session = leftRecord.session,
-            modified;
+            modified, oldInstanceName;
 
         if (rightRecord && rightRecord.isEntity) {
-            if (ret !== rightRecord) {
+            if (current !== rightRecord) {
+                oldInstanceName = me.getOldInstanceName();
+                leftRecord[oldInstanceName] = current;
+                leftRecord[instanceName] = rightRecord;
+                if (current && current.isEntity) {
+                    current[inverse.getInstanceName()] = undefined;
+                }
                 if (foreignKey) {
                     leftRecord.set(foreignKey, rightRecord.getId());
                 }
-                
-                leftRecord[instanceName] = rightRecord;
+                delete leftRecord[oldInstanceName];
 
                 if (inverseSetter) {
                     // Because the rightRecord has a reference back to the leftRecord
@@ -493,12 +510,12 @@ Ext.define('Ext.data.schema.Role', {
             modified = (leftRecord.changingKey && !inverse.isMany) || leftRecord.set(foreignKey, rightRecord);
             // set returns the modifiedFieldNames[] or null if nothing was change
 
-            if (modified && ret && ret.isEntity && !ret.isEqual(ret.getId(), rightRecord)) {
+            if (modified && current && current.isEntity && !current.isEqual(current.getId(), rightRecord)) {
                 // If we just modified the FK value and it no longer matches the id of the
                 // record we had cached (ret), remove references from *both* sides:
                 leftRecord[instanceName] = undefined;
                 if (!inverse.isMany) {
-                    ret[inverse.getInstanceName()] = undefined;
+                    current[inverse.getInstanceName()] = undefined;
                 }
             }
         }

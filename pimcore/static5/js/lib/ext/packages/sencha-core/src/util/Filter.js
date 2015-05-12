@@ -137,7 +137,7 @@ Ext.define('Ext.util.Filter', {
         /**
          * @cfg {Function} [serializer]
          * A function to post-process any serialization.
-         * @param {Object} serializer.data The serialized data.
+         * @param {Object} data The serialized data.
          * @private
          */
         serializer: null,

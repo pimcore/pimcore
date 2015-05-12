@@ -86,7 +86,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
                 endRho: 'path,bbox',
                 margin: 'path,bbox',
                 thickness: 'path',
-                baseRotation: 'path,partZIndex,partColor',
+                baseRotation: 'path,partZIndex',
                 baseColor: 'partZIndex,partColor',
                 part: 'path,partZIndex'
             },
@@ -101,6 +101,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
                 distortion: 1,
                 baseRotation: 0,
                 baseColor: 'white',
+                miterLimit: 1,
                 part: 'top'
             },
             updaters: {
@@ -168,18 +169,18 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
 
                     attr.fillStyle = fillStyle;
                     attr.canvasAttributes.fillStyle = fillStyle;
-                    //console.groupCollapsed('partColor:', attr.part);
-                    //console.trace();
-                    //console.groupEnd();
                 },
                 partZIndex: function (attr) {
-                    var rotation = attr.baseRotation;
+                    var rotation = attr.baseRotation,
+                        midAngle = (attr.startAngle + attr.endAngle) * 0.5,
+                        depth = Math.sin(midAngle + rotation);
+
                     switch (attr.part) {
                         case 'top':
                             attr.zIndex = 5;
                             break;
                         case 'outer':
-                            attr.zIndex = 4;
+                            attr.zIndex = 4 + depth;
                             break;
                         case 'start':
                             attr.zIndex = 1 + Math.sin(attr.startAngle + rotation);
@@ -188,7 +189,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
                             attr.zIndex = 1 + Math.sin(attr.endAngle + rotation);
                             break;
                         case 'inner':
-                            attr.zIndex = 1;
+                            attr.zIndex = 1 + depth;
                             break;
                     }
                     attr.dirtyZIndex = true;

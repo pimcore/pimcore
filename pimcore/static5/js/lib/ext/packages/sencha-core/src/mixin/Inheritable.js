@@ -200,8 +200,9 @@ Ext.define('Ext.mixin.Inheritable', {
      * @protected
      * @since 5.0.0
      */
-    resolveListenerScope: function (defaultScope) {
+    resolveListenerScope: function (defaultScope, /* private */ skipThis) {
         var me = this,
+            hasSkipThis = (typeof skipThis === 'boolean'),
             namedScope = Ext._namedScopes[defaultScope],
             ret;
 
@@ -210,21 +211,57 @@ Ext.define('Ext.mixin.Inheritable', {
             // declared on the class body (i.e. !namedScope.isSelf) and so we can skip
             // this instance and resolve to defaultListenerScope upward in the hierarchy.
             // scope: not a named scope so we default to this
-            ret = me.getInheritedConfig('defaultListenerScope', true) || defaultScope || me;
+            ret = me.getInheritedConfig('defaultListenerScope', hasSkipThis ? skipThis : true) || defaultScope || me;
         } else if (namedScope.isController) {
             // scope:'controller' declared on the class body must include our own
             // controller before ascending the hierarchy, but scope:'controller' declared
             // on the instance must skip our own controller and search only for an
             // inherited controller.
-            ret = me.getInheritedConfig('controller', !namedScope.isSelf);
+            ret = me.getInheritedConfig('controller', hasSkipThis ? skipThis : !namedScope.isSelf);
         } else if (namedScope.isSelf) {
             // scope:'self' indicates listeners declared on the class body with unspecified
             // scope. Include this instance when searching for an inherited default scope.
-            ret = me.getInheritedConfig('defaultListenerScope') || me;
+            ret = me.getInheritedConfig('defaultListenerScope', hasSkipThis && skipThis) || me;
         } else if (namedScope.isThis) {
             // scope:'this' always resolves to this instance, regardless of whether the
             // listener was declared on the class or instance
             ret = me;
+        }
+
+        return ret || null;
+    },
+
+    /**
+     * Returns the default listener scope for a "satellite" of this component.
+     * Used for resolving scope for observable objects that are not part of the normal
+     * Container/Component hierarchy (for example, plugins)
+     *
+     * @param {Ext.mixin.Observable} satellite
+     * @param {Object} [defaultScope]
+     * @return {Object} The listener scope
+     * @protected
+     * @since 5.1.1
+     */
+    resolveSatelliteListenerScope: function(satellite, defaultScope) {
+        var me = this,
+            namedScope = Ext._namedScopes[defaultScope],
+            ret;
+
+        // The logic here is the same as that in resolveListenerScope with a couple of
+        // exceptions:
+        // 1. If scope resolution failed, fall back to the satellite instance, not "this"
+        //    for class-declared listeners, for instance-declared use "this"
+        // 2. Never pass skipThis to getInheritedConfig.  The satellite is essentially
+        //    treated as a "child" of this component and therefore should always consider
+        //    its component/component's controller as candidates for listener scope
+        if (!namedScope) {
+            ret = me.getInheritedConfig('defaultListenerScope') || defaultScope || me;
+        } else if (namedScope.isController) {
+            ret = me.getInheritedConfig('controller');
+        } else if (namedScope.isSelf) {
+            ret = me.getInheritedConfig('defaultListenerScope') || satellite;
+        } else if (namedScope.isThis) {
+            ret = satellite;
         }
 
         return ret || null;

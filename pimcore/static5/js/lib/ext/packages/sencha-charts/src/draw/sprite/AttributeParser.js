@@ -95,7 +95,7 @@ Ext.define('Ext.draw.sprite.AttributeParser', {
     /**
      * Generates a function that checks if a value matches
      * one of the given attributes.
-     * @returns {Function}
+     * @return {Function}
      */
     enums: function () {
         var enums = {},

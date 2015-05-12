@@ -8,75 +8,88 @@
  * documentation for more information. A typical configuration object for the line series could be:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 0
- *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             }],
- *             series: [{
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 style: {
- *                     stroke: 'rgb(143,203,203)'
- *                 },
- *                 xField: 'name',
- *                 yField: 'data1',
- *                 marker: {
- *                     type: 'path',
- *                     path: ['M', -2, 0, 0, 2, 2, 0, 0, -2, 'Z'],
- *                     stroke: 'blue',
- *                     lineWidth: 0
- *                 }
- *             }, {
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 fill: true,
- *                 xField: 'name',
- *                 yField: 'data3',
- *                 marker: {
- *                     type: 'circle',
- *                     radius: 4,
- *                     lineWidth: 0
- *                 }
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        insetPadding: 40,
+ *        store: {
+ *            fields: ['name', 'data1', 'data2'],
+ *            data: [{
+ *                'name': 'metric one',
+ *                'data1': 10,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric two',
+ *                'data1': 7,
+ *                'data2': 16
+ *            }, {
+ *                'name': 'metric three',
+ *                'data1': 5,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric four',
+ *                'data1': 2,
+ *                'data2': 6
+ *            }, {
+ *                'name': 'metric five',
+ *                'data1': 27,
+ *                'data2': 36
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['data1'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            grid: true,
+ *            minimum: 0
+ *        }, {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            fields: ['name'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            }
+ *        }],
+ *        series: [{
+ *            type: 'line',
+ *            style: {
+ *                stroke: '#30BDA7',
+ *                lineWidth: 2
+ *            },
+ *            xField: 'name',
+ *            yField: 'data1',
+ *            marker: {
+ *                type: 'path',
+ *                path: ['M', - 4, 0, 0, 4, 4, 0, 0, - 4, 'Z'],
+ *                stroke: '#30BDA7',
+ *                lineWidth: 2,
+ *                fill: 'white'
+ *            }
+ *        }, {
+ *            type: 'line',
+ *            fill: true,
+ *            style: {
+ *                fill: '#96D4C6',
+ *                fillOpacity: .6,
+ *                stroke: '#0A3F50',
+ *                strokeOpacity: .6,
+ *            },
+ *            xField: 'name',
+ *            yField: 'data2',
+ *            marker: {
+ *                type: 'circle',
+ *                radius: 4,
+ *                lineWidth: 2,
+ *                fill: 'white'
+ *            }
+ *        }]
  *     });
  *
  * In this configuration we're adding two series (or lines), one bound to the `data1`

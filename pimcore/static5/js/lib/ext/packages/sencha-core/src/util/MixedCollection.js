@@ -37,8 +37,6 @@ Ext.define('Ext.util.MixedCollection', {
      * Configure as `true` if the {@link #addAll} function should add function references to the collection.
      */
 
-    //me.addEvents('sort');
-
     /**
      * Creates new MixedCollection.
      * @param {Object} config A configuration object.
@@ -50,9 +48,8 @@ Ext.define('Ext.util.MixedCollection', {
      * equivalent to overriding the {@link #method-getKey} method.
      */
     constructor: function() {
-        var me = this;
-        me.initConfig();
-        me.callParent(arguments);
+        this.initConfig();
+        this.callParent(arguments);
     },
 
     doSort: function(sorterFn) {

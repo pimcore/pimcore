@@ -208,11 +208,11 @@ Ext.define('Ext.chart.interactions.Abstract', {
             me.syncTimer = null;
         }
         if (me.stopAnimationBeforeSync) {
-            chart.resizing = true;
+            ++chart.resizing;
         }
         chart.redraw();
         if (me.stopAnimationBeforeSync) {
-            chart.resizing = false;
+            --chart.resizing;
         }
         me.syncThrottle = Date.now() + me.throttleGap;
     },

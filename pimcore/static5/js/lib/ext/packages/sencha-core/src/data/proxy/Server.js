@@ -504,7 +504,11 @@ Ext.define('Ext.data.proxy.Server', {
      */
     afterRequest: Ext.emptyFn,
 
-    onDestroy: function() {
+    destroy: function() {
+        this.callParent();
+        
         Ext.destroy(this.getReader(), this.getWriter());
+        
+        this.reader = this.writer = null;
     }
 });

@@ -380,7 +380,7 @@ Ext.define('Ext.util.Positionable', {
             // Otherwise, use this Positionable's element's parent node.
             constrainToEl = me.constrainTo || me.container || me.el.parent();
             constrainToEl = Ext.get(constrainToEl.el || constrainToEl);
-            constrainTo = constrainToEl.getViewRegion();
+            constrainTo = constrainToEl.getConstrainRegion();
             constrainTo.right = constrainTo.left + constrainToEl.el.dom.clientWidth;
 
             myWidth = me.getWidth();
@@ -541,7 +541,8 @@ Ext.define('Ext.util.Positionable', {
             parentOffset,
             borderPadding,
             proposedConstrainPosition,
-            xy = false;
+            xy = false,
+            localXY;
 
         if (local && fp) {
             parentOffset = parentNode.getXY();
@@ -558,15 +559,54 @@ Ext.define('Ext.util.Positionable', {
         // constrainTo setting. getConstrainVector will provide a default constraint
         // region if there is no explicit constrainTo, *and* there is no floatParent owner Component.
         constrainTo = constrainTo || me.constrainTo || parentNode || me.container || me.el.parent();
-        vector = me.getConstrainVector(constrainTo, proposedConstrainPosition, proposedSize);
+
+        if (local && proposedConstrainPosition) {
+            proposedConstrainPosition = me.reverseTranslateXY(proposedConstrainPosition);
+        }
+
+        vector = ((me.constrainHeader && me.header.rendered) ? me.header : me).getConstrainVector(
+            constrainTo,
+            proposedConstrainPosition,
+            proposedSize
+        );
 
         // false is returned if no movement is needed
-        xy = proposedPosition || me.getPosition(local);
         if (vector) {
+            xy = proposedPosition || me.getPosition(local);
             xy[0] += vector[0];
             xy[1] += vector[1];
         }
         return xy;
+    },
+
+    /**
+     * Returns the content region of this element for purposes of constraining floating
+     * children.  That is the region within the borders and scrollbars, but not within the padding.
+     */
+    getConstrainRegion: function() {
+        var me = this,
+            el = me.el,
+            isBody = el.dom.nodeName === 'BODY',
+            dom = el.dom,
+            borders = el.getBorders(),
+            pos = el.getXY(),
+            left = pos[0] + borders.beforeX,
+            top = pos[1] + borders.beforeY,
+            scroll, width, height;
+
+        // For the body we want to do some special logic.
+        if (isBody) {
+            scroll = el.getScroll();
+            left = scroll.left;
+            top = scroll.top;
+            width = Ext.Element.getViewportWidth();
+            height = Ext.Element.getViewportHeight();
+        } else {
+            width = dom.clientWidth;
+            height = dom.clientHeight;
+        }
+
+        return new Ext.util.Region(top, left + width, top + height, left);
     },
 
     /**
@@ -597,8 +637,7 @@ Ext.define('Ext.util.Positionable', {
     getConstrainVector: function(constrainTo, proposedPosition, proposedSize) {
         var thisRegion = this.getRegion(),
             vector = [0, 0],
-            shadow = this.shadow,
-            shadowSize = (shadow && this.constrainShadow && !shadow.disabled) ? shadow.getShadowSize() : undefined,
+            shadowSize = (this.shadow && this.constrainShadow && !this.shadowDisabled) ? this.shadow.getShadowSize() : undefined,
             overflowed = false,
             constrainSize,
             constraintInsets = this.constraintInsets;
@@ -609,7 +648,7 @@ Ext.define('Ext.util.Positionable', {
             // getRegion uses bounding client rect.
             // We need to clear any scrollbars, so get the size using getViewSize
             constrainSize = constrainTo.getViewSize();
-            constrainTo = constrainTo.getViewRegion();
+            constrainTo = constrainTo.getConstrainRegion();
             constrainTo.right = constrainTo.left + constrainSize.width;
             constrainTo.bottom = constrainTo.top + constrainSize.height;
         }
@@ -853,5 +892,41 @@ Ext.define('Ext.util.Positionable', {
             x: left,
             y: top
         };
+    },
+
+    /**
+     * Converts local coordinates into page-level coordinates
+     * @param {Number[]} xy The local x and y coordinates
+     * @return {Number[]} The translated coordinates
+     * @private
+     */
+    reverseTranslateXY: function(xy) {
+        var coords = xy,
+            el = this.el,
+            translatedXY = [],
+            dom = el.dom,
+            offsetParent = dom.offsetParent,
+            relative,
+            offsetParentXY,
+            x, y;
+
+        if (offsetParent) {
+            relative = el.isStyle('position', 'relative'),
+            offsetParentXY = Ext.fly(offsetParent).getXY(),
+
+            x = xy[0] + offsetParentXY[0] + offsetParent.clientLeft;
+            y = xy[1] + offsetParentXY[1] + offsetParent.clientTop;
+
+            if (relative) {
+                // relative positioned elements sit inside the offsetParent's padding,
+                // while absolute positioned element sit just inside the border
+                x += el.getPadding('l');
+                y += el.getPadding('t');
+            }
+
+            coords = [x, y];
+        }
+
+        return coords;
     }
 });

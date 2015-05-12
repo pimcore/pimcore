@@ -139,7 +139,7 @@ Ext.define('Ext.GlobalEvents', {
 
         me.callParent();
 
-        Ext.onReady(function() {
+        Ext.onInternalReady(function() {
             // using a closure here instead of attaching the event directly to the
             // attachListeners method gives us a chance to override the method
             me.attachListeners();

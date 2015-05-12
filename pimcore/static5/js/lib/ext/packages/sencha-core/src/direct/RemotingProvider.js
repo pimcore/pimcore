@@ -617,7 +617,7 @@ Ext.define('Ext.direct.RemotingProvider', {
             len = buffer.length;
             
         if (len > 0) {
-            me.sendRequest(len == 1 ? buffer[0] : buffer);
+            me.sendRequest(len === 1 ? buffer[0] : buffer);
             me.callBuffer = [];
         }
     },

@@ -71,7 +71,7 @@ Ext.define("Ext.locale.fr_CA.grid.plugin.DragDrop", {
 
 Ext.define("Ext.locale.fr_CA.tab.Tab", {
     override: "Ext.tab.Tab",
-    closeText: "Fermer cette onglet"
+    closeText: "Fermer cet onglet"
 });
 
 Ext.define("Ext.locale.fr_CA.form.field.Base", {

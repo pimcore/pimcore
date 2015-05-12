@@ -16,7 +16,9 @@ Ext.define('Ext.chart.axis.layout.Continuous', {
         return +value;
     },
 
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     snapEnds: function (context, min, max, estStepSize) {
         var segmenter = context.segmenter,
             axis = this.getAxis(),

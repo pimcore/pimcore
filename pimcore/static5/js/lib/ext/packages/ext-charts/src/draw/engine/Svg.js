@@ -227,7 +227,7 @@ Ext.define('Ext.draw.engine.Svg', {
 
     /**
      * Get the region for the surface's canvas area
-     * @returns {Ext.util.Region}
+     * @return {Ext.util.Region}
      */
     getRegion: function() {
         // Mozilla requires using the background rect because the svg element returns an

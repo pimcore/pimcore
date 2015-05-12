@@ -56,6 +56,8 @@ describe("Ext.direct.PollingProvider", function() {
             remotingProvider = null;
         }
         
+        Ext.direct.Manager.clearAllMethods();
+        
         window.spec = null;
         
         Ext.util.TaskManager.stopAll();

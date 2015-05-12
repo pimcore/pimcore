@@ -79,6 +79,27 @@
  *
  * @member Global_CSS
  */
+/**
+ * adds a css outline to an element with compatibility for IE8/outline-offset
+ * NOTE: the element receiving the outline must be positioned (either relative or absolute)
+ * in order for the outline to work in IE8
+ *
+ * @param {number} [$width=1px]
+ * The width of the outline
+ *
+ * @param {string} [$style=solid]
+ * The style of the outline
+ *
+ * @param {color} [$color=#000]
+ * The color of the outline
+ *
+ * @param {number} [$offset=0]
+ * The offset of the outline
+ *
+ * @param {number/list} [$border-width=0]
+ * The border-width of the element receiving the outline.
+ * Required in order for outline-offset to work in IE8
+ */
 /* including package ext-theme-neutral */
 /* including package ext-theme-classic */
 /* including package ext-theme-gray */
@@ -129,6 +150,7 @@
  *
  * This defaults to `true`. It is required if either grid fields are being used,
  * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * @member Ext.view.Table
  */
 /** @class Ext.grid.feature.Grouping */
 /** @class Ext.menu.Menu */
@@ -138,6 +160,7 @@
  *
  * This defaults to `true`. It is required if either grid fields are being used,
  * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * @member Ext.view.Table
  */
 /** @class Ext.grid.plugin.RowEditing */
 /** @class Ext.grid.plugin.RowExpander */
@@ -447,6 +470,22 @@
  * The opacity of the collapse tool on the active Splitter (the Splitter currently being dragged)
  */
 /**
+ * @var {color}
+ * The color of the outline around the splitter when it is focused
+ */
+/**
+ * @var {string}
+ * The outline-style of the splitter when it is focused
+ */
+/**
+ * @var {number}
+ * The outline-width of the splitter when it is focused
+ */
+/**
+ * @var {number}
+ * The outline-offset of the splitter when it is focused
+ */
+/**
  * @var {string}
  * The the type of cursor to display when the cursor is over the collapse tool
  */
@@ -634,17 +673,17 @@
 /**
  * @var {number}
  * The opacity of Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
@@ -998,6 +1037,12 @@
 /**
  * @var {color} $form-field-focus-border-color
  * Border color for focused form fields.
+ *
+ * In the default Neptune color scheme this is the same as $base-highlight-color
+ * but it does not change automatically when one changes the $base-color.  This is because
+ * checkboxes and radio buttons have this focus color hard coded into their background
+ * images.  If this color is changed, you should also modify checkbox and radio button
+ * background images to match
  */
 /**
  * @var {color} $form-field-invalid-border-color
@@ -1492,10 +1537,11 @@
 /**
  * @var {boolean}
  * True to use vertically oriented triggers. False to use horizontally oriented triggers.
- * Themes that set this property to true must also override the {@link #triggerVertical}
- * config to match. Defaults to true.  When 'vertical' orientation is used, the background image
- * for both triggers is 'form/spinner'.  When 'horizontal' is used, the triggers use separate
- * background images - 'form/spinner-up', and 'form/spinner-down'.
+ * Themes that set this property to true must also override the
+ * {@link Ext.form.trigger.Spinner#vertical} config to match. Defaults to true.  When
+ * 'vertical' orientation is used, the background image for both triggers is
+ * 'form/spinner'.  When 'horizontal' is used, the triggers use separate background
+ * images - 'form/spinner-up', and 'form/spinner-down'.
  */
 /**
  * @var {string}
@@ -3150,10 +3196,6 @@
  * The default icon size for a grid cell button
  */
 /**
- * @var {number}
- * The space between a grid cell button's icon and text
- */
-/**
  * @var {color}
  * The border-color for the `cell` button UI
  */
@@ -3361,11 +3403,11 @@
  * The opacity of the {@link #glyph} icon for the `cell` button UI
  */
 /**
- * @var {number} $button-opacity-disabled
+ * @var {number} $button-grid-cell-opacity-disabled
  * opacity to apply to the button's main element when the button is disabled
  */
 /**
- * @var {number} $button-inner-opacity-disabled
+ * @var {number} $button-grid-cell-inner-opacity-disabled
  * opacity to apply to the button's inner elements (icon and text) when the buton is disabled
  */
 /**
@@ -5157,6 +5199,12 @@
 /**
  * @var {color} $form-field-focus-border-color
  * Border color for focused form fields.
+ *
+ * In the default Neptune color scheme this is the same as $base-highlight-color
+ * but it does not change automatically when one changes the $base-color.  This is because
+ * checkboxes and radio buttons have this focus color hard coded into their background
+ * images.  If this color is changed, you should also modify checkbox and radio button
+ * background images to match
  */
 /**
  * @var {color} $form-field-invalid-border-color
@@ -5651,10 +5699,11 @@
 /**
  * @var {boolean}
  * True to use vertically oriented triggers. False to use horizontally oriented triggers.
- * Themes that set this property to true must also override the {@link #triggerVertical}
- * config to match. Defaults to true.  When 'vertical' orientation is used, the background image
- * for both triggers is 'form/spinner'.  When 'horizontal' is used, the triggers use separate
- * background images - 'form/spinner-up', and 'form/spinner-down'.
+ * Themes that set this property to true must also override the
+ * {@link Ext.form.trigger.Spinner#vertical} config to match. Defaults to true.  When
+ * 'vertical' orientation is used, the background image for both triggers is
+ * 'form/spinner'.  When 'horizontal' is used, the triggers use separate background
+ * images - 'form/spinner-up', and 'form/spinner-down'.
  */
 /**
  * @var {string}
@@ -6088,8 +6137,10 @@
  * @var {boolean}
  * True to include the "grid-cell" form field UIs input fields rendered in the context of a grid cell.
  *
- * This defaults to `true`. It is required if either {@link Ext.grid.plugin.Editor grid editors} are being used,
- * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * This defaults to `true`. It is required if either grid editors
+ * ({@link Ext.grid.plugin.CellEditing cell} or {@link Ext.grid.plugin.RowEditing row})
+ * are being used, or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to
+ * house an input field.
  */
 /**
  *  @class Ext.form.field.Text
@@ -6116,11 +6167,11 @@
  */
 /**
  * @var {color}
- * The background color of a text field's input element when endered in the context of a grid cell
+ * The background color of a text field's input element when entered in the context of a grid cell
  */
 /**
  * @var {number/list}
- * The border width of text fields endered in the context of a grid cell
+ * The border width of text fields entered in the context of a grid cell
  */
 /**
  * @var {string/list}
@@ -6429,6 +6480,10 @@
  * The style of cursor to display when the cursor is over a {@link Ext.menu.Item Menu Item}
  */
 /**
+ * @var {string}
+ * The style of cursor to display when the cursor is over a disabled {@link Ext.menu.Item Menu Item}
+ */
+/**
  * @var {color}
  * The background-color of the active {@link Ext.menu.Item Menu Item}
  */
@@ -6567,17 +6622,17 @@
 /**
  * @var {number}
  * The opacity of Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
@@ -6662,8 +6717,10 @@
  * @var {boolean}
  * True to include the "grid-cell" form field UIs input fields rendered in the context of a grid cell.
  *
- * This defaults to `true`. It is required if either {@link Ext.grid.plugin.Editor grid editors} are being used,
- * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * This defaults to `true`. It is required if either grid editors
+ * ({@link Ext.grid.plugin.CellEditing cell} or {@link Ext.grid.plugin.RowEditing row})
+ * are being used, or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to
+ * house an input field.
  */
 /**
  *  @class Ext.form.field.Text
@@ -6690,11 +6747,11 @@
  */
 /**
  * @var {color}
- * The background color of a text field's input element when endered in the context of a grid cell
+ * The background color of a text field's input element when entered in the context of a grid cell
  */
 /**
  * @var {number/list}
- * The border width of text fields endered in the context of a grid cell
+ * The border width of text fields entered in the context of a grid cell
  */
 /**
  * @var {string/list}
@@ -7246,17 +7303,17 @@
 /**
  * @var {number}
  * The opacity of Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Toolbar scroller buttons. Only applicable when
- * {@link $toolbar-classic-scrollers} is `false`.
+ * {@link #$toolbar-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
@@ -7290,11 +7347,11 @@
  */
 /**
  * @var {number}
- * The width of breadcrumb arrows when {@link #split} is `false`
+ * The width of breadcrumb arrows when {@link #useSplitButtons} is `false`
  */
 /**
  * @var {number}
- * The width of breadcrumb arrows when {@link #split} is `true`
+ * The width of breadcrumb arrows when {@link #useSplitButtons} is `true`
  */
 /**
  * @var {string}
@@ -7357,22 +7414,22 @@
 /**
  * @var {number}
  * The opacity of Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of hovered Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of pressed Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {number}
  * The opacity of disabled Breadcrumb scroller buttons. Only applicable when
- * {@link $breadcrumb-classic-scrollers} is `false`.
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
  */
 /**
  * @var {boolean}
@@ -7685,8 +7742,8 @@ td.x-frame-br {
 .x-container {
   position: relative; }
 
-/* line 204, ../../../ext-theme-base/sass/src/Component.scss */
-.x-webkit *:focus {
+/* line 203, ../../../ext-theme-base/sass/src/Component.scss */
+:focus {
   outline: none; }
 
 /* line 3, ../../../ext-theme-base/sass/src/layout/container/Container.scss */
@@ -7902,6 +7959,10 @@ td.x-frame-br {
 .x-collapse-el {
   position: absolute;
   background-repeat: no-repeat; }
+
+/* line 30, ../../../ext-theme-base/sass/src/resizer/Splitter.scss */
+.x-splitter-focus {
+  z-index: 4; }
 
 /* line 1, ../../../ext-theme-base/sass/src/layout/container/Box.scss */
 .x-box-layout-ct {
@@ -8171,6 +8232,10 @@ td.x-frame-mc {
   border: 0;
   padding: 0; }
 
+/* line 33, ../../../ext-theme-base/sass/src/panel/Panel.scss */
+.x-panel-collapsed-mini {
+  visibility: hidden; }
+
 /* line 1, ../../../ext-theme-base/sass/src/form/Labelable.scss */
 .x-form-item {
   display: table;
@@ -8217,28 +8282,29 @@ td.x-frame-mc {
 .x-form-item-label-right {
   text-align: right; }
 
-/* line 48, ../../../ext-theme-base/sass/src/form/Labelable.scss */
+/* line 53, ../../../ext-theme-base/sass/src/form/Labelable.scss */
 .x-form-error-wrap-side {
   display: table-cell;
   vertical-align: middle; }
 
-/* line 53, ../../../ext-theme-base/sass/src/form/Labelable.scss */
+/* line 58, ../../../ext-theme-base/sass/src/form/Labelable.scss */
 .x-form-error-wrap-under {
   display: table-row;
   height: 1px; }
-  /* line 56, ../../../ext-theme-base/sass/src/form/Labelable.scss */
+  /* line 61, ../../../ext-theme-base/sass/src/form/Labelable.scss */
   .x-form-error-wrap-under > .x-form-error-msg {
     display: table-cell; }
 
-/* line 61, ../../../ext-theme-base/sass/src/form/Labelable.scss */
+/* line 66, ../../../ext-theme-base/sass/src/form/Labelable.scss */
 .x-form-error-wrap-under-side-label:before {
   display: table-cell;
-  content: ''; }
+  content: '';
+  pointer-events: none; }
 
-/* line 66, ../../../ext-theme-base/sass/src/form/Labelable.scss */
+/* line 72, ../../../ext-theme-base/sass/src/form/Labelable.scss */
 .x-form-invalid-icon {
   overflow: hidden; }
-  /* line 68, ../../../ext-theme-base/sass/src/form/Labelable.scss */
+  /* line 74, ../../../ext-theme-base/sass/src/form/Labelable.scss */
   .x-form-invalid-icon ul {
     display: none; }
 
@@ -8337,9 +8403,12 @@ the height of a multi-line element */
 .x-form-cb-label {
   display: inline-block; }
 
-/* line 53, ../../../ext-theme-base/sass/src/form/field/Checkbox.scss */
+/* line 54, ../../../ext-theme-base/sass/src/form/field/Checkbox.scss */
 .x-form-cb-wrap-inner-no-box-label > .x-form-cb {
   position: static; }
+/* line 58, ../../../ext-theme-base/sass/src/form/field/Checkbox.scss */
+.x-form-cb-wrap-inner-no-box-label > .x-form-cb-label {
+  display: none; }
 
 /* line 2, ../../../ext-theme-base/sass/src/grid/header/DropZone.scss */
 .x-col-move-top,
@@ -8379,22 +8448,29 @@ the height of a multi-line element */
   .x-leaf-column-header .x-column-header-text-container {
     height: 100%; }
 
-/* line 24, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 26, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-text-container {
   width: 100%;
-  display: table; }
+  display: table;
+  table-layout: fixed; }
+  /* line 31, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+  .x-column-header-text-container.x-column-header-text-container-auto {
+    table-layout: auto; }
 
-/* line 29, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 36, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-text-wrapper {
   display: table-cell;
   vertical-align: middle; }
 
-/* line 34, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 41, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-text {
-  white-space: nowrap;
-  background-repeat: no-repeat; }
+  background-repeat: no-repeat;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
 
-/* line 48, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 58, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-trigger {
   display: none;
   height: 100%;
@@ -8404,19 +8480,19 @@ the height of a multi-line element */
   top: 0;
   z-index: 2; }
 
-/* line 66, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 76, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-over .x-column-header-trigger, .x-column-header-open .x-column-header-trigger {
   display: block; }
 
-/* line 71, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 81, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-align-right {
   text-align: right; }
 
-/* line 81, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 91, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-align-left {
   text-align: left; }
 
-/* line 91, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
+/* line 101, ../../../ext-theme-base/sass/src/grid/column/Column.scss */
 .x-column-header-align-center {
   text-align: center; }
 
@@ -9194,12 +9270,12 @@ the height of a multi-line element */
   overflow-y: auto; }
 
 /* line 13, ../../../ext-theme-base/sass/src/form/field/Tag.scss */
-.x-tagfield ul.x-tagfield-list {
+.x-tagfield .x-tagfield-list {
   padding: 1px 3px;
   margin: 0; }
 
 /* line 18, ../../../ext-theme-base/sass/src/form/field/Tag.scss */
-ul.x-tagfield-list.x-tagfield-singleselect {
+.x-tagfield-list.x-tagfield-singleselect {
   white-space: nowrap;
   overflow: hidden; }
 
@@ -9426,6 +9502,14 @@ ul.x-tagfield-list.x-tagfield-singleselect {
 .x-abs-layout-item {
   position: absolute !important; }
 
+/* line 1, ../../../ext-theme-base/sass/src/layout/container/Center.scss */
+.x-center-layout-item {
+  position: absolute; }
+
+/* line 5, ../../../ext-theme-base/sass/src/layout/container/Center.scss */
+.x-center-target {
+  position: relative; }
+
 /* line 1, ../../../ext-theme-base/sass/src/layout/container/Form.scss */
 .x-form-layout-wrap {
   display: table;
@@ -9470,7 +9554,8 @@ ul.x-tagfield-list.x-tagfield-singleselect {
 /* line 60, ../../../ext-theme-base/sass/src/layout/container/Form.scss */
 .x-form-form-item.x-form-item-no-label:before {
   content: ' ';
-  display: table-cell; }
+  display: table-cell;
+  pointer-events: none; }
 
 /* line 2, ../../../ext-theme-base/sass/src/resizer/Resizer.scss */
 .x-resizable-wrapped {
@@ -10038,6 +10123,23 @@ ul.x-tagfield-list.x-tagfield-singleselect {
   .x-splitter-active .x-collapse-el {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
     opacity: 0.3; }
+
+/* line 91, ../../../ext-theme-neutral/sass/src/resizer/Splitter.scss */
+.x-splitter-focus {
+  outline: 1px dotted #464646;
+  outline-offset: -1px; }
+  /* line 33, ../../../ext-theme-base/sass/etc/mixins/css-outline.scss */
+  .x-ie8 .x-splitter-focus {
+    outline: none; }
+    /* line 35, ../../../ext-theme-base/sass/etc/mixins/css-outline.scss */
+    .x-ie8 .x-splitter-focus:after {
+      position: absolute;
+      content: ' ';
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      border: 1px dotted #464646; }
 
 /**
  * Creates a visual theme for a {@link Ext.layout.container.boxOverflow.Scroller Box Scroller}
@@ -12272,10 +12374,10 @@ ul.x-tagfield-list.x-tagfield-singleselect {
  * @param {number} [$ui-line-height=$form-label-line-height]
  * The line-height of the label
  *
- * @param {number} [$ui-horizontal-spacing: $form-label-horizontal-spacing]
+ * @param {number} [$ui-horizontal-spacing=$form-label-horizontal-spacing]
  * Horizontal space between the label and the field body when the label is left-aligned.
  *
- * @param {number} [$ui-vertical-spacing: $form-label-vertical-spacing]
+ * @param {number} [$ui-vertical-spacing=$form-label-vertical-spacing]
  * Vertical space between the label and the field body when the label is top-aligned.
  *
  * @param {number} [$ui-error-icon-background-image=$form-error-icon-background-image]
@@ -12432,7 +12534,7 @@ ul.x-tagfield-list.x-tagfield-singleselect {
  * @param {number} [$ui-field-height=$form-field-height]
  * The height of the field body that the display text must fit within.  This does not set
  * the height of the field, only allows the text to be centered inside the field body.
- * (The height of the field body is determined by {@link #extjs-label}).
+ * (The height of the field body is determined by {@link #extjs-label-ui}).
  *
  * @param {color} [$ui-color=$form-display-field-color]
  * The text color of display fields
@@ -12465,48 +12567,52 @@ ul.x-tagfield-list.x-tagfield-singleselect {
   color: black;
   margin-top: 5px; }
 
-/* line 1, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 5, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+.x-grid-view {
+  z-index: 1; }
+
+/* line 9, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-body {
   background: white;
   border-width: 1px;
   border-style: solid;
   border-color: #d0d0d0; }
 
-/* line 10, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 18, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-item-container {
   min-height: 1px;
   position: relative; }
 
-/* line 15, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 23, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-empty {
   padding: 10px;
   color: gray;
   background-color: white;
   font: normal 11px tahoma, arial, verdana, sans-serif; }
 
-/* line 23, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 31, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-item {
   color: black;
   font: normal 11px/13px tahoma, arial, verdana, sans-serif;
   background-color: white; }
 
-/* line 29, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 37, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-item-alt {
   background-color: #fafafa; }
 
-/* line 33, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 41, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-item-over {
   color: black;
   background-color: #efefef; }
 
-/* line 40, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 48, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-item-focused {
   outline: 0;
   color: black; }
-  /* line 44, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+  /* line 52, ../../../ext-theme-neutral/sass/src/view/Table.scss */
   .x-grid-item-focused .x-grid-cell-inner {
     z-index: 1; }
-  /* line 52, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+  /* line 60, ../../../ext-theme-neutral/sass/src/view/Table.scss */
   .x-grid-item-focused .x-grid-cell-inner:before {
     content: "";
     position: absolute;
@@ -12515,55 +12621,56 @@ ul.x-tagfield-list.x-tagfield-singleselect {
     right: 0px;
     bottom: 0px;
     left: 0px;
+    pointer-events: none;
     border: 1px dotted #464646; }
 
-/* line 73, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 82, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-item-selected {
   color: black;
   background-color: #e0e0e0; }
 
-/* line 79, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 88, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-row-lines .x-grid-item {
   border-style: solid;
   border-width: 1px 0 0;
   border-color: #ededed; }
-/* line 85, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 94, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-row-lines .x-grid-item:first-child {
   border-top-color: white; }
-/* line 91, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 100, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-row-lines .x-grid-item.x-grid-item-over {
   border-style: solid;
   border-color: #dddddd; }
-/* line 96, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 105, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-row-lines .x-grid-item-over + .x-grid-item {
   border-top-style: solid;
   border-top-color: #dddddd; }
-/* line 101, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 110, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-row-lines .x-grid-item.x-grid-item-selected {
   border-style: dotted;
   border-color: #bfb8b8; }
-/* line 106, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 115, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-row-lines .x-grid-item-selected + .x-grid-item {
   border-top-style: dotted;
   border-top-color: #bfb8b8; }
-/* line 111, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 120, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-row-lines .x-grid-item:last-child {
   border-bottom-width: 1px; }
-/* line 121, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 130, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-ie8 .x-grid-with-row-lines .x-grid-item {
   border-width: 1px 0;
   margin-top: -1px; }
-/* line 126, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 135, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-ie8 .x-grid-with-row-lines .x-grid-item:first-child {
   margin-top: 0; }
 
-/* line 132, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 141, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-cell-inner {
   position: relative;
   text-overflow: ellipsis;
   padding: 3px 6px 4px 6px; }
 
-/* line 148, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 157, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-cell-special {
   border-color: #c6c6c6;
   border-style: solid;
@@ -12582,7 +12689,7 @@ ul.x-tagfield-list.x-tagfield-singleselect {
   /*<if slicer>*/
   /*</if slicer>*/
   /* */ }
-  /* line 161, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+  /* line 170, ../../../ext-theme-neutral/sass/src/view/Table.scss */
   .x-grid-item-selected .x-grid-cell-special {
     border-right-color: #d4b7b7;
     background-image: none;
@@ -12593,11 +12700,11 @@ ul.x-tagfield-list.x-tagfield-singleselect {
     background-image: -o-linear-gradient(left, #e0e0e0, #d3d3d3);
     background-image: -ms-linear-gradient(left, #e0e0e0, #d3d3d3);
     background-image: linear-gradient(left, #e0e0e0, #d3d3d3); }
-  /* line 176, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+  /* line 185, ../../../ext-theme-neutral/sass/src/view/Table.scss */
   .x-nlg .x-grid-cell-special {
     background-repeat: repeat-y;
     background-image: url(images/grid/cell-special-bg.gif); }
-  /* line 181, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+  /* line 190, ../../../ext-theme-neutral/sass/src/view/Table.scss */
   .x-nlg .x-grid-item-selected .x-grid-cell-special {
     background-image: url(images/grid/cell-special-selected-bg.gif); }
   /* line 83, ../../../ext-theme-base/sass/etc/mixins/slicer.scss */
@@ -12609,20 +12716,20 @@ ul.x-tagfield-list.x-tagfield-singleselect {
     display: none;
     content: "x-slicer:bg:url(images/grid/cell-special-selected-bg.gif)" !important; }
 
-/* line 198, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 207, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-dirty-cell {
   background: url(images/grid/dirty.gif) no-repeat 0 0; }
 
-/* line 211, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 220, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-row .x-grid-cell-selected {
   color: black;
   background-color: #b8cfee; }
 
-/* line 217, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 226, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-with-col-lines .x-grid-cell {
   border-right: 1px solid #c6c6c6; }
 
-/* line 229, ../../../ext-theme-neutral/sass/src/view/Table.scss */
+/* line 238, ../../../ext-theme-neutral/sass/src/view/Table.scss */
 .x-grid-resize-marker {
   width: 1px;
   background-color: #0f0f0f; }
@@ -12950,17 +13057,16 @@ ul.x-tagfield-list.x-tagfield-singleselect {
 
 /* line 37, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
 .x-column-header-inner {
-  padding: 4px 6px 5px 6px;
-  text-overflow: ellipsis; }
+  padding: 4px 6px 5px 6px; }
 
-/* line 42, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
+/* line 41, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
 .x-column-header-inner-empty {
   text-overflow: clip; }
 
-/* line 50, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
+/* line 49, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
 .x-column-header.x-column-header-focus {
   color: black; }
-  /* line 51, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
+  /* line 50, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
   .x-column-header.x-column-header-focus .x-column-header-inner:before {
     content: "";
     position: absolute;
@@ -12968,7 +13074,8 @@ ul.x-tagfield-list.x-tagfield-singleselect {
     right: 0px;
     bottom: 0px;
     left: 0px;
-    border: 1px dotted #333333; }
+    border: 1px dotted #333333;
+    pointer-events: none; }
   /* line 63, ../../../ext-theme-neutral/sass/src/grid/column/Column.scss */
   .x-column-header.x-column-header-focus.x-group-sub-header .x-column-header-inner:before {
     bottom: 0px; }
@@ -19926,15 +20033,16 @@ div.x-border-layout-ct {
   right: 0;
   bottom: 0;
   left: 0;
+  pointer-events: none;
   outline: 1px dotted #6f6f6f; }
-/* line 1662, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1663, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-default.x-tab-closable .x-tab-button:before {
   right: 14px; }
 
-/* line 1702, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1703, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over.x-tab-default {
   background-color: #f2eeee; }
-/* line 1746, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1747, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over.x-tab-default-top, .x-tab-over.x-tab-default-left, .x-tab-over.x-tab-default-right {
   background-image: none;
   background-color: #f2eeee;
@@ -19944,7 +20052,7 @@ div.x-border-layout-ct {
   background-image: -o-linear-gradient(top, #ffffff, #f0f0f0);
   background-image: -ms-linear-gradient(top, #ffffff, #f0f0f0);
   background-image: linear-gradient(top, #ffffff, #f0f0f0); }
-/* line 1749, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1750, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over.x-tab-default-bottom {
   background-image: none;
   background-color: #f2eeee;
@@ -19955,19 +20063,19 @@ div.x-border-layout-ct {
   background-image: -ms-linear-gradient(bottom, #ffffff, #f0f0f0);
   background-image: linear-gradient(bottom, #ffffff, #f0f0f0); }
 
-/* line 1813, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1814, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active.x-tab-default {
   background-color: #eaeaea; }
-  /* line 1819, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+  /* line 1820, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
   .x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
     color: #333333; }
-  /* line 1834, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+  /* line 1835, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
   .x-tab.x-tab-active.x-tab-default .x-tab-glyph {
     color: #333333; }
-    /* line 1842, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+    /* line 1843, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
     .x-ie8 .x-tab.x-tab-active.x-tab-default .x-tab-glyph {
       color: #8e8e8e; }
-/* line 1852, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1853, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active.x-tab-default-top, .x-tab.x-tab-active.x-tab-default-left, .x-tab.x-tab-active.x-tab-default-right {
   background-image: none;
   background-color: #eaeaea;
@@ -19977,7 +20085,7 @@ div.x-border-layout-ct {
   background-image: -o-linear-gradient(top, #ffffff, #eaeaea);
   background-image: -ms-linear-gradient(top, #ffffff, #eaeaea);
   background-image: linear-gradient(top, #ffffff, #eaeaea); }
-/* line 1856, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1857, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active.x-tab-default-bottom {
   background-image: none;
   background-color: #eaeaea;
@@ -19988,27 +20096,27 @@ div.x-border-layout-ct {
   background-image: -ms-linear-gradient(bottom, #ffffff, #eaeaea);
   background-image: linear-gradient(bottom, #ffffff, #eaeaea); }
 
-/* line 1921, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1922, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled.x-tab-default {
   border-color: #dadada;
   background-color: #eeeeee;
   cursor: default; }
-  /* line 1938, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+  /* line 1939, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
   .x-tab.x-tab-disabled.x-tab-default .x-tab-inner-default {
     color: #b7b7b7; }
-  /* line 1957, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+  /* line 1958, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
   .x-tab.x-tab-disabled.x-tab-default .x-tab-icon-el-default {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
     opacity: 0.5; }
-  /* line 1962, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+  /* line 1963, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
   .x-tab.x-tab-disabled.x-tab-default .x-tab-glyph {
     color: #b7b7b7;
     opacity: 0.3;
     filter: none; }
-    /* line 1977, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+    /* line 1978, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
     .x-ie8 .x-tab.x-tab-disabled.x-tab-default .x-tab-glyph {
       color: #dddddd; }
-/* line 1986, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1987, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled.x-tab-default-top, .x-tab.x-tab-disabled.x-tab-default-left, .x-tab.x-tab-disabled.x-tab-default-right {
   background-image: none;
   background-color: #eeeeee;
@@ -20018,7 +20126,7 @@ div.x-border-layout-ct {
   background-image: -o-linear-gradient(top, #eeeeee, #f4f4f4);
   background-image: -ms-linear-gradient(top, #eeeeee, #f4f4f4);
   background-image: linear-gradient(top, #eeeeee, #f4f4f4); }
-/* line 1990, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1991, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled.x-tab-default-bottom {
   background-image: none;
   background-color: #eeeeee;
@@ -20029,11 +20137,11 @@ div.x-border-layout-ct {
   background-image: -ms-linear-gradient(bottom, #eeeeee, #f4f4f4);
   background-image: linear-gradient(bottom, #eeeeee, #f4f4f4); }
 
-/* line 1997, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 1998, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-nbr .x-tab-default {
   background-image: none; }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-top-tl,
 .x-tab-over .x-tab-default-top-bl,
 .x-tab-over .x-tab-default-top-tr,
@@ -20041,17 +20149,17 @@ div.x-border-layout-ct {
 .x-tab-over .x-tab-default-top-tc,
 .x-tab-over .x-tab-default-top-bc {
   background-image: url(images/tab/tab-default-top-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-top-ml,
 .x-tab-over .x-tab-default-top-mr {
   background-image: url(images/tab/tab-default-top-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-top-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-top-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-top-tl,
 .x-tab-focus .x-tab-default-top-bl,
 .x-tab-focus .x-tab-default-top-tr,
@@ -20059,17 +20167,17 @@ div.x-border-layout-ct {
 .x-tab-focus .x-tab-default-top-tc,
 .x-tab-focus .x-tab-default-top-bc {
   background-image: url(images/tab/tab-default-top-focus-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-top-ml,
 .x-tab-focus .x-tab-default-top-mr {
   background-image: url(images/tab/tab-default-top-focus-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-top-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-top-focus-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-top-tl,
 .x-tab-focus.x-tab-over .x-tab-default-top-bl,
 .x-tab-focus.x-tab-over .x-tab-default-top-tr,
@@ -20077,17 +20185,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-over .x-tab-default-top-tc,
 .x-tab-focus.x-tab-over .x-tab-default-top-bc {
   background-image: url(images/tab/tab-default-top-focus-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-top-ml,
 .x-tab-focus.x-tab-over .x-tab-default-top-mr {
   background-image: url(images/tab/tab-default-top-focus-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-top-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-top-focus-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-top-tl,
 .x-tab.x-tab-active .x-tab-default-top-bl,
 .x-tab.x-tab-active .x-tab-default-top-tr,
@@ -20095,17 +20203,17 @@ div.x-border-layout-ct {
 .x-tab.x-tab-active .x-tab-default-top-tc,
 .x-tab.x-tab-active .x-tab-default-top-bc {
   background-image: url(images/tab/tab-default-top-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-top-ml,
 .x-tab.x-tab-active .x-tab-default-top-mr {
   background-image: url(images/tab/tab-default-top-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-top-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-top-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-top-tl,
 .x-tab-focus.x-tab-active .x-tab-default-top-bl,
 .x-tab-focus.x-tab-active .x-tab-default-top-tr,
@@ -20113,17 +20221,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-active .x-tab-default-top-tc,
 .x-tab-focus.x-tab-active .x-tab-default-top-bc {
   background-image: url(images/tab/tab-default-top-focus-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-top-ml,
 .x-tab-focus.x-tab-active .x-tab-default-top-mr {
   background-image: url(images/tab/tab-default-top-focus-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-top-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-top-focus-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-top-tl,
 .x-tab.x-tab-disabled .x-tab-default-top-bl,
 .x-tab.x-tab-disabled .x-tab-default-top-tr,
@@ -20131,17 +20239,17 @@ div.x-border-layout-ct {
 .x-tab.x-tab-disabled .x-tab-default-top-tc,
 .x-tab.x-tab-disabled .x-tab-default-top-bc {
   background-image: url(images/tab/tab-default-top-disabled-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-top-ml,
 .x-tab.x-tab-disabled .x-tab-default-top-mr {
   background-image: url(images/tab/tab-default-top-disabled-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-top-mc {
   background-color: #eeeeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-top-disabled-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-right-tl,
 .x-tab-over .x-tab-default-right-bl,
 .x-tab-over .x-tab-default-right-tr,
@@ -20149,17 +20257,17 @@ div.x-border-layout-ct {
 .x-tab-over .x-tab-default-right-tc,
 .x-tab-over .x-tab-default-right-bc {
   background-image: url(images/tab/tab-default-right-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-right-ml,
 .x-tab-over .x-tab-default-right-mr {
   background-image: url(images/tab/tab-default-right-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-right-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-right-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-right-tl,
 .x-tab-focus .x-tab-default-right-bl,
 .x-tab-focus .x-tab-default-right-tr,
@@ -20167,17 +20275,17 @@ div.x-border-layout-ct {
 .x-tab-focus .x-tab-default-right-tc,
 .x-tab-focus .x-tab-default-right-bc {
   background-image: url(images/tab/tab-default-right-focus-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-right-ml,
 .x-tab-focus .x-tab-default-right-mr {
   background-image: url(images/tab/tab-default-right-focus-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-right-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-right-focus-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-right-tl,
 .x-tab-focus.x-tab-over .x-tab-default-right-bl,
 .x-tab-focus.x-tab-over .x-tab-default-right-tr,
@@ -20185,17 +20293,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-over .x-tab-default-right-tc,
 .x-tab-focus.x-tab-over .x-tab-default-right-bc {
   background-image: url(images/tab/tab-default-right-focus-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-right-ml,
 .x-tab-focus.x-tab-over .x-tab-default-right-mr {
   background-image: url(images/tab/tab-default-right-focus-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-right-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-right-focus-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-right-tl,
 .x-tab.x-tab-active .x-tab-default-right-bl,
 .x-tab.x-tab-active .x-tab-default-right-tr,
@@ -20203,17 +20311,17 @@ div.x-border-layout-ct {
 .x-tab.x-tab-active .x-tab-default-right-tc,
 .x-tab.x-tab-active .x-tab-default-right-bc {
   background-image: url(images/tab/tab-default-right-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-right-ml,
 .x-tab.x-tab-active .x-tab-default-right-mr {
   background-image: url(images/tab/tab-default-right-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-right-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-right-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-right-tl,
 .x-tab-focus.x-tab-active .x-tab-default-right-bl,
 .x-tab-focus.x-tab-active .x-tab-default-right-tr,
@@ -20221,17 +20329,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-active .x-tab-default-right-tc,
 .x-tab-focus.x-tab-active .x-tab-default-right-bc {
   background-image: url(images/tab/tab-default-right-focus-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-right-ml,
 .x-tab-focus.x-tab-active .x-tab-default-right-mr {
   background-image: url(images/tab/tab-default-right-focus-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-right-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-right-focus-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-right-tl,
 .x-tab.x-tab-disabled .x-tab-default-right-bl,
 .x-tab.x-tab-disabled .x-tab-default-right-tr,
@@ -20239,17 +20347,17 @@ div.x-border-layout-ct {
 .x-tab.x-tab-disabled .x-tab-default-right-tc,
 .x-tab.x-tab-disabled .x-tab-default-right-bc {
   background-image: url(images/tab/tab-default-right-disabled-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-right-ml,
 .x-tab.x-tab-disabled .x-tab-default-right-mr {
   background-image: url(images/tab/tab-default-right-disabled-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-right-mc {
   background-color: #eeeeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-right-disabled-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-bottom-tl,
 .x-tab-over .x-tab-default-bottom-bl,
 .x-tab-over .x-tab-default-bottom-tr,
@@ -20257,17 +20365,17 @@ div.x-border-layout-ct {
 .x-tab-over .x-tab-default-bottom-tc,
 .x-tab-over .x-tab-default-bottom-bc {
   background-image: url(images/tab/tab-default-bottom-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-bottom-ml,
 .x-tab-over .x-tab-default-bottom-mr {
   background-image: url(images/tab/tab-default-bottom-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-bottom-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-bottom-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-bottom-tl,
 .x-tab-focus .x-tab-default-bottom-bl,
 .x-tab-focus .x-tab-default-bottom-tr,
@@ -20275,17 +20383,17 @@ div.x-border-layout-ct {
 .x-tab-focus .x-tab-default-bottom-tc,
 .x-tab-focus .x-tab-default-bottom-bc {
   background-image: url(images/tab/tab-default-bottom-focus-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-bottom-ml,
 .x-tab-focus .x-tab-default-bottom-mr {
   background-image: url(images/tab/tab-default-bottom-focus-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-bottom-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-bottom-focus-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-bottom-tl,
 .x-tab-focus.x-tab-over .x-tab-default-bottom-bl,
 .x-tab-focus.x-tab-over .x-tab-default-bottom-tr,
@@ -20293,17 +20401,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-over .x-tab-default-bottom-tc,
 .x-tab-focus.x-tab-over .x-tab-default-bottom-bc {
   background-image: url(images/tab/tab-default-bottom-focus-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-bottom-ml,
 .x-tab-focus.x-tab-over .x-tab-default-bottom-mr {
   background-image: url(images/tab/tab-default-bottom-focus-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-bottom-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-bottom-focus-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-bottom-tl,
 .x-tab.x-tab-active .x-tab-default-bottom-bl,
 .x-tab.x-tab-active .x-tab-default-bottom-tr,
@@ -20311,17 +20419,17 @@ div.x-border-layout-ct {
 .x-tab.x-tab-active .x-tab-default-bottom-tc,
 .x-tab.x-tab-active .x-tab-default-bottom-bc {
   background-image: url(images/tab/tab-default-bottom-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-bottom-ml,
 .x-tab.x-tab-active .x-tab-default-bottom-mr {
   background-image: url(images/tab/tab-default-bottom-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-bottom-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-bottom-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-bottom-tl,
 .x-tab-focus.x-tab-active .x-tab-default-bottom-bl,
 .x-tab-focus.x-tab-active .x-tab-default-bottom-tr,
@@ -20329,17 +20437,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-active .x-tab-default-bottom-tc,
 .x-tab-focus.x-tab-active .x-tab-default-bottom-bc {
   background-image: url(images/tab/tab-default-bottom-focus-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-bottom-ml,
 .x-tab-focus.x-tab-active .x-tab-default-bottom-mr {
   background-image: url(images/tab/tab-default-bottom-focus-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-bottom-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-bottom-focus-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-bottom-tl,
 .x-tab.x-tab-disabled .x-tab-default-bottom-bl,
 .x-tab.x-tab-disabled .x-tab-default-bottom-tr,
@@ -20347,17 +20455,17 @@ div.x-border-layout-ct {
 .x-tab.x-tab-disabled .x-tab-default-bottom-tc,
 .x-tab.x-tab-disabled .x-tab-default-bottom-bc {
   background-image: url(images/tab/tab-default-bottom-disabled-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-bottom-ml,
 .x-tab.x-tab-disabled .x-tab-default-bottom-mr {
   background-image: url(images/tab/tab-default-bottom-disabled-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-bottom-mc {
   background-color: #eeeeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-bottom-disabled-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-left-tl,
 .x-tab-over .x-tab-default-left-bl,
 .x-tab-over .x-tab-default-left-tr,
@@ -20365,17 +20473,17 @@ div.x-border-layout-ct {
 .x-tab-over .x-tab-default-left-tc,
 .x-tab-over .x-tab-default-left-bc {
   background-image: url(images/tab/tab-default-left-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-left-ml,
 .x-tab-over .x-tab-default-left-mr {
   background-image: url(images/tab/tab-default-left-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-over .x-tab-default-left-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-left-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-left-tl,
 .x-tab-focus .x-tab-default-left-bl,
 .x-tab-focus .x-tab-default-left-tr,
@@ -20383,17 +20491,17 @@ div.x-border-layout-ct {
 .x-tab-focus .x-tab-default-left-tc,
 .x-tab-focus .x-tab-default-left-bc {
   background-image: url(images/tab/tab-default-left-focus-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-left-ml,
 .x-tab-focus .x-tab-default-left-mr {
   background-image: url(images/tab/tab-default-left-focus-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus .x-tab-default-left-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-left-focus-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-left-tl,
 .x-tab-focus.x-tab-over .x-tab-default-left-bl,
 .x-tab-focus.x-tab-over .x-tab-default-left-tr,
@@ -20401,17 +20509,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-over .x-tab-default-left-tc,
 .x-tab-focus.x-tab-over .x-tab-default-left-bc {
   background-image: url(images/tab/tab-default-left-focus-over-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-left-ml,
 .x-tab-focus.x-tab-over .x-tab-default-left-mr {
   background-image: url(images/tab/tab-default-left-focus-over-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-over .x-tab-default-left-mc {
   background-color: #f2eeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-left-focus-over-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-left-tl,
 .x-tab.x-tab-active .x-tab-default-left-bl,
 .x-tab.x-tab-active .x-tab-default-left-tr,
@@ -20419,17 +20527,17 @@ div.x-border-layout-ct {
 .x-tab.x-tab-active .x-tab-default-left-tc,
 .x-tab.x-tab-active .x-tab-default-left-bc {
   background-image: url(images/tab/tab-default-left-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-left-ml,
 .x-tab.x-tab-active .x-tab-default-left-mr {
   background-image: url(images/tab/tab-default-left-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-active .x-tab-default-left-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-left-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-left-tl,
 .x-tab-focus.x-tab-active .x-tab-default-left-bl,
 .x-tab-focus.x-tab-active .x-tab-default-left-tr,
@@ -20437,17 +20545,17 @@ div.x-border-layout-ct {
 .x-tab-focus.x-tab-active .x-tab-default-left-tc,
 .x-tab-focus.x-tab-active .x-tab-default-left-bc {
   background-image: url(images/tab/tab-default-left-focus-active-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-left-ml,
 .x-tab-focus.x-tab-active .x-tab-default-left-mr {
   background-image: url(images/tab/tab-default-left-focus-active-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-focus.x-tab-active .x-tab-default-left-mc {
   background-color: #eaeaea;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-left-focus-active-fbg.gif); }
 
-/* line 2022, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2023, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-left-tl,
 .x-tab.x-tab-disabled .x-tab-default-left-bl,
 .x-tab.x-tab-disabled .x-tab-default-left-tr,
@@ -20455,24 +20563,24 @@ div.x-border-layout-ct {
 .x-tab.x-tab-disabled .x-tab-default-left-tc,
 .x-tab.x-tab-disabled .x-tab-default-left-bc {
   background-image: url(images/tab/tab-default-left-disabled-corners.gif); }
-/* line 2027, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2028, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-left-ml,
 .x-tab.x-tab-disabled .x-tab-default-left-mr {
   background-image: url(images/tab/tab-default-left-disabled-sides.gif); }
-/* line 2031, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2032, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab.x-tab-disabled .x-tab-default-left-mc {
   background-color: #eeeeee;
   background-repeat: repeat-x;
   background-image: url(images/tab/tab-default-left-disabled-fbg.gif); }
 
-/* line 2045, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2046, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-default-tl,
 .x-tab-default-bl,
 .x-tab-default-tr,
 .x-tab-default-br {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF); }
 
-/* line 2052, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2053, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-default .x-tab-close-btn {
   top: 2px;
   right: 2px;
@@ -20481,19 +20589,19 @@ div.x-border-layout-ct {
   background: url(images/tab/tab-default-close.gif) 0 0;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   opacity: 0.6; }
-/* line 2063, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2064, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-default .x-tab-close-btn-over {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1; }
-/* line 2079, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2080, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-default.x-tab-active .x-tab-close-btn {
   background-position: 0 -11px; }
-/* line 2097, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2098, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-default.x-tab-disabled .x-tab-close-btn {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
   opacity: 0.3; }
 
-/* line 2115, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
+/* line 2116, ../../../ext-theme-neutral/sass/src/tab/Tab.scss */
 .x-tab-closable.x-tab-default .x-tab-button {
   padding-right: 14px; }
 
@@ -20793,16 +20901,16 @@ div.x-border-layout-ct {
   min-height: 26px; }
   /* line 323, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-ie9m .x-tab-bar-horizontal > .x-tab-bar-body-default {
-    min-height: 23px; }
+    min-height: 22px; }
 
-/* line 329, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 330, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-vertical > .x-tab-bar-body-default {
   min-width: 26px; }
-  /* line 332, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 333, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-ie9m .x-tab-bar-vertical > .x-tab-bar-body-default {
-    min-width: 23px; }
+    min-width: 22px; }
 
-/* line 339, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 341, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-top {
   background-image: none;
   background-color: #d2d2d2;
@@ -20812,11 +20920,11 @@ div.x-border-layout-ct {
   background-image: -o-linear-gradient(top, #dfdede, #d2d2d2);
   background-image: -ms-linear-gradient(top, #dfdede, #d2d2d2);
   background-image: linear-gradient(top, #dfdede, #d2d2d2); }
-  /* line 343, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 345, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-nlg .x-tab-bar-default-top {
     background: url(images/tab-bar/tab-bar-default-top-bg.gif); }
 
-/* line 349, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 351, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-bottom {
   background-image: none;
   background-color: #d2d2d2;
@@ -20826,11 +20934,11 @@ div.x-border-layout-ct {
   background-image: -o-linear-gradient(bottom, #dfdede, #d2d2d2);
   background-image: -ms-linear-gradient(bottom, #dfdede, #d2d2d2);
   background-image: linear-gradient(bottom, #dfdede, #d2d2d2); }
-  /* line 353, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 355, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-nlg .x-tab-bar-default-bottom {
     background: url(images/tab-bar/tab-bar-default-bottom-bg.gif) bottom 0; }
 
-/* line 359, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 361, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-left {
   background-image: none;
   background-color: #d2d2d2;
@@ -20840,11 +20948,11 @@ div.x-border-layout-ct {
   background-image: -o-linear-gradient(left, #dfdede, #d2d2d2);
   background-image: -ms-linear-gradient(left, #dfdede, #d2d2d2);
   background-image: linear-gradient(left, #dfdede, #d2d2d2); }
-  /* line 363, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 365, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-nlg .x-tab-bar-default-left {
     background: url(images/tab-bar/tab-bar-default-left-bg.gif); }
 
-/* line 369, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 371, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-right {
   background-image: none;
   background-color: #d2d2d2;
@@ -20854,7 +20962,7 @@ div.x-border-layout-ct {
   background-image: -o-linear-gradient(right, #dfdede, #d2d2d2);
   background-image: -ms-linear-gradient(right, #dfdede, #d2d2d2);
   background-image: linear-gradient(right, #dfdede, #d2d2d2); }
-  /* line 373, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 375, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-nlg .x-tab-bar-default-right {
     background: url(images/tab-bar/tab-bar-default-right-bg.gif) 0 right; }
 
@@ -20913,57 +21021,57 @@ div.x-border-layout-ct {
     .x-box-scroller-tab-bar-default.x-box-scroller-bottom.x-box-scroller-hover {
       background-position: 0 -18px; }
 
-/* line 407, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 409, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-right .x-box-scroller-top {
   background-position: right -18px; }
-  /* line 410, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 412, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-tab-bar-default-right .x-box-scroller-top.x-box-scroller-hover {
     background-position: right 0; }
-/* line 415, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 417, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-right .x-box-scroller-bottom {
   background-position: right 0; }
-  /* line 418, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 420, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-tab-bar-default-right .x-box-scroller-bottom.x-box-scroller-hover {
     background-position: right -18px; }
 
-/* line 425, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 427, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-bottom .x-box-scroller-left {
   background-position: -18px bottom; }
-  /* line 428, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 430, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-tab-bar-default-bottom .x-box-scroller-left.x-box-scroller-hover {
     background-position: 0 bottom; }
-/* line 433, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 435, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-bottom .x-box-scroller-right {
   background-position: 0 bottom; }
-  /* line 436, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+  /* line 438, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
   .x-tab-bar-default-bottom .x-box-scroller-right.x-box-scroller-hover {
     background-position: -18px bottom; }
 
-/* line 503, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 505, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-top .x-box-scroller-left {
   background-image: url(images/tab-bar/default-scroll-left-top.gif); }
-/* line 506, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 508, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-top .x-box-scroller-right {
   background-image: url(images/tab-bar/default-scroll-right-top.gif); }
 
-/* line 512, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 514, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-bottom .x-box-scroller-left {
   background-image: url(images/tab-bar/default-scroll-left-bottom.gif); }
-/* line 515, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 517, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-bottom .x-box-scroller-right {
   background-image: url(images/tab-bar/default-scroll-right-bottom.gif); }
 
-/* line 521, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 523, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-left .x-box-scroller-top {
   background-image: url(images/tab-bar/default-scroll-top-left.gif); }
-/* line 524, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 526, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-left .x-box-scroller-bottom {
   background-image: url(images/tab-bar/default-scroll-bottom-left.gif); }
 
-/* line 530, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 532, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-right .x-box-scroller-top {
   background-image: url(images/tab-bar/default-scroll-top-right.gif); }
-/* line 533, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
+/* line 535, ../../../ext-theme-neutral/sass/src/tab/Bar.scss */
 .x-tab-bar-default-right .x-box-scroller-bottom {
   background-image: url(images/tab-bar/default-scroll-bottom-right.gif); }
 
@@ -23610,7 +23718,8 @@ div.x-border-layout-ct {
 
 /**
  * Creates a visual theme for text fields.  Note this mixin only provides styling
- * For the form field body, The label and error are styled by {@link #extjs-label}.
+ * For the form field body, The label and error are styled by
+ * {@link Ext.form.Labelable#css_mixin-extjs-label-ui}.
  *
  * @param {string} $ui
  * The name of the UI being created. Can not included spaces or special punctuation
@@ -23680,7 +23789,7 @@ div.x-border-layout-ct {
  *
  * @member Ext.form.FieldSet
  */
-/* line 109, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+/* line 110, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
 .x-fieldset-default {
   border: 1px solid #b5b8c8;
   padding: 0 10px;
@@ -23691,46 +23800,46 @@ div.x-border-layout-ct {
   -o-border-radius: 4px;
   border-radius: 4px; }
 
-/* line 122, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+/* line 123, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
 .x-ie8 .x-fieldset-default {
   padding-top: 0; }
-/* line 125, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+/* line 126, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
 .x-ie8 .x-fieldset-body-default {
   padding-top: 0; }
 
-/* line 131, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+/* line 132, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
 .x-fieldset-header-default {
   padding: 0 3px 1px;
   line-height: 14px; }
-  /* line 135, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+  /* line 136, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
   .x-fieldset-header-default > .x-fieldset-header-text {
     font: normal 11px/14px tahoma, arial, verdana, sans-serif;
     color: #333333;
     padding: 1px 0; }
 
-/* line 142, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+/* line 143, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
 .x-fieldset-header-checkbox-default {
   margin: 2px 3px 1px 0;
   line-height: 14px; }
 
-/* line 152, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+/* line 153, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
 .x-fieldset-header-tool-default {
   margin: 1px 3px 0 0;
   padding: 0; }
-  /* line 161, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+  /* line 162, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
   .x-fieldset-header-tool-default > .x-tool-img {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1;
     height: 15px;
     width: 15px; }
-  /* line 179, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+  /* line 180, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
   .x-fieldset-header-tool-default > .x-tool-toggle {
     background-position: 0 -60px; }
-  /* line 186, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+  /* line 187, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
   .x-fieldset-header-tool-default.x-tool-over > .x-tool-toggle {
     background-position: -15px -60px; }
 
-/* line 193, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+/* line 194, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
 .x-fieldset-default.x-fieldset-collapsed {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -23740,17 +23849,17 @@ div.x-border-layout-ct {
   border-width: 1px 1px 0 1px;
   border-left-color: transparent;
   border-right-color: transparent; }
-  /* line 201, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+  /* line 202, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
   .x-fieldset-default.x-fieldset-collapsed .x-tool-toggle {
     background-position: 0 -75px; }
-  /* line 205, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
+  /* line 206, ../../../ext-theme-neutral/sass/src/form/FieldSet.scss */
   .x-fieldset-default.x-fieldset-collapsed .x-tool-over > .x-tool-toggle {
     background-position: -15px -75px; }
 
 /**
  * Creates a visual theme for spinner field triggers.  Note this mixin only provides
  * styling for the spinner trigger buttons. The text field portion of the styling must be
- * created using {@link #extjs-text-field-ui}
+ * created using {@link Ext.form.field.Text#css_mixin-extjs-text-field-ui}
  *
  * @param {string} $ui
  * The name of the UI being created. Can not included spaces or special punctuation
@@ -23764,7 +23873,7 @@ div.x-border-layout-ct {
  *
  * @param {number} [$ui-field-height=$form-text-field-height]
  * The height of the text field that the trigger must fit within.  This does not set the
- * height of the field, only the height of the triggers.  When {@link #$ui-trigger-vertical}
+ * height of the field, only the height of the triggers.  When {@link #css_mixin-extjs-spinner-trigger-ui $ui-trigger-vertical}
  * is true, the available height within the field borders is divided evenly between the
  * two triggers.
  *
@@ -25237,7 +25346,7 @@ a.x-color-picker-item:hover {
 .x-grid-row-summary .x-grid-cell-inner-row-expander {
   display: none; }
 
-/*
+/**
  * Creates a visual theme for a Menu.
  *
  * @param {string} $ui
@@ -25279,6 +25388,9 @@ a.x-color-picker-item:hover {
  *
  * @param {string} [$ui-item-cursor=$menu-item-cursor]
  * The style of cursor to display when the cursor is over a {@link Ext.menu.Item Menu Item}
+ *
+ * @param {string} [$ui-item-disabled-cursor=$menu-item-disabled-cursor]
+ * The style of cursor to display when the cursor is over a disabled {@link Ext.menu.Item Menu Item}
  *
  * @param {color} [$ui-item-active-background-color=$menu-item-active-background-color]
  * The background-color of the active {@link Ext.menu.Item Menu Item}
@@ -25388,15 +25500,15 @@ a.x-color-picker-item:hover {
  *
  * @param {number} [$ui-scroller-opacity=$menu-scroller-opacity]
  * The opacity of Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  *
  * @param {number} [$ui-scroller-opacity-over=$menu-scroller-opacity-over]
  * The opacity of hovered Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  *
  * @param {number} [$ui-scroller-opacity-pressed=$menu-scroller-opacity-pressed]
  * The opacity of pressed Menu scroller buttons. Only applicable when
- * {@link $menu-classic-scrollers} is `false`.
+ * {@link #$menu-classic-scrollers} is `false`.
  *
  * @param {number} [$ui-scroller-opacity-disabled=$menu-scroller-opacity-disabled]
  * The opacity of disabled Menu scroller buttons.
@@ -25408,29 +25520,29 @@ a.x-color-picker-item:hover {
  *
  * @member Ext.menu.Menu
  */
-/* line 232, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 236, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-default {
   border-style: solid;
   border-width: 1px;
   border-color: #d0d0d0; }
 
-/* line 238, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 242, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-body-default {
   background: #f0f0f0;
   padding: 2px; }
 
-/* line 243, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 247, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-icon-separator-default {
   left: 24px;
   border-left: solid 1px #e0e0e0;
   background-color: white;
   width: 2px; }
 
-/* line 257, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 261, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-item-default {
   border-width: 1px;
   cursor: pointer; }
-  /* line 261, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 265, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-default.x-menu-item-active {
     background-image: none;
     background-color: #e6e6e6;
@@ -25446,79 +25558,88 @@ a.x-color-picker-item:hover {
     -o-border-radius: 3px;
     border-radius: 3px;
     border-color: #9d9d9d; }
-    /* line 273, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+    /* line 277, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
     .x-nlg .x-menu-item-default.x-menu-item-active {
       background: #e6e6e6 repeat-x left top;
       background-image: url(images/menu/menu-item-default-active-bg.gif); }
-  /* line 280, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 284, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  .x-menu-item-default.x-menu-item-disabled {
+    cursor: default; }
+    /* line 287, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+    .x-menu-item-default.x-menu-item-disabled a {
+      cursor: default; }
+  /* line 292, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-default.x-menu-item-separator {
     height: 2px;
     border-top: solid 1px #e0e0e0;
     background-color: white;
     margin: 2px 0;
     padding: 0; }
-  /* line 288, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 300, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-default.x-menu-item-disabled {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
     opacity: 0.5; }
-    /* line 293, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+    /* line 305, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
     .x-ie9m .x-menu-item-default.x-menu-item-disabled .x-menu-item-icon-ui {
       filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
       opacity: 0.5; }
-    /* line 297, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+    /* line 309, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
     .x-ie9m .x-menu-item-default.x-menu-item-disabled .x-menu-item-text-default {
       background-color: transparent; }
-  /* line 307, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 319, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-default .x-form-item-label {
     font-size: 11px;
     color: #222222; }
 
-/* line 315, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 327, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-item-text-default,
 .x-menu-item-cmp-default {
   margin: 0 4px 0 4px; }
 
-/* line 319, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 331, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-item-text-default {
   font: normal 11px tahoma, arial, verdana, sans-serif;
   line-height: 21px;
   padding-top: 1px;
   color: #222222;
   cursor: pointer; }
-  /* line 330, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 342, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-text-default.x-menu-item-indent {
     margin-left: 30px; }
-  /* line 334, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 346, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-text-default.x-menu-item-indent-no-separator {
     margin-left: 24px; }
-  /* line 338, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 350, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-text-default.x-menu-item-indent-right-icon {
     margin-right: 28px; }
-  /* line 342, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 354, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-text-default.x-menu-item-indent-right-arrow {
     margin-right: 21px; }
+  /* line 358, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  .x-menu-item-disabled .x-menu-item-text-default {
+    cursor: default; }
 
-/* line 374, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 390, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-item-indent-default {
   margin-left: 30px; }
 
-/* line 384, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 400, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-item-icon-default {
   width: 16px;
   height: 16px;
   top: 4px;
   left: 3px;
   background-position: center center; }
-  /* line 402, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 418, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-icon-default.x-menu-item-glyph {
     font-size: 16px;
     line-height: 16px;
     color: #222222;
     opacity: 0.5; }
-    /* line 419, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+    /* line 435, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
     .x-ie8 .x-menu-item-icon-default.x-menu-item-glyph {
       color: #898989; }
-  /* line 427, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 443, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-icon-default.x-menu-item-icon-right {
     width: 16px;
     height: 16px;
@@ -25526,27 +25647,27 @@ a.x-color-picker-item:hover {
     right: 5px;
     left: auto;
     background-position: center center; }
-  /* line 452, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 468, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-checked .x-menu-item-icon-default.x-menu-item-checkbox {
     background-image: url(images/menu/default-checked.gif); }
-  /* line 456, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 472, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-unchecked .x-menu-item-icon-default.x-menu-item-checkbox {
     background-image: url(images/menu/default-unchecked.gif); }
-  /* line 462, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 478, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-checked .x-menu-item-icon-default.x-menu-group-icon {
     background-image: url(images/menu/default-group-checked.gif); }
-  /* line 466, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 482, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-unchecked .x-menu-item-icon-default.x-menu-group-icon {
     background-image: none; }
 
-/* line 472, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 488, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-menu-item-arrow-default {
   width: 12px;
   height: 9px;
   top: 7px;
   right: 0;
   background-image: url(images/menu/default-menu-parent.gif); }
-  /* line 479, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+  /* line 495, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
   .x-menu-item-active .x-menu-item-arrow-default {
     top: 6px;
     right: -1px; }
@@ -25594,7 +25715,7 @@ a.x-color-picker-item:hover {
     .x-box-scroller-menu-default.x-box-scroller-bottom.x-box-scroller-hover {
       background-position: 0 -5px; }
 
-/* line 524, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
+/* line 540, ../../../ext-theme-neutral/sass/src/menu/Menu.scss */
 .x-ie8 .x-box-scroller-menu-default {
   background-color: #f0f0f0; }
 
@@ -26398,10 +26519,12 @@ a.x-color-picker-item:hover {
  * The space between the breadcrumb buttons
  *
  * @param {number} [$ui-arrow-width=$breadcrumb-arrow-width]
- * The width of the breadcrumb arrows when {@link #split} is `false`
+ * The width of the breadcrumb arrows when
+ * {@link Ext.toolbar.Breadcrumb#useSplitButtons} is `false`
  *
  * @param {number} [$ui-split-width=$breadcrumb-split-width]
- * The width of breadcrumb arrows when {@link #split} is `true`
+ * The width of breadcrumb arrows when {@link Ext.toolbar.Breadcrumb#useSplitButtons} is
+ * `true`
  *
  * @param {boolean} [$ui-include-menu-active-arrow=$breadcrumb-include-menu-active-arrow]
  * `true` to include a separate background-image for menu arrows when a breadcrumb button's
@@ -26466,35 +26589,37 @@ a.x-color-picker-item:hover {
  * `true` to use classic-style scroller buttons.  When `true` scroller buttons are given
  * their hover state by changing their background-position,  When `false` scroller buttons
  * are given their hover state by applying opacity.
+ *
+ * @member Ext.toolbar.Breadcrumb
  */
-/* line 111, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 115, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-btn-default {
   margin: 0 0 0 0px; }
 
-/* line 115, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 119, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-icon-folder-default {
   background-image: url(images/tree/folder.gif); }
 
-/* line 119, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 123, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-icon-leaf-default {
   background-image: url(images/tree/leaf.gif); }
 
-/* line 124, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 128, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-arrow:after {
   width: 14px;
   background-image: url(images/breadcrumb/default-arrow.gif); }
-/* line 136, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 140, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-btn-menu-active.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-arrow:after {
   background-image: url(images/breadcrumb/default-arrow-open.gif); }
 
-/* line 149, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 153, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   width: 14px;
   background-image: url(images/breadcrumb/default-split-arrow.gif); }
-/* line 161, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 165, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-btn-over.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   background-image: url(images/breadcrumb/default-split-arrow-over.gif); }
-/* line 173, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 177, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-btn-menu-active.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   background-image: url(images/breadcrumb/default-split-arrow-open.gif); }
 

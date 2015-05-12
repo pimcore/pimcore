@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * AjaxProxy is one of the most widely-used ways of getting data into your application. It uses AJAX requests to load
  * data from the server, usually to be placed into a {@link Ext.data.Store Store}. Let's take a look at a typical setup.
  * Here we're going to set up a Store that has an AjaxProxy. To prepare, we'll also set up a {@link Ext.data.Model
@@ -404,5 +402,11 @@ Ext.define('Ext.data.proxy.Ajax', {
             }
             me.processResponse(success, operation, request, response);
         };
+    },
+    
+    destroy: function() {
+        this.lastRequest = null;
+        
+        this.callParent();
     }
 });

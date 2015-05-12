@@ -38,7 +38,7 @@ Ext.define('Ext.event.publisher.Focus', {
         var me = this,
             commonAncestor = Ext.Element.getCommonAncestor(toElement, fromElement, true),
             node, targets = [],
-            event, el, id;
+            event;
 
         // Gather targets for focusleave event from the fromElement to the parentNode (not inclusive)
         for (node = fromElement; node && node !== commonAncestor; node = node.parentNode) {

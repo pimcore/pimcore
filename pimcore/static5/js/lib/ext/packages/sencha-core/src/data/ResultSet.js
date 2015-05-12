@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * Simple wrapper class that represents a set of records returned by a Proxy.
  */
 Ext.define('Ext.data.ResultSet', {
@@ -50,13 +48,7 @@ Ext.define('Ext.data.ResultSet', {
          * @cfg {String} message
          * The message that was read in from the data
          */
-        message: null,
-        
-        /**
-         * @cfg {Boolean} rootExists
-         * `true` if the root config was part of the data set and read correctly
-         */
-        readRoot: false
+        message: null
     },
 
     /**
@@ -67,18 +59,16 @@ Ext.define('Ext.data.ResultSet', {
         this.initConfig(config);
     },
 
-    applyCount: function(count) {
-        if (!count && count !== 0) {
-            return this.getRecords().length;
+    getCount: function() {
+        var count = this.callParent(),
+            records;
+
+        if (!count) {
+            records = this.getRecords();
+            if (records) {
+                count = records.length;
+            }
         }
         return count;
-    },
-    
-    /**
-     * @private
-     * Make sure we set the right count when new records have been sent in
-     */
-    updateRecords: function(records) {
-        this.setCount(records.length);
     }
 });

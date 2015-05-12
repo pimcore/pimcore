@@ -220,6 +220,16 @@ Ext.define('Ext.chart.theme.Base', {
             }
         },
 
+        /**
+         * @private
+         * An object with the following structure:
+         * {
+         *   fillStyle: [color, color, ...],
+         *   strokeStyle: [color, color, ...],
+         *   ...
+         * }
+         * If missing, generated from the other configs: 'baseColor, 'gradients', 'colors'.
+         */
         seriesThemes: undefined,
 
         markerThemes: {
@@ -233,7 +243,7 @@ Ext.define('Ext.chart.theme.Base', {
         useGradients: false,
 
         /**
-         * @deprecated Use the {@link Ext.draw.Container#background} config instead.
+         * @deprecated Use the {@link Ext.chart.AbstractChart#background} config instead.
          * @since 5.0.1
          */
         background: null
@@ -398,10 +408,14 @@ Ext.define('Ext.chart.theme.Base', {
     },
 
     applySeriesThemes: function (newSeriesThemes) {
+        // Init the 'colors' config with solid colors generated from the 'baseColor'.
         this.getBaseColor();
+        // Init the 'gradients' config with a hardcoded value, if the legacy 'useGradients'
+        // config was set to 'true'. This in turn updates the 'colors' config.
         this.getUseGradients();
+        // Init the 'gradients' config normally. This also updates the 'colors' config.
         this.getGradients();
-        var colors = this.getColors();
+        var colors = this.getColors(); // Final colors.
         if (!newSeriesThemes) {
             newSeriesThemes = {
                 fillStyle: Ext.Array.clone(colors),

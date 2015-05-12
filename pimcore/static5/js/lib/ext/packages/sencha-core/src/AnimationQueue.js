@@ -264,7 +264,7 @@ Ext.define('Ext.AnimationQueue', {
     },
 
     showFps: function() {
-        Ext.onReady(function() {
+        Ext.onInternalReady(function() {
             Ext.Viewport.add([{
                     xtype: 'component',
                     bottom: 50,

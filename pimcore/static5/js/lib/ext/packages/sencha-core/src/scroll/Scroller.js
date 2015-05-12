@@ -374,30 +374,34 @@ Ext.define('Ext.scroll.Scroller', {
      * @param {Boolean} [hscroll=true] False to disable horizontal scroll.
      * @param {Boolean/Object} [animate] true for the default animation or a standard Element
      * animation config object
-     * @param {Boolean/String} [highlight=false] true to {@link #highlight} the element
-     * when it is in view. Can also be a hex color to use for highlighting (defaults to
-     * yellow = '#ffff9c')
+     * @param {Boolean/String} [highlight=false] true to
+     * {@link Ext.dom.Element#highlight} the element when it is in view. Can also be a
+     * hex color to use for highlighting (defaults to yellow = '#ffff9c')
      * @private
      */
     scrollIntoView: function(el, hscroll, animate, highlight) {
         var me = this,
             position = me.getPosition(),
-            newPosition, newX, newY;
+            newPosition, newX, newY,
+            myEl = me.getElement();
 
-        newPosition = Ext.fly(el).getScrollIntoViewXY(me.getElement(), position.x, position.y);
-        newX = (hscroll === false) ? position.x : newPosition.x;
-        newY = newPosition.y;
+        // Might get called before Component#onBoxReady which is when the Scroller is set up with elements.
+        if (el) {
+            newPosition = Ext.fly(el).getScrollIntoViewXY(myEl, position.x, position.y);
+            newX = (hscroll === false) ? position.x : newPosition.x;
+            newY = newPosition.y;
 
-        if (highlight) {
-            me.on({
-                scrollend: 'doHighlight',
-                scope: me,
-                single: true,
-                args: [el, highlight]
-            });
+            if (highlight) {
+                me.on({
+                    scrollend: 'doHighlight',
+                    scope: me,
+                    single: true,
+                    args: [el, highlight]
+                });
+            }
+
+            me.doScrollTo(newX, newY, animate);
         }
-
-        me.doScrollTo(newX, newY, animate);
     },
 
     /**
@@ -550,7 +554,7 @@ Ext.define('Ext.scroll.Scroller', {
                  * @deprecated 5.1.0 Use scrollTo instead
                  */
                 scrollToEnd: function(animate) {
-                    return this.scrollTo(Infinity, Infinity, animate)
+                    return this.scrollTo(Infinity, Infinity, animate);
                 }
             }
         }
@@ -584,6 +588,8 @@ Ext.define('Ext.scroll.Scroller', {
             if (component && component.onScrollStart) {
                 component.onScrollStart(x, y);
             }
+
+            Ext.GlobalEvents.fireEvent('scrollstart', me, x, y);
         },
 
         fireScroll: function(x, y) {
@@ -599,6 +605,8 @@ Ext.define('Ext.scroll.Scroller', {
             if (component && component.onScrollMove) {
                 component.onScrollMove(x, y);
             }
+
+            Ext.GlobalEvents.fireEvent('scroll', me, x, y);
         },
 
         fireScrollEnd: function(x, y) {
@@ -614,6 +622,38 @@ Ext.define('Ext.scroll.Scroller', {
             if (component && component.onScrollEnd) {
                 component.onScrollEnd(x, y);
             }
+
+            Ext.GlobalEvents.fireEvent('scrollend', me, x, y);
+        },
+
+        initXStyle: function() {
+            var element = this.getElement(),
+                x = this.getX();
+
+            if (!x) {
+                x = 'hidden';
+            } else if (x === true) {
+                x = 'auto';
+            }
+
+            if (element) {
+                element.setStyle('overflow-x', x);
+            }
+        },
+
+        initYStyle: function() {
+            var element = this.getElement(),
+                y = this.getY();
+
+            if (!y) {
+                y = 'hidden';
+            } else if (y === true) {
+                y = 'auto';
+            }
+
+            if (element) {
+                element.setStyle('overflow-y', y);
+            }
         },
 
         invokePartners: function(method, x, y) {
@@ -623,10 +663,8 @@ Ext.define('Ext.scroll.Scroller', {
 
             if (!this.suspendSync) {
                 for (id in partners) {
-                    partner = partners[id];
-                    if (!partner.suspendSync) {
-                        partner.scroller[method](this, x, y);
-                    }
+                    partner = partners[id].scroller;
+                    partner[method](this, x, y);
                 }
             }
         },
@@ -667,11 +705,16 @@ Ext.define('Ext.scroll.Scroller', {
 
         onDomScrollEnd: function() {
             var me = this,
-                position = me.getPosition();
+                position = me.getPosition(),
+                x = position.x,
+                y = position.y;
 
             me.isScrolling = false;
 
-            me.fireScrollEnd(position.x, position.y);
+            me.trackingScrollLeft = x;
+            me.trackingScrollTop = y;
+
+            me.fireScrollEnd(x, y);
         },
 
         onPartnerScroll: function(partner, x, y) {
@@ -685,11 +728,35 @@ Ext.define('Ext.scroll.Scroller', {
                 }
             }
 
-            this.doScrollTo(x, y, null, true);
+            this.doScrollTo(x, y);
         },
 
-        onPartnerScrollEnd: Ext.privateFn,
+        restoreState: function () {
+            var me = this,
+                el = me.getElement(),
+                dom;
 
-        onPartnerScrollStart: Ext.privateFn
+            if (el) {
+                dom = el.dom;
+
+                // Only restore state if has been previously captured! For example,
+                // floaters probably have not been hidden before initially shown.
+                if (me.trackingScrollTop !== undefined) {
+                    dom.scrollTop = me.trackingScrollTop;
+                    dom.scrollLeft = me.trackingScrollLeft;
+                }
+            }
+        },
+
+        onPartnerScrollStart: function() {
+            // When a partner starts scrolling, he's going to be the one in charge,
+            // so we must not sync back
+            this.suspendPartnerSync();
+        },
+
+        onPartnerScrollEnd: function() {
+            // When the scrolling partner stops, we can resume syncing
+            this.resumePartnerSync();
+        }
     }
 });

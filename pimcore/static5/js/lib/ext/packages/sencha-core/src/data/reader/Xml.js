@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * The XML Reader is used by a Proxy to read a server response that is sent back in XML format. This usually happens as
  * a result of loading a Store - for example we might create something like this:
  *
@@ -140,7 +138,8 @@ Ext.define('Ext.data.reader.Xml', {
         * @cfg {String} record (required)
         * The DomQuery path to the repeated element which contains record information.
         *
-        * By default, the elements which match the selector may be nested at any level below the {@link #root}
+        * By default, the elements which match the selector may be nested at any level
+        * below the {@link #rootProperty}
         *
         * If this Reader is being used by a {@link Ext.data.TreeStore TreeStore} to read tree-structured data,
         * then only first generation child nodes of the root element must be selected, so the record selector must be
@@ -283,26 +282,20 @@ Ext.define('Ext.data.reader.Xml', {
      * @param {Object} [readOptions] See {@link #read} for details.
      * @return {Ext.data.ResultSet} The parsed result set
      */
-    readRecords: function(doc, readOptions) {
+    readRecords: function(doc, readOptions, /* private */ internalReadOptions) {
         // it's possible that we get passed an array here by associations.
         // Make sure we strip that out (see Ext.data.reader.Reader#readAssociated)
         if (Ext.isArray(doc)) {
             doc = doc[0];
         }
 
-        /**
-         * @property {Object} xmlData
-         * Copy of {@link #rawData}.
-         * @deprecated Will be removed in Ext JS 5.0. Use {@link #rawData} instead.
-         */
-        this.xmlData = doc;
-        return this.callParent([doc, readOptions]);
+        return this.callParent([doc, readOptions, internalReadOptions]);
     },
 
     /**
      * @private
      * Returns an accessor function for the passed Field from an XML element using either the Field's mapping, or
-     * its ordinal position in the fields collsction as the index.
+     * its ordinal position in the fields collection as the index.
      * This is used by buildExtractors to create optimized on extractor function which converts raw data into model instances.
      */
     createFieldAccessor: function(field) {
@@ -322,5 +315,18 @@ Ext.define('Ext.data.reader.Xml', {
             };
         }
         return result;
+    },
+    
+    deprecated: {
+        '5.1.1': {
+            properties: {
+                /**
+                 * @property {Object} xmlData
+                 * Copy of {@link #rawData}.
+                 * @deprecated 5.1.1 Removed in Ext JS 5.0. Use {@link #rawData} instead.
+                 */
+                xmlData: null
+            }
+        }
     }
 });

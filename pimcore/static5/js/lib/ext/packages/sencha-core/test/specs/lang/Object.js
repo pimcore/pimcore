@@ -362,6 +362,20 @@ describe("Ext.Object", function(){
                 expect(value).toBe(42);
             });
         });
+
+        describe("undefined and null", function() {
+            it("should not throw an error if undefined is passed", function() {
+                expect(function() {
+                    Ext.Object.each(undefined, function() {});
+                }).not.toThrow();
+            });
+
+            it("should not throw an error if null is passed", function() {
+                expect(function() {
+                    Ext.Object.each(null, function() {});
+                }).not.toThrow();
+            });
+        });
     });
 
     describe("toQueryString", function(){
@@ -374,6 +388,20 @@ describe("Ext.Object", function(){
 
             it("should return an empty string for an empty object", function(){
                 expect(toQueryString({})).toEqual('');
+            });
+        });
+
+        describe("spaces", function() {
+            it("should convert space to %20", function() {
+                expect(toQueryString({
+                    name: 'foo bar'
+                })).toBe('name=foo%20bar');
+            });
+
+            it("should convert + to %2B, not spaces", function() {
+                expect(toQueryString({
+                    name: 'foo+bar'
+                })).toBe('name=foo%2Bbar');
             });
         });
 
@@ -702,6 +730,26 @@ describe("Ext.Object", function(){
 
     describe("fromQueryString", function() {
         var fromQueryString = Ext.Object.fromQueryString;
+
+        describe("spaces", function() {
+            it("should decode %20 to space", function() {
+                expect(fromQueryString('name=foo%20bar')).toEqual({
+                    name: 'foo bar'
+                });
+            });
+
+            it("should decode + to space", function() {
+                expect(fromQueryString('name=foo+bar')).toEqual({
+                    name: 'foo bar'
+                });
+            });
+
+            it("should decode a mixture of %20 & + to space", function() {
+                expect(fromQueryString('name=foo+bar%20baz')).toEqual({
+                    name: 'foo bar baz'
+                });
+            });
+        });
 
         describe("standard mode", function() {
             it("empty string", function(){

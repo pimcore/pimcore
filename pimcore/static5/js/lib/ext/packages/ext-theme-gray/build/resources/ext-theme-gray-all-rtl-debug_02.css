@@ -1,3 +1,54 @@
+/* line 45, ../../../ext-theme-neutral/sass/src/layout/container/Accordion.scss */
+.x-accordion-hd .x-tool-collapse-top,
+.x-accordion-hd .x-tool-collapse-bottom {
+  background-position: 0 -255px; }
+/* line 50, ../../../ext-theme-neutral/sass/src/layout/container/Accordion.scss */
+.x-accordion-hd .x-tool-expand-top,
+.x-accordion-hd .x-tool-expand-bottom {
+  background-position: 0 -240px; }
+/* line 58, ../../../ext-theme-neutral/sass/src/layout/container/Accordion.scss */
+.x-accordion-hd .x-tool-over .x-tool-collapse-top,
+.x-accordion-hd .x-tool-over .x-tool-collapse-bottom {
+  background-position: -15px -255px; }
+/* line 63, ../../../ext-theme-neutral/sass/src/layout/container/Accordion.scss */
+.x-accordion-hd .x-tool-over .x-tool-expand-top,
+.x-accordion-hd .x-tool-over .x-tool-expand-bottom {
+  background-position: -15px -240px; }
+/* line 69, ../../../ext-theme-neutral/sass/src/layout/container/Accordion.scss */
+.x-accordion-hd .x-tool-img {
+  background-color: #e5e5e5; }
+
+/* line 1, ../../../ext-theme-neutral/sass/src/layout/container/Form.scss */
+.x-form-layout-wrap {
+  border-spacing: 5px; }
+
+/* line 1, ../../../ext-theme-neutral/sass/src/resizer/Resizer.scss */
+.x-resizable-handle {
+  position: absolute;
+  z-index: 100;
+  font-size: 1px;
+  line-height: 6px;
+  overflow: hidden;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  background-color: #fff; }
+
+/* line 17, ../../../ext-theme-neutral/sass/src/resizer/Resizer.scss */
+.x-collapsed .x-resizable-handle {
+  display: none; }
+
+/* line 21, ../../../ext-theme-neutral/sass/src/resizer/Resizer.scss */
+.x-resizable-handle-north {
+  cursor: n-resize; }
+
+/* line 24, ../../../ext-theme-neutral/sass/src/resizer/Resizer.scss */
+.x-resizable-handle-south {
+  cursor: s-resize; }
+
+/* line 27, ../../../ext-theme-neutral/sass/src/resizer/Resizer.scss */
+.x-resizable-handle-east {
+  cursor: e-resize; }
+
 /* line 30, ../../../ext-theme-neutral/sass/src/resizer/Resizer.scss */
 .x-resizable-handle-west {
   cursor: w-resize; }
@@ -333,10 +384,12 @@
  * The space between the breadcrumb buttons
  *
  * @param {number} [$ui-arrow-width=$breadcrumb-arrow-width]
- * The width of the breadcrumb arrows when {@link #split} is `false`
+ * The width of the breadcrumb arrows when
+ * {@link Ext.toolbar.Breadcrumb#useSplitButtons} is `false`
  *
  * @param {number} [$ui-split-width=$breadcrumb-split-width]
- * The width of breadcrumb arrows when {@link #split} is `true`
+ * The width of breadcrumb arrows when {@link Ext.toolbar.Breadcrumb#useSplitButtons} is
+ * `true`
  *
  * @param {boolean} [$ui-include-menu-active-arrow=$breadcrumb-include-menu-active-arrow]
  * `true` to include a separate background-image for menu arrows when a breadcrumb button's
@@ -401,50 +454,52 @@
  * `true` to use classic-style scroller buttons.  When `true` scroller buttons are given
  * their hover state by changing their background-position,  When `false` scroller buttons
  * are given their hover state by applying opacity.
+ *
+ * @member Ext.toolbar.Breadcrumb
  */
-/* line 111, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 115, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-btn-default {
   margin: 0 0 0 0px; }
 
-/* line 115, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 119, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-icon-folder-default {
   background-image: url(images/tree/folder.gif); }
 
-/* line 119, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 123, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-icon-leaf-default {
   background-image: url(images/tree/leaf.gif); }
 
-/* line 124, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 128, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-arrow:after {
   width: 14px;
   background-image: url(images/breadcrumb/default-arrow.gif); }
-/* line 130, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 134, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-rtl.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-arrow:after {
   background-image: url(images/breadcrumb/default-arrow-rtl.gif); }
-/* line 136, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 140, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-btn-menu-active.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-arrow:after {
   background-image: url(images/breadcrumb/default-arrow-open.gif); }
-/* line 141, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 145, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-rtl.x-btn-menu-active.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-arrow:after {
   background-image: url(images/breadcrumb/default-arrow-open-rtl.gif); }
 
-/* line 149, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 153, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   width: 14px;
   background-image: url(images/breadcrumb/default-split-arrow.gif); }
-/* line 155, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 159, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-rtl.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   background-image: url(images/breadcrumb/default-split-arrow-rtl.gif); }
-/* line 161, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 165, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-btn-over.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   background-image: url(images/breadcrumb/default-split-arrow-over.gif); }
-/* line 166, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 170, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-rtl.x-btn-over.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   background-image: url(images/breadcrumb/default-split-arrow-over-rtl.gif); }
-/* line 173, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 177, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-btn-menu-active.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   background-image: url(images/breadcrumb/default-split-arrow-open.gif); }
-/* line 178, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
+/* line 182, ../../../ext-theme-neutral/sass/src/toolbar/Breadcrumb.scss */
 .x-rtl.x-btn-menu-active.x-breadcrumb-btn > .x-btn-wrap-default-toolbar-small.x-btn-split:after {
   background-image: url(images/breadcrumb/default-split-arrow-open-rtl.gif); }
 

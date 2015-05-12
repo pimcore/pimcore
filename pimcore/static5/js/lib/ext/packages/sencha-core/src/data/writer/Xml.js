@@ -1,13 +1,8 @@
 /**
- * @author Ed Spencer
  * @class Ext.data.writer.Xml
-
-This class is used to write {@link Ext.data.Model} data to the server in an XML format.
-The {@link #documentRoot} property is used to specify the root element in the XML document.
-The {@link #record} option is used to specify the element name for each record that will make
-up the XML document.
-
- * @markdown
+ * This class is used to write {@link Ext.data.Model} data to the server in an XML format.
+ * The {@link #documentRoot} property is used to specify the root element in the XML document.
+ * The {@link #record} option is used to specify the element name for each record that will make up the XML document.
  */
 Ext.define('Ext.data.writer.Xml', {
     
@@ -138,7 +133,7 @@ Ext.define('Ext.data.writer.Xml', {
      * @param {String} name The element name for the object.
      * @param {Object} o The object to serialize.
      * @param {Array} [output] The array into which to serialize the object.
-     * @returns {undefined}
+     * @return {undefined}
      */
     objectToElement: function(name, o, output) {
         var key,

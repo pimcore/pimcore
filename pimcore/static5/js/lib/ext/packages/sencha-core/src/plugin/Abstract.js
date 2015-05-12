@@ -105,5 +105,21 @@ Ext.define('Ext.plugin.Abstract', {
             }
             cls.prototype.ptype = alias.split('plugin.')[1];
         }
+    },
+
+    resolveListenerScope: function(defaultScope) {
+        var me = this,
+            cmp = me.getCmp(),
+            scope;
+
+        if (cmp) {
+            scope = cmp.resolveSatelliteListenerScope(me, defaultScope);
+        }
+
+        // If this method was called, it means the plugin subclass must
+        // have mixed in Observable, so we can rely on there being
+        // a "this.mixins.observable" even though Ext.plugin.Abstract
+        // does not mix it in directly
+        return scope || me.mixins.observable.resolveListenerScope.call(me, defaultScope);
     }
 });

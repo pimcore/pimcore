@@ -5,7 +5,7 @@
  * A set of useful static methods to deal with arrays; provide missing methods for
  * older browsers.
  */
-Ext.Array = new (function() {
+Ext.Array = (function() {
 // @define Ext.lang.Array
 // @define Ext.Array
 // @require Ext
@@ -1460,4 +1460,4 @@ Ext.Array = new (function() {
     };
 
     return ExtArray;
-});
+}());

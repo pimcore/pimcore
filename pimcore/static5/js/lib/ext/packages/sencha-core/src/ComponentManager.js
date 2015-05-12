@@ -12,9 +12,7 @@
  * A child Component may be specified simply as a *config object* as long as the correct
  * `{@link Ext.Component#xtype xtype}` is specified so that if and when the Component
  * needs rendering, the correct type can be looked up for lazy instantiation.
- *
- * For a list of all available `{@link Ext.Component#xtype xtypes}`, see
- * {@link Ext.Component}.
+ * 
  * @singleton
  */
 Ext.define('Ext.ComponentManager', {
@@ -26,11 +24,16 @@ Ext.define('Ext.ComponentManager', {
     
     typeName: 'xtype',
 
+    /**
+     * @private
+     */
     constructor: function(config) {
-        Ext.apply(this, config || {});
-        this.all = {};
-        this.references = {};
-        this.onAvailableCallbacks = {};
+        var me = this;
+        
+        Ext.apply(me, config || {});
+        me.all = {};
+        me.references = {};
+        me.onAvailableCallbacks = {};
     },
     
     /**
@@ -43,7 +46,7 @@ Ext.define('Ext.ComponentManager', {
      * @return {Ext.Component} The newly instantiated Component.
      */
     create: function (config, defaultType) {
-        if (typeof config == 'string') {
+        if (typeof config === 'string') {
             return Ext.widget(config);
         }
         if (config.isComponent) {
@@ -89,8 +92,9 @@ Ext.define('Ext.ComponentManager', {
 
         ++me.count;
         
-        if (me.count === 1) {
-            me.initFocusListener();
+        if (!me.hasFocusListener) {
+            Ext.on('focus', me.onGlobalFocus, me);
+            me.hasFocusListener = true;
         }
 
         onAvailableCallbacks = onAvailableCallbacks && onAvailableCallbacks[key];
@@ -195,44 +199,13 @@ Ext.define('Ext.ComponentManager', {
     },
 
     /**
-     * Find a Component that the given Element belongs to.
-     *
-     * @param {Ext.dom.Element/HTMLElement} el
-     * @return {Ext.Component/null} Component, or null
-     * @private
-     */
-    byElement: function(node) {
-        var topmost = document.body,
-            cmpIdAttr = Ext.Component.componentIdAttribute,
-            cmpId,
-            target = Ext.getDom(node),
-            cmp;
-
-        while (target && target.nodeType === 1 && target !== topmost) {
-            cmpId = target.getAttribute(cmpIdAttr) || target.id;
-            if (cmpId) {
-                cmp = this.all[cmpId];
-                if (cmp) {
-                    return cmp;
-                }
-            }
-            target = target.parentNode;
-        }
-        return null;
-    },
-
-    /**
      * Return the currently active (focused) Component
      *
      * @return {Ext.Component/null} Active Component, or null
      * @private
      */
     getActiveComponent: function() {
-        return this.byElement(Ext.dom.Element.getActiveElement());
-    },
-
-    initFocusListener: function() {
-        Ext.on('focus', this.onGlobalFocus, this);
+        return Ext.Component.fromElement(Ext.dom.Element.getActiveElement());
     },
 
     // Deliver focus events to Component
@@ -240,13 +213,13 @@ Ext.define('Ext.ComponentManager', {
         var me = this,
             toElement = e.toElement,
             fromElement = e.fromElement,
-            toComponent = me.byElement(toElement),
-            fromComponent = me.byElement(fromElement),
+            toComponent = Ext.Component.fromElement(toElement),
+            fromComponent = Ext.Component.fromElement(fromElement),
             commonAncestor = me.getCommonAncestor(fromComponent, toComponent),
             event,
             targetComponent;
 
-        if (fromComponent && !fromComponent.isDestroyed) {
+        if (fromComponent && !(fromComponent.isDestroyed || fromComponent.destroying)) {
             // Call the Blurred Component's blur event handler directly with a synthesized blur event.
             if (fromComponent.focusable && fromElement === fromComponent.getFocusEl().dom) {
                 event = new Ext.event.Event(e.event);
@@ -258,14 +231,16 @@ Ext.define('Ext.ComponentManager', {
 
             // Call onFocusLeave on the component axis from which focus is exiting
             for (targetComponent = fromComponent; targetComponent && targetComponent !== commonAncestor; targetComponent = targetComponent.getRefOwner()) {
-                targetComponent.onFocusLeave({
-                    event: e.event,
-                    type: 'focusleave',
-                    target: fromElement,
-                    relatedTarget: toElement,
-                    fromComponent: fromComponent,
-                    toComponent: toComponent
-                });
+                if (!(targetComponent.isDestroyed || targetComponent.destroying)) {
+                    targetComponent.onFocusLeave({
+                        event: e.event,
+                        type: 'focusleave',
+                        target: fromElement,
+                        relatedTarget: toElement,
+                        fromComponent: fromComponent,
+                        toComponent: toComponent
+                    });
+                }
             }
         }
         if (toComponent && !toComponent.isDestroyed) {

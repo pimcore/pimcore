@@ -13,6 +13,10 @@ Ext.define('Ext.draw.sprite.AnimationParser', function () {
         return from + (to - from) * delta;
     }
 
+    function isNotNumber(n) {
+        return isNaN(parseFloat(n)) || !isFinite(n);
+    }
+
     return {
         singleton: true,
         attributeRe: /^url\(#([a-zA-Z\-]+)\)$/,
@@ -93,6 +97,7 @@ Ext.define('Ext.draw.sprite.AnimationParser', function () {
                     length,
                     lastStripe = toStripes[toLength - 1],
                     endPoint = [lastStripe[lastStripe.length - 2], lastStripe[lastStripe.length - 1]];
+
                 for (i = fromLength; i < toLength; i++) {
                     fromStripes.push(fromStripes[fromLength - 1].slice(0));
                 }
@@ -137,6 +142,7 @@ Ext.define('Ext.draw.sprite.AnimationParser', function () {
                 var i = 0, ln = fromStripes.length,
                     j = 0, ln2, from, to,
                     temp = toStripes.temp.params, pos = 0;
+
                 for (; i < ln; i++) {
                     from = fromStripes[i];
                     to = toStripes[i];
@@ -155,19 +161,31 @@ Ext.define('Ext.draw.sprite.AnimationParser', function () {
                     lt = to.length - 1,
                     len = Math.max(lf, lt),
                     f, t, i;
+
                 if (!target || target === from) {
                     target = [];
                 }
                 target.length = len + 1;
+
                 for (i = 0; i <= len; i++) {
                     f = from[Math.min(i, lf)];
                     t = to[Math.min(i, lt)];
-                    if (isNaN(f)) {
+                    if (isNotNumber(f)) {
                         target[i] = t;
                     } else {
+                        if (isNotNumber(t)) {
+                            // This may not give the desired visual result during
+                            // animation (after all, we don't know what the target
+                            // value should be, if it wasn't given to us), but it's
+                            // better than spitting out a bunch of NaNs in the target
+                            // array, when transitioning from a non-empty to an empty
+                            // array.
+                            t = 0;
+                        }
                         target[i] = (t - f) * delta + f;
                     }
                 }
+
                 return target;
             }
         },

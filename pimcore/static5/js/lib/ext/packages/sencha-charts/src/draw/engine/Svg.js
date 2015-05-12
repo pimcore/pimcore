@@ -197,7 +197,7 @@ Ext.define('Ext.draw.engine.Svg', {
      * @private
      * Serializes an SVG DOM element and its children recursively into a string.
      * @param {Object} node DOM element to serialize.
-     * @returns {String}
+     * @return {String}
      */
     serializeNode: function (node) {
         var result = '',

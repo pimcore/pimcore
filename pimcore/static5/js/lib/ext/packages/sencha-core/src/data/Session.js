@@ -620,10 +620,18 @@ Ext.define('Ext.data.Session', {
          */
         dropEntities: function(entityType, ids) {
             var len = ids.length,
-                i, rec, id;
+                i, rec, id, extractId;
+
+            if (len) {
+                // Handle writeAllFields here, we may not have an array of raw ids
+                extractId = Ext.isObject(ids[0]);
+            }
 
             for (i = 0; i < len; ++i) {
                 id = ids[i];
+                if (extractId) {
+                    id = entityType.getIdFromData(id);
+                }
                 rec = this.peekRecord(entityType, id);
                 if (rec) {
                     rec.drop();
@@ -841,7 +849,7 @@ Ext.define('Ext.data.Session', {
 
         processManyBlock: function(entityType, role, items, processor) {
             var me = this,
-                id, record, store;
+                id, record, records, store;
 
             if (items) {
                 for (id in items) {

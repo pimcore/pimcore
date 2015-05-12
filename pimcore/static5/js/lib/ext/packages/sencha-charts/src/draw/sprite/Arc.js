@@ -5,24 +5,21 @@
  *  A sprite that represents a circular arc.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'arc',
- *                 cx: 100,
- *                 cy: 100,
- *                 r: 25,
- *                 fillStyle: 'blue',
- *                 startAngle: 0,
- *                 endAngle: Math.PI,
- *                 anticlockwise: true
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'arc',
+ *            cx: 100,
+ *            cy: 100,
+ *            r: 80,
+ *            fillStyle: '#1F6D91',
+ *            startAngle: 0,
+ *            endAngle: Math.PI,
+ *            anticlockwise: true
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Arc', {

@@ -31,8 +31,6 @@
  *     }
  *
  * An object literal of this form could also be used as the {@link #cfg-data} config option.
- *
- * @author Ed Spencer
  */
 Ext.define('Ext.data.JsonStore',  {
     extend: 'Ext.data.Store',

@@ -280,7 +280,7 @@ Ext.define('Ext.data.Batch', {
             current = this.current;
             
         if (!(current === -1 || this.complete)) {
-            out = this.operations[current]
+            out = this.operations[current];
         }    
         return out;
     },

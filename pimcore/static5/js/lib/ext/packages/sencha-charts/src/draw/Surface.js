@@ -97,7 +97,7 @@ Ext.define('Ext.draw.Surface', {
                      * Stably sort the list of sprites by their zIndex.
                      * Deprecated, use the {@link Ext.Array#sort} method instead.
                      * @param {Array} list
-                     * @returns {Array} Sorted array.
+                     * @return {Array} Sorted array.
                      */
                     stableSort: function (list) {
                         return Ext.Array.sort(list, function (a, b) {
@@ -281,7 +281,7 @@ Ext.define('Ext.draw.Surface', {
      * Get the sprite by id or index.
      * It will first try to find a sprite with the given id, otherwise will try to use the id as an index.
      * @param {String|Number} id
-     * @returns {Ext.draw.sprite.Sprite}
+     * @return {Ext.draw.sprite.Sprite}
      */
     get: function (id) {
         return this.map[id] || this.items[id];
@@ -451,7 +451,7 @@ Ext.define('Ext.draw.Surface', {
      * Return the minimal bounding box that contains all the sprites bounding boxes in the given list of sprites.
      * @param {Ext.draw.sprite.Sprite[]|Ext.draw.sprite.Sprite} sprites
      * @param {Boolean} [isWithoutTransform=false]
-     * @returns {{x: Number, y: Number, width: number, height: number}}
+     * @return {{x: Number, y: Number, width: number, height: number}}
      */
     getBBox: function (sprites, isWithoutTransform) {
         var sprites = Ext.Array.from(sprites),

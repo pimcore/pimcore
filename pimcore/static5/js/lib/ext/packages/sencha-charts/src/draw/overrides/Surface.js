@@ -12,6 +12,7 @@ Ext.define('Ext.draw.overrides.Surface', {
      * @param {Object} options Hit testing options.
      * @return {Object} A hit result object that contains more information about what
      * exactly was hit or null if nothing was hit.
+     * @member Ext.draw.Surface
      */
     hitTest: function (point, options) {
         var me = this,
@@ -40,6 +41,7 @@ Ext.define('Ext.draw.overrides.Surface', {
      * @param {Object} options Hit testing options.
      * @return {Object} A hit result object that contains more information about what
      * exactly was hit or null if nothing was hit.
+     * @member Ext.draw.Surface
      */
     hitTestEvent: function (event, options) {
         var xy = this.getEventXY(event);

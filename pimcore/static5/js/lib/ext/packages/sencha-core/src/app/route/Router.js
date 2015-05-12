@@ -10,7 +10,6 @@
  * {@link Ext.app.Controller Controller documentation} for more information on specifying
  * routes.
  *
- * @author Mitchell Simoens
  * @private
  */
 Ext.define('Ext.app.route.Router', {

@@ -2,43 +2,37 @@
  * Radial gradient.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'circle',
- *                 cx: 100,
- *                 cy: 100,
- *                 r: 100,
- *                 fillStyle: {
- *                     type: 'radial',
- *                     start: {
- *                         x: 0,
- *                         y: 0,
- *                         r: 0
- *                     },
- *                     end: {
- *                         x: 0,
- *                         y: 0,
- *                         r: 1
- *                     },
- *                     stops: [
- *                         {
- *                             offset: 0,
- *                             color: 'white'
- *                         },
- *                         {
- *                             offset: 1,
- *                             color: 'blue'
- *                         }
- *                     ]
- *                 }
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'circle',
+ *            cx: 100,
+ *            cy: 100,
+ *            r: 100,
+ *            fillStyle: {
+ *                type: 'radial',
+ *                start: {
+ *                    x: 0,
+ *                    y: 0,
+ *                    r: 0
+ *                },
+ *                end: {
+ *                    x: 0,
+ *                    y: 0,
+ *                    r: 1
+ *                },
+ *                stops: [{
+ *                    offset: 0,
+ *                    color: '#90BCC9'
+ *                }, {
+ *                    offset: 1,
+ *                    color: '#1F6D91'
+ *                }]
+ *            }
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.gradient.Radial', {

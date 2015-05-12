@@ -338,29 +338,21 @@ Ext.define('Ext.data.ProxyStore', {
         return proxy;
     },
 
-    updateProxy: function(proxy, oldProxy) {
+    applyState: function (state) {
         var me = this,
-            listeners = {
-                scope: me,
-                beginprocessresponse: me.beginUpdate,
-                endprocessresponse: me.endUpdate
-            };
+            doLoad = me.getAutoLoad() || me.isLoaded();
 
-        if (!me.disableMetaChangeEvent) {
-            listeners.metachange = me.onMetaChange;
-        }
+        me.blockLoad();
+        me.callParent([state]);
+        me.unblockLoad(doLoad);
+    },
 
-        if (oldProxy) {
-            oldProxy.un(listeners);
-        }
-
-        // Bracket Proxy's processing of response with begin/end update.
-        if (proxy) {
-            proxy.on(listeners);
-        }
+    updateProxy: function(proxy, oldProxy) {
+        this.proxyListeners = Ext.destroy(this.proxyListeners);
     },
 
     updateTrackRemoved: function (track) {
+        this.cleanRemoved();
         this.removed = track ? [] : null;
     },
 
@@ -372,8 +364,8 @@ Ext.define('Ext.data.ProxyStore', {
     //saves any phantom records
     create: function(data, options) {
         var me = this,
-            instance = new me.model(data),
-            proxy = me.getProxy(),
+            Model = me.getModel(),
+            instance = new Model(data),
             operation;
 
         options = Ext.apply({}, options);
@@ -383,7 +375,7 @@ Ext.define('Ext.data.ProxyStore', {
         options.internalScope = me;
         options.internalCallback = me.onProxyWrite;
 
-        operation = proxy.createOperation('create', options);
+        operation = me.createOperation('create', options);
         return operation.execute();
     },
 
@@ -393,7 +385,6 @@ Ext.define('Ext.data.ProxyStore', {
 
     update: function(options) {
         var me = this,
-            proxy = me.getProxy(),
             operation;
             
         options = Ext.apply({}, options);
@@ -403,7 +394,7 @@ Ext.define('Ext.data.ProxyStore', {
         options.internalScope = me;
         options.internalCallback = me.onProxyWrite;
 
-        operation = proxy.createOperation('update', options);
+        operation = me.createOperation('update', options);
         return operation.execute();
     },
 
@@ -450,7 +441,7 @@ Ext.define('Ext.data.ProxyStore', {
      */
     onDestroyRecords: function(records, operation, success) {
         if (success) {
-            this.removed.length = 0;
+            this.cleanRemoved();
         }
     },
 
@@ -458,7 +449,6 @@ Ext.define('Ext.data.ProxyStore', {
     // @since 3.4.0
     erase: function(options) {
         var me = this,
-            proxy = me.getProxy(),
             operation;
 
         options = Ext.apply({}, options);
@@ -468,7 +458,7 @@ Ext.define('Ext.data.ProxyStore', {
         options.internalScope = me;
         options.internalCallback = me.onProxyWrite;
 
-        operation = proxy.createOperation('destroy', options);
+        operation = me.createOperation('destroy', options);
         return operation.execute();
     },
 
@@ -700,7 +690,6 @@ Ext.define('Ext.data.ProxyStore', {
         }
         
         var me = this,
-            proxy = me.getProxy(),
             operation = {
                 internalScope: me,
                 internalCallback: me.onProxyLoad
@@ -708,14 +697,14 @@ Ext.define('Ext.data.ProxyStore', {
         
         // Only add filtering and sorting options if those options are remote
         if (me.getRemoteFilter()) {
-            filters = me.getFilters();
-            if (filters.getCount()) {
+            filters = me.getFilters(false);
+            if (filters && filters.getCount()) {
                 operation.filters = filters.getRange();
             }
         }
         if (me.getRemoteSort()) {
-            sorters = me.getSorters();
-            if (sorters.getCount()) {
+            sorters = me.getSorters(false);
+            if (sorters && sorters.getCount()) {
                 operation.sorters = sorters.getRange();
             }
             me.fireEvent('beforesort', me, operation.sorters);
@@ -725,7 +714,7 @@ Ext.define('Ext.data.ProxyStore', {
         me.lastOptions = operation;
         
 
-        operation = proxy.createOperation('read', operation);
+        operation = me.createOperation('read', operation);
 
         if (me.fireEvent('beforeload', me, operation) !== false) {
             me.onBeforeLoad(operation);
@@ -808,7 +797,7 @@ Ext.define('Ext.data.ProxyStore', {
      * @param {Ext.data.Model} record The model instance that was edited
      * @since 3.4.0
      */
-    afterReject : function(record) {
+    afterReject: function(record) {
         var me = this;
         // Must pass the 5th param (modifiedFieldNames) as null, otherwise the
         // event firing machinery appends the listeners "options" object to the arg list
@@ -827,7 +816,7 @@ Ext.define('Ext.data.ProxyStore', {
      * @param {Ext.data.Model} record The model instance that was edited
      * @since 3.4.0
      */
-    afterCommit : function(record, modifiedFieldNames) {
+    afterCommit: function(record, modifiedFieldNames) {
         var me = this;
         if (!modifiedFieldNames) {
             modifiedFieldNames = null;
@@ -854,9 +843,11 @@ Ext.define('Ext.data.ProxyStore', {
         me.blockLoad();
         me.clearData();
         me.setProxy(null);
+        
         if (proxy.autoCreated) {
             proxy.destroy();
         }
+        
         me.setModel(null);
     },
 
@@ -949,6 +940,39 @@ Ext.define('Ext.data.ProxyStore', {
             }
         },
 
+        cleanRemoved: function() {
+            var removed = this.removed,
+                len, i;
+
+            if (removed) {
+                for (i = 0, len = removed.length; i < len; ++i) {
+                    removed[i].unjoin(this);
+                }
+                removed.length = 0;
+            }
+        },
+
+        createOperation: function(type, options) {
+            var me = this,
+                proxy = me.getProxy(),
+                listeners;
+
+            if (!me.proxyListeners) {
+                listeners = {
+                    scope: me,
+                    destroyable: true,
+                    beginprocessresponse: me.beginUpdate,
+                    endprocessresponse: me.endUpdate
+                };
+
+                if (!me.disableMetaChangeEvent) {
+                    listeners.metachange = me.onMetaChange;
+                }
+                me.proxyListeners = proxy.on(listeners);
+            }
+            return proxy.createOperation(type, options);
+        },
+
         isLoadBlocked: function () {
             return !!this.blockLoadCounter;
         },
@@ -958,6 +982,14 @@ Ext.define('Ext.data.ProxyStore', {
         },
 
         onBeforeLoad: Ext.privateFn,
+
+        removeFromRemoved: function(record) {
+            var removed = this.removed;
+            if (removed) {
+                Ext.Array.remove(removed, record);
+                record.unjoin(this);
+            }
+        },
 
         unblockLoad: function (doLoad) {
             var me = this,

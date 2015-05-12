@@ -1,5 +1,20 @@
 /**
  * A sprite that represents a square.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'square',
+ *            x: 100,
+ *            y: 100,
+ *            size: 50,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Square', {
     extend: 'Ext.draw.sprite.Rect',

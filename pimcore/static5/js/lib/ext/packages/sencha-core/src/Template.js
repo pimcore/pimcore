@@ -103,7 +103,7 @@ Ext.define('Ext.Template', {
         if (length > 1) {
             for (i = 0; i < length; i++) {
                 value = args[i];
-                if (typeof value == 'object') {
+                if (typeof value === 'object') {
                     Ext.apply(me.initialConfig, value);
                     Ext.apply(me, value);
                 } else {
@@ -202,7 +202,7 @@ Ext.define('Ext.Template', {
         function fn(match, index, name, formatFn, args) {
             // Calculate the correct name extracted from the {}
             // Certain browser pass unmatched parameters as undefined, some as an empty string.
-            if (name == null || name == '') {
+            if (name == null || name === '') {
                 name = index;
             }
             if (formatFn && useFormat) {
@@ -296,7 +296,7 @@ Ext.define('Ext.Template', {
                 (me.useEval ? '$=' : 'return') +
                 " function(v){return ['" + code + "'];};";
 
-        me.fn  = me.useEval ? me.evalCompiled(code) : (new Function('Ext', code))(Ext);
+        me.fn  = me.useEval ? me.evalCompiled(code) : (new Function('Ext', code))(Ext); // jshint ignore:line
         me.compiled = true;
         return me;
     },
@@ -308,7 +308,7 @@ Ext.define('Ext.Template', {
         // don't want a deep scope chain. We only do this in Firefox and it is also unhappy
         // with eval containing a return statement, so instead we assign to "$" and return
         // that. Because we use "eval", we are automatically sandboxed properly.
-        eval($);
+        eval($); // jshint ignore:line
         return $;
     },
 
@@ -316,7 +316,7 @@ Ext.define('Ext.Template', {
         // Calculate the correct expression to use to index into the values object/array
         // index may be a numeric string, or a quoted alphanumeric string.
         // Certain browser pass unmatched parameters as undefined, some as an empty string.
-        if (index == null || index == '') {
+        if (index == null || index === '') {
             index = '"' + name + '"';
         }
         // If we are being used as a formatter for Ext.String.format, we must skip the string itself in the argument list.

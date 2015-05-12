@@ -800,7 +800,7 @@ var makeCtor = Ext.Class.makeCtor,
 
                     Ext.override(cls, data);
 
-                    // This pushes the overridding file itself into Ext.Loader.history
+                    // This pushes the overriding file itself into Ext.Loader.history
                     // Hence if the target class never exists, the overriding file will
                     // never be included in the build.
                     Ext.Loader.history.push(className);
@@ -1005,6 +1005,29 @@ var makeCtor = Ext.Class.makeCtor,
             return this;
         }
     });
+
+    /**
+     * @cfg xtype
+     * @member Ext.Class
+     * @inheritdoc Ext.Component#cfg-xtype
+     */
+
+    /**
+     * @cfg {String} override
+     * @member Ext.Class
+     * Overrides members of the specified `target` class.
+     * 
+     * **NOTE:** the overridden class must have been defined using 
+     * {@link #define Ext.define} in order to use the `override` config.
+     * 
+     * Methods defined on the overriding class will not automatically call the methods of 
+     * the same name in the ancestor class chain.  To call the parent's method of the 
+     * same name you must call {@link Ext.Base#callParent callParent}.  To skip the 
+     * method of the overridden class and call its parent you will instead call 
+     * {@link Ext.Base#callSuper callSuper}.
+     *
+     * See {@link Ext#define Ext.define} for additional usage examples.
+     */
     
     //<feature classSystem.alias>
     /**
@@ -1603,7 +1626,7 @@ var makeCtor = Ext.Class.makeCtor,
          *          ]
          *      });
          *
-         * Overrides can also contain statics:
+         * Overrides can also contain statics, inheritableStatics, or privates:
          *
          *      Ext.define('My.app.BarMod', {
          *          override: 'Ext.foo.Bar',
@@ -1692,15 +1715,23 @@ var makeCtor = Ext.Class.makeCtor,
          * Pass `null` to create an anonymous class.
          * @param {Object} data The key - value pairs of properties to apply to this class. Property names can be of any valid
          * strings, except those in the reserved listed below:
-         *  - `mixins`
-         *  - `statics`
-         *  - `config`
-         *  - `alias`
-         *  - `xtype` (for {@link Ext.Component Components} only)
+         *  
+         *  - {@link Ext.Class#cfg-alias alias}
+         *  - {@link Ext.Class#cfg-alternateClassName alternateClassName}
+         *  - {@link Ext.Class#cfg-cachedConfig cachedConfig}
+         *  - {@link Ext.Class#cfg-config config}
+         *  - {@link Ext.Class#cfg-extend extend}
+         *  - {@link Ext.Class#cfg-inheritableStatics inheritableStatics}
+         *  - {@link Ext.Class#cfg-mixins mixins}
+         *  - {@link Ext.Class#cfg-override override}
+         *  - {@link Ext.Class#cfg-platformConfig platformConfig}
+         *  - {@link Ext.Class#cfg-privates privates}
+         *  - {@link Ext.Class#cfg-requires requires}
          *  - `self`
-         *  - `singleton`
-         *  - `alternateClassName`
-         *  - `override`
+         *  - {@link Ext.Class#cfg-singleton singleton}
+         *  - {@link Ext.Class#cfg-statics statics}
+         *  - {@link Ext.Class#cfg-uses uses}
+         *  - {@link Ext.Class#cfg-xtype xtype} (for {@link Ext.Component Components} only)
          *
          * @param {Function} [createdFn] Callback to execute after the class is created, the execution scope of which
          * (`this`) will be the newly created class itself.

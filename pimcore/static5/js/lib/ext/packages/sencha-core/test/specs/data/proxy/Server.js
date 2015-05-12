@@ -638,7 +638,7 @@ describe("Ext.data.proxy.Server", function() {
 
         it('should destroy reader and writer', function(){
            spy = spyOn(Ext, "destroy");
-           proxy.onDestroy();
+           proxy.destroy();
            expect(spy).toHaveBeenCalledWith(reader, writer);
         });
     });

@@ -247,6 +247,11 @@ Ext.define('Ext.Widget', {
      * {@link #element} property should be use to configure the element template for a
      * given Widget subclass.
      *
+     * This method is called once when the first instance of each Widget subclass is
+     * created.  The element config object that is returned is cached and used as the template
+     * for all successive instances.  The scope object for this method is the class prototype,
+     * not the instance.
+     *
      * @return {Object} the element config object
      * @protected
      */
@@ -292,7 +297,7 @@ Ext.define('Ext.Widget', {
 
     /**
      * Initializes the Element for this Widget instance.  If this is the first time a
-     * Widget of this type has been instantiated the {@link element} config will be
+     * Widget of this type has been instantiated the {@link #element} config will be
      * processed to create an Element.  This Element is then cached on the prototype (see
      * afterCachedConfig) so that future instances can obtain their element by simply
      * cloning the Element that was cached by the first instance.
@@ -305,7 +310,7 @@ Ext.define('Ext.Widget', {
             referenceList = me.referenceList = [],
             cleanAttributes = true,
             renderTemplate, renderElement, element, referenceNodes, i, ln, referenceNode,
-            reference, elementConfig;
+            reference;
 
         if (prototype.hasOwnProperty('renderTemplate')) {
             // we have already created an instance of this Widget type, so the element
@@ -319,13 +324,7 @@ Ext.define('Ext.Widget', {
             // config from scratch to create our Element.
             cleanAttributes = false;
             renderTemplate = document.createDocumentFragment();
-            elementConfig = me.getElementConfig();
-            // initElementListeners needs to be called BEFORE passing the element config
-            // along to Ext.Element.create().  This ensures that the listener meta data is
-            // saved, and then the listeners objects are removed from the element config
-            // so that they do not get added as attributes by create()
-            me.initElementListeners(elementConfig);
-            renderElement = Ext.Element.create(elementConfig, true);
+            renderElement = Ext.Element.create(me.processElementConfig.call(prototype), true);
             renderTemplate.appendChild(renderElement);
         }
 
@@ -530,6 +529,12 @@ Ext.define('Ext.Widget', {
             return referenceEl;
         },
 
+        detachFromBody: function() {
+            // See reattachToBody
+            Ext.getDetachedBody().appendChild(this.element);
+            this.isDetached = true;
+        },
+
         //@private
         doAddListener: function(name, fn, scope, options, order, caller, manager) {
             if (options && 'element' in options) {
@@ -566,30 +571,52 @@ Ext.define('Ext.Widget', {
          *
          *     _elementListeners: {
          *         element: {
-         *             click: 'onClick'
+         *             click: 'onClick',
          *             scope: this
          *         },
          *         fooReference: {
          *             tap: {
-         *                 fn: someFunction
+         *                 fn: someFunction,
          *                 delay: 100
          *             }
          *         }
          *     }
          *
+         * The returned object is prototype chained to the _elementListeners object of its
+         * superclass, and each key in the object is prototype chained to object with the
+         * corresponding key in the superclass _elementListeners.  This allows element
+         * listeners to be inherited and overridden when subclassing widgets.
+         *
+         * This method is invoked with the prototype object as the scope
+         *
          * @private
          */
         initElementListeners: function(elementConfig) {
-            var me = this,
-                elementListeners = me._elementListeners ||
-                    (me.self.prototype._elementListeners = {}),
+            var prototype = this,
+                superPrototype = prototype.self.superclass,
+                superElementListeners = superPrototype._elementListeners,
                 reference = elementConfig.reference,
                 children = elementConfig.children,
-                listeners, ln, i;
+                elementListeners, listeners, superListeners, ln, i;
+
+            if (prototype.hasOwnProperty('_elementListeners')) {
+                elementListeners = prototype._elementListeners;
+            } else {
+                elementListeners = prototype._elementListeners =
+                    (superElementListeners ? Ext.Object.chain(superElementListeners) : {});
+            }
 
             if (reference) {
                 listeners = elementConfig.listeners;
                 if (listeners) {
+                    if (superElementListeners) {
+                        superListeners = superElementListeners[reference];
+                        if (superListeners) {
+                            listeners = Ext.Object.chain(superListeners);
+                            Ext.apply(listeners, elementConfig.listeners);
+                        }
+                    }
+
                     elementListeners[reference] = listeners;
                     // null out the listeners on the elementConfig, since we are going to pass
                     // it to Element.create(), and don't want "listeners" to be treated as an
@@ -600,7 +627,7 @@ Ext.define('Ext.Widget', {
 
             if (children) {
                 for (i = 0, ln = children.length; i < ln; i++) {
-                    me.initElementListeners(children[i]);
+                    prototype.initElementListeners(children[i]);
                 }
             }
         },
@@ -619,6 +646,47 @@ Ext.define('Ext.Widget', {
                 // if no id configured, generate one (Identifiable)
                 me.getId();
             }
+        },
+
+        /**
+         * Recursively processes the element templates for this class and its superclasses,
+         * ascending the hierarchy until it reaches a superclass whose element template
+         * has already been processed.  This method is invoked using the prototype as the scope.
+         *
+         * @private
+         * @return {Object}
+         */
+        processElementConfig: function() {
+            var prototype = this,
+                superPrototype = prototype.self.superclass,
+                elementConfig;
+
+            if (prototype.hasOwnProperty('_elementConfig')) {
+                elementConfig = prototype._elementConfig;
+            } else {
+                // cache the elementConfig on the prototype, since we may end up here multiple
+                // times if there are multiple subclasses
+                elementConfig = prototype._elementConfig = prototype.getElementConfig();
+
+                if (superPrototype.isWidget) {
+                    // Before initializing element listeners we must process the element template
+                    // for our superclass so that we can chain our listeners to the superclass listeners
+                    prototype.processElementConfig.call(superPrototype);
+                }
+
+                // initElementListeners needs to be called BEFORE passing the element config
+                // along to Ext.Element.create().  This ensures that the listener meta data is
+                // saved, and then the listeners objects are removed from the element config
+                // so that they do not get added as attributes by create()
+                prototype.initElementListeners(elementConfig);
+            }
+
+            return elementConfig;
+        },
+
+        reattachToBody: function() {
+            // See detachFromBody
+            this.isDetached = false;
         }
     }
 }, function(Widget) {

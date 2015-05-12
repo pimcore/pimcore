@@ -2038,7 +2038,7 @@ Ext.define('Ext.draw.Color', {
      *
      * @param {String/String[]} color The color value (i.e 'rgb(255, 255, 255)', 'color: #ffffff').
      * Can also be an Array, in this case the function handles the first member.
-     * @returns {String} The color in hexadecimal format.
+     * @return {String} The color in hexadecimal format.
      * @static
      */
     toHex: function(color) {
@@ -2073,7 +2073,7 @@ Ext.define('Ext.draw.Color', {
      * **Note:** This method is both static and instance.
      *
      * @param {String} str Color in string.
-     * @returns Ext.draw.Color
+     * @return Ext.draw.Color
      * @static
      */
     fromString: function(str) {
@@ -2108,14 +2108,14 @@ Ext.define('Ext.draw.Color', {
                 b = values[3];
             }
         }
-        return (typeof r == 'undefined') ? undefined : new Ext.draw.Color(r,g,b);
+        return (typeof r == 'undefined') ? undefined : new Ext.draw.Color(r, g, b);
     },
     /**
      * Returns the gray value (0 to 255) of the color.
      *
      * The gray value is calculated using the formula r*0.3 + g*0.59 + b*0.11.
      *
-     * @returns {Number}
+     * @return {Number}
      */
     getGrayscale: function() {
         // http://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
@@ -2129,7 +2129,7 @@ Ext.define('Ext.draw.Color', {
      * @param {Number} h Hue component [0..360)
      * @param {Number} s Saturation component [0..1]
      * @param {Number} l Lightness component [0..1]
-     * @returns Ext.draw.Color
+     * @return Ext.draw.Color
      * @static
      */
     fromHSL: function(h, s, l) {
@@ -2202,7 +2202,7 @@ Ext.define('Ext.draw.Color', {
                 rgb[2] + m
             ];
         }
-        return new Ext.draw.Color(rgb[0] * 255,rgb[1] * 255,rgb[2] * 255);
+        return new Ext.draw.Color(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255);
     },
     /**
      * Create a new color based on the specified HSV values.
@@ -2212,7 +2212,7 @@ Ext.define('Ext.draw.Color', {
      * @param {Number} h Hue component [0..360)
      * @param {Number} s Saturation component [0..1]
      * @param {Number} v Value component [0..1]
-     * @returns Ext.draw.Color
+     * @return Ext.draw.Color
      * @static
      */
     fromHSV: function(h, s, v) {
@@ -2284,7 +2284,7 @@ Ext.define('Ext.draw.Color', {
                 rgb[2] + m
             ];
         }
-        return new Ext.draw.Color(rgb[0] * 255,rgb[1] * 255,rgb[2] * 255);
+        return new Ext.draw.Color(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255);
     }
 }, function() {
     var prototype = this.prototype,
@@ -4748,14 +4748,14 @@ Ext.define('Ext.chart.Chart', {
         };
         me.store = Ext.data.StoreManager.lookup(me.store);
         axes = me.axes;
-        me.axes = new Ext.util.MixedCollection(false,function(a) {
+        me.axes = new Ext.util.MixedCollection(false, function(a) {
             return a.position;
         });
         if (axes) {
             me.axes.addAll(axes);
         }
         series = me.series;
-        me.series = new Ext.util.MixedCollection(false,function(a) {
+        me.series = new Ext.util.MixedCollection(false, function(a) {
             return a.seriesId || (a.seriesId = Ext.id(null, 'ext-chart-series-'));
         });
         if (series) {
@@ -5048,7 +5048,7 @@ Ext.define('Ext.chart.Chart', {
     delayRefresh: function() {
         var me = this;
         if (!me.refreshTask) {
-            me.refreshTask = new Ext.util.DelayedTask(me.refresh,me);
+            me.refreshTask = new Ext.util.DelayedTask(me.refresh, me);
         }
         me.refreshTask.delay(me.refreshBuffer);
     },
@@ -7562,28 +7562,28 @@ Ext.define('Ext.draw.Draw', {
         } else {
             switch (stepUnit) {
                 case Ext.Date.MILLI:
-                    testFrom = new Date(fromStat[0],fromStat[1],fromStat[2],fromStat[3],fromStat[4],fromStat[5],Math.floor(fromStat[6] / stepValue) * stepValue);
+                    testFrom = new Date(fromStat[0], fromStat[1], fromStat[2], fromStat[3], fromStat[4], fromStat[5], Math.floor(fromStat[6] / stepValue) * stepValue);
                     break;
                 case Ext.Date.SECOND:
-                    testFrom = new Date(fromStat[0],fromStat[1],fromStat[2],fromStat[3],fromStat[4],Math.floor(fromStat[5] / stepValue) * stepValue,0);
+                    testFrom = new Date(fromStat[0], fromStat[1], fromStat[2], fromStat[3], fromStat[4], Math.floor(fromStat[5] / stepValue) * stepValue, 0);
                     break;
                 case Ext.Date.MINUTE:
-                    testFrom = new Date(fromStat[0],fromStat[1],fromStat[2],fromStat[3],Math.floor(fromStat[4] / stepValue) * stepValue,0,0);
+                    testFrom = new Date(fromStat[0], fromStat[1], fromStat[2], fromStat[3], Math.floor(fromStat[4] / stepValue) * stepValue, 0, 0);
                     break;
                 case Ext.Date.HOUR:
-                    testFrom = new Date(fromStat[0],fromStat[1],fromStat[2],Math.floor(fromStat[3] / stepValue) * stepValue,0,0,0);
+                    testFrom = new Date(fromStat[0], fromStat[1], fromStat[2], Math.floor(fromStat[3] / stepValue) * stepValue, 0, 0, 0);
                     break;
                 case Ext.Date.DAY:
-                    testFrom = new Date(fromStat[0],fromStat[1],Math.floor((fromStat[2] - 1) / stepValue) * stepValue + 1,0,0,0,0);
+                    testFrom = new Date(fromStat[0], fromStat[1], Math.floor((fromStat[2] - 1) / stepValue) * stepValue + 1, 0, 0, 0, 0);
                     break;
                 case Ext.Date.MONTH:
-                    testFrom = new Date(fromStat[0],Math.floor(fromStat[1] / stepValue) * stepValue,1,0,0,0,0);
+                    testFrom = new Date(fromStat[0], Math.floor(fromStat[1] / stepValue) * stepValue, 1, 0, 0, 0, 0);
                     steps = [];
                     stepsArray = true;
                     break;
                 default:
                     // Ext.Date.YEAR
-                    testFrom = new Date(Math.floor(fromStat[0] / stepValue) * stepValue,0,1,0,0,0,0);
+                    testFrom = new Date(Math.floor(fromStat[0] / stepValue) * stepValue, 0, 1, 0, 0, 0, 0);
                     steps = [];
                     stepsArray = true;
                     break;
@@ -16929,7 +16929,7 @@ Ext.define('Ext.draw.Matrix', {
             e = matrix[0][2],
             f = matrix[1][2],
             x = a * d - b * c;
-        return new Ext.draw.Matrix(d / x,-b / x,-c / x,a / x,(c * f - d * e) / x,(b * e - a * f) / x);
+        return new Ext.draw.Matrix(d / x, -b / x, -c / x, a / x, (c * f - d * e) / x, (b * e - a * f) / x);
     },
     clone: function() {
         var matrix = this.matrix,
@@ -16939,7 +16939,7 @@ Ext.define('Ext.draw.Matrix', {
             d = matrix[1][1],
             e = matrix[0][2],
             f = matrix[1][2];
-        return new Ext.draw.Matrix(a,b,c,d,e,f);
+        return new Ext.draw.Matrix(a, b, c, d, e, f);
     },
     translate: function(x, y) {
         this.prepend(1, 0, 0, 1, x, y);
@@ -17090,7 +17090,7 @@ Ext.define('Ext.draw.SpriteDD', {
         x2 = x1 + bbox.width;
         y1 = pos[1];
         y2 = y1 + bbox.height;
-        return new Ext.util.Region(y1,x2,y2,x1);
+        return new Ext.util.Region(y1, x2, y2, x1);
     },
     /*
       TODO(nico): Cumulative translations in VML are handled
@@ -17453,7 +17453,7 @@ Ext.define('Ext.draw.Sprite', {
         if (!me.el) {
             me.surface.createSpriteElement(me);
         }
-        me.dd = new Ext.draw.SpriteDD(me,Ext.isBoolean(me.draggable) ? null : me.draggable);
+        me.dd = new Ext.draw.SpriteDD(me, Ext.isBoolean(me.draggable) ? null : me.draggable);
         me.on('beforedestroy', me.dd.destroy, me.dd);
     },
     /**
@@ -18320,7 +18320,7 @@ Ext.define('Ext.draw.engine.Svg', {
     },
     /**
      * Get the region for the surface's canvas area
-     * @returns {Ext.util.Region}
+     * @return {Ext.util.Region}
      */
     getRegion: function() {
         // Mozilla requires using the background rect because the svg element returns an

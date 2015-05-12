@@ -39,7 +39,7 @@
 Ext.define('Ext.util.DelimitedValue', {
     /**
      * @cfg {String} dateFormat
-     * The {@link Ext.Data#format format} to use for dates
+     * The {@link Ext.Date#format format} to use for dates
      */
     dateFormat: 'C',
 
@@ -68,6 +68,8 @@ Ext.define('Ext.util.DelimitedValue', {
     parseREs: {},
     quoteREs: {},
 
+    lineBreakRe: /\r?\n/g,
+
     constructor: function (config) {
         if (config) {
             Ext.apply(this, config);
@@ -79,7 +81,7 @@ Ext.define('Ext.util.DelimitedValue', {
      * strings.
      *
      * Note that this function does not convert the string values in each column into
-     * other data types. To do that, use an {@link Ext.data.reader.Array.reader ArrayReader}.
+     * other data types. To do that, use an {@link Ext.data.reader.Array ArrayReader}.
      *
      * For example:
      *
@@ -190,10 +192,12 @@ Ext.define('Ext.util.DelimitedValue', {
             delim = delimiter || me.delimiter,
             dateFormat = me.dateFormat,
             quote = me.quote,
+            twoQuotes = quote + quote,
             rowIndex = input.length,
+            lineBreakRe = me.lineBreakRe,
             result = [],
             outputRow = [],
-            col, columnIndex, inputRow, twoQuotes;
+            col, columnIndex, inputRow;
 
         while (rowIndex-- > 0) {
             inputRow = input[rowIndex];
@@ -205,12 +209,13 @@ Ext.define('Ext.util.DelimitedValue', {
                 if (col == null) { // == null || === undefined
                     col = '';
                 } else if (typeof col === 'string') {
-                    // If the value contains quotes, double them up, and wrap with quotes
-                    if (col && col.indexOf(quote) > -1) {
-                        if (!twoQuotes) {
-                            twoQuotes = quote + quote;
+                    if (col) {
+                        // If the value contains quotes, double them up, and wrap with quotes
+                        if (col.indexOf(quote) > -1) {
+                            col = quote + col.split(quote).join(twoQuotes) + quote;
+                        } else if (col.indexOf(delim) > -1 || lineBreakRe.test(col)) {
+                            col = quote + col + quote;
                         }
-                        col = quote + col.split(quote).join(twoQuotes) + quote;
                     }
                 } else if (Ext.isDate(col)) {
                     col = Ext.Date.format(col, dateFormat);

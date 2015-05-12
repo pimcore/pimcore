@@ -1,3 +1,6 @@
+/**
+ * @class Ext.chart.axis.Time3D
+ */
 Ext.define('Ext.chart.axis.Time3D', {
     extend: 'Ext.chart.axis.Numeric3D',
     alias: 'axis.time3d',

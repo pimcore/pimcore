@@ -129,7 +129,8 @@ Ext.define("Ext.locale.it.form.field.Number", {
     decimalPrecision: 2,
     minText: "Il valore minimo \u00E8 {0}",
     maxText: "Il valore massimo \u00E8 {0}",
-    nanText: "{0} non \u00E8 un valore numerico valido"
+    nanText: "{0} non \u00E8 un valore numerico valido",
+    negativeText: "Il valore del campo non può essere negativo"
 });
 
 Ext.define("Ext.locale.it.form.field.Date", {
@@ -266,20 +267,20 @@ Ext.define("Ext.locale.it.grid.PropertyColumnModel", {
     falseText: "false"
 });
 
-Ext.define("Ext.locale.it.grid.BooleanColumn", {
-    override: "Ext.grid.BooleanColumn",
+Ext.define("Ext.locale.it.grid.column.Boolean", {
+    override: "Ext.grid.column.Boolean",
     trueText: "vero",
     falseText: "falso",
     undefinedText: '&#160;'
 });
 
-Ext.define("Ext.locale.it.grid.NumberColumn", {
-    override: "Ext.grid.NumberColumn",
-    format: '0.000,00'
+Ext.define("Ext.locale.it.grid.column.Number", {
+    override: "Ext.grid.column.Number",
+    format: '0,000.00'
 });
 
-Ext.define("Ext.locale.it.grid.DateColumn", {
-    override: "Ext.grid.DateColumn",
+Ext.define("Ext.locale.it.grid.column.Date", {
+    override: "Ext.grid.column.Date",
     format: 'd/m/Y'
 });
 

@@ -1,6 +1,4 @@
 /**
- * @author Ed Spencer
- *
  * Proxies are used by {@link Ext.data.Store Stores} to handle the loading and saving of {@link Ext.data.Model Model}
  * data. Usually developers will not need to create or interact with proxies directly.
  *
@@ -133,6 +131,9 @@ Ext.define('Ext.data.proxy.Proxy', {
     constructor: function(config) {
         // Will call initConfig
         this.mixins.observable.constructor.call(this, config);
+        
+        // We need to abort all pending operations when destroying
+        this.pendingOperations = {};
     },
      
     applyModel: function(model) {
@@ -376,11 +377,34 @@ Ext.define('Ext.data.proxy.Proxy', {
     
     createOperation: function(action, config) {
         var operation = Ext.createByAlias('data.operation.' + action, config);
+        
         operation.setProxy(this);
+        
+        this.pendingOperations[operation._internalId] = operation;
+        
         return operation;  
+    },
+    
+    completeOperation: function(operation) {
+        delete this.pendingOperations[operation._internalId];
     },
 
     clone: function() {
         return new this.self(this.getInitialConfig());
+    },
+    
+    destroy: function() {
+        var ops = this.pendingOperations,
+            opId, op;
+        
+        for (opId in ops) {
+            op = ops[opId];
+            
+            if (op && op.isRunning()) {
+                op.abort();
+            }
+        }
+        
+        this.pendingOperations = null;
     }
 });

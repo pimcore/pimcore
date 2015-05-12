@@ -10,6 +10,10 @@
 
 // The "constructor" for chain:
 var TemplateClass = function(){},
+    queryRe = /^\?/,
+    keyRe = /(\[):?([^\]]*)\]/g,
+    nameRe = /^([^\[]+)/,
+    plusRe = /\+/g,
     ExtObject = Ext.Object = {
 // @define Ext.lang.Object
 // @define Ext.Object
@@ -242,7 +246,7 @@ var TemplateClass = function(){},
      * @return {Object}
      */
     fromQueryString: function(queryString, recursive) {
-        var parts = queryString.replace(/^\?/, '').split('&'),
+        var parts = queryString.replace(queryRe, '').split('&'),
             object = {},
             temp, components, name, value, i, ln,
             part, j, subLn, matchedKeys, matchedName,
@@ -253,8 +257,17 @@ var TemplateClass = function(){},
 
             if (part.length > 0) {
                 components = part.split('=');
-                name = decodeURIComponent(components[0]);
-                value = (components[1] !== undefined) ? decodeURIComponent(components[1]) : '';
+                name = components[0];
+                name = name.replace(plusRe, '%20');
+                name = decodeURIComponent(name);
+
+                value = components[1];
+                if (value !== undefined) {
+                    value = value.replace(plusRe, '%20');
+                    value = decodeURIComponent(value);
+                } else {
+                    value = '';
+                }
 
                 if (!recursive) {
                     if (object.hasOwnProperty(name)) {
@@ -269,8 +282,8 @@ var TemplateClass = function(){},
                     }
                 }
                 else {
-                    matchedKeys = name.match(/(\[):?([^\]]*)\]/g);
-                    matchedName = name.match(/^([^\[]+)/);
+                    matchedKeys = name.match(keyRe);
+                    matchedName = name.match(nameRe);
 
                     //<debug>
                     if (!matchedName) {
@@ -353,21 +366,23 @@ var TemplateClass = function(){},
         var enumerables = Ext.enumerables,
             i, property;
 
-        scope = scope || object;
+        if (object) {
+            scope = scope || object;
 
-        for (property in object) {
-            if (object.hasOwnProperty(property)) {
-                if (fn.call(scope, property, object[property], object) === false) {
-                    return;
-                }
-            }
-        }
-
-        if (enumerables) {
-            for (i = enumerables.length; i--; ) {
-                if (object.hasOwnProperty(property = enumerables[i])) {
+            for (property in object) {
+                if (object.hasOwnProperty(property)) {
                     if (fn.call(scope, property, object[property], object) === false) {
                         return;
+                    }
+                }
+            }
+
+            if (enumerables) {
+                for (i = enumerables.length; i--; ) {
+                    if (object.hasOwnProperty(property = enumerables[i])) {
+                        if (fn.call(scope, property, object[property], object) === false) {
+                            return;
+                        }
                     }
                 }
             }
@@ -708,8 +723,7 @@ var TemplateClass = function(){},
      * @private
      */
     fork: function (obj) {
-        var ExtArray = Ext.Array,
-            ret, key, value;
+        var ret, key, value;
 
         if (obj && obj.constructor === Object) {
             ret = ExtObject.chain(obj);

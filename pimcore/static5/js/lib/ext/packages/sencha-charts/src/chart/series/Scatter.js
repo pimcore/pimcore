@@ -8,59 +8,74 @@
  * documentation for more information on creating charts. A typical configuration object for the scatter could be:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 0
- *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             }],
- *             series: {
- *                 type: 'scatter',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 fill: true,
- *                 xField: 'name',
- *                 yField: 'data3',
- *                 marker: {
- *                     type: 'circle',
- *                     fillStyle: 'blue',
- *                     radius: 10,
- *                     lineWidth: 0
- *                 }
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        insetPadding: 40,
+ *        interactions: ['itemhighlight'],
+ *        store: {
+ *            fields: ['name', 'data1', 'data2'],
+ *            data: [{
+ *                'name': 'metric one',
+ *                'data1': 10,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric two',
+ *                'data1': 7,
+ *                'data2': 16
+ *            }, {
+ *                'name': 'metric three',
+ *                'data1': 5,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric four',
+ *                'data1': 2,
+ *                'data2': 6
+ *            }, {
+ *                'name': 'metric five',
+ *                'data1': 27,
+ *                'data2': 36
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['data1'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            grid: true,
+ *            minimum: 0
+ *        }, {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            fields: ['name'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            }
+ *        }],
+ *        series: {
+ *            type: 'scatter',
+ *            highlight: {
+ *                size: 12,
+ *                radius: 12,
+ *                fill: '#96D4C6',
+ *                stroke: '#30BDA7'
+ *            },
+ *            fill: true,
+ *            xField: 'name',
+ *            yField: 'data2',
+ *            marker: {
+ *                type: 'circle',
+ *                fill: '#30BDA7',
+ *                radius: 10,
+ *                lineWidth: 0
+ *            }
+ *        }
  *     });
  *
  * In this configuration we add three different categories of scatter series. Each of them is bound to a different field of the same data store,

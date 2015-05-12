@@ -206,7 +206,7 @@
          * @param {Function} fn.cls The created class
          * @param {Object} fn.data The set of properties passed in {@link Ext.Class} constructor
          * @param {Function} fn.fn The callback function that **must** to be executed when this
-         * pre-processor finishes, regardless of whether the processing is synchronous or aynchronous.
+         * pre-processor finishes, regardless of whether the processing is synchronous or asynchronous.
          * @return {Ext.Class} this
          * @private
          * @static
@@ -382,6 +382,35 @@
 
     }, true); // true to always run this preprocessor even w/o "extend" keyword
 
+    /**
+     * @cfg {Object} privates
+     * The `privates` config is a list of methods intended to be used internally by the 
+     * framework.  Methods are placed in a `privates` block to prevent developers from 
+     * accidentally overriding framework methods in custom classes.
+     *
+     *     Ext.define('Computer', {
+     *         privates: {
+     *             runFactory: function(brand) {
+     *                 // internal only processing of brand passed to factory
+     *                 this.factory(brand);
+     *             }
+     *         },
+     *     
+     *         factory: function (brand) {}
+     *     });
+     * 
+     * In order to override a method from a `privates` block, the overridden method must 
+     * also be placed in a `privates` block within the override class.
+     * 
+     *     Ext.define('Override.Computer', {
+     *         override: 'Computer',
+     *         privates: {
+     *             runFactory: function() {
+     *                 // overriding logic
+     *             }
+     *         }
+     *     });
+     */
     ExtClass.registerPreprocessor('privates', function(Class, data) {
         //<debug>
         Ext.classSystemMonitor && Ext.classSystemMonitor(Class, 'Ext.Class#privatePreprocessor', arguments);

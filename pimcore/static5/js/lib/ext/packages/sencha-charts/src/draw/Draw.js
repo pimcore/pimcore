@@ -27,7 +27,7 @@ Ext.define('Ext.draw.Draw', {
     pi2: Math.PI * 2,
 
     /**
-     * @deprecated Please use the {@link Ext.identityFn} instead.
+     * @deprecated Please use the {@link Ext#identityFn} instead.
      * Function that returns its first element.
      * @param {Mixed} a
      * @return {Mixed}
@@ -72,7 +72,7 @@ Ext.define('Ext.draw.Draw', {
      * @param x
      * @param y
      * @param bbox
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     isPointInBBox: function (x, y, bbox) {
         return !!bbox && x >= bbox.x && x <= (bbox.x + bbox.width) && y >= bbox.y && y <= (bbox.y + bbox.height);

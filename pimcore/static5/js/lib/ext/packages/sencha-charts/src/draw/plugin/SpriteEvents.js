@@ -15,9 +15,12 @@
  *               y: 100
  *          }],
  *          listeners: {
- *              spriteclick: function (sprite, event) {
- *                  sprite.setAttributes({fillStyle: 'red'});
-                    sprite.getSurface().renderFrame();
+ *              spriteclick: function (item, event) {
+ *                  var sprite = item && item.sprite;
+ *                  if (sprite) {
+ *                      sprite.setAttributes({fillStyle: 'red'});
+                        sprite.getSurface().renderFrame();
+ *                  }
  *              }
  *          }
  *     });
@@ -155,11 +158,11 @@ Ext.define('Ext.draw.plugin.SpriteEvents', {
         sprite = me.hitTestEvent(e);
 
         if (isMouseMoveEvent && !Ext.Object.equals(sprite, lastSprite)) {
-            if (sprite) {
-                drawContainer.fireEvent('spritemouseover', sprite, e);
-            }
             if (lastSprite) {
                 drawContainer.fireEvent('spritemouseout', lastSprite, e);
+            }
+            if (sprite) {
+                drawContainer.fireEvent('spritemouseover', sprite, e);
             }
         }
 

@@ -80,6 +80,7 @@ Ext.Configurator = function (cls) {
          * @readonly
          */
         me.values = ExtObject.chain(zuper.values);
+        me.needsFork = zuper.needsFork;
     } else {
         me.configs = {};
         me.cachedConfigs = {};
@@ -93,6 +94,8 @@ Ext.Configurator = function (cls) {
 
 Ext.Configurator.prototype = {
     self: Ext.Configurator,
+
+    needsFork: false,
 
     /**
      * This array holds the properties that need to be set on new instances.
@@ -112,7 +115,7 @@ Ext.Configurator.prototype = {
      * defined that target the class.
      * 
      * @param {Object} config The config object containing the new config properties.
-     * @param {Class} [mixinClass] The mixin class if the configs are from a mixin.
+     * @param {Ext.Class} [mixinClass] The mixin class if the configs are from a mixin.
      * @private
      */
     add: function (config, mixinClass) {
@@ -134,6 +137,7 @@ Ext.Configurator.prototype = {
             if (meta) {
                 isCached = !!meta.cached;
                 value = meta.$value;
+                isObject = value && value.constructor === Object;
             }
 
             merge = meta && meta.merge;
@@ -240,6 +244,12 @@ Ext.Configurator.prototype = {
                 delete cfg.$value;
             }
 
+            // Fork checks all the default values to see if they are arrays or objects
+            // Do this to save us from doing it on each run
+            if (!me.needsFork && value && (value.constructor === Object || value instanceof Array)) {
+                me.needsFork = true;
+            }
+
             // If the value is non-null, we need to initialize it.
             if (value !== null) {
                 initMap[name] = true;
@@ -273,13 +283,13 @@ Ext.Configurator.prototype = {
             initListMap = me.initListMap,
             initList = me.initList,
             prototype = me.cls.prototype,
-            // Make a copy of the config properties for this instance so we can apply the
-            // instanceConfig to it safely later:
-            values = ExtObject.fork(me.values),
+            values = me.values,
             remaining = 0,
             firstInstance = !initList,
             cachedInitList, cfg, getter, needsInit, i, internalName,
             ln, names, name, value, isCached, valuesKey;
+
+        values = me.needsFork ? ExtObject.fork(values) : ExtObject.chain(values);
 
         if (firstInstance) {
             // When called to configure the first instance of the class to which we are

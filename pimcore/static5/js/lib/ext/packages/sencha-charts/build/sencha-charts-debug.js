@@ -60,8 +60,18 @@ Ext.define('Ext.draw.ContainerBase', {
         });
         this.renderFrame();
     },
-    onResize: function() {
-        this.onBodyResize();
+    onResize: function(width, height, oldWidth, oldHeight) {
+        var me = this;
+        me.callParent([
+            width,
+            height,
+            oldWidth,
+            oldHeight
+        ]);
+        me.setBodySize({
+            width: width,
+            height: height
+        });
     },
     preview: function() {
         var image = this.getImage();
@@ -366,8 +376,10 @@ Ext.define('Ext.draw.Color', {
      * @return {Ext.draw.Color}
      */
     createLighter: function(factor) {
+        if (!factor && factor !== 0) {
+            factor = this.lightnessFactor;
+        }
         var hsl = this.getHSL();
-        factor = factor || this.lightnessFactor;
         hsl[2] = Ext.Number.constrain(hsl[2] + factor, 0, 1);
         return Ext.draw.Color.fromHSL(hsl[0], hsl[1], hsl[2]);
     },
@@ -377,11 +389,15 @@ Ext.define('Ext.draw.Color', {
      * @return {Ext.draw.Color}
      */
     createDarker: function(factor) {
-        factor = factor || this.lightnessFactor;
+        if (!factor && factor !== 0) {
+            factor = this.lightnessFactor;
+        }
         return this.createLighter(-factor);
     },
     /**
-     * Return the color in the hex format, i.e. '#rrggbb'.
+     * toString() returns a color in hex format ('#rrggbb') if the alpha is 1. If the 
+     * alpha is less than one, toString() returns the color in RGBA format ('rgba(255,0,0,0.3)').
+     * 
      * @return {String}
      */
     toString: function() {
@@ -443,13 +459,18 @@ Ext.define('Ext.draw.Color', {
         }
     },
     /**
-     * Parse the string and set current color.
+     * Parse the string and set the current color.
      *
-     * Supported formats: '#rrggbb', '#rgb', and 'rgb(r,g,b)'.
+     * Supported formats: 
+     * 
+     * + '#rrggbb'
+     * + '#rgb', 'rgb(r,g,b)'
+     * + 'rgba(r,g,b,a)'
+     * + supported CSS color names (e.g., 'black', 'white', etc).
      *
-     * If the string is not recognized, an `undefined` will be returned instead.
+     * If the string is not recognized, setFromString returns rgba(0,0,0,0).
      *
-     * @param {String} str Color in string.
+     * @param {String} Color Color as string.
      * @return this
      */
     setFromString: function(str) {
@@ -678,7 +699,7 @@ Ext.define('Ext.draw.Color', {
          * @static
          */
         fromHSL: function(h, s, l) {
-            return (new this(0,0,0,0)).setHSL(h, s, l);
+            return (new this(0, 0, 0, 0)).setHSL(h, s, l);
         },
         /**
          * Create a new color based on the specified HSV values.
@@ -690,21 +711,26 @@ Ext.define('Ext.draw.Color', {
          * @static
          */
         fromHSV: function(h, s, v) {
-            return (new this(0,0,0,0)).setHSL(h, s, v);
+            return (new this(0, 0, 0, 0)).setHSL(h, s, v);
         },
         /**
          * Parse the string and create a new color.
          *
-         * Supported formats: '#rrggbb', '#rgb', and 'rgb(r,g,b)'.
+         * Supported formats: 
+         * 
+         * + '#rrggbb'
+         * + '#rgb', 'rgb(r,g,b)'
+         * + 'rgba(r,g,b,a)'
+         * + supported CSS color names (e.g., 'black', 'white', etc).
          *
-         * If the string is not recognized, an undefined will be returned instead.
+         * If the string is not recognized, fromString returns rgba(0,0,0,0).
          *
-         * @param {String} string Color in string.
-         * @returns {Ext.draw.Color}
+         * @param {String} Color Color as string.
+         * @return {Ext.draw.Color}
          * @static
          */
         fromString: function(string) {
-            return (new this(0,0,0,0)).setFromString(string);
+            return (new this(0, 0, 0, 0)).setFromString(string);
         },
         /**
          * Convenience method for creating a color.
@@ -738,13 +764,13 @@ Ext.define('Ext.draw.Color', {
             if (arg instanceof this) {
                 return arg;
             } else if (Ext.isArray(arg)) {
-                return new Ext.draw.Color(arg[0],arg[1],arg[2],arg[3]);
+                return new Ext.draw.Color(arg[0], arg[1], arg[2], arg[3]);
             } else if (Ext.isString(arg)) {
                 return Ext.draw.Color.fromString(arg);
             } else if (arguments.length > 2) {
-                return new Ext.draw.Color(arguments[0],arguments[1],arguments[2],arguments[3]);
+                return new Ext.draw.Color(arguments[0], arguments[1], arguments[2], arguments[3]);
             } else {
-                return new Ext.draw.Color(0,0,0,0);
+                return new Ext.draw.Color(0, 0, 0, 0);
             }
         }
     });
@@ -762,6 +788,9 @@ Ext.define('Ext.draw.Color', {
 Ext.define('Ext.draw.sprite.AnimationParser', function() {
     function compute(from, to, delta) {
         return from + (to - from) * delta;
+    }
+    function isNotNumber(n) {
+        return isNaN(parseFloat(n)) || !isFinite(n);
     }
     return {
         singleton: true,
@@ -933,9 +962,18 @@ Ext.define('Ext.draw.sprite.AnimationParser', function() {
                 for (i = 0; i <= len; i++) {
                     f = from[Math.min(i, lf)];
                     t = to[Math.min(i, lt)];
-                    if (isNaN(f)) {
+                    if (isNotNumber(f)) {
                         target[i] = t;
                     } else {
+                        if (isNotNumber(t)) {
+                            // This may not give the desired visual result during
+                            // animation (after all, we don't know what the target
+                            // value should be, if it wasn't given to us), but it's
+                            // better than spitting out a bunch of NaNs in the target
+                            // array, when transitioning from a non-empty to an empty
+                            // array.
+                            t = 0;
+                        }
                         target[i] = (t - f) * delta + f;
                     }
                 }
@@ -978,7 +1016,7 @@ Ext.define('Ext.draw.Draw', {
     radian: Math.PI / 180,
     pi2: Math.PI * 2,
     /**
-     * @deprecated Please use the {@link Ext.identityFn} instead.
+     * @deprecated Please use the {@link Ext#identityFn} instead.
      * Function that returns its first element.
      * @param {Mixed} a
      * @return {Mixed}
@@ -1018,7 +1056,7 @@ Ext.define('Ext.draw.Draw', {
      * @param x
      * @param y
      * @param bbox
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     isPointInBBox: function(x, y, bbox) {
         return !!bbox && x >= bbox.x && x <= (bbox.x + bbox.width) && y >= bbox.y && y <= (bbox.y + bbox.height);
@@ -1376,7 +1414,7 @@ Ext.define('Ext.draw.sprite.AttributeParser', {
     /**
      * Generates a function that checks if a value matches
      * one of the given attributes.
-     * @returns {Function}
+     * @return {Function}
      */
     enums: function() {
         var enums = {},
@@ -1811,16 +1849,15 @@ Ext.define('Ext.draw.sprite.AttributeDefinition', {
 /**
  * Utility class to calculate [affine transformation](http://en.wikipedia.org/wiki/Affine_transformation) matrix.
  *
- * This class is compatible with SVGMatrix (http://www.w3.org/TR/SVG11/coords.html#InterfaceSVGMatrix) except:
+ * This class is compatible with [SVGMatrix](http://www.w3.org/TR/SVG11/coords.html#InterfaceSVGMatrix) except:
  *
  *   1. Ext.draw.Matrix is not read only.
  *   2. Using Number as its components rather than floats.
  *
- * Using this class to reduce the severe numeric problem with HTML Canvas and SVG transformation:
- * http://stackoverflow.com/questions/8784405/large-numbers-in-html-canvas-translate-result-in-strange-behavior
- * There's also no way to get current transformation matrix in Canvas:
- * http://stackoverflow.com/questions/7395813/html5-canvas-get-transform-matrix
- *
+ * Using this class helps to reduce the severe numeric 
+ * [problem with HTML Canvas and SVG transformation](http://stackoverflow.com/questions/8784405/large-numbers-in-html-canvas-translate-result-in-strange-behavior)
+ * 
+ * There's also no way to get current transformation matrix [in Canvas](http://stackoverflow.com/questions/7395813/html5-canvas-get-transform-matrix).
  */
 Ext.define('Ext.draw.Matrix', {
     isMatrix: true,
@@ -1847,7 +1884,7 @@ Ext.define('Ext.draw.Matrix', {
                 b = dxp * dy - dx * dyp,
                 c = -a * x0 - b * y0,
                 f = b * x0 - a * y0;
-            return new this(a * r,-b * r,b * r,a * r,c * r + x0p,f * r + y0p);
+            return new this(a * r, -b * r, b * r, a * r, c * r + x0p, f * r + y0p);
         },
         /**
          * @static
@@ -1876,7 +1913,7 @@ Ext.define('Ext.draw.Matrix', {
                 r = dx * dx + dy * dy,
                 rp = dxp * dxp + dyp * dyp,
                 scale = Math.sqrt(rp / r);
-            return new this(scale,0,0,scale,cxp - scale * cx,cyp - scale * cy);
+            return new this(scale, 0, 0, scale, cxp - scale * cx, cyp - scale * cy);
         },
         /**
          * @static
@@ -2073,7 +2110,7 @@ Ext.define('Ext.draw.Matrix', {
             target.set(d, -b, -c, a, c * f - d * e, b * e - a * f);
             return target;
         } else {
-            return new Ext.draw.Matrix(d,-b,-c,a,c * f - d * e,b * e - a * f);
+            return new Ext.draw.Matrix(d, -b, -c, a, c * f - d * e, b * e - a * f);
         }
     },
     /**
@@ -2994,9 +3031,9 @@ Ext.define('Ext.draw.Animator', {
     },
     /**
      * Register a one-time callback that will be called at the next frame.
-     * @param {Function} callback
+     * @param {Function/String} callback
      * @param {Object} scope
-     * @return {String}
+     * @return {String} The ID of the scheduled callback.
      */
     schedule: function(callback, scope) {
         scope = scope || this;
@@ -3012,6 +3049,28 @@ Ext.define('Ext.draw.Animator', {
         this.scheduled++;
         Ext.draw.Animator.ignite();
         return id;
+    },
+    /**
+     * Register a one-time callback that will be called at the next frame,
+     * if that callback (with a matching function and scope) isn't already scheduled.
+     * @param {Function/String} callback
+     * @param {Object} scope
+     * @return {String/null} The ID of the scheduled callback or null, if that callback has already been scheduled.
+     */
+    scheduleIf: function(callback, scope) {
+        scope = scope || this;
+        var frameCallbacks = Ext.draw.Animator.frameCallbacks,
+            cb, id;
+        if (Ext.isString(callback)) {
+            callback = scope[callback];
+        }
+        for (id in frameCallbacks) {
+            cb = frameCallbacks[id];
+            if (cb.once && cb.fn === callback && cb.scope === scope) {
+                return null;
+            }
+        }
+        return this.schedule(callback, scope);
     },
     /**
      * Cancel a registered one-time callback
@@ -3822,6 +3881,8 @@ Ext.define('Ext.draw.sprite.Sprite', {
                  * Note that while this is supported in IE8 (VML engine), the behavior is
                  * different from Canvas and SVG. Please refer to this document for details:
                  * http://msdn.microsoft.com/en-us/library/bb264085(v=vs.85).aspx
+                 * Although IE9 and IE10 have Canvas support, the 'lineDash'
+                 * attribute is not supported in those browsers.
                  */
                 lineDash: "data",
                 /**
@@ -5524,6 +5585,7 @@ Ext.define('Ext.draw.overrides.Path', {
      * @param {Number} x
      * @param {Number} y
      * @return {Boolean}
+     * @member Ext.draw.Path
      */
     isPointInPath: function(x, y) {
         var me = this,
@@ -5579,7 +5641,8 @@ Ext.define('Ext.draw.overrides.Path', {
      * Tests whether the given point is on the path.
      * @param {Number} x
      * @param {Number} y
-     * @returns {Boolean}
+     * @return {Boolean}
+     * @member Ext.draw.Path
      */
     isPointOnPath: function(x, y) {
         var me = this,
@@ -5646,7 +5709,8 @@ Ext.define('Ext.draw.overrides.Path', {
      * @param y3
      * @param x4
      * @param y4
-     * @returns {Array}
+     * @return {Array}
+     * @member Ext.draw.Path
      */
     getSegmentIntersections: function(x1, y1, x2, y2, x3, y3, x4, y4) {
         var me = this,
@@ -5789,19 +5853,16 @@ Ext.define('Ext.draw.overrides.Path', {
  * A sprite that represents a path.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'path',
- *                 path: 'M75,75 c0,-25 50,25 50,0 c0,-25 -50,25 -50,0',
- *                 fillStyle: 'blue'
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'path',
+ *            path: 'M20,30 c0,-50 75,50 75,0 c0,-50 -75,50 -75,0',
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Path', {
@@ -5985,6 +6046,9 @@ Ext.define('Ext.draw.sprite.Path', {
     updatePath: function(path, attr) {}
 });
 
+/**
+ * @class Ext.draw.overrides.sprite.Path
+ */
 Ext.define('Ext.draw.overrides.sprite.Path', {
     override: 'Ext.draw.sprite.Path',
     requires: [
@@ -5994,7 +6058,8 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
      * Tests whether the given point is inside the path.
      * @param x
      * @param y
-     * @returns {Boolean}
+     * @return {Boolean}
+     * @member Ext.draw.sprite.Path
      */
     isPointInPath: function(x, y) {
         var attr = this.attr;
@@ -6018,7 +6083,8 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
      * Tests whether the given point is on the path.
      * @param x
      * @param y
-     * @returns {Boolean}
+     * @return {Boolean}
+     * @member Ext.draw.sprite.Path
      */
     isPointOnPath: function(x, y) {
         var attr = this.attr,
@@ -6035,7 +6101,9 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
         }
         return result;
     },
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     hitTest: function(point, options) {
         var me = this,
             attr = me.attr,
@@ -6045,7 +6113,7 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
             x = point[0],
             y = point[1],
             hasFill = attr.fillStyle !== Ext.draw.Color.NONE && attr.fillStyle !== Ext.draw.Color.RGBA_NONE,
-            bboxHit = bbox && x >= bbox.left && x <= bbox.right && y >= bbox.top && y <= bbox.bottom,
+            bboxHit = bbox && x >= bbox.x && x <= (bbox.x + bbox.width) && y >= bbox.y && y <= (bbox.y + bbox.height),
             result = null,
             params;
         if (!bboxHit) {
@@ -6092,7 +6160,8 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
      * The given sprite must be an instance of the {@link Ext.draw.sprite.Path} class
      * or its subclass.
      * @param path
-     * @returns {Array}
+     * @return {Array}
+     * @member Ext.draw.sprite.Path
      */
     getIntersections: function(path) {
         if (!(path.isSprite && path.isPath)) {
@@ -6131,21 +6200,18 @@ Ext.define('Ext.draw.overrides.sprite.Path', {
  * A sprite that represents a circle.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                  type: 'circle',
- *                  cx: 100,
- *                  cy: 100,
- *                  r: 25,
- *                  fillStyle: 'blue'
- *              }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'circle',
+ *            cx: 100,
+ *            cy: 100,
+ *            r: 50,
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Circle', {
@@ -6225,24 +6291,21 @@ Ext.define('Ext.draw.sprite.Circle', {
  *  A sprite that represents a circular arc.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'arc',
- *                 cx: 100,
- *                 cy: 100,
- *                 r: 25,
- *                 fillStyle: 'blue',
- *                 startAngle: 0,
- *                 endAngle: Math.PI,
- *                 anticlockwise: true
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'arc',
+ *            cx: 100,
+ *            cy: 100,
+ *            r: 80,
+ *            fillStyle: '#1F6D91',
+ *            startAngle: 0,
+ *            endAngle: Math.PI,
+ *            anticlockwise: true
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Arc', {
@@ -6290,6 +6353,21 @@ Ext.define('Ext.draw.sprite.Arc', {
 
 /**
  * A sprite that represents an arrow.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'arrow',
+ *            translationX: 100,
+ *            translationY: 100,
+ *            size: 40,
+ *            fillStyle: '#30BDA7'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Arrow', {
     extend: 'Ext.draw.sprite.Path',
@@ -6454,6 +6532,21 @@ Ext.define('Ext.draw.sprite.Composite', {
 
 /**
  * A sprite that represents a cross.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'cross',
+ *            translationX: 100,
+ *            translationY: 100,
+ *            size: 40,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Cross', {
     extend: 'Ext.draw.sprite.Path',
@@ -6515,6 +6608,21 @@ Ext.define('Ext.draw.sprite.Cross', {
 
 /**
  * A sprite that represents a diamond.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'diamond',
+ *            translationX: 100,
+ *            translationY: 100,
+ *            size: 40,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Diamond', {
     extend: 'Ext.draw.sprite.Path',
@@ -6571,22 +6679,19 @@ Ext.define('Ext.draw.sprite.Diamond', {
  * A sprite that represents an ellipse.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'ellipse',
- *                 cx: 100,
- *                 cy: 100,
- *                 rx: 40,
- *                 ry: 25,
- *                 fillStyle: 'blue'
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'ellipse',
+ *            cx: 100,
+ *            cy: 100,
+ *            rx: 80,
+ *            ry: 50,
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define("Ext.draw.sprite.Ellipse", {
@@ -6688,25 +6793,22 @@ Ext.define("Ext.draw.sprite.Ellipse", {
  * A sprite that represents an elliptical arc.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'ellipticalArc',
- *                 cx: 100,
- *                 cy: 100,
- *                 rx: 40,
- *                 ry: 25,
- *                 fillStyle: 'blue',
- *                 startAngle: 0,
- *                 endAngle: Math.PI,
- *                 anticlockwise: true
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'ellipticalArc',
+ *            cx: 100,
+ *            cy: 100,
+ *            rx: 80,
+ *            ry: 50,
+ *            fillStyle: '#1F6D91',
+ *            startAngle: 0,
+ *            endAngle: Math.PI,
+ *            anticlockwise: true
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.EllipticalArc', {
@@ -6759,22 +6861,19 @@ Ext.define('Ext.draw.sprite.EllipticalArc', {
  * A sprite that represents a rectangle.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'rect',
- *                 x: 50,
- *                 y: 50,
- *                 width: 50,
- *                 height: 50,
- *                 fillStyle: 'blue'
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'rect',
+ *            x: 50,
+ *            y: 50,
+ *            width: 100,
+ *            height: 100,
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Rect', {
@@ -7112,6 +7211,23 @@ Ext.define('Ext.draw.sprite.Instancing', {
 
 /**
  * A sprite that represents a line.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'line',
+ *            fromX: 20,
+ *            fromY: 20,
+ *            toX: 120,
+ *            toY: 120,
+ *            strokeStyle: '#1F6D91',
+ *            lineWidth: 3
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Line', {
     extend: 'Ext.draw.sprite.Sprite',
@@ -7131,6 +7247,12 @@ Ext.define('Ext.draw.sprite.Line', {
                 toX: 1,
                 toY: 1,
                 strokeStyle: 'black'
+            },
+            aliases: {
+                x1: 'fromX',
+                y1: 'fromY',
+                x2: 'toX',
+                y2: 'toY'
             }
         }
     },
@@ -7158,6 +7280,21 @@ Ext.define('Ext.draw.sprite.Line', {
 
 /**
  * A sprite that represents a plus.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'plus',
+ *            translationX: 100,
+ *            translationY: 100,
+ *            size: 40,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Plus', {
     extend: 'Ext.draw.sprite.Path',
@@ -7222,6 +7359,23 @@ Ext.define('Ext.draw.sprite.Plus', {
  * @extends Ext.draw.sprite.Path
  * 
  * A sprite representing a pie slice.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'sector',
+ *            centerX: 100,
+ *            centerY: 100,
+ *            startAngle: -2.355,
+ *            endAngle: -.785,
+ *            endRho: 50,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Sector', {
     extend: 'Ext.draw.sprite.Path',
@@ -7309,6 +7463,21 @@ Ext.define('Ext.draw.sprite.Sector', {
 
 /**
  * A sprite that represents a square.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'square',
+ *            x: 100,
+ *            y: 100,
+ *            size: 50,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Square', {
     extend: 'Ext.draw.sprite.Rect',
@@ -7536,22 +7705,19 @@ Ext.define('Ext.draw.TextMeasurer', {
  * A sprite that represents text.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'text',
- *                 x: 50,
- *                 y: 50,
- *                 text: 'Sencha',
- *                 fontSize: 18,
- *                 fillStyle: 'blue'
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'text',
+ *            x: 50,
+ *            y: 50,
+ *            text: 'Sencha',
+ *            fontSize: 30,
+ *            fillStyle: '#1F6D91'
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.sprite.Text', {
@@ -7982,7 +8148,25 @@ Ext.define('Ext.draw.sprite.Text', {
 });
 
 /**
- * A sprite that represents a tick.
+ * A veritical line sprite. The x and y configs set the center of the line with the size 
+ * value determining the height of the line (the line will be twice the height of 'size' 
+ * since 'size' is added to above and below 'y' to set the line endpoints).
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'tick',
+ *            x: 20,
+ *            y: 40,
+ *            size: 10,
+ *            strokeStyle: '#388FAD',
+ *            lineWidth: 2
+ *        }]
+ *     });
  */
 Ext.define('Ext.draw.sprite.Tick', {
     extend: 'Ext.draw.sprite.Line',
@@ -7990,7 +8174,13 @@ Ext.define('Ext.draw.sprite.Tick', {
     inheritableStatics: {
         def: {
             processors: {
+                /**
+                 * @cfg {Object} x The position of the center of the sprite on the x-axis.
+                 */
                 x: 'number',
+                /**
+                 * @cfg {Object} y The position of the center of the sprite on the y-axis.
+                 */
                 y: 'number',
                 /**
                  * @cfg {Number} [size=4] The size of the sprite.
@@ -8028,6 +8218,22 @@ Ext.define('Ext.draw.sprite.Tick', {
 
 /**
  * A sprite that represents a triangle.
+ *
+ *     @example
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'triangle',
+ *            size: 50,
+ *            translationX: 100,
+ *            translationY: 100,
+ *            fillStyle: '#1F6D91'
+ *        }]
+ *     });
+ * 
  */
 Ext.define('Ext.draw.sprite.Triangle', {
     extend: 'Ext.draw.sprite.Path',
@@ -8067,34 +8273,28 @@ Ext.define('Ext.draw.sprite.Triangle', {
  * Linear gradient.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'circle',
- *                 cx: 50,
- *                 cy: 50,
- *                 r: 100,
- *                 fillStyle: {
- *                     type: 'linear',
- *                     degrees: 0,
- *                     stops: [
- *                         {
- *                             offset: 0,
- *                             color: 'white'
- *                         },
- *                         {
- *                             offset: 1,
- *                             color: 'blue'
- *                         }
- *                     ]
- *                 }
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'circle',
+ *            cx: 100,
+ *            cy: 100,
+ *            r: 100,
+ *            fillStyle: {
+ *                type: 'linear',
+ *                degrees: 180,
+ *                stops: [{
+ *                    offset: 0,
+ *                    color: '#1F6D91'
+ *                }, {
+ *                    offset: 1,
+ *                    color: '#90BCC9'
+ *                }]
+ *            }
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.gradient.Linear', {
@@ -8105,11 +8305,13 @@ Ext.define('Ext.draw.gradient.Linear', {
     type: 'linear',
     config: {
         /**
-         * @cfg {Number} The angle of rotation of the gradient in degrees.
+         * @cfg {Number}
+         * The angle of rotation of the gradient in degrees.
          */
         degrees: 0,
         /**
-         * @cfg {Number} The angle of rotation of the gradient in radians.
+         * @cfg {Number}
+         * The angle of rotation of the gradient in radians.
          */
         radians: 0
     },
@@ -8161,43 +8363,37 @@ Ext.define('Ext.draw.gradient.Linear', {
  * Radial gradient.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'draw',
- *             sprites: [{
- *                 type: 'circle',
- *                 cx: 100,
- *                 cy: 100,
- *                 r: 100,
- *                 fillStyle: {
- *                     type: 'radial',
- *                     start: {
- *                         x: 0,
- *                         y: 0,
- *                         r: 0
- *                     },
- *                     end: {
- *                         x: 0,
- *                         y: 0,
- *                         r: 1
- *                     },
- *                     stops: [
- *                         {
- *                             offset: 0,
- *                             color: 'white'
- *                         },
- *                         {
- *                             offset: 1,
- *                             color: 'blue'
- *                         }
- *                     ]
- *                 }
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'draw', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        sprites: [{
+ *            type: 'circle',
+ *            cx: 100,
+ *            cy: 100,
+ *            r: 100,
+ *            fillStyle: {
+ *                type: 'radial',
+ *                start: {
+ *                    x: 0,
+ *                    y: 0,
+ *                    r: 0
+ *                },
+ *                end: {
+ *                    x: 0,
+ *                    y: 0,
+ *                    r: 1
+ *                },
+ *                stops: [{
+ *                    offset: 0,
+ *                    color: '#90BCC9'
+ *                }, {
+ *                    offset: 1,
+ *                    color: '#1F6D91'
+ *                }]
+ *            }
+ *        }]
  *     });
  */
 Ext.define('Ext.draw.gradient.Radial', {
@@ -8389,7 +8585,7 @@ Ext.define('Ext.draw.Surface', {
                      * Stably sort the list of sprites by their zIndex.
                      * Deprecated, use the {@link Ext.Array#sort} method instead.
                      * @param {Array} list
-                     * @returns {Array} Sorted array.
+                     * @return {Array} Sorted array.
                      */
                     stableSort: function(list) {
                         return Ext.Array.sort(list, function(a, b) {
@@ -8562,7 +8758,7 @@ Ext.define('Ext.draw.Surface', {
      * Get the sprite by id or index.
      * It will first try to find a sprite with the given id, otherwise will try to use the id as an index.
      * @param {String|Number} id
-     * @returns {Ext.draw.sprite.Sprite}
+     * @return {Ext.draw.sprite.Sprite}
      */
     get: function(id) {
         return this.map[id] || this.items[id];
@@ -8717,7 +8913,7 @@ Ext.define('Ext.draw.Surface', {
      * Return the minimal bounding box that contains all the sprites bounding boxes in the given list of sprites.
      * @param {Ext.draw.sprite.Sprite[]|Ext.draw.sprite.Sprite} sprites
      * @param {Boolean} [isWithoutTransform=false]
-     * @returns {{x: Number, y: Number, width: number, height: number}}
+     * @return {{x: Number, y: Number, width: number, height: number}}
      */
     getBBox: function(sprites, isWithoutTransform) {
         var sprites = Ext.Array.from(sprites),
@@ -8926,6 +9122,7 @@ Ext.define('Ext.draw.overrides.Surface', {
      * @param {Object} options Hit testing options.
      * @return {Object} A hit result object that contains more information about what
      * exactly was hit or null if nothing was hit.
+     * @member Ext.draw.Surface
      */
     hitTest: function(point, options) {
         var me = this,
@@ -8951,6 +9148,7 @@ Ext.define('Ext.draw.overrides.Surface', {
      * @param {Object} options Hit testing options.
      * @return {Object} A hit result object that contains more information about what
      * exactly was hit or null if nothing was hit.
+     * @member Ext.draw.Surface
      */
     hitTestEvent: function(event, options) {
         var xy = this.getEventXY(event);
@@ -9575,7 +9773,7 @@ Ext.define('Ext.draw.engine.SvgContext', {
             "y2": y1,
             "gradientUnits": "userSpaceOnUse"
         });
-        gradient = new Ext.draw.engine.SvgContext.Gradient(me,me.surface,element);
+        gradient = new Ext.draw.engine.SvgContext.Gradient(me, me.surface, element);
         gradients[element.dom.id] = gradient;
         return gradient;
     },
@@ -9603,7 +9801,7 @@ Ext.define('Ext.draw.engine.SvgContext', {
             "r": r1,
             "gradientUnits": "userSpaceOnUse"
         });
-        gradient = new Ext.draw.engine.SvgContext.Gradient(me,me.surface,element,r0 / r1);
+        gradient = new Ext.draw.engine.SvgContext.Gradient(me, me.surface, element, r0 / r1);
         gradients[element.dom.id] = gradient;
         return gradient;
     }
@@ -9858,7 +10056,7 @@ Ext.define('Ext.draw.engine.Svg', {
      * @private
      * Serializes an SVG DOM element and its children recursively into a string.
      * @param {Object} node DOM element to serialize.
-     * @returns {String}
+     * @return {String}
      */
     serializeNode: function(node) {
         var result = '',
@@ -9909,6 +10107,11 @@ Ext.define('Ext.draw.engine.Svg', {
 });
 
 // @define Ext.draw.engine.excanvas
+/**
+ * @class Ext.draw.engine.excanvas
+ * @private
+ * @define Ext.draw.engine.excanvas
+ */
 Ext.draw || (Ext.draw = {});
 Ext.draw.engine || (Ext.draw.engine = {});
 Ext.draw.engine.excanvas = true;
@@ -9957,7 +10160,7 @@ if (!document.createElement('canvas').getContext) {
         var Z2 = Z / 2;
         var IE_VERSION = +navigator.userAgent.match(/MSIE ([\d.]+)?/)[1];
         /**
-   * This funtion is assigned to the <canvas> elements as element.getContext().
+   * This funtion is assigned to the <canvas></canvas> elements as element.getContext().
    * @this {HTMLElement}
    * @return {CanvasRenderingContext2D_}
    */
@@ -10440,11 +10643,14 @@ if (!document.createElement('canvas').getContext) {
             return lineCapMap[lineCap] || 'square';
         }
         /**
+   * @class CanvasRenderingContext2D_
    * This class implements CanvasRenderingContext2D interface as described by
    * the WHATWG.
    * @param {HTMLElement} canvasElement The element that the 2D context should
    * be associated with
+   * @private
    */
+        //
         function CanvasRenderingContext2D_(canvasElement) {
             this.m_ = createMatrixIdentity();
             this.mStack_ = [];
@@ -11090,7 +11296,7 @@ if (!document.createElement('canvas').getContext) {
         contextPrototype.arcTo = function() {};
         // TODO: Implement
         contextPrototype.createPattern = function(image, repetition) {
-            return new CanvasPattern_(image,repetition);
+            return new CanvasPattern_(image, repetition);
         };
         // Gradient / Pattern Stubs
         function CanvasGradient_(aType) {
@@ -11172,6 +11378,7 @@ if (!document.createElement('canvas').getContext) {
         DOMException = DOMException_;
     })();
 }
+// if
 
 /**
  * Provides specific methods to draw with 2D Canvas element.
@@ -12018,9 +12225,9 @@ Ext.define('Ext.draw.engine.Canvas', {
  *      });
  *
  * In this case we created a draw container and added a sprite to it.
- * The *type* of the sprite is *circle*, so if you run this code you'll see a green-ish circle.
+ * The *type* of the sprite is *circle*, so if you run this code you'll see a green circle.
  *
- * One can attach sprite event listners to the draw container with the help of the
+ * One can attach sprite event listeners to the draw container with the help of the
  * {@link Ext.draw.plugin.SpriteEvents} plugin.
  *
  * For more information on Sprites, the core elements added to a draw container's surface,
@@ -12107,7 +12314,6 @@ Ext.define('Ext.draw.Container', {
          * to prevent double rendering.
          */
         resizeHandler: null,
-        background: null,
         /**
          * @cfg {Object[]} sprites
          * Defines a set of sprites to be added to the drawContainer surface.
@@ -12265,11 +12471,14 @@ Ext.define('Ext.draw.Container', {
      */
     onPlaceWatermark: Ext.emptyFn,
     onBodyResize: function() {
-        if (!this.element) {
+        var el = this.element;
+        if (!el) {
             return;
         }
+        this.setBodySize(el.getSize());
+    },
+    setBodySize: function(size) {
         var me = this,
-            size = me.element.getSize(),
             resizeHandler = me.getResizeHandler(),
             result;
         me.fireEvent('resize', me, size);
@@ -12370,7 +12579,7 @@ Ext.define('Ext.draw.Container', {
      * @param {Object} [config] The following config options are supported:
      *
      * @param {String} config.url The url to post the data to. Defaults to
-     * the {@link #defaultUrl} configuration on the class.
+     * the {@link #defaultDownloadServerUrl} configuration on the class.
      *
      * @param {String} config.format The format of image to export. See the
      * {@link #supportedFormats}. Defaults to 'png' on the Sencha IO server.
@@ -12726,6 +12935,16 @@ Ext.define('Ext.chart.theme.Base', {
                 fillStyle: 'black'
             }
         },
+        /**
+         * @private
+         * An object with the following structure:
+         * {
+         *   fillStyle: [color, color, ...],
+         *   strokeStyle: [color, color, ...],
+         *   ...
+         * }
+         * If missing, generated from the other configs: 'baseColor, 'gradients', 'colors'.
+         */
         seriesThemes: undefined,
         markerThemes: {
             type: [
@@ -12743,7 +12962,7 @@ Ext.define('Ext.chart.theme.Base', {
          */
         useGradients: false,
         /**
-         * @deprecated Use the {@link Ext.draw.Container#background} config instead.
+         * @deprecated Use the {@link Ext.chart.AbstractChart#background} config instead.
          * @since 5.0.1
          */
         background: null
@@ -12902,10 +13121,15 @@ Ext.define('Ext.chart.theme.Base', {
         }
     },
     applySeriesThemes: function(newSeriesThemes) {
+        // Init the 'colors' config with solid colors generated from the 'baseColor'.
         this.getBaseColor();
+        // Init the 'gradients' config with a hardcoded value, if the legacy 'useGradients'
+        // config was set to 'true'. This in turn updates the 'colors' config.
         this.getUseGradients();
+        // Init the 'gradients' config normally. This also updates the 'colors' config.
         this.getGradients();
         var colors = this.getColors();
+        // Final colors.
         if (!newSeriesThemes) {
             newSeriesThemes = {
                 fillStyle: Ext.Array.clone(colors),
@@ -13330,9 +13554,11 @@ Ext.define('Ext.chart.series.Series', {
         'Ext.chart.label.Label',
         'Ext.tip.ToolTip'
     ],
-    mixins: {
-        observable: 'Ext.mixin.Observable'
-    },
+    mixins: [
+        'Ext.mixin.Observable',
+        'Ext.mixin.Bindable'
+    ],
+    defaultBindProperty: 'store',
     /**
      * @property {String} type
      * The type of series. Set in subclasses.
@@ -13766,17 +13992,18 @@ Ext.define('Ext.chart.series.Series', {
         if (!chart || chart.isInitializing) {
             return;
         }
-        var newTitle = Ext.Array.from(newTitle),
-            series = chart.getSeries(),
+        newTitle = Ext.Array.from(newTitle);
+        var series = chart.getSeries(),
             seriesIndex = Ext.Array.indexOf(series, me),
             legendStore = chart.getLegendStore(),
-            ln = Math.min(newTitle.length, me.getYField().length),
-            i, item, title;
-        if (seriesIndex !== -1) {
+            yField = me.getYField(),
+            i, item, title, ln;
+        if (legendStore.getCount() && seriesIndex !== -1) {
+            ln = yField ? Math.min(newTitle.length, yField.length) : newTitle.length;
             for (i = 0; i < ln; i++) {
                 title = newTitle[i];
-                if (title) {
-                    item = legendStore.getAt(seriesIndex + i);
+                item = legendStore.getAt(seriesIndex + i);
+                if (title && item) {
                     item.set('name', title);
                 }
             }
@@ -13859,6 +14086,11 @@ Ext.define('Ext.chart.series.Series', {
             }
         }
         me.mixins.observable.constructor.call(me, config);
+        me.initBindable();
+    },
+    lookupViewModel: function(skipThis) {
+        var chart = this.getChart();
+        return chart ? chart.lookupViewModel(skipThis) : null;
     },
     applyTooltip: function(tooltip, oldTooltip) {
         var chart = this.getChart(),
@@ -13873,13 +14105,15 @@ Ext.define('Ext.chart.series.Series', {
                 offsetY: 10
             });
         for (i = 0; i < interactions.length; i++) {
-            if (interactions[i].type === 'itemhightlight') {
+            if (interactions[i].type === 'itemhighlight') {
                 hasItemHighlight = true;
                 break;
             }
         }
         if (!hasItemHighlight) {
-            interactions.push('itemhighlight');
+            interactions.push({
+                type: 'itemhighlight'
+            });
             chart.setInteractions(interactions);
         }
         return new Ext.tip.ToolTip(config);
@@ -13940,13 +14174,11 @@ Ext.define('Ext.chart.series.Series', {
     },
     updateStore: function(newStore, oldStore) {
         var me = this,
-            chartStore = this.getChart() && this.getChart().getStore(),
-            sprites = me.getSprites(),
-            ln = sprites.length,
-            i, sprite;
-        newStore = newStore || chartStore;
+            chart = this.getChart(),
+            chartStore = chart && chart.getStore(),
+            sprites, sprite, len, i;
         oldStore = oldStore || chartStore;
-        if (oldStore) {
+        if (oldStore && oldStore !== newStore) {
             oldStore.un({
                 datachanged: 'onDataChanged',
                 update: 'onDataChanged',
@@ -13959,7 +14191,8 @@ Ext.define('Ext.chart.series.Series', {
                 update: 'onDataChanged',
                 scope: me
             });
-            for (i = 0; i < ln; i++) {
+            sprites = me.getSprites();
+            for (i = 0 , len = sprites.length; i < len; i++) {
                 sprite = sprites[i];
                 if (sprite.setStore) {
                     sprite.setStore(newStore);
@@ -14124,7 +14357,8 @@ Ext.define('Ext.chart.series.Series', {
         }
     },
     updateChart: function(newChart, oldChart) {
-        var me = this;
+        var me = this,
+            store = me._store;
         if (oldChart) {
             oldChart.un('axeschange', 'onAxesChange', me);
             // TODO: destroy them
@@ -14132,6 +14366,9 @@ Ext.define('Ext.chart.series.Series', {
             me.setSurface(null);
             me.setOverlaySurface(null);
             me.onChartDetached(oldChart);
+            if (!store) {
+                me.updateStore(null);
+            }
         }
         if (newChart) {
             me.setSurface(newChart.getSurface('series'));
@@ -14146,8 +14383,10 @@ Ext.define('Ext.chart.series.Series', {
                 me.onAxesChange(newChart);
             }
             me.onChartAttached(newChart);
+            if (!store) {
+                me.updateStore(newChart.getStore());
+            }
         }
-        me.updateStore(me._store, null);
     },
     onAxesChange: function(chart) {
         var me = this,
@@ -14394,7 +14633,6 @@ Ext.define('Ext.chart.series.Series', {
     },
     applyMarkerSubStyle: function(marker, oldMarker) {
         var type = (marker && marker.type) || (oldMarker && oldMarker.type) || 'circle',
-            // TODO:ps Should use marker theme instead of 'circle'
             cls = Ext.ClassManager.get(Ext.ClassManager.getNameByAlias('sprite.' + type));
         if (cls && cls.def) {
             marker = cls.def.batchedNormalize(marker, true);
@@ -14402,14 +14640,47 @@ Ext.define('Ext.chart.series.Series', {
         return Ext.merge(oldMarker || {}, marker);
     },
     updateHidden: function(hidden) {
-        // TODO: remove this when jacky fix the problem.
-        this.getColors();
-        this.getSubStyle();
-        this.setSubStyle({
+        var me = this;
+        me.getColors();
+        me.getSubStyle();
+        me.setSubStyle({
             hidden: hidden
         });
-        this.processData();
-        this.doUpdateStyles();
+        me.processData();
+        me.doUpdateStyles();
+        if (!Ext.isArray(hidden)) {
+            me.updateLegendStore(hidden);
+        }
+    },
+    /**
+     * @private
+     * Updates chart's legend store when the value of the series' {@link #hidden} config
+     * changes or when the {@link #setHiddenByIndex} method is called.
+     * @param hidden Whether series (or its component) should be hidden or not.
+     * @param index Used for stacked series.
+     *              If present, only the component with the specified index will change visibility.
+     */
+    updateLegendStore: function(hidden, index) {
+        var me = this,
+            chart = me.getChart(),
+            legendStore = chart.getLegendStore(),
+            id = me.getId(),
+            record;
+        if (legendStore) {
+            if (arguments.length > 1) {
+                record = legendStore.findBy(function(rec) {
+                    return rec.get('series') === id && rec.get('index') === index;
+                });
+                if (record !== -1) {
+                    record = legendStore.getAt(record);
+                }
+            } else {
+                record = legendStore.findRecord('series', id);
+            }
+            if (record && record.get('disabled') !== hidden) {
+                record.set('disabled', hidden);
+            }
+        }
     },
     /**
      *
@@ -14417,11 +14688,13 @@ Ext.define('Ext.chart.series.Series', {
      * @param {Boolean} value
      */
     setHiddenByIndex: function(index, value) {
-        if (Ext.isArray(this.getHidden())) {
-            this.getHidden()[index] = value;
-            this.updateHidden(this.getHidden());
+        var me = this;
+        if (Ext.isArray(me.getHidden())) {
+            me.getHidden()[index] = value;
+            me.updateHidden(me.getHidden());
+            me.updateLegendStore(value, index);
         } else {
-            this.setHidden(value);
+            me.setHidden(value);
         }
     },
     getStrokeColorsFromFillColors: function(colors) {
@@ -14653,6 +14926,28 @@ Ext.define('Ext.chart.series.Series', {
     onSpriteAnimationEnd: function(sprite) {
         this.fireEvent('animationend', this, sprite);
     },
+    // Override the Observable's method to redirect listener scope
+    // resolution to the chart.
+    resolveListenerScope: function(defaultScope) {
+        var me = this,
+            namedScope = Ext._namedScopes[defaultScope],
+            chart = me.getChart(),
+            scope;
+        if (!namedScope) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : (defaultScope || me);
+        } else if (namedScope.isThis) {
+            scope = me;
+        } else if (namedScope.isController) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+        } else if (namedScope.isSelf) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+            // Class body listener. No chart controller, nor chart container controller.
+            if (scope === chart && !chart.getInheritedConfig('defaultListenerScope')) {
+                scope = me;
+            }
+        }
+        return scope;
+    },
     /**
      * Provide legend information to target array.
      *
@@ -14676,14 +14971,24 @@ Ext.define('Ext.chart.series.Series', {
     },
     destroy: function() {
         var me = this,
-            store = me.getStore(),
+            store = me._store,
             // Peek at the config so we don't create one just to destroy it
-            tooltip = me.getConfig('tooltip', true);
+            tooltip = me.getConfig('tooltip', true),
+            sprites = me.getSprites(),
+            sprite, i, ln;
+        for (i = 0 , ln = sprites.length; i < ln; i++) {
+            sprite = sprites[i];
+            if (sprite && sprite.isSprite) {
+                sprite.destroy();
+            }
+        }
+        me.sprites = null;
         me.clearListeners();
         Ext.ComponentManager.unregister(me);
         if (store && store.getAutoDestroy()) {
             Ext.destroy(store);
         }
+        me.updateStore(null);
         me.setStore(null);
         if (tooltip) {
             Ext.destroy(tooltip);
@@ -14871,11 +15176,11 @@ Ext.define('Ext.chart.interactions.Abstract', {
             me.syncTimer = null;
         }
         if (me.stopAnimationBeforeSync) {
-            chart.resizing = true;
+            ++chart.resizing;
         }
         chart.redraw();
         if (me.stopAnimationBeforeSync) {
-            chart.resizing = false;
+            --chart.resizing;
         }
         me.syncThrottle = Date.now() + me.throttleGap;
     },
@@ -14924,6 +15229,9 @@ Ext.define('Ext.chart.MarkerHolder', {
         after: {
             constructor: 'constructor',
             preRender: 'preRender'
+        },
+        before: {
+            destroy: 'destroy'
         }
     },
     isMarkerHolder: true,
@@ -14990,6 +15298,17 @@ Ext.define('Ext.chart.MarkerHolder', {
             id = this.getId();
         if (boundMarker) {
             return boundMarker[0].getMarkerBBoxFor(id, index, isWithoutTransform);
+        }
+    },
+    destroy: function() {
+        var boundMarkers = this.boundMarkers,
+            name, markers, i, marker;
+        for (name in boundMarkers) {
+            markers = boundMarkers[name];
+            for (i = 0; i < markers.length; i++) {
+                marker = markers[i];
+                marker.clear(this.getId());
+            }
         }
     }
 });
@@ -15124,7 +15443,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                  */
                 totalAngle: 'number',
                 /**
-                 * @cfg {Number} The starting rotation of the angular axis.
+                 * @cfg {Number} baseRotation The starting rotation of the angular axis.
                  */
                 baseRotation: 'number',
                 /**
@@ -15530,23 +15849,6 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                     if (labelText === undefined) {
                         return;
                     }
-                    // TODO: When a custom renderer is used, the labels don't go through the segmenter.renderer
-                    // TODO: and so if they are numbers they don't get rounded, we have to take care of it in our
-                    // TODO: custom renderer. It may appear that they have the precision we want already, so
-                    // TODO: for our custom renderer we could just use function (v) { return v + '%'; }, but this is
-                    // TODO: deceiving, as the min/max values are not aligned by the Numeric (or Time) segmenter
-                    // TODO: (see layout.Continuous#snapEnds) since segmenter.from simply returns the passed value.
-                    // TODO: So what we get is sever jittering during axis range animation because the min/max
-                    // TODO: labels (typically max, since min is often 0) will have varying mantissa during animation.
-                    // TODO: The min/max should always be aligned as well as intermidiate ticks, because who really
-                    // TODO: wants to have axis with values like this [-13.5233, -10, -5, 0, 5, 10, 12.2352]?
-                    // TODO: Granted, it will only look this way if we defined our own custom render and don't do
-                    // TODO: the rounding there, like in the example above. But even without a custom renderer
-                    // TODO: the labels will look like this [-13, -10, -5, 0, 5, 10, 12]. The spacing between the
-                    // TODO: ticks and the grid lines is still inconsistent, which doesn't look right to most everybody.
-                    // TODO: Alternatively, alignMaximum/MinimumByMajorUnit configs should be implemented
-                    // TODO: and set to 'true' by default.
-                    // TODO: For now taking care of rounding in custom renderers is the way to go.
                     text = renderer ? renderer.call(this, labelText, layout, lastLabelText) : segmenter.renderer(labelText, layout, lastLabelText);
                     lastLabelText = labelText;
                     label.setAttributes({
@@ -15958,6 +16260,10 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
         }
     }
 });
+/*
+    Moved TODO comments to bottom
+    TODO(touch-2.2): Split different types of axis into different sprite classes.
+*/
 
 /**
  * @abstract
@@ -16090,9 +16396,9 @@ Ext.define('Ext.chart.axis.segmenter.Numeric', {
         return value + step * unit.scale;
     },
     preferredStep: function(min, estStepSize) {
-        var logs = Math.floor(Math.log(estStepSize) * Math.LOG10E),
-            // common logarithm of estStepSize
-            scale = Math.pow(10, logs);
+        // Getting an order of magnitude of the estStepSize with a common logarithm.
+        var order = Math.floor(Math.log(estStepSize) * Math.LOG10E),
+            scale = Math.pow(10, order);
         estStepSize /= scale;
         if (estStepSize < 2) {
             estStepSize = 2;
@@ -16100,13 +16406,14 @@ Ext.define('Ext.chart.axis.segmenter.Numeric', {
             estStepSize = 5;
         } else if (estStepSize < 10) {
             estStepSize = 10;
-            logs++;
+            order++;
         }
         return {
             unit: {
-                // when estStepSize < 1, rounded down log10(estStepSize) is equal to -number_of_leading_zeros in estStepSize
-                fixes: -logs,
-                // number of fractional digits
+                // When passed estStepSize is less than 1, its order of magnitude
+                // is equal to -number_of_leading_zeros in the estStepSize.
+                fixes: -order,
+                // Number of fractional digits.
                 scale: scale
             },
             step: estStepSize
@@ -16122,12 +16429,12 @@ Ext.define('Ext.chart.axis.segmenter.Numeric', {
      * @return {Object} return.unit The unit.
      */
     exactStep: function(min, estStepSize) {
-        var logs = Math.floor(Math.log(estStepSize) * Math.LOG10E),
-            scale = Math.pow(10, logs);
+        var order = Math.floor(Math.log(estStepSize) * Math.LOG10E),
+            scale = Math.pow(10, order);
         return {
             unit: {
                 // add one decimal point if estStepSize is not a multiple of scale
-                fixes: -logs + (estStepSize % scale === 0 ? 0 : 1),
+                fixes: -order + (estStepSize % scale === 0 ? 0 : 1),
                 scale: 1
             },
             step: estStepSize
@@ -16180,14 +16487,13 @@ Ext.define('Ext.chart.axis.segmenter.Time', {
         return new Date(value);
     },
     diff: function(min, max, unit) {
-        var ExtDate = Ext.Date;
         if (isFinite(min)) {
             min = new Date(min);
         }
         if (isFinite(max)) {
             max = new Date(max);
         }
-        return ExtDate.diff(min, max, unit);
+        return Ext.Date.diff(min, max, unit);
     },
     align: function(date, step, unit) {
         if (unit === 'd' && step >= 7) {
@@ -16201,77 +16507,77 @@ Ext.define('Ext.chart.axis.segmenter.Time', {
     add: function(value, step, unit) {
         return Ext.Date.add(new Date(value), unit, step);
     },
+    stepUnits: [
+        [
+            Ext.Date.YEAR,
+            1,
+            2,
+            5,
+            10,
+            20,
+            50,
+            100,
+            200,
+            500
+        ],
+        [
+            Ext.Date.MONTH,
+            1,
+            3,
+            6
+        ],
+        [
+            Ext.Date.DAY,
+            1,
+            7,
+            14
+        ],
+        [
+            Ext.Date.HOUR,
+            1,
+            6,
+            12
+        ],
+        [
+            Ext.Date.MINUTE,
+            1,
+            5,
+            15,
+            30
+        ],
+        [
+            Ext.Date.SECOND,
+            1,
+            5,
+            15,
+            30
+        ],
+        [
+            Ext.Date.MILLI,
+            1,
+            2,
+            5,
+            10,
+            20,
+            50,
+            100,
+            200,
+            500
+        ]
+    ],
     preferredStep: function(min, estStepSize) {
         if (this.getStep()) {
             return this.getStep();
         }
         var from = new Date(+min),
             to = new Date(+min + Math.ceil(estStepSize)),
-            ExtDate = Ext.Date,
-            units = [
-                [
-                    ExtDate.YEAR,
-                    1,
-                    2,
-                    5,
-                    10,
-                    20,
-                    50,
-                    100,
-                    200,
-                    500
-                ],
-                [
-                    ExtDate.MONTH,
-                    1,
-                    3,
-                    6
-                ],
-                [
-                    ExtDate.DAY,
-                    1,
-                    7,
-                    14
-                ],
-                [
-                    ExtDate.HOUR,
-                    1,
-                    6,
-                    12
-                ],
-                [
-                    ExtDate.MINUTE,
-                    1,
-                    5,
-                    15,
-                    30
-                ],
-                [
-                    ExtDate.SECOND,
-                    1,
-                    5,
-                    15,
-                    30
-                ],
-                [
-                    ExtDate.MILLI,
-                    1,
-                    2,
-                    5,
-                    10,
-                    20,
-                    50,
-                    100,
-                    200,
-                    500
-                ]
-            ],
-            result;
-        for (var i = 0; i < units.length; i++) {
-            var unit = units[i][0],
-                diff = this.diff(from, to, unit);
+            units = this.stepUnits,
+            result, unit, diff, i, j;
+        for (i = 0; i < units.length; i++) {
+            unit = units[i][0];
+            diff = this.diff(from, to, unit);
             if (diff > 0) {
-                for (var j = 1; j < units[i].length; j++) {
+                for (j = 1; j < units[i].length; j++) {
                     if (diff <= units[i][j]) {
                         result = {
                             unit: unit,
@@ -16292,7 +16598,7 @@ Ext.define('Ext.chart.axis.segmenter.Time', {
         }
         if (!result) {
             result = {
-                unit: ExtDate.DAY,
+                unit: Ext.Date.DAY,
                 step: 1
             };
         }
@@ -16472,14 +16778,18 @@ Ext.define('Ext.chart.axis.layout.Discrete', {
         });
         this.fireEvent('datachange', this.labels);
     },
-    // @inheritdoc
+    /**
+     * @inheritdoc
+     */
     calculateLayout: function(context) {
         context.data = this.labels;
         this.callParent([
             context
         ]);
     },
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     calculateMajorTicks: function(context) {
         var me = this,
             attr = context.attr,
@@ -16495,7 +16805,9 @@ Ext.define('Ext.chart.axis.layout.Discrete', {
             context.majorTicks = out;
         }
     },
-    // @inheritdoc
+    /**
+     * @inheritdoc
+     */
     snapEnds: function(context, min, max, estStepSize) {
         estStepSize = Math.ceil(estStepSize);
         var steps = Math.floor((max - min) / estStepSize),
@@ -16516,7 +16828,9 @@ Ext.define('Ext.chart.axis.layout.Discrete', {
             }
         };
     },
-    // @inheritdoc
+    /**
+     * @inheritdoc
+     */
     trimByRange: function(context, out, trimMin, trimMax) {
         var unit = out.unit,
             beginIdx = Math.ceil((trimMin - out.from) / unit) * unit,
@@ -16582,7 +16896,9 @@ Ext.define('Ext.chart.axis.layout.Continuous', {
     getCoordFor: function(value, field, idx, items) {
         return +value;
     },
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     snapEnds: function(context, min, max, estStepSize) {
         var segmenter = context.segmenter,
             axis = this.getAxis(),
@@ -16706,7 +17022,7 @@ Ext.define('Ext.chart.axis.Axis', {
     ],
     /**
      * @event rangechange
-     * Fires when the {@link #range} of the axis  changes.
+     * Fires when the {@link Ext.chart.axis.Axis#range range} of the axis changes.
      * @param {Ext.chart.axis.Axis} axis
      * @param {Array} range
      */
@@ -16774,7 +17090,7 @@ Ext.define('Ext.chart.axis.Axis', {
          */
         limits: null,
         /**
-         * @cfg {Function} renderer Allows direct customisation of rendered axis sprites.
+         * @cfg {Function} renderer Allows direct customization of rendered axis sprites.
          * @param {String} label The label.
          * @param {Object|Ext.chart.axis.layout.Layout} layout The layout configuration used by the axis.
          * @param {String} lastLabel The last label.
@@ -16993,8 +17309,9 @@ Ext.define('Ext.chart.axis.Axis', {
     surface: null,
     /**
      * @private
-     * @property {Array} The full data range of the axis. Should not be set directly,
-     * clear it to `null` and use `getRange` to update.
+     * @property {Array} range
+     * The full data range of the axis. Should not be set directly.  Clear it to `null` 
+     * and use `getRange` to update.
      */
     range: null,
     xValues: [],
@@ -17057,9 +17374,9 @@ Ext.define('Ext.chart.axis.Axis', {
         me.labels = [];
         // Maps IDs of the axes that float along this axis to their floating values.
         me.floatingAxes = {};
+        config = config || {};
         if (config.position === 'angular') {
             config.style = config.style || {};
-            // TODO: try to get rid of the estStepSize
             config.style.estStepSize = 1;
         }
         if ('id' in config) {
@@ -17240,13 +17557,11 @@ Ext.define('Ext.chart.axis.Axis', {
         return oldText;
     },
     applyLayout: function(layout, oldLayout) {
-        // TODO: finish this
         layout = Ext.factory(layout, null, oldLayout, 'axisLayout');
         layout.setAxis(this);
         return layout;
     },
     applySegmenter: function(segmenter, oldSegmenter) {
-        // TODO: finish this
         segmenter = Ext.factory(segmenter, null, oldSegmenter, 'segmenter');
         segmenter.setAxis(this);
         return segmenter;
@@ -17369,7 +17684,7 @@ Ext.define('Ext.chart.axis.Axis', {
         var me = this;
         function link(action, slave, master) {
             master.getLayout()[action]('datachange', 'onDataChange', slave);
-            master[action]('rangechange', 'onRangeChange', slave);
+            master[action]('rangechange', 'onMasterAxisRangeChange', slave);
         }
         if (me.masterAxis) {
             link('un', me, me.masterAxis);
@@ -17381,7 +17696,7 @@ Ext.define('Ext.chart.axis.Axis', {
             }
             link('on', me, masterAxis);
             me.onDataChange(masterAxis.getLayout().labels);
-            me.onRangeChange(masterAxis, masterAxis.range);
+            me.onMasterAxisRangeChange(masterAxis, masterAxis.range);
             me.setStyle(Ext.apply({}, me.config.style, masterAxis.config.style));
             me.setTitle(Ext.apply({}, me.config.title, masterAxis.config.title));
             me.setLabel(Ext.apply({}, me.config.label, masterAxis.config.label));
@@ -17391,7 +17706,7 @@ Ext.define('Ext.chart.axis.Axis', {
     onDataChange: function(data) {
         this.getLayout().labels = data;
     },
-    onRangeChange: function(axis, range) {
+    onMasterAxisRangeChange: function(masterAxis, range) {
         this.range = range;
     },
     applyRange: function(newRange) {
@@ -17514,7 +17829,10 @@ Ext.define('Ext.chart.axis.Axis', {
                 me.getChart().on('layout', 'clearRange', me);
             }
         }
-        me.fireEvent('rangechange', me, me.range);
+        if (!Ext.Array.equals(me.range, me.oldRange || [])) {
+            me.fireEvent('rangechange', me, me.range);
+            me.oldRange = me.range;
+        }
         return me.range;
     },
     // @private
@@ -17777,6 +18095,28 @@ Ext.define('Ext.chart.axis.Axis', {
     isXType: function(xtype) {
         return xtype === 'axis';
     },
+    // Override the Observable's method to redirect listener scope
+    // resolution to the chart.
+    resolveListenerScope: function(defaultScope) {
+        var me = this,
+            namedScope = Ext._namedScopes[defaultScope],
+            chart = me.getChart(),
+            scope;
+        if (!namedScope) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : (defaultScope || me);
+        } else if (namedScope.isThis) {
+            scope = me;
+        } else if (namedScope.isController) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+        } else if (namedScope.isSelf) {
+            scope = chart ? chart.resolveListenerScope(defaultScope, false) : me;
+            // Class body listener. No chart controller, nor chart container controller.
+            if (scope === chart && !chart.getInheritedConfig('defaultListenerScope')) {
+                scope = me;
+            }
+        }
+        return scope;
+    },
     destroy: function() {
         var chart = this.getChart();
         if (chart) {
@@ -17817,18 +18157,19 @@ Ext.define('Ext.chart.LegendBase', {
         docked: 'bottom'
     },
     setDocked: function(docked) {
-        var panel = this.ownerCt,
+        var me = this,
+            panel = me.ownerCt,
             layout;
-        this.docked = docked;
+        me.docked = docked;
         switch (docked) {
             case 'top':
             case 'bottom':
-                this.addCls('x-horizontal');
+                me.addCls(Ext.baseCSSPrefix + 'horizontal');
                 layout = 'hbox';
                 break;
             case 'left':
             case 'right':
-                this.removeCls('x-horizontal');
+                me.removeCls(Ext.baseCSSPrefix + 'horizontal');
                 layout = 'vbox';
                 break;
         }
@@ -17857,7 +18198,7 @@ Ext.define('Ext.chart.Legend', {
     xtype: 'legend',
     extend: 'Ext.chart.LegendBase',
     config: {
-        baseCls: 'x-legend',
+        baseCls: Ext.baseCSSPrefix + 'legend',
         padding: 5,
         /**
          * @cfg {Array}
@@ -17865,6 +18206,11 @@ Ext.define('Ext.chart.Legend', {
          */
         rect: null,
         disableSelection: true,
+        /**
+         * @cfg {Boolean} toggleable
+         * `true` to allow series items to have their visibility
+         * toggled by interaction with the legend items.
+         */
         toggleable: true
     },
     toggleItem: function(index) {
@@ -17989,6 +18335,7 @@ Ext.define('Ext.chart.AbstractChart', {
         'Ext.chart.Legend',
         'Ext.data.Store'
     ],
+    isChart: true,
     defaultBindProperty: 'store',
     /**
      * @event beforerefresh
@@ -18085,8 +18432,60 @@ Ext.define('Ext.chart.AbstractChart', {
     version: '2.5.0',
     config: {
         /**
-         * @cfg {Ext.data.Store} store
-         * The store that supplies data to this chart.
+         * @cfg {Ext.data.Store/String/Object} store
+         * The data source to which the chart is bound. Acceptable values for this property are:
+         *
+         *   - **any {@link Ext.data.Store Store} class / subclass**
+         *   - **an {@link Ext.data.Store#storeId ID of a store}**
+         *   - **a {@link Ext.data.Store Store} config object**.  When passing a config you can 
+         *     specify the store type by alias.  Passing a config object with a store type will 
+         *     dynamically create a new store of that type when the chart is instantiated.
+         *
+         * For example:
+         * 
+         *     Ext.define('MyApp.store.Customer', {
+         *         extend: 'Ext.data.Store',
+         *         alias: 'store.customerstore',
+         *     
+         *         fields: ['name', 'value']
+         *     });
+         *     
+         *     
+         *     Ext.create({
+         *         xtype: 'cartesian',
+         *         renderTo: document.body,
+         *         height: 400,
+         *         width: 400,
+         *         store: {
+         *             type: 'customerstore',
+         *             data: [{
+         *                 name: 'metric one',
+         *                 value: 10
+         *             }]
+         *         },
+         *         axes: [{
+         *             type: 'numeric',
+         *             position: 'left',
+         *             title: {
+         *                 text: 'Sample Values',
+         *                 fontSize: 15
+         *             },
+         *             fields: 'value'
+         *         }, {
+         *             type: 'category',
+         *             position: 'bottom',
+         *             title: {
+         *                 text: 'Sample Values',
+         *                 fontSize: 15
+         *             },
+         *             fields: 'name'
+         *         }],
+         *         series: {
+         *             type: 'bar',
+         *             xField: 'name',
+         *             yField: 'value'
+         *         }
+         *     });
          */
         store: 'ext-empty-store',
         /**
@@ -18106,11 +18505,20 @@ Ext.define('Ext.chart.AbstractChart', {
          */
         style: null,
         /**
-         * @cfg {Boolean/Object} shadow (optional) `true` for the default shadow configuration 
+         * @cfg {Boolean/Object} shadow (optional) `true` for the default shadow configuration
          * `{shadowOffsetX: 2, shadowOffsetY: 2, shadowBlur: 3, shadowColor: '#444'}`
          * or a standard shadow config object to be used for default chart shadows.
+         * @hide
          */
         shadow: false,
+        /**
+         * @cfg shadowOffset
+         * @hide
+         */
+        /**
+         * @cfg animateShadow
+         * @hide
+         */
         /**
          * @cfg {Boolean/Object} animation (optional) `true` for the default animation (easing: 'ease' and duration: 500)
          * or a standard animation config object to be used for default chart animations.
@@ -18541,6 +18949,12 @@ Ext.define('Ext.chart.AbstractChart', {
             return newRect;
         }
     },
+    /**
+     * @method getAxis Returns an axis instance based on the type of data passed. 
+     * @param {String/Number/Ext.chart.axis.Axis} axis You may request an axis by passing
+     * an id, the number of the array key returned by {@link #getAxes}, or an axis instance.
+     * @return {Ext.chart.axis.Axis} The axis requested
+     */
     getAxis: function(axis) {
         if (axis instanceof Ext.chart.axis.Axis) {
             return axis;
@@ -18573,52 +18987,58 @@ Ext.define('Ext.chart.AbstractChart', {
         return surface;
     },
     applyAxes: function(newAxes, oldAxes) {
-        this.resizing++;
-        this.getStore();
-        if (!oldAxes) {
-            oldAxes = [];
-            oldAxes.map = {};
-        }
-        var result = [],
-            i, ln, axis, oldAxis, linkedTo, id,
+        var me = this,
             positions = {
                 left: 'right',
                 right: 'left'
             },
-            oldMap = oldAxes.map;
+            result = [],
+            axis, oldAxis, linkedTo, id, i, ln, oldMap;
+        me.resizing++;
+        me.getStore();
+        if (!oldAxes) {
+            oldAxes = [];
+            oldAxes.map = {};
+        }
+        oldMap = oldAxes.map;
         result.map = {};
         newAxes = Ext.Array.from(newAxes, true);
         for (i = 0 , ln = newAxes.length; i < ln; i++) {
-            axis = Ext.Object.chain(newAxes[i]);
+            axis = newAxes[i];
             if (!axis) {
                 
                 continue;
             }
-            linkedTo = axis.linkedTo;
-            id = axis.id;
-            if (Ext.isNumber(linkedTo)) {
-                axis = Ext.merge({}, newAxes[linkedTo], axis);
-            } else if (Ext.isString(linkedTo)) {
-                Ext.Array.each(newAxes, function(item) {
-                    if (item.id === axis.linkedTo) {
-                        axis = Ext.merge({}, item, axis);
-                        return false;
-                    }
-                });
+            if (axis instanceof Ext.chart.axis.Axis) {
+                oldAxis = oldMap[axis.getId()];
+            } else {
+                axis = Ext.Object.chain(axis);
+                linkedTo = axis.linkedTo;
+                id = axis.id;
+                if (Ext.isNumber(linkedTo)) {
+                    axis = Ext.merge({}, newAxes[linkedTo], axis);
+                } else if (Ext.isString(linkedTo)) {
+                    Ext.Array.each(newAxes, function(item) {
+                        if (item.id === axis.linkedTo) {
+                            axis = Ext.merge({}, item, axis);
+                            return false;
+                        }
+                    });
+                }
+                axis.id = id;
+                if (me.getInherited().rtl) {
+                    axis.position = positions[axis.position] || axis.position;
+                }
+                id = axis.getId && axis.getId() || axis.id;
+                axis = Ext.factory(axis, null, oldAxis = oldMap[id], 'axis');
             }
-            axis.id = id;
-            if (this.getInherited().rtl) {
-                axis.position = positions[axis.position] || axis.position;
-            }
-            id = axis.getId && axis.getId() || axis.id;
-            axis = Ext.factory(axis, null, oldAxis = oldMap[id], 'axis');
             if (axis) {
-                axis.setChart(this);
+                axis.setChart(me);
                 result.push(axis);
                 result.map[axis.getId()] = axis;
                 if (!oldAxis) {
-                    axis.on('animationstart', 'onAnimationStart', this);
-                    axis.on('animationend', 'onAnimationEnd', this);
+                    axis.on('animationstart', 'onAnimationStart', me);
+                    axis.on('animationend', 'onAnimationEnd', me);
                 }
             }
         }
@@ -18627,7 +19047,7 @@ Ext.define('Ext.chart.AbstractChart', {
                 oldMap[i].destroy();
             }
         }
-        this.resizing--;
+        me.resizing--;
         return result;
     },
     updateAxes: function(newAxes) {
@@ -18710,37 +19130,49 @@ Ext.define('Ext.chart.AbstractChart', {
     updateTheme: function(theme) {
         var me = this,
             axes = me.getAxes(),
-            series = me.getSeries(),
+            seriesList = me.getSeries(),
             colors = me.getColors(),
-            seriesItem, seriesTheme,
-            colorIndex = 0,
-            markerIndex = 0,
-            markerCount, colorCount, i;
+            series, i;
+        //seriesStyle,
+        //colorIndex = 0,
+        //markerIndex = 0,
+        //markerCount,
+        //colorCount,
         me.updateChartTheme(theme);
         for (i = 0; i < axes.length; i++) {
             axes[i].updateTheme(theme);
         }
-        for (i = 0; i < series.length; i++) {
-            series[i].updateTheme(theme);
-            seriesItem = series[i];
-            seriesTheme = {};
-            if (theme.getSeriesThemes) {
-                colorCount = seriesItem.themeColorCount();
-                seriesTheme.subStyle = me.circularCopyObject(theme.getSeriesThemes(), colorIndex, colorCount);
-                colorIndex += colorCount;
-            } else {
-                seriesTheme.subStyle = {};
-            }
-            if (theme.getMarkerThemes) {
-                markerCount = seriesItem.themeMarkerCount();
-                seriesTheme.markerSubStyle = me.circularCopyObject(theme.getMarkerThemes(), markerIndex, markerCount);
-                markerIndex += markerCount;
-            } else {
-                seriesTheme.markerSubStyle = {};
-            }
+        for (i = 0; i < seriesList.length; i++) {
+            series = seriesList[i];
+            // TODO: This may look like it belongs to the theme, but there we don't know what
+            // TODO: series the chart will be using and thus the color count is unknown.
+            // TODO: It could also be moved to the series.updateTheme method, if not for the
+            // TODO: circular copying that starts from the previous index.
+            // TODO: Finally, keeping it here is not really an option either, since theme
+            // TODO: is a singleton, so we shouldn't modify it before passing it
+            // TODO: to the series.updateTheme.
+            // seriesStyle = {};
+            //
+            //if (theme.getSeriesThemes) {
+            //    colorCount = series.themeColorCount();
+            //    seriesStyle.subStyle = me.circularCopyObject(theme.getSeriesThemes(), colorIndex, colorCount);
+            //    colorIndex += colorCount;
+            //} else {
+            //    seriesStyle.subStyle = {};
+            //}
+            //
+            //if (theme.getMarkerThemes) {
+            //    markerCount = series.themeMarkerCount();
+            //    seriesStyle.markerSubStyle = me.circularCopyObject(theme.getMarkerThemes(), markerIndex, markerCount);
+            //    markerIndex += markerCount;
+            //} else {
+            //    seriesStyle.markerSubStyle = {};
+            //}
+            series.updateTheme(theme);
         }
         me.updateSpriteTheme(theme);
         me.updateColors(colors);
+        me.redraw();
     },
     themeOnlyIfConfigured: {},
     updateChartTheme: function(theme) {
@@ -18799,13 +19231,63 @@ Ext.define('Ext.chart.AbstractChart', {
             }
         }
     },
+    /**
+     * Adds a {@link Ext.chart.series.Series Series} to this chart.
+     *
+     * The Series (or array) passed will be added to the existing series. If an `id` is specified
+     * in a new Series, any existing Series of that `id` will be updated.
+     *
+     * The chart will be redrawn in response to the change.
+     *
+     * @param {Object/Object[]/Ext.chart.series.Series/Ext.chart.series.Series[]} newSeries A config object
+     * describing the Series to add, or an instantiated Series object. Or an array of these.
+     */
+    addSeries: function(newSeries) {
+        var series = this.getSeries();
+        Ext.Array.push(series, newSeries);
+        this.setSeries(series);
+    },
+    /**
+     * Remove a {@link Ext.chart.series.Series Series} from this chart.
+     * The Series (or array) passed will be removed from the existing series.
+     *
+     * The chart will be redrawn in response to the change.
+     *
+     * @param {Ext.chart.series.Series/String} series The Series or the `id` of the Series to remove. May be an array.
+     */
+    removeSeries: function(series) {
+        series = Ext.Array.from(series);
+        var existingSeries = this.getSeries(),
+            newSeries = [],
+            len = series.length,
+            removeMap = {},
+            i, s;
+        // Build a map of the Series IDs that are to be removed
+        for (i = 0; i < len; i++) {
+            s = series[i];
+            // If they passed a Series Object
+            if (typeof s !== 'string') {
+                s = s.getId();
+            }
+            removeMap[s] = true;
+        }
+        // Build a new Series array that excludes those Series scheduled for removal
+        for (i = 0 , len = existingSeries.length; i < len; i++) {
+            if (!removeMap[existingSeries[i].getId()]) {
+                newSeries.push(existingSeries[i]);
+            }
+        }
+        this.setSeries(newSeries);
+    },
     applySeries: function(newSeries, oldSeries) {
         var me = this,
             result = [],
             oldMap, oldSeriesItem, i, ln, series;
         me.resizing++;
         me.getAxes();
-        if (!oldSeries) {
+        if (oldSeries) {
+            oldMap = oldSeries.map;
+        } else {
             oldSeries = [];
             oldMap = oldSeries.map = {};
         }
@@ -18817,30 +19299,31 @@ Ext.define('Ext.chart.AbstractChart', {
                 
                 continue;
             }
-            oldSeriesItem = oldSeries.map[series.getId && series.getId() || series.id];
+            oldSeriesItem = oldMap[series.getId && series.getId() || series.id];
+            // New Series instance passed in
             if (series instanceof Ext.chart.series.Series) {
-                if (oldSeriesItem !== series) {
-                    // Replacing
-                    if (oldSeriesItem) {
-                        oldSeriesItem.destroy();
-                    }
+                // Replacing
+                if (oldSeriesItem && oldSeriesItem !== series) {
+                    oldSeriesItem.destroy();
                 }
                 series.setChart(me);
-            } else if (Ext.isObject(series)) {
+            }
+            // Series config object passed in
+            else if (Ext.isObject(series)) {
+                // Config object matched an existing Series item by id;
+                // update its configuration
                 if (oldSeriesItem) {
-                    // Update
                     oldSeriesItem.setConfig(series);
                     series = oldSeriesItem;
-                } else {
-                    // Create a series.
+                } else // Create a new Series
+                {
                     if (Ext.isString(series)) {
-                        series = Ext.create(series.xclass || ('series.' + series), {
-                            chart: me
-                        });
-                    } else {
-                        series.chart = me;
-                        series = Ext.create(series.xclass || ('series.' + series.type), series);
+                        series = {
+                            type: series
+                        };
                     }
+                    series.chart = me;
+                    series = Ext.create(series.xclass || ('series.' + series.type), series);
                     series.on('animationstart', 'onAnimationStart', me);
                     series.on('animationend', 'onAnimationEnd', me);
                 }
@@ -19135,13 +19618,22 @@ Ext.define('Ext.chart.AbstractChart', {
     // @private remove gently.
     destroy: function() {
         var me = this,
-            emptyArray = [],
-            legend = me.getLegend();
+            legend = me.getLegend(),
+            axes = me.getAxes(),
+            series = me.getSeries(),
+            interactions = me.getInteractions(),
+            i, ln;
         me.surfaceMap = null;
         me.setHighlightItem(null);
-        me.setSeries(emptyArray);
-        me.setAxes(emptyArray);
-        me.setInteractions(emptyArray);
+        for (i = 0 , ln = interactions.length; i < ln; i++) {
+            interactions[i].destroy();
+        }
+        for (i = 0 , ln = axes.length; i < ln; i++) {
+            axes[i].destroy();
+        }
+        for (i = 0 , ln = series.length; i < ln; i++) {
+            series[i].destroy();
+        }
         if (legend) {
             legend.destroy();
             me.setLegend(null);
@@ -19149,7 +19641,7 @@ Ext.define('Ext.chart.AbstractChart', {
         me.legendStore = null;
         me.setStore(null);
         me.cancelLayout();
-        this.callParent(arguments);
+        me.callParent(arguments);
     },
     /* ---------------------------------
      Methods needed for ComponentQuery
@@ -19195,7 +19687,10 @@ Ext.define('Ext.chart.overrides.AbstractChart', {
     override: 'Ext.chart.AbstractChart',
     updateLegend: function(legend, oldLegend) {
         var dock;
-        this.callParent(arguments);
+        this.callParent([
+            legend,
+            oldLegend
+        ]);
         if (legend) {
             dock = legend.docked;
             this.addDocked({
@@ -19211,6 +19706,22 @@ Ext.define('Ext.chart.overrides.AbstractChart', {
                 cls: Ext.baseCSSPrefix + 'legend-panel'
             });
         }
+    },
+    performLayout: function() {
+        if (this.isVisible(true)) {
+            return this.callParent();
+        }
+        this.cancelLayout();
+        return false;
+    },
+    afterComponentLayout: function(width, height, oldWidth, oldHeight) {
+        this.callParent([
+            width,
+            height,
+            oldWidth,
+            oldHeight
+        ]);
+        this.scheduleLayout();
     }
 });
 
@@ -19412,7 +19923,10 @@ Ext.define('Ext.chart.CartesianChart', {
      */
     performLayout: function() {
         this.resizing++;
-        this.callParent();
+        if (this.callParent() === false) {
+            // Resizing will still be decremented
+            return;
+        }
         this.suspendThicknessChanged();
         var me = this,
             chartRect = me.getSurface('chart').getRect(),
@@ -19834,11 +20348,7 @@ Ext.define('Ext.chart.PolarChart', {
         innerPadding: 0
     },
     getDirectionForAxis: function(position) {
-        if (position === 'radial') {
-            return 'Y';
-        } else {
-            return 'X';
-        }
+        return position === 'radial' ? 'Y' : 'X';
     },
     applyCenter: function(center, oldCenter) {
         if (oldCenter && center[0] === oldCenter[0] && center[1] === oldCenter[1]) {
@@ -19852,9 +20362,8 @@ Ext.define('Ext.chart.PolarChart', {
     updateCenter: function(center) {
         var me = this,
             axes = me.getAxes(),
-            axis,
             series = me.getSeries(),
-            seriesItem, i, ln;
+            i, ln, axis, seriesItem;
         for (i = 0 , ln = axes.length; i < ln; i++) {
             axis = axes[i];
             axis.setCenter(center);
@@ -19903,7 +20412,10 @@ Ext.define('Ext.chart.PolarChart', {
     performLayout: function() {
         try {
             this.resizing++;
-            this.callParent();
+            if (this.callParent() === false) {
+                // Resizing will still be decremented
+                return;
+            }
             this.suspendThicknessChanged();
             var me = this,
                 chartRect = me.getSurface('chart').getRect(),
@@ -19975,7 +20487,7 @@ Ext.define('Ext.chart.PolarChart', {
             }
             for (i = 0 , ln = radialAxes.length; i < ln; i++) {
                 axis = radialAxes[i];
-                me.doSetSurfaceRect(axis.getSurface(), mainRect);
+                me.doSetSurfaceRect(axis.getSurface(), chartRect);
                 axis.setMinimum(0);
                 axis.setLength(seriesRadius);
                 axis.getSprites();
@@ -20093,7 +20605,10 @@ Ext.define('Ext.chart.SpaceFillingChart', {
     performLayout: function() {
         try {
             this.resizing++;
-            this.callParent();
+            if (this.callParent() === false) {
+                // Resizing will still be decremented
+                return;
+            }
             var me = this,
                 chartRect = me.getSurface('chart').getRect(),
                 padding = me.getInsetPadding(),
@@ -20246,42 +20761,58 @@ Ext.define('Ext.chart.axis.Axis3D', {
  * As with other axis you can set the position of the axis and its title. For example:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             innerPadding: '0 40 0 40',
- *             store: {
- *                 fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *                 data: [
- *                     {'name': 'metric one', 'data1': 10, 'data2': 12, 'data3': 14, 'data4': 8, 'data5': 13},
- *                     {'name': 'metric two', 'data1': 7, 'data2': 8, 'data3': 16, 'data4': 10, 'data5': 3},
- *                     {'name': 'metric three', 'data1': 5, 'data2': 2, 'data3': 14, 'data4': 12, 'data5': 7},
- *                     {'name': 'metric four', 'data1': 2, 'data2': 14, 'data3': 6, 'data4': 1, 'data5': 23},
- *                     {'name': 'metric five', 'data1': 27, 'data2': 38, 'data3': 36, 'data4': 13, 'data5': 33}
- *                 ]
- *             },
- *             axes: {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             },
- *             series: {
- *                 type: 'area',
- *                 subStyle: {
- *                     fill: ['blue', 'green', 'red']
- *                 },
- *                 xField: 'name',
- *                 yField: ['data1', 'data2', 'data3']
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        innerPadding: '0 40 0 40',
+ *        store: {
+ *            fields: ['name', 'data1', 'data2', 'data3'],
+ *            data: [{
+ *                'name': 'metric one',
+ *                'data1': 10,
+ *                'data2': 12,
+ *                'data3': 14
+ *            }, {
+ *                'name': 'metric two',
+ *                'data1': 7,
+ *                'data2': 8,
+ *                'data3': 16
+ *            }, {
+ *                'name': 'metric three',
+ *                'data1': 5,
+ *                'data2': 2,
+ *                'data3': 14
+ *            }, {
+ *                'name': 'metric four',
+ *                'data1': 2,
+ *                'data2': 14,
+ *                'data3': 6
+ *            }, {
+ *                'name': 'metric five',
+ *                'data1': 27,
+ *                'data2': 38,
+ *                'data3': 36
+ *            }]
+ *        },
+ *        axes: {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            fields: ['name'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            }
+ *        },
+ *        series: {
+ *            type: 'area',
+ *            subStyle: {
+ *                fill: ['#0A3F50', '#30BDA7', '#96D4C6']
+ *            },
+ *            xField: 'name',
+ *            yField: ['data1', 'data2', 'data3']
+ *        }
  *     });
  *
  * In this example with set the category axis to the bottom of the surface, bound the axis to
@@ -20301,6 +20832,9 @@ Ext.define('Ext.chart.axis.Category', {
     }
 });
 
+/**
+ * Category 3D Axis
+ */
 Ext.define('Ext.chart.axis.Category3D', {
     requires: [
         'Ext.chart.axis.layout.CombineDuplicate',
@@ -20325,47 +20859,63 @@ Ext.define('Ext.chart.axis.Category3D', {
  * scale will auto-adjust to the values.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name': 1, 'data1': 10, 'data2': 12, 'data3': 14, 'data4': 8, 'data5': 13},
- *                   {'name': 2, 'data1': 7, 'data2': 8, 'data3': 16, 'data4': 10, 'data5': 3},
- *                   {'name': 3, 'data1': 5, 'data2': 2, 'data3': 14, 'data4': 12, 'data5': 7},
- *                   {'name': 4, 'data1': 2, 'data2': 14, 'data3': 6, 'data4': 1, 'data5': 23},
- *                   {'name': 5, 'data1': 27, 'data2': 38, 'data3': 36, 'data4': 13, 'data5': 33}
- *               ]
- *             },
- *             axes: {
- *                 type: 'numeric',
- *                 position: 'left',
- *                 minimum: 0,
- *                 fields: ['data1', 'data2', 'data3', 'data4', 'data5'],
- *                 title: 'Sample Values',
- *                 grid: {
- *                     odd: {
- *                         opacity: 1,
- *                         fill: '#ddd',
- *                         stroke: '#bbb',
- *                         'lineWidth': 1
- *                     }
- *                 }
- *             },
- *             series: {
- *                 type: 'area',
- *                 subStyle: {
- *                     fill: ['blue', 'green', 'red']
- *                 },
- *                 xField: 'name',
- *                 yField: ['data1', 'data2', 'data3']
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['name', 'data1', 'data2', 'data3'],
+ *            data: [{
+ *                'name': 1,
+ *                'data1': 10,
+ *                'data2': 12,
+ *                'data3': 14
+ *            }, {
+ *                'name': 2,
+ *                'data1': 7,
+ *                'data2': 8,
+ *                'data3': 16
+ *            }, {
+ *                'name': 3,
+ *                'data1': 5,
+ *                'data2': 2,
+ *                'data3': 14
+ *            }, {
+ *                'name': 4,
+ *                'data1': 2,
+ *                'data2': 14,
+ *                'data3': 6
+ *            }, {
+ *                'name': 5,
+ *                'data1': 27,
+ *                'data2': 38,
+ *                'data3': 36
+ *            }]
+ *        },
+ *        axes: {
+ *            type: 'numeric',
+ *            position: 'left',
+ *            minimum: 0,
+ *            fields: ['data1', 'data2', 'data3'],
+ *            title: 'Sample Values',
+ *            grid: {
+ *                odd: {
+ *                    opacity: 1,
+ *                    fill: '#F2F2F2',
+ *                    stroke: '#DDD',
+ *                    'lineWidth': 1
+ *                }
+ *            }
+ *        },
+ *        series: {
+ *            type: 'area',
+ *            subStyle: {
+ *                fill: ['#0A3F50', '#30BDA7', '#96D4C6']
+ *            },
+ *            xField: 'name',
+ *            yField: ['data1', 'data2', 'data3']
+ *        }
  *     });
  *
  * In this example we create an axis of Numeric type. We set a minimum value so that
@@ -20396,6 +20946,9 @@ Ext.define('Ext.chart.axis.Numeric', {
     }
 });
 
+/**
+ * @class Ext.chart.axis.Numeric3D
+ */
 Ext.define('Ext.chart.axis.Numeric3D', {
     extend: 'Ext.chart.axis.Axis3D',
     alias: [
@@ -20423,67 +20976,85 @@ Ext.define('Ext.chart.axis.Numeric3D', {
  * Category class for axis instead.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *                 fields: ['time', 'open', 'high', 'low', 'close'],
- *                 data: [
- *                     {'time': new Date('Jan 1 2010').getTime(), 'open': 600, 'high': 614, 'low': 578, 'close': 590},
- *                     {'time': new Date('Jan 2 2010').getTime(), 'open': 590, 'high': 609, 'low': 580, 'close': 580},
- *                     {'time': new Date('Jan 3 2010').getTime(), 'open': 580, 'high': 602, 'low': 578, 'close': 602},
- *                     {'time': new Date('Jan 4 2010').getTime(), 'open': 602, 'high': 614, 'low': 586, 'close': 586}
- *                 ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['open', 'high', 'low', 'close'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 560,
- *                 maximum: 640
- *             }, {
- *                 type: 'time',
- *                 position: 'bottom',
- *                 fields: ['time'],
- *                 fromDate: new Date('Dec 31 2009'),
- *                 toDate: new Date('Jan 5 2010'),
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 style: {
- *                     axisLine: false
- *                 }
- *             }],
- *             series: {
- *                 type: 'candlestick',
- *                 xField: 'time',
- *                 openField: 'open',
- *                 highField: 'high',
- *                 lowField: 'low',
- *                 closeField: 'close',
- *                 style: {
- *                 ohlcType: 'ohlc',
- *                     dropStyle: {
- *                         fill: 'rgb(237, 123, 43)',
- *                         stroke: 'rgb(237, 123, 43)'
- *                     },
- *                     raiseStyle: {
- *                         fill: 'rgb(55, 153, 19)',
- *                         stroke: 'rgb(55, 153, 19)'
- *                     }
- *                 }
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['time', 'open', 'high', 'low', 'close'],
+ *            data: [{
+ *                'time': new Date('Jan 1 2010').getTime(),
+ *                'open': 600,
+ *                'high': 614,
+ *                'low': 578,
+ *                'close': 590
+ *            }, {
+ *                'time': new Date('Jan 2 2010').getTime(),
+ *                'open': 590,
+ *                'high': 609,
+ *                'low': 580,
+ *                'close': 580
+ *            }, {
+ *                'time': new Date('Jan 3 2010').getTime(),
+ *                'open': 580,
+ *                'high': 602,
+ *                'low': 578,
+ *                'close': 602
+ *            }, {
+ *                'time': new Date('Jan 4 2010').getTime(),
+ *                'open': 602,
+ *                'high': 614,
+ *                'low': 586,
+ *                'close': 586
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['open', 'high', 'low', 'close'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            grid: true,
+ *            minimum: 560,
+ *            maximum: 640
+ *        }, {
+ *            type: 'time',
+ *            position: 'bottom',
+ *            fields: ['time'],
+ *            fromDate: new Date('Dec 31 2009'),
+ *            toDate: new Date('Jan 5 2010'),
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            style: {
+ *                axisLine: false
+ *            }
+ *        }],
+ *        series: {
+ *            type: 'candlestick',
+ *            xField: 'time',
+ *            openField: 'open',
+ *            highField: 'high',
+ *            lowField: 'low',
+ *            closeField: 'close',
+ *            style: {
+ *                ohlcType: 'ohlc',
+ *                dropStyle: {
+ *                    fill: 'rgb(255, 128, 128)',
+ *                    stroke: 'rgb(255, 128, 128)',
+ *                    lineWidth: 3
+ *                },
+ *                raiseStyle: {
+ *                    fill: 'rgb(48, 189, 167)',
+ *                    stroke: 'rgb(48, 189, 167)',
+ *                    lineWidth: 3
+ *                }
+ *            }
+ *        }
  *     });
  */
 Ext.define('Ext.chart.axis.Time', {
@@ -20549,6 +21120,9 @@ Ext.define('Ext.chart.axis.Time', {
     }
 });
 
+/**
+ * @class Ext.chart.axis.Time3D
+ */
 Ext.define('Ext.chart.axis.Time3D', {
     extend: 'Ext.chart.axis.Numeric3D',
     alias: 'axis.time3d',
@@ -20869,76 +21443,103 @@ Ext.define('Ext.chart.grid.VerticalGrid3D', {
  * The CrossZoom interaction allows the user to zoom in on a selected area of the chart.
  *
  *     @example
- *     Ext.create('Ext.Container', {
+ *     Ext.create({
+ *         xtype: 'cartesian',
  *         renderTo: Ext.getBody(),
  *         width: 600,
  *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             interactions: 'crosszoom',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 0
+ *         insetPadding: 40,
+ *         interactions: 'crosszoom',
+ *         store: {
+ *             fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
+ *             data: [{
+ *                 'name': 'metric one',
+ *                 'data1': 10,
+ *                 'data2': 12,
+ *                 'data3': 14,
+ *                 'data4': 8,
+ *                 'data5': 13
  *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             }],
- *             series: [{
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 style: {
- *                     stroke: 'rgb(143,203,203)'
- *                 },
- *                 xField: 'name',
- *                 yField: 'data1',
- *                 marker: {
- *                     type: 'path',
- *                     path: ['M', -2, 0, 0, 2, 2, 0, 0, -2, 'Z'],
- *                     stroke: 'blue',
- *                     lineWidth: 0
- *                 }
+ *                 'name': 'metric two',
+ *                 'data1': 7,
+ *                 'data2': 8,
+ *                 'data3': 16,
+ *                 'data4': 10,
+ *                 'data5': 3
  *             }, {
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 fill: true,
- *                 xField: 'name',
- *                 yField: 'data3',
- *                 marker: {
- *                     type: 'circle',
- *                     radius: 4,
- *                     lineWidth: 0
- *                 }
+ *                 'name': 'metric three',
+ *                 'data1': 5,
+ *                 'data2': 2,
+ *                 'data3': 14,
+ *                 'data4': 12,
+ *                 'data5': 7
+ *             }, {
+ *                 'name': 'metric four',
+ *                 'data1': 2,
+ *                 'data2': 14,
+ *                 'data3': 6,
+ *                 'data4': 1,
+ *                 'data5': 23
+ *             }, {
+ *                 'name': 'metric five',
+ *                 'data1': 27,
+ *                 'data2': 38,
+ *                 'data3': 36,
+ *                 'data4': 13,
+ *                 'data5': 33
  *             }]
- *         }
+ *         },
+ *         axes: [{
+ *             type: 'numeric',
+ *             position: 'left',
+ *             fields: ['data1'],
+ *             title: {
+ *                 text: 'Sample Values',
+ *                 fontSize: 15
+ *             },
+ *             grid: true,
+ *             minimum: 0
+ *         }, {
+ *             type: 'category',
+ *             position: 'bottom',
+ *             fields: ['name'],
+ *             title: {
+ *                 text: 'Sample Values',
+ *                 fontSize: 15
+ *             }
+ *         }],
+ *         series: [{
+ *             type: 'line',
+ *             highlight: {
+ *                 size: 7,
+ *                 radius: 7
+ *             },
+ *             style: {
+ *                 stroke: 'rgb(143,203,203)'
+ *             },
+ *             xField: 'name',
+ *             yField: 'data1',
+ *             marker: {
+ *                 type: 'path',
+ *                 path: ['M', - 2, 0, 0, 2, 2, 0, 0, - 2, 'Z'],
+ *                 stroke: 'blue',
+ *                 lineWidth: 0
+ *             }
+ *         }, {
+ *             type: 'line',
+ *             highlight: {
+ *                 size: 7,
+ *                 radius: 7
+ *             },
+ *             fill: true,
+ *             xField: 'name',
+ *             yField: 'data3',
+ *             marker: {
+ *                 type: 'circle',
+ *                 radius: 4,
+ *                 lineWidth: 0
+ *             }
+ *         }]
  *     });
  */
 Ext.define('Ext.chart.interactions.CrossZoom', {
@@ -20985,7 +21586,9 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
          * default axis options.
          */
         axes: true,
-        //@inheritdoc
+        /**
+         * @inheritdoc
+         */
         gestures: {
             dragstart: 'onGestureStart',
             drag: 'onGesture',
@@ -21029,10 +21632,10 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
     },
     applyUndoButton: function(button, oldButton) {
         var me = this;
+        if (oldButton) {
+            oldButton.destroy();
+        }
         if (button) {
-            if (oldButton) {
-                oldButton.destroy();
-            }
             return Ext.create('Ext.Button', Ext.apply({
                 cls: [],
                 text: 'Undo Zoom',
@@ -21041,8 +21644,6 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
                     me.undoZoom();
                 }
             }, button));
-        } else if (oldButton) {
-            oldButton.destroy();
         }
     },
     getSurface: function() {
@@ -21263,6 +21864,10 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
     },
     onDoubleTap: function(e) {
         this.undoZoom();
+    },
+    destroy: function() {
+        this.setUndoButton(null);
+        this.callParent(arguments);
     }
 });
 
@@ -21717,7 +22322,9 @@ Ext.define('Ext.chart.interactions.ItemHighlight', {
     type: 'itemhighlight',
     alias: 'interaction.itemhighlight',
     config: {
-        //@inheritdoc
+        /**
+         * @inheritdoc
+         */
         gestures: {
             tap: 'onHighlightGesture',
             mousemove: 'onMouseMoveGesture',
@@ -21799,81 +22406,108 @@ Ext.define('Ext.chart.interactions.ItemHighlight', {
  * {@link #modeToggleButton} provides a button to indicate and toggle between two modes.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
+ *     Ext.create({
+ *         renderTo: document.body,
+ *         xtype: 'cartesian',
  *         width: 600,
  *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             interactions: [{
- *                 type: 'panzoom',
- *                 zoomOnPanGesture: true
- *             }],
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 0
+ *         insetPadding: 40,            
+ *         interactions: [{
+ *             type: 'panzoom',
+ *             zoomOnPanGesture: true
+ *         }],
+ *         store: {
+ *             fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
+ *             data: [{
+ *                 'name': 'metric one',
+ *                 'data1': 10,
+ *                 'data2': 12,
+ *                 'data3': 14,
+ *                 'data4': 8,
+ *                 'data5': 13
  *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             }],
- *             series: [{
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 style: {
- *                     stroke: 'rgb(143,203,203)'
- *                 },
- *                 xField: 'name',
- *                 yField: 'data1',
- *                 marker: {
- *                     type: 'path',
- *                     path: ['M', -2, 0, 0, 2, 2, 0, 0, -2, 'Z'],
- *                     stroke: 'blue',
- *                     lineWidth: 0
- *                 }
+ *                 'name': 'metric two',
+ *                 'data1': 7,
+ *                 'data2': 8,
+ *                 'data3': 16,
+ *                 'data4': 10,
+ *                 'data5': 3
  *             }, {
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 fill: true,
- *                 xField: 'name',
- *                 yField: 'data3',
- *                 marker: {
- *                     type: 'circle',
- *                     radius: 4,
- *                     lineWidth: 0
- *                 }
+ *                 'name': 'metric three',
+ *                 'data1': 5,
+ *                 'data2': 2,
+ *                 'data3': 14,
+ *                 'data4': 12,
+ *                 'data5': 7
+ *             }, {
+ *                 'name': 'metric four',
+ *                 'data1': 2,
+ *                 'data2': 14,
+ *                 'data3': 6,
+ *                 'data4': 1,
+ *                 'data5': 23
+ *             }, {
+ *                 'name': 'metric five',
+ *                 'data1': 27,
+ *                 'data2': 38,
+ *                 'data3': 36,
+ *                 'data4': 13,
+ *                 'data5': 33
  *             }]
- *         }
+ *         },
+ *         axes: [{
+ *             type: 'numeric',
+ *             position: 'left',
+ *             fields: ['data1'],
+ *             title: {
+ *                 text: 'Sample Values',
+ *                 fontSize: 15
+ *             },
+ *             grid: true,
+ *             minimum: 0
+ *         }, {
+ *             type: 'category',
+ *             position: 'bottom',
+ *             fields: ['name'],
+ *             title: {
+ *                 text: 'Sample Values',
+ *                 fontSize: 15
+ *             }
+ *         }],
+ *         series: [{
+ *             type: 'line',
+ *             highlight: {
+ *                 size: 7,
+ *                 radius: 7
+ *             },
+ *             style: {
+ *                 stroke: 'rgb(143,203,203)'
+ *             },
+ *             xField: 'name',
+ *             yField: 'data1',
+ *             marker: {
+ *                 type: 'path',
+ *                 path: ['M', - 2, 0, 0, 2, 2, 0, 0, - 2, 'Z'],
+ *                 stroke: 'blue',
+ *                 lineWidth: 0
+ *             }
+ *         }, {
+ *             type: 'line',
+ *             highlight: {
+ *                 size: 7,
+ *                 radius: 7
+ *             },
+ *             fill: true,
+ *             xField: 'name',
+ *             yField: 'data3',
+ *             marker: {
+ *                 type: 'circle',
+ *                 radius: 4,
+ *                 lineWidth: 0
+ *             }
+ *         }]
  *     });
- *
+ * 
  * The configuration object for the `panzoom` interaction type should specify which axes
  * will be made navigable via the `axes` config. See the {@link #axes} config documentation
  * for details on the allowed formats. If the `axes` config is not specified, it will default
@@ -22016,6 +22650,9 @@ Ext.define('Ext.chart.interactions.PanZoom', {
     applyModeToggleButton: function(button, oldButton) {
         var me = this,
             result = Ext.factory(button, 'Ext.button.Segmented', oldButton);
+        if (!result && oldButton) {
+            oldButton.destroy();
+        }
         if (result && !oldButton) {
             result.addListener('toggle', function(segmentedButton) {
                 me.setZoomOnPanGesture(segmentedButton.getValue() === 1);
@@ -22368,7 +23005,9 @@ Ext.define('Ext.chart.interactions.Rotate', {
          * @private
          */
         gesture: 'rotate',
-        //@inheritdoc
+        /**
+         * @inheritdoc
+         */
         gestures: {
             rotate: 'onRotate',
             rotateend: 'onRotate',
@@ -22610,13 +23249,13 @@ Ext.define('Ext.chart.plugin.ItemEvents', {
         chartXY = chart.getEventXY(e);
         item = chart.getItemForPoint(chartXY[0], chartXY[1]);
         if (isMouseMoveEvent && !Ext.Object.equals(item, lastItem)) {
-            if (item) {
-                chart.fireEvent('itemmouseover', chart, item, e);
-                item.series.fireEvent('itemmouseover', item.series, item, e);
-            }
             if (lastItem) {
                 chart.fireEvent('itemmouseout', chart, lastItem, e);
                 lastItem.series.fireEvent('itemmouseout', lastItem.series, lastItem, e);
+            }
+            if (item) {
+                chart.fireEvent('itemmouseover', chart, item, e);
+                item.series.fireEvent('itemmouseover', item.series, item, e);
             }
         }
         if (item) {
@@ -22769,7 +23408,6 @@ Ext.define('Ext.chart.series.Cartesian', {
             sprite = sprites[0];
         }
         if (animation) {
-            me.getLabel().getTemplate().fx.setConfig(animation);
             if (itemInstancing) {
                 sprite.itemsMarker.getTemplate().fx.setConfig(animation);
             }
@@ -23088,10 +23726,12 @@ Ext.define('Ext.chart.series.StackedCartesian', {
         for (i = 0; i < sprites.length; i++) {
             style = me.getStyleByIndex(i);
             fill = style.fillStyle;
-            if (Ext.isArray(title)) {
-                name = title[i];
-            } else if (single) {
-                name = title;
+            if (title) {
+                if (Ext.isArray(title)) {
+                    name = title[i];
+                } else if (single) {
+                    name = title;
+                }
             } else if (Ext.isArray(field)) {
                 name = field[i];
             } else {
@@ -23180,7 +23820,7 @@ Ext.define('Ext.chart.series.sprite.Cartesian', {
                  */
                 selectionTolerance: 'number',
                 /**
-                 * @cfg {Boolean} If flipXY is 'true', the series is flipped.
+                 * @cfg {Boolean} flipXY If flipXY is 'true', the series is flipped.
                  */
                 flipXY: 'bool',
                 renderer: 'default',
@@ -23429,7 +24069,9 @@ Ext.define('Ext.chart.series.sprite.StackedCartesian', {
             }
         }
     },
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     getIndexNearPoint: function(x, y) {
         var sprite = this,
             mat = sprite.attr.matrix,
@@ -23595,40 +24237,60 @@ Ext.define('Ext.chart.series.sprite.Area', {
  * Creates an Area Chart.
  * 
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {name: 'metric one',   data1: 10, data2: 12, data3: 14, data4: 8,  data5: 13},
- *                   {name: 'metric two',   data1: 7,  data2: 8,  data3: 16, data4: 10, data5: 3 },
- *                   {name: 'metric three', data1: 5,  data2: 2,  data3: 14, data4: 12, data5: 7 },
- *                   {name: 'metric four',  data1: 2,  data2: 14, data3: 6,  data4: 1,  data5: 23},
- *                   {name: 'metric five',  data1: 27, data2: 38, data3: 36, data4: 13, data5: 33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 grid: true,
- *                 minimum: 0
- *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name']
- *             }],
- *             series: {
- *                 type: 'area',
- *                 xField: 'name',
- *                 yField: ['data1', 'data2', 'data3']
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        insetPadding: 40,
+ *        store: {
+ *            fields: ['name', 'data1', 'data2', 'data3'],
+ *            data: [{
+ *                name: 'metric one',
+ *                data1: 10,
+ *                data2: 12,
+ *                data3: 14
+ *            }, {
+ *                name: 'metric two',
+ *                data1: 7,
+ *                data2: 8,
+ *                data3: 16
+ *            }, {
+ *                name: 'metric three',
+ *                data1: 5,
+ *                data2: 2,
+ *                data3: 14
+ *            }, {
+ *                name: 'metric four',
+ *                data1: 2,
+ *                data2: 14,
+ *                data3: 6
+ *            }, {
+ *                name: 'metric five',
+ *                data1: 27,
+ *                data2: 38,
+ *                data3: 36
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['data1'],
+ *            grid: true,
+ *            minimum: 0
+ *        }, {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            fields: ['name']
+ *        }],
+ *        series: {
+ *            type: 'area',
+ *            subStyle: {
+ *                fill: ['#0A3F50', '#30BDA7', '#96D4C6']
+ *            },
+ *            xField: 'name',
+ *            yField: ['data1', 'data2', 'data3']
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.Area', {
@@ -23796,7 +24458,9 @@ Ext.define('Ext.chart.series.sprite.Bar', {
         }
         me.putMarker('items', itemCfg, index, !renderer);
     },
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     renderClipped: function(surface, ctx, clip, rect) {
         if (this.cleanRedraw) {
             return;
@@ -23847,7 +24511,9 @@ Ext.define('Ext.chart.series.sprite.Bar', {
             }, i, true);
         }
     },
-    //@inheritdoc
+    /**
+     * @inheritdoc
+     */
     getIndexNearPoint: function(x, y) {
         var sprite = this,
             attr = sprite.attr,
@@ -23895,46 +24561,56 @@ Ext.define('Ext.chart.series.sprite.Bar', {
  * {@link Ext.chart.CartesianChart#flipXY flipXY} config).
  * 
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *                 fields: ['name', 'value'],
- *                 data: [
- *                     {name: 'metric one', value: 10},
- *                     {name: 'metric two', value: 7},
- *                     {name: 'metric three', value: 5},
- *                     {name: 'metric four', value: 2},
- *                     {name: 'metric five', value: 27}
- *                 ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 fields: 'value'
- *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 fields: 'name'
- *             }],
- *             series: {
- *                 type: 'bar',
- *                 xField: 'name',
- *                 yField: 'value'
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['name', 'value'],
+ *            data: [{
+ *                name: 'metric one',
+ *                value: 10
+ *            }, {
+ *                name: 'metric two',
+ *                value: 7
+ *            }, {
+ *                name: 'metric three',
+ *                value: 5
+ *            }, {
+ *                name: 'metric four',
+ *                value: 2
+ *            }, {
+ *                name: 'metric five',
+ *                value: 27
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            fields: 'value'
+ *        }, {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            fields: 'name'
+ *        }],
+ *        series: {
+ *            type: 'bar',
+ *            subStyle: {
+ *                fill: ['#388FAD'],
+ *                stroke: '#1F6D91'
+ *            },
+ *            xField: 'name',
+ *            yField: 'value'
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.Bar', {
@@ -24029,10 +24705,22 @@ Ext.define('Ext.chart.series.sprite.Bar3D', {
     inheritableStatics: {
         def: {
             processors: {
-                depthWidthRatio: 'number'
+                depthWidthRatio: 'number',
+                /**
+                 * @cfg {Number} [saturationFactor=1]
+                 * The factor applied to the saturation of the bars.
+                 */
+                saturationFactor: 'number',
+                /**
+                 * @cfg {Number} [brightnessFactor=1]
+                 * The factor applied to the brightness of the bars.
+                 */
+                brightnessFactor: 'number'
             },
             defaults: {
                 depthWidthRatio: 1 / 3,
+                saturationFactor: 1,
+                brightnessFactor: 1,
                 transformFillStroke: true
             },
             triggers: {
@@ -24079,6 +24767,8 @@ Ext.define('Ext.chart.series.sprite.Bar3D', {
         itemCfg.height = bottom - top;
         itemCfg.depth = depth = itemCfg.width * attr.depthWidthRatio;
         itemCfg.orientation = attr.flipXY ? 'horizontal' : 'vertical';
+        itemCfg.saturationFactor = attr.saturationFactor;
+        itemCfg.brightnessFactor = attr.brightnessFactor;
         if (depth !== me.depth) {
             me.depth = depth;
             series = me.getSeries();
@@ -24345,56 +25035,70 @@ Ext.define('Ext.chart.series.sprite.Box', {
  * {@link Ext.chart.CartesianChart#flipXY flipXY} config).
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             innerPadding: '0 10 0 10',
- *             store: {
- *                 fields: ['name', 'apples', 'oranges'],
- *                 data: [
- *                      {name: 'Eric', apples: 10, oranges: 3},
- *                      {name: 'Mary', apples: 7,  oranges: 2},
- *                      {name: 'John', apples: 5,  oranges: 2},,
- *                      {name: 'Bob',  apples: 2,  oranges: 3},
- *                      {name: 'Joe',  apples: 19, oranges: 1},
- *                      {name: 'Macy', apples: 13, oranges: 4}
- *                 ]
- *             },
- *             axes: [{
- *                 type: 'numeric3d',
- *                 position: 'left',
- *                 fields: ['apples', 'oranges'],
- *                 title: {
- *                     text: 'Inventory',
- *                     fontSize: 15
- *                 },
- *                 grid: {
- *                     odd: {
- *                         fillStyle: 'rgba(255, 255, 255, 0.06)'
- *                     },
- *                     even: {
- *                         fillStyle: 'rgba(0, 0, 0, 0.03)'
- *                     }
- *                 }
- *             }, {
- *                 type: 'category3d',
- *                 position: 'bottom',
- *                 title: {
- *                     text: 'People',
- *                     fontSize: 15
- *                 },
- *                 fields: 'name'
- *             }],
- *             series: {
- *                 type: 'bar3d',
- *                 xField: 'name',
- *                 yField: ['apples', 'oranges']
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: Ext.getBody(),
+ *        width: 600,
+ *        height: 400,
+ *        innerPadding: '0 10 0 10',
+ *        store: {
+ *            fields: ['name', 'apples', 'oranges'],
+ *            data: [{
+ *                name: 'Eric',
+ *                apples: 10,
+ *                oranges: 3
+ *            }, {
+ *                name: 'Mary',
+ *                apples: 7,
+ *                oranges: 2
+ *            }, {
+ *                name: 'John',
+ *                apples: 5,
+ *                oranges: 2
+ *            }, {
+ *                name: 'Bob',
+ *                apples: 2,
+ *                oranges: 3
+ *            }, {
+ *                name: 'Joe',
+ *                apples: 19,
+ *                oranges: 1
+ *            }, {
+ *                name: 'Macy',
+ *                apples: 13,
+ *                oranges: 4
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric3d',
+ *            position: 'left',
+ *            fields: ['apples', 'oranges'],
+ *            title: {
+ *                text: 'Inventory',
+ *                fontSize: 15
+ *            },
+ *            grid: {
+ *                odd: {
+ *                    fillStyle: 'rgba(255, 255, 255, 0.06)'
+ *                },
+ *                even: {
+ *                    fillStyle: 'rgba(0, 0, 0, 0.03)'
+ *                }
+ *            }
+ *        }, {
+ *            type: 'category3d',
+ *            position: 'bottom',
+ *            title: {
+ *                text: 'People',
+ *                fontSize: 15
+ *            },
+ *            fields: 'name'
+ *        }],
+ *        series: {
+ *            type: 'bar3d',
+ *            xField: 'name',
+ *            yField: ['apples', 'oranges']
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.Bar3D', {
@@ -25316,67 +26020,91 @@ Ext.define('Ext.chart.series.sprite.CandleStick', {
  * Creates a candlestick or OHLC Chart.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *                 fields: ['time', 'open', 'high', 'low', 'close'],
- *                 data: [
- *                     {'time':new Date('Jan 1 2010').getTime(), 'open':600, 'high':614, 'low':578, 'close':590},
- *                     {'time':new Date('Jan 2 2010').getTime(), 'open':590, 'high':609, 'low':580, 'close':580},
- *                     {'time':new Date('Jan 3 2010').getTime(), 'open':580, 'high':602, 'low':578, 'close':602},
- *                     {'time':new Date('Jan 4 2010').getTime(), 'open':602, 'high':614, 'low':586, 'close':586},
- *                     {'time':new Date('Jan 5 2010').getTime(), 'open':586, 'high':602, 'low':565, 'close':565}
- *                 ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['open', 'high', 'low', 'close'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 560,
- *                 maximum: 640
- *             }, {
- *                 type: 'time',
- *                 position: 'bottom',
- *                 fields: ['time'],
- *                 fromDate: new Date('Dec 31 2009'),
- *                 toDate: new Date('Jan 6 2010'),
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 style: {
- *                     axisLine: false
- *                 }
- *             }],
- *             series: {
- *                 type: 'candlestick',
- *                 xField: 'time',
- *                 openField: 'open',
- *                 highField: 'high',
- *                 lowField: 'low',
- *                 closeField: 'close',
- *                 style: {
- *                     dropStyle: {
- *                         fill: 'rgb(237, 123, 43)',
- *                         stroke: 'rgb(237, 123, 43)'
- *                     },
- *                     raiseStyle: {
- *                         fill: 'rgb(55, 153, 19)',
- *                         stroke: 'rgb(55, 153, 19)'
- *                     }
- *                 }
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        insetPadding: 40,
+ *        store: {
+ *            fields: ['time', 'open', 'high', 'low', 'close'],
+ *            data: [{
+ *                'time': new Date('Jan 1 2010').getTime(),
+ *                'open': 600,
+ *                'high': 614,
+ *                'low': 578,
+ *                'close': 590
+ *            }, {
+ *                'time': new Date('Jan 2 2010').getTime(),
+ *                'open': 590,
+ *                'high': 609,
+ *                'low': 580,
+ *                'close': 580
+ *            }, {
+ *                'time': new Date('Jan 3 2010').getTime(),
+ *                'open': 580,
+ *                'high': 602,
+ *                'low': 578,
+ *                'close': 602
+ *            }, {
+ *                'time': new Date('Jan 4 2010').getTime(),
+ *                'open': 602,
+ *                'high': 614,
+ *                'low': 586,
+ *                'close': 586
+ *            }, {
+ *                'time': new Date('Jan 5 2010').getTime(),
+ *                'open': 586,
+ *                'high': 602,
+ *                'low': 565,
+ *                'close': 565
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['open', 'high', 'low', 'close'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            grid: true,
+ *            minimum: 560,
+ *            maximum: 640
+ *        }, {
+ *            type: 'time',
+ *            position: 'bottom',
+ *            fields: ['time'],
+ *            fromDate: new Date('Dec 31 2009'),
+ *            toDate: new Date('Jan 6 2010'),
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            style: {
+ *                axisLine: false
+ *            }
+ *        }],
+ *        series: {
+ *            type: 'candlestick',
+ *            xField: 'time',
+ *            openField: 'open',
+ *            highField: 'high',
+ *            lowField: 'low',
+ *            closeField: 'close',
+ *            style: {
+ *                dropStyle: {
+ *                    fill: 'rgb(222, 87, 87)',
+ *                    stroke: 'rgb(222, 87, 87)',
+ *                    lineWidth: 3
+ *                },
+ *                raiseStyle: {
+ *                    fill: 'rgb(48, 189, 167)',
+ *                    stroke: 'rgb(48, 189, 167)',
+ *                    lineWidth: 3
+ *                }
+ *            }
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.CandleStick', {
@@ -25563,21 +26291,27 @@ Ext.define('Ext.chart.series.Polar', {
  * Creates a Gauge Chart.
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'polar',
- *             series: {
- *                 type: 'gauge',
- *                 minimum: 100,
- *                 maximum: 800,
- *                 value: 400,
- *                 donut: 30
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'polar', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        store: {
+ *            fields: ['mph', 'fuel', 'temp', 'rpm'],
+ *            data: [{
+ *                mph: 65,
+ *                fuel: 50,
+ *                temp: 150,
+ *                rpm: 6000
+ *            }]
+ *        },
+ *        series: {
+ *            type: 'gauge',
+ *            colors: ['#1F6D91', '#90BCC9'],
+ *            field: 'mph',
+ *            needle: true,
+ *            donut: 30
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.Gauge', {
@@ -26518,75 +27252,88 @@ Ext.define('Ext.chart.series.sprite.Line', {
  * documentation for more information. A typical configuration object for the line series could be:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 0
- *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             }],
- *             series: [{
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 style: {
- *                     stroke: 'rgb(143,203,203)'
- *                 },
- *                 xField: 'name',
- *                 yField: 'data1',
- *                 marker: {
- *                     type: 'path',
- *                     path: ['M', -2, 0, 0, 2, 2, 0, 0, -2, 'Z'],
- *                     stroke: 'blue',
- *                     lineWidth: 0
- *                 }
- *             }, {
- *                 type: 'line',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 fill: true,
- *                 xField: 'name',
- *                 yField: 'data3',
- *                 marker: {
- *                     type: 'circle',
- *                     radius: 4,
- *                     lineWidth: 0
- *                 }
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        insetPadding: 40,
+ *        store: {
+ *            fields: ['name', 'data1', 'data2'],
+ *            data: [{
+ *                'name': 'metric one',
+ *                'data1': 10,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric two',
+ *                'data1': 7,
+ *                'data2': 16
+ *            }, {
+ *                'name': 'metric three',
+ *                'data1': 5,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric four',
+ *                'data1': 2,
+ *                'data2': 6
+ *            }, {
+ *                'name': 'metric five',
+ *                'data1': 27,
+ *                'data2': 36
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['data1'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            grid: true,
+ *            minimum: 0
+ *        }, {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            fields: ['name'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            }
+ *        }],
+ *        series: [{
+ *            type: 'line',
+ *            style: {
+ *                stroke: '#30BDA7',
+ *                lineWidth: 2
+ *            },
+ *            xField: 'name',
+ *            yField: 'data1',
+ *            marker: {
+ *                type: 'path',
+ *                path: ['M', - 4, 0, 0, 4, 4, 0, 0, - 4, 'Z'],
+ *                stroke: '#30BDA7',
+ *                lineWidth: 2,
+ *                fill: 'white'
+ *            }
+ *        }, {
+ *            type: 'line',
+ *            fill: true,
+ *            style: {
+ *                fill: '#96D4C6',
+ *                fillOpacity: .6,
+ *                stroke: '#0A3F50',
+ *                strokeOpacity: .6,
+ *            },
+ *            xField: 'name',
+ *            yField: 'data2',
+ *            marker: {
+ *                type: 'circle',
+ *                radius: 4,
+ *                lineWidth: 2,
+ *                fill: 'white'
+ *            }
+ *        }]
  *     });
  *
  * In this configuration we're adding two series (or lines), one bound to the `data1`
@@ -26989,34 +27736,41 @@ Ext.define('Ext.chart.series.sprite.PieSlice', {
  * documentation for more information. A typical configuration object for the pie series could be:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'polar',
- *             interactions: 'rotate',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {name: 'metric one',   data1: 10, data2: 12, data3: 14, data4: 8,  data5: 13},
- *                   {name: 'metric two',   data1: 7,  data2: 8,  data3: 16, data4: 10, data5: 3},
- *                   {name: 'metric three', data1: 5,  data2: 2,  data3: 14, data4: 12, data5: 7},
- *                   {name: 'metric four',  data1: 2,  data2: 14, data3: 6,  data4: 1,  data5: 23},
- *                   {name: 'metric five',  data1: 27, data2: 38, data3: 36, data4: 13, data5: 33}
- *               ]
- *             },
- *             series: {
- *                 type: 'pie',
- *                 label: {
- *                     field: 'name',
- *                     display: 'rotate'
- *                 },
- *                 xField: 'data3',
- *                 donut: 30
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'polar', 
+ *        renderTo: document.body,
+ *        width: 400,
+ *        height: 400,
+ *        theme: 'green',
+ *        interactions: 'rotate',
+ *        store: {
+ *            fields: ['name', 'data1'],
+ *            data: [{
+ *                name: 'metric one',
+ *                data1: 14
+ *            }, {
+ *                name: 'metric two',
+ *                data1: 16
+ *            }, {
+ *                name: 'metric three',
+ *                data1: 14
+ *            }, {
+ *                name: 'metric four',
+ *                data1: 6
+ *            }, {
+ *                name: 'metric five',
+ *                data1: 36
+ *            }]
+ *        },
+ *        series: {
+ *            type: 'pie',
+ *            label: {
+ *                field: 'name',
+ *                display: 'rotate'
+ *            },
+ *            xField: 'data1',
+ *            donut: 30
+ *        }
  *     });
  *
  * In this configuration we set `pie` as the type for the series, set an object with specific style properties for highlighting options
@@ -27078,7 +27832,7 @@ Ext.define('Ext.chart.series.Pie', {
          */
         radiusFactor: 100,
         /**
-         * @cfg {Object} Default highlight config for the pie series.
+         * @cfg {Object} highlightCfg Default highlight config for the pie series.
          * Slides highlighted pie sector outward.
          */
         highlightCfg: {
@@ -27139,14 +27893,14 @@ Ext.define('Ext.chart.series.Pie', {
     coordinateX: function() {
         var me = this,
             store = me.getStore(),
-            items = store.getData().items,
-            itemCount = items.length,
-            field = me.getXField(),
-            lengthField = me.getLengthField(),
-            value,
-            sum = 0,
-            length,
-            maxLength = 0,
+            records = store.getData().items,
+            recordCount = records.length,
+            xField = me.getXField(),
+            yField = me.getYField(),
+            x,
+            sumX = 0,
+            unit, y,
+            maxY = 0,
             hidden = me.getHidden(),
             summation = [],
             i,
@@ -27157,32 +27911,39 @@ Ext.define('Ext.chart.series.Pie', {
         if (!sprites) {
             return;
         }
-        for (i = 0; i < itemCount; i++) {
-            value = Math.abs(Number(items[i].get(field))) || 0;
-            length = lengthField && Math.abs(Number(items[i].get(lengthField))) || 0;
+        for (i = 0; i < recordCount; i++) {
+            x = Math.abs(Number(records[i].get(xField))) || 0;
+            y = yField && Math.abs(Number(records[i].get(yField))) || 0;
             if (!hidden[i]) {
-                sum += value;
-                if (length > maxLength) {
-                    maxLength = length;
+                sumX += x;
+                if (y > maxY) {
+                    maxY = y;
                 }
             }
-            summation[i] = sum;
+            summation[i] = sumX;
             if (i >= hidden.length) {
                 hidden[i] = false;
             }
         }
-        me.maxLength = maxLength;
-        if (sum !== 0) {
-            sum = totalAngle / sum;
+        hidden.length = recordCount;
+        me.maxY = maxY;
+        if (sumX !== 0) {
+            unit = totalAngle / sumX;
         }
-        for (i = 0; i < itemCount; i++) {
+        for (i = 0; i < recordCount; i++) {
             sprites[i].setAttributes({
                 startAngle: lastAngle,
-                endAngle: lastAngle = (sum ? clockwise * summation[i] * sum : 0),
+                endAngle: lastAngle = (unit ? clockwise * summation[i] * unit : 0),
                 globalAlpha: 1
             });
         }
-        for (; i < me.sprites.length; i++) {
+        if (recordCount < me.sprites.length) {
+            for (i = recordCount; i < me.sprites.length; i++) {
+                me.sprites[i].destroy();
+            }
+            me.sprites.length = recordCount;
+        }
+        for (i = recordCount; i < me.sprites.length; i++) {
             sprites[i].setAttributes({
                 startAngle: totalAngle,
                 endAngle: totalAngle,
@@ -27207,18 +27968,22 @@ Ext.define('Ext.chart.series.Pie', {
     },
     getStyleByIndex: function(i) {
         var me = this,
-            items = me.getStore().getData().items,
-            lengthField = me.getLengthField(),
+            store = me.getStore(),
+            item = store.getAt(i),
+            yField = me.getYField(),
             radius = me.getRadius(),
-            style, length, startRho, endRho;
-        length = lengthField && Math.abs(Number(items[i].get(lengthField))) || 0;
-        startRho = radius * me.getDonut() * 0.01;
-        endRho = radius * me.getRadiusFactor() * 0.01;
-        style = this.callParent([
-            i
-        ]);
-        style.startRho = startRho;
-        style.endRho = me.maxLength ? (startRho + (endRho - startRho) * length / me.maxLength) : endRho;
+            style = {},
+            startRho, endRho, y;
+        if (item) {
+            y = yField && Math.abs(Number(item.get(yField))) || 0;
+            startRho = radius * me.getDonut() * 0.01;
+            endRho = radius * me.getRadiusFactor() * 0.01;
+            style = me.callParent([
+                i
+            ]);
+            style.startRho = startRho;
+            style.endRho = me.maxY ? (startRho + (endRho - startRho) * y / me.maxY) : endRho;
+        }
         return style;
     },
     updateDonut: function(donut) {
@@ -27417,6 +28182,13 @@ Ext.define('Ext.chart.series.Pie', {
         }
     }
 });
+/*
+    Moved TODO comments to bottom:
+    TODO: `contrast` is not supported. Should be in the series.label config.
+    TODO: We set `contrast` to `true` to flip the color of the label if it is to similar 
+    to the background color. Finally, we set the font family
+    TODO: and size through the `font` parameter.    
+*/
 
 /**
  * @class Ext.chart.series.sprite.Pie3DPart
@@ -27495,7 +28267,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
                 endRho: 'path,bbox',
                 margin: 'path,bbox',
                 thickness: 'path',
-                baseRotation: 'path,partZIndex,partColor',
+                baseRotation: 'path,partZIndex',
                 baseColor: 'partZIndex,partColor',
                 part: 'path,partZIndex'
             },
@@ -27510,6 +28282,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
                 distortion: 1,
                 baseRotation: 0,
                 baseColor: 'white',
+                miterLimit: 1,
                 part: 'top'
             },
             updaters: {
@@ -27576,17 +28349,16 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
                     attr.fillStyle = fillStyle;
                     attr.canvasAttributes.fillStyle = fillStyle;
                 },
-                //console.groupCollapsed('partColor:', attr.part);
-                //console.trace();
-                //console.groupEnd();
                 partZIndex: function(attr) {
-                    var rotation = attr.baseRotation;
+                    var rotation = attr.baseRotation,
+                        midAngle = (attr.startAngle + attr.endAngle) * 0.5,
+                        depth = Math.sin(midAngle + rotation);
                     switch (attr.part) {
                         case 'top':
                             attr.zIndex = 5;
                             break;
                         case 'outer':
-                            attr.zIndex = 4;
+                            attr.zIndex = 4 + depth;
                             break;
                         case 'start':
                             attr.zIndex = 1 + Math.sin(attr.startAngle + rotation);
@@ -27595,7 +28367,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
                             attr.zIndex = 1 + Math.sin(attr.endAngle + rotation);
                             break;
                         case 'inner':
-                            attr.zIndex = 1;
+                            attr.zIndex = 1 + depth;
                             break;
                     }
                     attr.dirtyZIndex = true;
@@ -27787,30 +28559,32 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
  * 3D Pie chart series.
  * 
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'polar',
- *             interactions: 'rotate',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             series: {
- *                 type: 'pie3d',
- *                 field: 'data3',
- *                 donut: 30
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'polar', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        theme: 'green',
+ *        interactions: 'rotate',
+ *        store: {
+ *            fields: ['data3'],
+ *            data: [{
+ *                'data3': 14
+ *            }, {
+ *                'data3': 16
+ *            }, {
+ *                'data3': 14
+ *            }, {
+ *                'data3': 6
+ *            }, {
+ *                'data3': 36
+ *            }]
+ *        },
+ *        series: {
+ *            type: 'pie3d',
+ *            field: 'data3',
+ *            donut: 30
+ *        }
  *     });
  */
 Ext.define('Ext.chart.series.Pie3D', {
@@ -27872,10 +28646,36 @@ Ext.define('Ext.chart.series.Pie3D', {
             });
         }
     },
-    updateColors: function(colorSet) {
+    updateColors: function(colors) {
         this.setSubStyle({
-            baseColor: colorSet
+            baseColor: colors
         });
+    },
+    // This is a temporary solution until the Series.getStyleByIndex is fixed
+    // to give user styles the priority over theme ones. Also, for sprites of
+    // this particular series, the fillStyle shouldn't be set directly. Instead,
+    // the 'baseColor' attribute should be set, from which the stops of the
+    // gradient (used for fillStyle) will be calculated. Themes can't handle
+    // situations like that properly.
+    getStyleByIndex: function(i) {
+        var indexStyle = this.callParent([
+                i
+            ]),
+            style = this.getStyle(),
+            // 'fill' and 'color' are 'fillStyle' aliases
+            // (see Ext.draw.sprite.Sprite.inheritableStatics.def.aliases)
+            fillStyle = indexStyle.fillStyle || indexStyle.fill || indexStyle.color,
+            strokeStyle = style.strokeStyle || style.stroke;
+        if (fillStyle) {
+            indexStyle.baseColor = fillStyle;
+            delete indexStyle.fillStyle;
+            delete indexStyle.fill;
+            delete indexStyle.color;
+        }
+        if (strokeStyle) {
+            indexStyle.strokeStyle = strokeStyle;
+        }
+        return indexStyle;
     },
     doUpdateStyles: function() {
         var me = this,
@@ -27938,6 +28738,26 @@ Ext.define('Ext.chart.series.Pie3D', {
             lastAngle = summation[i];
         }
     },
+    // The radius here will normally be set by the PolarChart.performLayout,
+    // where it's half the width or height (whichever is smaller) of the chart's rect.
+    // But for 3D pie series we have to take the thickness of the pie and the
+    // distortion into account to calculate the proper radius.
+    // The passed value is never used (or derived from) since the radius config
+    // is not really meant to be used directly, as it will be reset by the next layout.
+    applyRadius: function() {
+        var me = this,
+            chart = me.getChart(),
+            padding = chart.getInnerPadding(),
+            rect = chart.getMainRect() || [
+                0,
+                0,
+                1,
+                1
+            ],
+            width = rect[2] - padding * 2,
+            height = (rect[3] - padding * 2 - me.getThickness() * 2) / me.getDistortion();
+        return Math.min(width, height) * 0.5;
+    },
     getSprites: function() {
         var me = this,
             chart = me.getChart(),
@@ -27950,17 +28770,11 @@ Ext.define('Ext.chart.series.Pie3D', {
             itemOffset = me.itemOffset,
             length = items.length,
             animation = me.getAnimation() || chart && chart.getAnimation(),
-            rect = chart.getMainRect() || [
-                0,
-                0,
-                1,
-                1
-            ],
             rotation = me.getRotation(),
             center = me.getCenter(),
             offsetX = me.getOffsetX(),
             offsetY = me.getOffsetY(),
-            radius = Math.min((rect[3] - me.getThickness() * 2) / me.getDistortion(), rect[2]) / 2,
+            radius = me.getRadius(),
             commonAttributes = {
                 centerX: center[0] + offsetX,
                 centerY: center[1] + offsetY - me.getThickness() / 2,
@@ -28258,52 +29072,60 @@ Ext.define('Ext.chart.series.sprite.Radar', {
  * documentation for more information. A typical configuration object for the radar series could be:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'polar',
- *             interactions: 'rotate',
- *             store: {
- *                 fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *                 data: [
- *                     {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                     {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                     {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                     {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                     {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *                 ]
- *             },
- *             series: {
- *                 type: 'radar',
- *                 xField: 'name',
- *                 yField: 'data4',
- *                 style: {
- *                     fillStyle: 'rgba(0, 0, 255, 0.1)',
- *                     strokeStyle: 'rgba(0, 0, 0, 0.8)',
- *                     lineWidth: 1
- *                 }
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'radial',
- *                 fields: 'data4',
- *                 style: {
- *                     estStepSize: 10
- *                 },
- *                 grid: true
- *             }, {
- *                 type: 'category',
- *                 position: 'angular',
- *                 fields: 'name',
- *                 style: {
- *                     estStepSize: 1
- *                 },
- *                 grid: true
- *             }]
- *         }
+ *     Ext.create({
+ *        xtype: 'polar', 
+ *        renderTo: document.body,
+ *        width: 500,
+ *        height: 400,
+ *        interactions: 'rotate',
+ *        store: {
+ *            fields: ['name', 'data1'],
+ *            data: [{
+ *                'name': 'metric one',
+ *                'data1': 8
+ *            }, {
+ *                'name': 'metric two',
+ *                'data1': 10
+ *            }, {
+ *                'name': 'metric three',
+ *                'data1': 12
+ *            }, {
+ *                'name': 'metric four',
+ *                'data1': 1
+ *            }, {
+ *                'name': 'metric five',
+ *                'data1': 13
+ *            }]
+ *        },
+ *        series: {
+ *            type: 'radar',
+ *            xField: 'name',
+ *            yField: 'data1',
+ *            style: {
+ *                fill: '#388FAD',
+ *                fillOpacity: .1,
+ *                stroke: '#388FAD',
+ *                strokeOpacity: .8,
+ *                lineWidth: 1
+ *            }
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'radial',
+ *            fields: 'data1',
+ *            style: {
+ *                estStepSize: 10
+ *            },
+ *            grid: true
+ *        }, {
+ *            type: 'category',
+ *            position: 'angular',
+ *            fields: 'name',
+ *            style: {
+ *                estStepSize: 1
+ *            },
+ *            grid: true
+ *        }]
  *     });
  *
  */
@@ -28573,59 +29395,74 @@ Ext.define('Ext.chart.series.sprite.Scatter', {
  * documentation for more information on creating charts. A typical configuration object for the scatter could be:
  *
  *     @example
- *     Ext.create('Ext.Container', {
- *         renderTo: Ext.getBody(),
- *         width: 600,
- *         height: 400,
- *         layout: 'fit',
- *         items: {
- *             xtype: 'cartesian',
- *             store: {
- *               fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5'],
- *               data: [
- *                   {'name':'metric one', 'data1':10, 'data2':12, 'data3':14, 'data4':8, 'data5':13},
- *                   {'name':'metric two', 'data1':7, 'data2':8, 'data3':16, 'data4':10, 'data5':3},
- *                   {'name':'metric three', 'data1':5, 'data2':2, 'data3':14, 'data4':12, 'data5':7},
- *                   {'name':'metric four', 'data1':2, 'data2':14, 'data3':6, 'data4':1, 'data5':23},
- *                   {'name':'metric five', 'data1':27, 'data2':38, 'data3':36, 'data4':13, 'data5':33}
- *               ]
- *             },
- *             axes: [{
- *                 type: 'numeric',
- *                 position: 'left',
- *                 fields: ['data1'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 },
- *                 grid: true,
- *                 minimum: 0
- *             }, {
- *                 type: 'category',
- *                 position: 'bottom',
- *                 fields: ['name'],
- *                 title: {
- *                     text: 'Sample Values',
- *                     fontSize: 15
- *                 }
- *             }],
- *             series: {
- *                 type: 'scatter',
- *                 highlight: {
- *                     size: 7,
- *                     radius: 7
- *                 },
- *                 fill: true,
- *                 xField: 'name',
- *                 yField: 'data3',
- *                 marker: {
- *                     type: 'circle',
- *                     fillStyle: 'blue',
- *                     radius: 10,
- *                     lineWidth: 0
- *                 }
- *             }
- *         }
+ *     Ext.create({
+ *        xtype: 'cartesian', 
+ *        renderTo: document.body,
+ *        width: 600,
+ *        height: 400,
+ *        insetPadding: 40,
+ *        interactions: ['itemhighlight'],
+ *        store: {
+ *            fields: ['name', 'data1', 'data2'],
+ *            data: [{
+ *                'name': 'metric one',
+ *                'data1': 10,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric two',
+ *                'data1': 7,
+ *                'data2': 16
+ *            }, {
+ *                'name': 'metric three',
+ *                'data1': 5,
+ *                'data2': 14
+ *            }, {
+ *                'name': 'metric four',
+ *                'data1': 2,
+ *                'data2': 6
+ *            }, {
+ *                'name': 'metric five',
+ *                'data1': 27,
+ *                'data2': 36
+ *            }]
+ *        },
+ *        axes: [{
+ *            type: 'numeric',
+ *            position: 'left',
+ *            fields: ['data1'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            },
+ *            grid: true,
+ *            minimum: 0
+ *        }, {
+ *            type: 'category',
+ *            position: 'bottom',
+ *            fields: ['name'],
+ *            title: {
+ *                text: 'Sample Values',
+ *                fontSize: 15
+ *            }
+ *        }],
+ *        series: {
+ *            type: 'scatter',
+ *            highlight: {
+ *                size: 12,
+ *                radius: 12,
+ *                fill: '#96D4C6',
+ *                stroke: '#30BDA7'
+ *            },
+ *            fill: true,
+ *            xField: 'name',
+ *            yField: 'data2',
+ *            marker: {
+ *                type: 'circle',
+ *                fill: '#30BDA7',
+ *                radius: 10,
+ *                lineWidth: 0
+ *            }
+ *        }
  *     });
  *
  * In this configuration we add three different categories of scatter series. Each of them is bound to a different field of the same data store,
@@ -29199,7 +30036,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * Finds roots of a cubic equation in t, where t lies in the interval of [0,1].
          * Based on http://www.particleincell.com/blog/2013/cubic-line-intersection/
          * @param P {Number[]} Cubic equation coefficients.
-         * @returns {Number[]} Returns an array of parametric intersection locations along the cubic,
+         * @return {Number[]} Returns an array of parametric intersection locations along the cubic,
          *                  with -1 indicating an out-of-bounds intersection
          *                  (before or after the end point or in the imaginary plane).
          */
@@ -29260,7 +30097,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param a {Number}
          * @param b {Number}
          * @param c {Number}
-         * @returns {Array}
+         * @return {Array}
          */
         quadraticRoots: function(a, b, c) {
             var D, rD, t, i;
@@ -29297,7 +30134,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * Takes two linear equation coefficients as parameters.
          * @param a {Number}
          * @param b {Number}
-         * @returns {Array}
+         * @return {Array}
          */
         linearRoot: function(a, b) {
             var t = -b / a;
@@ -29315,7 +30152,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param P1 {Number}
          * @param P2 {Number}
          * @param P3 {Number}
-         * @returns {Array}
+         * @return {Array}
          */
         bezierCoeffs: function(P0, P1, P2, P3) {
             var Z = [];
@@ -29342,7 +30179,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param y1 {Number}
          * @param x2 {Number}
          * @param y2 {Number}
-         * @returns {Array} Array of intersection points, where each intersection point
+         * @return {Array} Array of intersection points, where each intersection point
          *                  is itself a two-item array [x,y].
          */
         cubicLineIntersections: function(px1, px2, px3, px4, py1, py2, py3, py4, x1, y1, x2, y2) {
@@ -29404,7 +30241,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param P3 {Number}
          * @param P4 {Number}
          * @param z Point to split the given curve at.
-         * @returns {Array} Two-item array, where each item is itself an array
+         * @return {Array} Two-item array, where each item is itself an array
          *                  of cubic coefficients.
          */
         splitCubic: function(P1, P2, P3, P4, z) {
@@ -29437,7 +30274,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param b {Number}
          * @param c {Number}
          * @param d {Number}
-         * @returns {Array} Two-item array representing cubic's range in the given direction.
+         * @return {Array} Two-item array representing cubic's range in the given direction.
          */
         cubicDimension: function(a, b, c, d) {
             var qa = 3 * (-a + 3 * (b - c) + d),
@@ -29496,7 +30333,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param c {Number}
          * @param d {Number}
          * @param t {Number}
-         * @returns {Number}
+         * @return {Number}
          */
         interpolateCubic: function(a, b, c, d, t) {
             if (t === 0) {
@@ -29528,7 +30365,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param by2 {Number}
          * @param by3 {Number}
          * @param by4 {Number}
-         * @returns {Array} Array of intersection points, where each intersection point
+         * @return {Array} Array of intersection points, where each intersection point
          *                  is itself a two-item array [x,y].
          */
         cubicsIntersections: function(ax1, ax2, ax3, ax4, ay1, ay2, ay3, ay4, bx1, bx2, bx3, bx4, by1, by2, by3, by4) {
@@ -29576,7 +30413,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param y3 {Number}
          * @param x4 {Number}
          * @param y4 {Number}
-         * @returns {Number[]|null}
+         * @return {Number[]|null}
          */
         linesIntersection: function(x1, y1, x2, y2, x3, y3, x4, y4) {
             var d = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3),
@@ -29609,7 +30446,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param y2 {Number}
          * @param x {Number}
          * @param y {Number}
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         pointOnLine: function(x1, y1, x2, y2, x, y) {
             var t, _;
@@ -29645,7 +30482,7 @@ Ext.define('Ext.draw.PathUtil', function() {
          * @param py4 {Number}
          * @param x {Number}
          * @param y {Number}
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         pointOnCubic: function(px1, px2, px3, px4, py1, py2, py3, py4, x, y) {
             // Finding cubic Bezier curve equation coefficients.
@@ -29689,9 +30526,12 @@ Ext.define('Ext.draw.PathUtil', function() {
  *               y: 100
  *          }],
  *          listeners: {
- *              spriteclick: function (sprite, event) {
- *                  sprite.setAttributes({fillStyle: 'red'});
-                    sprite.getSurface().renderFrame();
+ *              spriteclick: function (item, event) {
+ *                  var sprite = item && item.sprite;
+ *                  if (sprite) {
+ *                      sprite.setAttributes({fillStyle: 'red'});
+                        sprite.getSurface().renderFrame();
+ *                  }
  *              }
  *          }
  *     });
@@ -29809,11 +30649,11 @@ Ext.define('Ext.draw.plugin.SpriteEvents', {
         }
         sprite = me.hitTestEvent(e);
         if (isMouseMoveEvent && !Ext.Object.equals(sprite, lastSprite)) {
-            if (sprite) {
-                drawContainer.fireEvent('spritemouseover', sprite, e);
-            }
             if (lastSprite) {
                 drawContainer.fireEvent('spritemouseout', lastSprite, e);
+            }
+            if (sprite) {
+                drawContainer.fireEvent('spritemouseover', sprite, e);
             }
         }
         if (sprite) {

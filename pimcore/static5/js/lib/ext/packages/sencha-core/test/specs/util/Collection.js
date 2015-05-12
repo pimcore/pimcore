@@ -692,7 +692,7 @@ describe("Ext.util.Collection", function() {
             item8 = {id: 8, name: 'eighth'},
             item9 = {id: 9, name: 'ninth'};
             
-        var fill = function(){
+        function fill () {
             collection.clear();
             collection.add([
                 item1,  // 0    -9
@@ -707,16 +707,60 @@ describe("Ext.util.Collection", function() {
             ]);
         };
 
+        var generation;
+
         beforeEach(function() {
             collection = new Ext.util.Collection();
 
             collection.add([item1, item2, item3]);
+            generation = collection.generation;
         });
         
         describe("updateKey", function(){
-            it("should do nothing if the old key doesn't exist", function() {
+            it("should do nothing if the old key doesn't exist for member item", function() {
                 collection.updateKey(item1, 'bar');
                 expect(collection.getByKey('bar')).toBeUndefined();
+                expect(collection.getByKey(item1.id)).toBe(item1);
+
+                expect(collection.generation).toBe(generation); // no changes made
+            });
+
+            it("should do nothing if the old key doesn't exist for non-member item", function() {
+                collection.updateKey(item4, 'bar');
+                expect(collection.getByKey('bar')).toBeUndefined();
+                expect(collection.getByKey(item4.id)).toBe(undefined);
+
+                expect(collection.generation).toBe(generation); // no changes made
+            });
+
+            it("should throw if old key is a different item", function() {
+                expect(function () {
+                    collection.updateKey(item4, item1.id);
+                }).toThrow();
+
+                expect(collection.getByKey(item4.id)).toBe(undefined);
+
+                expect(collection.generation).toBe(generation); // no changes made
+            });
+
+            it("should throw if new key collides with a different item", function() {
+                // Replace item1 so we can change its key and not have any issues with
+                // an error for claiming newItem1 was the item by id=1. We just want to
+                // check for the collision on the new id.
+                var newItem1 = Ext.apply({}, item1);
+                collection.add(newItem1);
+
+                generation = collection.generation;
+
+                newItem1.id = item3.id;
+
+                expect(function () {
+                    collection.updateKey(newItem1, item1.id);
+                }).toThrow();
+
+                expect(collection.getByKey(item3.id)).toBe(item3);
+
+                expect(collection.generation).toBe(generation); // no changes made
             });
 
             it("should update the key for the item", function () {
@@ -2020,6 +2064,21 @@ describe("Ext.util.Collection", function() {
                     e = collection.getGroups().get('E');
                     expect(e.length).toBe(1);
                     expect(e.contains(o)).toBe(true);
+                });
+
+                it("should position correctly when adding multiple items", function() {
+                    groupBy();
+                    var new1 = {
+                        id: 'new1',
+                        group: 'D'
+                    }, new2 = {
+                        id: 'new2',
+                        group: 'C'
+                    };
+
+                    collection.add([new1, new2]);
+                    expect(collection.indexOf(new1)).toBe(11);
+                    expect(collection.indexOf(new2)).toBe(9);
                 });
             });
             

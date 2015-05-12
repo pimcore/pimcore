@@ -20,7 +20,7 @@
  * all of your entities and use the `{@link Ext.data.Model#cfg-schema schema}` config like
  * this:
  * 
- *      Ext.define('MyApp.models.Base', {
+ *      Ext.define('MyApp.model.Base', {
  *          extend: 'Ext.data.Model',
  *
  *          // This configures the default schema because we don't assign an "id":
@@ -42,22 +42,22 @@
  * that do not contain the common namespace portion. This is called the `entityName` as
  * opposed to its class name. By default, the `entityName` is the full class name. However,
  * if a namespace is used, the common portion can be discarded and we can derive a shorter name.
- * In the following code, `"MyApp.models.Foo"` has an `entityName` of `"Foo"` and the schema has
- * a `namespace` of "MyApp.models".
+ * In the following code, `"MyApp.model.Foo"` has an `entityName` of `"Foo"` and the schema has
+ * a `namespace` of "MyApp.model".
  * 
  * If you use deeper nesting for entities, you may need to set the `namespace` config to
  * account for this. For example:
  * 
- *      Ext.define('MyApp.models.Base', {
+ *      Ext.define('MyApp.model.Base', {
  *          extend: 'Ext.data.Model',
  *
  *          schema: {
- *              namespace: 'MyApp.models'
+ *              namespace: 'MyApp.model'
  *          }
  *      });
  *
  * Your derived classes now will generate proper default `entityName` values even if they
- * have further namespaces. For example, "MyApp.models.foo.Thing" will produce "foo.Thing"
+ * have further namespaces. For example, "MyApp.model.foo.Thing" will produce "foo.Thing"
  * as the `entityName` given the above as a base class.
  *
  * # Association Naming
@@ -68,7 +68,7 @@
  * 
  *   * `entityName` - The names "User" and "Group" are the `entityName` values associated
  *   with these two classes. These are derived from their full classnames (perhaps
- *   something like "App.models.User" and "App.models.Group").
+ *   something like "App.model.User" and "App.model.Group").
  *   
  *   * `associationName` - When talking about associations, especially the many-to-many
  *   variety, it is important to give them names. Associations are not owned by either of
@@ -90,18 +90,18 @@
  * This job is delegated to a class called the `namer`. If you need to generate names in
  * other ways, you can provide a custom `namer` for your classes:
  *
- *      Ext.define('MyApp.models.Base', {
+ *      Ext.define('MyApp.model.Base', {
  *          extend: 'Ext.data.Model',
  *
  *          schema: {
- *              namespace: 'MyApp.models',
+ *              namespace: 'MyApp.model',
  *              namer: 'custom'
  *          }
  *      });
  *
  * This will create a class using the alias "namer.custom". For example:
  *
- *      Ext.define('MyApp.models.CustomNamer', {
+ *      Ext.define('MyApp.model.CustomNamer', {
  *          extend: 'Ext.data.schema.Namer',
  *
  *          alias: 'namer.custom',
@@ -486,7 +486,7 @@ Ext.define('Ext.data.schema.Schema', {
     // Protected
 
     /**
-     * Adds an entry from a {@link Ext.data.Schema#ManyToMany matrix config} declared by an
+     * Adds an entry from a {@link Ext.data.schema.ManyToMany matrix config} declared by an
      * entity.
      * 
      * This is the ideal method to override in a derived class if the standard, default
@@ -499,7 +499,7 @@ Ext.define('Ext.data.schema.Schema', {
      * @param {String} matrixName The name of the matrix association.
      *
      * @param {String} [relation] A base name for the matrix. For information about the
-     * meaning of this see {@link Ext.data.Schema#ManyToMany}.
+     * meaning of this see {@link Ext.data.schema.ManyToMany}.
      * 
      * @param {Object} left The descriptor for the "left" of the matrix.
      * @param {String} left.type The type of the entity on the "left" of the matrix.
@@ -511,7 +511,7 @@ Ext.define('Ext.data.schema.Schema', {
      * 
      * @param {String} [left.role] The name of the relationship from the `left.type` to the
      * `right.type`. If not provided, this defaults to the `left.type` name
-     * {@link Ext.util.Inflector#pluralize pluralized} and uncapitalized. For exmaple,
+     * {@link Ext.util.Inflector#pluralize pluralized} and uncapitalized. For example,
      * "users" for a `left.type` of "User".
      * 
      * @param {Object} right The descriptor for the "right" of the matrix.
@@ -603,7 +603,7 @@ Ext.define('Ext.data.schema.Schema', {
      * suffix if present).
      * 
      * @param {String} [inverse] The name of the relationship from the target `type`
-     * to the `entityType`. If not specifed, this is derived from the
+     * to the `entityType`. If not specified, this is derived from the
      * {@link Ext.data.Model#entityName entityName} of the `entityType`
      * ({@link Ext.util.Inflector#singularize singularized} or
      * {@link Ext.util.Inflector#pluralize pluralized} based on `referenceField.unique`).
@@ -806,12 +806,12 @@ Ext.define('Ext.data.schema.Schema', {
         },
 
         /**
-         * Adds an entry from a {@link Ext.data.Schema#ManyToMany matrix config} declared by an
+         * Adds an entry from a {@link Ext.data.schema.ManyToMany matrix config} declared by an
          * {@link Ext.data.Model entity}.
          *
          * @param {Ext.Class} entityType A class derived from {@link Ext.data.Model Entity}.
          * @param {String} [matrixName] The name of the matrix association.
-         * @param {String/Object} matrixDef A {@link Ext.data.Schema#ManyToMany matrix config}
+         * @param {String/Object} matrixDef A {@link Ext.data.schema.ManyToMany matrix config}
          * declared by an {@link Ext.data.Model entity}.
          * @private
          */
@@ -940,7 +940,7 @@ Ext.define('Ext.data.schema.Schema', {
             }
             //<debug>
             //
-            // In the case of a matrix assocation, both sides may need to declare it to allow
+            // In the case of a matrix association, both sides may need to declare it to allow
             // them to be used w/o the other present. In development mode, we want to check
             // that they declare the same thing!
             //
@@ -979,7 +979,7 @@ Ext.define('Ext.data.schema.Schema', {
          * association for an entity to this `schema`. This method decodes the `reference`
          * config of the `referenceField` and calls {@link #addReference}.
          *
-         * @param {Ext.Class} entityType A class derived from {@link Ext.data.Model Nodel}.
+         * @param {Ext.Class} entityType A class derived from {@link Ext.data.Model Model}.
          * @param {Ext.data.Field} referenceField The `field` with the `reference` config.
          * @private
          */

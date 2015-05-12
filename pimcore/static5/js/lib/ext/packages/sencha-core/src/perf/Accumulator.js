@@ -3,7 +3,7 @@
  */
 Ext.define('Ext.perf.Accumulator', function () {
     var currentFrame = null,
-        khrome = Ext.global['chrome'],
+        khrome = Ext.global['chrome'], // jshint ignore:line
         formatTpl,
         // lazy init on first request for timestamp (avoids infobar in IE until needed)
         // Also avoids kicking off Chrome's microsecond timer until first needed
@@ -22,7 +22,7 @@ Ext.define('Ext.perf.Accumulator', function () {
             } else if (window.ActiveXObject) {
                 try {
                     // the above technique is not very accurate for small intervals...
-                    toolbox = new ActiveXObject('SenchaToolbox.Toolbox');
+                    toolbox = new ActiveXObject('SenchaToolbox.Toolbox'); // jshint ignore:line
                     Ext.senchaToolbox = toolbox; // export for other uses
                     getTimestamp = function () {
                         return toolbox.milliseconds;
@@ -76,10 +76,6 @@ Ext.define('Ext.perf.Accumulator', function () {
             frame.leave();
             return ret;
         };
-    }
-
-    function round (x) {
-        return Math.round(x * 100) / 100;
     }
 
     function setToJSON (count, childCount, calibration, set) {
@@ -201,12 +197,12 @@ Ext.define('Ext.perf.Accumulator', function () {
 
         tap: function (className, methodName) {
             var me = this,
-                methods = typeof methodName == 'string' ? [methodName] : methodName,
+                methods = typeof methodName === 'string' ? [methodName] : methodName,
                 klass, statik, i, parts, length, name, src,
                 tapFunc;
 
             tapFunc = function(){
-                if (typeof className == 'string') {
+                if (typeof className === 'string') {
                     klass = Ext.global;
                     parts = className.split('.');
                     for (i = 0, length = parts.length; i < length; ++i) {
@@ -218,7 +214,7 @@ Ext.define('Ext.perf.Accumulator', function () {
 
                 for (i = 0, length = methods.length; i < length; ++i) {
                     name = methods[i];
-                    statik = name.charAt(0) == '!';
+                    statik = name.charAt(0) === '!';
 
                     if (statik) {
                         name = name.substring(1);

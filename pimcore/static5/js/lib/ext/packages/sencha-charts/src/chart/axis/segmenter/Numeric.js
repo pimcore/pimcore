@@ -26,8 +26,10 @@ Ext.define('Ext.chart.axis.segmenter.Numeric', {
     },
 
     preferredStep: function (min, estStepSize) {
-        var logs = Math.floor(Math.log(estStepSize) * Math.LOG10E), // common logarithm of estStepSize
-            scale = Math.pow(10, logs);
+        // Getting an order of magnitude of the estStepSize with a common logarithm.
+        var order = Math.floor(Math.log(estStepSize) * Math.LOG10E),
+            scale = Math.pow(10, order);
+
         estStepSize /= scale;
         if (estStepSize < 2) {
             estStepSize = 2;
@@ -35,12 +37,13 @@ Ext.define('Ext.chart.axis.segmenter.Numeric', {
             estStepSize = 5;
         } else if (estStepSize < 10) {
             estStepSize = 10;
-            logs++;
+            order++;
         }
         return {
             unit: {
-                // when estStepSize < 1, rounded down log10(estStepSize) is equal to -number_of_leading_zeros in estStepSize
-                fixes: -logs, // number of fractional digits
+                // When passed estStepSize is less than 1, its order of magnitude
+                // is equal to -number_of_leading_zeros in the estStepSize.
+                fixes: -order, // Number of fractional digits.
                 scale: scale
             },
             step: estStepSize
@@ -58,12 +61,12 @@ Ext.define('Ext.chart.axis.segmenter.Numeric', {
      */
 
     exactStep: function (min, estStepSize) {
-        var logs = Math.floor(Math.log(estStepSize) * Math.LOG10E),
-            scale = Math.pow(10, logs);
+        var order = Math.floor(Math.log(estStepSize) * Math.LOG10E),
+            scale = Math.pow(10, order);
         return {
             unit: {
                 // add one decimal point if estStepSize is not a multiple of scale
-                fixes: -logs + (estStepSize % scale === 0 ? 0 : 1),
+                fixes: -order + (estStepSize % scale === 0 ? 0 : 1),
                 scale: 1
             },
             step: estStepSize

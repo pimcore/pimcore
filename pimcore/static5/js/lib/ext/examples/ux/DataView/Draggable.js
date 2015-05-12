@@ -195,7 +195,7 @@ Ext.define('Ext.ux.DataView.Draggable', {
     /**
      * Updates the internal ghost DataView by ensuring it is rendered and contains the correct records
      * @param {Array} records The set of records that is currently selected in the parent DataView
-     * @return {HtmlElement} The Ghost DataView's encapsulating HtmnlElement.
+     * @return {HTMLElement} The Ghost DataView's encapsulating HtmnlElement.
      */
     prepareGhost: function(records) {
         return this.createGhost(records).getEl().dom;

@@ -155,12 +155,18 @@ Ext.define('Ext.app.bind.Stub', {
         var me = this,
             parentData = me.parent.getDataObject(), // RootStub does not get here
             name = me.name,
-            ret = parentData ? parentData[name] : null;
+            ret = parentData ? parentData[name] : null,
+            associations, association;
+
+        if (!ret && parentData && parentData.isEntity) {
+            // Check if the item is an association, if it is, grab it but don't load it.
+            associations = parentData.associations;
+            if (associations && name in associations) {
+                ret = parentData[associations[name].getterName]();
+            }
+        }
 
         if (!ret || !(ret.$className || Ext.isObject(ret))) {
-            if (ret) {
-                //TODO - we probably need to schedule ourselves here
-            }
             parentData[name] = ret = {};
             // We're implicitly setting a value on the object here
             me.hadValue = me.owner.hadValue[me.path] = true;
@@ -489,13 +495,12 @@ Ext.define('Ext.app.bind.Stub', {
                 name = me.name,
                 current = me.boundValue,
                 boundValue = null,
-                associations, association, raw, changed, associatedEntity;
+                associations, raw, changed, associatedEntity;
 
             if (parentData && parentData.isEntity) {
                 associations = parentData.associations;
                 if (associations && (name in associations)) {
-                    association = associations[name];
-                    boundValue = parentData[association.getterName]();
+                    boundValue = parentData[associations[name].getterName]();
                     if (boundValue && boundValue.isStore) {
                         boundValue.$associatedStore = true;
                     }

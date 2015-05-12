@@ -257,6 +257,685 @@ describe("Ext.Widget", function() {
     makeSuite(true);
     makeSuite(false);
 
+    describe("element listener merging", function() {
+        var SuperWidget, SubWidget, superWidget, subWidget;
+
+        it("should not allow listeners declared in a subclass to pollute the superclass cache (no listeners on superclass)", function() {
+            // https://sencha.jira.com/browse/EXTJS-16984
+            SuperWidget = Ext.define(null, {
+                extend: Ext.Widget
+            });
+
+            SubWidget = Ext.define(null, {
+                extend: SuperWidget,
+                element: {
+                    reference: 'element',
+                    listeners: {
+                        click: 'onClick'
+                    }
+                },
+                onClick: Ext.emptyFn
+            });
+
+            // create an instance of SuperWidget first so that its listener cache gets created
+            superWidget = new SuperWidget();
+
+            // SubWidget should create its own listener cache
+            subWidget = new SubWidget();
+
+            // SubWidget's listeners should not invade SuperWidget's cache
+            expect(SuperWidget.prototype._elementListeners).toEqual({});
+            // SubWidget should have its own cache
+            expect(SubWidget.prototype.hasOwnProperty('_elementListeners')).toBe(true);
+        });
+
+        it("should not allow listeners declared in a subclass to pollute the superclass cache (with listeners on superclass)", function() {
+            // https://sencha.jira.com/browse/EXTJS-16984
+            SuperWidget = Ext.define(null, {
+                extend: Ext.Widget,
+                element: {
+                    reference: 'element',
+                    listeners: {
+                        mousedown: 'onMouseDown'
+                    }
+                },
+                onMouseDown: Ext.emptyFn
+            });
+
+            SubWidget = Ext.define(null, {
+                extend: SuperWidget,
+                element: {
+                    reference: 'element',
+                    listeners: {
+                        click: 'onClick'
+                    }
+                },
+                onClick: Ext.emptyFn
+            });
+
+            // create an instance of SuperWidget first so that its listener cache gets created
+            superWidget = new SuperWidget();
+
+            // SubWidget should create its own listener cache
+            subWidget = new SubWidget();
+
+            // SubWidget's listeners should not invade SuperWidget's cache
+            expect(SuperWidget.prototype._elementListeners).toEqual({
+                element: {
+                    mousedown: 'onMouseDown'
+                }
+            });
+            // SubWidget should have its own cache
+            expect(SubWidget.prototype.hasOwnProperty('_elementListeners')).toBe(true);
+        });
+
+        describe("when first instance of superclass has already been created", function() {
+            var superMouseDownSpy, superMouseUpSpy, superClickSpy,
+                subMouseDownSpy, subMouseUpSpy, subClickSpy;
+
+            beforeEach(function() {
+                superMouseDownSpy = jasmine.createSpy();
+                superMouseUpSpy = jasmine.createSpy();
+                superClickSpy = jasmine.createSpy();
+
+                subMouseDownSpy = jasmine.createSpy();
+                subMouseUpSpy = jasmine.createSpy();
+                subClickSpy = jasmine.createSpy();
+            });
+
+            afterEach(function() {
+                if (superWidget) {
+                    superWidget.destroy();
+                }
+                if (subWidget) {
+                    subWidget.destroy();
+                }
+            });
+
+            it("should merge subclass element listeners with superclass element listeners", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            click: 'superOnClick',
+                            mousedown: 'superOnMouseDown'
+                        }
+                    },
+                    superOnClick: superClickSpy,
+                    superOnMouseDown: superMouseDownSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            // inherits mousedown, overrides click, and adds mouseup
+                            click: 'subOnClick',
+                            mouseup: 'subOnMouseUp'
+                        }
+                    },
+                    subOnClick: subClickSpy,
+                    subOnMouseUp: subMouseUpSpy
+                });
+
+                // create an instance of SuperWidget first so that its listener cache gets created
+                superWidget = new SuperWidget();
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.element, 'click');
+
+                expect(superMouseDownSpy.callCount).toBe(1);
+                expect(superClickSpy).not.toHaveBeenCalled();
+                expect(subClickSpy.callCount).toBe(1);
+                expect(subMouseUpSpy.callCount).toBe(1);
+            });
+
+            it("should inherit element listeners from superclass", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            click: 'superOnClick'
+                        }
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget
+                });
+
+                // create an instance of SuperWidget first so that its listener cache gets created
+                superWidget = new SuperWidget();
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.element, 'click');
+
+                expect(superClickSpy.callCount).toBe(1);
+            });
+
+            it("should merge subclass child element listeners with superclass child element listeners", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick',
+                                mousedown: 'superOnMouseDown'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy,
+                    superOnMouseDown: superMouseDownSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                // inherits mousedown, overrides click, and adds mouseup
+                                click: 'subOnClick',
+                                mouseup: 'subOnMouseUp'
+                            }
+                        }]
+                    },
+                    subOnClick: subClickSpy,
+                    subOnMouseUp: subMouseUpSpy
+                });
+
+                // create an instance of SuperWidget first so that its listener cache gets created
+                superWidget = new SuperWidget();
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.foo, 'click');
+
+                expect(superMouseDownSpy.callCount).toBe(1);
+                expect(superClickSpy).not.toHaveBeenCalled();
+                expect(subClickSpy.callCount).toBe(1);
+                expect(subMouseUpSpy.callCount).toBe(1);
+            });
+
+            it("should inherit child element listeners from superclass", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget
+                });
+
+                // create an instance of SuperWidget first so that its listener cache gets created
+                superWidget = new SuperWidget();
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.foo, 'click');
+
+                expect(superClickSpy.callCount).toBe(1);
+            });
+
+            it("should add listeners to subclass child elements that do not have a corresponding reference in the superclass template", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'bar',
+                            listeners: {
+                                click: 'subOnClick'
+                            }
+                        }]
+                    },
+                    subOnClick: subClickSpy
+                });
+
+                // create an instance of SuperWidget first so that its listener cache gets created
+                superWidget = new SuperWidget();
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.bar, 'click');
+
+                expect(superClickSpy.callCount).toBe(0);
+                expect(subClickSpy.callCount).toBe(1);
+            });
+
+            it("should merge subclass element listeners with superclass element listeners (multiple levels of inheritance)", function() {
+                var mouseUpSpy = jasmine.createSpy(),
+                    Widget;
+
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            click: 'superOnClick',
+                            mousedown: 'superOnMouseDown'
+                        }
+                    },
+                    superOnClick: superClickSpy,
+                    superOnMouseDown: superMouseDownSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            // inherits mousedown, overrides click, and adds mouseup
+                            click: 'subOnClick',
+                            mouseup: 'subOnMouseUp'
+                        }
+                    },
+                    subOnClick: subClickSpy,
+                    subOnMouseUp: subMouseUpSpy
+                });
+
+                Widget = Ext.define(null, {
+                    extend: SubWidget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            // overrides mouseup, inherits click/mousedown
+                            mouseup: 'onMouseUp'
+                        }
+                    },
+                    onMouseUp: mouseUpSpy
+                });
+
+                // create an instance of SuperWidget/SubWidget first so that their listener caches get created
+                superWidget = new SuperWidget();
+                subWidget = new SubWidget();
+                widget = new Widget();
+
+                Ext.getBody().appendChild(widget.element);
+
+                jasmine.fireMouseEvent(widget.element, 'click');
+
+                expect(superMouseDownSpy.callCount).toBe(1);
+                expect(superClickSpy).not.toHaveBeenCalled();
+                expect(subClickSpy.callCount).toBe(1);
+                expect(subMouseUpSpy).not.toHaveBeenCalled();
+                expect(mouseUpSpy.callCount).toBe(1);
+            });
+
+            it("should inherit child element listeners from superclass over multiple inheritance levels", function() {
+                var Widget;
+
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget
+                });
+
+                Widget = Ext.define(null, {
+                    extend: SubWidget
+                });
+
+                // create an instance of SuperWidget/SubWidget first so that their listener caches get created
+                superWidget = new SuperWidget();
+                subWidget = new SubWidget();
+
+                widget = new Widget();
+
+                Ext.getBody().appendChild(widget.element);
+
+                jasmine.fireMouseEvent(widget.foo, 'click');
+
+                expect(superClickSpy.callCount).toBe(1);
+            });
+        });
+
+        describe("when first instance of superclass has not yet been created", function() {
+            var superMouseDownSpy, superMouseUpSpy, superClickSpy,
+                subMouseDownSpy, subMouseUpSpy, subClickSpy;
+
+            beforeEach(function() {
+                superMouseDownSpy = jasmine.createSpy();
+                superMouseUpSpy = jasmine.createSpy();
+                superClickSpy = jasmine.createSpy();
+
+                subMouseDownSpy = jasmine.createSpy();
+                subMouseUpSpy = jasmine.createSpy();
+                subClickSpy = jasmine.createSpy();
+            });
+
+            afterEach(function() {
+                if (superWidget) {
+                    superWidget.destroy();
+                }
+                if (subWidget) {
+                    subWidget.destroy();
+                }
+            });
+
+            it("should merge subclass element listeners with superclass element listeners", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            click: 'superOnClick',
+                            mousedown: 'superOnMouseDown'
+                        }
+                    },
+                    superOnClick: superClickSpy,
+                    superOnMouseDown: superMouseDownSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            // inherits mousedown, overrides click, and adds mouseup
+                            click: 'subOnClick',
+                            mouseup: 'subOnMouseUp'
+                        }
+                    },
+                    subOnClick: subClickSpy,
+                    subOnMouseUp: subMouseUpSpy
+                });
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.element, 'click');
+
+                expect(superMouseDownSpy.callCount).toBe(1);
+                expect(superClickSpy).not.toHaveBeenCalled();
+                expect(subClickSpy.callCount).toBe(1);
+                expect(subMouseUpSpy.callCount).toBe(1);
+            });
+
+            it("should inherit element listeners from superclass", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            click: 'superOnClick'
+                        }
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget
+                });
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.element, 'click');
+
+                expect(superClickSpy.callCount).toBe(1);
+            });
+
+            it("should merge subclass child element listeners with superclass child element listeners", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick',
+                                mousedown: 'superOnMouseDown'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy,
+                    superOnMouseDown: superMouseDownSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                // inherits mousedown, overrides click, and adds mouseup
+                                click: 'subOnClick',
+                                mouseup: 'subOnMouseUp'
+                            }
+                        }]
+                    },
+                    subOnClick: subClickSpy,
+                    subOnMouseUp: subMouseUpSpy
+                });
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.foo, 'click');
+
+                expect(superMouseDownSpy.callCount).toBe(1);
+                expect(superClickSpy).not.toHaveBeenCalled();
+                expect(subClickSpy.callCount).toBe(1);
+                expect(subMouseUpSpy.callCount).toBe(1);
+            });
+
+            it("should inherit child element listeners from superclass", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget
+                });
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.foo, 'click');
+
+                expect(superClickSpy.callCount).toBe(1);
+            });
+
+            it("should add listeners to subclass child elements that do not have a corresponding reference in the superclass template", function() {
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'bar',
+                            listeners: {
+                                click: 'subOnClick'
+                            }
+                        }]
+                    },
+                    subOnClick: subClickSpy
+                });
+
+                subWidget = new SubWidget();
+
+                Ext.getBody().appendChild(subWidget.element);
+
+                jasmine.fireMouseEvent(subWidget.bar, 'click');
+
+                expect(superClickSpy.callCount).toBe(0);
+                expect(subClickSpy.callCount).toBe(1);
+            });
+
+            it("should merge subclass element listeners with superclass element listeners (multiple levels of inheritance)", function() {
+                var mouseUpSpy = jasmine.createSpy(),
+                    Widget;
+
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            click: 'superOnClick',
+                            mousedown: 'superOnMouseDown'
+                        }
+                    },
+                    superOnClick: superClickSpy,
+                    superOnMouseDown: superMouseDownSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            // inherits mousedown, overrides click, and adds mouseup
+                            click: 'subOnClick',
+                            mouseup: 'subOnMouseUp'
+                        }
+                    },
+                    subOnClick: subClickSpy,
+                    subOnMouseUp: subMouseUpSpy
+                });
+
+                Widget = Ext.define(null, {
+                    extend: SubWidget,
+                    element: {
+                        reference: 'element',
+                        listeners: {
+                            // overrides mouseup, inherits click/mousedown
+                            mouseup: 'onMouseUp'
+                        }
+                    },
+                    onMouseUp: mouseUpSpy
+                });
+
+                widget = new Widget();
+
+                Ext.getBody().appendChild(widget.element);
+
+                jasmine.fireMouseEvent(widget.element, 'click');
+
+                expect(superMouseDownSpy.callCount).toBe(1);
+                expect(superClickSpy).not.toHaveBeenCalled();
+                expect(subClickSpy.callCount).toBe(1);
+                expect(subMouseUpSpy).not.toHaveBeenCalled();
+                expect(mouseUpSpy.callCount).toBe(1);
+            });
+
+            it("should inherit child element listeners from superclass over multiple inheritance levels", function() {
+                var Widget;
+
+                SuperWidget = Ext.define(null, {
+                    extend: Ext.Widget,
+                    element: {
+                        reference: 'element',
+                        children: [{
+                            reference: 'foo',
+                            listeners: {
+                                click: 'superOnClick'
+                            }
+                        }]
+                    },
+                    superOnClick: superClickSpy
+                });
+
+                SubWidget = Ext.define(null, {
+                    extend: SuperWidget
+                });
+
+                Widget = Ext.define(null, {
+                    extend: SubWidget
+                });
+
+                widget = new Widget();
+
+                Ext.getBody().appendChild(widget.element);
+
+                jasmine.fireMouseEvent(widget.foo, 'click');
+
+                expect(superClickSpy.callCount).toBe(1);
+            });
+        });
+    });
+
     describe("listener scope resolution", function() {
         var spies, scopes, Widget, widget, Parent, parent, Grandparent, grandparent,
             Controller, ParentController, GrandparentController;

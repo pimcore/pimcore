@@ -553,7 +553,7 @@ Ext.Function = (function() {
          * @param {Number} interval The interval in milliseconds on which the passed function is executed.
          * @param {Object} [scope] The scope (`this` reference) in which
          * the passed function is executed. If omitted, defaults to the scope specified by the caller.
-         * @returns {Function} A function which invokes the passed function at the specified interval.
+         * @return {Function} A function which invokes the passed function at the specified interval.
          */
         createThrottled: function(fn, interval, scope) {
             var lastCallTime = 0,

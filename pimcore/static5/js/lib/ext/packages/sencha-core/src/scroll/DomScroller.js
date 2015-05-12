@@ -8,12 +8,6 @@ Ext.define('Ext.scroll.DomScroller', {
 
     isDomScroller: true,
 
-    constructor: function(config) {
-        var me = this;
-
-        me.callParent([config]);
-    },
-
     getMaxPosition: function() {
         var element = this.getElement(),
             x = 0,
@@ -164,36 +158,6 @@ Ext.define('Ext.scroll.DomScroller', {
         // rtl hook
         getElementScroll: function(element) {
             return element.getScroll();
-        },
-
-        initXStyle: function() {
-            var element = this.getElement(),
-                x = this.getX();
-
-            if (!x) {
-                x = 'hidden';
-            } else if (x === true) {
-                x = 'auto';
-            }
-
-            if (element) {
-                element.setStyle('overflow-x', x);
-            }
-        },
-
-        initYStyle: function() {
-            var element = this.getElement(),
-                y = this.getY();
-
-            if (!y) {
-                y = 'hidden';
-            } else if (y === true) {
-                y = 'auto';
-            }
-
-            if (element) {
-                element.setStyle('overflow-y', y);
-            }
         },
 
         stopAnimation: function() {

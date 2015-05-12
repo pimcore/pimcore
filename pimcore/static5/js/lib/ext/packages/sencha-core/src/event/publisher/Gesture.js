@@ -124,9 +124,11 @@ Ext.define('Ext.event.publisher.Gesture', {
 
         if (supports.PointerEvents) {
             handledDomEvents.push('pointerdown', 'pointermove', 'pointerup', 'pointercancel');
+            me.mousePointerType = 'mouse';
         } else if (supports.MSPointerEvents) {
             // IE10 uses vendor prefixed pointer events, IE11+ use unprefixed names.
             handledDomEvents.push('MSPointerDown', 'MSPointerMove', 'MSPointerUp', 'MSPointerCancel');
+            me.mousePointerType = 4;
         } else if (supportsTouchEvents) {
             handledDomEvents.push('touchstart', 'touchmove', 'touchend', 'touchcancel');
         }
@@ -412,10 +414,22 @@ Ext.define('Ext.event.publisher.Gesture', {
     },
 
     onTouchMove: function(e) {
-        if (this.isStarted) {
-            this.updateTouches(e);
+        var me = this,
+            mousePointerType = me.mousePointerType;
+
+        if (me.isStarted) {
+            // In IE10/11, the corresponding pointerup event is not fired after the pointerdown after 
+            // the mouse is released from the scrollbar. However, it does fire a pointermove event with buttons: 0, so
+            // we capture that here and ensure the touch end process is completed.
+            if (mousePointerType && e.browserEvent.pointerType === mousePointerType && e.buttons === 0) {
+                e.type = Ext.dom.Element.prototype.eventMap.touchend;
+                e.button = 0;
+                me.onTouchEnd(e);
+                return;
+            }
+            me.updateTouches(e);
             if (e.changedTouches.length > 0) {
-                this.invokeRecognizers('onTouchMove', e);
+                me.invokeRecognizers('onTouchMove', e);
             }
         }
     },
@@ -520,6 +534,7 @@ Ext.define('Ext.event.publisher.Gesture', {
         me.activeTouchesMap = {};
         me.activeTouches = [];
         me.changedTouches = [];
+        me.isStarted = false;
 
         for (i = 0; i < ln; i++) {
             recognizer = recognizers[i];

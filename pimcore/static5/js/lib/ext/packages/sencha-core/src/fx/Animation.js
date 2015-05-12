@@ -1,7 +1,5 @@
 /**
  * @private
- * @author Jacky Nguyen <jacky@sencha.com>
- *
  * This class is a factory class that will create and return an animation class based on the {@link #type} configuration.
  */
 Ext.define('Ext.fx.Animation', {

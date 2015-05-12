@@ -293,10 +293,12 @@ Ext.define('Ext.chart.series.StackedCartesian', {
         for (i = 0; i < sprites.length; i++) {
             style = me.getStyleByIndex(i);
             fill = style.fillStyle;
-            if (Ext.isArray(title)) {
-                name = title[i];
-            } else if (single) {
-                name = title;
+            if (title) {
+                if (Ext.isArray(title)) {
+                    name = title[i];
+                } else if (single) {
+                    name = title;
+                }
             } else if (Ext.isArray(field)) {
                 name = field[i];
             } else {

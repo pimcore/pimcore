@@ -27,7 +27,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * Finds roots of a cubic equation in t, where t lies in the interval of [0,1].
          * Based on http://www.particleincell.com/blog/2013/cubic-line-intersection/
          * @param P {Number[]} Cubic equation coefficients.
-         * @returns {Number[]} Returns an array of parametric intersection locations along the cubic,
+         * @return {Number[]} Returns an array of parametric intersection locations along the cubic,
          *                  with -1 indicating an out-of-bounds intersection
          *                  (before or after the end point or in the imaginary plane).
          */
@@ -93,7 +93,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param a {Number}
          * @param b {Number}
          * @param c {Number}
-         * @returns {Array}
+         * @return {Array}
          */
         quadraticRoots: function (a, b, c) {
             var D, rD, t, i;
@@ -123,7 +123,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * Takes two linear equation coefficients as parameters.
          * @param a {Number}
          * @param b {Number}
-         * @returns {Array}
+         * @return {Array}
          */
         linearRoot: function (a, b) {
             var t = -b/a;
@@ -140,7 +140,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param P1 {Number}
          * @param P2 {Number}
          * @param P3 {Number}
-         * @returns {Array}
+         * @return {Array}
          */
         bezierCoeffs: function (P0, P1, P2, P3) {
             var Z = [];
@@ -168,7 +168,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param y1 {Number}
          * @param x2 {Number}
          * @param y2 {Number}
-         * @returns {Array} Array of intersection points, where each intersection point
+         * @return {Array} Array of intersection points, where each intersection point
          *                  is itself a two-item array [x,y].
          */
         cubicLineIntersections: function (px1, px2, px3, px4, py1, py2, py3, py4,
@@ -235,7 +235,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param P3 {Number}
          * @param P4 {Number}
          * @param z Point to split the given curve at.
-         * @returns {Array} Two-item array, where each item is itself an array
+         * @return {Array} Two-item array, where each item is itself an array
          *                  of cubic coefficients.
          */
         splitCubic: function (P1, P2, P3, P4, z) {
@@ -270,7 +270,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param b {Number}
          * @param c {Number}
          * @param d {Number}
-         * @returns {Array} Two-item array representing cubic's range in the given direction.
+         * @return {Array} Two-item array representing cubic's range in the given direction.
          */
         cubicDimension: function (a, b, c, d) {
             var qa = 3 * (-a + 3 * (b - c) + d),
@@ -323,7 +323,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param c {Number}
          * @param d {Number}
          * @param t {Number}
-         * @returns {Number}
+         * @return {Number}
          */
         interpolateCubic: function (a, b, c, d, t) {
             if (t === 0) {
@@ -356,7 +356,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param by2 {Number}
          * @param by3 {Number}
          * @param by4 {Number}
-         * @returns {Array} Array of intersection points, where each intersection point
+         * @return {Array} Array of intersection points, where each intersection point
          *                  is itself a two-item array [x,y].
          */
         cubicsIntersections: function (ax1, ax2, ax3, ax4, ay1, ay2, ay3, ay4,
@@ -406,7 +406,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param y3 {Number}
          * @param x4 {Number}
          * @param y4 {Number}
-         * @returns {Number[]|null}
+         * @return {Number[]|null}
          */
         linesIntersection: function (x1, y1, x2, y2, x3, y3, x4, y4) {
             var d = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3),
@@ -436,7 +436,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param y2 {Number}
          * @param x {Number}
          * @param y {Number}
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         pointOnLine: function (x1, y1, x2, y2, x, y) {
             var t, _;
@@ -473,7 +473,7 @@ Ext.define('Ext.draw.PathUtil', function () {
          * @param py4 {Number}
          * @param x {Number}
          * @param y {Number}
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         pointOnCubic: function (px1, px2, px3, px4, py1, py2, py3, py4, x, y) {
             // Finding cubic Bezier curve equation coefficients.

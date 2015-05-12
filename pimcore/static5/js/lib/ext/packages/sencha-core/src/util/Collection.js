@@ -80,6 +80,12 @@ Ext.define('Ext.util.Collection', {
         autoSort: true,
 
         /**
+         * @cfg {Boolean} autoGroup `true` to sort by the grouper
+         * @private
+         */
+        autoGroup: true,
+
+        /**
          * @cfg {Function} decoder
          * A function that can convert newly added items to a proper type before being
          * added to this collection.
@@ -553,6 +559,15 @@ Ext.define('Ext.util.Collection', {
      *
      * @param {Ext.util.Collection} collection The collection being sorted.
      */
+    
+    /**
+     * @event beforesort
+     * @private
+     * This event fires before the contents of the collection have been sorted.
+     *
+     * @param {Ext.util.Collection} collection The collection being sorted.
+     * @param {Ext.util.Sorter[]} sorters Array of sorters applied to the Collection.
+     */
 
     /**
      * @event updatekey
@@ -584,7 +599,7 @@ Ext.define('Ext.util.Collection', {
 
         /**
          * @property {Object} map
-         * An object used as map to get an object based on its key.
+         * An object used as a map to find items based on their key.
          * @private
          * @since 5.0.0
          */
@@ -592,7 +607,7 @@ Ext.define('Ext.util.Collection', {
 
         /**
          * @property {Number} length
-         * The count of items in the collection filtered and sorted
+         * The count of items in the collection.
          * @readonly
          * @since 5.0.0
          */
@@ -762,7 +777,7 @@ Ext.define('Ext.util.Collection', {
      * this index will *not* be included in the aggregation.
      * @param {Object} [scope] The `this` pointer to use if `operation` is a function.
      * Defaults to this collection.
-     * @returns {Object}
+     * @return {Object}
      */
     aggregate: function (property, operation, begin, end, scope) {
         var me = this,
@@ -785,7 +800,7 @@ Ext.define('Ext.util.Collection', {
      * operate.
      * @param {Object} [scope] The `this` pointer to use if `operation` is a function.
      * Defaults to this collection.
-     * @returns {Object}
+     * @return {Object}
      */
     aggregateByGroup: function(property, operation, scope) {
         var groups = this.getGroups();
@@ -811,7 +826,7 @@ Ext.define('Ext.util.Collection', {
      * Defaults to this collection.
      * 
      * @private
-     * @returns {Object}
+     * @return {Object}
      */
     aggregateItems: function (items, property, operation, begin, end, scope) {
         var me = this,
@@ -915,7 +930,7 @@ Ext.define('Ext.util.Collection', {
      * @since 5.0.0
      */
     beginUpdate: function () {
-        if (!this.updating++) {
+        if (!this.updating++) { // jshint ignore:line
             this.notify('beginupdate');
         }
     },
@@ -1333,7 +1348,7 @@ Ext.define('Ext.util.Collection', {
      * Returns the first item in the collection.
      * @param {Boolean} [grouped] `true` to extract the first item in each group. Only applies if
      * a {@link #grouper} is active in the collection.
-     * @return {Object} The first item in the collection. If the grouped paramter is passed,
+     * @return {Object} The first item in the collection. If the grouped parameter is passed,
      * see {@link #aggregateByGroup} for information on the return type.
      * @since 5.0.0
      */
@@ -1346,7 +1361,7 @@ Ext.define('Ext.util.Collection', {
      * Returns the last item in the collection.
      * @param {Boolean} [grouped] `true` to extract the first item in each group. Only applies if
      * a {@link #grouper} is active in the collection.
-     * @return {Object} The last item in the collection. If the grouped paramter is passed,
+     * @return {Object} The last item in the collection. If the grouped parameter is passed,
      * see {@link #aggregateByGroup} for information on the return type.
      * @since 5.0.0
      */
@@ -1457,6 +1472,14 @@ Ext.define('Ext.util.Collection', {
 
         return range;
     },
+    
+    /**
+     * @method getSource
+     * Returns all unfiltered items in the Collection when the Collection has been 
+     * filtered.  Returns `null` when the Collection is not filtered.
+     * @return {Ext.util.Collection} items All unfiltered items (or `null` when the 
+     * Collection is not filtered)
+     */
 
     /**
      * Returns an array of values for the specified (sub) property.
@@ -1571,10 +1594,10 @@ Ext.define('Ext.util.Collection', {
             itemMovement = 0,
             items = me.items,
             last = me.length - 1,
-            sorted = me.sorted && last > 0, // one or zero items is not really sorted
-                                            // CAN be called on an empty Collection
-                                            // A TreeStore can call afterEdit on a hidden root before
-                                            // any child nodes exist in the store.
+            sorted = me.sorted && last > 0 && me.getAutoSort(), // one or zero items is not really sorted
+                                                                // CAN be called on an empty Collection
+                                                                // A TreeStore can call afterEdit on a hidden root before
+                                                                // any child nodes exist in the store.
             source = me.getSource(),
             toAdd,
             toRemove = 0,
@@ -1792,7 +1815,7 @@ Ext.define('Ext.util.Collection', {
     },
 
     /**
-     * Removes the item associated with the passed key fom the collection.
+     * Removes the item associated with the passed key from the collection.
      * @param {String} key The key of the item to remove.
      * @return {Object} Only returned if removing at a specified key. The item removed or
      * `false` if no item was removed.
@@ -1811,8 +1834,8 @@ Ext.define('Ext.util.Collection', {
     /*
      * @private
      * Replace an old entry with a new entry of the same key if the entry existed.
-     * @param {type} item The item to insert.
-     * @return {Object} The item inserted.
+     * @param {Object} item The item to insert.
+     * @return {Object} inserted The item inserted.
      */
     replace: function(item) {
         var index = this.indexOf(item);
@@ -2197,8 +2220,11 @@ Ext.define('Ext.util.Collection', {
 
     /**
      * Change the key for an existing item in the collection. If the old key does not
-     * exist this call does nothing.
-     * @param {Object} item The item whose key has changed.
+     * exist this call does nothing. Even so, it is highly recommended to *avoid* calling
+     * this method for an `item` that is not a member of this collection.
+     *
+     * @param {Object} item The item whose key has changed. The `item` should be a member
+     * of this collection.
      * @param {String} oldKey The old key for the `item`.
      * @since 5.0.0
      */
@@ -2215,17 +2241,10 @@ Ext.define('Ext.util.Collection', {
             source.updateKey(item, oldKey);
         }
         else if ((newKey = me.getKey(item)) !== oldKey) {
-            if (oldKey in map || map[newKey] !== item) {
-                if (oldKey in map) {
-                    //<debug>
-                    if (map[oldKey] !== item) {
-                        Ext.Error.raise('Incorrect oldKey "' + oldKey +
-                                        '" for item with newKey "' + newKey + '"');
-                    }
-                    //</debug>
-
-                    delete map[oldKey];
-                }
+            // If the key has changed and "item" is the item mapped to the oldKey and
+            // there is no collision with an item with the newKey, we can proceed.
+            if (map[oldKey] === item && !(newKey in map)) {
+                delete map[oldKey];
 
                 // We need to mark ourselves as updating so that observing collections
                 // don't reflect the updateKey back to us (see above check) but this is
@@ -2247,6 +2266,28 @@ Ext.define('Ext.util.Collection', {
 
                 me.updating--;
             }
+            //<debug>
+            else {
+                // It may be that the item is (somehow) already in the map using the
+                // newKey or that there is no item in the map with the oldKey. These
+                // are not errors.
+
+                if (newKey in map && map[newKey] !== item) {
+                    // There is a different item in the map with the newKey which is an
+                    // error. To properly handle this, add the item instead.
+                    Ext.Error.raise('Duplicate newKey "' + newKey +
+                                    '" for item with oldKey "' + oldKey + '"');
+                }
+
+                if (oldKey in map && map[oldKey] !== item) {
+                    // There is a different item in the map with the oldKey which is also
+                    // an error. Do not call this method for items that are not part of
+                    // the collection.
+                    Ext.Error.raise('Incorrect oldKey "' + oldKey +
+                                    '" for item with newKey "' + newKey + '"');
+                }
+            }
+            //</debug>
         }
     },
 
@@ -2689,10 +2730,10 @@ Ext.define('Ext.util.Collection', {
                 // First pass max and min are undefined and since nothing is less than
                 // or greater than undefined we always evaluate these "if" statements as
                 // true to pick up the first value as both max and min.
-                if (!(value < max)) {
+                if (!(value < max)) { // jshint ignore:line
                     max = value;
                 }
-                if (!(value > min)) {
+                if (!(value > min)) { // jshint ignore:line
                     min = value;
                 }
             }
@@ -2714,11 +2755,11 @@ Ext.define('Ext.util.Collection', {
                 value = (root ? item[root] : item)[property];
 
                 // Same trick as "bounds"
-                if (!(value < max)) {
+                if (!(value < max)) { // jshint ignore:line
                     max = value;
                     most = item;
                 }
-                if (!(value > min)) {
+                if (!(value > min)) { // jshint ignore:line
                     min = value;
                     least = item;
                 }
@@ -2788,25 +2829,25 @@ Ext.define('Ext.util.Collection', {
      * @since 5.0.0
      */
     addObserver: function (observer) {
-        var observers = this.observers,
-            observerMap,
-            observerId = observer.getId();
+        var me = this,
+            observers = me.observers;
 
         if (!observers) {
-            observers = this.observers = [];
-            this.observerMap = {};
+            me.observers = observers = [];
         }
-        observerMap = this.observerMap;
 
-        if (!observerMap[observerId]) {
-            observers.push(observer);
-            observerMap[observerId] = observer;
+        //<debug>
+        if (Ext.Array.contains(observers, observer)) {
+            Ext.Error.raise('Observer already added');
+        }
+        //</debug>
 
-            if (observers.length > 1) {
-                // Allow observers to be inserted with a priority.
-                // For example GroupCollections must react to Collection mutation before views.
-                Ext.Array.sort(observers, this.prioritySortFn);
-            }
+        observers.push(observer);
+
+        if (observers.length > 1) {
+            // Allow observers to be inserted with a priority.
+            // For example GroupCollections must react to Collection mutation before views.
+            Ext.Array.sort(observers, me.prioritySortFn);
         }
     },
 
@@ -2834,9 +2875,11 @@ Ext.define('Ext.util.Collection', {
                 if (Ext.isString(value)) {
                     config.property = value;
                 } else {
-                    Ext.apply(config, value);
+                    config = Ext.apply(config, value);
                 }
                 value = new Ext.util.CollectionKey(config);
+            } else {
+                value.setCollection(me);
             }
 
             ret[name] = me[name] = value;
@@ -2918,7 +2961,7 @@ Ext.define('Ext.util.Collection', {
      * involve too much overhead. When this threshold is cross, the index map is discarded
      * and must be rebuilt by calling this method.
      *
-     * @returns {Object}
+     * @return {Object}
      * @private
      * @since 5.0.0
      */
@@ -2965,7 +3008,7 @@ Ext.define('Ext.util.Collection', {
             for (index = 0, length = observers.length; index < length; ++index) {
                 method = (observer = observers[index])[methodName];
                 if (method) {
-                    if (!added++) {
+                    if (!added++) { // jshint ignore:line
                         args.unshift(me); // put this Collection as the first argument
                     }
                     method.apply(observer, args);
@@ -3041,15 +3084,23 @@ Ext.define('Ext.util.Collection', {
      */
     onFilterChange: function (filters) {
         var me = this,
-            source = me.getSource();
+            source = me.getSource(),
+            extraKeys, newKeys, key;
 
         if (!source) {
             // In this method, we have changed the filter but since we don't start with
             // any and we create the source collection as needed that means we are getting
             // our first filter.
+            extraKeys = me.getExtraKeys()
+            if (extraKeys) {
+                newKeys = {};
+                for (key in extraKeys) {
+                    newKeys[key] = extraKeys[key].clone(me);
+                }
+            }
             source = new Ext.util.Collection({
                 keyFn: me.getKey,
-                extraKeys: me.getInitialConfig().extraKeys,
+                extraKeys: newKeys,
                 rootProperty: me.getRootProperty()
             });
 
@@ -3205,7 +3256,7 @@ Ext.define('Ext.util.Collection', {
      * should be one the following values:
      *
      * * `**replace**` : The new sorter(s) become the sole sorter set for this Sortable.
-     *   This is the most useful call mode to programmaticly sort by multiple fields.
+     *   This is the most useful call mode to programmatically sort by multiple fields.
      *
      * * `**prepend**` : The new sorters are inserted as the primary sorters. The sorter
      *   collection length must be controlled by the developer.
@@ -3256,7 +3307,7 @@ Ext.define('Ext.util.Collection', {
 
         me.indices = null;
 
-        me.notify('beforesort', [me.getSorters()]);
+        me.notify('beforesort', [me.getSorters(false)]);
 
         if (me.length) {
             Ext.Array.sort(me.items, sortFn);
@@ -3309,14 +3360,19 @@ Ext.define('Ext.util.Collection', {
     createSortFn: function () {
         var me = this,
             grouper = me.getGrouper(),
-            sorterFn = me.getSorters().getSortFn();
+            sorters = me.getSorters(false),
+            sorterFn = sorters ? sorters.getSortFn() : null;
 
         if (!grouper) {
             return sorterFn;
         }
 
         return function (lhs, rhs) {
-            return grouper.sort(lhs, rhs) || sorterFn(lhs, rhs);
+            var ret = grouper.sort(lhs, rhs);
+            if (!ret && sorterFn) {
+                ret = sorterFn(lhs, rhs);
+            }
+            return ret;
         };
     },
 
@@ -3334,8 +3390,7 @@ Ext.define('Ext.util.Collection', {
                 groups = new Ext.util.GroupCollection({
                     itemRoot: me.getRootProperty()
                 });
-
-                me.addObserver(groups);
+                groups.$groupable = me;
                 me.setGroups(groups);
             }
             groups.setGrouper(grouper);
@@ -3389,7 +3444,7 @@ Ext.define('Ext.util.Collection', {
     onEndUpdateSorters: function (sorters) {
         var me = this,
             was = me.sorted,
-            is = me.grouped || (sorters && (sorters.length > 0));
+            is = (me.grouped && me.getAutoGroup()) || (sorters && sorters.length > 0);
 
         if (was || is) {
              // ensure flag property is a boolean.
@@ -3411,7 +3466,6 @@ Ext.define('Ext.util.Collection', {
 
         if (observers) {
             Ext.Array.remove(observers, observer);
-            delete this.observerMap[observer.getId()];
         }
     },
 
@@ -3437,7 +3491,7 @@ Ext.define('Ext.util.Collection', {
             adds = [],
             count = 0,
             items = [],
-            sorters = me.getSorters(),
+            sortFn = me.getSortFn(), // account for grouper and sorter(s)
             addItems, end, i, newItem, oldItem, newIndex;
 
         me.items = items;
@@ -3465,7 +3519,7 @@ Ext.define('Ext.util.Collection', {
                 //  at newIndex == 0 this loop sets oldItem but breaks immediately
                 //  at newIndex == 2 this loop pushes 15 and breaks w/oldIndex=1
                 //  at newIndex == 4 this loop pushes 25, 35 and 45 and breaks w/oldIndex=4
-                if (sorters.sortFn(newItem, oldItem = oldItems[oldIndex]) < 0) {
+                if (sortFn(newItem, oldItem = oldItems[oldIndex]) < 0) {
                     break;
                 }
                 items.push(oldItem);
@@ -3512,7 +3566,7 @@ Ext.define('Ext.util.Collection', {
                 // Consider above arrays...
                 //  at newIndex == 0 this loop pushes 11 then breaks w/end == 2
                 //  at newIndex == 2 this loop pushes 21 the breaks w/end == 4
-                if (sorters.sortFn(newItem = newItems[end], oldItem) >= 0) {
+                if (sortFn(newItem = newItems[end], oldItem) >= 0) {
                     break;
                 }
                 items.push(newItem);
@@ -3546,6 +3600,16 @@ Ext.define('Ext.util.Collection', {
     
     getGroups: function() {
         return this.callParent() || null;
+    },
+
+    updateAutoGroup: function(autoGroup) {
+        var groups = this.getGroups();
+        if (groups) {
+            groups.setAutoGroup(autoGroup);
+        }
+        // Important to call this so it can clear the .sorted flag
+        // as needed
+        this.onEndUpdateSorters(this._sorters);
     },
 
     updateGroups: function (newGroups, oldGroups) {

@@ -111,8 +111,11 @@ Ext.define('Ext.chart.CartesianChart', {
      */
     performLayout: function () {
         this.resizing++;
-
-        this.callParent();
+        if (this.callParent() === false) {
+            // Resizing will still be decremented
+            return;
+        }
+        
         this.suspendThicknessChanged();
         var me = this,
             chartRect = me.getSurface('chart').getRect(),
