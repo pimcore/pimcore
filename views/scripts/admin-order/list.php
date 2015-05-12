@@ -33,7 +33,6 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                             <?php
                             $arrFields = [
                                 'order' => $this->translate('online-shop.back-office.order-list.filter-order')
-//                                , 'product' => $this->translate('online-shop.back-office.order-list.filter-product')
                                 , 'productType' => $this->translate('online-shop.back-office.order-list.filter-product-type')
                             ];
                             $selected = $this->getParam('search', 'order');
@@ -48,19 +47,19 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                             </ul>
                         </div>
                         <input type="hidden" id="search-query" name="search" value="<?= $selected ?>" />
-                        <input type="text" class="form-control" name="q" placeholder="Suche" value="<?= $this->getParam('q') ?>">
+                        <input type="text" class="form-control" name="q" placeholder="<?= $this->translate('online-shop.back-office.order-list.search.placeholder') ?>" value="<?= $this->escape($this->getParam('q')) ?>">
                     </div>
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="input-group">
                         <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        <input type="text" class="form-control date" name="from" placeholder="Buchungen von" value="<?= $this->escape($this->getParam('from')) ?>">
+                        <input type="text" class="form-control date" name="from" placeholder="<?= $this->translate('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('from')) ?>">
                     </div>
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="input-group">
                         <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        <input type="text" class="form-control date" name="till" placeholder="Buchungen bis" value="<?= $this->escape($this->getParam('till')) ?>">
+                        <input type="text" class="form-control date" name="till" placeholder="<?= $this->translate('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('till')) ?>">
                     </div>
                 </div>
                 <?php
@@ -71,9 +70,9 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></div>
                             <select class="form-control" name="pricingRule">
-                                <option value="">Pricing Rules</option>
+                                <option value=""><?= $this->translate('online-shop.back-office.order-list.filter-pricing-rules') ?></option>
                                 <?php foreach($list as $item): ?>
-                                    <option value="<?= $item->getId() ?>" <?= $item->getId() == $this->getParam('pricingRule') ? 'selected':'' ?>><?= $item->getLabel('de_DE') ?></option>
+                                    <option value="<?= $item->getId() ?>" <?= $item->getId() == $this->getParam('pricingRule') ? 'selected':'' ?>><?= $item->getLabel() ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -82,21 +81,21 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
             </fieldset>
         </div>
         <div class="panel-footer text-center">
-            <button type="submit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-filter"></span> Suchen</button>
+            <button type="submit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-filter"></span> <?= $this->translate('online-shop.back-office.order-list.search.button') ?></button>
         </div>
     </form>
 </div>
 
 
 <table class="table table-striped table-hover">
-    <caption>Gefunden: <?= $paginator->getTotalItemCount(); ?></caption>
+    <caption><?= $this->translate('online-shop.back-office.order-list.result-count') ?>: <?= $paginator->getTotalItemCount(); ?></caption>
     <thead>
     <tr>
-        <th width="180">Best.-Nr.</th>
-        <th width="180">Eingegangen</th>
-        <th width="80">Artikel</th>
+        <th width="180"><?= $this->translate('online-shop.back-office.order') ?></th>
+        <th width="180"><?= $this->translate('online-shop.back-office.order.date') ?></th>
+        <th width="80"><?= $this->translate('online-shop.back-office.order.order-items') ?></th>
         <th></th>
-        <th width="100">Preis</th>
+        <th width="100"><?= $this->translate('online-shop.back-office.order.price.total') ?></th>
     </tr>
     </thead>
     <tbody>

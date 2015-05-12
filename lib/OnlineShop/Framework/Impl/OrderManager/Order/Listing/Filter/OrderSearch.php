@@ -15,12 +15,12 @@ use Pimcore\Model\Object\OnlineShopOrder;
 use Pimcore\Model\Object\OnlineShopOrderItem;
 
 
-class Order implements IOrderListFilter
+class OrderSearch implements IOrderListFilter
 {
     /**
      * @var string
      */
-    protected $query;
+    protected $keyword;
     
 
     /**
@@ -34,7 +34,7 @@ class Order implements IOrderListFilter
         $query = $orderList->getQuery();
 
 
-        if($this->getQuery())
+        if($this->getKeyword())
         {
             $condition = <<<'SQL'
 0
@@ -56,7 +56,7 @@ OR `order`.deliveryCity like ?
 OR `order`.deliveryCountry like ?
 SQL;
 
-            $query->where($condition, '%' . $this->getQuery() . '%');
+            $query->where($condition, '%' . $this->getKeyword() . '%');
         }
 
     }
@@ -64,19 +64,19 @@ SQL;
     /**
      * @return string
      */
-    public function getQuery()
+    public function getKeyword()
     {
-        return $this->query;
+        return $this->keyword;
     }
 
     /**
-     * @param string $query
+     * @param string $keyword
      *
      * @return $this
      */
-    public function setQuery($query)
+    public function setKeyword($keyword)
     {
-        $this->query = $query;
+        $this->keyword = $keyword;
         return $this;
     }
 }

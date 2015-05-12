@@ -107,7 +107,6 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         // add select fields
         $list->addSelectField('order.OrderDate');
         $list->addSelectField(['OrderNumber' => 'order.orderNumber']);
-//        $list->addSelectField(['PaymentReference' => 'order.paymentReference']);
         if($list->getListType() == $list::LIST_TYPE_ORDER)
         {
             $list->addSelectField(['TotalPrice' => 'order.totalPrice']);
@@ -126,12 +125,6 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             $search = $this->getParam('search');
             switch($search)
             {
-//                case 'product':
-//                    $filterProduct = new Filter\Product();
-//                    $filterProduct->getClassId();
-//                    $list->addFilter( $filterProduct );
-//                    break;
-
                 case 'productType':
                     $filterProductType = new Filter\ProductType();
                     $filterProductType->setTypes( [$q] );
@@ -140,13 +133,12 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
                 case 'order':
                 default:
-                    $filterOrder = new Filter\Order();
-                    $filterOrder->setQuery( $q );
+                    $filterOrder = new Filter\OrderSearch();
+                    $filterOrder->setKeyword( $q );
                     $list->addFilter( $filterOrder );
                     break;
             }
         }
-
 
 
         // add Date Filter
