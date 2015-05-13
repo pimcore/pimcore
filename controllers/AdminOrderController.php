@@ -244,24 +244,27 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
 
             // order count
-            $order = new Object_OnlineShopOrder();
-            $field = $order->getClass()->getFieldDefinition('customer');
-            if($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href)
-            {
-                if(count($field->getClasses()) == 1)
+            $addOrderCount = function () use($customer, $arrCustomerAccount) {
+                $order = new Object_OnlineShopOrder();
+                $field = $order->getClass()->getFieldDefinition('customer');
+                if($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href)
                 {
-                    $class = 'Pimcore\Model\Object\\' . reset($field->getClasses())['classes'];
-                    /* @var \Pimcore\Model\Object\Concrete $class */
+                    if(count($field->getClasses()) == 1)
+                    {
+                        $class = 'Pimcore\Model\Object\\' . reset($field->getClasses())['classes'];
+                        /* @var \Pimcore\Model\Object\Concrete $class */
 
-                    $orderList = $this->orderManager->createOrderList();
-                    $orderList->joinCustomer( $class::classId() );
+                        $orderList = $this->orderManager->createOrderList();
+                        $orderList->joinCustomer( $class::classId() );
 
-                    $orderList->getQuery()->where('customer.o_id = ?', $customer->getId());
+                        $orderList->getQuery()->where('customer.o_id = ?', $customer->getId());
 
-                    $arrCustomerAccount['orderCount'] = $orderList->count();
+                        $arrCustomerAccount['orderCount'] = $orderList->count();
+                    }
                 }
-            }
-            
+            };
+            $addOrderCount();
+
             $this->view->arrCustomerAccount = $arrCustomerAccount;
         }
 
@@ -373,7 +376,6 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
             // extend log
             $note->addData('message', 'text', $this->getParam('message')); # 'text','date','document','asset','object','bool'
-            $note->setUser(3);
             $note->save();
 
 
