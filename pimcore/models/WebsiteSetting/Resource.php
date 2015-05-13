@@ -44,14 +44,14 @@ class Resource extends Model\Resource\AbstractResource {
      * @param null $siteId
      * @throws \Exception
      */
-    public function getByName($name = null, $siteId = null) {
-
+    public function getByName($name = null, $siteId = null)
+    {
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT id, data FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
+        $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
         
-        if($data["id"]) {
+        if(!empty($data["id"])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception("Website Setting with name: " . $this->model->getName() . " does not exist");
