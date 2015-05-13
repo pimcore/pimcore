@@ -114,10 +114,11 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         self::createClass("OfferToolCustomProduct", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolCustomProduct_export.json');
 
         //copy config file
-        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShopConfig.xml")) {
-            copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/OnlineShopConfig_sample.xml", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShopConfig.xml");
+        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/OnlineShopConfig.xml")) {
+            copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/OnlineShopConfig_sample.xml", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/OnlineShopConfig.xml");
+            copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/.htaccess", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/.htaccess");
         }
-        self::setConfig("/website/var/plugins/OnlineShopConfig.xml");
+        self::setConfig("/website/var/plugins/OnlineShop/OnlineShopConfig.xml");
 
 
         // execute installations from subsystems
