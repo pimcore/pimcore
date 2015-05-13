@@ -81,7 +81,7 @@ $currency = $orderAgent->getCurrency();
                 </tfoot>
                 <tbody>
                 <?php foreach($order->getItems() as $item):
-                    /* @var Pimcore\Model\Object\OnlineShopOrderItem $item */
+                    /* @var OnlineShop_Framework_AbstractOrderItem $item */
                     ?>
                     <tr>
                         <td>
@@ -145,19 +145,6 @@ $currency = $orderAgent->getCurrency();
                                                 <a href="<?= $urlComplaint ?>" data-toggle="modal" data-target="#popup" class="text-danger">
                                                     <span class="glyphicon glyphicon-share-alt"></span>
                                                     <?= $this->translate('online-shop.back-office.order.complaint.item') ?>
-                                                </a>
-                                            <?php endif; ?>
-                                            <?php if(true):
-                                                $urlSetStatus = $this->url([
-                                                    'action' => 'item-set-status'
-                                                    , 'controller' => 'admin-order'
-                                                    , 'module' => 'OnlineShop'
-                                                    , 'id' => $item->getId()
-                                                ]);
-                                                ?>
-                                                <a href="<?= $urlSetStatus ?>" data-toggle="modal" data-target="#popup" class="text-danger">
-                                                    <span class="glyphicon glyphicon-flash"></span>
-                                                    <?= $this->translate('online-shop.back-office.order.set-status.item') ?>
                                                 </a>
                                             <?php endif; ?>
                                         </li>
@@ -300,7 +287,9 @@ $currency = $orderAgent->getCurrency();
                                 <?= $order->getCustomerStreet() ?><br/>
                                 <?= $order->getCustomerZip().' - '.$order->getCustomerCity() ?><br/>
                                 <?= strtoupper(Zend_Locale::getTranslation($order->getCustomerCountry(), 'territory')) ?><br/>
-                                <?= sprintf('<a href="mailto:%1$s">%1$s</a>', $order->getCustomer()->getEmail()) ?>
+                                <?php if($order->getCustomer() && method_exists($order->getCustomer(), 'email')): ?>
+                                    <?= sprintf('<a href="mailto:%1$s">%1$s</a>', $order->getCustomer()->getEmail()) ?>
+                                <?php endif; ?>
                             </address>
                         </div>
 
