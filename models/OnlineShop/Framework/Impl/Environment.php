@@ -288,7 +288,10 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
      */
     public function setCurrentCheckoutTenant($tenant)
     {
-        $this->currentCheckoutTenant = $tenant;
+        if($this->currentCheckoutTenant != $tenant) {
+            $this->currentCheckoutTenant = $tenant;
+            OnlineShop_Framework_Factory::resetInstance();
+        }
     }
 
     /**

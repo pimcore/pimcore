@@ -78,6 +78,10 @@ class OnlineShop_Framework_Factory {
         return self::$instance;
     }
 
+    public static function resetInstance() {
+        self::$instance = null;
+    }
+
     private function __construct() {
         //$this->initEnvironment();
     }
