@@ -314,8 +314,6 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
         // execute request
         $response = $this->serverToServerRequest( 'https://checkout.wirecard.com/page/toolkit.php', $request );
-        #var_dump($request, $response);
-        # 15570385
 
 
         // check response
@@ -325,7 +323,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
             return new OnlineShop_Framework_Impl_Payment_Status(
                 $reference
-                , $request['paymentNumber']
+                , $response['paymentNumber'] ?: $response['orderNumber']
                 , ''
                 , OnlineShop_Framework_Payment_IStatus::STATUS_CLEARED
                 , [
@@ -347,7 +345,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
             return new OnlineShop_Framework_Impl_Payment_Status(
                 $reference
-                , $request['paymentNumber']
+                , $response['paymentNumber'] ?: $response['orderNumber']
                 , implode("\n", $error)
                 , OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
                 , [

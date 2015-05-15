@@ -267,7 +267,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         }
 
         //cleans up all old zombie data
-        $this->doCleanupOldZombieData($object, $subObjectIds);
+//        $this->doCleanupOldZombieData($object, $subObjectIds);
 
     }
 
