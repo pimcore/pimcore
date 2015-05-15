@@ -495,7 +495,7 @@ SQL;
         if($this->isInReindexMode()) {
 
             // check if all entries are updated
-            $query = "SELECT count(*) FROM plugin_onlineshop_productindex_store WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
+            $query = "SELECT count(*) FROM " . $this->getStoreTableName() . " WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
             $result = $this->db->fetchOne($query, array($this->name));
 
             if($result == 0) {
