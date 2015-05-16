@@ -233,7 +233,13 @@ abstract class AbstractListing extends AbstractModel {
 
                 // If there is not a placeholder, ignore value!
                 if(!$value['ignore-value']){
-                    $params[] = $value['value'];
+                    if(is_array($value['value'])){
+                        foreach($value['value'] as $v){
+                            $params[] = $v;
+                        }
+                    }else{
+                        $params[] = $value['value'];
+                    }
                 }
                 $i++;
             }
