@@ -40,14 +40,14 @@
 					{
 						"fieldtype":"select",
 						"options":[
-						  {
-							"key":"Committed",
-							"value":"committed"
-						  },
-						  {
-							"key":"Cancelled",
-							"value":"cancelled"
-						  }
+							{
+								"key":"Committed",
+								"value":"committed"
+							},
+							{
+								"key":"Cancelled",
+								"value":"cancelled"
+							}
 						],
 						"width":"",
 						"queryColumnType":"varchar(255)",
@@ -68,7 +68,7 @@
 						"visibleGridView":false,
 						"visibleSearch":false
 					},
-				  	{
+					{
 						"fieldtype":"href",
 						"width":"",
 						"assetUploadPath":"",
@@ -271,7 +271,7 @@
 						"mandatory":false,
 						"noteditable":false,
 						"index":false,
-						"locked":null,
+						"locked":false,
 						"style":"",
 						"permissions":null,
 						"datatype":"data",

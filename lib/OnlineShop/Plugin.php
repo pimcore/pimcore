@@ -329,6 +329,35 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
 
     /**
+     * install all object bricks
+     */
+    private static function installObjectBricks()
+    {
+        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/objectbrick_sources');
+        foreach ($sourceFiles as $filename) {
+            if (!is_dir($filename)) {
+
+                preg_match('/_(.*)_/', $filename, $matches);
+                $key = $matches[1];
+
+                try {
+                    $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($key);
+                } catch(Exception $e) {
+                    $brick = new \Pimcore\Model\Object\Objectbrick\Definition();
+                    $brick->setKey($key);
+                }
+
+                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/objectbrick_sources/' . $filename);
+                $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
+                if(!$success){
+                    Logger::err("Could not import $key ObjectBrick.");
+                }
+            }
+        }
+    }
+
+
+    /**
      * install pricing rule system
      *
      * @return bool
