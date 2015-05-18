@@ -99,7 +99,8 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         }
 
         //check if pending payment. if one, do not update order from cart
-        $paymentInfo = $this->getOrCreateActivePaymentInfo($order, false);
+        $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        $paymentInfo = $orderAgent->startPayment();
         if($paymentInfo) {
             return $order;
         }
@@ -176,87 +177,33 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
     /**
+     * @deprecated use orderManager instead
      * @return OnlineShop_Framework_AbstractPaymentInformation
      */
     public function getOrCreateActivePaymentInfo(OnlineShop_Framework_AbstractOrder $order, $createNew = true) {
-        $paymentInformation = $order->getPaymentInfo();
-        $currentPaymentInformation = null;
-        if($paymentInformation) {
-            foreach($paymentInformation as $paymentInfo) {
-                if($paymentInfo->getPaymentState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_PENDING) {
-                    $currentPaymentInformation = $paymentInfo;
-                    break;
-                }
-            }
-        } else {
-            $paymentInformation = new \Pimcore\Model\Object\Fieldcollection();
-            $order->setPaymentInfo($paymentInformation);
-        }
 
-        if(empty($currentPaymentInformation) && $createNew) {
-            $currentPaymentInformation = new \Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo();
-            $currentPaymentInformation->setPaymentStart(Zend_Date::now());
-            $currentPaymentInformation->setPaymentState(OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_PENDING);
-            $currentPaymentInformation->setInternalPaymentId(uniqid("payment_") . "~" . $order->getId());
-
-            $paymentInformation->add($currentPaymentInformation);
-
-            $order->setOrderState(OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_PENDING);
-            $order->save();
-        }
-
-        return $currentPaymentInformation;
+        $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        return $orderAgent->startPayment( $createNew );
     }
 
     /**
      * @param OnlineShop_Framework_Payment_IStatus $status
      *
+     * @deprecated use orderManager instead
      * @return OnlineShop_Framework_AbstractOrder
      * @throws Exception
      */
     public function updateOrderPayment(OnlineShop_Framework_Payment_IStatus $status) {
 
+        // init
         $orderId = explode("~", $status->getInternalPaymentId());
         $orderId = $orderId[1];
         $orderClass = $this->orderClass;
         $order = $orderClass::getById($orderId);
         /* @var OnlineShop_Framework_AbstractOrder $order */
 
-
-        $paymentInformation = $order->getPaymentInfo();
-        $currentPaymentInformation = null;
-        foreach($paymentInformation as $paymentInfo) {
-            if($paymentInfo->getInternalPaymentId() == $status->getInternalPaymentId()) {
-                $currentPaymentInformation = $paymentInfo;
-                break;
-            }
-        }
-
-        if(empty($currentPaymentInformation)) {
-            throw new Exception("Paymentinformation with internal id " . $status->getInternalPaymentId() . " not found.");
-        }
-
-        // save basic payment data
-        $currentPaymentInformation->setPaymentFinish(Zend_Date::now());
-        $currentPaymentInformation->setPaymentReference($status->getPaymentReference());
-        $currentPaymentInformation->setPaymentState($status->getStatus());
-        $currentPaymentInformation->setMessage($status->getMessage());
-
-
-        // save additional data
-        foreach($status->getData() as $field => $value)
-        {
-            $setter = 'setProvider_' . $field;
-            if(method_exists($currentPaymentInformation, $setter))
-            {
-                $currentPaymentInformation->$setter( $value );
-            }
-        }
-
-
-        $order->save();
-
-        return $order;
+        $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        return $orderAgent->updatePayment( $status )->getOrder();
     }
 
 

@@ -49,6 +49,6 @@ class OrderManager implements IOrderManager
      */
     public function createOrderAgent(Order $order)
     {
-        return new $this->config->orderAgent->class( $order );
+        return new $this->config->orderAgent->class( \OnlineShop_Framework_Factory::getInstance(), $order );
     }
 }

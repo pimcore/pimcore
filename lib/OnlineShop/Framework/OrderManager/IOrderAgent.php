@@ -8,6 +8,7 @@
 
 namespace OnlineShop\Framework\OrderManager;
 
+use OnlineShop_Framework_Factory;
 use OnlineShop_Framework_IPayment;
 use OnlineShop_Framework_Payment_IStatus;
 
@@ -22,9 +23,10 @@ use Pimcore\Model\Element\Note;
 interface IOrderAgent
 {
     /**
-     * @param Order $order
+     * @param OnlineShop_Framework_Factory $factory
+     * @param Order                        $order
      */
-    public function __construct(Order $order);
+    public function __construct(OnlineShop_Framework_Factory $factory, Order $order);
 
 
     /**

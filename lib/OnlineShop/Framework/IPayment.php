@@ -12,6 +12,12 @@ interface OnlineShop_Framework_IPayment
 
 
     /**
+     * @return string
+     */
+    public function getName();
+
+
+    /**
      * start payment
      * @param OnlineShop_Framework_IPrice $price
      * @param array                       $config

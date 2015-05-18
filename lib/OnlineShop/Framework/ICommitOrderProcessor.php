@@ -15,6 +15,8 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
     /**
      * Gets or creates active payment info for the given order
      *
+     * @deprecated use orderManager instead
+     * @param OnlineShop_Framework_AbstractOrder $order
      * @return OnlineShop_Framework_AbstractPaymentInformation
      */
     public function getOrCreateActivePaymentInfo(OnlineShop_Framework_AbstractOrder $order);
@@ -23,6 +25,7 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      * Updates payment information with given status information
      * order id is retrieved from status object
      *
+     * @deprecated use orderManager instead
      * @param OnlineShop_Framework_Payment_IStatus $status
      * @return OnlineShop_Framework_AbstractOrder
      */

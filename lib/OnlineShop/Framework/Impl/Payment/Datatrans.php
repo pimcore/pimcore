@@ -72,6 +72,15 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'Datatrans';
+    }
+
+
+    /**
      * start payment
      * @param OnlineShop_Framework_IPrice $price
      * @param array                       $config

@@ -57,6 +57,15 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
 
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'PayPal';
+    }
+
+
+    /**
      * start payment
      * @param OnlineShop_Framework_IPrice $price
      * @param array                       $config
@@ -71,6 +80,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
         $required = [  'ReturnURL' => null
                        , 'CancelURL' => null
                        , 'OrderDescription' => null
+                       , 'InvoiceID' => null
         ];
         $config = array_intersect_key($config, $required);
 
@@ -91,6 +101,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->AllowNote = "0";
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->PaymentDetails = $this->createPaymentDetails( $price );
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->OrderDescription = $config['OrderDescription'];
+        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->InvoiceID = $config['InvoiceID'];
 
 
         // add optional config
@@ -137,7 +148,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
         // check required fields
         $required = [   'token' => null
                       , 'PayerID' => null
-                      , 'internal_id' => null
+                      , 'InvoiceID' => null
                       , 'amount' => null
                       , 'currency' => null
         ];
@@ -167,7 +178,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
         // execute
         //TODO do not call this in handle response, but call it in the controller!
         //TODO return a 'intermediate' status
-        return $this->executeDebit($price, $response['internal_id']);
+        return $this->executeDebit($price, $response['InvoiceID']);
     }
 
 

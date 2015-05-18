@@ -60,6 +60,15 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'Qpay';
+    }
+
+
+    /**
      * start payment
      * @param OnlineShop_Framework_IPrice $price
      * @param array                       $config

@@ -23,6 +23,7 @@ use Pimcore\Model\Element\Note;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Fieldcollection;
 use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
+use Pimcore\Model\Object\Objectbrick\Data as ObjectbrickData;
 
 
 class Agent implements IOrderAgent
@@ -31,11 +32,6 @@ class Agent implements IOrderAgent
      * @var Order
      */
     protected $order;
-
-    /**
-     * @var \Zend_EventManager_EventManager
-     */
-    protected $eventManager;
 
     /**
      * @var OnlineShop_Framework_IPayment
@@ -49,20 +45,14 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @param Order $order
+     * @param OnlineShop_Framework_Factory $factory
+     * @param Order                        $order
      */
-    public function __construct(Order $order)
+    public function __construct(OnlineShop_Framework_Factory $factory, Order $order)
     {
         $this->order = $order;
-        $this->eventManager = new \Zend_EventManager_EventManager( __CLASS__ );
-        $this->factory = OnlineShop_Framework_Factory::getInstance();   // TODO über param?
+        $this->factory = $factory;
     }
-
-
-//    public function addHook($event, callable $callback)
-//    {
-//        $this->eventManager->attach($event, $callback);
-//    }
 
 
     /**
@@ -197,8 +187,6 @@ class Agent implements IOrderAgent
         $note->setDate( time() );
 
         $note->setType( 'order-agent' );
-//        $note->setTitle( 'itemChangeAmount' );
-//        $note->setDescription( '' );
 
         return $note;
     }
@@ -210,7 +198,7 @@ class Agent implements IOrderAgent
      */
     public function hasPayment()
     {
-        return $this->getOrder()->getPaymentReference() != '' || $this->getOrder()->getPaymentInfo();
+        return !empty($this->getOrder()->getPaymentInfo());
     }
 
 
@@ -222,6 +210,7 @@ class Agent implements IOrderAgent
         return new \Zend_Currency($this->getOrder()->getCurrency(), $this->factory->getEnvironment()->getCurrencyLocale());
     }
 
+
     /**
      * @return OnlineShop_Framework_IPayment
      */
@@ -231,22 +220,38 @@ class Agent implements IOrderAgent
         {
             // init
             $order = $this->getOrder();
-            $authorizedData = [];
-            foreach($order as $field => $value)
+
+
+            // get first available provider
+            foreach($order->getPaymentProvider()->getBrickGetters() as $method)
             {
-                if(preg_match('#^paymentAuthorizedData_(?<name>\w+)$#i', $field, $match))
+                $providerData = $order->getPaymentProvider()->{$method}();
+                if($providerData)
                 {
-                    $func = 'get' . $field;
-                    $authorizedData[$match['name']] = $order->$func();
+                    /* @var \Pimcore\Model\Object\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
+
+                    // get provider data
+                    $name = strtolower(str_replace('PaymentProvider', '', $providerData->getType()));
+                    $authorizedData = [];
+                    foreach($providerData->getObjectVars() as $field => $value)
+                    {
+                        if(preg_match('#^auth_(?<name>\w+)$#i', $field, $match))
+                        {
+                            $func = 'get' . $field;
+                            $authorizedData[$match['name']] = $providerData->$func();
+                        }
+                    }
+
+
+                    // init payment
+                    $paymentProvider = $this->factory->getPaymentManager()->getProvider( $name );
+                    $paymentProvider->setAuthorizedData( $authorizedData );
+
+                    $this->paymentProvider = $paymentProvider;
+
+                    break;
                 }
             }
-
-
-            // init payment
-            $paymentProvider = $this->factory->getPaymentManager()->getProvider( $order->getPaymentProvider() );
-            $paymentProvider->setAuthorizedData( $authorizedData );
-
-            $this->paymentProvider = $paymentProvider;
         }
 
         return $this->paymentProvider;
@@ -262,22 +267,39 @@ class Agent implements IOrderAgent
         $this->paymentProvider = $paymentProvider;
 
 
-        // save authorizedData
+        // save provider data
         $order = $this->getOrder();
+
+        $provider = $order->getPaymentProvider();
+        /* @var \Pimcore\Model\Object\OnlineShopOrder\PaymentProvider $provider */
+
+
+        // load existing
+        $getter = 'getPaymentProvider' . $paymentProvider->getName();
+        $providerData = $provider->{$getter}();
+        /* @var ObjectbrickData\PaymentProvider* $providerData */
+
+        if(!$providerData)
+        {
+            // create new
+            $class = '\Pimcore\Model\Object\Objectbrick\Data\PaymentProvider' . $paymentProvider->getName();
+            $providerData = new $class( $order );
+            $provider->{'setPaymentProvider' . $paymentProvider->getName()}( $providerData );
+        }
+
+
+        // update authorizedData
         $authorizedData = $paymentProvider->getAuthorizedData();
         foreach($authorizedData as $field => $value)
         {
-            $setter = 'setPaymentAuthorizedData_' . $field;
-            if(method_exists($order, $setter))
+            $setter = 'setAuth_' . $field;
+            if(method_exists($providerData, $setter))
             {
-                $order->{$setter}( $value );
+                $providerData->{$setter}( $value );
             }
         }
 
         $order->save();
-//        $order->setPaymentProvider( $paymentProvider->getName() );    // TODO
-
-
         return $this;
     }
 
@@ -348,9 +370,10 @@ class Agent implements IOrderAgent
         $currentPaymentInformation->setPaymentReference( $status->getPaymentReference() );
         $currentPaymentInformation->setPaymentState( $status->getStatus() );
         $currentPaymentInformation->setMessage( $status->getMessage() );
+        $currentPaymentInformation->setProviderData( json_encode($status->getData()) );
 
 
-        // save additional payment data
+        // opt. save additional payment data separately
         foreach($status->getData() as $field => $value)
         {
             $setter = 'setProvider_' . $field;
@@ -363,6 +386,6 @@ class Agent implements IOrderAgent
 
         $order->save();
 
-        return $order;
+        return $this;
     }
 }
