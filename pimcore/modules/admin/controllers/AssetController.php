@@ -1072,9 +1072,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         if ($this->getParam("start")) {
             $start = $this->getParam("start");
         }
+        
+        $condition = "path LIKE '" . ($folder->getFullPath() == "/" ? "/%'" : $folder->getFullPath() . "/%'") ." AND type != 'folder'";
 
         $list = Asset::getList(array(
-            "condition" => "path LIKE '" . $folder->getFullPath() . "/%' AND type != 'folder'",
+            "condition" => $condition,
             "limit" => $limit,
             "offset" => $start,
             "orderKey" => "filename",
@@ -1621,7 +1623,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             if($this->getParam("only_direct_children") == "true") {
                 $conditionFilters[] = "parentId = " . $folder->getId();
             } else {
-                $conditionFilters[] = "path LIKE '" . $folder->getFullPath() . "/%'";
+                $conditionFilters[] = "path LIKE '" . ($folder->getFullPath() == "/" ? "/%'" : $folder->getFullPath() . "/%'");
             }
 
             $conditionFilters[] = "type != 'folder'";
