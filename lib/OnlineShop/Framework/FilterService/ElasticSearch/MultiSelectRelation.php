@@ -51,7 +51,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectRelation exten
                         $productList->addRelationCondition($field, $value);
                     }
                 } else {
-                    $productList->addRelationCondition($field, ['terms' => ["relations." . $field => $quotedValues]]);
+                    $productList->addRelationCondition($field, ['terms' => [$field => $quotedValues]]);
                 }
             }
         }

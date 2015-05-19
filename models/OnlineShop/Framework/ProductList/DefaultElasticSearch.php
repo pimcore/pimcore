@@ -158,7 +158,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @param string $condition
      */
     public function addRelationCondition($fieldname, $condition) {
-        $this->relationConditions[$fieldname][] = $condition;
+        $this->relationConditions['relations.' . $fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }
@@ -575,7 +575,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
                     if (is_array($relationCondition)) {
                         $boolFilters[] = $relationCondition;
                     } else {
-                        $boolFilters[] = ['term' => ['relations.' . $fieldname => $relationCondition]];
+                        $boolFilters[] = ['term' => [$fieldname => $relationCondition]];
                     }
                 }
             }
