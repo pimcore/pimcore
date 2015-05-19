@@ -262,7 +262,9 @@ class Concrete extends AbstractObject {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("object.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.preUpdate", $this, [
+                "saveVersionOnly" => true
+            ]);
         }
 
         // scheduled tasks are saved always, they are not versioned!
@@ -285,7 +287,9 @@ class Concrete extends AbstractObject {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("object.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.postUpdate", $this, [
+                "saveVersionOnly" => true
+            ]);
         }
 
         return $version;

@@ -8,14 +8,14 @@
 
 /*
 // register a custom ZF controller plugin
-$front = Zend_Controller_Front::getInstance();
+$front = \Zend_Controller_Front::getInstance();
 $front->registerPlugin(new Website\Controller\Plugin\Custom(), 700);
 */
 
 /*
 // register a custom ZF route
 $router = $front->getRouter();
-$routeCustom = new Zend_Controller_Router_Route(
+$routeCustom = new \Zend_Controller_Router_Route(
     'custom/:controller/:action/*',
     array(
         'module' => 'custom',
@@ -29,7 +29,7 @@ $front->setRouter($router);
 
 /*
 // add a custom module directory
-$front = Zend_Controller_Front::getInstance();
+$front = \Zend_Controller_Front::getInstance();
 $front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/customModuleDirectory");
 
 //init the autoloader
@@ -37,9 +37,12 @@ Pimcore::initAutoloader();
 
 
 // add some custom events
-Pimcore::getEventManager()->attach("object.postUpdate", function ($event) {
+\Pimcore::getEventManager()->attach("object.postUpdate", function (\Zend_EventManager_Event $event) {
     $object = $event->getTarget();
     // do something ...
+    // get a parameter from the event
+    $saveVersionOnly = $event->getParam("saveVersionOnly");
+    // ...
 });
 
 */

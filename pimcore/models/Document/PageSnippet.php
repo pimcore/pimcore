@@ -118,7 +118,9 @@ abstract class PageSnippet extends Model\Document {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("document.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("document.preUpdate", $this, [
+                "saveVersionOnly" => true
+            ]);
         }
 
         // set date
@@ -146,7 +148,9 @@ abstract class PageSnippet extends Model\Document {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("document.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("document.postUpdate", $this, [
+                "saveVersionOnly" => true
+            ]);
         }
 
         return $version;

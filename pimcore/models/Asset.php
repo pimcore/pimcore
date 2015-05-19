@@ -734,7 +734,9 @@ class Asset extends Element\AbstractElement {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("asset.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("asset.preUpdate", $this, [
+                "saveVersionOnly" => true
+            ]);
         }
 
         // set date
@@ -762,7 +764,9 @@ class Asset extends Element\AbstractElement {
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("asset.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("asset.postUpdate", $this, [
+                "saveVersionOnly" => true
+            ]);
         }
 
         return $version;
