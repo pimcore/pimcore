@@ -174,6 +174,7 @@ class Areablock extends Model\Document\Tag {
             $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
             $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
         } catch (\Exception $e) {
+            \Logger::err($e);
             $info = null;
         }
 
@@ -542,11 +543,11 @@ class Areablock extends Model\Document\Tag {
                 }
 
                 $availableAreas[$sortKey][] = array(
-                        "name" => $n,
-                        "description" => $d,
-                        "type" => $areaName,
-                        "icon" => $icon,
-                        "sortIndex" => $sortIndex
+                    "name" => $n,
+                    "description" => $d,
+                    "type" => $areaName,
+                    "icon" => $icon,
+                    "sortIndex" => $sortIndex
                 );
             }
         }
@@ -669,7 +670,7 @@ class Areablock extends Model\Document\Tag {
     public function getFromWebserviceImport($wsElement, $idMapper = null){
         $data = $wsElement->value;
         if(($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current))
-                    and ($data->currentIndex==null or is_numeric($data->currentIndex))) {
+            and ($data->currentIndex==null or is_numeric($data->currentIndex))) {
             $indices = $data["indices"];
             if ($indices instanceof \stdclass) {
                 $indices = (array) $indices;
@@ -729,8 +730,8 @@ class Areablock extends Model\Document\Tag {
      */
     public function getBrickConfig($name) {
         if($this->isCustomAreaPath()) {
-            $path = $this->getPathForBrick($name);
-            ExtensionManager::getBrickConfig($name, $path);
+            $path = $this->getAreaDirectory();
+            return ExtensionManager::getBrickConfig($name, $path);
         }
 
         return ExtensionManager::getBrickConfig($name);
