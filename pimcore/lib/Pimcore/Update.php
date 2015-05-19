@@ -214,10 +214,13 @@ class Update {
             File::mkdir($scriptsDir);
         }
         
-        
         $xml = Tool::getHttpData($url);
         if($xml) {
-            $parserOptions = LIBXML_VERSION >= 20900 ? LIBXML_NOCDATA | LIBXML_PARSEHUGE : LIBXML_NOCDATA;
+            $parserOptions = LIBXML_NOCDATA;
+            if(defined("LIBXML_PARSEHUGE")) {
+                $parserOptions = LIBXML_NOCDATA | LIBXML_PARSEHUGE;
+            }
+
             $updateFiles = simplexml_load_string($xml, null, $parserOptions);
             
             foreach ($updateFiles->file as $file) {
