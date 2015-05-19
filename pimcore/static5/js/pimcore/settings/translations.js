@@ -169,10 +169,10 @@ pimcore.settings.translations = Class.create({
             return Ext.Date.format(date, "Y-m-d H:i:s");
         };
         typesColumns.push({header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
-            renderer: dateRenderer
+            renderer: dateRenderer, filter: "date"
         });
         typesColumns.push({header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
-            ,renderer: dateRenderer
+            ,renderer: dateRenderer, filter: "date"
         })
         ;
 
@@ -220,7 +220,7 @@ pimcore.settings.translations = Class.create({
                     },
                     extraParams: {
                         limit: itemsPerPage,
-                        filter: this.preconfiguredFilter
+                        searchString: this.preconfiguredFilter
                     },
 
                     // Reader is now on the proxy, as the message was explaining
@@ -305,6 +305,7 @@ pimcore.settings.translations = Class.create({
             clicksToEdit: 1
         });
 
+
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
             autoScroll: true,
@@ -324,6 +325,7 @@ pimcore.settings.translations = Class.create({
             stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
+                "gridfilters",
                 this.cellEditing,
                 {
                     ptype: 'datatip',
@@ -408,16 +410,19 @@ pimcore.settings.translations = Class.create({
 
     doExport:function(){
 
-        if(this.filterField.getValue()) {
+        var filtersActive = this.filterField.getValue() || this.gridFilters.getFilterData().length;
+        if(filtersActive) {
             Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
                 if (buttonValue == "yes") {
-                    window.open(Ext.urlAppend(this.exportUrl, "filter=" + this.filterField.getValue()));
+                    var queryString = "searchString=" + this.filterField.getValue();
+                    queryString += "&" + Ext.urlEncode(this.gridFilters.buildQuery(this.gridFilters.getFilterData()));
+                    pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
                 } else {
-                    window.open(this.exportUrl);
+                    pimcore.helpers.download(this.exportUrl);
                 }
             }.bind(this));
         } else {
-            window.open(this.exportUrl);
+            pimcore.helpers.download(this.exportUrl);
         }
     },
 

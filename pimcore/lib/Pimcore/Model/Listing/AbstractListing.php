@@ -306,7 +306,7 @@ abstract class AbstractListing extends AbstractModel {
 
     /**
      * @param  $value
-     * @return void
+     * @return string
      */
     public function quote ($value, $type = null) {
         $db = Resource::get();

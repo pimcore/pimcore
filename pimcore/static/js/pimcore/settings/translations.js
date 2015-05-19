@@ -31,7 +31,7 @@ pimcore.settings.translations = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        this.store.baseParams.searchString = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
@@ -210,7 +210,7 @@ pimcore.settings.translations = Class.create({
             remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
-                filter: this.preconfiguredFilter
+                searchString: this.preconfiguredFilter
             },
             listeners: {
                 write : function(store, action, result, response, rs) {
@@ -254,6 +254,19 @@ pimcore.settings.translations = Class.create({
         }));
 
 
+        // filters
+        this.gridFilters = new Ext.ux.grid.GridFilters({
+            encode: true,
+            local: false,
+            filters: [{
+                type: "date",
+                dataIndex: "creationDate"
+            },{
+                type: "date",
+                dataIndex: "modificationDate"
+            }
+            ]
+        });
 
         this.grid = new Ext.grid.EditorGridPanel({
             frame: false,
@@ -261,6 +274,7 @@ pimcore.settings.translations = Class.create({
             store: this.store,
             columnLines: true,
             stripeRows: true,
+            plugins: [this.gridFilters],
             columns : typesColumns,
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
@@ -342,19 +356,21 @@ pimcore.settings.translations = Class.create({
         this.store.reload();
     },
 
-
     doExport:function(){
 
-        if(this.filterField.getValue()) {
+        var filtersActive = this.filterField.getValue() || this.gridFilters.getFilterData().length;
+        if(filtersActive) {
             Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
                 if (buttonValue == "yes") {
-                    window.open(Ext.urlAppend(this.exportUrl, "filter=" + this.filterField.getValue()));
+                    var queryString = "searchString=" + this.filterField.getValue();
+                    queryString += "&" + Ext.urlEncode(this.gridFilters.buildQuery(this.gridFilters.getFilterData()));
+                    pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
                 } else {
-                    window.open(this.exportUrl);
+                    pimcore.helpers.download(this.exportUrl);
                 }
             }.bind(this));
         } else {
-            window.open(this.exportUrl);
+            pimcore.helpers.download(this.exportUrl);
         }
     },
 
