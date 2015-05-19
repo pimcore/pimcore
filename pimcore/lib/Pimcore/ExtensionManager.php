@@ -257,9 +257,9 @@ class ExtensionManager {
      * @param $id
      * @throws \Exception
      */
-    public static function getBrickConfig ($id) {
+    public static function getBrickConfig ($id, $path = null) {
 
-        $brickConfigs = self::getBrickConfigs();
+        $brickConfigs = self::getBrickConfigs($path);
 
         foreach ($brickConfigs as $brickId => $config) {
             if($brickId == $id) {
