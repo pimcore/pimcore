@@ -108,7 +108,7 @@ class ClassDefinition extends Model\Webservice\Data {
     /**
      * @param $class
      */
-    public function map($object, $options = null) {
+    public function map($class, $options = null) {
 
         $arr = $class->fieldDefinitions;
         $result = array();
