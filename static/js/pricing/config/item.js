@@ -179,7 +179,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         var _this = this;
         var addMenu = [];
         var itemTypes = Object.keys(pimcore.plugin.OnlineShop.pricing.conditions);
-
         // show only defined conditions
         Ext.each(this.parent.condition, function (condition) {
             var method = "condition" + condition;
@@ -1035,6 +1034,73 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
 
         return item;
     },
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionVoucherToken: function (panel, data, getName) {
+        var niceName = t("plugin_onlineshop_pricing_config_condition_voucherToken");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if(typeof data == "undefined") {
+            data = {};
+        }
+
+        // create item
+        var myId = Ext.id();
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            type: 'VoucherToken',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionVoucherToken"),
+            items: [
+                new pimcore.plugin.OnlineShop.pricing.config.objects(data.whiteList, {
+                    classes: [
+                        {classes: "VoucherSeries"}
+                    ],
+                    name: "whiteList",
+                    title: "White List",
+                    visibleFields: "path",
+                    height: 200,
+                    width: 500,
+                    columns: [],
+
+                    // ?
+                    columnType: null,
+                    datatype: "data",
+                    fieldtype: "objects",
+
+                    // ??
+                    index: false,
+                    invisible: false,
+                    lazyLoading: false,
+                    locked: false,
+                    mandatory: false,
+                    maxItems: "",
+                    noteditable: false,
+                    permissions: null,
+                    phpdocType: "array",
+                    queryColumnType: "text",
+                    relationType: true,
+                    style: "",
+                    tooltip: "",
+                    visibleGridView: false,
+                    visibleSearch: false
+                }).getLayoutEdit()
+            ]
+        });
+
+        return item;
+    }
 
 };
 

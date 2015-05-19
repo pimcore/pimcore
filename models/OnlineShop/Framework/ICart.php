@@ -264,4 +264,21 @@ interface OnlineShop_Framework_ICart {
      * @return OnlineShop_Framework_ICart[]
      */
     public static function getAllCartsForUser($userId);
+
+    /**
+     * @param OnlineShop_Framework_VoucherService_Token $token
+     * @return bool
+     */
+    public function addVoucherToken($token);
+
+    /**
+     * @param OnlineShop_Framework_VoucherService_Token $token
+     * @return bool
+     */
+    public function removeVoucherToken($token);
+
+    /**
+     * @return array
+     */
+    public function getVoucherTokenCodes();
 }

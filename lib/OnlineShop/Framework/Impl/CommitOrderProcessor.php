@@ -115,6 +115,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             $modificationItem->setAmount($modification->getAmount());
             $modificationItems->add($modificationItem);
         }
+
         $order->setPriceModifications($modificationItems);
 
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
@@ -133,6 +134,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
 
         $order->save();
+
 
         //for each cart item and cart sub item create corresponding order items
         $orderItems = array();
@@ -207,6 +209,17 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
 
+    protected function applyVoucherTokens(OnlineShop_Framework_AbstractOrder $order, OnlineShop_Framework_ICart $cart){
+
+        $voucherTokens = $cart->getVoucherTokenCodes();
+        if (is_array($voucherTokens)) {
+            $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+            foreach ($voucherTokens as $code) {
+                $service->applyToken($code, $cart, $order);
+            }
+        }
+    }
+
     /**
      * @param OnlineShop_Framework_ICart $cart
      *
@@ -219,6 +232,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         try {
             $this->processOrder($cart, $order);
             $order->setOrderState(OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED);
+            $this->applyVoucherTokens($order, $cart); // TODO check if right position in code
             $order->save();
         } catch(Exception $e) {
             $order->delete();

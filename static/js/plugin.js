@@ -107,7 +107,20 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
             this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
         }
 
+    },
+
+
+    postOpenObject: function(object, type) {
+        //if(pimcore.globalmanager.get("user").isAllowed("plugin_outputDataConfigToolkit")) {
+
+            var tab = new pimcore.plugin.onlineshop.VoucherSeriesTab(object, type);
+
+            object.tab.items.items[1].insert(object.tab.items.items[1].items.length, tab.getLayout());
+            object.tab.items.items[1].doLayout();
+            pimcore.layout.refresh();
+        //}
     }
+
 });
 
 new pimcore.plugin.OnlineShop.plugin();

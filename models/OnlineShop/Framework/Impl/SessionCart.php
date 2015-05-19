@@ -123,4 +123,13 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
         return $finalVars;
     }
 
+
+    /**
+     * modified flag needs to be set
+     */
+    public function __wakeup() {
+        $this->setIgnoreReadonly();
+        $this->modified();
+        $this->unsetIgnoreReadonly();
+    }
 }

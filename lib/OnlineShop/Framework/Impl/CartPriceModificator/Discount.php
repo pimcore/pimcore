@@ -7,16 +7,17 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Discount implements OnlineS
      */
     protected $amount = 0;
 
+    /**
+     * @var null|OnlineShop_Framework_Pricing_IRule
+     */
+    protected $rule = null;
+
 
     /**
-     * @param Zend_Config $config
+     * @param OnlineShop_Framework_Pricing_IRule $rule
      */
-    public function __construct(Zend_Config $config = null)
-    {
-        if($config && $config->charge)
-        {
-            $this->charge = floatval($config->charge);
-        }
+    public function __construct(OnlineShop_Framework_Pricing_IRule $rule) {
+        $this->rule = $rule;
     }
 
 
@@ -27,6 +28,9 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Discount implements OnlineS
      */
     public function getName()
     {
+        if($this->rule) {
+            return $this->rule->getName();
+        }
         return "discount";
     }
 
@@ -36,13 +40,12 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Discount implements OnlineS
      * @param OnlineShop_Framework_IPrice $currentSubTotal
      * @param OnlineShop_Framework_ICart  $cart
      *
-     * @return OnlineShop_Framework_IPrice|null
+     * @return OnlineShop_Framework_IPrice
      */
     public function modify(OnlineShop_Framework_IPrice $currentSubTotal, OnlineShop_Framework_ICart $cart)
     {
-        if($this->getAmount() != 0)
-        {
-            return new OnlineShop_Framework_Impl_ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency());
+        if($this->getAmount() != 0) {
+            return new OnlineShop_Framework_Impl_ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
         }
     }
 

@@ -329,7 +329,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
 
     /**
-     * install all object bricks
+     * @todo
      */
     private static function installObjectBricks()
     {
@@ -422,5 +422,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
     public function maintenance() {
         $checkoutManager = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager(new OnlineShop_Framework_Impl_Cart());
         $checkoutManager->cleanUpPendingOrders();
+
+        OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpReservations();
     }
 }

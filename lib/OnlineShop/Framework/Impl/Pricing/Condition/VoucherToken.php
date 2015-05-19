@@ -1,0 +1,129 @@
+<?php
+
+class OnlineShop_Framework_Impl_Pricing_Condition_VoucherToken implements OnlineShop_Framework_Pricing_ICondition
+{
+    /**
+     * @var array
+     */
+    protected $whiteListIds = [];
+    protected $whiteList = [];
+
+
+    /**
+     * @param OnlineShop_Framework_Pricing_IEnvironment $environment
+     *
+     * @return boolean
+     */
+    public function check(OnlineShop_Framework_Pricing_IEnvironment $environment)
+    {
+
+        if (!($cart = $environment->getCart())) {
+            return false;
+        }
+
+        $voucherTokens = $cart->getVoucherTokenCodes();
+
+        if (is_array($voucherTokens)) {
+            foreach ($voucherTokens as $voucherToken) {
+                if (in_array(OnlineShop_Framework_VoucherService_Token::getByCode($voucherToken)->getVoucherSeriesId(), $this->whiteListIds)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function toJSON()
+    {
+        // basic
+        $json = array(
+            'type' => 'VoucherToken',
+            'whiteList' => []
+        );
+
+        // add categories
+        foreach ($this->getWhiteList() as $series) {
+            /* @var OnlineShop_Framework_AbstractVoucherSeries $series */
+            $json['whiteList'][] = array(
+                $series->id,
+                $series->path
+            );
+        }
+
+        return json_encode($json);
+    }
+
+    /**
+     * @param string $string
+     *
+     * @return OnlineShop_Framework_Pricing_ICondition
+     */
+    public function fromJSON($string)
+    {
+        $json = json_decode($string);
+
+        $whiteListIds = array();
+        $whiteList = array();
+
+        foreach ($json->whiteList as $series) {
+            $seriesId = $series->id;
+            if ($seriesId) {
+                $whiteListIds[] = $seriesId;
+                $whiteList[] = $series;
+            }
+        }
+
+        $this->setWhiteListIds($whiteListIds);
+        $this->setWhiteList($whiteList);
+
+        return $this;
+    }
+
+    /**
+     * @param $id
+     *
+     * @return \Pimcore\Model\Object\Concrete|null
+     */
+    protected function loadSeries($id)
+    {
+        return \Pimcore\Model\Object\Concrete::getById($id);
+    }
+
+    /**
+     * @return array
+     */
+    public function getWhiteListIds()
+    {
+        return $this->whiteListIds;
+    }
+
+    /**
+     * @param array $whiteListIds
+     */
+    public function setWhiteListIds($whiteListIds)
+    {
+        $this->whiteListIds = $whiteListIds;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWhiteList()
+    {
+        return $this->whiteList;
+    }
+
+    /**
+     * @param array $whiteList
+     */
+    public function setWhiteList($whiteList)
+    {
+        $this->whiteList = $whiteList;
+    }
+
+
+}

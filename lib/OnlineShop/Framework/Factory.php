@@ -70,6 +70,17 @@ class OnlineShop_Framework_Factory {
     private $paymentManager;
 
 
+    /**
+     * @var OnlineShop_Framework_IVoucherService
+     */
+    private $voucherService;
+
+    /**
+     * @var OnlineShop_Framework_VoucherService_ITokenManager[]
+     */
+    private $tokenManagers = array();
+
+
     public static function getInstance() {
         if (self::$instance === null) {
             self::$instance = new OnlineShop_Framework_Factory();
@@ -499,4 +510,52 @@ class OnlineShop_Framework_Factory {
     {
         return $this->orderManager;
     }
+
+
+    /**
+     * @return OnlineShop_Framework_IVoucherService
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getVoucherService() {
+
+        if(empty($this->voucherService)) {
+            $this->voucherService = new $this->config->onlineshop->voucherservice->class($this->config->onlineshop->voucherservice->config);
+            if (!($this->voucherService instanceof OnlineShop_Framework_IVoucherService)) {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("Voucher Service class " . $this->config->onlineshop->voucherservice->class . " does not implement OnlineShop_Framework_IVoucherService.");
+            }
+
+        }
+
+        return $this->voucherService;
+    }
+
+
+    /**
+     * @param OnlineShop_Framework_AbstractVoucherTokenType $configuration
+     * @return OnlineShop_Framework_VoucherService_ITokenManager
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function getTokenManager(OnlineShop_Framework_AbstractVoucherTokenType $configuration) {
+        $type = $configuration->getType();
+        if(empty($this->tokenManagers[$type])) {
+
+            $tokenManagerClass = $this->config->onlineshop->voucherservice->tokenmanagers->$type;
+
+            if($tokenManagerClass) {
+                $tokenManager = new $tokenManagerClass->class($configuration);
+                if (!($tokenManager instanceof OnlineShop_Framework_VoucherService_ITokenManager)) {
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Token Manager class " . $tokenManagerClass->class . " does not implement OnlineShop_Framework_VoucherService_ITokenManager.");
+                }
+
+                $this->tokenManagers[$type] = $tokenManager;
+
+            } else {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("Token Manager for " . $type . " not defined.");
+            }
+
+        }
+        return $this->tokenManagers[$type];
+
+    }
+
 }

@@ -21,8 +21,10 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CartAmount implements OnlineSh
      */
     public function check(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        if(!$environment->getCart() || $environment->getProduct() !== null)
+        if(!$environment->getCart() || $environment->getProduct() !== null) {
             return false;
+        }
+
 
         return $environment->getCart()->getPriceCalculator()->getSubTotal()->getAmount() >= $this->getLimit();
     }

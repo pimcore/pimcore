@@ -311,6 +311,8 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
         $this->items = array();
         $this->giftItems = array();
 
+        $this->removeAllVoucherTokens();
+
         // trigger cart has been modified
         $this->modified();
 
@@ -630,13 +632,14 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
         return $this->priceCalcuator;
     }
 
-
     /**
      * cart has been changed
      */
     protected function modified()
     {
         $this->setModificationDateTimestamp( time() );
+
+        $this->validateVoucherTokenReservations();
 
         // apply pricing rules
         OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyCartRules($this);
@@ -671,5 +674,85 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     public function sortItems(callable $value_compare_func)
     {
 
+    }
+
+    /**
+     *
+     *
+     * @param OnlineShop_Framework_VoucherService_Token $code
+     *
+     * @return bool
+     *
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function addVoucherToken($code){
+        $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+        if($service->checkToken($code, $this) && $service->reserveToken($code, $this)){
+            $index = 'voucher_'.$code;
+            $this->setCheckoutData($index, $code);
+            $this->save();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes all tokens form cart and releases the token reservations.
+     */
+    public function removeAllVoucherTokens(){
+        foreach($this->getVoucherTokenCodes() as $code){
+            $this->removeVoucherToken($code);
+        }
+    }
+
+    /**
+     * Removes a token from cart and releases token reservation.
+     *
+     * @param OnlineShop_Framework_VoucherService_Token $code
+     *
+     * @return bool
+     *
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function removeVoucherToken($code)
+    {
+        $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+        $key = array_search($code, $this->getVoucherTokenCodes());
+        if ($key !== false) {
+            if ($service->releaseToken($code, $this)) {
+                unset($this->checkoutData[$key]);
+                $this->save();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Filters checkout data and returns an array of strings with the assigns tokens.
+     *
+     * @return array
+     */
+    public function getVoucherTokenCodes(){
+        $tokens = [];
+        foreach($this->checkoutData as $key => $value){
+            $exp_key = explode('_', $key);
+            if($exp_key[0] == 'voucher'){
+                $tokens[$key] = $value->getData();
+            }
+        }
+        return $tokens;
+    }
+
+    /**
+     * Checks if checkout data voucher tokens are valid reservations
+     */
+    protected function validateVoucherTokenReservations(){
+        foreach($this->getVoucherTokenCodes() as $code){
+            $reservation = OnlineShop_Framework_VoucherService_Reservation::get($code, $this);
+            if(!$reservation->check($this->getId())){
+                unset($this->checkoutData["voucher_".$code]);
+            }
+        }
     }
 }
