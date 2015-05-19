@@ -263,6 +263,28 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param $object
+     * @return string
+     */
+    public function getDataForSearchIndex($object) {
+
+        $dataString = "";
+        $lfData = $this->getDataFromObjectParam($object);
+
+        if ($lfData instanceof Object\Localizedfield) {
+            foreach ($lfData->getItems() as $language => $values) {
+                foreach ($values as $lData) {
+                    if(is_string($lData)) {
+                        $dataString .= $lData . " ";
+                    }
+                }
+            }
+        }
+
+        return $dataString;
+    }
+
+    /**
      * @param Model\Object\AbstractObject $object
      * @return mixed
      */

@@ -199,6 +199,36 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $object
+     * @return string
+     */
+    public function getDataForSearchIndex ($object) {
+
+        $dataString = "";
+        $fcData = $this->getDataFromObjectParam($object);
+        if ($fcData instanceof Object\Fieldcollection) {
+            foreach ($fcData as $item) {
+
+                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                    continue;
+                }
+
+                try {
+                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                } catch (\Exception $e) {
+                    continue;
+                }
+
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    $dataString .= $fd->getDataForSearchIndex($item) . " ";
+                }
+            }
+        }
+
+        return $dataString;
+    }
+
+    /**
+     * @param $object
      * @param array $params
      * @throws \Exception
      */

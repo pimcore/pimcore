@@ -221,6 +221,15 @@ abstract class Data
     }
 
     /**
+     * @param $object
+     * @return string
+     */
+    public function getDataForSearchIndex($object) {
+        // this is the default, but csv doesn't work for all data types
+        return $this->getForCsvExport($object);
+    }
+
+    /**
      * converts data to be exposed via webservices
      * @param Object\AbstractObject $object
      * @return mixed

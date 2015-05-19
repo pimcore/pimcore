@@ -275,7 +275,6 @@ class Table extends Model\Object\ClassDefinition\Data {
         if (is_array($data)) {
             return base64_encode(Serialize::serialize($data));
         } else return null;
-
     }
 
     /**
@@ -289,6 +288,27 @@ class Table extends Model\Object\ClassDefinition\Data {
             return $value;
         } else return null;
 
+    }
+
+    /**
+     * @param $object
+     * @return string
+     */
+    public function getDataForSearchIndex($object) {
+        $data = $this->getDataFromObjectParam($object);
+
+        if (!empty($data)) {
+            $tmpLine = array();
+            if (is_array($data)) {
+                foreach ($data as $row) {
+                    if (is_array($row)) {
+                        $tmpLine[] = implode(" ", $row);
+                    }
+                }
+            }
+            return implode("\n", $tmpLine);
+        }
+        return "";
     }
 
     /** True if change is allowed in edit mode.

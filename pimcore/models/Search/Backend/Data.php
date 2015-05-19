@@ -386,70 +386,9 @@ class Data extends \Pimcore\Model\AbstractModel {
 
                 $this->published = $element->isPublished();
                 foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
-                    // Object\ClassDefinition\Data\Fieldcollections, Object\ClassDefinition\Data\Localizedfields and Object\ClassDefinition\Data\Objectbricks is special because it doesn't support the csv export
-                    if($value instanceof Object\ClassDefinition\Data\Fieldcollections) {
-                        $getter = "get".$value->getName();
-
-                        $fcData = $element->$getter();
-                        if ($fcData instanceof Object\Fieldcollection) {
-                            foreach ($fcData as $item) {
-
-                                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
-                                    continue;
-                                }
-
-                                try {
-                                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
-                                } catch (\Exception $e) {
-                                    continue;
-                                }
-
-                                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                                    $this->data .= $fd->getForCsvExport($item) . " ";
-                                }
-                            }
-                        }
-                    } else if ($value instanceof Object\ClassDefinition\Data\Localizedfields){
-
-                        // only for text-values at the moment, because the CSV doesn't work for localized fields (getter-problem)
-                        $getter = "get".$value->getName();
-
-                        $lfData = $element->$getter();
-                        if ($lfData instanceof Object\Localizedfield) {
-                            foreach ($lfData->getItems() as $language => $values) {
-                                foreach ($values as $lData) {
-                                    if(is_string($lData)) {
-                                        $this->data .= $lData . " ";
-                                    }
-                                }
-                            }
-                        }
-                    } else if ($value instanceof Object\ClassDefinition\Data\Objectbricks){
-                        $getter = "get".$value->getName();
-
-                        $obData = $element->$getter();
-                        if ($obData instanceof Object\Objectbrick) {
-                            $items = $obData->getItems();
-                            foreach ($items as $item) {
-                                if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
-                                    continue;
-                                }
-
-                                try {
-                                    $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
-                                } catch (\Exception $e) {
-                                    continue;
-                                }
-
-                                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                                    $this->data .= $fd->getForCsvExport($item) . " ";
-                                }
-                            }
-                        }
-                    } else {
-                        $this->data .= $value->getForCsvExport($element)." ";
-                    }
+                    $this->data .= $value->getDataForSearchIndex($element)." ";
                 }
+
                 Object\AbstractObject::setGetInheritedValues($getInheritedValues);
 
             } else if ($element instanceof Object\Folder){

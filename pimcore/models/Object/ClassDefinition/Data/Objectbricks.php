@@ -265,6 +265,37 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $object
+     * @return string
+     */
+    public function getDataForSearchIndex($object) {
+
+        $dataString = "";
+        $obData = $this->getDataFromObjectParam($object);
+
+        if ($obData instanceof Object\Objectbrick) {
+            $items = $obData->getItems();
+            foreach ($items as $item) {
+                if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+                    continue;
+                }
+
+                try {
+                    $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+                } catch (\Exception $e) {
+                    continue;
+                }
+
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    $dataString .= $fd->getDataForSearchIndex($item) . " ";
+                }
+            }
+        }
+
+        return $dataString;
+    }
+
+    /**
+     * @param $object
      * @param array $params
      */
     public function save($object, $params = array())
