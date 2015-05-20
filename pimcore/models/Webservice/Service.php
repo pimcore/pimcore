@@ -191,6 +191,7 @@ class Service
                 "limit" => $limit,
                 "groupBy" => $groupBy
             ));
+            $list->setUnpublished(1);
 
             $items = array();
             foreach ($list as $doc) {
@@ -828,6 +829,7 @@ class Service
             }
 
             $list = $listClassName::getList($params);
+            $list->setUnpublished(1);
 
             $items = array();
             foreach ($list as $object) {
