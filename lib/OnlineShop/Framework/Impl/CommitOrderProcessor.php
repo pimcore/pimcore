@@ -100,7 +100,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
         //check if pending payment. if one, do not update order from cart
         $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
-        $paymentInfo = $orderAgent->startPayment();
+        $paymentInfo = $orderAgent->startPayment( false );
         if($paymentInfo) {
             return $order;
         }

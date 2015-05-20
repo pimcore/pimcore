@@ -108,7 +108,7 @@ interface IOrderAgent
     /**
      * @return PaymentInfo
      */
-    public function startPayment($forceNew = false);
+    public function startPayment($forceNew = true);
 
     /**
      * @param OnlineShop_Framework_Payment_IStatus $status
