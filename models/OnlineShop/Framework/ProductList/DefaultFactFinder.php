@@ -329,6 +329,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         // add paging
         $params['page'] = ceil($this->getOffset() / $this->getLimit());
         $params['productsPerPage'] = $this->getLimit();
+        $params['idsOnly'] = 'true';
 
 
         // send request
@@ -344,28 +345,32 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         $this->products = [];
         foreach($searchResult['records'] as $item)
         {
-            // TODO variant handling
+            $id = null;
+
+            // variant handling
             switch($this->getVariantMode())
             {
-                case OnlineShop_Framework_IProductList::VARIANT_MODE_HIDE:
-                    #$item['record']['MasterArticleNumber']
+                case self::VARIANT_MODE_INCLUDE:
+                case self::VARIANT_MODE_HIDE:
+                    $id = $item['id'];
                     break;
 
-                case OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE:
-                    #$item['record']['MasterArticleNumber']
-                    #$item['record']['PimcoreObjectId']
-                    break;
-
-                case OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
-                    #$item['record']['MasterArticleNumber']
+                case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
+                    $id = $item['record']['MasterProductID'];
                     break;
             }
 
-//            $product = $this->tenantConfig->getObjectMockupById( $item['record']['PimcoreObjectId'] );
-            $product = $this->tenantConfig->getObjectMockupById( $item['id'] );   // FIXME factfinder workaround
-            if($product)
+            if($id)
             {
-                $this->products[] = $product;
+                $product = $this->tenantConfig->getObjectMockupById( $item['id'] );
+                if($product)
+                {
+                    $this->products[] = $product;
+                }
+            }
+            else
+            {
+                $this->getLogger()->log(sprintf('object "%s" not found',$item['id']), Zend_Log::ERR);
             }
         }
 
@@ -375,6 +380,19 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         $elements = $searchResult['groups'];
         foreach($elements as $item)
         {
+            // add selected
+            if($item['filterStyle'] == 'MULTISELECT' || $item['filterStyle'] == 'DEFAULT')
+            {
+                foreach($item['selectedElements'] as $selected)
+                {
+                    if($item['selectionType'] == 'singleHideUnselected')
+                    {
+                        $selected['recordCount'] = (int)$searchResult['resultCount'];
+                    }
+                    array_unshift($item['elements'], $selected);
+                }
+            }
+
             $this->groupedValues[ $item['name'] ] = $item;
         }
 
@@ -393,53 +411,33 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      *
      * @param array $filter
      * @return array
-     * @todo
      */
     protected function buildSystemConditions(array $filter)
     {
-        // TODO
-//        $boolFilters[] = ['term' => ['system.active' => true]];
-//        $boolFilters[] = ['term' => ['system.o_virtualProductActive' => true]];
-//        if($this->inProductList) {
-//            $boolFilters[] = ['term' => ['system.inProductList' => true]];
-//        }
-
         // add sub tenant filter
         $tenantCondition = $this->tenantConfig->getSubTenantCondition();
         if($tenantCondition)
         {
             foreach($tenantCondition as $key => $value)
             {
-                $filter['filter' . $key] = $value;
+                $filter[$key] = $value;
             }
-        }
-
-
-        // TODO
-        if($this->getCategory())
-        {
-            $filter['navigation'] = 'true';
-            $filter['filterCategory1'] = 'Handwerkzeug';
-//            $url .= 'navigation=true&filterCategory1=Handwerkzeug';
-            # &filterCategory1=Ordnen%2C+Archivieren
-            # &filterCategory2=Sichth%C3%BClle%2C+Schutzh%C3%BClle
-            # filtercategoryROOT=ID/ID/ID
         }
 
 
         // variant handling
         switch($this->getVariantMode())
         {
-            case OnlineShop_Framework_IProductList::VARIANT_MODE_HIDE:
+            case self::VARIANT_MODE_HIDE:
                 // nothing todo, default factfinder
                 break;
 
-            case OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE:
+            case self::VARIANT_MODE_INCLUDE:
                 $filter['duplicateFilter'] = 'NONE';
                 break;
 
             default:
-            case OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
+            case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                 // nothing todo, default factfinder
                 break;
         }
@@ -538,7 +536,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         {
             $appendSort = function ($field, $order = null) use(&$params) {
 
-                $field = $field === \OnlineShop_Framework_IProductList::ORDERKEY_PRICE
+                $field = $field === self::ORDERKEY_PRICE
                     ? 'GRUNDPREIS'
                     : $field
                 ;
@@ -564,14 +562,15 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
     }
 
 
-
-
     /**
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
      *
      * @param string $fieldname
-     * @return void
+     * @param bool   $countValues
+     * @param bool   $fieldnameShouldBeExcluded
+     *
+     * @throws Exception
      */
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
@@ -644,17 +643,13 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         {
             $field = $this->groupedValues[ $fieldname ];
 
-//            if($field['selectionType'] == 'multiSelectOr')
-//            {
-                foreach($field['elements'] as $item)
-                {
-                    $groups[] = [
-                        'value' => $item['name']
-                        , 'count' => $item['recordCount']
-                    ];
-                }
-//            }
-
+            foreach($field['elements'] as $item)
+            {
+                $groups[] = [
+                    'value' => $item['name']
+                    , 'count' => $item['recordCount']
+                ];
+            }
         }
 
 
@@ -765,7 +760,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
      * @link http://php.net/manual/en/iterator.key.php
-     * @return scalar scalar on success, integer
+     * @return scalar on success, integer
      * 0 on failure.
      */
     public function key() {
@@ -782,8 +777,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     public function next() {
         $this->getProducts();
-        $var = next($this->products);
-        return $var;
+        next($this->products);
     }
 
     /**
