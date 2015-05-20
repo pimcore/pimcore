@@ -38,7 +38,11 @@
                     </config>
                 </pricecalculator>
 
-                <!-- special configuration for specific checkout tenants -->
+                <!--
+                    special configuration for specific checkout tenants
+                    - for not specified elements the default configuration is used as fallback
+                    - active tenant is set at OnlineShop_Framework_IEnvironment::setCurrentCheckoutTenant()
+                -->
                 <tenants>
                     <noShipping>
                         <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
@@ -134,13 +138,22 @@
 
                 <provider name="qpay" class="OnlineShop_Framework_Impl_Payment_QPay" mode="sandbox">
                     <config>
+                        <!-- https://integration.wirecard.at/doku.php/wcp:integration -->
+                        <!-- https://integration.wirecard.at/doku.php/demo:demo_data -->
                         <sandbox>
                             <secret>B8AKTPWBRMNBV455FG6M2DANE99WU2</secret>
                             <customer>D200001</customer>
+                            <toolkitPassword>jcv45z</toolkitPassword>
                         </sandbox>
+                        <test>
+                            <secret>CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ</secret>
+                            <customer>D200411</customer>
+                            <toolkitPassword>2g4fq2m</toolkitPassword>
+                        </test>
                         <live>
                             <secret></secret>
                             <customer></customer>
+                            <toolkitPassword></toolkitPassword>
                         </live>
                     </config>
                 </provider>
@@ -167,13 +180,18 @@
             <generalSearchColumns>
                 <column name="name"/>
                 <column name="seoname"/>
-                <column name="color" />
             </generalSearchColumns>
 
             <!-- column definition for product index -->
             <columns>
                 <column name="name" type="varchar(255)" locale="en_GB" filtergroup="string"/>
                 <column name="seoname" type="varchar(255)" filtergroup="string"/>
+
+               <!--
+
+                SAMPLE FOR FURTHER ATTRIBUTES
+
+
                 <column name="color" type="varchar(255)" filtergroup="multiselect" />
                 <column name="gender" type="varchar(100)" filtergroup="multiselect"/>
                 <column name="features" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" filtergroup="relation" />
@@ -229,13 +247,14 @@
                 <column name="simularity_feature" fieldname="features" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
                 <column name="simularity_technolgy" fieldname="technologies" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
                 <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-
+                -->
             </columns>
 
             <!-- configuration of different tenants -->
             <tenants>
-                <!--  <sampletenant class="OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig" file="/website/var/plugins/OnlineShop/sampletenant.xml">
+                <!--  <elasticsearch class="OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch" file="/website/var/plugins/OnlineShop/assortment-tenant-elasticsearch.xml"> -->
 
+                <!-- <sampletenant class="OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig">
                       <generalSearchColumns>
                           <column name="name"/>
                           <column name="shortDescription"/>
@@ -253,13 +272,16 @@
                           </column>
                       </columns>
                   </sampletenant>-->
-                <!--<testtenant2 class="OnlineShop_Framework_IndexService_Tenant_DefaultConfigInheritColumnConfig">
-                </testtenant2>-->
             </tenants>
 
         </productindex>
 
-        <!-- assign backend implementations and views to filter type field collections -->
+        <!--
+            assign backend implementations and views to filter type field collections
+
+            helper = tool for pimcore backend controller to get possible group by values for a certain field
+                     (used by object data type IndexFieldSelection, e.g. in filter definitions)
+        -->
         <filtertypes helper="OnlineShop_Framework_FilterService_FilterGroupHelper">
             <FilterNumberRange class="OnlineShop_Framework_FilterService_NumberRange" script="/shop/filters/range.php"/>
             <FilterNumberRangeSelection class="OnlineShop_Framework_FilterService_NumberRangeSelection" script="/shop/filters/numberrange.php"/>
@@ -275,6 +297,8 @@
         <!-- pricing manager -->
         <pricingmanager class="OnlineShop_Framework_Impl_PricingManager">
             <config>
+                <!--<disabled>true</disabled>-->
+
                 <!-- rule and priceinfo -->
                 <rule class="OnlineShop_Framework_Impl_Pricing_Rule" />
                 <priceInfo class="OnlineShop_Framework_Impl_Pricing_PriceInfo" />
