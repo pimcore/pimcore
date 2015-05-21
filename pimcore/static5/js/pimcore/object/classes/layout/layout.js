@@ -41,6 +41,24 @@ pimcore.object.classes.layout.layout = Class.create({
 
     getLayout: function () {
 
+        var regionData = [
+            [ "-", "" ],
+            [ "center", "center" ],
+            [ "north", "north" ],
+            [ "south", "south" ],
+            [ "east", "east" ],
+            [ "west", "west" ]
+        ];
+
+        var regionStore = Ext.create('Ext.data.ArrayStore', {
+            data     : regionData,
+            fields   : [
+                'display',
+                'value'
+            ]
+        });
+
+
         this.layout = new Ext.Panel({
             bodyStyle: "padding: 10px;",
             items: [
@@ -62,7 +80,9 @@ pimcore.object.classes.layout.layout = Class.create({
                             fieldLabel: t("region"),
                             name: "region",
                             value: this.datax.region,
-                            store: ["","center", "north", "south", "east", "west"],
+                            store: regionStore,
+                            displayField: 'display',
+                            valueField: 'value',
                             triggerAction: 'all',
                             editable: false
                         },
