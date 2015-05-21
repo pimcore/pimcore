@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql
+ *
+ * Tenant configuration for a simple mysql product index implementation. It is used by the default tenant.
+ */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql extends OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig implements OnlineShop_Framework_IndexService_Tenant_IMysqlConfig {
 
     /**

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig
+ *
+ * Sample implementation for sub-tenants based on mysql.
+ */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig extends OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql {
 
     // NOTE: this works only with a single-column primary key

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch
+ *
+ * Default configuration for elastic search as product index implementation.
+ */
 class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig implements OnlineShop_Framework_IndexService_Tenant_IMockupConfig, OnlineShop_Framework_IndexService_Tenant_IElasticSearchConfig {
 
     /**

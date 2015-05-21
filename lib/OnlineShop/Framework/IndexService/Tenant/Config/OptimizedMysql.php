@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql
+ *
+ * Configuration for the optimized mysql product index implementation.
+ */
 class OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql extends OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql implements OnlineShop_Framework_IndexService_Tenant_IMockupConfig {
 
     /**

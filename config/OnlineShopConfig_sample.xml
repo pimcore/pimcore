@@ -176,6 +176,8 @@
         </paymentmanager>
 
         <productindex>
+            <!-- to disable default tenant, add attribute  disableDefaultTenant="true"  to productindex element -->
+
             <!-- add columns for general fulltext search index of productlist - they must be part of the column configuration below -->
             <generalSearchColumns>
                 <column name="name"/>

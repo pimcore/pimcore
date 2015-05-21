@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlInheritColumnConfig
+ *
+ * Sample implementation based on the OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql
+ * that inherits attribute configuration of the default tenant.
+ */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlInheritColumnConfig extends OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql {
 
     public function __construct($tenantConfigXml, $totalConfigXml = null) {

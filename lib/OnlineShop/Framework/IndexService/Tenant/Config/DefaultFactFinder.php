@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder
+ *
+ * Default implementation for fact finder as product index backend
+ */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder
     extends OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig
     implements OnlineShop_Framework_IndexService_Tenant_IFactFinderConfig, OnlineShop_Framework_IndexService_Tenant_IMockupConfig

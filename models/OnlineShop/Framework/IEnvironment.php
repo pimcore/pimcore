@@ -99,7 +99,7 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
     public function setCurrentAssortmentSubTenant($subTenant);
 
     /**
-     * gets current assortment tenant which is used for indexing and product lists
+     * gets current sub assortment tenant which is used for indexing and product lists
      *
      * @return string
      */
