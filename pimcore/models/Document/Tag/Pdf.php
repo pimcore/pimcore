@@ -388,17 +388,35 @@ class Pdf extends Model\Document\Tag
 
         $options = $this->getOptions();
 
-
         if ($asset instanceof Asset\Document && $asset->getPageCount()) {
             $pageCount = $asset->getPageCount();
             $hotspots = $this->getHotspots();
-            $rewritePath = function ($data) {
+            $rewritePath = function ($data) use ($options) {
 
                 if(!is_array($data)) {
                     return array();
                 }
 
                 foreach ($data as &$element) {
+
+                    if(isset($options["hotspotCallback"]) && is_callable($options["hotspotCallback"])) {
+                        $element = $options["hotspotCallback"]($element);
+                        if(!is_array($element)) {
+                            throw new \Exception("Return value must be the the array passed as parameter (can be modified)");
+                        }
+
+                        if(isset($element["attributes"]) && is_array($element["attributes"])) {
+                            $attributes = $element["attributes"];
+                            $element["attributes"] = [];
+                            foreach($attributes as $name => $value) {
+                                $element["attributes"][] = [
+                                    "name" => $name,
+                                    "value" => $value
+                                ];
+                            }
+                        }
+                    }
+
                     if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach($element["data"] as &$metaData) {
                             if($metaData["value"] instanceof Element\ElementInterface) {

@@ -254,6 +254,19 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @return void
      */
     public function __sleep() {
+
+        // we need to remove all closures out of the options
+        // e.g. "hotspotCallback" in Pdf editable
+        // otherwise this can cause problems when used in combination with hardlinks (upper-cast / serialization)
+        if(is_array($this->options)) {
+            foreach($this->options as &$value) {
+                if(is_object($value) && ($value instanceof Closure)) {
+                    $value = null;
+                }
+            }
+        }
+
+        // here the "normal" task of __sleep ;-)
         $blockedVars = array("resource", "controller", "view", "editmode");
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
@@ -280,7 +293,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         } catch (\Exception $e) {
             if(\Pimcore::inDebugMode()){
                 // the __toString method isn't allowed to throw exceptions
-                $return = '<b style="color:#f00">__toString not possible - ' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
+                $return = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
             }
             \Logger::error("to string not possible - " . $e->getMessage());
         }
