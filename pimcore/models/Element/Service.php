@@ -646,7 +646,7 @@ class Service extends Model\AbstractModel {
                 if (!($type::getByPath($currentPath) instanceof $type)) {
                     $parentFolderPath = ($i ==0) ? '/' : $pathsArray[$i - 1];
 
-                    $parentFolder = $type::getByPath($parentFolderPath);
+                    $parentFolder = $folderType::getByPath($parentFolderPath);
 
                     $folder = new $folderType();
                     $folder->setParent($parentFolder);
