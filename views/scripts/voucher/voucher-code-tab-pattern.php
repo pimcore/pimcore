@@ -11,8 +11,8 @@
 
 
 $seriesId = $this->getParam('id');
-$url = $this->url(['controller' => 'voucher', 'action' => 'voucher-code-tab', 'id' => $seriesId], 'plugins', true);
-
+$url = $this->url(['controller' => 'voucher', 'action' => 'voucher-code-tab', "id" => $seriesId], 'plugins', true);
+var_dump($url);
 if ($this->paginator) {
     $this->paginator->setCurrentPageNumber($this->getParam('page'));
     $this->paginator->setPageRange(10);
@@ -22,7 +22,7 @@ if ($this->paginator) {
     $paginationTemplate = $this->paginationControl($this->paginator,
         'Sliding',
         'voucher/parts/paginator.php',
-        ['url' => $url]
+        ['seriesId' => $seriesId]
     );
 }
 
