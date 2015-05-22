@@ -331,7 +331,9 @@ $currency = $orderAgent->getCurrency();
                     <div class="row">
                         <div class="col-md-4">
                             <div class="well text-center" style="margin-bottom: 0;">
-                                <span class="glyphicon glyphicon-user" style="font-size: 400%;"></span>
+                                <a href="#" data-action="open" data-id="<?= $order->getCustomer()->getId() ?>">
+                                    <span class="glyphicon glyphicon-user" style="font-size: 400%;"></span>
+                                </a>
                             </div>
                         </div>
                         <div class="col-md-8">
