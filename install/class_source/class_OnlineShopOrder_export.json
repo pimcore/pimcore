@@ -261,14 +261,14 @@
 								"title":"Voucher Tokens",
 								"tooltip":"",
 								"mandatory":false,
-								"noteditable":false,
+								"noteditable":true,
 								"index":false,
 								"locked":false,
 								"style":"",
 								"permissions":null,
 								"datatype":"data",
 								"columnType":null,
-								"invisible":true,
+								"invisible":false,
 								"visibleGridView":false,
 								"visibleSearch":false
 							},
@@ -2819,8 +2819,8 @@
 								"phpdocType":"\\Pimcore\\Model\\Object\\Objectbrick",
 								"allowedTypes":[
 									"PaymentProviderDatatrans",
-									"PaymentProviderQpay",
-									"PaymentProviderPayPal"
+									"PaymentProviderPayPal",
+									"PaymentProviderQpay"
 								],
 								"name":"paymentProvider",
 								"title":"Payment Provider",

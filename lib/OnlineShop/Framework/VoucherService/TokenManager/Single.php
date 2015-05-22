@@ -31,20 +31,26 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineS
     /**
      * @return bool
      */
-    public function cleanUpCodes()
+    public function cleanUpCodes($filter = [])
     {
     }
 
 
-    public function cleanupReservations($duration = 0)
+    public function cleanupReservations($duration = 0, $seriesId = null)
     {
-
+        return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($duration, $seriesId);
     }
 
+    /**
+     * @param $view
+     * @param array $params
+     * @return string
+     * @throws Zend_Paginator_Exception
+     */
     public function prepareConfigurationView($view, $params)
     {
         if ($this->getConfiguration()->getToken() != $this->getCodes()[0]['token']) {
-            $view->generateWarning = "You may overwrite your single token with this operation, please check your settings.";  //TODO translate
+            $view->generateWarning = $view->ts('plugin_onlineshop_voucherservice_msg-error-overwrite-single');
             $view->settings['Original Token'] = $this->getCodes()[0];
         }
 
@@ -54,11 +60,15 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineS
         }
 
         $view->settings = [
-            'Token' => $this->getConfiguration()->getToken(),
-            'Max Usages' => $this->getConfiguration()->getUsages(),
+            $view->ts('plugin_onlineshop_voucherservice_settings-token') => $this->getConfiguration()->getToken(),
+            $view->ts('plugin_onlineshop_voucherservice_settings-max-usages') => $this->getConfiguration()->getUsages(),
         ];
 
-        $view->statistics = $this->getStatistics();
+        $statisticUsagePeriod = 30;
+        if(isset($params['statisticUsagePeriod'])){
+            $statisticUsagePeriod = $params['statisticUsagePeriod'];
+        }
+        $view->statistics = $this->getStatistics($statisticUsagePeriod);
 
         return $this->template;
     }
@@ -94,16 +104,28 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineS
         return OnlineShop_Framework_VoucherService_Token_List::getCodes($this->seriesId, $params);
     }
 
+    protected function prepareUsageStatisticData(&$data, $usagePeriod){
+        $now = new DateTime("NOW");
+        $periodData = [];
+        for ($i = $usagePeriod; $i > 0; $i--) {
+            $index = $now->format("Y-m-d");
+            $periodData[$index] = isset($data[$index]) ? $data[$index] : 0;
+            $now->modify('-1 day');
+        }
+        $data = $periodData;
+    }
+
     /**
      * @return array
      */
-    public function getStatistics()
+    public function getStatistics($usagePeriod = null)
     {
         $overallCount = $this->configuration->getUsages();
         $usageCount = OnlineShop_Framework_VoucherService_Token::getByCode($this->configuration->getToken())->getUsages();
         $reservedTokenCount = OnlineShop_Framework_VoucherService_Token_List::getCountByReservation($this->seriesId);
 
-        $usage = OnlineShop_Framework_VoucherService_Statistic::getBySeriesId($this->seriesId);
+        $usage = OnlineShop_Framework_VoucherService_Statistic::getBySeriesId($this->seriesId, $usagePeriod);
+        $this->prepareUsageStatisticData($usage, $usagePeriod);
 
         return [
             'overallCount' => $overallCount,
@@ -129,6 +151,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineS
         return false;
     }
 
+
     /**
      * @param string $code
      * @param OnlineShop_Framework_ICart $cart
@@ -139,17 +162,20 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineS
     public function applyToken($code, OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
-            if ($token->isAvailable($this->configuration->getUsages(), true)) {
+            if ($token->check($this->configuration->getUsages(), true)) {
                 if ($token->apply()) {
-                    $orderToken = new Object_OnlineShopVoucherToken();
-                    $orderToken->setTokenId($token->getId());
-                    $orderToken->setToken($token->getToken());
-                    $series = Object_OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
-                    $orderToken->setVoucherSeries([$series]);
-                    $orderToken->setParent($series);        // TODO set correct parent for applied tokens
-                    $orderToken->setKey(\Pimcore\File::getValidFilename($token->getToken() . "_" . substr(uniqid(), 8)));
-                    $orderToken->setPublished(1);
-                    $orderToken->save();
+                    $orderToken = Object_OnlineShopVoucherToken::getByToken($code, 1);
+                    if(!$orderToken instanceof Object_OnlineShopVoucherToken) {
+                        $orderToken = new Object_OnlineShopVoucherToken();
+                        $orderToken->setTokenId($token->getId());
+                        $orderToken->setToken($token->getToken());
+                        $series = Object_OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
+                        $orderToken->setVoucherSeries($series);
+                        $orderToken->setParent($series);        // TODO set correct parent for applied tokens
+                        $orderToken->setKey(\Pimcore\File::getValidFilename($token->getToken()));
+                        $orderToken->setPublished(1);
+                        $orderToken->save();
+                    }
 
                     return $orderToken;
                 }
@@ -176,7 +202,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineS
     public function checkToken($code, OnlineShop_Framework_ICart $cart)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
-            if ($token->isAvailable($this->configuration->getUsages())) {
+            if ($token->check($this->configuration->getUsages())) {
                 return true;
             }
         }

@@ -20,7 +20,8 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
      * @param int $id
      * @return bool|OnlineShop_Framework_VoucherService_Statistic
      */
-    public function getById($id){
+    public function getById($id)
+    {
         try {
             $config = new self();
             $config->getResource()->getById($id);
@@ -37,11 +38,21 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
      *
      * @return bool
      */
-    public static function getBySeriesId($seriesId)
+    public static function getBySeriesId($seriesId, $usagePeriod = null)
     {
         $db = \Pimcore\Resource::get();
+
+        $query = "SELECT date, COUNT(*) as count FROM " . OnlineShop_Framework_VoucherService_Statistic_Resource::TABLE_NAME . " WHERE voucherSeriesId = ?";
+        $params[] = $seriesId;
+        if ($usagePeriod) {
+            $query .= " AND (TO_DAYS(NOW()) - TO_DAYS(date)) < ?";
+            $params[] = $usagePeriod;
+        }
+
+        $query .= " GROUP BY date";
+
         try {
-            $result = $db->fetchPairs("SELECT date, COUNT(*) as count FROM " . OnlineShop_Framework_VoucherService_Statistic_Resource::TABLE_NAME . " WHERE voucherSeriesId = ? GROUP BY date", $seriesId);
+            $result = $db->fetchPairs($query, $params);
             return $result;
         } catch (Exception $e) {
 //            \Pimcore\Log\Simple::log('VoucherService',$e);
@@ -49,6 +60,10 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
         }
     }
 
+    /**
+     * @param $seriesId
+     * @return bool
+     */
     public static function increaseUsageStatistic($seriesId)
     {
         $db = $db = \Pimcore\Resource::get();
@@ -57,6 +72,30 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
 
         } catch (Exception $e) {
 //            \Pimcore\Log\Simple::log('VoucherService',$e);
+            return false;
+        }
+    }
+
+
+    /**
+     * @param int $duration days
+     * @param string|null $seriesId
+     * @return bool
+     */
+    public static function cleanUpStatistics($duration, $seriesId = null){
+        $query = "DELETE FROM " . OnlineShop_Framework_VoucherService_Statistic_Resource::TABLE_NAME . " WHERE DAY(DATEDIFF(date, NOW())) >= ?";
+        $params[] = $duration;
+
+        if (isset($seriesId)) {
+            $query .= " AND voucherSeriesId = ?";
+            $params[] = $seriesId;
+        }
+
+        $db = \Pimcore\Resource::get();
+        try {
+            $db->query($query, $params);
+            return true;
+        } catch (Exception $e) {
             return false;
         }
     }

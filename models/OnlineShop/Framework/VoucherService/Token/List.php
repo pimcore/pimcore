@@ -37,48 +37,51 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
         $query = "SELECT * FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " WHERE voucherSeriesId = ?";
         $queryParams[] = $seriesId;
 
-        if (isset($params['token'])) {
+        if (!empty($params['token'])) {
             $query .= " AND token LIKE ?";
             $queryParams[] = "%" . $params['token'] . "%";
         }
-        if (isset($params['usages'])) {
+        if (!empty($params['usages'])) {
             $query .= " AND usages = ? ";
             $queryParams[] = $params['usages'];
         }
-        if (isset($params['length'])) {
+        if (!empty($params['length'])) {
             $query .= " AND length = ? ";
             $queryParams[] = $params['length'];
         }
-        if (isset($params['creation_to']) && isset($params['creation_from'])) {
+        if (!empty($params['creation_to']) && isset($params['creation_from'])) {
             $from = $db->quote($params['creation_from']);
             $to = $db->quote($params['creation_to']);
             $query .= " AND timestamp BETWEEN STR_TO_DATE(" . $from . ",'%Y-%m-%d') AND STR_TO_DATE(" . $to . ",'%Y-%m-%d')";
         } else {
-            if (isset($params['creation_from'])) {
+            if (!empty($params['creation_from'])) {
                 $param = $db->quote($params['creation_from']);
                 $query .= " AND timestamp >= STR_TO_DATE(" . $param . ",'%Y-%m-%d')";
             }
-            if (isset($params['creation_to'])) {
+            if (!empty($params['creation_to'])) {
                 $param = $db->quote($params['creation_to']);
                 $query .= " AND timestamp <= STR_TO_DATE(" . $param . ",'%Y-%m-%d') + INTERVAL 1 DAY";
             }
         }
 
-        if (!isset($params['sort_criteria']) || !isset($params['sort_order'])) {
-            $params['sort_criteria'] = "timestamp";
-            $params['sort_order'] = "DESC";
+        if (self::isValidOrderKey($params['sort_criteria'])) {
+            $query .= " ORDER BY " . $params['sort_criteria'];
         } else {
-            $params['sort_criteria'] = $db->quote($params['sort_criteria']);
-            $params['sort_order'] = $db->quote($params['sort_order']);
+            $query .= " ORDER BY timestamp";
         }
 
-        $query .= " ORDER BY " . $params['sort_criteria'] . " " . $params['sort_order'];
+        if ($params['sort_order'] == "ASC") {
+            $query .= " ASC";
+        } else {
+            $query .= " DESC";
+        }
 
         try {
             $codes = $db->fetchAll($query, array_values($queryParams));
         } catch (Exception $e) {
             return false;
         }
+
         return $codes;
     }
 
@@ -154,39 +157,72 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
         }
     }
 
-
-    public static function cleanUpTokens($seriesId, $filter, $maxUsages = 1)
+    /**
+     * Use with care, cleans all tokens of a series and the dependent
+     * reservations.
+     *
+     * @param string $seriesId
+     * @return bool
+     */
+    public static function cleanUpAllTokens($seriesId)
     {
-        // TODO Reservations etc
-        $query = "DELETE FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " WHERE voucherSeriesId = ? ";
+        return self::cleanUpTokens($seriesId);
+    }
 
-        $params[] = $seriesId;
+    /**
+     * @param string $seriesId
+     * @param array $filter
+     * @param int $maxUsages
+     * @return bool
+     */
+    public static function cleanUpTokens($seriesId, $filter = [], $maxUsages = 1)
+    {
         $db = \Pimcore\Resource::get();
+
+        $reservationsQuery = "DELETE r FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " AS t
+                        JOIN " . OnlineShop_Framework_VoucherService_Reservation_Resource::TABLE_NAME . " AS r
+                        ON t.token = r.token
+                        WHERE t.voucherSeriesId = ?";
+
+
+        $tokensQuery = "DELETE t FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " AS t WHERE t.voucherSeriesId = ?";
+        $params[] = $seriesId;
+
+        $queryParts = [];
+
+        if (isset($filter['usage'])) {
+            if ($filter['usage'] == 'used') {
+                $queryParts[] = "t.usages >= " . $maxUsages;
+            } else if ($filter['usage'] == 'unused') {
+                $queryParts[] = "t.usages = 0";
+            } else if ($filter['usage'] == 'both') {
+                $queryParts[] = "t.usages >= 0";
+            }
+        }
+
+        if (isset($filter['olderThan'])) {
+            $param = $db->quote($filter['olderThan']);
+            $queryParts[] = "t.timestamp < STR_TO_DATE(" . $param . ",'%Y-%m-%d')";
+        }
+
+        if (sizeof($queryParts) == 1) {
+            $reservationsQuery = $reservationsQuery . " AND " . $queryParts[0];
+            $tokensQuery = $tokensQuery . " AND " . $queryParts[0];
+        } elseif (sizeof($queryParts) > 1) {
+            $reservationsQuery = $reservationsQuery . " AND (" . implode(' OR ', $queryParts) . ")";
+            $tokensQuery = $tokensQuery . " AND (" . implode(' OR ', $queryParts) . ")";
+        }
+
+        $db->beginTransaction();
         try {
-            if (isset($filter['used'])) {
-                $queryParts[] = "usages >= " . $maxUsages;
-            }
-            if (isset($filter['unused'])) {
-                $queryParts[] = "usages = 0";
-            }
-
-            if (isset($filter['olderThan'])) {
-                $param = $db->quote($filter['olderThan']);
-                $queryParts[] = "timestamp < STR_TO_DATE(" . $param . ",'%Y-%m-%d')";
-            }
-
-            if (is_array($queryParts)) {
-                if (sizeof($queryParts) > 1) {
-                    $query = $query . " AND (" . implode(' OR ', $queryParts) . ")";
-                } else {
-                    $query = $query . " AND " . $queryParts[0];
-                }
-                $db->query($query, $params);
-            }
+            $db->query($reservationsQuery, $params);
+            $db->query($tokensQuery, $params);
+            $db->commit();
+            return true;
         } catch (Exception $e) {
+            $db->rollBack();
             return false;
         }
-        return true;
     }
 
 

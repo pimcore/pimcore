@@ -70,16 +70,52 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;"
         );
 
-        //OrderEvent
-        \Pimcore\Resource::get()->query("
-            CREATE TABLE `plugin_customerdb_event_orderEvent` (
-              `eventid` int(11) NOT NULL DEFAULT '0',
-              `orderObject__id` int(11) DEFAULT NULL,
-              `orderObject__type` enum('document','asset','object') DEFAULT NULL,
-              PRIMARY KEY (`eventid`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-        ");
+        // Voucher Service
 
+        // Statistics
+        \Pimcore\Resource::get()->query(
+            "CREATE TABLE `plugins_onlineshop_vouchertoolkit_statistics` (
+                `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                `voucherSeriesId` BIGINT(20) NOT NULL,
+                `date` DATE NOT NULL,
+                PRIMARY KEY (`id`)
+            )
+            COLLATE='utf8_general_ci'
+            ENGINE=InnoDB ;"
+        );
+
+
+        // Tokens
+        \Pimcore\Resource::get()->query(
+            "CREATE TABLE `plugins_onlineshop_vouchertoolkit_tokens` (
+                `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                `voucherSeriesId` BIGINT(20) NULL DEFAULT NULL,
+                `token` VARCHAR(250) NULL DEFAULT NULL COLLATE 'latin1_bin',
+                `length` INT(11) NULL DEFAULT NULL,
+                `type` VARCHAR(50) NULL DEFAULT NULL,
+                `usages` BIGINT(20) NULL DEFAULT '0',
+                `timestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                UNIQUE INDEX `token` (`token`)
+            )
+            COLLATE='utf8_general_ci'
+            ENGINE=InnoDB;"
+        );
+
+        // Reservations
+        \Pimcore\Resource::get()->query(
+            "CREATE TABLE `plugins_onlineshop_vouchertoolkit_reservations` (
+                `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                `token` VARCHAR(250) NOT NULL,
+                `cart_id` VARCHAR(250) NOT NULL,
+                `timestamp` DATETIME NOT NULL,
+                PRIMARY KEY (`id`),
+                INDEX `token` (`token`)
+            )
+            COLLATE='utf8_general_ci'
+            ENGINE=InnoDB
+            ;"
+        );
 
 
         // Add FieldCollections
@@ -108,6 +144,8 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         // Add classes
         self::createClass("FilterDefinition", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.json');
         self::createClass("OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrderItem_export.json');
+        self::createClass("OnlineShopVoucherSeries", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherSeries_export.json');
+        self::createClass("OnlineShopVoucherToken", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherToken_export.json');
         self::createClass("OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrder_export.json');
         self::createClass("OfferToolOfferItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOfferItem_export.json');
         self::createClass("OfferToolOffer", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOffer_export.json');
@@ -189,6 +227,9 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
         \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
         \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
+        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_reservations`");
+        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_tokens`");
+        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_statistics`");
 
 
         // execute uninstallation from subsystems
@@ -263,6 +304,12 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
             $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->deleteFromIndex($object);
+        }
+
+        // Delete tokens when a a configuration object gets removed.
+        if($object instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries){
+            $voucherService = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+            $voucherService->cleanUpVoucherSeries($object);
         }
     }
 
@@ -424,5 +471,6 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         $checkoutManager->cleanUpPendingOrders();
 
         OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpReservations();
+        OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpStatistics();
     }
 }

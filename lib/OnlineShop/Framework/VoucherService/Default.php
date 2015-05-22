@@ -9,9 +9,11 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
 
     public $sysConfig;
 
-    public function __construct($config){
+    public function __construct($config)
+    {
         $this->sysConfig = $config;
     }
+
     /**
      * @param string $code
      * @param OnlineShop_Framework_ICart $cart
@@ -75,13 +77,35 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     /**
      * @return bool
      */
-    public function cleanUpReservations($duration =  null){
-        if(isset($duration)){
-            return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($duration);
-        }else{
+    public function cleanUpReservations($duration = null, $seriesId = null)
+    {
+        if (isset($duration)) {
+            return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($duration, $seriesId);
+        } else {
             return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($this->sysConfig->reservations->duration);
         }
+    }
 
+    /**
+     * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $series
+     * @return bool
+     */
+    public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series)
+    {
+        return OnlineShop_Framework_VoucherService_Token_List::cleanUpAllTokens($series->getId());
+    }
+
+    /**
+     * @param null|int $duration days
+     * @param null|string $seriesId
+     * @return bool
+     */
+    public function cleanUpStatistics($duration =  null, $seriesId = null){
+        if (isset($duration)) {
+            return OnlineShop_Framework_VoucherService_Statistic::cleanUpStatistics($duration, $seriesId);
+        } else {
+            return OnlineShop_Framework_VoucherService_Statistic::cleanUpStatistics($this->sysConfig->statistics->duration);
+        }
     }
 
     /**

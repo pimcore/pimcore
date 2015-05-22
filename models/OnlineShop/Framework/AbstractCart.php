@@ -677,21 +677,22 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     }
 
     /**
+     * Adds a voucher token to the cart's checkout data and reserves it.
      *
-     *
-     * @param OnlineShop_Framework_VoucherService_Token $code
-     *
+     * @param string $code
      * @return bool
-     *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
     public function addVoucherToken($code){
         $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
-        if($service->checkToken($code, $this) && $service->reserveToken($code, $this)){
-            $index = 'voucher_'.$code;
-            $this->setCheckoutData($index, $code);
-            $this->save();
-            return true;
+        if($service->checkToken($code, $this)){
+            if($service->reserveToken($code, $this)){
+                $index = 'voucher_' . $code;
+                $this->setCheckoutData($index, $code);
+                $this->save();
+                return true;
+            }
+//            \Pimcore\Log\Simple::log('VoucherService', 'Token Reservation failed for code ' . $code);
         }
         return false;
     }

@@ -5,7 +5,7 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
 {
 
     /**
-     *
+     *  Loads and shows voucherservice backend tab
      */
     public function voucherCodeTabAction()
     {
@@ -13,59 +13,90 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
         if ($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 $this->view->series = $onlineShopVoucherSeries;
-
                 $renderScript = $tokenManager->prepareConfigurationView($this->view, $this->getAllParams());
                 $this->renderScript($renderScript);
             }
         }
     }
 
+    /**
+     * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries
+     * @param OnlineShop_Framework_VoucherService_ITokenManager $tokenManager
+     * @param array $params
+     */
+    public function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, OnlineShop_Framework_VoucherService_ITokenManager $tokenManager, $params = []){
+        $this->view->series = $onlineShopVoucherSeries;
+        $viewParams = array_merge($params, $this->getAllParams());
+        $renderScript = $tokenManager->prepareConfigurationView($this->view, $viewParams);
+        $this->renderScript($renderScript);
+    }
+
+    /**
+     * Generates new Tokens or Applies single token settings.
+     */
     public function generateAction()
     {
         $onlineShopVoucherSeries = \Pimcore\Model\Object\AbstractObject::getById($this->getParam('id'));
         if ($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 $result = $tokenManager->insertOrUpdateVoucherSeries();
-                if ($result !== true) {
-                    $this->forward('voucher-Code-Tab', 'Voucher', null, ['error' => $result['error']]);
+                if ($result == true) {
+                    $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('success' => $this->view->ts('plugin_onlineshop_voucherservice_msg-success-generation')));
                 } else {
-                    $this->forward('voucher-Code-Tab', 'Voucher');
+                    $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-generation')));
                 }
             }
         }
     }
 
+    /**
+     * Removes tokens due to given filter parameters.
+     */
     public function cleanupAction()
     {
         $onlineShopVoucherSeries = \Pimcore\Model\Object\AbstractObject::getById($this->getParam('id'));
         if ($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
+
                 // Prepare cleanUp parameter array.
                 $params = [];
-                $this->getParam('used') ? $params['used'] = $this->getParam('used') : '';
-                $this->getParam('unused') ? $params['unused'] = $this->getParam('unused') : '';
+                $this->getParam('usage') ? $params['usage'] = $this->getParam('usage') : '';
                 $this->getParam('olderThan') ? $params['olderThan'] = $this->getParam('olderThan') : '';
 
+                if(empty($params['usage'])){
+                    $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-required-missing')));
+                    return;
+                }
+
                 if ($tokenManager->cleanUpCodes($params)) {
-                    $this->forward('voucher-Code-Tab', 'Voucher');
+                    $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('success' => $this->view->ts('plugin_onlineshop_voucherservice_msg-success-cleanup')));
+                } else {
+                    $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-cleanup')));
                 }
             }
         }
-        $this->forward('voucher-Code-Tab', 'Voucher', null, ['error' => 'Something went wrong.']); //TODO translate
     }
 
+    /**
+     * Removes token reservations due to given duration.
+     *
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
     public function cleanupReservationsAction()
     {
         $duration = $this->getParam('duration');
+        $id = $this->getParam('id');
+
         if (isset($duration)) {
             $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
-            if ($service->cleanUpReservations($duration)) {
-                $this->forward('voucher-Code-Tab', 'Voucher');
+            if ($service->cleanUpReservations($duration, $id)) {
+                $this->forward('voucher-Code-Tab', 'Voucher', null, ['success' => $this->view->ts('plugin_onlineshop_voucherservice_msg-success-cleanup-reservations'), 'id' => $id]);
+            } else {
+                $this->forward('voucher-Code-Tab', 'Voucher', null, ['error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-cleanup-reservations'), 'id' => $id]);
             }
         } else {
-            $this->forward('voucher-Code-Tab', 'Voucher', null, ['error' => 'Please specify a duration.']); //TODO translate
+            $this->forward('voucher-Code-Tab', 'Voucher', null, ['error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-cleanup-reservations-duration-missing'), 'id' => $id]);
         }
-        $this->forward('voucher-Code-Tab', 'Voucher', null, ['error' => 'Something went wrong.']); //TODO translate
     }
 
 }

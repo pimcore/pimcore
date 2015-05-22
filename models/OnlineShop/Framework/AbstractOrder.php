@@ -461,4 +461,21 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
 //        return new \Zend_Currency($this->getOrder()->getCurrency(), $this->factory->getEnvironment()->getCurrencyLocale());
     }
 
+    /**
+     * Get voucherTokens - Voucher Tokens
+     * @return array
+     */
+    public function getVoucherTokens () {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getVoucherTokens is not implemented for " . get_class($this));
+    }
+
+    /**
+     * Set voucherTokens - Voucher Tokens
+     * @param array $voucherTokens
+     * @return \Pimcore\Model\Object\OnlineShopOrder
+     */
+    public function setVoucherTokens ($voucherTokens) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setVoucherTokens is not implemented for " . get_class($this));
+    }
+
 }

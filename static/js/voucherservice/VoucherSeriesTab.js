@@ -3,7 +3,7 @@ pimcore.registerNS("pimcore.plugin.onlineshop.VoucherSeriesTab");
 pimcore.plugin.onlineshop.VoucherSeriesTab = Class.create({
 
     title: t('plugin_onlineshop_vouchertoolkit_tab'),
-    iconCls: '',
+    iconCls: 'plugin_voucherservice_icon',
     src: '/plugin/OnlineShop/voucher/voucher-code-tab',
     id: null,
 
@@ -37,7 +37,12 @@ pimcore.plugin.onlineshop.VoucherSeriesTab = Class.create({
             });
 
             this.panel.on("resize", this.onLayoutResize.bind(this));
-            this.panel.on("afterrender", this.reload.bind(this));
+            var that = this;
+            this.panel.on("afterrender", function(e){
+                that.panel.on("activate", function(e){
+                    that.reload();
+                });
+            });
 
         }
         return this.panel;

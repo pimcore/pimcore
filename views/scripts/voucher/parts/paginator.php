@@ -1,5 +1,4 @@
 <div class="paging">
-
 <?
 if ($this->pageCount > 1): ?>
     <? $baseUrl = Zend_Controller_Front::getInstance()->getRequest()->getParam('document') ? : '/' ?>
@@ -7,10 +6,10 @@ if ($this->pageCount > 1): ?>
         <!-- Link zur vorherigen Seite -->
         <? if (isset($this->previous)): ?>
 <!--            <li class="first first-page"><a class="pagination-li" href="--><?//= $this->url . "&page=". $this->first?><!--"rel="--><?//= $this->first ?><!--"><span class="pag-text-label">first</span></a></li>-->
-            <li class="first"><a class="pagination-li" href="<?=$this->url . "&page=". $this->previous?>" rel="<?=$this->previous?>"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span>previous</span></a></li>
+            <li class="first"><a class="pagination-li" href="<?=$this->url . "&page=". $this->previous?>" rel="<?=$this->previous?>"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span><?=$this->ts('plugin_onlineshop_voucherservice_paging-previous')?></span></a></li>
         <? else: ?>
 <!--            <li class="first first-page"><span class="pag-text-label">first</span></li>-->
-            <li class="first"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span>previous</span></li>
+            <li class="first"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span><?=$this->ts('plugin_onlineshop_voucherservice_paging-previous')?></span></li>
         <? endif; ?>
 
         <!-- Numbered page links -->
@@ -24,15 +23,17 @@ if ($this->pageCount > 1): ?>
 
         <!-- Link zur nächsten Seite -->
         <? if (isset($this->next)): ?>
-            <li class="last"><a class="pagination-li" href="<?=$this->url . "&page=". $this->next?>" rel="<?=$this->next?>"><span class="pag-text-label">next<span class="glyphicon glyphicon-chevron-right"></span></span></a></li>
+            <li class="last"><a class="pagination-li" href="<?=$this->url . "&page=". $this->next?>" rel="<?=$this->next?>"><span class="pag-text-label"><?=$this->ts('plugin_onlineshop_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></a></li>
 <!--            <li class="last last-page"><a class="pagination-li" href="--><?//=$baseUrl?><!--?page=--><?//=$this->last?><!--" data-href="--><?//=$this->url . "&page=". $this->last?><!--" rel="--><?//= $this->last ?><!--"><span class="pag-text-label">--><?//= $this->translate('paging.lastpage') ?><!--</span></a></li>-->
 
         <? else: ?>
-            <li class="last"><span class="pag-text-label">next<span class="glyphicon glyphicon-chevron-right"></span></span></li>
+            <li class="last"><span class="pag-text-label"><?=$this->ts('plugin_onlineshop_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></li>
 <!--            <li class="last last-page"><span class="pag-text-label">--><?//= $this->translate('paging.lastpage') ?><!--</span></li>-->
         <? endif; ?>
     </ul>
 <? endif; ?>
+
+
 </div>
 
 <style>

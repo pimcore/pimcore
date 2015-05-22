@@ -1,5 +1,4 @@
 <?php
-// TODO Select Queries in Blöcke aufteilen.  http://onlineshop.plugins.elements.pm/plugin/OnlineShop/voucher/test
 
 /**
  * Class OnlineShop_Framework_VoucherService_TokenManager_Pattern
@@ -289,35 +288,53 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern implements Online
             } else {
                 $db->query($generatedInsertQueries);
             }
-
+            return true;
 
         } catch (Exception $e) {
 //            var_dump($e);
 //            \Pimcore\Log\Simple::log('VoucherSystem', $e);
-            return ['error' => 'Token generation not possible, please adjust your parameters in the edit tab.']; //TODO translate
-
+            return false;
         }
     }
 
     /**
-     * @param array|null $params
+     * @param array|null $filter
      * @return array|bool
      */
-    public function getCodes($params = null)
+    public function getCodes($filter = null)
     {
-        return OnlineShop_Framework_VoucherService_Token_List::getCodes($this->seriesId, $params);
+        return OnlineShop_Framework_VoucherService_Token_List::getCodes($this->seriesId, $filter);
+    }
+
+    /**
+     * @param array $data
+     * @param $usagePeriod
+     */
+    protected function prepareUsageStatisticData(&$data, $usagePeriod)
+    {
+        $now = new DateTime("NOW");
+        $periodData = [];
+        for ($i = $usagePeriod; $i > 0; $i--) {
+            $index = $now->format("Y-m-d");
+            $periodData[$index] = isset($data[$index]) ? $data[$index] : 0;
+            $now->modify('-1 day');
+        }
+        $data = $periodData;
     }
 
     /**
      * @return array
      */
-    public function getStatistics()
+    public function getStatistics($usagePeriod = null)
     {
         $overallCount = OnlineShop_Framework_VoucherService_Token_List::getCountBySeriesId($this->seriesId);
         $usageCount = OnlineShop_Framework_VoucherService_Token_List::getCountByUsages(1, $this->seriesId);
         $reservedTokenCount = OnlineShop_Framework_VoucherService_Token_List::getCountByReservation($this->seriesId);
 
-        $usage = OnlineShop_Framework_VoucherService_Statistic::getBySeriesId($this->seriesId);
+        $usage = OnlineShop_Framework_VoucherService_Statistic::getBySeriesId($this->seriesId, $usagePeriod);
+        if (is_array($usage)) {
+            $this->prepareUsageStatisticData($usage, $usagePeriod);
+        }
 
         return [
             'overallCount' => $overallCount,
@@ -330,15 +347,12 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern implements Online
 
 
     /**
-     * @param array $params Associative with the indices: "used", "unused" and "olderThan".
+     * @param array|null $filter Associative with the indices: "used", "unused" and "olderThan".
      * @return bool
      */
-    public function cleanUpCodes($params = [])
+    public function cleanUpCodes($filter = [])
     {
-        if (OnlineShop_Framework_VoucherService_Token_List::cleanUpTokens($this->seriesId, $params)) {
-            return true;
-        }
-        return false;
+        return OnlineShop_Framework_VoucherService_Token_List::cleanUpTokens($this->seriesId, $filter);
     }
 
     /**
@@ -389,19 +403,19 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern implements Online
      * @param OnlineShop_Framework_ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      *
-     * @return bool|OnlineShop_Framework_VoucherService_Token
+     * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
     public function applyToken($code, OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
             if (!$token->isUsed()) {
                 if ($token->apply()) {
-                    $orderToken = new Object_OnlineShopVoucherToken();
+                    $orderToken = new \Pimcore\Model\Object\OnlineShopVoucherToken();
                     $orderToken->setTokenId($token->getId());
                     $orderToken->setToken($token->getToken());
-                    $series = Object_OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
-                    $orderToken->setVoucherSeries([$series]);
-                    $orderToken->setParent($series);        // TODO set correct parent for applied tokens
+                    $series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
+                    $orderToken->setVoucherSeries($series);
+                    $orderToken->setParent($series);
                     $orderToken->setKey(\Pimcore\File::getValidFilename($token->getToken()));
                     $orderToken->setPublished(1);
                     $orderToken->save();
@@ -422,30 +436,45 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern implements Online
      */
     public function prepareConfigurationView($view, $params)
     {
+        $view->msg = [];
+
         if ($codes = $this->getCodes($params)) {
             $view->paginator = Zend_Paginator::factory($codes);
+            if ($params['tokensPerPage']) {
+                $view->paginator->setItemCountPerPage((int)$params['tokensPerPage']);
+            } else {
+                $view->paginator->setItemCountPerPage(25);
+            }
+
             $view->count = sizeof($codes);
-        }else{
-            $view->error = "No Tokens found.";  // TODO
+        } else {
+            $view->msg['result'] = $view->ts('plugin_onlineshop_voucherservice_msg-error-token-noresult');
         }
 
-        $view->error = $params['error'];
+        $view->msg['error'] = $params['error'];
+        $view->msg['success'] = $params['success'];
 
+        // Settings parsed via foreach in view -> key is translation
         $view->settings = [
-            'Amount' => $this->getConfiguration()->getCount(),
-            'Prefix' => $this->getConfiguration()->getPrefix(),
-            'Length' => $this->getConfiguration()->getLength(),
-            'Example' => $this->getExampleToken(),
+            $view->ts('plugin_onlineshop_voucherservice_settings-count') => $this->getConfiguration()->getCount(),
+            $view->ts('plugin_onlineshop_voucherservice_settings-prefix') => $this->getConfiguration()->getPrefix(),
+            $view->ts('plugin_onlineshop_voucherservice_settings-length') => $this->getConfiguration()->getLength(),
+            $view->ts('plugin_onlineshop_voucherservice_settings-exampletoken') => $this->getExampleToken(),
         ];
 
-        $view->statistics = $this->getStatistics();
+        $statisticUsagePeriod = 30;
+        if (isset($params['statisticUsagePeriod'])) {
+            $statisticUsagePeriod = $params['statisticUsagePeriod'];
+        }
+
+        $view->statistics = $this->getStatistics($statisticUsagePeriod);
 
         return $this->template;
     }
 
-    public function cleanUpReservations($duration = 0)
+    public function cleanUpReservations($duration = 0, $seriesId = null)
     {
-        OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($duration);
+        return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($duration, $seriesId);
     }
 
     /**

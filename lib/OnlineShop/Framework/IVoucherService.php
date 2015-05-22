@@ -32,8 +32,22 @@ interface OnlineShop_Framework_IVoucherService
     public function releaseToken($code, Onlineshop_Framework_ICart $cart);
 
     /**
+     * @param null|int $duration
+     * @param null|string $seriesId
      * @return bool
      */
-    public function cleanUpReservations($duration = null);
+    public function cleanUpReservations($duration = null, $seriesId = null);
 
+    /**
+     * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $series
+     * @return bool
+     */
+    public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series);
+
+    /**
+     * @param null|int $duration days
+     * @param null|string $seriesId
+     * @return bool
+     */
+    public function cleanUpStatistics($duration = null, $seriesId = null);
 }

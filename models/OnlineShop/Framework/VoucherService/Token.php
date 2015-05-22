@@ -77,7 +77,7 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
      * @param bool $isCheckout In the checkout there is one reservation more, the one of the current order.
      * @return bool
      */
-    public function isAvailable($maxUsages = null, $isCheckout = false)
+    public function check($maxUsages = null, $isCheckout = false)
     {
         if (isset($maxUsages)) {
             if ($this->getUsages() + OnlineShop_Framework_VoucherService_Reservation::getReservationCount($this->getToken()) - (int)$isCheckout < $maxUsages) {

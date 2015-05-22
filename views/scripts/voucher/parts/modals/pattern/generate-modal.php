@@ -1,14 +1,13 @@
 <div id="generate" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <!-- dialog body -->
             <div class="modal-body">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body-content">
-                <h3>New Token Series</h3>
+                <h3><?=$this->ts('plugin_onlineshop_voucherservice_modal_generate-headline')?></h3>
                 <div class="row">
-                    <div class="col col-sm-8">
+                    <div class="col col-sm-10">
                         <table class="table current-data table-only-body">
                             <tbody>
                             <? foreach ($this->settings as $name => $setting) { ?>
@@ -25,17 +24,12 @@
                             <? } ?>
                             </tbody>
                         </table>
-                        <? if ($this->generateWarning) { ?>
-                            <div class="alert alert-danger"><?= $this->generateWarning ?></div>
-                        <? } ?>
                     </div>
                 </div>
             </div>
-            <!-- dialog buttons -->
             <div class="modal-footer">
-                <? // TODO correct URL !?>
-                <a href="/plugin/OnlineShop/voucher/generate?id=<?= $this->getParam('id') ?>" class="btn btn-primary js-loading" data-msg="Generating Codes, please wait. This can take some minutes.">Generate</a>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a href="<?= $this->url(array('action' => 'generate', 'controller' => 'voucher', 'id' => $this->id)) ?>" class="btn btn-primary js-loading" data-msg="<?=$this->ts('plugin_onlineshop_voucherservice_modal_generate-infotext')?>"><?=$this->ts('plugin_onlineshop_voucherservice_modal_generate-submit-button')?></a>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->ts('plugin_onlineshop_voucherservice_modal_cancle')?></button>
             </div>
         </div>
     </div>

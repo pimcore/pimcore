@@ -110,15 +110,18 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
     },
 
 
-    postOpenObject: function(object, type) {
-        //if(pimcore.globalmanager.get("user").isAllowed("plugin_outputDataConfigToolkit")) {
+    postOpenObject: function (object, type) {
+        if (pimcore.globalmanager.get("user").isAllowed("plugin_onlineshop_pricing_rules")) {
 
-            var tab = new pimcore.plugin.onlineshop.VoucherSeriesTab(object, type);
+            if (type == "object" && object.data.general.o_className == "OnlineShopVoucherSeries") {
+                var tab = new pimcore.plugin.onlineshop.VoucherSeriesTab(object, type);
 
-            object.tab.items.items[1].insert(object.tab.items.items[1].items.length, tab.getLayout());
-            object.tab.items.items[1].doLayout();
-            pimcore.layout.refresh();
-        //}
+                object.tab.items.items[1].insert(1, tab.getLayout());
+                object.tab.items.items[1].doLayout();
+                pimcore.layout.refresh();
+            }
+
+        }
     }
 
 });
