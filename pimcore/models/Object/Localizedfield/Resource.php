@@ -250,6 +250,7 @@ class Resource extends Model\Resource\AbstractResource {
         $languages = Tool::getValidLanguages();
         $defaultTable = 'object_query_' . $this->model->getClass()->getId();
 
+        $db = $this->db;
 
         /**
          * macro for creating ifnull statement
@@ -258,7 +259,7 @@ class Resource extends Model\Resource\AbstractResource {
          *
          * @return string
          */
-        $getFallbackValue = function ($field, array $languages) use (&$getFallbackValue) {
+        $getFallbackValue = function ($field, array $languages) use (&$getFallbackValue, $db) {
 
             // init
             $lang = array_shift($languages);
@@ -270,7 +271,7 @@ class Resource extends Model\Resource\AbstractResource {
             ;
 
             // create query
-            $sql = sprintf('ifnull(%s.%s, %s)'
+            $sql = sprintf('ifnull(`%s`.`%s`, %s)'
                 , $lang
                 , $field
                 , $fallback
@@ -278,7 +279,7 @@ class Resource extends Model\Resource\AbstractResource {
 
             return $fallback !== 'null'
                 ? $sql
-                : $lang . '.' . $field
+                : $db->quoteIdentifier($lang) . '.' . $db->quoteIdentifier($field)
                 ;
         };
 
@@ -300,7 +301,7 @@ class Resource extends Model\Resource\AbstractResource {
                 $viewFields = [];
                 foreach($viewColumns as $row)
                 {
-                    $viewFields[] = $row['Field'];
+                    $viewFields[] = $this->db->quoteIdentifier($row['Field']);
                 }
 
 
