@@ -16,9 +16,29 @@ $currency = $orderAgent->getCurrency();
     <div class="col-xs-7">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2 class="panel-title">
-                    <strong><?= $this->translate('online-shop.back-office.order') ?>: <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a></strong>
-                    <small><?= $order->getOrderDate() ?></small>
+                <div class="panel-title row" style="font-weight: bold;">
+                    <?php
+                    $urlList = $this->url(['action' => 'list', 'controller' => 'admin-order', 'module' => 'OnlineShop'], null);
+                    ?>
+                    <div class="col-sm-6">
+                        <a href="<?= $urlList ?>"><?= $this->translate('online-shop.back-office.order-list') ?></a>
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                        <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <?= $order->getOrderDate() ?>
+                    </div>
+                </div>
+
+                <h2 class="hide panel-title row" style="font-weight: bold;">
+                    <div class="col-sm-6">
+                        <a href="#" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>
+
+                        <?= $this->translate('online-shop.back-office.order') ?> <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <?= $order->getOrderDate() ?>
+                    </div>
                 </h2>
             </div>
         </div>
