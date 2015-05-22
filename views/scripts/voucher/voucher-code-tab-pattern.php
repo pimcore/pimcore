@@ -12,7 +12,6 @@
 
 $seriesId = $this->getParam('id');
 $url = $this->url(['controller' => 'voucher', 'action' => 'voucher-code-tab', "id" => $seriesId], 'plugins', true);
-var_dump($url);
 if ($this->paginator) {
     $this->paginator->setCurrentPageNumber($this->getParam('page'));
     $this->paginator->setPageRange(10);
