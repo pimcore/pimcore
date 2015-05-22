@@ -68,14 +68,14 @@ interface IOrderAgent
 
 
     /**
-     * set a item status
+     * set a item state
      *
      * @param OrderItem $item
-     * @param string $status
+     * @param string    $state
      *
-     * @return Note
+     * @return $this
      */
-    public function itemSetStatus(OrderItem $item, $status);
+    public function itemSetState(OrderItem $item, $state);
 
 
 

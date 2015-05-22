@@ -291,7 +291,15 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         $arrIcons = [
             'itemChangeAmount' => 'glyphicon glyphicon-pencil'
             , 'itemCancel' => 'glyphicon glyphicon-remove'
+            , 'itemComplaint' => 'glyphicon glyphicon-alert'
         ];
+
+        $arrContext = [
+            'itemChangeAmount' => 'default'
+            , 'itemCancel' => 'danger'
+            , 'itemComplaint' => 'warning'
+        ];
+
         $arrTimeline = [];
         $date = new Zend_Date();
         foreach($noteList->load() as $note)
@@ -311,15 +319,24 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             ;
 
 
+            // load reference
+            $reference = Pimcore\Model\Object\Concrete::getById( $note->getCid() );
+            $title = $reference instanceof OnlineShop_Framework_AbstractOrderItem
+                ? $reference->getProduct()->getOSName()
+                : null
+            ;
+
+
             // add
             $arrTimeline[ $group ][] = [
                 'icon' => $arrIcons[ $note->getTitle() ]
-                , 'context' => 'default'
+                , 'context' => $arrContext[ $note->getTitle() ] ?: 'default'
                 , 'type' => $note->getTitle()
                 , 'date' => $date->setTimestamp( $note->getDate() )->get(Zend_Date::DATETIME_MEDIUM)
                 , 'avatar' => $avatar
                 , 'user' => $user->getName()
                 , 'message' => $note->getData()['message']['data']
+                , 'title' => $title ?: $note->getTitle()
             ];
         }
         $this->view->timeLine = $arrTimeline;

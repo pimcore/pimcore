@@ -400,7 +400,7 @@ $currency = $orderAgent->getCurrency();
 
                         <!-- Icon -->
                         <div class="panel-heading icon">
-                            <i class="<?= $item['icon'] ?>"></i>
+                            <span class="<?= $item['icon'] ?>" title="<?= $this->translate('online-shop.back-office.order.history.' . $item['type']) ?>"></span>
                         </div>
                         <!-- /Icon -->
 
@@ -410,7 +410,8 @@ $currency = $orderAgent->getCurrency();
                                 <img src="<?= $item['avatar'] ?>" width="40" class="img-circle pull-left" title="<?= $item['user'] ?>">
                                 <div class="media-body">
                                     <h4 class="media-heading">
-                                        <?= $this->translate('online-shop.back-office.order.history.' . $item['type']) ?>
+                                        <?= $item['title'] ?>
+                                        <small><?= $this->translate('online-shop.back-office.order.history.' . $item['type']) ?></small>
                                     </h4>
                                     <p><?= nl2br($item['message']) ?></p>
                                 </div>

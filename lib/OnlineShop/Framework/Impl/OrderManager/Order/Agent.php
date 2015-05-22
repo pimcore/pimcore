@@ -151,26 +151,52 @@ class Agent implements IOrderAgent
      * @param float     $quantity
      *
      * @return $this
-     * @todo
      */
     public function itemComplaint(OrderItem $item, $quantity)
     {
-        // TODO: Implement itemComplaint() method.
+        // add log note
+        $note = $this->createNote( $item );
+        $note->setTitle( __FUNCTION__ );
+        $note->addData('quantity', 'text', $quantity);
+
+
+        // save
+        $note->save();
+
+        return $note;
+
     }
 
 
     /**
-     * set a item status
+     * set a item state
      *
      * @param OrderItem $item
-     * @param string    $status
+     * @param string    $state
      *
      * @return $this
-     * @todo
      */
-    public function itemSetStatus(OrderItem $item, $status)
+    public function itemSetState(OrderItem $item, $state)
     {
-        // TODO: Implement itemSetStatus() method.
+        // add log note
+        $note = $this->createNote( $item );
+        $note->setTitle( __FUNCTION__ );
+
+        $oldState = $item->getOrderState();
+        $note->addData('state.old', 'text', $oldState);
+        $note->addData('state.new', 'text', $state);
+
+
+        // change
+        $item->setOrderState( $oldState );
+
+
+        // save
+        $item->save();
+        $note->save();
+
+        return $note;
+
     }
 
 
