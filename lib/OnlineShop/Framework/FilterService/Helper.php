@@ -1,15 +1,28 @@
 <?php
+
 /**
- * Created by JetBrains PhpStorm.
- * User: cfasching
- * Date: 03.05.12
- * Time: 09:01
- * To change this template use File | Settings | File Templates.
+ * Class OnlineShop_Framework_FilterService_Helper
+ *
+ * Helper Class for setting up a product list utilizing the filter service
+ * based on a filter definition and set filter parameters
  */
 class OnlineShop_Framework_FilterService_Helper
 {
+    /**
+     * @param \Pimcore\Model\Object\FilterDefinition $filterDefinition
+     * @param OnlineShop_Framework_IProductList $productList
+     * @param $params
+     * @param Zend_View $view
+     * @param OnlineShop_Framework_FilterService $filterService
+     * @param $loadFullPage
+     * @param bool $excludeLimitOfFirstpage
+     */
+    public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
+                                            OnlineShop_Framework_IProductList $productList,
+                                            $params, Zend_View $view,
+                                            OnlineShop_Framework_FilterService $filterService,
+                                            $loadFullPage, $excludeLimitOfFirstpage = false) {
 
-    public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition, $productList, $params, $view, $filterService, $loadFullPage, $excludeLimitOfFirstpage = false) {
         $orderByOptions = array();
         $orderKeysAsc = explode(",", $filterDefinition->getOrderByAsc());
         if(!empty($orderKeysAsc)) {
@@ -97,6 +110,10 @@ class OnlineShop_Framework_FilterService_Helper
 
     }
 
+    /**
+     * @param $page
+     * @return string
+     */
     public static function createPagingQuerystring($page) {
         $params = $_REQUEST;
         $params['page'] = $page;
@@ -116,6 +133,10 @@ class OnlineShop_Framework_FilterService_Helper
     }
 
 
+    /**
+     * @param $conditions
+     * @return OnlineShop_Framework_AbstractCategory
+     */
     public static function getFirstFilteredCategory($conditions) {
         if(!empty($conditions)) {
             foreach($conditions as $c) {
@@ -125,6 +146,5 @@ class OnlineShop_Framework_FilterService_Helper
             }
         }
     }
-
 
 }

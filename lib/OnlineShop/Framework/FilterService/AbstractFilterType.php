@@ -40,6 +40,9 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
 
 
     /**
+     * renders and returns the rendered html snippet for the current filter
+     * based on settings in the filter definition and the current filter params.
+     *
      * @abstract
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
      * @param OnlineShop_Framework_IProductList $productList
@@ -49,6 +52,8 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
     public abstract function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter);
 
     /**
+     * adds necessary conditions to the product list implementation based on the currently set filter params.
+     *
      * @abstract
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
      * @param OnlineShop_Framework_IProductList $productList

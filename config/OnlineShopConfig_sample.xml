@@ -350,6 +350,11 @@
                 <VoucherTokenTypePattern class="OnlineShop_Framework_VoucherService_TokenManager_Pattern" />
                 <VoucherTokenTypeSingle class="OnlineShop_Framework_VoucherService_TokenManager_Single" />
             </tokenmanagers>
+
+            <config>
+                <!-- Duration to until release of reservation in minutes-->
+                <reservationDuration duration="5"/>
+            </config>
         </voucherservice>
 
     </onlineshop>
