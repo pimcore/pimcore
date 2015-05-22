@@ -7,6 +7,15 @@
  */
 class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framework_Impl_CachingPriceSystem implements OnlineShop_Framework_IPriceSystem {
 
+    /**
+     * @param $productIds
+     * @param $fromPrice
+     * @param $toPrice
+     * @param $order
+     * @param $offset
+     * @param $limit
+     * @throws Exception
+     */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit) {
         throw new Exception("not supported yet");
     }

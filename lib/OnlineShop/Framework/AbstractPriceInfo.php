@@ -3,7 +3,7 @@
 /**
  * Abstract base class price info
  */
- class OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo{
+ class OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo {
 
      /**
       * @static

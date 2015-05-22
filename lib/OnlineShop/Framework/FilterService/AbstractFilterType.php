@@ -12,7 +12,7 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
      * @param $script script for rendering the filter frontend
      * @param $config Zend_Config for more settings (optional)
      */
-    public function __construct($view, $script,$config=null) {
+    public function __construct($view, $script, $config = null) {
         $this->view = $view;
         $this->script = $script;
         $this->config = $config;
