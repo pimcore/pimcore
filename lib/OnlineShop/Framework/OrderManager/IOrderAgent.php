@@ -116,4 +116,10 @@ interface IOrderAgent
      * @return IOrderAgent
      */
     public function updatePayment(OnlineShop_Framework_Payment_IStatus $status);
+
+
+    /**
+     * @return Note[]
+     */
+    public function getFullChangeLog();
 }

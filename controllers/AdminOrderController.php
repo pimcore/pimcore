@@ -192,7 +192,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         // init
         $order = Object_OnlineShopOrder::getById( $this->getParam('id') );
         /* @var OnlineShop_Framework_AbstractOrder $order */
-        $this->view->orderAgent = $this->orderManager->createOrderAgent( $order );
+        $orderAgent = $this->view->orderAgent = $this->orderManager->createOrderAgent( $order );
 
 
         /**
@@ -270,23 +270,6 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
 
 
-        // load order events
-        $noteList = new Element_Note_List();
-        /* @var \Pimcore\Model\Element\Note\Listing $noteList */
-
-        $cid = [ $order->getId() ];
-        foreach($order->getItems() as $item)
-        {
-            $cid[] = $item->getId();
-        }
-
-        $noteList->addConditionParam('type = ?', 'order-agent');
-        $noteList->addConditionParam(sprintf('cid in(%s)', implode(',', $cid)), '');
-
-        $noteList->setOrderKey('date');
-        $noteList->setOrder('desc');
-
-
         // create timeline
         $arrIcons = [
             'itemChangeAmount' => 'glyphicon glyphicon-pencil'
@@ -302,7 +285,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
         $arrTimeline = [];
         $date = new Zend_Date();
-        foreach($noteList->load() as $note)
+        foreach($orderAgent->getFullChangeLog() as $note)
         {
             /* @var \Pimcore\Model\Element\Note $note */
 

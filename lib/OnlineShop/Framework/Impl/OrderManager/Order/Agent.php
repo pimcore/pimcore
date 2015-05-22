@@ -20,6 +20,7 @@ use OnlineShop_Framework_AbstractOrder as Order;
 use OnlineShop_Framework_AbstractOrderItem as OrderItem;
 
 use Pimcore\Model\Element\Note;
+use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Fieldcollection;
 use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
@@ -42,6 +43,11 @@ class Agent implements IOrderAgent
      * @var OnlineShop_Framework_Factory
      */
     protected $factory;
+
+    /**
+     * @var Note[]
+     */
+    protected $fullChangeLog;
 
 
     /**
@@ -413,5 +419,38 @@ class Agent implements IOrderAgent
         $order->save();
 
         return $this;
+    }
+
+
+    /**
+     * @return Note[]
+     */
+    public function getFullChangeLog()
+    {
+        if(!$this->fullChangeLog)
+        {
+            // init
+            $order = $this->getOrder();
+
+            // load order events
+            $noteList = new NoteListing();
+            /* @var \Pimcore\Model\Element\Note\Listing $noteList */
+
+            $cid = [ $order->getId() ];
+            foreach($order->getItems() as $item)
+            {
+                $cid[] = $item->getId();
+            }
+
+            $noteList->addConditionParam('type = ?', 'order-agent');
+            $noteList->addConditionParam(sprintf('cid in(%s)', implode(',', $cid)), '');
+
+            $noteList->setOrderKey('date');
+            $noteList->setOrder('desc');
+
+            $this->fullChangeLog = $noteList->load();
+        }
+
+        return $this->fullChangeLog;
     }
 }
