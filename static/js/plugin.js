@@ -36,16 +36,16 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
         if(user.isAllowed("plugin_onlineshop_pricing_rules")) {
             // add pricing rules to menu
             // create item
-            var panelId = "plugin_onlineshop_pricing_config";
+            var pricingPanelId = "plugin_onlineshop_pricing_config";
             var item = {
                 text: t("plugin_onlineshop_pricing_rules"),
                 iconCls: "plugin_onlineshop_pricing_rules",
                 handler: function () {
                     try {
-                        pimcore.globalmanager.get(panelId).activate();
+                        pimcore.globalmanager.get(pricingPanelId).activate();
                     }
                     catch (e) {
-                        pimcore.globalmanager.add(panelId, new pimcore.plugin.OnlineShop.pricing.config.panel(panelId));
+                        pimcore.globalmanager.add(pricingPanelId, new pimcore.plugin.OnlineShop.pricing.config.panel(pricingPanelId));
                     }
                 }
             }
@@ -57,16 +57,16 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
         // order backend
         if(user.isAllowed("plugin_onlineshop_back-office_order")) {
             // create item
-            var panelId = "plugin_onlineshop_back-office_order";
+            var orderPanelId = "plugin_onlineshop_back-office_order";
             var item = {
                 text: t("plugin_onlineshop_back-office_order"),
                 iconCls: "plugin_onlineshop_back-office_order",
                 handler: function () {
                     try {
-                        pimcore.globalmanager.get(panelId).activate();
+                        pimcore.globalmanager.get(orderPanelId).activate();
                     }
                     catch (e) {
-                        pimcore.globalmanager.add(panelId, new pimcore.tool.genericiframewindow("backoffice-order", "/plugin/OnlineShop/admin-order/list", "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
+                        pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow("backoffice-order", "/plugin/OnlineShop/admin-order/list", "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
                     }
                 }
             };
@@ -80,7 +80,6 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
         if(user.admin) {
 
-            var panelId = "plugin_onlineshop_clear_config_cache";
             var item = {
                 text: t("plugin_onlineshop_clear_config_cache"),
                 iconCls: "plugin_onlineshop_clear_config_cache",
