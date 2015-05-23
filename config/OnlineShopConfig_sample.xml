@@ -353,7 +353,7 @@
 
             <config>
                 <!-- Duration to until release of reservation in minutes-->
-                <reservationDuration duration="5"/>
+                <reservationDuration duration="120"/>
             </config>
         </voucherservice>
 
