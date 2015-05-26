@@ -63,12 +63,9 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                 iconCls: "plugin_onlineshop_back-office_order",
                 handler: function () {
                     try {
-                        console.log("klick");
-                        console.log(pimcore.globalmanager.get(orderPanelId));
                         pimcore.globalmanager.get(orderPanelId).activate();
                     }
                     catch (e) {
-                        console.log("error");
                         pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, "/plugin/OnlineShop/admin-order/list", "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
                     }
                 }
