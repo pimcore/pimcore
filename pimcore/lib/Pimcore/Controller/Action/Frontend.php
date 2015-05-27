@@ -345,7 +345,11 @@ abstract class Frontend extends Action {
         if(!$translate) {
             // setup \Zend_Translate
             try {
-                $locale = \Zend_Registry::get("Zend_Locale");
+                if(\Zend_Registry::isRegistered("Zend_Locale")) {
+                    $locale = \Zend_Registry::get("Zend_Locale");
+                } else {
+                    $locale = Tool::getValidLanguages()[0];
+                }
 
                 $translate = new \Pimcore\Translate\Website($locale);
 
