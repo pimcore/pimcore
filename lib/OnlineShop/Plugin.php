@@ -4,6 +4,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
     public static $configFile = "/OnlineShop/config/plugin_config.xml";
 
+
     public static function getConfig($readonly = true) {
         if(!$readonly) {
             $config = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile,
@@ -171,6 +172,10 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
                 $success = self::$func();
             }
         }
+
+
+        // import admin-translations
+        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/admin-translations/init.csv', true);
 
 
         // create status message
