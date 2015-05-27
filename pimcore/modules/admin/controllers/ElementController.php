@@ -95,11 +95,11 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin {
         $list->setOffset($this->getParam("start"));
 
         if($this->getParam("sort")) {
-            $list->setOrderKey($this->getParam("sort"));
-            $list->setOrder($this->getParam("dir"));
+            $list->setOrderKey(array($this->getParam("sort"), "id"));
+            $list->setOrder(array($this->getParam("dir"), $this->getParam("dir")));
         } else {
-            $list->setOrderKey("date");
-            $list->setOrder("DESC");
+            $list->setOrderKey(array("date", "id"));
+            $list->setOrder(array("DESC", "DESC"));
         }
 
         $conditions = array();
