@@ -270,16 +270,16 @@ class Resource extends Model\Element\Resource
         return (bool)$c;
     }
 
-	/**
-	 * Quick test if there are siblings
-	 *
-	 * @param array $objectTypes
-	 * @return boolean
-	 */
-	public function hasSiblings($objectTypes = array(Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER)) {
-		$c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "')", [$this->model->getParentId(), $this->model->getId()]);
-		return (bool)$c;
-	}
+    /**
+     * Quick test if there are siblings
+     *
+     * @param array $objectTypes
+     * @return boolean
+     */
+    public function hasSiblings($objectTypes = array(Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER)) {
+        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "')", [$this->model->getParentId(), $this->model->getId()]);
+        return (bool)$c;
+    }
 
     /**
      * returns the amount of directly childs (not recursivly)
@@ -423,17 +423,56 @@ class Resource extends Model\Element\Resource
 
         try {
             if ($type && $quote) {
-                $type = "`" . $type . "`";
+                $queryType = "`" . $type . "`";
             } else {
-                $type = "*";
+                $queryType = "*";
             }
 
-            $permissions = $this->db->fetchRow("SELECT " . $type . " FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+            $commaSeparated = in_array($type, array("lView", "lEdit", "layouts"));
+
+            if ($commaSeparated) {
+                $allPermissions = $this->db->fetchAll("SELECT " . $queryType . ",cid,cpath FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC");
+                if (!$allPermissions) {
+                    return null;
+                } else if (count($allPermissions) == 1) {
+                    return $allPermissions[0];
+                } else {
+                    $firstPermission = $allPermissions[0];
+                    $firstPermissionCid = $firstPermission["cid"];
+                    $mergedPermissions = array();
+
+                    foreach ($allPermissions as $permission) {
+                        $cid = $permission["cid"];
+                        if ($cid != $firstPermissionCid) {
+                            break;
+                        }
+
+                        $permissionValues = $permission[$type];
+                        if (!$permissionValues) {
+                            $firstPermission[$type] = null;
+                            return $firstPermission;
+                        }
+
+                        $permissionValues = explode(",", $permissionValues);
+                        foreach ($permissionValues as $permissionValue) {
+                            $mergedPermissions[$permissionValue] = $permissionValue;
+                        }
+                    }
+
+                    $firstPermission[$type] = implode(',', $mergedPermissions);
+                    return $firstPermission;
+                }
+
+            } else {
+                $permissions = $this->db->fetchRow("SELECT " . $queryType . " FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC  LIMIT 1");
+                return $permissions;
+            }
+
         } catch (\Exception $e) {
             \Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
         }
 
-        return $permissions;
+
     }
 
     public function getChildPermissions($type, $user, $quote = true) {
