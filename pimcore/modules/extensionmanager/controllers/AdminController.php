@@ -82,7 +82,8 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin 
                 "description" => $config->description,
                 "installed" => true,
                 "active" => $isEnabled,
-                "updateable" => $updateable
+                "updateable" => $updateable,
+                "version" => $config->version
             );
             $configurations[] = $brick;
         }
