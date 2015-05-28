@@ -110,14 +110,15 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
      * @return void
      */
     public function createOrUpdateIndexStructures() {
-        $this->doCreateOrUpdateIndexStructures();
-    }
 
-    protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false) {
         if($this->IsInReindexMode()) {
             throw new Exception("Index currently in re index mode, update index structures not allowed!");
         }
 
+        $this->doCreateOrUpdateIndexStructures();
+    }
+
+    protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false) {
         $this->createOrUpdateStoreTable();
 
         $esClient = $this->getElasticSearchClient();
@@ -226,7 +227,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         return $mappingAttributes;
     }
 
-    public function getSystemAttributes($includeTypes) {
+    public function getSystemAttributes($includeTypes = false) {
         $systemAttributes = array(
             "o_id" => "long",
             "o_classId" => "string",
@@ -358,8 +359,6 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     /**
      * actually sending data to elastic search
-     *
-     * TODO error handling
      */
     protected function commitUpdateIndex() {
 
@@ -371,11 +370,29 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         ]);
 
 
-        if($responses['errors']) {
-            foreach($responses as $e){
-                p_r($e);
+        if($responses['errors'])
+        {
+            // save update status
+            Logger::error('commitUpdateIndex partial failed');
+
+            $this->db->beginTransaction();
+            foreach($responses['items'] as $response)
+            {
+                if($response['index']['status'] >= 200 && $response['index']['status'] < 300)
+                {
+                    $query = <<<SQL
+UPDATE {$this->getStoreTableName()}
+SET update_status = :status, update_error = :error, crc_index = 0
+WHERE id = :id
+SQL;
+                    $this->db->query( $query, [
+                        'status' => $response['index']['status']
+                        , 'error' => $response['index']['error']
+                        , 'id' => $response['index']['_id']
+                    ]);
+                }
             }
-            throw new Exception("Indexing threw an Exception");
+            $this->db->commit();
         }
 
 
@@ -442,7 +459,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         // increment version and recreate index structures
         $this->indexVersion++;
         Logger::info("Could not put index Mapping -> creating new Index. Version Number: " . $this->indexVersion);
-        $this->createOrUpdateIndexStructures(true);
+        $this->doCreateOrUpdateIndexStructures(true);
 
         // reset indexing queue in order to initiate a full re-index to the new index version
         $this->resetIndexingQueue();
@@ -478,7 +495,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         if($this->isInReindexMode()) {
 
             // check if all entries are updated
-            $query = "SELECT count(*) FROM plugin_onlineshop_productindex_store WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
+            $query = "SELECT count(*) FROM " . $this->getStoreTableName() . " WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
             $result = $this->db->fetchOne($query, array($this->name));
 
             if($result == 0) {
