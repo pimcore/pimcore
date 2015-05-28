@@ -96,7 +96,7 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
             "text" => [
                 "en" => "Cookies help us deliver our services. By using our services, you agree to our use of cookies.",
                 "de" => "Cookies helfen uns bei der Bereitstellung unserer Dienste. Durch die Nutzung unserer Dienste erklären Sie sich mit dem Einsatz von Cookies einverstanden.",
-                "it" => "I cookie ci aiutano a fornire i nostri servizi. Utilizzando tali servizi, accetti l'utilizzo dei cookie da parte di Google.",
+                "it" => "I cookie ci aiutano a fornire i nostri servizi. Utilizzando tali servizi, accetti l'utilizzo dei cookie da parte.",
                 "fr" => "Les cookies assurent le bon fonctionnement de nos services. En utilisant ces derniers, vous acceptez l'utilisation des cookies.",
                 "nl" => "Cookies helpen ons onze services te leveren. Door onze services te gebruiken, geef je aan akkoord te gaan met ons gebruik van cookies.",
                 "es" => "Las cookies nos ayudan a ofrecer nuestros servicios. Al utilizarlos, aceptas que usemos cookies.",
