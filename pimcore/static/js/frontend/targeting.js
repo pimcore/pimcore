@@ -1,4 +1,4 @@
-/*global user,util,google,localStorage*/
+/*global user,util,google,localStorage,pimcore*/
 (function () {
 
     /**
@@ -290,7 +290,7 @@
                 }
             }
 
-            for (script in scripts) {
+            for (var script in scripts) {
                 util.evalScript(scripts[script]);
             }
         },
@@ -860,7 +860,7 @@
             var personaMatch = util.getPrimaryPersona();
             if(personaMatch) {
                 user["persona"] = personaMatch;
-                console.log("use persona ID " + personaMatch + " as primary persona for this page")
+                console.log("use persona ID " + personaMatch + " as primary persona for this page");
             }
         }
     } catch (e16) {
@@ -872,20 +872,20 @@
     util.contentLoaded(window, function () {
         try {
             var linkElements = document.querySelectorAll("a");
+            var linkClickHandler = function(ev) {
+                try {
+                    var el = ev.target ? ev.target : ev.srcElement;
+                    addActivityLog({
+                        type: "linkClicked",
+                        href: el.getAttribute("href")
+                    });
+                    app.saveUser();
+                } catch (e) {
+                    util.log(e);
+                }
+            };
             for (var le = 0; le < linkElements.length; le++) {
-                util.listen(linkElements[le], "click", function (ev) {
-                    try {
-                        var el = ev.target ? ev.target : ev.srcElement;
-                        addActivityLog({
-                            type: "linkClicked",
-                            href: el.getAttribute("href")
-                        })
-
-                        app.saveUser();
-                    } catch (e) {
-                        util.log(e);
-                    }
-                });
+                util.listen(linkElements[le], "click", linkClickHandler);
             }
         } catch (e12) {
             util.log(e12);
