@@ -225,7 +225,8 @@ class Redirect extends AbstractModel {
     }
 
     /**
-     * @param int $expiry
+     * @param $expiry
+     * @return $this
      */
     public function setExpiry($expiry)
     {
