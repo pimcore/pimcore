@@ -79,8 +79,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                                         (select list from users_workspaces_document where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                         )", $document->getId());
             }
-            $list->setOrderKey("index");
-            $list->setOrder("asc");
+
+            $list->setOrderKey(["index", "id"]);
+            $list->setOrder(["asc","asc"]);
+
             $list->setLimit($limit);
             $list->setOffset($offset);
 
