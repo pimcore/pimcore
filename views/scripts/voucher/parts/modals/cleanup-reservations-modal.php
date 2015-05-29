@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body-content">
                 <form class="form-horizontal js-cleanup-reservations-modal-form"
-                      action="<?= $this->url(array('action' => 'cleanup-reservations', 'controller' => 'voucher', 'id'=>$this->id)) ?>">
+                      action="<?=$this->url(array_merge($this->urlParams, ['action' => 'cleanup-reservations']))?>">
                     <h3><?=$this->ts('plugin_onlineshop_voucherservice_modal_cleanup-reservations-headline')?></h3>
                     <div class="form-group" style="margin-top: 20px">
                         <div class="col col-sm-12">

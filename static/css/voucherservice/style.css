@@ -189,3 +189,7 @@ a.pages-count:hover, a.pages-count.active{
 .token-container h5.subtitle.pages{
     margin-right: 12px;
 }
+
+.form-horizontal .cleanup-radio{
+    min-width: 100px;
+}

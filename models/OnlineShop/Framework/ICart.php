@@ -267,6 +267,7 @@ interface OnlineShop_Framework_ICart {
 
     /**
      * @param OnlineShop_Framework_VoucherService_Token $token
+     * @throws Exception
      * @return bool
      */
     public function addVoucherToken($token);
@@ -281,4 +282,9 @@ interface OnlineShop_Framework_ICart {
      * @return array
      */
     public function getVoucherTokenCodes();
+
+    /**
+     * @return bool
+     */
+    public function isVoucherErrorCode($errorCode);
 }

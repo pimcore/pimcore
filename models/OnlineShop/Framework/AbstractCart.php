@@ -679,9 +679,12 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     /**
      * Adds a voucher token to the cart's checkout data and reserves it.
      *
-     * @param string $code
+     * @param OnlineShop_Framework_VoucherService_Token $code
+     *
      * @return bool
+     *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws Exception
      */
     public function addVoucherToken($code){
         $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
@@ -698,6 +701,16 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     }
 
     /**
+     * Checks if an error code is a defined Voucher Error Code.
+     *
+     * @param $errorCode
+     * @return bool
+     */
+    public function isVoucherErrorCode($errorCode){
+        return $errorCode > 0 && $errorCode < 10;
+    }
+
+    /**
      * Removes all tokens form cart and releases the token reservations.
      */
     public function removeAllVoucherTokens(){
@@ -709,24 +722,27 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     /**
      * Removes a token from cart and releases token reservation.
      *
-     * @param OnlineShop_Framework_VoucherService_Token $code
-     *
-     * @return bool
+     * @param string $code
      *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws Exception
+     *
+     * @return bool
      */
     public function removeVoucherToken($code)
     {
         $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
         $key = array_search($code, $this->getVoucherTokenCodes());
+
         if ($key !== false) {
             if ($service->releaseToken($code, $this)) {
                 unset($this->checkoutData[$key]);
                 $this->save();
                 return true;
             }
+        } else {
+            throw new Exception("No Token with code " . $code . " in this cart." , 7);
         }
-        return false;
     }
 
     /**
@@ -739,7 +755,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
         foreach($this->checkoutData as $key => $value){
             $exp_key = explode('_', $key);
             if($exp_key[0] == 'voucher'){
-                $tokens[$key] = $value->getData();
+                $tokens[] = $value->getData();
             }
         }
         return $tokens;

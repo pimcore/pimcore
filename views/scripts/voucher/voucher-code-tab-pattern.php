@@ -9,11 +9,16 @@
 
 <?
 
+$colors=[
+'used'=>"#F7355B",
+'free'=>"#47BFBD",
+'reserved'=>"#FDC45B",
+];
 
 $seriesId = $this->getParam('id');
-$url = $this->url(['controller' => 'voucher', 'action' => 'voucher-code-tab', "id" => $seriesId], 'plugins', true);
+$urlParams = $this->getAllParams();
+
 if ($this->paginator) {
-    $this->paginator->setCurrentPageNumber($this->getParam('page'));
     $this->paginator->setPageRange(10);
 
     $pagesCount = $this->paginator->getItemCountPerPage();
@@ -21,7 +26,7 @@ if ($this->paginator) {
     $paginationTemplate = $this->paginationControl($this->paginator,
         'Sliding',
         'voucher/parts/paginator.php',
-        ['seriesId' => $seriesId]
+        ['urlParams' => $urlParams]
     );
 }
 
@@ -30,8 +35,8 @@ if ($this->paginator) {
 <div class="container-fluid">
     <div id="content">
         <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-            <li class="active"><a href="#manager" data-toggle="tab"><?=$this->ts('plugin_onlineshop_voucherservice_tab-manager')?></a></li>
-            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><?=$this->ts('plugin_onlineshop_voucherservice_tab-statistics')?></a></li>
+            <li class="active"><a href="#manager" data-toggle="tab"><span class="glyphicon glyphicon-home"></span>&nbsp; <?=$this->ts('plugin_onlineshop_voucherservice_tab-manager')?></a></li>
+            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><span class="glyphicon glyphicon-stats"></span>&nbsp; <?=$this->ts('plugin_onlineshop_voucherservice_tab-statistics')?></a></li>
         </ul>
 
         <div id="my-tab-content" class="tab-content">
@@ -50,7 +55,6 @@ if ($this->paginator) {
                         <? } ?>
                     </div>
 
-
                     <!--Info and Error Messages Container-->
 
                     <div class="col col-sm-4">
@@ -66,7 +70,9 @@ if ($this->paginator) {
 
                     <div class="col col-sm-4 text-right">
                         <div class="btn-group">
+                            <!--
                             <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-export"></span> <?=$this->ts('plugin_onlineshop_voucherservice_export-button')?></button>
+                            -->
                         </div>
                     </div>
                 </div>
@@ -91,9 +97,9 @@ if ($this->paginator) {
                             <?if($this->paginator){?>
                             <div class="col col-sm-6 text-right">
                                 <h5 class="subtitle pages"><?=$this->ts('plugin_onlineshop_voucherservice_tokens-per-page')?>
-                                    <a class="pages-count <?if($pagesCount == 25){echo "active";}?>" href="<?= $this->url(array('tokensPerPage' => 25, 'id' => $seriesId)); ?>">25&nbsp;</a>
-                                    <a class="pages-count <?if($pagesCount == 50){echo "active";}?>" href="<?= $this->url(array('tokensPerPage' => 50, 'id' => $seriesId)); ?>">50&nbsp;</a>
-                                    <a class="pages-count <?if($pagesCount == 100){echo "active";}?>" href="<?= $this->url(array('tokensPerPage' => 100, 'id' => $seriesId)); ?>">100&nbsp;</a>
+                                    <a class="pages-count <?if($pagesCount == 25){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 25]))?>">25&nbsp;</a>
+                                    <a class="pages-count <?if($pagesCount == 75){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 75]))?>">75&nbsp;</a>
+                                    <a class="pages-count <?if($pagesCount == 150){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 150]))?>">150&nbsp;</a>
                                 </h5>
                             </div>
                             <?}?>
@@ -113,10 +119,10 @@ if ($this->paginator) {
                                 <? if ($this->paginator) { ?>
                                     <? foreach ($this->paginator as $code) { ?>
                                         <tr>
-                                            <td class="token"><?= $code['token'] ?></td>
-                                            <td class="text-center"><?= (int)$code['usages'] ?></td>
-                                            <td class="text-center"><?= (int)$code['length'] ?></td>
-                                            <td class="text-center"><?= $code['timestamp'] ?></td>
+                                            <td class="token"><?= $code->getToken() ?></td>
+                                            <td class="text-center"><?= (int)$code->getUsages() ?></td>
+                                            <td class="text-center"><?= (int)$code->getLength() ?></td>
+                                            <td class="text-center"><?= $code->getTimestamp() ?></td>
                                         </tr>
                                     <? } ?>
                                 <? } ?>
@@ -128,7 +134,7 @@ if ($this->paginator) {
                     <div class="col col-sm-4 filter">
                         <h3><i class="glyphicon glyphicon-search"></i> &nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_filter-headline')?></h3>
 
-                        <form class="form-horizontal js-filter-form" action="<?=$this->url()?>">
+                        <form class="form-horizontal js-filter-form" action="<?= $this->url(['action' => 'voucher-code-tab', 'id' => $seriesId, 'module' => 'OnlineShop', 'controller' => 'voucher'], 'plugin', true) ?>">
                             <div class="form-group">
                                 <div class=" col col-sm-12">
                                     <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-token')?></label>
@@ -195,41 +201,7 @@ if ($this->paginator) {
                     </div>
                 </div>
 
-                <div class="row border content-block">
-                    <div class="col col-sm-3">
-                        <div class="statistics">
-                            <h3><?=$this->ts('plugin_onlineshop_voucherservice_token-statistic-headline')?></h3>
-                        </div>
-                        <canvas id="canvas-token"></canvas>
-                        <table class="table current-data" style="margin-top: 35px;">
-                            <tbody>
-                            <tr>
-                                <td><?=$this->ts('plugin_onlineshop_voucherservice_token-overall')?></td>
-                                <td><?= number_format($this->statistics['overallCount'], 0, ',', ' ') ?></td>
-                            </tr>
-                            <tr>
-                                <td><?=$this->ts('plugin_onlineshop_voucherservice_token-used')?></td>
-                                <td><?= number_format($this->statistics['usageCount'], 0, ',', ' ') ?></td>
-                            </tr>
-                            <tr>
-                                <td><?=$this->ts('plugin_onlineshop_voucherservice_token-reserved')?></td>
-                                <td><?= number_format($this->statistics['reservedCount'], 0, ',', ' ') ?></td>
-                            </tr>
-                            <tr>
-                                <td><?=$this->ts('plugin_onlineshop_voucherservice_token-free')?></td>
-                                <td><?= number_format($this->statistics['freeCount'], 0, ',', ' ') ?></td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                    </div>
-                    <div class="col col-sm-9 canvas-container">
-                        <div class="statistics">
-                            <h3><?=$this->ts('plugin_onlineshop_voucherservice_usage-headline')?></h3>
-                        </div>
-                        <canvas id="canvas-usage" height="130" style="padding-right: 50px;"></canvas>
-                    </div>
-                </div>
+                <?= $this->template('voucher/parts/statistics.php', ['statistics' => $this->statistics, 'colors' => $colors]) ?>
             </div>
         </div>
     </div>
@@ -237,9 +209,9 @@ if ($this->paginator) {
 
 
 <!-- Modal Templates -->
-<?= $this->template('voucher/parts/modals/pattern/cleanup-modal.php', ['id' => $seriesId]) ?>
-<?= $this->template('voucher/parts/modals/pattern/generate-modal.php', ['settings' => $this->settings, 'id' => $seriesId]) ?>
-<?= $this->template('voucher/parts/modals/cleanup-reservations-modal.php', ['id' => $seriesId]) ?>
+<?= $this->template('voucher/parts/modals/pattern/cleanup-modal.php', ['urlParams' => $urlParams]) ?>
+<?= $this->template('voucher/parts/modals/pattern/generate-modal.php', ['settings' => $this->settings, 'urlParams' => $urlParams]) ?>
+<?= $this->template('voucher/parts/modals/cleanup-reservations-modal.php', ['urlParams' => $urlParams]) ?>
 
 <!--Plugin and Lib Scripts -->
 <script src="/plugins/OnlineShop/static/vendor/jquery-2.1.3.min.js"></script>
@@ -251,12 +223,13 @@ if ($this->paginator) {
 
 <script src="/plugins/OnlineShop/static/js/voucherservice/voucherSeriesTabScript.js"></script>
 
-<!--Script for tab view-->
 
-
+<!--Script for statistics-->
 <? if (is_array($this->statistics['usage'])) { ?>
-    <?= $this->template('voucher/parts/usageStatisticScript.php', ['usage' => $this->statistics['usage']]) ?>
+    <?= $this->template('voucher/parts/usageStatisticScript.php', ['usage' => $this->statistics['usage'], 'colors'=>$colors]) ?>
 <? } ?>
+
+<!--Script for tab view-->
 
 <script>
     $(document).ready(function ($) {
@@ -272,9 +245,9 @@ if ($this->paginator) {
             disabled: true
         });
 
-        documentBody.on('click', 'th span.sort', function (e) {
-            var form = $('.js-filter-form');
+        var form = $('.js-filter-form');
 
+        documentBody.on('click', 'th span.sort', function (e) {
             if($(this).hasClass('active')){
                 $(this).toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
             }
@@ -293,7 +266,6 @@ if ($this->paginator) {
 
             form.submit();
         });
-
 
         /**
          * Init sort parameter and display of icon
@@ -319,6 +291,45 @@ if ($this->paginator) {
         };
 
         initSort();
+
+
+//        /**
+//         * Filtering
+//         */
+//
+//        var urlData = {
+//            <?// foreach($urlParams as $key => $param){ ?>
+//            "<?//= $key ?>//": "<?//= $param ?>//",
+//            <?// } ?>
+//        };
+//
+//        function getFormData($form){
+//            var unindexed_array = $form.serializeArray();
+//            var indexed_array = {};
+//
+//            $.map(unindexed_array, function(n, i){
+//                indexed_array[n['name']] = n['value'];
+//            });
+//
+//            return indexed_array;
+//        }
+//
+//        function mergeObjects(obj1,obj2){
+//            var obj3 = {};
+//            for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+//            for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+//            return obj3;
+//        }
+//
+//        documentBody.on('submit','.js-cleanup-modal-form', function(event){
+//            console.log($(this).attr("action"));
+//        });
+//        documentBody.on('submit',form, function(event){
+//            event.preventDefault();
+//            var formData = getFormData(form);
+//            var params = mergeObjects(urlData, formData);
+//            window.location.href = "/?" + $.param(params);
+//        });
 
     });
 </script>

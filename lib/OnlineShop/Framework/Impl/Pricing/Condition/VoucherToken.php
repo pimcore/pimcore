@@ -21,11 +21,11 @@ class OnlineShop_Framework_Impl_Pricing_Condition_VoucherToken implements Online
             return false;
         }
 
-        $voucherTokens = $cart->getVoucherTokenCodes();
+        $voucherTokenCodes = $cart->getVoucherTokenCodes();
 
-        if (is_array($voucherTokens)) {
-            foreach ($voucherTokens as $voucherToken) {
-                if (in_array(OnlineShop_Framework_VoucherService_Token::getByCode($voucherToken)->getVoucherSeriesId(), $this->whiteListIds)) {
+        if (is_array($voucherTokenCodes)) {
+            foreach ($voucherTokenCodes as $code) {
+                if (in_array(OnlineShop_Framework_VoucherService_Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
                     return true;
                 }
             }

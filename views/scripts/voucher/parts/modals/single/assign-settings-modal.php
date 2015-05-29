@@ -33,7 +33,7 @@
             </div>
             <!-- dialog buttons -->
             <div class="modal-footer">
-                <a href="<?= $this->url(array('action' => 'generate', 'controller'=>'voucher', 'id'=>$this->id)) ?>" class="btn btn-primary js-loading" data-msg="<?=$this->ts('plugin_onlineshop_voucherservice_modal_assign-infotext')?>"><?=$this->ts('plugin_onlineshop_voucherservice_modal_assign-submit')?></a>
+                <a href="<?=$this->url(array_merge($this->urlParams, ['action' => 'generate']))?>" class="btn btn-primary js-loading" data-msg="<?=$this->ts('plugin_onlineshop_voucherservice_modal_assign-infotext')?>"><?=$this->ts('plugin_onlineshop_voucherservice_modal_assign-submit')?></a>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->ts('plugin_onlineshop_voucherservice_modal_cancle')?></button>
             </div>
         </div>

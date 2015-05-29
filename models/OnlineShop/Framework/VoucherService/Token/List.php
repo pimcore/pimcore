@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\Listing\AbstractListing
+class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
 {
 
     public $tokens;
@@ -17,6 +17,57 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
         return false;
     }
 
+    /**
+     * @param $seriesId
+     * @param array $filter
+     * @throws Exception
+     */
+    public function setFilterConditions($seriesId, $filter = [])
+    {
+        if(isset($seriesId)){
+            $this->addConditionParam("voucherSeriesId = ?", $seriesId);
+        }else{
+            throw new Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
+        }
+
+        if (sizeof($filter)) {
+            if (!empty($filter['token'])) {
+                $this->addConditionParam("token LIKE ?", "%" . $filter['token'] . "%");
+            }
+
+            if ($filter['usages']) {
+                $this->addConditionParam("usages = ?", $filter['usages']);
+            }
+            if (!empty($filter['length'])) {
+                $this->addConditionParam("length = ?", $filter['length']);
+            }
+
+            if ($filter['creation_to'] && $filter['creation_from']) {
+                $this->addConditionParam("Date(timestamp) BETWEEN STR_TO_DATE(?,'%Y-%m-%d')",$filter['creation_from']);
+                $this->addConditionParam("STR_TO_DATE(?,'%Y-%m-%d')",$filter['creation_to']);
+            } else {
+                if ($filter['creation_from']) {
+                    $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
+                }
+                if ($filter['creation_to']) {
+                    $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
+                }
+            }
+
+            if ($this->isValidOrderKey($filter['sort_criteria'])) {
+                $this->setOrderKey($filter['sort_criteria']);
+            } else {
+                $this->setOrderKey("timestamp");
+            }
+
+            if ($filter['sort_order'] == "ASC") {
+                $this->setOrder("ASC");
+            } else {
+                $this->setOrder("DESC");
+            }
+        }
+    }
+
     public static function getBySeriesId($seriesId)
     {
         try {
@@ -28,6 +79,17 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
 //            Logger::debug($ex->getMessage());
             return false;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getTokenList()
+    {
+        if (empty($this->$tokens)) {
+            $this->load();
+        }
+        return $this->$tokens;
     }
 
     public static function getCodes($seriesId, $params)
@@ -264,6 +326,95 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
     public function setTokens($tokens)
     {
         $this->tokens = $tokens;
+    }
+
+
+    /**
+     * @return Model\Object\Listing|\Zend_Paginator_Adapter_Interface
+     */
+    public function getPaginatorAdapter()
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function current()
+    {
+        $this->getTokens();
+        $var = current($this->tokens);
+        return $var;
+    }
+
+    /**
+     * @return mixed|void
+     */
+    public function next()
+    {
+        $this->getTokens();
+        $var = next($this->tokens);
+        return $var;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function key()
+    {
+        $this->getTOkens();
+        $var = key($this->tokens);
+        return $var;
+    }
+
+    /**
+     * @return bool
+     */
+    public function valid()
+    {
+        $this->getTokens();
+        $var = $this->current() !== false;
+        return $var;
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Rewind the Iterator to the first element
+     * @link http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     */
+    public function rewind()
+    {
+        $this->getTokens();
+        reset($this->tokens);
+    }
+
+    /**
+     * Returns an collection of items for a page.
+     *
+     * @param  integer $offset Page offset
+     * @param  integer $itemCountPerPage Number of items per page
+     * @return array
+     */
+    public function getItems($offset, $itemCountPerPage)
+    {
+        $this->setOffset($offset);
+        $this->setLimit($itemCountPerPage);
+        return $this->load();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return $this->getTotalCount();
     }
 
 }

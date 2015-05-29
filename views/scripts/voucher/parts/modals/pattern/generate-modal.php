@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="<?= $this->url(array('action' => 'generate', 'controller' => 'voucher', 'id' => $this->id)) ?>" class="btn btn-primary js-loading" data-msg="<?=$this->ts('plugin_onlineshop_voucherservice_modal_generate-infotext')?>"><?=$this->ts('plugin_onlineshop_voucherservice_modal_generate-submit-button')?></a>
+                <a href="<?=$this->url(array_merge($this->urlParams, ['action' => 'generate']))?>" class="btn btn-primary js-loading" data-msg="<?=$this->ts('plugin_onlineshop_voucherservice_modal_generate-infotext')?>"><?=$this->ts('plugin_onlineshop_voucherservice_modal_generate-submit-button')?></a>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->ts('plugin_onlineshop_voucherservice_modal_cancle')?></button>
             </div>
         </div>

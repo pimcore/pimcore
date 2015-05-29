@@ -1,21 +1,17 @@
 <?php
 
-class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineShop_Framework_VoucherService_ITokenManager
+class OnlineShop_Framework_VoucherService_TokenManager_Single extends OnlineShop_Framework_VoucherService_AbstractTokenManager
 {
 
-    public
-        $configuration,
-        $seriesId;
-
-    protected $template = "voucher/voucher-code-tab-single.php";
+    protected $template;
 
     public function __construct(OnlineShop_Framework_AbstractVoucherTokenType $configuration)
     {
+        parent::__construct($configuration);
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle) {
-            $this->configuration = $configuration;
-            $this->seriesId = $configuration->getObject()->getId();
+            $this->template =  "voucher/voucher-code-tab-single.php";
         } else {
-            throw new Exception("Invalid Configuration Class.");
+            throw new Exception("Invalid Configuration Class for type VoucherTokenTypeSingle.");
         }
     }
 
@@ -201,6 +197,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single implements OnlineS
      */
     public function checkToken($code, OnlineShop_Framework_ICart $cart)
     {
+        parent::checkToken($code, $cart);
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages())) {
                 return true;

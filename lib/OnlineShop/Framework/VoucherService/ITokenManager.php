@@ -2,14 +2,20 @@
 
 /**
  * Interface OnlineShop_Framework_VoucherService_ITokenManager
+ *
+ * Manager for specific token settings object of type OnlineShop_Framework_AbstractVoucherTokenType.
+ * Provides functionality for generating, checking, removing, applying, reserving tokens.
+ * Also prepares the view of the Voucher Code Tab and specifies its template.
  */
 interface OnlineShop_Framework_VoucherService_ITokenManager
 {
-
+    /**
+     * @param OnlineShop_Framework_AbstractVoucherTokenType $configuration
+     */
     public function __construct(OnlineShop_Framework_AbstractVoucherTokenType $configuration);
 
     /**
-     * Checks whether the configuration obejcts contains valid values to
+     * Checks if the configuration objects contains valid values to
      * generate the new token(s).
      *
      * @return bool
@@ -17,20 +23,21 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
     public function isValidSetting();
 
     /**
-     * Removes tokens von series, if no parameters are passed, the all tokens get removed from series.
+     * Removes tokens of series, if no parameters are passed, all tokens get removed from series.
      *
-     * @param array|null $filter Associative with the indices: "used", "unused" and "olderThan".
+     * @param array|null $filter Associative with the indices: "usage" and "olderThan".
      *
      * @return mixed
      */
     public function cleanUpCodes($filter = []);
 
     /**
-     * Checks a token code, whether it is available for putting into cart
-     * e.g. it is not reserved or used.
+     * Checks a token code, if it is available for putting into cart
+     * e.g. it is not reserved or used, or other tokenType specific settings.
      *
      * @param string $code
      * @param OnlineShop_Framework_ICart $cart
+     * @throws Exception
      * @return bool
      */
     public function checkToken($code, OnlineShop_Framework_ICart $cart);
@@ -40,6 +47,9 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
      *
      * @param string $code
      * @param OnlineShop_Framework_ICart $cart
+     *
+     * @throws Exception
+     *
      * @return bool
      */
     public function reserveToken($code, OnlineShop_Framework_ICart $cart);
@@ -51,6 +61,9 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
      * @param string $code
      * @param OnlineShop_Framework_ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
+     *
+     * @throws Exception
+     *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
     public function applyToken($code, OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order);
@@ -79,11 +92,6 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
     public function getStatistics($usagePeriod = null);
 
     /**
-     * @return OnlineShop_Framework_AbstractVoucherTokenType
-     */
-    public function getConfiguration();
-
-    /**
      * @return bool
      */
     public function insertOrUpdateVoucherSeries();
@@ -100,10 +108,19 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
     public function cleanUpReservations($duration = 0);
 
     /**
+     * Prepares the view and returns the according template for rendering.
+     * Gets the codes according to paging and filter params and sets
+     * error/success messages, settings and statistics for view.
+     *
      * @param $view
-     * @param array $params
-     * @return string The path of the template to display
+     * @param array $params All params, especially for filtering and ordering token codes.
+     * @return string The path of the template to display.
      */
     public function prepareConfigurationView($view, $params);
 
+
+    /**
+     * @return OnlineShop_Framework_AbstractVoucherTokenType
+     */
+    public function getConfiguration();
 }

@@ -10,7 +10,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
 
     public function __construct()
     {
-        $this->db = $db = \Pimcore\Resource::get();
+        $this->db = \Pimcore\Resource::get();
     }
 
     /**

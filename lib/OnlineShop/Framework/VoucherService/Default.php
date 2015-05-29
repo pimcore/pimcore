@@ -6,7 +6,6 @@
 class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framework_IVoucherService
 {
 
-
     public $sysConfig;
 
     public function __construct($config)
@@ -24,7 +23,7 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
         }
-        return false;
+        throw new Exception('No Token for code ' .$code . ' exists.', 3);
     }
 
     /**
@@ -50,12 +49,12 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {
-
                 $voucherTokens = $order->getVoucherTokens();
                 $voucherTokens[] = $orderToken;
                 $order->setVoucherTokens($voucherTokens);
 
                 $this->releaseToken($code, $cart);
+                return true;
             }
         }
         return false;
@@ -75,12 +74,13 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     }
 
     /**
+     * @param null $seriesId
      * @return bool
      */
-    public function cleanUpReservations($duration = null, $seriesId = null)
+    public function cleanUpReservations($seriesId = null)
     {
-        if (isset($duration)) {
-            return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($duration, $seriesId);
+        if (isset($seriesId)) {
+            return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($this->sysConfig->reservations->duration, $seriesId);
         } else {
             return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($this->sysConfig->reservations->duration);
         }
@@ -96,13 +96,12 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     }
 
     /**
-     * @param null|int $duration days
      * @param null|string $seriesId
      * @return bool
      */
-    public function cleanUpStatistics($duration =  null, $seriesId = null){
-        if (isset($duration)) {
-            return OnlineShop_Framework_VoucherService_Statistic::cleanUpStatistics($duration, $seriesId);
+    public function cleanUpStatistics($seriesId = null){
+        if (isset($seriesId) ) {
+            return OnlineShop_Framework_VoucherService_Statistic::cleanUpStatistics($this->sysConfig->statistics->duration, $seriesId);
         } else {
             return OnlineShop_Framework_VoucherService_Statistic::cleanUpStatistics($this->sysConfig->statistics->duration);
         }

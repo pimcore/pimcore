@@ -5,5 +5,4 @@
  */
 abstract class OnlineShop_Framework_AbstractVoucherTokenType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
 
-
 }

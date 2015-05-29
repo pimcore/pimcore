@@ -3,19 +3,39 @@
 class OnlineShop_Framework_VoucherService_Token_List_Resource extends \Pimcore\Model\Listing\Resource\AbstractResource
 {
 
-    public function load() {
-        $configs = array();
+    public function load()
+    {
+        $tokens = array();
 
-        $unitIds = $this->db->fetchAll("SELECT token FROM " . Elements_OutputDataConfigToolkit_OutputDefinition_Resource::TABLE_NAME .
-            $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $unitIds = $this->db->fetchAll("SELECT * FROM " .
+            OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME .
+            $this->getCondition() .
+            $this->getOrder() .
+            $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($unitIds as $row) {
-            $configs[] = OnlineShop_Framework_VoucherService_Token::getByCode($row['token']);
+            $item = new OnlineShop_Framework_VoucherService_Token();
+            $item->getResource()->assignVariablesToModel($row);
+            $tokens[] = $item;
         }
 
-        $this->model->setTokens($configs);
+        $this->model->setTokens($tokens);
 
-        return $configs;
+        return $tokens;
+    }
+
+    public function getTotalCount()
+    {
+        try {
+            $amount = (int)$this->db->fetchOne("SELECT COUNT(*) as amount FROM " .
+                OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME .
+                $this->getCondition(),
+                $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+
+        }
+
+        return $amount;
     }
 
 }

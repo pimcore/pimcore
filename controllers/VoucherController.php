@@ -15,6 +15,9 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
                 $this->view->series = $onlineShopVoucherSeries;
                 $renderScript = $tokenManager->prepareConfigurationView($this->view, $this->getAllParams());
                 $this->renderScript($renderScript);
+            } else {
+                $this->view->errors = array($this->view->ts('plugin_onlineshop_voucherservice_msg-error-config-missing'));
+                $this->renderScript('voucher/voucher-code-tab-error.php');
             }
         }
     }
@@ -24,7 +27,8 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
      * @param OnlineShop_Framework_VoucherService_ITokenManager $tokenManager
      * @param array $params
      */
-    public function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, OnlineShop_Framework_VoucherService_ITokenManager $tokenManager, $params = []){
+    public function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, OnlineShop_Framework_VoucherService_ITokenManager $tokenManager, $params = [])
+    {
         $this->view->series = $onlineShopVoucherSeries;
         $viewParams = array_merge($params, $this->getAllParams());
         $renderScript = $tokenManager->prepareConfigurationView($this->view, $viewParams);
@@ -46,6 +50,8 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
                     $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-generation')));
                 }
             }
+        } else {
+            throw new Exception('Could not get voucher series, probably you did not provide a correct id.');
         }
     }
 
@@ -63,7 +69,7 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
                 $this->getParam('usage') ? $params['usage'] = $this->getParam('usage') : '';
                 $this->getParam('olderThan') ? $params['olderThan'] = $this->getParam('olderThan') : '';
 
-                if(empty($params['usage'])){
+                if (empty($params['usage'])) {
                     $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-required-missing')));
                     return;
                 }
@@ -74,6 +80,8 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
                     $this->renderTab($onlineShopVoucherSeries, $tokenManager, array('error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-cleanup')));
                 }
             }
+        } else {
+            throw new Exception('Could not get voucher series, probably you did not provide a correct id.');
         }
     }
 
@@ -88,9 +96,13 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
         $id = $this->getParam('id');
 
         if (isset($duration)) {
-            $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
-            if ($service->cleanUpReservations($duration, $id)) {
-                $this->forward('voucher-Code-Tab', 'Voucher', null, ['success' => $this->view->ts('plugin_onlineshop_voucherservice_msg-success-cleanup-reservations'), 'id' => $id]);
+            $onlineShopVoucherSeries = \Pimcore\Model\Object\AbstractObject::getById($this->getParam('id'));
+            if ($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
+                if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
+                    if ($tokenManager->cleanUpReservations($duration)) {
+                        $this->forward('voucher-Code-Tab', 'Voucher', null, ['success' => $this->view->ts('plugin_onlineshop_voucherservice_msg-success-cleanup-reservations'), 'id' => $id]);
+                    }
+                }
             } else {
                 $this->forward('voucher-Code-Tab', 'Voucher', null, ['error' => $this->view->ts('plugin_onlineshop_voucherservice_msg-error-cleanup-reservations'), 'id' => $id]);
             }

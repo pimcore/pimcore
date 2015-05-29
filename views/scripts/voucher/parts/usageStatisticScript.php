@@ -32,20 +32,20 @@
         var pieData = [
             {
                 value: <?=$this->statistics['usageCount']?>,
-                color: "#F7464A",
-                highlight: "#FF5A5E",
+                color: "<?=$this->colors['used']?>",
+                highlight: "#FE6B4F",
                 label: "Used"
             },
             {
                 value: <?=$this->statistics['freeCount']?>,
-                color: "#46BFBD",
-                highlight: "#5AD3D1",
+                color: "<?=$this->colors['free']?>",
+                highlight: "#5AD2D2",
                 label: "Free"
             },
             {
                 value: <?=$this->statistics['reservedCount']?>,
-                color: "#FDB45C",
-                highlight: "#FFC870",
+                color: "<?=$this->colors['reserved']?>",
+                highlight: "#FEC770",
                 label: "Reserved"
             }
         ];
