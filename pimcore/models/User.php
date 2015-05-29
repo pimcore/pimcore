@@ -69,7 +69,7 @@ class User extends User\UserRole {
     /**
      * @var bool
      */
-    public $welcomescreen = true;
+    public $welcomescreen = false;
 
     /**
      * @var bool
