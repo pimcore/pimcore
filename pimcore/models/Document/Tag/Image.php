@@ -319,9 +319,8 @@ class Image extends Model\Document\Tag {
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromResource($data) {
 
@@ -370,15 +369,14 @@ class Image extends Model\Document\Tag {
         try {
             $this->image = Asset\Image::getById($this->id);
         }
-        catch (\Exception $e) {
-        }
+        catch (\Exception $e) { }
+
         return $this;
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data) {
 
@@ -401,25 +399,28 @@ class Image extends Model\Document\Tag {
             return $data;
         };
 
-        if(array_key_exists("marker",$data) && is_array($data["marker"]) && count($data["marker"]) > 0) {
-            $data["marker"] = $rewritePath($data["marker"]);
+        if(is_array($data)) {
+            if(array_key_exists("marker",$data) && is_array($data["marker"]) && count($data["marker"]) > 0) {
+                $data["marker"] = $rewritePath($data["marker"]);
+            }
+
+            if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+                $data["hotspots"] = $rewritePath($data["hotspots"]);
+            }
+
+            $this->id = $data["id"];
+            $this->alt = $data["alt"];
+            $this->cropPercent = $data["cropPercent"];
+            $this->cropWidth = $data["cropWidth"];
+            $this->cropHeight = $data["cropHeight"];
+            $this->cropTop = $data["cropTop"];
+            $this->cropLeft = $data["cropLeft"];
+            $this->marker = $data["marker"];
+            $this->hotspots = $data["hotspots"];
+
+            $this->image = Asset\Image::getById($this->id);
         }
 
-        if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
-            $data["hotspots"] = $rewritePath($data["hotspots"]);
-        }
-
-        $this->id = $data["id"];
-        $this->alt = $data["alt"];
-        $this->cropPercent = $data["cropPercent"];
-        $this->cropWidth = $data["cropWidth"];
-        $this->cropHeight = $data["cropHeight"];
-        $this->cropTop = $data["cropTop"];
-        $this->cropLeft = $data["cropLeft"];
-        $this->marker = $data["marker"];
-        $this->hotspots = $data["hotspots"];
-
-        $this->image = Asset\Image::getById($this->id);
         return $this;
     }
 
