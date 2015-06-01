@@ -23,7 +23,7 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
         }
-        throw new Exception('No Token for code ' .$code . ' exists.', 3);
+        throw new OnlineShop_Framework_Exception_VoucherServiceException('No Token for code ' .$code . ' exists.', 3);
     }
 
     /**

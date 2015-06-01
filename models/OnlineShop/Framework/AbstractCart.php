@@ -701,16 +701,6 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     }
 
     /**
-     * Checks if an error code is a defined Voucher Error Code.
-     *
-     * @param $errorCode
-     * @return bool
-     */
-    public function isVoucherErrorCode($errorCode){
-        return $errorCode > 0 && $errorCode < 10;
-    }
-
-    /**
      * Removes all tokens form cart and releases the token reservations.
      */
     public function removeAllVoucherTokens(){
@@ -725,7 +715,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      * @param string $code
      *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
-     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_VoucherServiceException
      *
      * @return bool
      */
@@ -741,7 +731,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
                 return true;
             }
         } else {
-            throw new Exception("No Token with code " . $code . " in this cart." , 7);
+            throw new OnlineShop_Framework_Exception_VoucherServiceException("No Token with code " . $code . " in this cart." , 7);
         }
     }
 

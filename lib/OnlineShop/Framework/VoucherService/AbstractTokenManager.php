@@ -48,7 +48,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
      *
      * @param $code
      * @param OnlineShop_Framework_ICart $cart
-     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_VoucherServiceException
      */
     protected function checkAllowOncePerCart($code, OnlineShop_Framework_ICart $cart)
     {
@@ -59,7 +59,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
                 foreach ($cartCodes as $cartCode) {
                     $cartToken = OnlineShop_Framework_VoucherService_Token::getByCode($cartCode);
                     if ($token->getVoucherSeriesId() == $cartToken->getVoucherSeriesId()) {
-                        throw new Exception("OncePerCart: Only one token of this series is allow per cart.", 5);
+                        throw new OnlineShop_Framework_Exception_VoucherServiceException("OncePerCart: Only one token of this series is allowed per cart.", 5);
                     }
                 }
             }
@@ -71,7 +71,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
      *
      * @param OnlineShop_Framework_ICart $cart
      *
-     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_VoucherServiceException
      */
     protected function checkOnlyToken(OnlineShop_Framework_ICart $cart)
     {
@@ -79,13 +79,13 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
         $cartVoucherCount = sizeof($cartCodes);
         if ($cartVoucherCount && method_exists($this->configuration, 'getOnlyTokenPerCart')) {
             if ($this->configuration->getOnlyTokenPerCart()) {
-                throw new Exception("OnlyTokenPerCart: This token is only allowed as only token in this cart.", 6);
+                throw new OnlineShop_Framework_Exception_VoucherServiceException("OnlyTokenPerCart: This token is only allowed as only token in this cart.", 6);
             }
 
             $cartToken = OnlineShop_Framework_VoucherService_Token::getByCode($cartCodes[0]);
             $cartTokenSettings = Object_OnlineShopVoucherSeries::getById($cartToken->getVoucherSeriesId())->getTokenSettings()->getItems()[0];
             if ($cartTokenSettings->getOnlyTokenPerCart()) {
-                throw new Exception("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);
+                throw new OnlineShop_Framework_Exception_VoucherServiceException("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);
             }
         }
     }

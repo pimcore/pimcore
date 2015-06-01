@@ -32,7 +32,7 @@ class OnlineShop_Framework_VoucherService_Token_List_Resource extends \Pimcore\M
                 $this->getCondition(),
                 $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
+            return false;
         }
 
         return $amount;
