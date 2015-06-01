@@ -300,6 +300,100 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
         }
     }
 
+    private function getDiffFdefs($oldDefs,$newDefs){
+        $oDefs = array();
+
+        foreach($oldDefs as $k=>$oDef){
+            $oDefs[$k] = $oDef->getFieldtype();
+        }
+        $nDefs = array();
+        foreach($newDefs as $k=>$nDef){
+            $nDefs[$k] = $nDef->getFieldtype();
+        }
+        $added = array_diff_key($nDefs,$oDefs);
+        $removed = array_diff_key($oDefs,$nDefs);
+        $changed = array_diff_assoc($nDefs,$oDefs);
+        $changed = array_diff_key($changed,$added);
+        $hasDiffs = false;
+        if(count($removed) >0 || count($added) > 0 || count($changed) > 0){
+            $hasDiffs = true;
+        }
+        return array("added"=>$added,"removed"=>$removed,"changed"=>$changed,"hasDiffs"=>$hasDiffs);
+    }
+
+    private function generateMessageDiffs($diffs){
+
+        $t = \Zend_Registry::get("Zend_Translate");
+
+        $message = "";
+        if(count($diffs["removed"])>0){
+            $message .= "<b style='color:red'>" . $t->translate("Removed fields") .  "</b><br>";
+            foreach($diffs["removed"] as $field=>$type){
+                $message .= $field . " (" . $type . ")<br>";
+            }
+            $message .= "<br>";
+        }
+        if(count($diffs["added"])>0){
+            $message .= "<b>" . $t->translate("Added fields") .  "</b><br>";
+            foreach($diffs["added"] as $field=>$type){
+                $message .= $field . " (" . $type . ")<br>";
+            }
+            $message .= "<br>";
+        }
+        if(count($diffs["changed"])>0){
+            $message .= "<b>" . $t->translate("Updated fields") .  "</b><br>";
+            foreach($diffs["changed"] as $field=>$type){
+                $message .= $field . " (" . $type . ")<br>";
+            }
+        }
+        if($message == ""){
+            $message = false;
+        }else{
+            $message .= "<br>" . $t->translate("Update class anyway ?");
+        }
+
+        return $message;
+    }
+
+    public function checkDiffAction(){
+        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $initFieldDefinitions = $class->getFieldDefinitions();
+
+
+        $configuration = \Zend_Json::decode($this->getParam("configuration"));
+        $values = \Zend_Json::decode($this->getParam("values"));
+
+
+        unset($values["creationDate"]);
+        unset($values["userOwner"]);
+        unset($values["layoutDefinitions"]);
+        unset($values["fieldDefinitions"]);
+
+
+        $configuration["datatype"] = "layout";
+        $configuration["fieldtype"] = "panel";
+        $configuration["name"] = "pimcore_root";
+
+        $class->setValues($values);
+
+        try {
+            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+
+            $class->setLayoutDefinitions($layout);
+            $newFieldDefinition = $class->getFieldDefinitions();
+
+            $fieldDiffs = $this->getDiffFdefs($initFieldDefinitions,$newFieldDefinition);
+            $message = $this->generateMessageDiffs($fieldDiffs);
+
+            $this->_helper->json(array("success" => true, "diffs" => $fieldDiffs,"message"=>$message));
+
+
+        } catch (\Exception $e) {
+            \Logger::error($e->getMessage());
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+        }
+    }
+
     public function saveAction() {
         $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
 

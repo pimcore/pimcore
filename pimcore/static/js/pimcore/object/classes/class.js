@@ -20,7 +20,7 @@ pimcore.object.classes.klass = Class.create({
     uploadUrl: '/admin/class/import-class',
     exportUrl: "/admin/class/export-class",
 
-
+    isSaving:false,
 
     initialize: function (data, parentPanel, reopen) {
         this.parentPanel = parentPanel;
@@ -1030,6 +1030,28 @@ pimcore.object.classes.klass = Class.create({
         return nodeData;
     },
 
+    checkDiffOnComplete:function(response){
+        try {
+            var res = Ext.decode(response.responseText);
+            if(res.success) {
+                if(res.diffs.hasDiffs){
+                    Ext.MessageBox.confirm("Confirmation",res.message,function(resp){
+                        if(resp == "yes"){
+                            this.saveToServer();
+                        }
+                    }.bind(this));
+                }else{
+                    this.saveToServer();
+                }
+
+            } else {
+                throw "save was not successful, see debug.log";
+            }
+        } catch (e) {
+            this.saveOnError();
+        }
+    },
+
     save: function () {
 
         this.saveCurrentNode();
@@ -1045,14 +1067,14 @@ pimcore.object.classes.klass = Class.create({
 
             if (this.getDataSuccess) {
                 Ext.Ajax.request({
-                    url: "/admin/class/save",
+                    url: "/admin/class/check-diff",
                     method: "post",
                     params: {
                         configuration: m,
                         values: n,
                         id: this.data.id
                     },
-                    success: this.saveOnComplete.bind(this),
+                    success: this.checkDiffOnComplete.bind(this),
                     failure: this.saveOnError.bind(this)
                 });
             }
@@ -1061,8 +1083,30 @@ pimcore.object.classes.klass = Class.create({
         }
     },
 
-    saveOnComplete: function (response) {
+    saveToServer:function(){
 
+        var m = Ext.encode(this.getData());
+        var n = Ext.encode(this.data);
+
+        if (this.getDataSuccess && !this.isSaving) {
+            this.isSaving = true;
+            Ext.Ajax.request({
+                url: "/admin/class/save",
+                method: "post",
+                params: {
+                    configuration: m,
+                    values: n,
+                    id: this.data.id
+                },
+                success: this.saveOnComplete.bind(this),
+                failure: this.saveOnError.bind(this)
+            });
+        }
+
+    },
+
+    saveOnComplete: function (response) {
+        this.isSaving = false;
         try {
             var res = Ext.decode(response.responseText);
             if(res.success) {
@@ -1083,10 +1127,12 @@ pimcore.object.classes.klass = Class.create({
     },
 
     saveOnError: function () {
+        this.isSaving = false;
         pimcore.helpers.showNotification(t("error"), t("class_save_error"), "error");
     },
 
     onRefresh: function() {
+        this.isSaving = false;
         this.parentPanel.getEditPanel().remove(this.panel);
         this.reopen();
     }
