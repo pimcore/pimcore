@@ -24,7 +24,7 @@
  *
  * <p>
  * For more information about this service, see the API
- * <a href="" target="_blank">Documentation</a>
+ * <a href="https://cloud.google.com/container-engine/docs/v1beta1/" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
@@ -39,6 +39,7 @@ class Google_Service_Container extends Google_Service
   public $projects_operations;
   public $projects_zones_clusters;
   public $projects_zones_operations;
+  public $projects_zones_tokens;
   
 
   /**
@@ -209,6 +210,41 @@ class Google_Service_Container extends Google_Service
                   'required' => true,
                 ),
                 'zoneId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->projects_zones_tokens = new Google_Service_Container_ProjectsZonesTokens_Resource(
+        $this,
+        $this->serviceName,
+        'tokens',
+        array(
+          'methods' => array(
+            'get' => array(
+              'path' => '{masterProjectId}/zones/{zoneId}/tokens/{projectNumber}/{clusterName}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'masterProjectId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'zoneId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'projectNumber' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'clusterName' => array(
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
@@ -445,6 +481,39 @@ class Google_Service_Container_ProjectsZonesOperations_Resource extends Google_S
     return $this->call('list', array($params), "Google_Service_Container_ListOperationsResponse");
   }
 }
+/**
+ * The "tokens" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $containerService = new Google_Service_Container(...);
+ *   $tokens = $containerService->tokens;
+ *  </code>
+ */
+class Google_Service_Container_ProjectsZonesTokens_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Gets a compute-rw scoped OAuth2 access token for . Authentication is
+   * performed to ensure that the caller is a member of  and that the request is
+   * coming from the expected master VM for the specified cluster. See go/gke-
+   * cross-project-auth for more details. (tokens.get)
+   *
+   * @param string $masterProjectId The hosted master project from which this
+   * request is coming.
+   * @param string $zoneId The zone of the specified cluster.
+   * @param string $projectNumber The project number for which the access token is
+   * being requested.
+   * @param string $clusterName The name of the specified cluster.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Container_Token
+   */
+  public function get($masterProjectId, $zoneId, $projectNumber, $clusterName, $optParams = array())
+  {
+    $params = array('masterProjectId' => $masterProjectId, 'zoneId' => $zoneId, 'projectNumber' => $projectNumber, 'clusterName' => $clusterName);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Container_Token");
+  }
+}
 
 
 
@@ -457,14 +526,17 @@ class Google_Service_Container_Cluster extends Google_Model
   public $containerIpv4Cidr;
   public $creationTimestamp;
   public $description;
+  public $enableCloudLogging;
   public $endpoint;
   protected $masterAuthType = 'Google_Service_Container_MasterAuth';
   protected $masterAuthDataType = '';
   public $name;
+  public $network;
   protected $nodeConfigType = 'Google_Service_Container_NodeConfig';
   protected $nodeConfigDataType = '';
   public $nodeRoutingPrefixSize;
   public $numNodes;
+  public $selfLink;
   public $servicesIpv4Cidr;
   public $status;
   public $statusMessage;
@@ -503,6 +575,14 @@ class Google_Service_Container_Cluster extends Google_Model
   {
     return $this->description;
   }
+  public function setEnableCloudLogging($enableCloudLogging)
+  {
+    $this->enableCloudLogging = $enableCloudLogging;
+  }
+  public function getEnableCloudLogging()
+  {
+    return $this->enableCloudLogging;
+  }
   public function setEndpoint($endpoint)
   {
     $this->endpoint = $endpoint;
@@ -527,6 +607,14 @@ class Google_Service_Container_Cluster extends Google_Model
   {
     return $this->name;
   }
+  public function setNetwork($network)
+  {
+    $this->network = $network;
+  }
+  public function getNetwork()
+  {
+    return $this->network;
+  }
   public function setNodeConfig(Google_Service_Container_NodeConfig $nodeConfig)
   {
     $this->nodeConfig = $nodeConfig;
@@ -550,6 +638,14 @@ class Google_Service_Container_Cluster extends Google_Model
   public function getNumNodes()
   {
     return $this->numNodes;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
   }
   public function setServicesIpv4Cidr($servicesIpv4Cidr)
   {
@@ -683,10 +779,19 @@ class Google_Service_Container_MasterAuth extends Google_Model
 {
   protected $internal_gapi_mappings = array(
   );
+  public $bearerToken;
   public $password;
   public $user;
 
 
+  public function setBearerToken($bearerToken)
+  {
+    $this->bearerToken = $bearerToken;
+  }
+  public function getBearerToken()
+  {
+    return $this->bearerToken;
+  }
   public function setPassword($password)
   {
     $this->password = $password;
@@ -705,11 +810,14 @@ class Google_Service_Container_MasterAuth extends Google_Model
   }
 }
 
-class Google_Service_Container_NodeConfig extends Google_Model
+class Google_Service_Container_NodeConfig extends Google_Collection
 {
+  protected $collection_key = 'serviceAccounts';
   protected $internal_gapi_mappings = array(
   );
   public $machineType;
+  protected $serviceAccountsType = 'Google_Service_Container_ServiceAccount';
+  protected $serviceAccountsDataType = 'array';
   public $sourceImage;
 
 
@@ -720,6 +828,14 @@ class Google_Service_Container_NodeConfig extends Google_Model
   public function getMachineType()
   {
     return $this->machineType;
+  }
+  public function setServiceAccounts($serviceAccounts)
+  {
+    $this->serviceAccounts = $serviceAccounts;
+  }
+  public function getServiceAccounts()
+  {
+    return $this->serviceAccounts;
   }
   public function setSourceImage($sourceImage)
   {
@@ -738,8 +854,10 @@ class Google_Service_Container_Operation extends Google_Model
   public $errorMessage;
   public $name;
   public $operationType;
+  public $selfLink;
   public $status;
   public $target;
+  public $targetLink;
   public $zone;
 
 
@@ -767,6 +885,14 @@ class Google_Service_Container_Operation extends Google_Model
   {
     return $this->operationType;
   }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
   public function setStatus($status)
   {
     $this->status = $status;
@@ -783,6 +909,14 @@ class Google_Service_Container_Operation extends Google_Model
   {
     return $this->target;
   }
+  public function setTargetLink($targetLink)
+  {
+    $this->targetLink = $targetLink;
+  }
+  public function getTargetLink()
+  {
+    return $this->targetLink;
+  }
   public function setZone($zone)
   {
     $this->zone = $zone;
@@ -790,5 +924,58 @@ class Google_Service_Container_Operation extends Google_Model
   public function getZone()
   {
     return $this->zone;
+  }
+}
+
+class Google_Service_Container_ServiceAccount extends Google_Collection
+{
+  protected $collection_key = 'scopes';
+  protected $internal_gapi_mappings = array(
+  );
+  public $email;
+  public $scopes;
+
+
+  public function setEmail($email)
+  {
+    $this->email = $email;
+  }
+  public function getEmail()
+  {
+    return $this->email;
+  }
+  public function setScopes($scopes)
+  {
+    $this->scopes = $scopes;
+  }
+  public function getScopes()
+  {
+    return $this->scopes;
+  }
+}
+
+class Google_Service_Container_Token extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $accessToken;
+  public $expiryTimeSeconds;
+
+
+  public function setAccessToken($accessToken)
+  {
+    $this->accessToken = $accessToken;
+  }
+  public function getAccessToken()
+  {
+    return $this->accessToken;
+  }
+  public function setExpiryTimeSeconds($expiryTimeSeconds)
+  {
+    $this->expiryTimeSeconds = $expiryTimeSeconds;
+  }
+  public function getExpiryTimeSeconds()
+  {
+    return $this->expiryTimeSeconds;
   }
 }

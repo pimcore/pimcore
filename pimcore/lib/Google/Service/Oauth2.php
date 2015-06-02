@@ -93,7 +93,11 @@ class Google_Service_Oauth2 extends Google_Service
         '',
         array(
           'methods' => array(
-            'tokeninfo' => array(
+            'getCertForOpenIdConnect' => array(
+              'path' => 'oauth2/v2/certs',
+              'httpMethod' => 'GET',
+              'parameters' => array(),
+            ),'tokeninfo' => array(
               'path' => 'oauth2/v2/tokeninfo',
               'httpMethod' => 'POST',
               'parameters' => array(
@@ -105,11 +109,27 @@ class Google_Service_Oauth2 extends Google_Service
                   'location' => 'query',
                   'type' => 'string',
                 ),
+                'token_handle' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
               ),
             ),
           )
         )
     );
+  }
+  /**
+   * (getCertForOpenIdConnect)
+   *
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Oauth2_Jwk
+   */
+  public function getCertForOpenIdConnect($optParams = array())
+  {
+    $params = array();
+    $params = array_merge($params, $optParams);
+    return $this->base_methods->call('getCertForOpenIdConnect', array($params), "Google_Service_Oauth2_Jwk");
   }
   /**
    * (tokeninfo)
@@ -118,6 +138,7 @@ class Google_Service_Oauth2 extends Google_Service
    *
    * @opt_param string access_token
    * @opt_param string id_token
+   * @opt_param string token_handle
    * @return Google_Service_Oauth2_Tokeninfo
    */
   public function tokeninfo($optParams = array())
@@ -194,12 +215,94 @@ class Google_Service_Oauth2_UserinfoV2Me_Resource extends Google_Service_Resourc
 
 
 
+class Google_Service_Oauth2_Jwk extends Google_Collection
+{
+  protected $collection_key = 'keys';
+  protected $internal_gapi_mappings = array(
+  );
+  protected $keysType = 'Google_Service_Oauth2_JwkKeys';
+  protected $keysDataType = 'array';
+
+
+  public function setKeys($keys)
+  {
+    $this->keys = $keys;
+  }
+  public function getKeys()
+  {
+    return $this->keys;
+  }
+}
+
+class Google_Service_Oauth2_JwkKeys extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $alg;
+  public $e;
+  public $kid;
+  public $kty;
+  public $n;
+  public $use;
+
+
+  public function setAlg($alg)
+  {
+    $this->alg = $alg;
+  }
+  public function getAlg()
+  {
+    return $this->alg;
+  }
+  public function setE($e)
+  {
+    $this->e = $e;
+  }
+  public function getE()
+  {
+    return $this->e;
+  }
+  public function setKid($kid)
+  {
+    $this->kid = $kid;
+  }
+  public function getKid()
+  {
+    return $this->kid;
+  }
+  public function setKty($kty)
+  {
+    $this->kty = $kty;
+  }
+  public function getKty()
+  {
+    return $this->kty;
+  }
+  public function setN($n)
+  {
+    $this->n = $n;
+  }
+  public function getN()
+  {
+    return $this->n;
+  }
+  public function setUse($use)
+  {
+    $this->use = $use;
+  }
+  public function getUse()
+  {
+    return $this->use;
+  }
+}
+
 class Google_Service_Oauth2_Tokeninfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
         "accessType" => "access_type",
         "expiresIn" => "expires_in",
         "issuedTo" => "issued_to",
+        "tokenHandle" => "token_handle",
         "userId" => "user_id",
         "verifiedEmail" => "verified_email",
   );
@@ -209,6 +312,7 @@ class Google_Service_Oauth2_Tokeninfo extends Google_Model
   public $expiresIn;
   public $issuedTo;
   public $scope;
+  public $tokenHandle;
   public $userId;
   public $verifiedEmail;
 
@@ -260,6 +364,14 @@ class Google_Service_Oauth2_Tokeninfo extends Google_Model
   public function getScope()
   {
     return $this->scope;
+  }
+  public function setTokenHandle($tokenHandle)
+  {
+    $this->tokenHandle = $tokenHandle;
+  }
+  public function getTokenHandle()
+  {
+    return $this->tokenHandle;
   }
   public function setUserId($userId)
   {

@@ -82,6 +82,21 @@ class Google_Service_Fitness extends Google_Service
                   'required' => true,
                 ),
               ),
+            ),'delete' => array(
+              'path' => '{userId}/dataSources/{dataSourceId}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'userId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'dataSourceId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
             ),'get' => array(
               'path' => '{userId}/dataSources/{dataSourceId}',
               'httpMethod' => 'GET',
@@ -358,6 +373,23 @@ class Google_Service_Fitness_UsersDataSources_Resource extends Google_Service_Re
     $params = array('userId' => $userId, 'postBody' => $postBody);
     $params = array_merge($params, $optParams);
     return $this->call('create', array($params), "Google_Service_Fitness_DataSource");
+  }
+
+  /**
+   * Delete the data source if there are no datapoints associated with it
+   * (dataSources.delete)
+   *
+   * @param string $userId Retrieve a data source for the person identified. Use
+   * me to indicate the authenticated user. Only me is supported at this time.
+   * @param string $dataSourceId The data stream ID of the data source to delete.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Fitness_DataSource
+   */
+  public function delete($userId, $dataSourceId, $optParams = array())
+  {
+    $params = array('userId' => $userId, 'dataSourceId' => $dataSourceId);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params), "Google_Service_Fitness_DataSource");
   }
 
   /**
@@ -862,6 +894,7 @@ class Google_Service_Fitness_DataTypeField extends Google_Model
   );
   public $format;
   public $name;
+  public $optional;
 
 
   public function setFormat($format)
@@ -879,6 +912,14 @@ class Google_Service_Fitness_DataTypeField extends Google_Model
   public function getName()
   {
     return $this->name;
+  }
+  public function setOptional($optional)
+  {
+    $this->optional = $optional;
+  }
+  public function getOptional()
+  {
+    return $this->optional;
   }
 }
 
@@ -1051,6 +1092,7 @@ class Google_Service_Fitness_Session extends Google_Model
 {
   protected $internal_gapi_mappings = array(
   );
+  public $activeTimeMillis;
   public $activityType;
   protected $applicationType = 'Google_Service_Fitness_Application';
   protected $applicationDataType = '';
@@ -1062,6 +1104,14 @@ class Google_Service_Fitness_Session extends Google_Model
   public $startTimeMillis;
 
 
+  public function setActiveTimeMillis($activeTimeMillis)
+  {
+    $this->activeTimeMillis = $activeTimeMillis;
+  }
+  public function getActiveTimeMillis()
+  {
+    return $this->activeTimeMillis;
+  }
   public function setActivityType($activityType)
   {
     $this->activityType = $activityType;

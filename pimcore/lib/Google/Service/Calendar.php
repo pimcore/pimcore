@@ -1212,8 +1212,8 @@ class Google_Service_Calendar_Calendars_Resource extends Google_Service_Resource
 {
 
   /**
-   * Clears a primary calendar. This operation deletes all data associated with
-   * the primary calendar of an account and cannot be undone. (calendars.clear)
+   * Clears a primary calendar. This operation deletes all events associated with
+   * the primary calendar of an account. (calendars.clear)
    *
    * @param string $calendarId Calendar identifier.
    * @param array $optParams Optional parameters.
@@ -1226,7 +1226,8 @@ class Google_Service_Calendar_Calendars_Resource extends Google_Service_Resource
   }
 
   /**
-   * Deletes a secondary calendar. (calendars.delete)
+   * Deletes a secondary calendar. Use calendars.clear for clearing all events on
+   * primary calendars. (calendars.delete)
    *
    * @param string $calendarId Calendar identifier.
    * @param array $optParams Optional parameters.
@@ -2880,19 +2881,6 @@ class Google_Service_Calendar_Event extends Google_Collection
 
 class Google_Service_Calendar_EventAttachment extends Google_Model
 {
-  protected $internal_gapi_mappings = array(
-  );
-  public $title;
-
-
-  public function setTitle($title)
-  {
-    $this->title = $title;
-  }
-  public function getTitle()
-  {
-    return $this->title;
-  }
 }
 
 class Google_Service_Calendar_EventAttendee extends Google_Model

@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-// pimcore modification: removed autoloader include
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 /**
  * Abstract class for the Authentication in the API client

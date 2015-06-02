@@ -30,7 +30,7 @@
  */
 class Google_Service_Drive extends Google_Service
 {
-  /** View and manage the files and documents in your Google Drive. */
+  /** View and manage the files in your Google Drive. */
   const DRIVE =
       "https://www.googleapis.com/auth/drive";
   /** View and manage its own configuration data in your Google Drive. */
@@ -42,10 +42,13 @@ class Google_Service_Drive extends Google_Service
   /** View and manage Google Drive files that you have opened or created with this app. */
   const DRIVE_FILE =
       "https://www.googleapis.com/auth/drive.file";
-  /** View metadata for files and documents in your Google Drive. */
+  /** View and manage metadata of files in your Google Drive. */
+  const DRIVE_METADATA =
+      "https://www.googleapis.com/auth/drive.metadata";
+  /** View metadata for files in your Google Drive. */
   const DRIVE_METADATA_READONLY =
       "https://www.googleapis.com/auth/drive.metadata.readonly";
-  /** View the files and documents in your Google Drive. */
+  /** View the files in your Google Drive. */
   const DRIVE_READONLY =
       "https://www.googleapis.com/auth/drive.readonly";
   /** Modify your Google Apps Script scripts' behavior. */
@@ -484,6 +487,10 @@ class Google_Service_Drive extends Google_Service
                   'location' => 'query',
                   'type' => 'boolean',
                 ),
+                'revisionId' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'projection' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -713,6 +720,10 @@ class Google_Service_Drive extends Google_Service
                 'updateViewedDate' => array(
                   'location' => 'query',
                   'type' => 'boolean',
+                ),
+                'revisionId' => array(
+                  'location' => 'query',
+                  'type' => 'string',
                 ),
                 'projection' => array(
                   'location' => 'query',
@@ -1679,7 +1690,8 @@ class Google_Service_Drive_Files_Resource extends Google_Service_Resource
   }
 
   /**
-   * Permanently deletes a file by ID. Skips the trash. (files.delete)
+   * Permanently deletes a file by ID. Skips the trash. The currently
+   * authenticated user must own the file. (files.delete)
    *
    * @param string $fileId The ID of the file to delete.
    * @param array $optParams Optional parameters.
@@ -1713,6 +1725,8 @@ class Google_Service_Drive_Files_Resource extends Google_Service_Resource
    * of downloading known malware or other abusive files.
    * @opt_param bool updateViewedDate Whether to update the view date after
    * successfully retrieving the file.
+   * @opt_param string revisionId Specifies the Revision ID that should be
+   * downloaded. Ignored unless alt=media is specified.
    * @opt_param string projection This parameter is deprecated and has no
    * function.
    * @return Google_Service_Drive_DriveFile
@@ -1906,6 +1920,8 @@ class Google_Service_Drive_Files_Resource extends Google_Service_Resource
    * of downloading known malware or other abusive files.
    * @opt_param bool updateViewedDate Whether to update the view date after
    * successfully retrieving the file.
+   * @opt_param string revisionId Specifies the Revision ID that should be
+   * downloaded. Ignored unless alt=media is specified.
    * @opt_param string projection This parameter is deprecated and has no
    * function.
    * @return Google_Service_Drive_Channel
@@ -2086,8 +2102,9 @@ class Google_Service_Drive_Permissions_Resource extends Google_Service_Resource
    * @param Google_Permission $postBody
    * @param array $optParams Optional parameters.
    *
-   * @opt_param bool transferOwnership Whether changing a role to 'owner' should
-   * also downgrade the current owners to writers.
+   * @opt_param bool transferOwnership Whether changing a role to 'owner'
+   * downgrades the current owners to writers. Does nothing if the specified role
+   * is not 'owner'.
    * @return Google_Service_Drive_Permission
    */
   public function patch($fileId, $permissionId, Google_Service_Drive_Permission $postBody, $optParams = array())
@@ -2105,8 +2122,9 @@ class Google_Service_Drive_Permissions_Resource extends Google_Service_Resource
    * @param Google_Permission $postBody
    * @param array $optParams Optional parameters.
    *
-   * @opt_param bool transferOwnership Whether changing a role to 'owner' should
-   * also downgrade the current owners to writers.
+   * @opt_param bool transferOwnership Whether changing a role to 'owner'
+   * downgrades the current owners to writers. Does nothing if the specified role
+   * is not 'owner'.
    * @return Google_Service_Drive_Permission
    */
   public function update($fileId, $permissionId, Google_Service_Drive_Permission $postBody, $optParams = array())
@@ -2503,6 +2521,7 @@ class Google_Service_Drive_About extends Google_Collection
   protected $exportFormatsDataType = 'array';
   protected $featuresType = 'Google_Service_Drive_AboutFeatures';
   protected $featuresDataType = 'array';
+  public $folderColorPalette;
   protected $importFormatsType = 'Google_Service_Drive_AboutImportFormats';
   protected $importFormatsDataType = 'array';
   public $isCurrentAppInstalled;
@@ -2566,6 +2585,14 @@ class Google_Service_Drive_About extends Google_Collection
   public function getFeatures()
   {
     return $this->features;
+  }
+  public function setFolderColorPalette($folderColorPalette)
+  {
+    $this->folderColorPalette = $folderColorPalette;
+  }
+  public function getFolderColorPalette()
+  {
+    return $this->folderColorPalette;
   }
   public function setImportFormats($importFormats)
   {
@@ -3963,6 +3990,7 @@ class Google_Service_Drive_DriveFile extends Google_Collection
   public $exportLinks;
   public $fileExtension;
   public $fileSize;
+  public $folderColorRgb;
   public $headRevisionId;
   public $iconLink;
   public $id;
@@ -4124,6 +4152,14 @@ class Google_Service_Drive_DriveFile extends Google_Collection
   public function getFileSize()
   {
     return $this->fileSize;
+  }
+  public function setFolderColorRgb($folderColorRgb)
+  {
+    $this->folderColorRgb = $folderColorRgb;
+  }
+  public function getFolderColorRgb()
+  {
+    return $this->folderColorRgb;
   }
   public function setHeadRevisionId($headRevisionId)
   {

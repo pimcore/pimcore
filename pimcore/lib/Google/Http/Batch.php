@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 
-// pimcore modification: removed autoloader include
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 /**
- * @author Chirag Shah <chirags@google.com>
+ * Class to handle batched requests to the Google API service.
  */
 class Google_Http_Batch
 {

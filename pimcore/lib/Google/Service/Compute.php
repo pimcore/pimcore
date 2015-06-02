@@ -30,6 +30,9 @@
  */
 class Google_Service_Compute extends Google_Service
 {
+  /** View and manage your data across Google Cloud Platform services. */
+  const CLOUD_PLATFORM =
+      "https://www.googleapis.com/auth/cloud-platform";
   /** View and manage your Google Compute Engine resources. */
   const COMPUTE =
       "https://www.googleapis.com/auth/compute";
@@ -70,7 +73,9 @@ class Google_Service_Compute extends Google_Service
   public $targetHttpProxies;
   public $targetInstances;
   public $targetPools;
+  public $targetVpnGateways;
   public $urlMaps;
+  public $vpnTunnels;
   public $zoneOperations;
   public $zones;
   
@@ -1462,6 +1467,10 @@ class Google_Service_Compute extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'port' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
               ),
             ),'insert' => array(
               'path' => '{project}/zones/{zone}/instances',
@@ -1597,6 +1606,46 @@ class Google_Service_Compute extends Google_Service
               ),
             ),'setTags' => array(
               'path' => '{project}/zones/{zone}/instances/{instance}/setTags',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'zone' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'instance' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'start' => array(
+              'path' => '{project}/zones/{zone}/instances/{instance}/start',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'zone' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'instance' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'stop' => array(
+              'path' => '{project}/zones/{zone}/instances/{instance}/stop',
               'httpMethod' => 'POST',
               'parameters' => array(
                 'project' => array(
@@ -1804,6 +1853,26 @@ class Google_Service_Compute extends Google_Service
             'get' => array(
               'path' => '{project}',
               'httpMethod' => 'GET',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'moveDisk' => array(
+              'path' => '{project}/moveDisk',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'moveInstance' => array(
+              'path' => '{project}/moveInstance',
+              'httpMethod' => 'POST',
               'parameters' => array(
                 'project' => array(
                   'location' => 'path',
@@ -2532,6 +2601,120 @@ class Google_Service_Compute extends Google_Service
           )
         )
     );
+    $this->targetVpnGateways = new Google_Service_Compute_TargetVpnGateways_Resource(
+        $this,
+        $this->serviceName,
+        'targetVpnGateways',
+        array(
+          'methods' => array(
+            'aggregatedList' => array(
+              'path' => '{project}/aggregated/targetVpnGateways',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'pageToken' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'maxResults' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
+              ),
+            ),'delete' => array(
+              'path' => '{project}/regions/{region}/targetVpnGateways/{targetVpnGateway}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'targetVpnGateway' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'get' => array(
+              'path' => '{project}/regions/{region}/targetVpnGateways/{targetVpnGateway}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'targetVpnGateway' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'insert' => array(
+              'path' => '{project}/regions/{region}/targetVpnGateways',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
+              'path' => '{project}/regions/{region}/targetVpnGateways',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'pageToken' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'maxResults' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
+              ),
+            ),
+          )
+        )
+    );
     $this->urlMaps = new Google_Service_Compute_UrlMaps_Resource(
         $this,
         $this->serviceName,
@@ -2643,6 +2826,120 @@ class Google_Service_Compute extends Google_Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->vpnTunnels = new Google_Service_Compute_VpnTunnels_Resource(
+        $this,
+        $this->serviceName,
+        'vpnTunnels',
+        array(
+          'methods' => array(
+            'aggregatedList' => array(
+              'path' => '{project}/aggregated/vpnTunnels',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'pageToken' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'maxResults' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
+              ),
+            ),'delete' => array(
+              'path' => '{project}/regions/{region}/vpnTunnels/{vpnTunnel}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'vpnTunnel' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'get' => array(
+              'path' => '{project}/regions/{region}/vpnTunnels/{vpnTunnel}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'vpnTunnel' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'insert' => array(
+              'path' => '{project}/regions/{region}/vpnTunnels',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
+              'path' => '{project}/regions/{region}/vpnTunnels',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'region' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'pageToken' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'maxResults' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
                 ),
               ),
             ),
@@ -2791,7 +3088,7 @@ class Google_Service_Compute_Addresses_Resource extends Google_Service_Resource
   /**
    * Retrieves the list of addresses grouped by scope. (addresses.aggregatedList)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -2812,8 +3109,8 @@ class Google_Service_Compute_Addresses_Resource extends Google_Service_Resource
   /**
    * Deletes the specified address resource. (addresses.delete)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $region Name of the region scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
    * @param string $address Name of the address resource to delete.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -2828,8 +3125,8 @@ class Google_Service_Compute_Addresses_Resource extends Google_Service_Resource
   /**
    * Returns the specified address resource. (addresses.get)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $region Name of the region scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
    * @param string $address Name of the address resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Address
@@ -2845,8 +3142,8 @@ class Google_Service_Compute_Addresses_Resource extends Google_Service_Resource
    * Creates an address resource in the specified project using the data included
    * in the request. (addresses.insert)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $region Name of the region scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
    * @param Google_Address $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -2862,8 +3159,8 @@ class Google_Service_Compute_Addresses_Resource extends Google_Service_Resource
    * Retrieves the list of address resources contained within the specified
    * region. (addresses.listAddresses)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $region Name of the region scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3029,7 +3326,7 @@ class Google_Service_Compute_DiskTypes_Resource extends Google_Service_Resource
    * Retrieves the list of disk type resources grouped by scope.
    * (diskTypes.aggregatedList)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3050,8 +3347,8 @@ class Google_Service_Compute_DiskTypes_Resource extends Google_Service_Resource
   /**
    * Returns the specified disk type resource. (diskTypes.get)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $diskType Name of the disk type resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_DiskType
@@ -3067,8 +3364,8 @@ class Google_Service_Compute_DiskTypes_Resource extends Google_Service_Resource
    * Retrieves the list of disk type resources available to the specified project.
    * (diskTypes.listDiskTypes)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3101,7 +3398,7 @@ class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
   /**
    * Retrieves the list of disks grouped by scope. (disks.aggregatedList)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3120,11 +3417,11 @@ class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
   }
 
   /**
-   * (disks.createSnapshot)
+   * Creates a snapshot of this disk. (disks.createSnapshot)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
-   * @param string $disk Name of the persistent disk resource to snapshot.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $disk Name of the persistent disk to snapshot.
    * @param Google_Snapshot $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3137,11 +3434,11 @@ class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
   }
 
   /**
-   * Deletes the specified persistent disk resource. (disks.delete)
+   * Deletes the specified persistent disk. (disks.delete)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
-   * @param string $disk Name of the persistent disk resource to delete.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $disk Name of the persistent disk to delete.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
    */
@@ -3153,11 +3450,11 @@ class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
   }
 
   /**
-   * Returns the specified persistent disk resource. (disks.get)
+   * Returns a specified persistent disk. (disks.get)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
-   * @param string $disk Name of the persistent disk resource to return.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $disk Name of the persistent disk to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Disk
    */
@@ -3169,11 +3466,11 @@ class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
   }
 
   /**
-   * Creates a persistent disk resource in the specified project using the data
-   * included in the request. (disks.insert)
+   * Creates a persistent disk in the specified project using the data included in
+   * the request. (disks.insert)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param Google_Disk $postBody
    * @param array $optParams Optional parameters.
    *
@@ -3188,11 +3485,11 @@ class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
   }
 
   /**
-   * Retrieves the list of persistent disk resources contained within the
-   * specified zone. (disks.listDisks)
+   * Retrieves the list of persistent disks contained within the specified zone.
+   * (disks.listDisks)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3225,7 +3522,7 @@ class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
   /**
    * Deletes the specified firewall resource. (firewalls.delete)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $firewall Name of the firewall resource to delete.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3240,7 +3537,7 @@ class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
   /**
    * Returns the specified firewall resource. (firewalls.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $firewall Name of the firewall resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Firewall
@@ -3256,7 +3553,7 @@ class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
    * Creates a firewall resource in the specified project using the data included
    * in the request. (firewalls.insert)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param Google_Firewall $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3272,7 +3569,7 @@ class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
    * Retrieves the list of firewall resources available to the specified project.
    * (firewalls.listFirewalls)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3294,7 +3591,7 @@ class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
    * Updates the specified firewall resource with the data included in the
    * request. This method supports patch semantics. (firewalls.patch)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $firewall Name of the firewall resource to update.
    * @param Google_Firewall $postBody
    * @param array $optParams Optional parameters.
@@ -3311,7 +3608,7 @@ class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
    * Updates the specified firewall resource with the data included in the
    * request. (firewalls.update)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $firewall Name of the firewall resource to update.
    * @param Google_Firewall $postBody
    * @param array $optParams Optional parameters.
@@ -3463,7 +3760,7 @@ class Google_Service_Compute_GlobalAddresses_Resource extends Google_Service_Res
   /**
    * Deletes the specified address resource. (globalAddresses.delete)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $address Name of the address resource to delete.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3478,7 +3775,7 @@ class Google_Service_Compute_GlobalAddresses_Resource extends Google_Service_Res
   /**
    * Returns the specified address resource. (globalAddresses.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $address Name of the address resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Address
@@ -3494,7 +3791,7 @@ class Google_Service_Compute_GlobalAddresses_Resource extends Google_Service_Res
    * Creates an address resource in the specified project using the data included
    * in the request. (globalAddresses.insert)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param Google_Address $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3510,7 +3807,7 @@ class Google_Service_Compute_GlobalAddresses_Resource extends Google_Service_Res
    * Retrieves the list of global address resources.
    * (globalAddresses.listGlobalAddresses)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3641,7 +3938,7 @@ class Google_Service_Compute_GlobalOperations_Resource extends Google_Service_Re
    * Retrieves the list of all operations grouped by scope.
    * (globalOperations.aggregatedList)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3662,7 +3959,7 @@ class Google_Service_Compute_GlobalOperations_Resource extends Google_Service_Re
   /**
    * Deletes the specified operation resource. (globalOperations.delete)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $operation Name of the operation resource to delete.
    * @param array $optParams Optional parameters.
    */
@@ -3676,7 +3973,7 @@ class Google_Service_Compute_GlobalOperations_Resource extends Google_Service_Re
   /**
    * Retrieves the specified operation resource. (globalOperations.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $operation Name of the operation resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3692,7 +3989,7 @@ class Google_Service_Compute_GlobalOperations_Resource extends Google_Service_Re
    * Retrieves the list of operation resources contained within the specified
    * project. (globalOperations.listGlobalOperations)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -3844,7 +4141,7 @@ class Google_Service_Compute_Images_Resource extends Google_Service_Resource
   /**
    * Deletes the specified image resource. (images.delete)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $image Name of the image resource to delete.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3857,10 +4154,12 @@ class Google_Service_Compute_Images_Resource extends Google_Service_Resource
   }
 
   /**
-   * Sets the deprecation status of an image. If no message body is given, clears
-   * the deprecation status instead. (images.deprecate)
+   * Sets the deprecation status of an image.
    *
-   * @param string $project Name of the project scoping this request.
+   * If an empty request body is given, clears the deprecation status instead.
+   * (images.deprecate)
+   *
+   * @param string $project Project ID for this request.
    * @param string $image Image name.
    * @param Google_DeprecationStatus $postBody
    * @param array $optParams Optional parameters.
@@ -3876,7 +4175,7 @@ class Google_Service_Compute_Images_Resource extends Google_Service_Resource
   /**
    * Returns the specified image resource. (images.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $image Name of the image resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Image
@@ -3892,7 +4191,7 @@ class Google_Service_Compute_Images_Resource extends Google_Service_Resource
    * Creates an image resource in the specified project using the data included in
    * the request. (images.insert)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param Google_Image $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -3908,7 +4207,7 @@ class Google_Service_Compute_Images_Resource extends Google_Service_Resource
    * Retrieves the list of image resources available to the specified project.
    * (images.listImages)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -4024,10 +4323,11 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
    * Adds an access config to an instance's network interface.
    * (instances.addAccessConfig)
    *
-   * @param string $project Project name.
-   * @param string $zone Name of the zone scoping this request.
-   * @param string $instance Instance name.
-   * @param string $networkInterface Network interface name.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $instance The instance name for this request.
+   * @param string $networkInterface The name of the network interface to add to
+   * this instance.
    * @param Google_AccessConfig $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4042,7 +4342,7 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   /**
    * (instances.aggregatedList)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -4061,10 +4361,10 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   }
 
   /**
-   * Attaches a disk resource to an instance. (instances.attachDisk)
+   * Attaches a Disk resource to an instance. (instances.attachDisk)
    *
-   * @param string $project Project name.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Instance name.
    * @param Google_AttachedDisk $postBody
    * @param array $optParams Optional parameters.
@@ -4078,10 +4378,11 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   }
 
   /**
-   * Deletes the specified instance resource. (instances.delete)
+   * Deletes the specified Instance resource. For more information, see Shutting
+   * down an instance. (instances.delete)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Name of the instance resource to delete.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4097,11 +4398,11 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
    * Deletes an access config from an instance's network interface.
    * (instances.deleteAccessConfig)
    *
-   * @param string $project Project name.
-   * @param string $zone Name of the zone scoping this request.
-   * @param string $instance Instance name.
-   * @param string $accessConfig Access config name.
-   * @param string $networkInterface Network interface name.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $instance The instance name for this request.
+   * @param string $accessConfig The name of the access config to delete.
+   * @param string $networkInterface The name of the network interface.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
    */
@@ -4115,8 +4416,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   /**
    * Detaches a disk from an instance. (instances.detachDisk)
    *
-   * @param string $project Project name.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Instance name.
    * @param string $deviceName Disk device name to detach.
    * @param array $optParams Optional parameters.
@@ -4132,8 +4433,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   /**
    * Returns the specified instance resource. (instances.get)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the The name of the zone for this request..
    * @param string $instance Name of the instance resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Instance
@@ -4149,10 +4450,12 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
    * Returns the specified instance's serial port output.
    * (instances.getSerialPortOutput)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Name of the instance scoping this request.
    * @param array $optParams Optional parameters.
+   *
+   * @opt_param int port Which COM port to retrieve data from.
    * @return Google_Service_Compute_SerialPortOutput
    */
   public function getSerialPortOutput($project, $zone, $instance, $optParams = array())
@@ -4166,8 +4469,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
    * Creates an instance resource in the specified project using the data included
    * in the request. (instances.insert)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param Google_Instance $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4183,8 +4486,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
    * Retrieves the list of instance resources contained within the specified zone.
    * (instances.listInstances)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -4205,8 +4508,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   /**
    * Performs a hard reset on the instance. (instances.reset)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Name of the instance scoping this request.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4219,15 +4522,15 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   }
 
   /**
-   * Sets the auto-delete flag for a disk attached to an instance
+   * Sets the auto-delete flag for a disk attached to an instance.
    * (instances.setDiskAutoDelete)
    *
-   * @param string $project Project name.
-   * @param string $zone Name of the zone scoping this request.
-   * @param string $instance Instance name.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $instance The instance name.
    * @param bool $autoDelete Whether to auto-delete the disk when the instance is
    * deleted.
-   * @param string $deviceName Disk device name to modify.
+   * @param string $deviceName The device name of the disk to modify.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
    */
@@ -4242,8 +4545,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
    * Sets metadata for the specified instance to the data included in the request.
    * (instances.setMetadata)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Name of the instance scoping this request.
    * @param Google_Metadata $postBody
    * @param array $optParams Optional parameters.
@@ -4259,8 +4562,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
   /**
    * Sets an instance's scheduling options. (instances.setScheduling)
    *
-   * @param string $project Project name.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Instance name.
    * @param Google_Scheduling $postBody
    * @param array $optParams Optional parameters.
@@ -4277,8 +4580,8 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
    * Sets tags for the specified instance to the data included in the request.
    * (instances.setTags)
    *
-   * @param string $project Name of the project scoping this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $instance Name of the instance scoping this request.
    * @param Google_Tags $postBody
    * @param array $optParams Optional parameters.
@@ -4289,6 +4592,45 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
     $params = array('project' => $project, 'zone' => $zone, 'instance' => $instance, 'postBody' => $postBody);
     $params = array_merge($params, $optParams);
     return $this->call('setTags', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
+   * This method starts an instance that was stopped using the using the
+   * instances().stop method. For more information, see Restart an instance.
+   * (instances.start)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $instance Name of the instance resource to start.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function start($project, $zone, $instance, $optParams = array())
+  {
+    $params = array('project' => $project, 'zone' => $zone, 'instance' => $instance);
+    $params = array_merge($params, $optParams);
+    return $this->call('start', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
+   * This method stops a running instance, shutting it down cleanly, and allows
+   * you to restart the instance at a later time. Stopped instances do not incur
+   * per-minute, virtual machine usage charges while they are stopped, but any
+   * resources that the virtual machine is using, such as persistent disks and
+   * static IP addresses,will continue to be charged until they are deleted. For
+   * more information, see Stopping an instance. (instances.stop)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $zone The name of the zone for this request.
+   * @param string $instance Name of the instance resource to start.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function stop($project, $zone, $instance, $optParams = array())
+  {
+    $params = array('project' => $project, 'zone' => $zone, 'instance' => $instance);
+    $params = array_merge($params, $optParams);
+    return $this->call('stop', array($params), "Google_Service_Compute_Operation");
   }
 }
 
@@ -4306,7 +4648,7 @@ class Google_Service_Compute_Licenses_Resource extends Google_Service_Resource
   /**
    * Returns the specified license resource. (licenses.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $license Name of the license resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_License
@@ -4356,7 +4698,7 @@ class Google_Service_Compute_MachineTypes_Resource extends Google_Service_Resour
    * Returns the specified machine type resource. (machineTypes.get)
    *
    * @param string $project Project ID for this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $zone The name of the zone for this request.
    * @param string $machineType Name of the machine type resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_MachineType
@@ -4373,7 +4715,7 @@ class Google_Service_Compute_MachineTypes_Resource extends Google_Service_Resour
    * project. (machineTypes.listMachineTypes)
    *
    * @param string $project Project ID for this request.
-   * @param string $zone Name of the zone scoping this request.
+   * @param string $zone The name of the zone for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -4406,7 +4748,7 @@ class Google_Service_Compute_Networks_Resource extends Google_Service_Resource
   /**
    * Deletes the specified network resource. (networks.delete)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $network Name of the network resource to delete.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4421,7 +4763,7 @@ class Google_Service_Compute_Networks_Resource extends Google_Service_Resource
   /**
    * Returns the specified network resource. (networks.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $network Name of the network resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Network
@@ -4437,7 +4779,7 @@ class Google_Service_Compute_Networks_Resource extends Google_Service_Resource
    * Creates a network resource in the specified project using the data included
    * in the request. (networks.insert)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param Google_Network $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4453,7 +4795,7 @@ class Google_Service_Compute_Networks_Resource extends Google_Service_Resource
    * Retrieves the list of network resources available to the specified project.
    * (networks.listNetworks)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -4486,7 +4828,7 @@ class Google_Service_Compute_Projects_Resource extends Google_Service_Resource
   /**
    * Returns the specified project resource. (projects.get)
    *
-   * @param string $project Name of the project resource to retrieve.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Project
    */
@@ -4498,10 +4840,41 @@ class Google_Service_Compute_Projects_Resource extends Google_Service_Resource
   }
 
   /**
+   * Moves a persistent disk from one zone to another. (projects.moveDisk)
+   *
+   * @param string $project Project ID for this request.
+   * @param Google_DiskMoveRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function moveDisk($project, Google_Service_Compute_DiskMoveRequest $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('moveDisk', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
+   * Moves an instance and its attached persistent disks from one zone to another.
+   * (projects.moveInstance)
+   *
+   * @param string $project Project ID for this request.
+   * @param Google_InstanceMoveRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function moveInstance($project, Google_Service_Compute_InstanceMoveRequest $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('moveInstance', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
    * Sets metadata common to all instances within the specified project using the
    * data included in the request. (projects.setCommonInstanceMetadata)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param Google_Metadata $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4514,9 +4887,11 @@ class Google_Service_Compute_Projects_Resource extends Google_Service_Resource
   }
 
   /**
-   * Sets usage export location (projects.setUsageExportBucket)
+   * Enables the usage export feature and sets the usage export bucket where
+   * reports are stored. If you provide an empty request body using this method,
+   * the usage export feature will be disabled. (projects.setUsageExportBucket)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param Google_UsageExportLocation $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Operation
@@ -4544,7 +4919,7 @@ class Google_Service_Compute_RegionOperations_Resource extends Google_Service_Re
    * Deletes the specified region-specific operation resource.
    * (regionOperations.delete)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $region Name of the region scoping this request.
    * @param string $operation Name of the operation resource to delete.
    * @param array $optParams Optional parameters.
@@ -4560,7 +4935,7 @@ class Google_Service_Compute_RegionOperations_Resource extends Google_Service_Re
    * Retrieves the specified region-specific operation resource.
    * (regionOperations.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $region Name of the zone scoping this request.
    * @param string $operation Name of the operation resource to return.
    * @param array $optParams Optional parameters.
@@ -4577,7 +4952,7 @@ class Google_Service_Compute_RegionOperations_Resource extends Google_Service_Re
    * Retrieves the list of operation resources contained within the specified
    * region. (regionOperations.listRegionOperations)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $region Name of the region scoping this request.
    * @param array $optParams Optional parameters.
    *
@@ -4611,7 +4986,7 @@ class Google_Service_Compute_Regions_Resource extends Google_Service_Resource
   /**
    * Returns the specified region resource. (regions.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $region Name of the region resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Region
@@ -4627,7 +5002,7 @@ class Google_Service_Compute_Regions_Resource extends Google_Service_Resource
    * Retrieves the list of region resources available to the specified project.
    * (regions.listRegions)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -5216,6 +5591,114 @@ class Google_Service_Compute_TargetPools_Resource extends Google_Service_Resourc
 }
 
 /**
+ * The "targetVpnGateways" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $computeService = new Google_Service_Compute(...);
+ *   $targetVpnGateways = $computeService->targetVpnGateways;
+ *  </code>
+ */
+class Google_Service_Compute_TargetVpnGateways_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Retrieves the list of target VPN gateways grouped by scope.
+   * (targetVpnGateways.aggregatedList)
+   *
+   * @param string $project Project ID for this request.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string filter Optional. Filter expression for filtering listed
+   * resources.
+   * @opt_param string pageToken Optional. Tag returned by a previous list request
+   * truncated by maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Optional. Maximum count of results to be
+   * returned. Maximum value is 500 and default value is 500.
+   * @return Google_Service_Compute_TargetVpnGatewayAggregatedList
+   */
+  public function aggregatedList($project, $optParams = array())
+  {
+    $params = array('project' => $project);
+    $params = array_merge($params, $optParams);
+    return $this->call('aggregatedList', array($params), "Google_Service_Compute_TargetVpnGatewayAggregatedList");
+  }
+
+  /**
+   * Deletes the specified TargetVpnGateway resource. (targetVpnGateways.delete)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param string $targetVpnGateway Name of the TargetVpnGateway resource to
+   * delete.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function delete($project, $region, $targetVpnGateway, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region, 'targetVpnGateway' => $targetVpnGateway);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
+   * Returns the specified TargetVpnGateway resource. (targetVpnGateways.get)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param string $targetVpnGateway Name of the TargetVpnGateway resource to
+   * return.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_TargetVpnGateway
+   */
+  public function get($project, $region, $targetVpnGateway, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region, 'targetVpnGateway' => $targetVpnGateway);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Compute_TargetVpnGateway");
+  }
+
+  /**
+   * Creates a TargetVpnGateway resource in the specified project and region using
+   * the data included in the request. (targetVpnGateways.insert)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param Google_TargetVpnGateway $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function insert($project, $region, Google_Service_Compute_TargetVpnGateway $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('insert', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
+   * Retrieves the list of TargetVpnGateway resources available to the specified
+   * project and region. (targetVpnGateways.listTargetVpnGateways)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string filter Optional. Filter expression for filtering listed
+   * resources.
+   * @opt_param string pageToken Optional. Tag returned by a previous list request
+   * truncated by maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Optional. Maximum count of results to be
+   * returned. Maximum value is 500 and default value is 500.
+   * @return Google_Service_Compute_TargetVpnGatewayList
+   */
+  public function listTargetVpnGateways($project, $region, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Compute_TargetVpnGatewayList");
+  }
+}
+
+/**
  * The "urlMaps" collection of methods.
  * Typical usage is:
  *  <code>
@@ -5347,6 +5830,112 @@ class Google_Service_Compute_UrlMaps_Resource extends Google_Service_Resource
 }
 
 /**
+ * The "vpnTunnels" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $computeService = new Google_Service_Compute(...);
+ *   $vpnTunnels = $computeService->vpnTunnels;
+ *  </code>
+ */
+class Google_Service_Compute_VpnTunnels_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Retrieves the list of VPN tunnels grouped by scope.
+   * (vpnTunnels.aggregatedList)
+   *
+   * @param string $project Project ID for this request.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string filter Optional. Filter expression for filtering listed
+   * resources.
+   * @opt_param string pageToken Optional. Tag returned by a previous list request
+   * truncated by maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Optional. Maximum count of results to be
+   * returned. Maximum value is 500 and default value is 500.
+   * @return Google_Service_Compute_VpnTunnelAggregatedList
+   */
+  public function aggregatedList($project, $optParams = array())
+  {
+    $params = array('project' => $project);
+    $params = array_merge($params, $optParams);
+    return $this->call('aggregatedList', array($params), "Google_Service_Compute_VpnTunnelAggregatedList");
+  }
+
+  /**
+   * Deletes the specified VpnTunnel resource. (vpnTunnels.delete)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param string $vpnTunnel Name of the VpnTunnel resource to delete.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function delete($project, $region, $vpnTunnel, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region, 'vpnTunnel' => $vpnTunnel);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
+   * Returns the specified VpnTunnel resource. (vpnTunnels.get)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param string $vpnTunnel Name of the VpnTunnel resource to return.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_VpnTunnel
+   */
+  public function get($project, $region, $vpnTunnel, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region, 'vpnTunnel' => $vpnTunnel);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Compute_VpnTunnel");
+  }
+
+  /**
+   * Creates a VpnTunnel resource in the specified project and region using the
+   * data included in the request. (vpnTunnels.insert)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param Google_VpnTunnel $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Compute_Operation
+   */
+  public function insert($project, $region, Google_Service_Compute_VpnTunnel $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('insert', array($params), "Google_Service_Compute_Operation");
+  }
+
+  /**
+   * Retrieves the list of VpnTunnel resources contained in the specified project
+   * and region. (vpnTunnels.listVpnTunnels)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The name of the region for this request.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string filter Optional. Filter expression for filtering listed
+   * resources.
+   * @opt_param string pageToken Optional. Tag returned by a previous list request
+   * truncated by maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Optional. Maximum count of results to be
+   * returned. Maximum value is 500 and default value is 500.
+   * @return Google_Service_Compute_VpnTunnelList
+   */
+  public function listVpnTunnels($project, $region, $optParams = array())
+  {
+    $params = array('project' => $project, 'region' => $region);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Compute_VpnTunnelList");
+  }
+}
+
+/**
  * The "zoneOperations" collection of methods.
  * Typical usage is:
  *  <code>
@@ -5361,7 +5950,7 @@ class Google_Service_Compute_ZoneOperations_Resource extends Google_Service_Reso
    * Deletes the specified zone-specific operation resource.
    * (zoneOperations.delete)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $zone Name of the zone scoping this request.
    * @param string $operation Name of the operation resource to delete.
    * @param array $optParams Optional parameters.
@@ -5377,7 +5966,7 @@ class Google_Service_Compute_ZoneOperations_Resource extends Google_Service_Reso
    * Retrieves the specified zone-specific operation resource.
    * (zoneOperations.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $zone Name of the zone scoping this request.
    * @param string $operation Name of the operation resource to return.
    * @param array $optParams Optional parameters.
@@ -5394,7 +5983,7 @@ class Google_Service_Compute_ZoneOperations_Resource extends Google_Service_Reso
    * Retrieves the list of operation resources contained within the specified
    * zone. (zoneOperations.listZoneOperations)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $zone Name of the zone scoping this request.
    * @param array $optParams Optional parameters.
    *
@@ -5428,7 +6017,7 @@ class Google_Service_Compute_Zones_Resource extends Google_Service_Resource
   /**
    * Returns the specified zone resource. (zones.get)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param string $zone Name of the zone resource to return.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Compute_Zone
@@ -5444,7 +6033,7 @@ class Google_Service_Compute_Zones_Resource extends Google_Service_Resource
    * Retrieves the list of zone resources available to the specified project.
    * (zones.listZones)
    *
-   * @param string $project Name of the project scoping this request.
+   * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. Filter expression for filtering listed
@@ -6564,6 +7153,32 @@ class Google_Service_Compute_DiskList extends Google_Collection
   public function getSelfLink()
   {
     return $this->selfLink;
+  }
+}
+
+class Google_Service_Compute_DiskMoveRequest extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $destinationZone;
+  public $targetDisk;
+
+
+  public function setDestinationZone($destinationZone)
+  {
+    $this->destinationZone = $destinationZone;
+  }
+  public function getDestinationZone()
+  {
+    return $this->destinationZone;
+  }
+  public function setTargetDisk($targetDisk)
+  {
+    $this->targetDisk = $targetDisk;
+  }
+  public function getTargetDisk()
+  {
+    return $this->targetDisk;
   }
 }
 
@@ -7988,6 +8603,7 @@ class Google_Service_Compute_Instance extends Google_Collection
   protected $internal_gapi_mappings = array(
   );
   public $canIpForward;
+  public $cpuPlatform;
   public $creationTimestamp;
   public $description;
   protected $disksType = 'Google_Service_Compute_AttachedDisk';
@@ -8019,6 +8635,14 @@ class Google_Service_Compute_Instance extends Google_Collection
   public function getCanIpForward()
   {
     return $this->canIpForward;
+  }
+  public function setCpuPlatform($cpuPlatform)
+  {
+    $this->cpuPlatform = $cpuPlatform;
+  }
+  public function getCpuPlatform()
+  {
+    return $this->cpuPlatform;
   }
   public function setCreationTimestamp($creationTimestamp)
   {
@@ -8260,6 +8884,32 @@ class Google_Service_Compute_InstanceList extends Google_Collection
   public function getSelfLink()
   {
     return $this->selfLink;
+  }
+}
+
+class Google_Service_Compute_InstanceMoveRequest extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $destinationZone;
+  public $targetInstance;
+
+
+  public function setDestinationZone($destinationZone)
+  {
+    $this->destinationZone = $destinationZone;
+  }
+  public function getDestinationZone()
+  {
+    return $this->destinationZone;
+  }
+  public function setTargetInstance($targetInstance)
+  {
+    $this->targetInstance = $targetInstance;
+  }
+  public function getTargetInstance()
+  {
+    return $this->targetInstance;
   }
 }
 
@@ -10164,6 +10814,7 @@ class Google_Service_Compute_Route extends Google_Collection
   public $nextHopInstance;
   public $nextHopIp;
   public $nextHopNetwork;
+  public $nextHopVpnTunnel;
   public $priority;
   public $selfLink;
   public $tags;
@@ -10258,6 +10909,14 @@ class Google_Service_Compute_Route extends Google_Collection
   public function getNextHopNetwork()
   {
     return $this->nextHopNetwork;
+  }
+  public function setNextHopVpnTunnel($nextHopVpnTunnel)
+  {
+    $this->nextHopVpnTunnel = $nextHopVpnTunnel;
+  }
+  public function getNextHopVpnTunnel()
+  {
+    return $this->nextHopVpnTunnel;
   }
   public function setPriority($priority)
   {
@@ -11570,6 +12229,319 @@ class Google_Service_Compute_TargetReference extends Google_Model
   }
 }
 
+class Google_Service_Compute_TargetVpnGateway extends Google_Collection
+{
+  protected $collection_key = 'tunnels';
+  protected $internal_gapi_mappings = array(
+  );
+  public $creationTimestamp;
+  public $description;
+  public $forwardingRules;
+  public $id;
+  public $kind;
+  public $name;
+  public $network;
+  public $region;
+  public $selfLink;
+  public $status;
+  public $tunnels;
+
+
+  public function setCreationTimestamp($creationTimestamp)
+  {
+    $this->creationTimestamp = $creationTimestamp;
+  }
+  public function getCreationTimestamp()
+  {
+    return $this->creationTimestamp;
+  }
+  public function setDescription($description)
+  {
+    $this->description = $description;
+  }
+  public function getDescription()
+  {
+    return $this->description;
+  }
+  public function setForwardingRules($forwardingRules)
+  {
+    $this->forwardingRules = $forwardingRules;
+  }
+  public function getForwardingRules()
+  {
+    return $this->forwardingRules;
+  }
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  public function getName()
+  {
+    return $this->name;
+  }
+  public function setNetwork($network)
+  {
+    $this->network = $network;
+  }
+  public function getNetwork()
+  {
+    return $this->network;
+  }
+  public function setRegion($region)
+  {
+    $this->region = $region;
+  }
+  public function getRegion()
+  {
+    return $this->region;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+  public function setStatus($status)
+  {
+    $this->status = $status;
+  }
+  public function getStatus()
+  {
+    return $this->status;
+  }
+  public function setTunnels($tunnels)
+  {
+    $this->tunnels = $tunnels;
+  }
+  public function getTunnels()
+  {
+    return $this->tunnels;
+  }
+}
+
+class Google_Service_Compute_TargetVpnGatewayAggregatedList extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $id;
+  protected $itemsType = 'Google_Service_Compute_TargetVpnGatewaysScopedList';
+  protected $itemsDataType = 'map';
+  public $kind;
+  public $nextPageToken;
+  public $selfLink;
+
+
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+}
+
+class Google_Service_Compute_TargetVpnGatewayAggregatedListItems extends Google_Model
+{
+}
+
+class Google_Service_Compute_TargetVpnGatewayList extends Google_Collection
+{
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
+  public $id;
+  protected $itemsType = 'Google_Service_Compute_TargetVpnGateway';
+  protected $itemsDataType = 'array';
+  public $kind;
+  public $nextPageToken;
+  public $selfLink;
+
+
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+}
+
+class Google_Service_Compute_TargetVpnGatewaysScopedList extends Google_Collection
+{
+  protected $collection_key = 'targetVpnGateways';
+  protected $internal_gapi_mappings = array(
+  );
+  protected $targetVpnGatewaysType = 'Google_Service_Compute_TargetVpnGateway';
+  protected $targetVpnGatewaysDataType = 'array';
+  protected $warningType = 'Google_Service_Compute_TargetVpnGatewaysScopedListWarning';
+  protected $warningDataType = '';
+
+
+  public function setTargetVpnGateways($targetVpnGateways)
+  {
+    $this->targetVpnGateways = $targetVpnGateways;
+  }
+  public function getTargetVpnGateways()
+  {
+    return $this->targetVpnGateways;
+  }
+  public function setWarning(Google_Service_Compute_TargetVpnGatewaysScopedListWarning $warning)
+  {
+    $this->warning = $warning;
+  }
+  public function getWarning()
+  {
+    return $this->warning;
+  }
+}
+
+class Google_Service_Compute_TargetVpnGatewaysScopedListWarning extends Google_Collection
+{
+  protected $collection_key = 'data';
+  protected $internal_gapi_mappings = array(
+  );
+  public $code;
+  protected $dataType = 'Google_Service_Compute_TargetVpnGatewaysScopedListWarningData';
+  protected $dataDataType = 'array';
+  public $message;
+
+
+  public function setCode($code)
+  {
+    $this->code = $code;
+  }
+  public function getCode()
+  {
+    return $this->code;
+  }
+  public function setData($data)
+  {
+    $this->data = $data;
+  }
+  public function getData()
+  {
+    return $this->data;
+  }
+  public function setMessage($message)
+  {
+    $this->message = $message;
+  }
+  public function getMessage()
+  {
+    return $this->message;
+  }
+}
+
+class Google_Service_Compute_TargetVpnGatewaysScopedListWarningData extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $key;
+  public $value;
+
+
+  public function setKey($key)
+  {
+    $this->key = $key;
+  }
+  public function getKey()
+  {
+    return $this->key;
+  }
+  public function setValue($value)
+  {
+    $this->value = $value;
+  }
+  public function getValue()
+  {
+    return $this->value;
+  }
+}
+
 class Google_Service_Compute_TestFailure extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11946,6 +12918,355 @@ class Google_Service_Compute_UsageExportLocation extends Google_Model
   public function getReportNamePrefix()
   {
     return $this->reportNamePrefix;
+  }
+}
+
+class Google_Service_Compute_VpnTunnel extends Google_Collection
+{
+  protected $collection_key = 'ikeNetworks';
+  protected $internal_gapi_mappings = array(
+  );
+  public $creationTimestamp;
+  public $description;
+  public $detailedStatus;
+  public $id;
+  public $ikeNetworks;
+  public $ikeVersion;
+  public $kind;
+  public $name;
+  public $peerIp;
+  public $region;
+  public $selfLink;
+  public $sharedSecret;
+  public $sharedSecretHash;
+  public $status;
+  public $targetVpnGateway;
+
+
+  public function setCreationTimestamp($creationTimestamp)
+  {
+    $this->creationTimestamp = $creationTimestamp;
+  }
+  public function getCreationTimestamp()
+  {
+    return $this->creationTimestamp;
+  }
+  public function setDescription($description)
+  {
+    $this->description = $description;
+  }
+  public function getDescription()
+  {
+    return $this->description;
+  }
+  public function setDetailedStatus($detailedStatus)
+  {
+    $this->detailedStatus = $detailedStatus;
+  }
+  public function getDetailedStatus()
+  {
+    return $this->detailedStatus;
+  }
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setIkeNetworks($ikeNetworks)
+  {
+    $this->ikeNetworks = $ikeNetworks;
+  }
+  public function getIkeNetworks()
+  {
+    return $this->ikeNetworks;
+  }
+  public function setIkeVersion($ikeVersion)
+  {
+    $this->ikeVersion = $ikeVersion;
+  }
+  public function getIkeVersion()
+  {
+    return $this->ikeVersion;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  public function getName()
+  {
+    return $this->name;
+  }
+  public function setPeerIp($peerIp)
+  {
+    $this->peerIp = $peerIp;
+  }
+  public function getPeerIp()
+  {
+    return $this->peerIp;
+  }
+  public function setRegion($region)
+  {
+    $this->region = $region;
+  }
+  public function getRegion()
+  {
+    return $this->region;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+  public function setSharedSecret($sharedSecret)
+  {
+    $this->sharedSecret = $sharedSecret;
+  }
+  public function getSharedSecret()
+  {
+    return $this->sharedSecret;
+  }
+  public function setSharedSecretHash($sharedSecretHash)
+  {
+    $this->sharedSecretHash = $sharedSecretHash;
+  }
+  public function getSharedSecretHash()
+  {
+    return $this->sharedSecretHash;
+  }
+  public function setStatus($status)
+  {
+    $this->status = $status;
+  }
+  public function getStatus()
+  {
+    return $this->status;
+  }
+  public function setTargetVpnGateway($targetVpnGateway)
+  {
+    $this->targetVpnGateway = $targetVpnGateway;
+  }
+  public function getTargetVpnGateway()
+  {
+    return $this->targetVpnGateway;
+  }
+}
+
+class Google_Service_Compute_VpnTunnelAggregatedList extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $id;
+  protected $itemsType = 'Google_Service_Compute_VpnTunnelsScopedList';
+  protected $itemsDataType = 'map';
+  public $kind;
+  public $nextPageToken;
+  public $selfLink;
+
+
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+}
+
+class Google_Service_Compute_VpnTunnelAggregatedListItems extends Google_Model
+{
+}
+
+class Google_Service_Compute_VpnTunnelList extends Google_Collection
+{
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
+  public $id;
+  protected $itemsType = 'Google_Service_Compute_VpnTunnel';
+  protected $itemsDataType = 'array';
+  public $kind;
+  public $nextPageToken;
+  public $selfLink;
+
+
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+}
+
+class Google_Service_Compute_VpnTunnelsScopedList extends Google_Collection
+{
+  protected $collection_key = 'vpnTunnels';
+  protected $internal_gapi_mappings = array(
+  );
+  protected $vpnTunnelsType = 'Google_Service_Compute_VpnTunnel';
+  protected $vpnTunnelsDataType = 'array';
+  protected $warningType = 'Google_Service_Compute_VpnTunnelsScopedListWarning';
+  protected $warningDataType = '';
+
+
+  public function setVpnTunnels($vpnTunnels)
+  {
+    $this->vpnTunnels = $vpnTunnels;
+  }
+  public function getVpnTunnels()
+  {
+    return $this->vpnTunnels;
+  }
+  public function setWarning(Google_Service_Compute_VpnTunnelsScopedListWarning $warning)
+  {
+    $this->warning = $warning;
+  }
+  public function getWarning()
+  {
+    return $this->warning;
+  }
+}
+
+class Google_Service_Compute_VpnTunnelsScopedListWarning extends Google_Collection
+{
+  protected $collection_key = 'data';
+  protected $internal_gapi_mappings = array(
+  );
+  public $code;
+  protected $dataType = 'Google_Service_Compute_VpnTunnelsScopedListWarningData';
+  protected $dataDataType = 'array';
+  public $message;
+
+
+  public function setCode($code)
+  {
+    $this->code = $code;
+  }
+  public function getCode()
+  {
+    return $this->code;
+  }
+  public function setData($data)
+  {
+    $this->data = $data;
+  }
+  public function getData()
+  {
+    return $this->data;
+  }
+  public function setMessage($message)
+  {
+    $this->message = $message;
+  }
+  public function getMessage()
+  {
+    return $this->message;
+  }
+}
+
+class Google_Service_Compute_VpnTunnelsScopedListWarningData extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $key;
+  public $value;
+
+
+  public function setKey($key)
+  {
+    $this->key = $key;
+  }
+  public function getKey()
+  {
+    return $this->key;
+  }
+  public function setValue($value)
+  {
+    $this->value = $value;
+  }
+  public function getValue()
+  {
+    return $this->value;
   }
 }
 
