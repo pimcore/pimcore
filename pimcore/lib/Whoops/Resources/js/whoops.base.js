@@ -5,6 +5,7 @@ Zepto(function($) {
   var $container      = $('.details-container');
   var $activeLine     = $frameContainer.find('.frame.active');
   var $activeFrame    = $container.find('.frame-code.active');
+  var $ajaxEditors    = $('.editor-link[data-ajax]');
   var headerHeight    = $('header').height();
 
   var highlightCurrentLine = function() {
@@ -56,4 +57,30 @@ Zepto(function($) {
 		  $clipEl.show();
 	  });
   }
+  
+  $(document).on('keydown', function(e) {
+	  if(e.ctrlKey) {
+		  // CTRL+Arrow-UP/Arrow-Down support:
+		  // 1) select the next/prev element 
+		  // 2) make sure the newly selected element is within the view-scope
+		  // 3) focus the (right) container, so arrow-up/down (without ctrl) scroll the details
+		  if (e.which === 38 /* arrow up */) {
+			  $activeLine.prev('.frame').click();
+			  $activeLine[0].scrollIntoView();
+			  $container.focus();
+			  e.preventDefault();
+		  } else if (e.which === 40 /* arrow down */) {
+			  $activeLine.next('.frame').click();
+			  $activeLine[0].scrollIntoView();
+			  $container.focus();
+			  e.preventDefault();
+		  }
+	  } 
+  });
+  
+  // Avoid to quit the page with some protocol (e.g. IntelliJ Platform REST API)
+  $ajaxEditors.on('click', function(e){
+    e.preventDefault();
+    $.get(this.href);
+  });
 });
