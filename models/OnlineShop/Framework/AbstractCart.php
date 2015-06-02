@@ -701,6 +701,16 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     }
 
     /**
+     * Checks if an error code is a defined Voucher Error Code.
+     *
+     * @param $errorCode
+     * @return bool
+     */
+    public function isVoucherErrorCode($errorCode){
+        return $errorCode > 0 && $errorCode < 10;
+    }
+
+    /**
      * Removes all tokens form cart and releases the token reservations.
      */
     public function removeAllVoucherTokens(){
@@ -715,7 +725,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      * @param string $code
      *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
-     * @throws OnlineShop_Framework_Exception_VoucherServiceException
+     * @throws Exception
      *
      * @return bool
      */

@@ -26,4 +26,23 @@ abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Model
         }
         return false;
     }
+
+    /**
+     * @return bool|string
+     */
+    public function getExistingLengths(){
+        $db = \Pimcore\Resource::get();
+
+        $query = "
+            SELECT length FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . "
+            WHERE voucherSeriesId = ?
+            GROUP BY length";
+
+        try {
+            return $db->fetchAssoc($query, $this->getId());
+        }catch (Exception $e){
+            return false;
+        }
+    }
+
 }

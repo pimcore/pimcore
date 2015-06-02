@@ -456,6 +456,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
         $view->msg = [];
 
         $tokens = new OnlineShop_Framework_VoucherService_Token_List();
+
         try {
             $tokens->setFilterConditions($params['id'], $params);
         } catch (Exception $e) {
@@ -464,15 +465,20 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
         }
 
         if ($tokens) {
+
             $paginator = Zend_Paginator::factory($tokens);
+
             if ($params['tokensPerPage']) {
                 $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
             } else {
                 $paginator->setItemCountPerPage(25);
             }
+
             $paginator->setCurrentPageNumber($params['page']);
+
             $view->paginator = $paginator;
             $view->count = sizeof($tokens);
+
         } else {
             $view->msg['result'] = $view->ts('plugin_onlineshop_voucherservice_msg-error-token-noresult');
         }
@@ -489,9 +495,12 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
         ];
 
         $statisticUsagePeriod = 30;
+
         if (isset($params['statisticUsagePeriod'])) {
             $statisticUsagePeriod = $params['statisticUsagePeriod'];
         }
+
+        $view->tokenLengths = $this->series->getExistingLengths();
 
         $view->statistics = $this->getStatistics($statisticUsagePeriod);
 

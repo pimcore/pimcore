@@ -311,7 +311,6 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
         return true;
     }
 
-
     /**
      * @return mixed
      */

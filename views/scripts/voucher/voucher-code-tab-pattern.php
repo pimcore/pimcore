@@ -162,8 +162,11 @@ if ($this->paginator) {
                                 </div>
                                 <div class=" col col-sm-6">
                                     <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-length')?></label>
-                                    <input type="number" name="length" value="<?= $this->getParam('length') ?>" min="0"
-                                           placeholder="length" class="form-control"/>
+                                    <select class="form-control" name="length" >
+                                        <? foreach($this->tokenLengths as $length => $amount){ ?>
+                                            <option value="<?=$length ?>" <? if ($this->getParam('length') == $length) { echo "selected"; } ?>"> <?= $length?> </option>
+                                        <? } ?>
+                                    </select>
                                 </div>
                             </div>
 

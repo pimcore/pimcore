@@ -8,6 +8,9 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
 
     public $seriesId;
 
+    /* @var OnlineShop_Framework_AbstractVoucherSeries */
+    public $series;
+
     /**
      * @param OnlineShop_Framework_AbstractVoucherTokenType $configuration
      * @throws Exception
@@ -17,6 +20,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
         if ($configuration instanceof OnlineShop_Framework_AbstractVoucherTokenType) {
             $this->configuration = $configuration;
             $this->seriesId = $configuration->getObject()->getId();
+            $this->series = $configuration->getObject();
         } else {
             throw new Exception("Invalid Configuration Class.");
         }
@@ -48,7 +52,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
      *
      * @param $code
      * @param OnlineShop_Framework_ICart $cart
-     * @throws OnlineShop_Framework_Exception_VoucherServiceException
+     * @throws Exception
      */
     protected function checkAllowOncePerCart($code, OnlineShop_Framework_ICart $cart)
     {
@@ -71,7 +75,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
      *
      * @param OnlineShop_Framework_ICart $cart
      *
-     * @throws OnlineShop_Framework_Exception_VoucherServiceException
+     * @throws Exception
      */
     protected function checkOnlyToken(OnlineShop_Framework_ICart $cart)
     {
