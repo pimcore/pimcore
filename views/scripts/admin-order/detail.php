@@ -86,7 +86,7 @@ $currency = $orderAgent->getCurrency();
                 <tr class="active">
                     <td colspan="6"></td>
                 </tr>
-                <?php foreach($order->getPriceModifications() as $modification): /* @var \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications $modification */ ?>
+                <?php foreach((array)$order->getPriceModifications() as $modification): /* @var \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications $modification */ ?>
                     <tr>
                         <td colspan="4" class="text-right"><?= $modification->getName() ?></td>
                         <th class="text-right"><?= $currency->toCurrency($modification->getAmount()) ?: '-' ?></th>

@@ -442,18 +442,18 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
     }
 
 
-
-
     /**
+     * @param string $currency
+     *
      * @return $this
      */
-    public function setCurrency(Zend_Currency $currency)
+    public function setCurrency($currency)
     {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("setPaymentInfo is not implemented for " . get_class($this));
+        throw new OnlineShop_Framework_Exception_UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
     /**
-     * @return Zend_Currency
+     * @return string
      */
     public function getCurrency()
     {
