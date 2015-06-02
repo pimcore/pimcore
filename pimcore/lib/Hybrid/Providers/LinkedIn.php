@@ -2,18 +2,18 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 /**
  * Hybrid_Providers_LinkedIn provider adapter based on OAuth1 protocol
- * 
+ *
  * Hybrid_Providers_LinkedIn use linkedinPHP library created by fiftyMission Inc.
- * 
+ *
  * http://hybridauth.sourceforge.net/userguide/IDProvider_info_LinkedIn.html
  */
 class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
-{ 
+{
 	/**
 	* IDp wrappers initializer
 	*/
@@ -22,7 +22,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] ){
 			throw new Exception( "Your application key and secret are required in order to connect to {$this->providerId}.", 4 );
 		}
-		if ( ! class_exists('OAuthConsumer') ) {
+		if ( ! class_exists('OAuthConsumer', false) ) {
 			require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth.php";
 		}
 		require_once Hybrid_Auth::$config["path_libraries"] . "LinkedIn/LinkedIn.php";
@@ -153,7 +153,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		}
 
 		$connections = new SimpleXMLElement( $response['linkedin'] );
-		
+
 		$contacts = ARRAY();
 
 		foreach( $connections->person as $connection ) {
@@ -230,7 +230,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
 		$updates = new SimpleXMLElement( $response['linkedin'] );
 
-		$activities = ARRAY(); 
+		$activities = ARRAY();
 
 		foreach( $updates->update as $update ) {
 			$person = $update->{'update-content'}->person;
@@ -246,7 +246,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 			$ua->user->displayName  = (string) $person->{'first-name'} . ' ' . $person->{'last-name'};
 			$ua->user->profileURL   = (string) $person->{'site-standard-profile-request'}->url;
 			$ua->user->photoURL     = NULL;
-			
+
 			$activities[] = $ua;
 		}
 

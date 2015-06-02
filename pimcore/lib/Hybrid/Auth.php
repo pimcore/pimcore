@@ -2,19 +2,19 @@
 /**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 /**
  * Hybrid_Auth class
- * 
+ *
  * Hybrid_Auth class provide a simple way to authenticate users via OpenID and OAuth.
- * 
+ *
  * Generally, Hybrid_Auth is the only class you should instanciate and use throughout your application.
  */
-class Hybrid_Auth 
+class Hybrid_Auth
 {
-	public static $version = "2.3.0";
+	public static $version = "2.4.1";
 
 	public static $config  = array();
 
@@ -28,15 +28,15 @@ class Hybrid_Auth
 
 	/**
 	* Try to start a new session of none then initialize Hybrid_Auth
-	* 
+	*
 	* Hybrid_Auth constructor will require either a valid config array or
-	* a path for a configuration file as parameter. To know more please 
+	* a path for a configuration file as parameter. To know more please
 	* refer to the Configuration section:
 	* http://hybridauth.sourceforge.net/userguide/Configuration.html
 	*/
 	function __construct( $config )
-	{ 
-		Hybrid_Auth::initialize( $config ); 
+	{
+		Hybrid_Auth::initialize( $config );
 	}
 
 	// --------------------------------------------------------------------
@@ -55,7 +55,7 @@ class Hybrid_Auth
 		}
 
 		// build some need'd paths
-		$config["path_base"]        = realpath( dirname( __FILE__ ) )  . "/"; 
+		$config["path_base"]        = realpath( dirname( __FILE__ ) )  . "/";
 		$config["path_libraries"]   = $config["path_base"] . "thirdparty/";
 		$config["path_resources"]   = $config["path_base"] . "resources/";
 		$config["path_providers"]   = $config["path_base"] . "Providers/";
@@ -99,10 +99,10 @@ class Hybrid_Auth
 		// start session storage mng
 		Hybrid_Auth::$store = new Hybrid_Storage();
 
-		Hybrid_Logger::info( "Enter Hybrid_Auth::initialize()"); 
-		Hybrid_Logger::info( "Hybrid_Auth::initialize(). PHP version: " . PHP_VERSION ); 
-		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth version: " . Hybrid_Auth::$version ); 
-		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth called from: " . Hybrid_Auth::getCurrentUrl() ); 
+		Hybrid_Logger::info( "Enter Hybrid_Auth::initialize()");
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(). PHP version: " . PHP_VERSION );
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth version: " . Hybrid_Auth::$version );
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth called from: " . Hybrid_Auth::getCurrentUrl() );
 
 		// PHP Curl extension [http://www.php.net/manual/en/intro.curl.php]
 		if ( ! function_exists('curl_init') ) {
@@ -114,7 +114,7 @@ class Hybrid_Auth
 		if ( ! function_exists('json_decode') ) {
 			Hybrid_Logger::error('Hybridauth Library needs the JSON PHP extension.');
 			throw new Exception('Hybridauth Library needs the JSON PHP extension.');
-		} 
+		}
 
 		// session.name
 		if( session_name() != "PHPSESSID" ){
@@ -132,10 +132,10 @@ class Hybrid_Auth
 		}
 
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump used config: ", serialize( $config ) );
-		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", Hybrid_Auth::storage()->getSessionData() ); 
+		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", Hybrid_Auth::storage()->getSessionData() );
 		Hybrid_Logger::info( "Hybrid_Auth initialize: check if any error is stored on the endpoint..." );
 
-		if( Hybrid_Error::hasError() ){ 
+		if( Hybrid_Error::hasError() ){
 			$m = Hybrid_Error::getErrorMessage();
 			$c = Hybrid_Error::getErrorCode();
 			$p = Hybrid_Error::getErrorPrevious();
@@ -146,7 +146,7 @@ class Hybrid_Auth
 
 			// try to provide the previous if any
 			// Exception::getPrevious (PHP 5 >= 5.3.0) http://php.net/manual/en/exception.getprevious.php
-			if ( version_compare( PHP_VERSION, '5.3.0', '>=' ) && ($p instanceof Exception) ) { 
+			if ( version_compare( PHP_VERSION, '5.3.0', '>=' ) && ($p instanceof Exception) ) {
 				throw new Exception( $m, $c, $p );
 			}
 			else{
@@ -156,7 +156,7 @@ class Hybrid_Auth
 
 		Hybrid_Logger::info( "Hybrid_Auth initialize: no error found. initialization succeed." );
 
-		// Endof initialize 
+		// Endof initialize
 	}
 
 	// --------------------------------------------------------------------
@@ -176,30 +176,30 @@ class Hybrid_Auth
 	// --------------------------------------------------------------------
 
 	/**
-	* Get hybridauth session data. 
+	* Get hybridauth session data.
 	*/
 	function getSessionData()
-	{ 
+	{
 		return Hybrid_Auth::storage()->getSessionData();
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	* restore hybridauth session data. 
+	* restore hybridauth session data.
 	*/
 	function restoreSessionData( $sessiondata = NULL )
-	{ 
+	{
 		Hybrid_Auth::storage()->restoreSessionData( $sessiondata );
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	* Try to authenticate the user with a given provider. 
+	* Try to authenticate the user with a given provider.
 	*
 	* If the user is already connected we just return and instance of provider adapter,
-	* ELSE, try to authenticate and authorize the user with the provider. 
+	* ELSE, try to authenticate and authorize the user with the provider.
 	*
 	* $params is generally an array with required info in order for this provider and HybridAuth to work,
 	*  like :
@@ -212,7 +212,7 @@ class Hybrid_Auth
 		Hybrid_Logger::info( "Enter Hybrid_Auth::authenticate( $providerId )" );
 
 		// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
-		if( ! Hybrid_Auth::storage()->get( "hauth_session.$providerId.is_logged_in" ) ){ 
+		if( ! Hybrid_Auth::storage()->get( "hauth_session.$providerId.is_logged_in" ) ){
 			Hybrid_Logger::info( "Hybrid_Auth::authenticate( $providerId ), User not connected to the provider. Try to authenticate.." );
 
 			$provider_adapter = Hybrid_Auth::setup( $providerId, $params );
@@ -232,7 +232,7 @@ class Hybrid_Auth
 
 	/**
 	* Return the adapter instance for an authenticated provider
-	*/ 
+	*/
 	public static function getAdapter( $providerId = NULL )
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Auth::getAdapter( $providerId )" );
@@ -244,25 +244,25 @@ class Hybrid_Auth
 
 	/**
 	* Setup an adapter for a given provider
-	*/ 
+	*/
 	public static function setup( $providerId, $params = NULL )
 	{
 		Hybrid_Logger::debug( "Enter Hybrid_Auth::setup( $providerId )", $params );
 
-		if( ! $params ){ 
+		if( ! $params ){
 			$params = Hybrid_Auth::storage()->get( "hauth_session.$providerId.id_provider_params" );
-			
+
 			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ), no params given. Trying to get the stored for this provider.", $params );
 		}
 
-		if( ! $params ){ 
+		if( ! $params ){
 			$params = ARRAY();
-			
+
 			Hybrid_Logger::info( "Hybrid_Auth::setup( $providerId ), no stored params found for this provider. Initialize a new one for new session" );
 		}
 
 		if( is_array($params) && ! isset( $params["hauth_return_to"] ) ){
-			$params["hauth_return_to"] = Hybrid_Auth::getCurrentUrl(); 
+			$params["hauth_return_to"] = Hybrid_Auth::getCurrentUrl();
 
 			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ). HybridAuth Callback URL set to: ", $params["hauth_return_to"] );
 		}
@@ -273,7 +273,7 @@ class Hybrid_Auth
 		$provider->factory( $providerId, $params );
 
 		return $provider;
-	} 
+	}
 
 	// --------------------------------------------------------------------
 
@@ -289,7 +289,7 @@ class Hybrid_Auth
 
 	/**
 	* Return array listing all authenticated providers
-	*/ 
+	*/
 	public static function getConnectedProviders()
 	{
 		$idps = array();
@@ -307,7 +307,7 @@ class Hybrid_Auth
 
 	/**
 	* Return array listing all enabled providers as well as a flag if you are connected.
-	*/ 
+	*/
 	public static function getProviders()
 	{
 		$idps = array();
@@ -328,8 +328,8 @@ class Hybrid_Auth
 	// --------------------------------------------------------------------
 
 	/**
-	* A generic function to logout all connected provider at once 
-	*/ 
+	* A generic function to logout all connected provider at once
+	*/
 	public static function logoutAllProviders()
 	{
 		$idps = Hybrid_Auth::getConnectedProviders();
@@ -363,7 +363,7 @@ class Hybrid_Auth
 			echo '<body onload="redirect()">';
 			echo 'Redirecting, please wait...';
 			echo '</body>';
-			echo '</html>'; 
+			echo '</html>';
 		}
 
 		die();
@@ -374,16 +374,23 @@ class Hybrid_Auth
 	/**
 	* Utility function, return the current url. TRUE to get $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
 	*/
-	public static function getCurrentUrl( $request_uri = true ) 
+	public static function getCurrentUrl( $request_uri = true )
 	{
+		if (php_sapi_name() == 'cli') {
+			return '';
+		}
+
+		$protocol = 'http://';
+
 		if(
-			isset( $_SERVER['HTTPS'] ) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 )
-		|| 	isset( $_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+			(
+				isset( $_SERVER['HTTPS'] ) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 )
+			) ||
+			(
+				isset( $_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+			)
 		){
 			$protocol = 'https://';
-		}
-		else {
-			$protocol = 'http://';
 		}
 
 		$url = $protocol . $_SERVER['HTTP_HOST'];

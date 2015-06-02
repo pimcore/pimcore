@@ -2,13 +2,13 @@
 /**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 /**
  * Errors manager
- * 
- * HybridAuth errors are stored in Hybrid::storage() and not displayed directly to the end user 
+ *
+ * HybridAuth errors are stored in Hybrid::storage() and not displayed directly to the end user
  */
 class Hybrid_Error
 {
@@ -35,7 +35,7 @@ class Hybrid_Error
 	* Clear the last error
 	*/
 	public static function clearError()
-	{ 
+	{
 		Hybrid_Logger::info( "Enter Hybrid_Error::clearError()" );
 
 		Hybrid_Auth::storage()->delete( "hauth_session.error.status"   );
@@ -46,28 +46,28 @@ class Hybrid_Error
 	}
 
 	/**
-	* Checks to see if there is a an error. 
-	* 
+	* Checks to see if there is a an error.
+	*
 	* @return boolean True if there is an error.
 	*/
 	public static function hasError()
-	{ 
+	{
 		return (bool) Hybrid_Auth::storage()->get( "hauth_session.error.status" );
 	}
 
 	/**
-	* return error message 
+	* return error message
 	*/
 	public static function getErrorMessage()
-	{ 
+	{
 		return Hybrid_Auth::storage()->get( "hauth_session.error.message" );
 	}
 
 	/**
-	* return error code  
+	* return error code
 	*/
 	public static function getErrorCode()
-	{ 
+	{
 		return Hybrid_Auth::storage()->get( "hauth_session.error.code" );
 	}
 
@@ -75,7 +75,7 @@ class Hybrid_Error
 	* return string detailed error backtrace as string.
 	*/
 	public static function getErrorTrace()
-	{ 
+	{
 		return Hybrid_Auth::storage()->get( "hauth_session.error.trace" );
 	}
 
@@ -83,7 +83,7 @@ class Hybrid_Error
 	* @return string detailed error backtrace as string.
 	*/
 	public static function getErrorPrevious()
-	{ 
+	{
 		return Hybrid_Auth::storage()->get( "hauth_session.error.previous" );
 	}
 }

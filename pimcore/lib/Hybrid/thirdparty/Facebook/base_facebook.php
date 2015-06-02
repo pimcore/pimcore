@@ -171,6 +171,13 @@ abstract class BaseFacebook
   );
 
   /**
+   * The decoded response object.
+   *
+   * @var mixed
+   */
+  protected $response;
+
+  /**
    * The Application ID.
    *
    * @var string
@@ -449,6 +456,16 @@ abstract class BaseFacebook
     }
 
     return $this->accessToken;
+  }
+
+  /**
+   * Return the response object afer the fact
+   *
+   * @return mixed
+   */
+  public function getResponse()
+  {
+      return $this->response;
   }
 
   /**
@@ -913,7 +930,7 @@ abstract class BaseFacebook
     }
     // @codeCoverageIgnoreEnd
 
-    return $result;
+    return $this->response = $result;
   }
 
   /**

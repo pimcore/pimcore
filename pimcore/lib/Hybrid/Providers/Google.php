@@ -2,12 +2,12 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 /**
  * Hybrid_Providers_Google provider adapter based on OAuth2 protocol
- * 
+ *
  * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
  */
 class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
@@ -15,13 +15,13 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
     // > more infos on google APIs: http://developer.google.com (official site)
 	// or here: http://discovery-check.appspot.com/ (unofficial but up to date)
 
-	// default permissions 
+	// default permissions
 	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds/";
 
 	/**
-	* IDp wrappers initializer 
+	* IDp wrappers initializer
 	*/
-	function initialize() 
+	function initialize()
 	{
 		parent::initialize();
 
@@ -29,7 +29,10 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->api->authorize_url  = "https://accounts.google.com/o/oauth2/auth";
 		$this->api->token_url      = "https://accounts.google.com/o/oauth2/token";
 		$this->api->token_info_url = "https://www.googleapis.com/oauth2/v2/tokeninfo";
-        
+
+		// Google POST methods require an access_token in the header
+		$this->api->curl_header = array("Authorization: OAuth " . $this->api->access_token);
+
 		// Override the redirect uri when it's set in the config parameters. This way we prevent
 		// redirect uri mismatches when authenticating with Google.
 		if( isset( $this->config['redirect_uri'] ) && ! empty( $this->config['redirect_uri'] ) ){
@@ -38,7 +41,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	}
 
 	/**
-	* begin login step 
+	* begin login step
 	*/
 	function loginBegin()
 	{
@@ -58,7 +61,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
             $parameters[ 'approval_prompt' ] = 'force';
         }
 
-		Hybrid_Auth::redirect( $this->api->authorizeUrl( $parameters ) ); 
+		Hybrid_Auth::redirect( $this->api->authorizeUrl( $parameters ) );
 	}
 
 	/**
@@ -66,7 +69,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
-		// refresh tokens if needed 
+		// refresh tokens if needed
 		$this->refreshToken();
 
 		// ask google api for user infos
@@ -94,7 +97,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->photoURL      = (property_exists($response,'image'))?((property_exists($response->image,'url'))?substr($response->image->url, 0, -2)."200":''):'';
 		$this->user->profile->profileURL    = (property_exists($response,'url'))?$response->url:"";
 		$this->user->profile->description   = (property_exists($response,'aboutMe'))?$response->aboutMe:"";
-		$this->user->profile->gender        = (property_exists($response,'gender'))?$response->gender:""; 
+		$this->user->profile->gender        = (property_exists($response,'gender'))?$response->gender:"";
 		$this->user->profile->language      = (property_exists($response,'locale'))?$response->locale:((property_exists($verified,'locale'))?$verified->locale:"");
 		$this->user->profile->email         = (property_exists($response,'email'))?$response->email:((property_exists($verified,'email'))?$verified->email:"");
 		$this->user->profile->emailVerified = (property_exists($verified,'email'))?$verified->email:"";
@@ -109,17 +112,29 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 					}
 				}
 			}
+			if (property_exists($verified, 'emails')) {
+				if (count($verified->emails) == 1) {
+					$this->user->profile->emailVerified = $verified->emails[0]->value;
+				} else {
+					foreach ($verified->emails as $email) {
+						if ($email->type == 'account') {
+							$this->user->profile->emailVerified = $email->value;
+							break;
+						}
+					}
+				}
+			}
 		}
 		$this->user->profile->phone 		= (property_exists($response,'phone'))?$response->phone:"";
 		$this->user->profile->country 		= (property_exists($response,'country'))?$response->country:"";
 		$this->user->profile->region 		= (property_exists($response,'region'))?$response->region:"";
 		$this->user->profile->zip	 		= (property_exists($response,'zip'))?$response->zip:"";
 		if( property_exists($response,'placesLived') ){
-			$this->user->profile->city 	= ""; 
-			$this->user->profile->address	= ""; 
+			$this->user->profile->city 	= "";
+			$this->user->profile->address	= "";
 			foreach($response->placesLived as $c){
 				if(property_exists($c,'primary')){
-					if($c->primary == true){ 
+					if($c->primary == true){
 						$this->user->profile->address 	= $c->value;
 						$this->user->profile->city 	= $c->value;
 						break;
@@ -128,12 +143,12 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 					if(property_exists($c,'value')){
 						$this->user->profile->address 	= $c->value;
 						$this->user->profile->city 	= $c->value;
-					}	
+					}
 				}
 			}
 		}
-		
-		// google API returns multiple urls, but a "website" only if it is verified 
+
+		// google API returns multiple urls, but a "website" only if it is verified
 		// see http://support.google.com/plus/answer/1713826?hl=en
 		if( property_exists($response,'urls') ){
 			foreach($response->urls as $u){
@@ -153,7 +168,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 			$this->user->profile->age = '';
 		}
 		// google API returns birthdays only if a user set 'show in my account'
-		if( property_exists($response,'birthday') ){ 
+		if( property_exists($response,'birthday') ){
 			list($birthday_year, $birthday_month, $birthday_day) = explode( '-', $response->birthday );
 
 			$this->user->profile->birthDay   = (int) $birthday_day;
@@ -162,30 +177,30 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		} else {
 			$this->user->profile->birthDay=0;$this->user->profile->birthMonth=0;$this->user->profile->birthYear=0;
 		}
-                
+
 		return $this->user->profile;
 	}
 
 	/**
-	* load the user (Gmail and google plus) contacts 
+	* load the user (Gmail and google plus) contacts
 	*  ..toComplete
 	*/
 	function getUserContacts()
-	{ 
-		// refresh tokens if needed 
-		$this->refreshToken();  
+	{
+		// refresh tokens if needed
+		$this->refreshToken();
 
-		$contacts = array(); 
+		$contacts = array();
 		if( ! isset( $this->config['contacts_param'] ) ){
 			$this->config['contacts_param'] = array( "max-results" => 500 );
 		}
-		
+
 		// Google Gmail and Android contacts
 		if (strpos($this->scope, '/m8/feeds/') !== false) {
-	
-			$response = $this->api->api( "https://www.google.com/m8/feeds/contacts/default/full?" 
-						. http_build_query( array_merge( array('alt' => 'json', 'v' => '3.0'), $this->config['contacts_param'] ) ) ); 
-	
+
+			$response = $this->api->api( "https://www.google.com/m8/feeds/contacts/default/full?"
+						. http_build_query( array_merge( array('alt' => 'json', 'v' => '3.0'), $this->config['contacts_param'] ) ) );
+
 			if( ! $response ){
 				return ARRAY();
 			}
@@ -229,33 +244,33 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 				}
 			}
 		}
-		
+
 		// Google social contacts
 		if (strpos($this->scope, '/auth/plus.login') !== false) {
-			
-			$response = $this->api->api( "https://www.googleapis.com/plus/v1/people/me/people/visible?" 
-						. http_build_query( $this->config['contacts_param'] ) ); 
-	
+
+			$response = $this->api->api( "https://www.googleapis.com/plus/v1/people/me/people/visible?"
+						. http_build_query( $this->config['contacts_param'] ) );
+
 			if( ! $response ){
 				return ARRAY();
 			}
-			
+
 			foreach( $response->items as $idx => $item ){
 				$uc = new Hybrid_User_Contact();
-				$uc->email 			= (property_exists($item,'email'))?$item->email:'';   
-				$uc->displayName 	= (property_exists($item,'displayName'))?$item->displayName:'';  
+				$uc->email 			= (property_exists($item,'email'))?$item->email:'';
+				$uc->displayName 	= (property_exists($item,'displayName'))?$item->displayName:'';
 				$uc->identifier 	= (property_exists($item,'id'))?$item->id:'';
-				
+
 				$uc->description 	= (property_exists($item,'objectType'))?$item->objectType:'';
 				$uc->photoURL 		= (property_exists($item,'image'))?((property_exists($item->image,'url'))?$item->image->url:''):'';
 				$uc->profileURL 	= (property_exists($item,'url'))?$item->url:'';
 				$uc->webSiteURL 	= '';
-				
+
 				$contacts[] = $uc;
 			}
-			
+
 		}
-		
+
 		return $contacts;
  	}
 
