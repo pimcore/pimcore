@@ -307,7 +307,7 @@ class PimcoreNavigationController
                     }
 
                     if ($child->hasChilds()) {
-                        $childPages = $this->buildNextLevel($child, false);
+                        $childPages = $this->buildNextLevel($child, false, $pageCallback);
                         $page->setPages($childPages);
                     }
 
