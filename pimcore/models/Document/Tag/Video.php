@@ -557,8 +557,41 @@ class Video extends Model\Document\Tag
                 $height = $options["height"];
             }
 
+                        $valid_vimeo_prams=array(
+                "autoplay",
+                "loop");
+
+            $additional_params="";
+
+            $clipConfig = array();
+            if(is_array($options["config"]["clip"])) {
+                $clipConfig = $options["config"]["clip"];
+            }
+
+            // this is to be backward compatible to <= v 1.4.7
+            $configurations = $clipConfig;
+            if(is_array($options["vimeo"])){
+                $configurations = array_merge($clipConfig, $options["vimeo"]);
+            }
+
+            if(!empty($configurations)){
+                foreach($configurations as $key=>$value){
+                    if(in_array($key, $valid_vimeo_prams)){
+                        if(is_bool($value)){
+                            if($value){
+                                $additional_params.="&".$key."=1";
+                            }else{
+                                $additional_params.="&".$key."=0";
+                            }
+                        }else{
+                            $additional_params.="&".$key."=".$value;
+                        }
+                    }
+                }
+            }
+
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
-                <iframe src="//player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                <iframe src="//player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
             return $code;
