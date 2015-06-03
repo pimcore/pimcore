@@ -538,9 +538,12 @@ class Video extends Model\Document\Tag
         $uid = "video_" . uniqid();
 
         // get vimeo id
-        if(preg_match("@vimeo.*/([\d]+)@i", $this->id, $matches))
+        if(preg_match("@vimeo.*/([\d]+)@i", $this->id, $matches)) {
             $vimeoId = intval($matches[1]);
-        else $vimeoId = $this->id; // for object-videos
+        } else {
+            // for object-videos
+            $vimeoId = $this->id;
+        }
 
         if (ctype_digit($vimeoId)){
 
