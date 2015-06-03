@@ -62,9 +62,21 @@ class ExtensionManager {
      */
     public static function isEnabled ($type, $id) {
         $config = self::getConfig();
-        if($config->$type) {
-            return (bool) $config->$type->$id;
+
+        if($type == "brick") {
+            // bricks are enabled per default
+            if(!isset($config->brick->$id)) {
+                return true;
+            } else {
+                return (bool) $config->$type->$id;
+            }
+        } else {
+            // plugins (any maybe others) need to be explicitly enabled
+            if($config->$type) {
+                return (bool) $config->$type->$id;
+            }
         }
+
         return false;
     }
 
