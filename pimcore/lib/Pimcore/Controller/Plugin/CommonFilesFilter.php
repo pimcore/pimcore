@@ -65,8 +65,11 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
                 // check for configured robots.txt in pimcore
                 $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
                 if(is_file($robotsPath)) {
+                    while (@ob_end_flush()) ;
+                    flush();
+
                     header("Content-Type: text/plain; charset=utf8");
-                    echo file_get_contents($robotsPath);
+                    readfile($robotsPath);
                     exit;
                 }
             }
