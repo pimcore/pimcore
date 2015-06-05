@@ -1,0 +1,12 @@
+
+# remove this for your own development
+website/
+tools/
+plugins/
+
+# tests
+tests/output/*
+tests/tmp/*
+
+# PhpStorm / IDEA
+.idea
