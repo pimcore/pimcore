@@ -16,7 +16,7 @@
  */
 
 if (!class_exists('Google_Client')) {
-  require_once dirname(__FILE__) . '/../autoload.php';
+  // pimcore modification: removed autoloader include
 }
 
 class Google_Service_Exception extends Google_Exception implements Google_Task_Retryable

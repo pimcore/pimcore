@@ -22,7 +22,7 @@
  */
 
 if (!class_exists('Google_Client')) {
-  require_once dirname(__FILE__) . '/../autoload.php';
+  // pimcore modification: removed autoloader include
 }
 
 class Google_IO_Curl extends Google_IO_Abstract

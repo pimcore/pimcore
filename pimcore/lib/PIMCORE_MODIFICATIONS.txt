@@ -19,6 +19,6 @@ this causes chrome to show a download warning
 
 - remove autoloader includes
 
-search for: require_once realpath\(dirname\((.*)autoload.php'\);
+search for: require_once dirname(.*)autoload.php';
 replace with: // pimcore modification: removed autoloader include
 
