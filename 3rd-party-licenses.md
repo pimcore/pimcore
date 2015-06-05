@@ -4,10 +4,49 @@ The overal pimcore project is licensed under the terms of a modified BSD Licence
 
 
 ## ExtJS by Sencha Inc.
-pimcore includes the GPLv3 version of the ExtJS JavaScript framework under the Open Source License Exception for Applications (FLOSS).
+pimcore includes the GPLv3 version of the ExtJS JavaScript framework under the Open Source License Exception for Applications (FLOSS).  
 http://www.sencha.com/license/
 
 ## Zend Framework by Zend Technologies Ltd.
-License: New BSD License
+License: New BSD License  
 http://framework.zend.com/license
 
+## jQuery by The jQuery Project
+License: MIT or GPLv2  
+http://jquery.org/license
+
+## CKEditor by Frederico Knabben
+License: LGPL / GPLv2 / MPL  
+http://ckeditor.com/license
+
+## SWFObject
+License: MIT  
+http://www.opensource.org/licenses/mit-license.php
+
+## PrototypeJS by Prototype Core Team
+License: MIT  
+https://raw.github.com/sstephenson/prototype/master/LICENSE
+
+## LESS by Alexis Sellier
+License: Apache 2.0  
+http://www.opensource.org/licenses/Apache-2.0
+
+## DaisyDiff by Guy Van den Broeck
+License: GPL  
+http://www.opensource.org/licenses/gpl-1.0
+
+## CSV Reader By Luke Visinoni
+License: GPL  
+http://www.opensource.org/licenses/gpl-1.0
+
+## Sabre by Rooftop Solutions
+License: Modified BSD License
+http://code.google.com/p/sabredav/wiki/License
+
+## simplehtmldom
+License: MIT  
+http://opensource.org/licenses/mit-license.php
+ 
+## password_compat
+License: MIT  
+http://www.opensource.org/licenses/mit-license.html
