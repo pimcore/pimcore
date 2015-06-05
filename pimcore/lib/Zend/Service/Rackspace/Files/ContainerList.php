@@ -19,8 +19,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Rackspace/Files/Container.php';
-require_once 'Zend/Service/Rackspace/Files.php';
+// require_once 'Zend/Service/Rackspace/Files/Container.php';
+// require_once 'Zend/Service/Rackspace/Files.php';
 
 /**
  * List of servers retrived from the Rackspace web service
@@ -59,7 +59,7 @@ class Zend_Service_Rackspace_Files_ContainerList implements Countable, Iterator,
     public function __construct($service,$list = array())
     {
         if (!($service instanceof Zend_Service_Rackspace_Files ) || !is_array($list)) {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception("You must pass a Zend_Service_Rackspace_Files_Exception object and an array");
         }
         $this->service= $service;
@@ -185,7 +185,7 @@ class Zend_Service_Rackspace_Files_ContainerList implements Countable, Iterator,
         if ($this->offsetExists($offset)) {
             return $this->objects[$offset];
         } else {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception('Illegal index');
         }
     }
@@ -201,7 +201,7 @@ class Zend_Service_Rackspace_Files_ContainerList implements Countable, Iterator,
      */
     public function offsetSet($offset, $value)
     {
-        require_once 'Zend/Service/Rackspace/Files/Exception.php';
+        // require_once 'Zend/Service/Rackspace/Files/Exception.php';
         throw new Zend_Service_Rackspace_Files_Exception('You are trying to set read-only property');
     }
 
@@ -215,7 +215,7 @@ class Zend_Service_Rackspace_Files_ContainerList implements Countable, Iterator,
      */
     public function offsetUnset($offset)
     {
-        require_once 'Zend/Service/Rackspace/Files/Exception.php';
+        // require_once 'Zend/Service/Rackspace/Files/Exception.php';
         throw new Zend_Service_Rackspace_Files_Exception('You are trying to unset read-only property');
     }
 }

@@ -66,7 +66,7 @@ class Zend_Tool_Framework_Client_Config
     public function setConfigFilepath($configFilepath)
     {
         if (!file_exists($configFilepath)) {
-            require_once 'Zend/Tool/Framework/Client/Exception.php';
+            // require_once 'Zend/Tool/Framework/Client/Exception.php';
             throw new Zend_Tool_Framework_Client_Exception('Provided path to config ' . $configFilepath . ' does not exist');
         }
 
@@ -87,19 +87,19 @@ class Zend_Tool_Framework_Client_Config
 
         switch ($suffix) {
             case '.ini':
-                require_once 'Zend/Config/Ini.php';
+                // require_once 'Zend/Config/Ini.php';
                 $this->_config = new Zend_Config_Ini($configFilepath, null, array('allowModifications' => true));
                 break;
             case '.xml':
-                require_once 'Zend/Config/Xml.php';
+                // require_once 'Zend/Config/Xml.php';
                 $this->_config = new Zend_Config_Xml($configFilepath, null, array('allowModifications' => true));
                 break;
             case '.php':
-                require_once 'Zend/Config.php';
+                // require_once 'Zend/Config.php';
                 $this->_config = new Zend_Config(include $configFilepath, true);
                 break;
             default:
-                require_once 'Zend/Tool/Framework/Client/Exception.php';
+                // require_once 'Zend/Tool/Framework/Client/Exception.php';
                 throw new Zend_Tool_Framework_Client_Exception('Unknown config file type '
                     . $suffix . ' at location ' . $configFilepath
                     );
@@ -187,7 +187,7 @@ class Zend_Tool_Framework_Client_Config
     public function getConfigInstance()
     {
         if(!$this->exists()) {
-            require_once "Zend/Tool/Framework/Client/Exception.php";
+            // require_once "Zend/Tool/Framework/Client/Exception.php";
             throw new Zend_Tool_Framework_Client_Exception("Client has no persistent configuration.");
         }
 
@@ -221,20 +221,20 @@ class Zend_Tool_Framework_Client_Config
         $suffix = substr($this->getConfigFilepath(), -4);
         switch($suffix) {
             case '.ini':
-                require_once "Zend/Config/Writer/Ini.php";
+                // require_once "Zend/Config/Writer/Ini.php";
                 $writer = new Zend_Config_Writer_Ini();
                 $writer->setRenderWithoutSections();
                 break;
             case '.xml':
-                require_once "Zend/Config/Writer/Xml.php";
+                // require_once "Zend/Config/Writer/Xml.php";
                 $writer = new Zend_Config_Writer_Xml();
                 break;
             case '.php':
-                require_once "Zend/Config/Writer/Array.php";
+                // require_once "Zend/Config/Writer/Array.php";
                 $writer = new Zend_Config_Writer_Array();
                 break;
             default:
-                require_once 'Zend/Tool/Framework/Client/Exception.php';
+                // require_once 'Zend/Tool/Framework/Client/Exception.php';
                 throw new Zend_Tool_Framework_Client_Exception('Unknown config file type '
                     . $suffix . ' at location ' . $this->getConfigFilepath()
                     );

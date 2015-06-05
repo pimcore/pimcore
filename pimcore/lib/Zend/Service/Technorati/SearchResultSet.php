@@ -24,7 +24,7 @@
 /**
  * @see Zend_Service_Technorati_ResultSet
  */
-require_once 'Zend/Service/Technorati/ResultSet.php';
+// require_once 'Zend/Service/Technorati/ResultSet.php';
 
 
 /**
@@ -73,7 +73,7 @@ class Zend_Service_Technorati_SearchResultSet extends Zend_Service_Technorati_Re
         /**
          * @see Zend_Service_Technorati_SearchResult
          */
-        require_once 'Zend/Service/Technorati/SearchResult.php';
+        // require_once 'Zend/Service/Technorati/SearchResult.php';
         return new Zend_Service_Technorati_SearchResult($this->_results->item($this->_currentIndex));
     }
 }

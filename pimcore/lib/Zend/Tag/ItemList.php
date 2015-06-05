@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tag_Taggable
  */
-require_once 'Zend/Tag/Taggable.php';
+// require_once 'Zend/Tag/Taggable.php';
 
 /**
  * @category   Zend
@@ -61,7 +61,7 @@ class Zend_Tag_ItemList implements Countable, SeekableIterator, ArrayAccess
     {
         // Don't allow an empty value list
         if (count($values) === 0) {
-            require_once 'Zend/Tag/Exception.php';
+            // require_once 'Zend/Tag/Exception.php';
             throw new Zend_Tag_Exception('Value list may not be empty');
         }
 
@@ -215,7 +215,7 @@ class Zend_Tag_ItemList implements Countable, SeekableIterator, ArrayAccess
         // We need to make that check here, as the method signature must be
         // compatible with ArrayAccess::offsetSet()
         if (!($item instanceof Zend_Tag_Taggable)) {
-            require_once 'Zend/Tag/Exception.php';
+            // require_once 'Zend/Tag/Exception.php';
             throw new Zend_Tag_Exception('Item must implement Zend_Tag_Taggable');
         }
 

@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_eed
  */
-require_once 'Zend/Gdata/Feed.php';
+// require_once 'Zend/Gdata/Feed.php';
 
 /**
  * @see Zend_Gdata_Geo
  */
-require_once 'Zend/Gdata/Geo.php';
+// require_once 'Zend/Gdata/Geo.php';
 
 /**
  * @see Zend_Gdata_Geo_Entry
  */
-require_once 'Zend/Gdata/Geo/Entry.php';
+// require_once 'Zend/Gdata/Geo/Entry.php';
 
 /**
  * Feed for Gdata Geographic data entries.

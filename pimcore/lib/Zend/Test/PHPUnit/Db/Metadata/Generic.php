@@ -23,7 +23,7 @@
 /**
  * @see Zend_Db_Adapter_Abstract
  */
-require_once "Zend/Db/Adapter/Abstract.php";
+// require_once "Zend/Db/Adapter/Abstract.php";
 
 /**
  * Generic Metadata accessor for the Zend_Db adapters

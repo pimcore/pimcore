@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_DeveloperGarden_Response_ConferenceCall_ConferenceCallAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Response/ConferenceCall/ConferenceCallAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/ConferenceCall/ConferenceCallAbstract.php';
 
 /**
  * @category   Zend

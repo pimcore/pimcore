@@ -23,12 +23,12 @@
 /**
  * @see Zend_Service_DeveloperGarden_Response_ResponseAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Response/ResponseAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/ResponseAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SecurityTokenServer_Interface
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/Interface.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/Interface.php';
 
 /**
  * @category   Zend
@@ -71,7 +71,7 @@ class Zend_Service_DeveloperGarden_Response_SecurityTokenServer_SecurityTokenRes
     public function getTokenData()
     {
         if (empty($this->tokenData)) {
-            require_once 'Zend/Service/DeveloperGarden/Response/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Response/Exception.php';
             throw new Zend_Service_DeveloperGarden_Response_Exception('No valid tokenData found.');
         }
 

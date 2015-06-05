@@ -23,27 +23,27 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Analytics_Extension_Dimension
  */
-require_once 'Zend/Gdata/Analytics/Extension/Dimension.php';
+// require_once 'Zend/Gdata/Analytics/Extension/Dimension.php';
 
 /**
  * @see Zend_Gdata_Analytics_Extension_Metric
  */
-require_once 'Zend/Gdata/Analytics/Extension/Metric.php';
+// require_once 'Zend/Gdata/Analytics/Extension/Metric.php';
 
 /**
  * @see Zend_Gdata_Analytics_Extension_Property
  */
-require_once 'Zend/Gdata/Analytics/Extension/Property.php';
+// require_once 'Zend/Gdata/Analytics/Extension/Property.php';
 
 /**
  * @see Zend_Gdata_Analytics_Extension_TableId
  */
-require_once 'Zend/Gdata/Analytics/Extension/TableId.php';
+// require_once 'Zend/Gdata/Analytics/Extension/TableId.php';
 
 /**
  * @category   Zend

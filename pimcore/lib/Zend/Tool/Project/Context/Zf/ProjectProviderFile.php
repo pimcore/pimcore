@@ -23,12 +23,12 @@
 /**
  * @see Zend_Tool_Project_Context_Filesystem_File
  */
-require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
+// require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
 
 /**
  * @see Zend_CodeGenerator_Php_File
  */
-require_once 'Zend/CodeGenerator/Php/File.php';
+// require_once 'Zend/CodeGenerator/Php/File.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project

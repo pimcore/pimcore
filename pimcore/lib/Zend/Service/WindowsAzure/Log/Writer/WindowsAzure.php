@@ -23,7 +23,7 @@
 /**
  * @see Zend_Log_Writer_Abstract
  */
-require_once 'Zend/Log/Writer/Abstract.php';
+// require_once 'Zend/Log/Writer/Abstract.php';
 
 /**
  * @category   Zend
@@ -83,14 +83,14 @@ class Zend_Service_WindowsAzure_Log_Writer_WindowsAzure
     )
     {
         if ($tableStorageConnection == null) {
-            require_once 'Zend/Service/Log/Exception.php';
+            // require_once 'Zend/Service/Log/Exception.php';
             throw new Zend_Service_Log_Exception(
                 'No connection to the Windows Azure tables provided.'
             );
         }
 
         if (!is_string($tableName)) {
-            require_once 'Zend/Service/Log/Exception.php';
+            // require_once 'Zend/Service/Log/Exception.php';
             throw new Zend_Service_Log_Exception(
                 'Provided Windows Azure table name must be a string.'
             );
@@ -168,7 +168,7 @@ class Zend_Service_WindowsAzure_Log_Writer_WindowsAzure
         Zend_Service_Log_Formatter_Interface $formatter
     )
     {
-        require_once 'Zend/Service/Log/Exception.php';
+        // require_once 'Zend/Service/Log/Exception.php';
         throw new Zend_Service_Log_Exception(
             get_class($this) . ' does not support formatting');
     }

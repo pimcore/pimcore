@@ -17,8 +17,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/StorageService/Adapter.php';
-require_once 'Zend/Cloud/StorageService/Exception.php';
+// require_once 'Zend/Cloud/StorageService/Adapter.php';
+// require_once 'Zend/Cloud/StorageService/Exception.php';
 
 /**
  * FileSystem adapter for unstructured cloud storage.
@@ -228,7 +228,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      */
     public function storeMetadata($destinationPath, $metadata, $options = array())
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+        // require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Storing metadata not implemented');
     }
 
@@ -241,7 +241,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      */
     public function deleteMetadata($path)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
+        // require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Deleting metadata not implemented');
     }
 

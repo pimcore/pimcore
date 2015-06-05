@@ -23,7 +23,7 @@
 /**
  * @see Zend_View_Helper_Navigation_HelperAbstract
  */
-require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
+// require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
 
 /**
  * Helper for printing breadcrumbs
@@ -259,7 +259,7 @@ class Zend_View_Helper_Navigation_Breadcrumbs
         }
 
         if (empty($partial)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(
                 'Unable to render menu: No partial view script provided'
             );
@@ -291,7 +291,7 @@ class Zend_View_Helper_Navigation_Breadcrumbs
 
         if (is_array($partial)) {
             if (count($partial) != 2) {
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception(
                     'Unable to render menu: A view partial supplied as '
                     .  'an array must contain two values: partial view '

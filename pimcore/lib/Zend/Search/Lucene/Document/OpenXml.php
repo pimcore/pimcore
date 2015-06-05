@@ -22,10 +22,10 @@
 
 
 /** Zend_Search_Lucene_Document */
-require_once 'Zend/Search/Lucene/Document.php';
+// require_once 'Zend/Search/Lucene/Document.php';
 
 /** Zend_Xml_Security */
-require_once 'Zend/Xml/Security.php';
+// require_once 'Zend/Xml/Security.php';
 
 /**
  * OpenXML document.

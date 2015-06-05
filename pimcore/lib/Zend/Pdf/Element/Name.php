@@ -21,7 +21,7 @@
 
 
 /** Zend_Pdf_Element */
-require_once 'Zend/Pdf/Element.php';
+// require_once 'Zend/Pdf/Element.php';
 
 
 /**
@@ -52,7 +52,7 @@ class Zend_Pdf_Element_Name extends Zend_Pdf_Element
     {
         settype($val, 'string');
         if (strpos($val,"\x00") !== false) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Null character is not allowed in PDF Names');
         }
         $this->value   = (string)$val;

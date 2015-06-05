@@ -85,7 +85,7 @@ final class Zend_Mail_Header_HeaderName
     public static function assertValid($name)
     {
         if (! self::isValid($name)) {
-            require_once 'Zend/Mail/Exception.php';
+            // require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('Invalid header name detected');
         }
     }

@@ -112,7 +112,7 @@ abstract class Zend_Db_Table_Rowset_Abstract implements SeekableIterator, Counta
             $this->_rowClass   = $config['rowClass'];
         }
         if (!class_exists($this->_rowClass)) {
-            require_once 'Zend/Loader.php';
+            // require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($this->_rowClass);
         }
         if (isset($config['data'])) {
@@ -310,7 +310,7 @@ abstract class Zend_Db_Table_Rowset_Abstract implements SeekableIterator, Counta
     {
         $position = (int) $position;
         if ($position < 0 || $position >= $this->_count) {
-            require_once 'Zend/Db/Table/Rowset/Exception.php';
+            // require_once 'Zend/Db/Table/Rowset/Exception.php';
             throw new Zend_Db_Table_Rowset_Exception("Illegal index $position");
         }
         $this->_pointer = $position;
@@ -340,7 +340,7 @@ abstract class Zend_Db_Table_Rowset_Abstract implements SeekableIterator, Counta
     {
         $offset = (int) $offset;
         if ($offset < 0 || $offset >= $this->_count) {
-            require_once 'Zend/Db/Table/Rowset/Exception.php';
+            // require_once 'Zend/Db/Table/Rowset/Exception.php';
             throw new Zend_Db_Table_Rowset_Exception("Illegal index $offset");
         }
         $this->_pointer = $offset;
@@ -382,7 +382,7 @@ abstract class Zend_Db_Table_Rowset_Abstract implements SeekableIterator, Counta
         try {
             $row = $this->_loadAndReturnRow($position);
         } catch (Zend_Db_Table_Rowset_Exception $e) {
-            require_once 'Zend/Db/Table/Rowset/Exception.php';
+            // require_once 'Zend/Db/Table/Rowset/Exception.php';
             throw new Zend_Db_Table_Rowset_Exception('No row could be found at position ' . (int) $position, 0, $e);
         }
 
@@ -413,7 +413,7 @@ abstract class Zend_Db_Table_Rowset_Abstract implements SeekableIterator, Counta
     protected function _loadAndReturnRow($position)
     {
         if (!isset($this->_data[$position])) {
-            require_once 'Zend/Db/Table/Rowset/Exception.php';
+            // require_once 'Zend/Db/Table/Rowset/Exception.php';
             throw new Zend_Db_Table_Rowset_Exception("Data for provided position does not exist");
         }
 

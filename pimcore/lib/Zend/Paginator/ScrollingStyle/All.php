@@ -22,7 +22,7 @@
 /**
  * @see Zend_Paginator_ScrollingStyle_Interface
  */
-require_once 'Zend/Paginator/ScrollingStyle/Interface.php';
+// require_once 'Zend/Paginator/ScrollingStyle/Interface.php';
 
 /**
  * A scrolling style that returns every page in the collection.

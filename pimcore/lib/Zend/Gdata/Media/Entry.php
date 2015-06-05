@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Media
  */
-require_once 'Zend/Gdata/Media.php';
+// require_once 'Zend/Gdata/Media.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaGroup
  */
-require_once 'Zend/Gdata/Media/Extension/MediaGroup.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaGroup.php';
 
 /**
  * Represents the Gdata flavor of an Atom entry

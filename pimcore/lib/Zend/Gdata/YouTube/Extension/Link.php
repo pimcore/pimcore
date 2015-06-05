@@ -23,12 +23,12 @@
 /**
  * @see Zend_Gdata_App_Extension_Link
  */
-require_once 'Zend/Gdata/App/Extension/Link.php';
+// require_once 'Zend/Gdata/App/Extension/Link.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Token
  */
-require_once 'Zend/Gdata/YouTube/Extension/Token.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Token.php';
 
 
 /**

@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_DeveloperGarden_Response_VoiceButler_VoiceButlerAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/VoiceButlerAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/VoiceButlerAbstract.php';
 
 /**
  * @category   Zend

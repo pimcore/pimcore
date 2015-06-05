@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata
  */
-require_once 'Zend/Gdata.php';
+// require_once 'Zend/Gdata.php';
 
 /**
  * @see Zend_Gdata_App_MediaEntry
  */
-require_once 'Zend/Gdata/App/MediaEntry.php';
+// require_once 'Zend/Gdata/App/MediaEntry.php';
 
 /**
  * Represents the Gdata flavor of an Atom entry
@@ -119,7 +119,7 @@ class Zend_Gdata_Entry extends Zend_Gdata_App_MediaEntry
                 $this->_etag = $etag;
             }
             elseif ($this->_etag != $etag) {
-                require_once('Zend/Gdata/App/IOException.php');
+                // require_once('Zend/Gdata/App/IOException.php');
                 throw new Zend_Gdata_App_IOException("ETag mismatch");
             }
             break;

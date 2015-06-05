@@ -66,7 +66,7 @@ class Zend_Service_Delicious_SimplePost
             /**
              * @see Zend_Service_Delicious_Exception
              */
-            require_once 'Zend/Service/Delicious/Exception.php';
+            // require_once 'Zend/Service/Delicious/Exception.php';
             throw new Zend_Service_Delicious_Exception('Title and URL not set.');
         }
 

@@ -23,12 +23,12 @@
 /**
  * @see Zend_Service_WindowsAzure_RetryPolicy_NoRetry
  */
-require_once 'Zend/Service/WindowsAzure/RetryPolicy/NoRetry.php';
+// require_once 'Zend/Service/WindowsAzure/RetryPolicy/NoRetry.php';
 
 /**
  * @see Zend_Service_WindowsAzure_RetryPolicy_RetryN
  */
-require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryN.php';
+// require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryN.php';
 
 /**
  * @category   Zend

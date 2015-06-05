@@ -24,12 +24,12 @@
 /**
 *  @see Zend_Gdata_MimeFile
 */
-require_once 'Zend/Gdata/MimeFile.php';
+// require_once 'Zend/Gdata/MimeFile.php';
 
 /**
 * @see Zend_Gdata_MimeBodyString
 */
-require_once 'Zend/Gdata/MimeBodyString.php';
+// require_once 'Zend/Gdata/MimeBodyString.php';
 
 
 /**
@@ -92,7 +92,7 @@ class Zend_Gdata_MediaMimeStream
         $fileContentType = null)
     {
         if (!file_exists($filePath) || !is_readable($filePath)) {
-            require_once 'Zend/Gdata/App/IOException.php';
+            // require_once 'Zend/Gdata/App/IOException.php';
             throw new Zend_Gdata_App_IOException('File to be uploaded at ' .
                 $filePath . ' does not exist or is not readable.');
         }

@@ -24,67 +24,67 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Access
  */
-require_once 'Zend/Gdata/Photos/Extension/Access.php';
+// require_once 'Zend/Gdata/Photos/Extension/Access.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_BytesUsed
  */
-require_once 'Zend/Gdata/Photos/Extension/BytesUsed.php';
+// require_once 'Zend/Gdata/Photos/Extension/BytesUsed.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Location
  */
-require_once 'Zend/Gdata/Photos/Extension/Location.php';
+// require_once 'Zend/Gdata/Photos/Extension/Location.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Name
  */
-require_once 'Zend/Gdata/Photos/Extension/Name.php';
+// require_once 'Zend/Gdata/Photos/Extension/Name.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_NumPhotos
  */
-require_once 'Zend/Gdata/Photos/Extension/NumPhotos.php';
+// require_once 'Zend/Gdata/Photos/Extension/NumPhotos.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_NumPhotosRemaining
  */
-require_once 'Zend/Gdata/Photos/Extension/NumPhotosRemaining.php';
+// require_once 'Zend/Gdata/Photos/Extension/NumPhotosRemaining.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_CommentCount
  */
-require_once 'Zend/Gdata/Photos/Extension/CommentCount.php';
+// require_once 'Zend/Gdata/Photos/Extension/CommentCount.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_CommentingEnabled
  */
-require_once 'Zend/Gdata/Photos/Extension/CommentingEnabled.php';
+// require_once 'Zend/Gdata/Photos/Extension/CommentingEnabled.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Id
  */
-require_once 'Zend/Gdata/Photos/Extension/Id.php';
+// require_once 'Zend/Gdata/Photos/Extension/Id.php';
 
 /**
  * @see Zend_Gdata_Geo_Extension_GeoRssWhere
  */
-require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
+// require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaGroup
  */
-require_once 'Zend/Gdata/Media/Extension/MediaGroup.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaGroup.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Category
  */
-require_once 'Zend/Gdata/App/Extension/Category.php';
+// require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * Data model class for a Photo Album Entry.

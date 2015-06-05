@@ -23,7 +23,7 @@
 /**
  * @see Zend_Queue_Adapter_AdapterAbstract
  */
-require_once 'Zend/Queue/Adapter/AdapterAbstract.php';
+// require_once 'Zend/Queue/Adapter/AdapterAbstract.php';
 
 /**
  * Class testing.  No supported functions.  Also used to disable a Zend_Queue.
@@ -59,7 +59,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function isExists($name)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 
@@ -71,7 +71,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function create($name, $timeout=null)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 
@@ -82,7 +82,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function delete($name)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 
@@ -93,7 +93,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function getQueues()
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 
@@ -104,7 +104,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function count(Zend_Queue $queue=null)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 
@@ -119,7 +119,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function send($message, Zend_Queue $queue=null)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 
@@ -130,7 +130,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function receive($maxMessages=null, $timeout=null, Zend_Queue $queue=null)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 
@@ -141,7 +141,7 @@ class Zend_Queue_Adapter_Null extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function deleteMessage(Zend_Queue_Message $message)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception(__FUNCTION__ . '() is not supported by ' . get_class($this));
     }
 

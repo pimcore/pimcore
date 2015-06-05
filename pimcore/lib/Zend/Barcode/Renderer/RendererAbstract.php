@@ -175,7 +175,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
     public function setTopOffset($value)
     {
         if (!is_numeric($value) || intval($value) < 0) {
-            require_once 'Zend/Barcode/Renderer/Exception.php';
+            // require_once 'Zend/Barcode/Renderer/Exception.php';
             throw new Zend_Barcode_Renderer_Exception(
                 'Vertical position must be greater than or equals 0'
             );
@@ -202,7 +202,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
     public function setLeftOffset($value)
     {
         if (!is_numeric($value) || intval($value) < 0) {
-            require_once 'Zend/Barcode/Renderer/Exception.php';
+            // require_once 'Zend/Barcode/Renderer/Exception.php';
             throw new Zend_Barcode_Renderer_Exception(
                 'Horizontal position must be greater than or equals 0'
             );
@@ -242,7 +242,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
     public function setHorizontalPosition($value)
     {
         if (!in_array($value, array('left' , 'center' , 'right'))) {
-            require_once 'Zend/Barcode/Renderer/Exception.php';
+            // require_once 'Zend/Barcode/Renderer/Exception.php';
             throw new Zend_Barcode_Renderer_Exception(
                 "Invalid barcode position provided must be 'left', 'center' or 'right'"
             );
@@ -270,7 +270,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
     public function setVerticalPosition($value)
     {
         if (!in_array($value, array('top' , 'middle' , 'bottom'))) {
-            require_once 'Zend/Barcode/Renderer/Exception.php';
+            // require_once 'Zend/Barcode/Renderer/Exception.php';
             throw new Zend_Barcode_Renderer_Exception(
                 "Invalid barcode position provided must be 'top', 'middle' or 'bottom'"
             );
@@ -297,7 +297,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
     public function setModuleSize($value)
     {
         if (!is_numeric($value) || floatval($value) <= 0) {
-            require_once 'Zend/Barcode/Renderer/Exception.php';
+            // require_once 'Zend/Barcode/Renderer/Exception.php';
             throw new Zend_Barcode_Renderer_Exception(
                 'Float size must be greater than 0'
             );
@@ -335,7 +335,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
     public function setBarcode($barcode)
     {
         if (!$barcode instanceof Zend_Barcode_Object_ObjectAbstract) {
-            require_once 'Zend/Barcode/Renderer/Exception.php';
+            // require_once 'Zend/Barcode/Renderer/Exception.php';
             throw new Zend_Barcode_Renderer_Exception(
                 'Invalid barcode object provided to setBarcode()'
             );
@@ -375,7 +375,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
             /**
              * @see Zend_Barcode_Renderer_Exception
              */
-            require_once 'Zend/Barcode/Renderer/Exception.php';
+            // require_once 'Zend/Barcode/Renderer/Exception.php';
             throw new Zend_Barcode_Renderer_Exception(
                 'No barcode object provided'
             );
@@ -494,7 +494,7 @@ abstract class Zend_Barcode_Renderer_RendererAbstract
                     /**
                      * @see Zend_Barcode_Renderer_Exception
                      */
-                    require_once 'Zend/Barcode/Renderer/Exception.php';
+                    // require_once 'Zend/Barcode/Renderer/Exception.php';
                     throw new Zend_Barcode_Renderer_Exception(
                         'Unknown drawing command'
                     );

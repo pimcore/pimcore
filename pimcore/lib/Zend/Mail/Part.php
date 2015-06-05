@@ -23,22 +23,22 @@
 /**
  * @see Zend_Mime_Decode
  */
-require_once 'Zend/Mime/Decode.php';
+// require_once 'Zend/Mime/Decode.php';
 
 /**
  * @see Zend_Mail_Header_HeaderName
  */
-require_once 'Zend/Mail/Header/HeaderName.php';
+// require_once 'Zend/Mail/Header/HeaderName.php';
 
 /**
  * @see Zend_Mail_Header_HeaderValue
  */
-require_once 'Zend/Mail/Header/HeaderValue.php';
+// require_once 'Zend/Mail/Header/HeaderValue.php';
 
 /**
  * @see Zend_Mail_Part_Interface
  */
-require_once 'Zend/Mail/Part/Interface.php';
+// require_once 'Zend/Mail/Part/Interface.php';
 
 
 /**
@@ -124,14 +124,14 @@ class Zend_Mail_Part implements RecursiveIterator, Zend_Mail_Part_Interface
                 /**
                  * @see Zend_Mail_Exception
                  */
-                require_once 'Zend/Mail/Exception.php';
+                // require_once 'Zend/Mail/Exception.php';
                 throw new Zend_Mail_Exception('handler is not a valid mail handler');
             }
             if (!isset($params['id'])) {
                 /**
                  * @see Zend_Mail_Exception
                  */
-                require_once 'Zend/Mail/Exception.php';
+                // require_once 'Zend/Mail/Exception.php';
                 throw new Zend_Mail_Exception('need a message id with a handler');
             }
 
@@ -174,14 +174,14 @@ class Zend_Mail_Part implements RecursiveIterator, Zend_Mail_Part_Interface
             /**
              * @see Zend_Mail_Exception
              */
-            require_once 'Zend/Mail/Exception.php';
+            // require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception("Class '{$class}' does not exist");
         }
         if ( !is_subclass_of($class, 'Zend_Mail_Part_Interface') ) {
             /**
              * @see Zend_Mail_Exception
              */
-            require_once 'Zend/Mail/Exception.php';
+            // require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception("Class '{$class}' must implement Zend_Mail_Part_Interface");
         }
         
@@ -236,7 +236,7 @@ class Zend_Mail_Part implements RecursiveIterator, Zend_Mail_Part_Interface
             /**
              * @see Zend_Mail_Exception
              */
-            require_once 'Zend/Mail/Exception.php';
+            // require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('no content');
         }
     }
@@ -276,7 +276,7 @@ class Zend_Mail_Part implements RecursiveIterator, Zend_Mail_Part_Interface
             /**
              * @see Zend_Mail_Exception
              */
-            require_once 'Zend/Mail/Exception.php';
+            // require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('no boundary found in content type to split message');
         }
         $parts = Zend_Mime_Decode::splitMessageStruct($this->_content, $boundary);
@@ -307,7 +307,7 @@ class Zend_Mail_Part implements RecursiveIterator, Zend_Mail_Part_Interface
             /**
              * @see Zend_Mail_Exception
              */
-            require_once 'Zend/Mail/Exception.php';
+            // require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('part not found');
         }
 
@@ -322,7 +322,7 @@ class Zend_Mail_Part implements RecursiveIterator, Zend_Mail_Part_Interface
             /**
              * @see Zend_Mail_Exception
              */
-            require_once 'Zend/Mail/Exception.php';
+            // require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('part not found');
         }
 
@@ -404,7 +404,7 @@ class Zend_Mail_Part implements RecursiveIterator, Zend_Mail_Part_Interface
                 /**
                  * @see Zend_Mail_Exception
                  */
-                require_once 'Zend/Mail/Exception.php';
+                // require_once 'Zend/Mail/Exception.php';
                 throw new Zend_Mail_Exception("no Header with Name $name or $lowerName found");
             }
         }

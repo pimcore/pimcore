@@ -23,12 +23,12 @@
 /**
  * @see Zend_Tool_Framework_Metadata_Interface
  */
-require_once 'Zend/Tool/Framework/Metadata/Interface.php';
+// require_once 'Zend/Tool/Framework/Metadata/Interface.php';
 
 /**
  * @see Zend_Tool_Framework_Metadata_Attributable
  */
-require_once 'Zend/Tool/Framework/Metadata/Attributable.php';
+// require_once 'Zend/Tool/Framework/Metadata/Attributable.php';
 
 /**
  * @category   Zend

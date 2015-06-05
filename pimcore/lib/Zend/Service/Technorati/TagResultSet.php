@@ -24,7 +24,7 @@
 /**
  * @see Zend_Service_Technorati_ResultSet
  */
-require_once 'Zend/Service/Technorati/ResultSet.php';
+// require_once 'Zend/Service/Technorati/ResultSet.php';
 
 
 /**
@@ -104,7 +104,7 @@ class Zend_Service_Technorati_TagResultSet extends Zend_Service_Technorati_Resul
         /**
          * @see Zend_Service_Technorati_TagResult
          */
-        require_once 'Zend/Service/Technorati/TagResult.php';
+        // require_once 'Zend/Service/Technorati/TagResult.php';
         return new Zend_Service_Technorati_TagResult($this->_results->item($this->_currentIndex));
     }
 }

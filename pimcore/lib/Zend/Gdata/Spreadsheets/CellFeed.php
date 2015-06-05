@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_Feed
  */
-require_once 'Zend/Gdata/Feed.php';
+// require_once 'Zend/Gdata/Feed.php';
 
 /**
  * @see Zend_Gdata_Spreadsheets_Extension_RowCount
  */
-require_once 'Zend/Gdata/Spreadsheets/Extension/RowCount.php';
+// require_once 'Zend/Gdata/Spreadsheets/Extension/RowCount.php';
 
 /**
  * @see Zend_Gdata_Spreadsheets_Extension_ColCount
  */
-require_once 'Zend/Gdata/Spreadsheets/Extension/ColCount.php';
+// require_once 'Zend/Gdata/Spreadsheets/Extension/ColCount.php';
 
 /**
  *

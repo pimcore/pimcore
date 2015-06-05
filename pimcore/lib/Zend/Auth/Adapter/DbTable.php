@@ -24,17 +24,17 @@
 /**
  * @see Zend_Auth_Adapter_Interface
  */
-require_once 'Zend/Auth/Adapter/Interface.php';
+// require_once 'Zend/Auth/Adapter/Interface.php';
 
 /**
  * @see Zend_Db_Adapter_Abstract
  */
-require_once 'Zend/Db/Adapter/Abstract.php';
+// require_once 'Zend/Db/Adapter/Abstract.php';
 
 /**
  * @see Zend_Auth_Result
  */
-require_once 'Zend/Auth/Result.php';
+// require_once 'Zend/Auth/Result.php';
 
 
 /**
@@ -170,10 +170,10 @@ class Zend_Auth_Adapter_DbTable implements Zend_Auth_Adapter_Interface
          * If no adapter is specified, fetch default database adapter.
          */
         if(null === $this->_zendDb) {
-            require_once 'Zend/Db/Table/Abstract.php';
+            // require_once 'Zend/Db/Table/Abstract.php';
             $this->_zendDb = Zend_Db_Table_Abstract::getDefaultAdapter();
             if (null === $this->_zendDb) {
-                require_once 'Zend/Auth/Adapter/Exception.php';
+                // require_once 'Zend/Auth/Adapter/Exception.php';
                 throw new Zend_Auth_Adapter_Exception('No database adapter present');
             }
         }
@@ -414,7 +414,7 @@ class Zend_Auth_Adapter_DbTable implements Zend_Auth_Adapter_Interface
             /**
              * @see Zend_Auth_Adapter_Exception
              */
-            require_once 'Zend/Auth/Adapter/Exception.php';
+            // require_once 'Zend/Auth/Adapter/Exception.php';
             throw new Zend_Auth_Adapter_Exception($exception);
         }
 
@@ -485,7 +485,7 @@ class Zend_Auth_Adapter_DbTable implements Zend_Auth_Adapter_Interface
             /**
              * @see Zend_Auth_Adapter_Exception
              */
-            require_once 'Zend/Auth/Adapter/Exception.php';
+            // require_once 'Zend/Auth/Adapter/Exception.php';
             throw new Zend_Auth_Adapter_Exception('The supplied parameters to Zend_Auth_Adapter_DbTable failed to '
                                                 . 'produce a valid sql statement, please check table and column names '
                                                 . 'for validity.', 0, $e);

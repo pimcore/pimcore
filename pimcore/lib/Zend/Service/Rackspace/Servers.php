@@ -19,14 +19,14 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Rackspace/Abstract.php';
-require_once 'Zend/Service/Rackspace/Servers/Server.php';
-require_once 'Zend/Service/Rackspace/Servers/ServerList.php';
-require_once 'Zend/Service/Rackspace/Servers/Image.php';
-require_once 'Zend/Service/Rackspace/Servers/ImageList.php';
-require_once 'Zend/Service/Rackspace/Servers/SharedIpGroup.php';
-require_once 'Zend/Service/Rackspace/Servers/SharedIpGroupList.php';
-require_once 'Zend/Validate/Ip.php';
+// require_once 'Zend/Service/Rackspace/Abstract.php';
+// require_once 'Zend/Service/Rackspace/Servers/Server.php';
+// require_once 'Zend/Service/Rackspace/Servers/ServerList.php';
+// require_once 'Zend/Service/Rackspace/Servers/Image.php';
+// require_once 'Zend/Service/Rackspace/Servers/ImageList.php';
+// require_once 'Zend/Service/Rackspace/Servers/SharedIpGroup.php';
+// require_once 'Zend/Service/Rackspace/Servers/SharedIpGroupList.php';
+// require_once 'Zend/Validate/Ip.php';
 
 class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
 {
@@ -94,7 +94,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function getServer($id) 
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         $result= $this->httpCall($this->getManagementUrl().'/servers/'.rawurlencode($id),'GET');
@@ -137,23 +137,23 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function createServer(array $data, $metadata=array(),$files=array())
     {
         if (empty($data) || !is_array($data) || !is_array($metadata) || !is_array($files)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ARRAY);
         }
         if (!isset($data['name'])) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_NAME);
         }
         if (!isset($data['flavorId'])) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_FLAVORID);
         }
         if (!isset($data['imageId'])) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_IMAGEID);
         }
         if (count($files)>self::LIMIT_NUM_FILE) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You can attach '.self::LIMIT_NUM_FILE.' files maximum');
         }
         if (!empty($metadata)) {
@@ -164,13 +164,13 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
         if (!empty($files)) {
             foreach ($files as $serverPath => $filePath) {
                 if (!file_exists($filePath)) {
-                    require_once 'Zend/Service/Rackspace/Exception.php';
+                    // require_once 'Zend/Service/Rackspace/Exception.php';
                     throw new Zend_Service_Rackspace_Exception(
                             sprintf("The file %s doesn't exist",$filePath));
                 }
                 $content= file_get_contents($filePath);
                 if (strlen($content) > self::LIMIT_FILE_SIZE) {
-                    require_once 'Zend/Service/Rackspace/Exception.php';
+                    // require_once 'Zend/Service/Rackspace/Exception.php';
                     throw new Zend_Service_Rackspace_Exception(
                             sprintf("The size of the file %s is greater than the max size of %d bytes",
                                     $filePath,self::LIMIT_FILE_SIZE));
@@ -219,11 +219,11 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     protected function updateServer($id,$name=null,$password=null)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You must specify the ID of the server');
         }
         if (empty($name) && empty($password)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("You must specify the new name or password of server");
         }
         $data= array();
@@ -271,11 +271,11 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function changeServerName($id,$name)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You must specify the ID of the server');
         }
         if (empty($name)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("You must specify the new name of the server");
         }
         return $this->updateServer($id, $name);
@@ -290,11 +290,11 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function changeServerPassword($id,$password)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You must specify the ID of the server');
         }
         if (empty($password)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("You must specify the new password of the server");
         }
         return $this->updateServer($id, null,$password);
@@ -308,7 +308,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function deleteServer($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You must specify the ID of the server');
         }
         $result = $this->httpCall($this->getManagementUrl().'/servers/'.rawurlencode($id),'DELETE');
@@ -392,20 +392,20 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function shareIpAddress($id,$ip,$groupId,$configure=true)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the ID of the server');
         }
         if (empty($ip)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the IP address to share');
         }
         $validator = new Zend_Validate_Ip();
         if (!$validator->isValid($ip)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("The parameter $ip specified is not a valid IP address");
         }
         if (empty($groupId)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the group id to use');
         }
         $data= array (
@@ -447,16 +447,16 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function unshareIpAddress($id,$ip)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the ID of the server');
         }
         if (empty($ip)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the IP address to share');
         }
         $validator = new Zend_Validate_Ip();
         if (!$validator->isValid($ip)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception("The parameter $ip specified is not a valid IP address");
         }
         $result = $this->httpCall($this->getManagementUrl().'/servers/'.rawurlencode($id).'/ips/public/'.rawurlencode($ip),
@@ -497,7 +497,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function rebootServer($id,$hard=false)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the ID of the server');
         }
         if (!$hard) {
@@ -552,11 +552,11 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function rebuildServer($id,$imageId)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the ID of the server');
         }
         if (empty($imageId)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the new imageId of the server');
         }
         $data= array (
@@ -608,11 +608,11 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function resizeServer($id,$flavorId)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the ID of the server');
         }
         if (empty($flavorId)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the new flavorId of the server');
         }
         $data= array (
@@ -666,7 +666,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function confirmResizeServer($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the ID of the server');
         }
         $data= array (
@@ -718,7 +718,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function revertResizeServer($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the ID of the server');
         }
         $data= array (
@@ -801,7 +801,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function getFlavor($flavorId)
     {
         if (empty($flavorId)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception('You didn\'t specified the new flavorId of the server');
         }
         $result= $this->httpCall($this->getManagementUrl().'/flavors/'.rawurlencode($flavorId),'GET');
@@ -906,11 +906,11 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function createImage($serverId,$name)
     {
         if (empty($serverId)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_SERVERID);
         }
         if (empty($name)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_NAME);
         }
         $data = array(
@@ -960,7 +960,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function deleteImage($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         $result = $this->httpCall($this->getManagementUrl().'/images/'.rawurlencode($id),'DELETE');
@@ -996,7 +996,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function getBackupSchedule($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         $result= $this->httpCall($this->getManagementUrl().'/servers/'.rawurlencode($id).'/backup_schedule',
@@ -1037,15 +1037,15 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function changeBackupSchedule($id,$weekly,$daily)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         if (empty($weekly)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_WEEKLY);
         }
         if (empty($daily)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_DAILY);
         }
         $data = array (
@@ -1092,7 +1092,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function disableBackupSchedule($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         $result = $this->httpCall($this->getManagementUrl().'/servers/'.rawurlencode($id).'/backup_schedule',
@@ -1167,7 +1167,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function getSharedIpGroup($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         $result= $this->httpCall($this->getManagementUrl().'/shared_ip_groups/'.rawurlencode($id),'GET');
@@ -1206,11 +1206,11 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function createSharedIpGroup($name,$serverId)
     {
         if (empty($name)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_NAME);
         }
         if (empty($serverId)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         $data = array (
@@ -1251,7 +1251,7 @@ class Zend_Service_Rackspace_Servers extends Zend_Service_Rackspace_Abstract
     public function deleteSharedIpGroup($id)
     {
         if (empty($id)) {
-            require_once 'Zend/Service/Rackspace/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Exception.php';
             throw new Zend_Service_Rackspace_Exception(self::ERROR_PARAM_NO_ID);
         }
         $result= $this->httpCall($this->getManagementUrl().'/shared_ip_groups/'.rawurlencode($id),'DELETE');

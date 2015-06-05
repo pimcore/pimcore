@@ -21,14 +21,14 @@
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Object.php';
-require_once 'Zend/Pdf/Element/Dictionary.php';
-require_once 'Zend/Pdf/Element/Name.php';
-require_once 'Zend/Pdf/Element/Numeric.php';
+// require_once 'Zend/Pdf/Element/Object.php';
+// require_once 'Zend/Pdf/Element/Dictionary.php';
+// require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Numeric.php';
 
 
 /** Zend_Pdf_Resource */
-require_once 'Zend/Pdf/Resource.php';
+// require_once 'Zend/Pdf/Resource.php';
 
 
 /**
@@ -54,7 +54,7 @@ class Zend_Pdf_Resource_GraphicsState extends Zend_Pdf_Resource
     {
         if ($extGStateObject == null) {
             // Create new Graphics State object
-            require_once 'Zend/Pdf/ElementFactory.php';
+            // require_once 'Zend/Pdf/ElementFactory.php';
             $factory = Zend_Pdf_ElementFactory::createFactory(1);
 
             $gsDictionary = new Zend_Pdf_Element_Dictionary();
@@ -64,7 +64,7 @@ class Zend_Pdf_Resource_GraphicsState extends Zend_Pdf_Resource
         }
 
         if ($extGStateObject->getType() != Zend_Pdf_Element::TYPE_DICTIONARY) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Graphics state PDF object must be a dictionary');
         }
 
@@ -90,11 +90,11 @@ class Zend_Pdf_Resource_GraphicsState extends Zend_Pdf_Resource
     {
         if (!in_array($mode, array('Normal', 'Multiply', 'Screen', 'Overlay', 'Darken', 'Lighten', 'ColorDodge',
                                    'ColorBurn', 'HardLight', 'SoftLight', 'Difference', 'Exclusion'))) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Unsupported transparency mode.');
         }
         if (!is_numeric($alpha)  ||  $alpha < 0  ||  $alpha > 1) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Alpha value must be numeric between 0 (transparent) and 1 (opaque).');
         }
 

@@ -24,7 +24,7 @@
 /**
  * @see Zend_Gdata_App_Extension_Category
  */
-require_once 'Zend/Gdata/App/Extension/Category.php';
+// require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * Describes a books category

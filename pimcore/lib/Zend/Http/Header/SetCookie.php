@@ -24,17 +24,17 @@
 /**
  * @see Zend_Http_Header_Exception_InvalidArgumentException
  */
-require_once "Zend/Http/Header/Exception/InvalidArgumentException.php";
+// require_once "Zend/Http/Header/Exception/InvalidArgumentException.php";
 
 /**
  * @see Zend_Http_Header_Exception_RuntimeException
  */
-require_once "Zend/Http/Header/Exception/RuntimeException.php";
+// require_once "Zend/Http/Header/Exception/RuntimeException.php";
 
 /**
  * @see Zend_Http_Header_HeaderValue
  */
-require_once "Zend/Http/Header/HeaderValue.php";
+// require_once "Zend/Http/Header/HeaderValue.php";
 
 /**
  * Zend_Http_Client is an implementation of an HTTP client in PHP. The client

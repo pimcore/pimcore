@@ -21,7 +21,7 @@
  */
 
 /** Zend_Dojo_Form_Element_Dijit */
-require_once 'Zend/Dojo/Form/Element/Dijit.php';
+// require_once 'Zend/Dojo/Form/Element/Dijit.php';
 
 /**
  * Editor dijit
@@ -392,7 +392,7 @@ class Zend_Dojo_Form_Element_Editor extends Zend_Dojo_Form_Element_Dijit
     public function setHeight($height)
     {
         if (!preg_match('/^\d+(em|px|%)?$/i', $height)) {
-            require_once 'Zend/Form/Element/Exception.php';
+            // require_once 'Zend/Form/Element/Exception.php';
             throw new Zend_Form_Element_Exception('Invalid height provided; must be integer or CSS measurement');
         }
         if (!preg_match('/(em|px|%)$/', $height)) {
@@ -447,7 +447,7 @@ class Zend_Dojo_Form_Element_Editor extends Zend_Dojo_Form_Element_Dijit
     public function setMinHeight($minHeight)
     {
         if (!preg_match('/^\d+(em|px|%)?$/i', $minHeight)) {
-            require_once 'Zend/Form/Element/Exception.php';
+            // require_once 'Zend/Form/Element/Exception.php';
             throw new Zend_Form_Element_Exception('Invalid minHeight provided; must be integer or CSS measurement');
         }
         if (!preg_match('/(em|px|%)$/', $minHeight)) {

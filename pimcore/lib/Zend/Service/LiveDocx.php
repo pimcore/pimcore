@@ -185,11 +185,11 @@ class Zend_Service_LiveDocx
     protected function _initSoapClient($endpoint)
     {
         try {
-            require_once 'Zend/Soap/Client.php';
+            // require_once 'Zend/Soap/Client.php';
             $this->_soapClient = new Zend_Soap_Client();
             $this->_soapClient->setWsdl($endpoint);
         } catch (Zend_Soap_Client_Exception $e) {
-            require_once 'Zend/Service/LiveDocx/Exception.php';
+            // require_once 'Zend/Service/LiveDocx/Exception.php';
             throw new Zend_Service_LiveDocx_Exception('Cannot connect to LiveDocx service at ' . $endpoint, 0, $e);
         }
     }
@@ -232,14 +232,14 @@ class Zend_Service_LiveDocx
     {
         if (!$this->isLoggedIn()) {
             if (null === $this->getUsername()) {
-                require_once 'Zend/Service/LiveDocx/Exception.php';
+                // require_once 'Zend/Service/LiveDocx/Exception.php';
                 throw new Zend_Service_LiveDocx_Exception(
                     'Username has not been set. To set username specify the options array in the constructor or call setUsername($username) after instantiation'
                 );
             }
 
             if (null === $this->getPassword()) {
-                require_once 'Zend/Service/LiveDocx/Exception.php';
+                // require_once 'Zend/Service/LiveDocx/Exception.php';
                 throw new Zend_Service_LiveDocx_Exception(
                     'Password has not been set. To set password specify the options array in the constructor or call setPassword($password) after instantiation'
                 );
@@ -256,7 +256,7 @@ class Zend_Service_LiveDocx
                 ));
                 $this->_loggedIn = true;
             } catch (Exception $e) {
-                require_once 'Zend/Service/LiveDocx/Exception.php';
+                // require_once 'Zend/Service/LiveDocx/Exception.php';
                 throw new Zend_Service_LiveDocx_Exception(
                     'Cannot login into LiveDocx service - username and/or password are invalid', 0, $e
                 );
@@ -280,7 +280,7 @@ class Zend_Service_LiveDocx
                 $this->getSoapClient()->LogOut();
                 $this->_loggedIn = false;
             } catch (Exception $e) {
-                require_once 'Zend/Service/LiveDocx/Exception.php';
+                // require_once 'Zend/Service/LiveDocx/Exception.php';
                 throw new Zend_Service_LiveDocx_Exception(
                     'Cannot log out of LiveDocx service', 0, $e
                 );

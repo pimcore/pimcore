@@ -19,7 +19,7 @@
  * @version    $Id$
  */
 
-require_once 'Zend/Feed/Writer/Renderer/Feed/Atom/AtomAbstract.php';
+// require_once 'Zend/Feed/Writer/Renderer/Feed/Atom/AtomAbstract.php';
 
 /**
  * @category   Zend

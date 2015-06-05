@@ -24,7 +24,7 @@
 /**
  * @see Zend_Gdata
  */
-require_once 'Zend/Gdata.php';
+// require_once 'Zend/Gdata.php';
 
 /**
  * Service class for interacting with the services which use the EXIF extensions

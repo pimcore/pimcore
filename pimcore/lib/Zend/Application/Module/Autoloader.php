@@ -21,7 +21,7 @@
  */
 
 /** @see Zend_Loader_Autoloader_Resource */
-require_once 'Zend/Loader/Autoloader/Resource.php';
+// require_once 'Zend/Loader/Autoloader/Resource.php';
 
 /**
  * Resource loader for application module classes

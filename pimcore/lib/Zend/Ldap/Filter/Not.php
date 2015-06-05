@@ -23,7 +23,7 @@
 /**
  * @see Zend_Ldap_Filter_Abstract
  */
-require_once 'Zend/Ldap/Filter/Abstract.php';
+// require_once 'Zend/Ldap/Filter/Abstract.php';
 
 /**
  * Zend_Ldap_Filter_Not provides a negation filter.

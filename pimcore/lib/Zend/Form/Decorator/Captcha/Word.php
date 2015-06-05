@@ -20,7 +20,7 @@
  */
 
 /** @see Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
+// require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Word-based captcha decorator

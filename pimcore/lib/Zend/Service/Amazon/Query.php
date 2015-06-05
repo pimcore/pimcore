@@ -25,7 +25,7 @@
 /**
  * @see Zend_Service_Amazon
  */
-require_once 'Zend/Service/Amazon.php';
+// require_once 'Zend/Service/Amazon.php';
 
 
 /**
@@ -76,7 +76,7 @@ class Zend_Service_Amazon_Query extends Zend_Service_Amazon
             /**
              * @see Zend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
+            // require_once 'Zend/Service/Exception.php';
             throw new Zend_Service_Exception('You must set a category before setting the search parameters');
         }
 

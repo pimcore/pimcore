@@ -22,7 +22,7 @@
 /**
  * @see Zend_Service_ShortUrl_AbstractShortener
  */
-require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
+// require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
 
 /**
  * Bit.ly API implementation

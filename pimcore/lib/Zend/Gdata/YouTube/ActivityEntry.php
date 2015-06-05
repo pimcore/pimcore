@@ -24,22 +24,22 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_VideoId
  */
-require_once 'Zend/Gdata/YouTube/Extension/VideoId.php';
+// require_once 'Zend/Gdata/YouTube/Extension/VideoId.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Username
  */
-require_once 'Zend/Gdata/YouTube/Extension/Username.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Username.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Rating
  */
-require_once 'Zend/Gdata/Extension/Rating.php';
+// require_once 'Zend/Gdata/Extension/Rating.php';
 
 /**
  * A concrete class for working with YouTube user activity entries.

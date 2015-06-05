@@ -1,6 +1,6 @@
 
 
-# Zend Framework
+### Zend Framework
 
 - strip all require once
 http://framework.zend.com/manual/1.10/en/performance.classloading.html#performance.classloading.striprequires.sed
@@ -10,12 +10,12 @@ this command: find . -name '*.php' -not -wholename '*/Loader/Autoloader.php' -no
 after stripping open the class/method:
 
 Zend_Loader_ClassMapAutoloader::autoload()
-and remove the comment in front of the require_once()
+and remove the comment in front of require_once $this->map[$class];
 
 - delete folder /pimcore/lib/Zend/Service/WindowsAzure/Commandline/Scaffolders/DefaultScaffolder
 this causes chrome to show a download warning
 
-# Google Client Libraries
+### Google Client Libraries
 
 - remove autoloader includes
 

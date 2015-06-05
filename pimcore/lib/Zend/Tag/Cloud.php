@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tag_Item
  */
-require_once 'Zend/Tag/Item.php';
+// require_once 'Zend/Tag/Item.php';
 
 /**
  * @category   Zend
@@ -150,7 +150,7 @@ class Zend_Tag_Cloud
             } else if (is_array($tag)) {
                 $itemList[] = new Zend_Tag_Item($tag);
             } else {
-                require_once 'Zend/Tag/Cloud/Exception.php';
+                // require_once 'Zend/Tag/Cloud/Exception.php';
                 throw new Zend_Tag_Cloud_Exception('Tag must be an instance of Zend_Tag_Taggable or an array');
             }
         }
@@ -172,7 +172,7 @@ class Zend_Tag_Cloud
         } else if (is_array($tag)) {
             $tags[] = new Zend_Tag_Item($tag);
         } else {
-            require_once 'Zend/Tag/Cloud/Exception.php';
+            // require_once 'Zend/Tag/Cloud/Exception.php';
             throw new Zend_Tag_Cloud_Exception('Tag must be an instance of Zend_Tag_Taggable or an array');
         }
 
@@ -201,7 +201,7 @@ class Zend_Tag_Cloud
     public function getItemList()
     {
         if (null === $this->_tags) {
-            require_once 'Zend/Tag/ItemList.php';
+            // require_once 'Zend/Tag/ItemList.php';
             $this->setItemList(new Zend_Tag_ItemList());
         }
         return $this->_tags;
@@ -233,7 +233,7 @@ class Zend_Tag_Cloud
         }
 
         if (!($decorator instanceof Zend_Tag_Cloud_Decorator_Cloud)) {
-            require_once 'Zend/Tag/Cloud/Exception.php';
+            // require_once 'Zend/Tag/Cloud/Exception.php';
             throw new Zend_Tag_Cloud_Exception('Decorator is no instance of Zend_Tag_Cloud_Decorator_Cloud');
         }
 
@@ -281,7 +281,7 @@ class Zend_Tag_Cloud
         }
 
         if (!($decorator instanceof Zend_Tag_Cloud_Decorator_Tag)) {
-            require_once 'Zend/Tag/Cloud/Exception.php';
+            // require_once 'Zend/Tag/Cloud/Exception.php';
             throw new Zend_Tag_Cloud_Exception('Decorator is no instance of Zend_Tag_Cloud_Decorator_Tag');
         }
 
@@ -326,7 +326,7 @@ class Zend_Tag_Cloud
             $prefix     = 'Zend_Tag_Cloud_Decorator_';
             $pathPrefix = 'Zend/Tag/Cloud/Decorator/';
 
-            require_once 'Zend/Loader/PluginLoader.php';
+            // require_once 'Zend/Loader/PluginLoader.php';
             $this->_pluginLoader = new Zend_Loader_PluginLoader(array($prefix => $pathPrefix));
         }
 

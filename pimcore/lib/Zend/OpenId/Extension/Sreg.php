@@ -23,7 +23,7 @@
 /**
  * @see Zend_OpenId_Extension
  */
-require_once "Zend/OpenId/Extension.php";
+// require_once "Zend/OpenId/Extension.php";
 
 /**
  * 'Simple Refistration Extension' for Zend_OpenId

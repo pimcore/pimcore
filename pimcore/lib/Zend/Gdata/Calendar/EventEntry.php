@@ -24,32 +24,32 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Kind_EventEntry
  */
-require_once 'Zend/Gdata/Kind/EventEntry.php';
+// require_once 'Zend/Gdata/Kind/EventEntry.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_SendEventNotifications
  */
-require_once 'Zend/Gdata/Calendar/Extension/SendEventNotifications.php';
+// require_once 'Zend/Gdata/Calendar/Extension/SendEventNotifications.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_Timezone
  */
-require_once 'Zend/Gdata/Calendar/Extension/Timezone.php';
+// require_once 'Zend/Gdata/Calendar/Extension/Timezone.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_Link
  */
-require_once 'Zend/Gdata/Calendar/Extension/Link.php';
+// require_once 'Zend/Gdata/Calendar/Extension/Link.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_QuickAdd
  */
-require_once 'Zend/Gdata/Calendar/Extension/QuickAdd.php';
+// require_once 'Zend/Gdata/Calendar/Extension/QuickAdd.php';
 
 /**
  * Data model class for a Google Calendar Event Entry

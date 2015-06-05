@@ -24,32 +24,32 @@
 /**
  * @see Zend_Gdata
  */
-require_once 'Zend/Gdata.php';
+// require_once 'Zend/Gdata.php';
 
 /**
  * @see Zend_Gdata_DublinCore
  */
-require_once 'Zend/Gdata/DublinCore.php';
+// require_once 'Zend/Gdata/DublinCore.php';
 
 /**
  * @see Zend_Gdata_Books_CollectionEntry
  */
-require_once 'Zend/Gdata/Books/CollectionEntry.php';
+// require_once 'Zend/Gdata/Books/CollectionEntry.php';
 
 /**
  * @see Zend_Gdata_Books_CollectionFeed
  */
-require_once 'Zend/Gdata/Books/CollectionFeed.php';
+// require_once 'Zend/Gdata/Books/CollectionFeed.php';
 
 /**
  * @see Zend_Gdata_Books_VolumeEntry
  */
-require_once 'Zend/Gdata/Books/VolumeEntry.php';
+// require_once 'Zend/Gdata/Books/VolumeEntry.php';
 
 /**
  * @see Zend_Gdata_Books_VolumeFeed
  */
-require_once 'Zend/Gdata/Books/VolumeFeed.php';
+// require_once 'Zend/Gdata/Books/VolumeFeed.php';
 
 /**
  * Service class for interacting with the Books service

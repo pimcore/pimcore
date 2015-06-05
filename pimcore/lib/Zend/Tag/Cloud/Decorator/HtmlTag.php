@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tag_Cloud_Decorator_Tag
  */
-require_once 'Zend/Tag/Cloud/Decorator/Tag.php';
+// require_once 'Zend/Tag/Cloud/Decorator/Tag.php';
 
 /**
  * Simple HTML decorator for tags
@@ -98,13 +98,13 @@ class Zend_Tag_Cloud_Decorator_HtmlTag extends Zend_Tag_Cloud_Decorator_Tag
     {
         if (is_array($classList)) {
             if (count($classList) === 0) {
-                require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
+                // require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
                 throw new Zend_Tag_Cloud_Decorator_Exception('Classlist is empty');
             }
 
             foreach ($classList as $class) {
                 if (!is_string($class)) {
-                    require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
+                    // require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
                     throw new Zend_Tag_Cloud_Decorator_Exception('Classlist contains an invalid classname');
                 }
             }
@@ -158,7 +158,7 @@ class Zend_Tag_Cloud_Decorator_HtmlTag extends Zend_Tag_Cloud_Decorator_Tag
     public function setFontSizeUnit($fontSizeUnit)
     {
         if (!in_array($fontSizeUnit, $this->_alloweFontSizeUnits)) {
-            require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
+            // require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
             throw new Zend_Tag_Cloud_Decorator_Exception('Invalid fontsize unit specified');
         }
 
@@ -208,7 +208,7 @@ class Zend_Tag_Cloud_Decorator_HtmlTag extends Zend_Tag_Cloud_Decorator_Tag
     public function setMaxFontSize($maxFontSize)
     {
         if (!is_numeric($maxFontSize)) {
-            require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
+            // require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
             throw new Zend_Tag_Cloud_Decorator_Exception('Fontsize must be numeric');
         }
 
@@ -237,7 +237,7 @@ class Zend_Tag_Cloud_Decorator_HtmlTag extends Zend_Tag_Cloud_Decorator_Tag
     public function setMinFontSize($minFontSize)
     {
         if (!is_numeric($minFontSize)) {
-            require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
+            // require_once 'Zend/Tag/Cloud/Decorator/Exception.php';
             throw new Zend_Tag_Cloud_Decorator_Exception('Fontsize must be numeric');
         }
 

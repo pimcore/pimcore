@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_SeperatorToSeparator
  */
-require_once 'Zend/Filter/Word/SeparatorToSeparator.php';
+// require_once 'Zend/Filter/Word/SeparatorToSeparator.php';
 
 /**
  * @category   Zend

@@ -73,7 +73,7 @@ abstract class Zend_Pdf_Resource
             return;
         }
 
-        require_once 'Zend/Pdf/ElementFactory.php';
+        // require_once 'Zend/Pdf/ElementFactory.php';
 
         $this->_objectFactory = Zend_Pdf_ElementFactory::createFactory(1);
         if ($resource instanceof Zend_Pdf_Element) {

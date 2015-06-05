@@ -22,7 +22,7 @@
 /**
  * @see Zend_Service_ShortUrl_AbstractShortener
  */
-require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
+// require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
 
 /**
  * TinyUrl.com API implementation
@@ -86,7 +86,7 @@ class Zend_Service_ShortUrl_TinyUrlCom extends Zend_Service_ShortUrl_AbstractSho
         //get response
         $response = $this->getHttpClient()->request();
 
-        require_once 'Zend/Dom/Query.php';
+        // require_once 'Zend/Dom/Query.php';
         $dom = new Zend_Dom_Query($response->getBody());
 
         //find the redirect url link

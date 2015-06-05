@@ -18,7 +18,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/File/PhpClassFile.php';
+// require_once 'Zend/File/PhpClassFile.php';
 
 /**
  * Locate files containing PHP classes, interfaces, or abstracts

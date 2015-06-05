@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tool_Framework_Registry_EnabledInterface
  */
-require_once 'Zend/Tool/Framework/Registry/EnabledInterface.php';
+// require_once 'Zend/Tool/Framework/Registry/EnabledInterface.php';
 
 /**
  * @category   Zend
@@ -102,7 +102,7 @@ class Zend_Tool_Framework_Manifest_Repository
                 }
 
                 if (!$provider instanceof Zend_Tool_Framework_Provider_Interface) {
-                    require_once 'Zend/Tool/Framework/Manifest/Exception.php';
+                    // require_once 'Zend/Tool/Framework/Manifest/Exception.php';
                     throw new Zend_Tool_Framework_Manifest_Exception(
                         'A provider provided by the ' . get_class($manifest)
                         . ' does not implement Zend_Tool_Framework_Provider_Interface'
@@ -179,13 +179,13 @@ class Zend_Tool_Framework_Manifest_Repository
                 foreach ($metadatas as $metadata) {
                     if (is_array($metadata)) {
                         if (!class_exists('Zend_Tool_Framework_Metadata_Dynamic')) {
-                            require_once 'Zend/Tool/Framework/Metadata/Dynamic.php';
+                            // require_once 'Zend/Tool/Framework/Metadata/Dynamic.php';
                         }
                         $metadata = new Zend_Tool_Framework_Metadata_Dynamic($metadata);
                     }
 
                     if (!$metadata instanceof Zend_Tool_Framework_Metadata_Interface) {
-                        require_once 'Zend/Tool/Framework/Manifest/Exception.php';
+                        // require_once 'Zend/Tool/Framework/Manifest/Exception.php';
                         throw new Zend_Tool_Framework_Manifest_Exception(
                             'A Zend_Tool_Framework_Metadata_Interface object was not found in manifest ' . get_class($manifest)
                             );

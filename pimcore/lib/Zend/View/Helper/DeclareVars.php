@@ -21,7 +21,7 @@
  */
 
 /** Zend_View_Helper_Abstract.php */
-require_once 'Zend/View/Helper/Abstract.php';
+// require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for declaring default values of template variables

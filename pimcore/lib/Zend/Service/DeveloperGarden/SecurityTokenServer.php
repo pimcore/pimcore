@@ -23,22 +23,22 @@
 /**
  * @see Zend_Service_DeveloperGarden_SecurityTokenServer_Cache
  */
-require_once 'Zend/Service/DeveloperGarden/SecurityTokenServer/Cache.php';
+// require_once 'Zend/Service/DeveloperGarden/SecurityTokenServer/Cache.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SecurityTokenServer_SecurityTokenResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/SecurityTokenResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/SecurityTokenResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SecurityTokenServer_GetTokensResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/GetTokensResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/GetTokensResponse.php';
 
 /**
  * @category   Zend

@@ -21,18 +21,18 @@
 /**
  * Zend_XmlRpc_Value
  */
-require_once 'Zend/XmlRpc/Value.php';
+// require_once 'Zend/XmlRpc/Value.php';
 
 /**
  * Zend_XmlRpc_Fault
  */
-require_once 'Zend/XmlRpc/Fault.php';
+// require_once 'Zend/XmlRpc/Fault.php';
 
 /** @see Zend_Xml_Security */
-require_once 'Zend/Xml/Security.php';
+// require_once 'Zend/Xml/Security.php';
 
 /** @see Zend_Xml_Exception */
-require_once 'Zend/Xml/Exception.php';
+// require_once 'Zend/Xml/Exception.php';
 
 /**
  * XmlRpc Request object

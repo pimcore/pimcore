@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Feed
  */
-require_once 'Zend/Gdata/Feed.php';
+// require_once 'Zend/Gdata/Feed.php';
 
 /**
  * @see Zend_Gdata_Gapps_MemberEntry
  */
-require_once 'Zend/Gdata/Gapps/MemberEntry.php';
+// require_once 'Zend/Gdata/Gapps/MemberEntry.php';
 
 /**
  * Data model for a collection of Google Apps member entries, usually

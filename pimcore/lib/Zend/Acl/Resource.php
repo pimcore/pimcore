@@ -23,7 +23,7 @@
 /**
  * @see Zend_Acl_Resource_Interface
  */
-require_once 'Zend/Acl/Resource/Interface.php';
+// require_once 'Zend/Acl/Resource/Interface.php';
 
 
 /**

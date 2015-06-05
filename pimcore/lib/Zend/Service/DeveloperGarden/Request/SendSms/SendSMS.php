@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_DeveloperGarden_Request_SendSms_SendSmsAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendSmsAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendSmsAbstract.php';
 
 /**
  * @category   Zend

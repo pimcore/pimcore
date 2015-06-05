@@ -24,7 +24,7 @@
 /**
  * @see Zend_Service_Technorati_Utils
  */
-require_once 'Zend/Service/Technorati/Utils.php';
+// require_once 'Zend/Service/Technorati/Utils.php';
 
 
 /**
@@ -82,7 +82,7 @@ class Zend_Service_Technorati_BlogInfoResult
         /**
          * @see Zend_Service_Technorati_Weblog
          */
-        require_once 'Zend/Service/Technorati/Weblog.php';
+        // require_once 'Zend/Service/Technorati/Weblog.php';
 
         $result = $xpath->query('//result/weblog');
         if ($result->length == 1) {
@@ -93,7 +93,7 @@ class Zend_Service_Technorati_BlogInfoResult
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                 "Your URL is not a recognized Technorati weblog");
         }

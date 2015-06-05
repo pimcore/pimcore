@@ -23,7 +23,7 @@
 /**
  * @see Zend_Gdata_Extension_Metric
  */
-require_once 'Zend/Gdata/Analytics/Extension/Metric.php';
+// require_once 'Zend/Gdata/Analytics/Extension/Metric.php';
 
 /**
  * @category   Zend

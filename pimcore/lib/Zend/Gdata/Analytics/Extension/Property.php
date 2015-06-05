@@ -23,7 +23,7 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @category   Zend

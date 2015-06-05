@@ -62,7 +62,7 @@ class Zend_Tool_Framework_Client_Response
     public function setContentCallback($callback)
     {
         if (!is_callable($callback)) {
-            require_once 'Zend/Tool/Framework/Client/Exception.php';
+            // require_once 'Zend/Tool/Framework/Client/Exception.php';
             throw new Zend_Tool_Framework_Client_Exception('The callback provided is not callable');
         }
         $this->_callback = $callback;

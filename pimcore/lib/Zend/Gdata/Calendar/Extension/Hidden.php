@@ -24,7 +24,7 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * Represents the gCal:hidden element used by the Calendar data API
@@ -90,7 +90,7 @@ class Zend_Gdata_Calendar_Extension_Hidden extends Zend_Gdata_Extension
                 $this->_value = false;
             }
             else {
-                require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+                // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
                 throw new Zend_Gdata_App_InvalidArgumentException("Expected 'true' or 'false' for gCal:selected#value.");
             }
             break;

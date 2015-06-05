@@ -23,22 +23,22 @@
 /**
  * @see Zend_Tool_Project_Context_Filesystem_File
  */
-require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
+// require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
 
 /**
  * @see Zend_Filter
  */
-require_once 'Zend/Filter.php';
+// require_once 'Zend/Filter.php';
 
 /**
  * @see Zend_Filter_Word_CamelCaseToDash
  */
-require_once 'Zend/Filter/Word/CamelCaseToDash.php';
+// require_once 'Zend/Filter/Word/CamelCaseToDash.php';
 
 /**
  * @see Zend_Filter_StringToLower
  */
-require_once 'Zend/Filter/StringToLower.php';
+// require_once 'Zend/Filter/StringToLower.php';
 
 
 /**

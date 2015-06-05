@@ -23,7 +23,7 @@
 /**
  * @see Zend_Gdata_Books_Extension_BooksLink
  */
-require_once 'Zend/Gdata/Books/Extension/BooksLink.php';
+// require_once 'Zend/Gdata/Books/Extension/BooksLink.php';
 
 /**
  * Describes an info link

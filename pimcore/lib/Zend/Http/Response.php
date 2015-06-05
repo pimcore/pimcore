@@ -24,7 +24,7 @@
 /**
  * @see Zend_Http_Header_HeaderValue
  */
-require_once 'Zend/Http/Header/HeaderValue.php';
+// require_once 'Zend/Http/Header/HeaderValue.php';
 
 /**
  * Zend_Http_Response represents an HTTP 1.0 / 1.1 response message. It
@@ -157,7 +157,7 @@ class Zend_Http_Response
     {
         // Make sure the response code is valid and set it
         if (self::responseCodeAsText($code) === null) {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception("{$code} is not a valid HTTP response code");
         }
 
@@ -167,7 +167,7 @@ class Zend_Http_Response
             if (is_int($name)) {
                 $header = explode(":", $value, 2);
                 if (count($header) != 2) {
-                    require_once 'Zend/Http/Exception.php';
+                    // require_once 'Zend/Http/Exception.php';
                     throw new Zend_Http_Exception("'{$value}' is not a valid HTTP header");
                 }
 
@@ -183,7 +183,7 @@ class Zend_Http_Response
 
         // Set the HTTP version
         if (! preg_match('|^\d\.\d$|', $version)) {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception("Invalid HTTP response version: $version");
         }
 
@@ -568,7 +568,7 @@ class Zend_Http_Response
             }
 
             // Anything else is an error condition
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception('Invalid header line detected');
         }
 
@@ -611,7 +611,7 @@ class Zend_Http_Response
 
         while (trim($body)) {
             if (! preg_match("/^([\da-fA-F]+)[^\r\n]*\r\n/sm", $body, $m)) {
-                require_once 'Zend/Http/Exception.php';
+                // require_once 'Zend/Http/Exception.php';
                 throw new Zend_Http_Exception("Error parsing body - doesn't seem to be a chunked message");
             }
 
@@ -639,7 +639,7 @@ class Zend_Http_Response
     public static function decodeGzip($body)
     {
         if (! function_exists('gzinflate')) {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception(
                 'zlib extension is required in order to decode "gzip" encoding'
             );
@@ -659,7 +659,7 @@ class Zend_Http_Response
     public static function decodeDeflate($body)
     {
         if (! function_exists('gzuncompress')) {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception(
                 'zlib extension is required in order to decode "deflate" encoding'
             );

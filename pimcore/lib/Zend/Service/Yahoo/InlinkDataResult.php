@@ -24,7 +24,7 @@
 /**
  * @see Zend_Service_Yahoo_Result
  */
-require_once 'Zend/Service/Yahoo/Result.php';
+// require_once 'Zend/Service/Yahoo/Result.php';
 
 
 /**

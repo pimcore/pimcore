@@ -22,7 +22,7 @@
 /**
  * Zend_Http_UserAgent_Features_Adapter_Interface
  */
-require_once 'Zend/Http/UserAgent/Features/Adapter.php';
+// require_once 'Zend/Http/UserAgent/Features/Adapter.php';
 
 /**
  * Features adapter build with the Tera Wurfl Api
@@ -46,7 +46,7 @@ class Zend_Http_UserAgent_Features_Adapter_DeviceAtlas implements Zend_Http_User
     {
         if (!class_exists('Mobi_Mtld_DA_Api')) {
             if (!isset($config['deviceatlas'])) {
-                require_once 'Zend/Http/UserAgent/Features/Exception.php';
+                // require_once 'Zend/Http/UserAgent/Features/Exception.php';
                 throw new Zend_Http_UserAgent_Features_Exception('"DeviceAtlas" configuration is not defined');
             }
         }
@@ -55,16 +55,16 @@ class Zend_Http_UserAgent_Features_Adapter_DeviceAtlas implements Zend_Http_User
 
         if (!class_exists('Mobi_Mtld_DA_Api')) {
             if (empty($config['deviceatlas_lib_dir'])) {
-                require_once 'Zend/Http/UserAgent/Features/Exception.php';
+                // require_once 'Zend/Http/UserAgent/Features/Exception.php';
                 throw new Zend_Http_UserAgent_Features_Exception('The "deviceatlas_lib_dir" parameter is not defined');
             }
 
             // Include the Device Atlas file from the specified lib_dir
-            require_once ($config['deviceatlas_lib_dir'] . '/Mobi/Mtld/DA/Api.php');
+            // require_once ($config['deviceatlas_lib_dir'] . '/Mobi/Mtld/DA/Api.php');
         }
 
         if (empty($config['deviceatlas_data'])) {
-            require_once 'Zend/Http/UserAgent/Features/Exception.php';
+            // require_once 'Zend/Http/UserAgent/Features/Exception.php';
             throw new Zend_Http_UserAgent_Features_Exception('The "deviceatlas_data" parameter is not defined');
         }
 

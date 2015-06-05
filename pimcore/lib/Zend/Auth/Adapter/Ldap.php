@@ -23,7 +23,7 @@
 /**
  * @see Zend_Auth_Adapter_Interface
  */
-require_once 'Zend/Auth/Adapter/Interface.php';
+// require_once 'Zend/Auth/Adapter/Interface.php';
 
 /**
  * @category   Zend
@@ -198,7 +198,7 @@ class Zend_Auth_Adapter_Ldap implements Zend_Auth_Adapter_Interface
             /**
              * @see Zend_Ldap
              */
-            require_once 'Zend/Ldap.php';
+            // require_once 'Zend/Ldap.php';
             $this->_ldap = new Zend_Ldap();
         }
 
@@ -246,7 +246,7 @@ class Zend_Auth_Adapter_Ldap implements Zend_Auth_Adapter_Interface
         /**
          * @see Zend_Ldap_Exception
          */
-        require_once 'Zend/Ldap/Exception.php';
+        // require_once 'Zend/Ldap/Exception.php';
 
         $messages = array();
         $messages[0] = ''; // reserved
@@ -284,7 +284,7 @@ class Zend_Auth_Adapter_Ldap implements Zend_Auth_Adapter_Interface
                 /**
                  * @see Zend_Auth_Adapter_Exception
                  */
-                require_once 'Zend/Auth/Adapter/Exception.php';
+                // require_once 'Zend/Auth/Adapter/Exception.php';
                 throw new Zend_Auth_Adapter_Exception('Adapter options array not an array');
             }
             $adapterOptions = $this->_prepareOptions($ldap, $options);
@@ -455,7 +455,7 @@ class Zend_Auth_Adapter_Ldap implements Zend_Auth_Adapter_Interface
         /**
          * @see Zend_Ldap_Filter
          */
-        require_once 'Zend/Ldap/Filter.php';
+        // require_once 'Zend/Ldap/Filter.php';
         $groupName = Zend_Ldap_Filter::equals($adapterOptions['groupAttr'], $adapterOptions['group']);
         $membership = Zend_Ldap_Filter::equals($adapterOptions['memberAttr'], $user);
         $group = Zend_Ldap_Filter::andFilter($groupName, $membership);

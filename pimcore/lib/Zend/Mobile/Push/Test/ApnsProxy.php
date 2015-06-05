@@ -21,7 +21,7 @@
  */
 
 /** Zend_Mobile_Push_Apns **/
-require_once 'Zend/Mobile/Push/Apns.php';
+// require_once 'Zend/Mobile/Push/Apns.php';
 
 /**
  * Apns Test Proxy

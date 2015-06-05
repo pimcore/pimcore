@@ -23,17 +23,17 @@
 /**
  * @see Zend_Queue_Adapter_AdapterAbstract
  */
-require_once 'Zend/Queue/Adapter/AdapterAbstract.php';
+// require_once 'Zend/Queue/Adapter/AdapterAbstract.php';
 
 /**
  * @see Zend_Queue_Adapter_Stomp_Client
  */
-require_once 'Zend/Queue/Stomp/Client.php';
+// require_once 'Zend/Queue/Stomp/Client.php';
 
 /**
  * @see Zend_Queue_Adapter_Stomp_Frame
  */
-require_once 'Zend/Queue/Stomp/Frame.php';
+// require_once 'Zend/Queue/Stomp/Frame.php';
 
 /**
  * Class for using Stomp to talk to an Stomp compliant server
@@ -103,7 +103,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
         if ((false !== $response)
             && ($response->getCommand() != 'CONNECTED')
         ) {
-            require_once 'Zend/Queue/Exception.php';
+            // require_once 'Zend/Queue/Exception.php';
             throw new Zend_Queue_Exception("Unable to authenticate to '".$options['scheme'].'://'.$options['host'].':'.$options['port']."'");
         }
     }
@@ -132,7 +132,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function create($name, $timeout=null)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception('create() is not supported in ' . get_class($this));
     }
 
@@ -145,7 +145,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function delete($name)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception('delete() is not supported in ' . get_class($this));
     }
 
@@ -177,7 +177,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function getQueues()
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception('getQueues() is not supported in this adapter');
     }
 
@@ -253,7 +253,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
                             break;
                         default:
                             $block = print_r($response, true);
-                            require_once 'Zend/Queue/Exception.php';
+                            // require_once 'Zend/Queue/Exception.php';
                             throw new Zend_Queue_Exception('Invalid response received: ' . $block);
                     }
                 }
@@ -269,7 +269,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
         $classname = $queue->getMessageSetClass();
 
         if (!class_exists($classname)) {
-            require_once 'Zend/Loader.php';
+            // require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($classname);
         }
         return new $classname($options);
@@ -309,7 +309,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
 
         $classname = $queue->getMessageClass();
         if (!class_exists($classname)) {
-            require_once 'Zend/Loader.php';
+            // require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($classname);
         }
         return new $classname($options);
@@ -324,7 +324,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function count(Zend_Queue $queue=null)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception('count() is not supported in this adapter');
     }
 
@@ -337,7 +337,7 @@ class Zend_Queue_Adapter_Activemq extends Zend_Queue_Adapter_AdapterAbstract
      */
     public function isExists($name)
     {
-        require_once 'Zend/Queue/Exception.php';
+        // require_once 'Zend/Queue/Exception.php';
         throw new Zend_Queue_Exception('isExists() is not supported in this adapter');
     }
 

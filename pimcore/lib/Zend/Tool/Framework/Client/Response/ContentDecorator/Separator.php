@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tool_Framework_Client_Response_ContentDecorator_Interface
  */
-require_once 'Zend/Tool/Framework/Client/Response/ContentDecorator/Interface.php';
+// require_once 'Zend/Tool/Framework/Client/Response/ContentDecorator/Interface.php';
 
 /**
  * @category   Zend

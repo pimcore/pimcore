@@ -24,52 +24,52 @@
 /**
  * @see Zend_Gdata_App_Extension_Element
 */
-require_once 'Zend/Gdata/App/Extension/Element.php';
+// require_once 'Zend/Gdata/App/Extension/Element.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Author
 */
-require_once 'Zend/Gdata/App/Extension/Author.php';
+// require_once 'Zend/Gdata/App/Extension/Author.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Category
 */
-require_once 'Zend/Gdata/App/Extension/Category.php';
+// require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Contributor
 */
-require_once 'Zend/Gdata/App/Extension/Contributor.php';
+// require_once 'Zend/Gdata/App/Extension/Contributor.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Id
  */
-require_once 'Zend/Gdata/App/Extension/Id.php';
+// require_once 'Zend/Gdata/App/Extension/Id.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Link
  */
-require_once 'Zend/Gdata/App/Extension/Link.php';
+// require_once 'Zend/Gdata/App/Extension/Link.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Rights
  */
-require_once 'Zend/Gdata/App/Extension/Rights.php';
+// require_once 'Zend/Gdata/App/Extension/Rights.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Title
  */
-require_once 'Zend/Gdata/App/Extension/Title.php';
+// require_once 'Zend/Gdata/App/Extension/Title.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Updated
  */
-require_once 'Zend/Gdata/App/Extension/Updated.php';
+// require_once 'Zend/Gdata/App/Extension/Updated.php';
 
 /**
  * Zend_Version
  */
-require_once 'Zend/Version.php';
+// require_once 'Zend/Version.php';
 
 /**
  * Abstract class for common functionality in entries and feeds
@@ -593,7 +593,7 @@ abstract class Zend_Gdata_App_FeedEntryParent extends Zend_Gdata_App_Base
     public function setMajorProtocolVersion($value)
     {
         if (!($value >= 1) && ($value !== null)) {
-            require_once('Zend/Gdata/App/InvalidArgumentException.php');
+            // require_once('Zend/Gdata/App/InvalidArgumentException.php');
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Major protocol version must be >= 1');
         }
@@ -623,7 +623,7 @@ abstract class Zend_Gdata_App_FeedEntryParent extends Zend_Gdata_App_Base
     public function setMinorProtocolVersion($value)
     {
         if (!($value >= 0)) {
-            require_once('Zend/Gdata/App/InvalidArgumentException.php');
+            // require_once('Zend/Gdata/App/InvalidArgumentException.php');
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Minor protocol version must be >= 0 or null');
         }

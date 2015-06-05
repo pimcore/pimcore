@@ -18,7 +18,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/EventManager/EventDescription.php';
+// require_once 'Zend/EventManager/EventDescription.php';
 
 /**
  * Representation of an event
@@ -111,7 +111,7 @@ class Zend_EventManager_Event implements Zend_EventManager_EventDescription
     public function setParams($params)
     {
         if (!is_array($params) && !is_object($params)) {
-            require_once 'Zend/EventManager/Exception/InvalidArgumentException.php';
+            // require_once 'Zend/EventManager/Exception/InvalidArgumentException.php';
             throw new Zend_EventManager_Exception_InvalidArgumentException(sprintf(
                 'Event parameters must be an array or object; received "%s"',
                 (is_object($params) ? get_class($params) : gettype($params))

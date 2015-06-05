@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Extension_Reminder
  */
-require_once 'Zend/Gdata/Extension/Reminder.php';
+// require_once 'Zend/Gdata/Extension/Reminder.php';
 
 /**
  * Represents the gd:when element

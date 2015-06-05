@@ -19,7 +19,7 @@
  * @version    $Id: $
  */
 
-require_once 'Zend/Service/Exception.php';
+// require_once 'Zend/Service/Exception.php';
 
 /**
  * @category   Zend

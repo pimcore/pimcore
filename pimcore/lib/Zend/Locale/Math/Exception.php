@@ -23,7 +23,7 @@
 /**
  * Zend_Exception
  */
-require_once 'Zend/Locale/Exception.php';
+// require_once 'Zend/Locale/Exception.php';
 
 
 /**

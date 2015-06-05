@@ -23,12 +23,12 @@
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_DirectoryConfigurationSubscription
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/DirectoryConfigurationSubscription.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/DirectoryConfigurationSubscription.php';
 
 /**
  * @category   Zend

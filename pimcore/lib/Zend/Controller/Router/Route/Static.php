@@ -21,7 +21,7 @@
  */
 
 /** Zend_Controller_Router_Route_Abstract */
-require_once 'Zend/Controller/Router/Route/Abstract.php';
+// require_once 'Zend/Controller/Router/Route/Abstract.php';
 
 /**
  * StaticRoute is used for managing static URIs.

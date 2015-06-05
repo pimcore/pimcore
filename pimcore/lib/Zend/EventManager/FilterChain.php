@@ -18,9 +18,9 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/EventManager/Filter.php';
-require_once 'Zend/EventManager/Filter/FilterIterator.php';
-require_once 'Zend/Stdlib/CallbackHandler.php';
+// require_once 'Zend/EventManager/Filter.php';
+// require_once 'Zend/EventManager/Filter/FilterIterator.php';
+// require_once 'Zend/Stdlib/CallbackHandler.php';
 
 /**
  * FilterChain: intercepting filter manager
@@ -85,7 +85,7 @@ class Zend_EventManager_FilterChain implements Zend_EventManager_Filter
     public function attach($callback, $priority = 1)
     {
         if (empty($callback)) {
-            require_once 'Zend/Stdlib/Exception/InvalidCallbackException.php';
+            // require_once 'Zend/Stdlib/Exception/InvalidCallbackException.php';
             throw new Zend_Stdlib_Exception_InvalidCallbackException('No callback provided');
         }
         $filter = new Zend_Stdlib_CallbackHandler($callback, array('priority' => $priority));

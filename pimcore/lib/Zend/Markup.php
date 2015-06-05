@@ -22,7 +22,7 @@
 /**
  * @see Zend_Loader_PluginLoader
  */
-require_once 'Zend/Loader/PluginLoader.php';
+// require_once 'Zend/Loader/PluginLoader.php';
 
 /**
  * @category   Zend

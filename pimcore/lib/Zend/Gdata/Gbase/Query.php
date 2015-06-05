@@ -24,12 +24,12 @@
 /**
  * @see Zend_Exception
  */
-require_once 'Zend/Exception.php';
+// require_once 'Zend/Exception.php';
 
 /**
  * @see Zend_Gdata_Query
  */
-require_once 'Zend/Gdata/Query.php';
+// require_once 'Zend/Gdata/Query.php';
 
 /**
  * Assists in constructing queries for Google Base

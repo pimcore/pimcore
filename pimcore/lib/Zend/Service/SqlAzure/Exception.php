@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_Exception
  */
-require_once 'Zend/Service/Exception.php';
+// require_once 'Zend/Service/Exception.php';
 
 /**
  * @category   Zend

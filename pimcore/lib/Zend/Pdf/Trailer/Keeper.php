@@ -21,7 +21,7 @@
 
 
 /** Zend_Pdf_Trailer */
-require_once 'Zend/Pdf/Trailer.php';
+// require_once 'Zend/Pdf/Trailer.php';
 
 /**
  * PDF file trailer.

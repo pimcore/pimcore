@@ -24,7 +24,7 @@
 /**
  * Abstract class for extension
  */
-require_once 'Zend/View/Helper/FormElement.php';
+// require_once 'Zend/View/Helper/FormElement.php';
 
 
 /**
@@ -124,7 +124,7 @@ class Zend_View_Helper_FormRadio extends Zend_View_Helper_FormElement
         $value = (array) $value;
 
         // Set up the filter - Alnum + hyphen + underscore
-        require_once 'Zend/Filter/PregReplace.php';
+        // require_once 'Zend/Filter/PregReplace.php';
         $pattern = @preg_match('/\pL/u', 'a') 
             ? '/[^\p{L}\p{N}\-\_]/u'    // Unicode
             : '/[^a-zA-Z0-9\-\_]/';     // No Unicode

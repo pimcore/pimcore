@@ -20,10 +20,10 @@
  */
 
 /** Zend_Controller_Request_Http */
-require_once 'Zend/Controller/Request/Http.php';
+// require_once 'Zend/Controller/Request/Http.php';
 
 /** Zend_Uri */
-require_once 'Zend/Uri.php';
+// require_once 'Zend/Uri.php';
 
 /**
  * Zend_Controller_Request_Apache404

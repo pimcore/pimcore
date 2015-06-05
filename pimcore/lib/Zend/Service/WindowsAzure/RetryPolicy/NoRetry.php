@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_WindowsAzure_RetryPolicy_RetryPolicyAbstract
  */
-require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryPolicyAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryPolicyAbstract.php';
 
 /**
  * @category   Zend

@@ -21,7 +21,7 @@
  */
 
 /** Zend_Dojo_View_Helper_ComboBox */
-require_once 'Zend/Dojo/View/Helper/ComboBox.php';
+// require_once 'Zend/Dojo/View/Helper/ComboBox.php';
 
 /**
  * Dojo FilteringSelect dijit

@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Feed
  */
-require_once 'Zend/Gdata/Feed.php';
+// require_once 'Zend/Gdata/Feed.php';
 
 /**
  * @see Zend_Gdata_Gapps_EmailListRecipientEntry
  */
-require_once 'Zend/Gdata/Gapps/EmailListRecipientEntry.php';
+// require_once 'Zend/Gdata/Gapps/EmailListRecipientEntry.php';
 
 /**
  * Data model for a collection of Google Apps email list recipient entries,

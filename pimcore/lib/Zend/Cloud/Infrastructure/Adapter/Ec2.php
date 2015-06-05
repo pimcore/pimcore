@@ -7,15 +7,15 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Amazon/Ec2/Instance.php';
-require_once 'Zend/Service/Amazon/Ec2/Image.php';
-require_once 'Zend/Service/Amazon/Ec2/Availabilityzones.php';
-require_once 'Zend/Service/Amazon/Ec2/CloudWatch.php';
-require_once 'Zend/Cloud/Infrastructure/Instance.php';
-require_once 'Zend/Cloud/Infrastructure/InstanceList.php';
-require_once 'Zend/Cloud/Infrastructure/Image.php';
-require_once 'Zend/Cloud/Infrastructure/ImageList.php';
-require_once 'Zend/Cloud/Infrastructure/Adapter/AbstractAdapter.php';
+// require_once 'Zend/Service/Amazon/Ec2/Instance.php';
+// require_once 'Zend/Service/Amazon/Ec2/Image.php';
+// require_once 'Zend/Service/Amazon/Ec2/Availabilityzones.php';
+// require_once 'Zend/Service/Amazon/Ec2/CloudWatch.php';
+// require_once 'Zend/Cloud/Infrastructure/Instance.php';
+// require_once 'Zend/Cloud/Infrastructure/InstanceList.php';
+// require_once 'Zend/Cloud/Infrastructure/Image.php';
+// require_once 'Zend/Cloud/Infrastructure/ImageList.php';
+// require_once 'Zend/Cloud/Infrastructure/Adapter/AbstractAdapter.php';
 
 /**
  * Amazon EC2 adapter for infrastructure service
@@ -129,14 +129,14 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2 extends Zend_Cloud_Infrastructure_Ad
         }
         
         if (empty($options) || !is_array($options)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Invalid options provided');
         }
         
         if (!isset($options[self::AWS_ACCESS_KEY]) 
             || !isset($options[self::AWS_SECRET_KEY])
         ) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('AWS keys not specified!');
         }
 
@@ -151,7 +151,7 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2 extends Zend_Cloud_Infrastructure_Ad
         try {
             $this->ec2 = new Zend_Service_Amazon_Ec2_Instance($options[self::AWS_ACCESS_KEY], $options[self::AWS_SECRET_KEY], $this->region);
         } catch (Exception  $e) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Error on create: ' . $e->getMessage(), $e->getCode(), $e);
         }
 
@@ -298,7 +298,7 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2 extends Zend_Cloud_Infrastructure_Ad
      */ 
     public function stopInstance($id)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
+        // require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('The stopInstance method is not implemented in the adapter');
     }
  
@@ -310,7 +310,7 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2 extends Zend_Cloud_Infrastructure_Ad
      */ 
     public function startInstance($id)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
+        // require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('The startInstance method is not implemented in the adapter');
     }
  
@@ -401,7 +401,7 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2 extends Zend_Cloud_Infrastructure_Ad
         }
 
         if (!in_array($metric,$this->validMetrics)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception(sprintf(
                 'The metric "%s" is not valid', 
                 $metric
@@ -409,7 +409,7 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2 extends Zend_Cloud_Infrastructure_Ad
         }
 
         if (!empty($options) && !is_array($options)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('The options must be an array');
         }
 
@@ -417,7 +417,7 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2 extends Zend_Cloud_Infrastructure_Ad
             && (empty($options[Zend_Cloud_Infrastructure_Instance::MONITOR_START_TIME]) 
                 || empty($options[Zend_Cloud_Infrastructure_Instance::MONITOR_END_TIME]))
         ) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception(sprintf(
                 'The options array must contain: "%s" and "%s"',
                 $options[Zend_Cloud_Infrastructure_Instance::MONITOR_START_TIME],

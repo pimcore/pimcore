@@ -21,14 +21,14 @@
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Destination.php';
+// require_once 'Zend/Pdf/Destination.php';
 
-require_once 'Zend/Pdf/Element/Dictionary.php';
-require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Dictionary.php';
+// require_once 'Zend/Pdf/Element/Name.php';
 
 
 /** Zend_Pdf_Action */
-require_once 'Zend/Pdf/Action.php';
+// require_once 'Zend/Pdf/Action.php';
 
 /**
  * PDF 'Go to' action
@@ -70,12 +70,12 @@ class Zend_Pdf_Action_GoTo extends Zend_Pdf_Action
     public static function create($destination)
     {
         if (is_string($destination)) {
-            require_once 'Zend/Pdf/Destination/Named.php';
+            // require_once 'Zend/Pdf/Destination/Named.php';
             $destination = Zend_Pdf_Destination_Named::create($destination);
         }
 
         if (!$destination instanceof Zend_Pdf_Destination) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('$destination parameter must be a Zend_Pdf_Destination object or string.');
         }
 

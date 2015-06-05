@@ -74,7 +74,7 @@ class Zend_Service_DeveloperGarden_SecurityTokenServer_Cache
     public static function getTokenFromCache($tokenId)
     {
         if (!array_key_exists($tokenId, self::$_storedToken)) {
-            require_once 'Zend/Service/DeveloperGarden/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Exception.php';
             throw new Zend_Service_DeveloperGarden_Exception(
                 'tokenID ' . $tokenId . ' unknown.'
             );
@@ -103,7 +103,7 @@ class Zend_Service_DeveloperGarden_SecurityTokenServer_Cache
         Zend_Service_DeveloperGarden_Response_SecurityTokenServer_Interface $tokenValue
     ) {
         if (!array_key_exists($tokenId, self::$_storedToken)) {
-            require_once 'Zend/Service/DeveloperGarden/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Exception.php';
             throw new Zend_Service_DeveloperGarden_Exception(
                 'tokenID ' . $tokenId . ' unknown.'
             );

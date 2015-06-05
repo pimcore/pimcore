@@ -19,7 +19,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Rackspace/Files.php';
+// require_once 'Zend/Service/Rackspace/Files.php';
 
 class Zend_Service_Rackspace_Files_Object
 {
@@ -100,38 +100,38 @@ class Zend_Service_Rackspace_Files_Object
     public function __construct($service, $data)
     {
         if (!($service instanceof Zend_Service_Rackspace_Files) || !is_array($data)) {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception(
                 'You must pass a RackspaceFiles and an array'
             );
         }
         if (!array_key_exists('container', $data)) {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception(
                 'You must pass the container of the object in the array (container)'
             );
         }
         if (array_key_exists('name', $data)) {
             if (!array_key_exists('hash', $data)) {
-                require_once 'Zend/Service/Rackspace/Files/Exception.php';
+                // require_once 'Zend/Service/Rackspace/Files/Exception.php';
                 throw new Zend_Service_Rackspace_Files_Exception(
                     'You must pass the hash of the object in the array (hash)'
                 );
             }
             if (!array_key_exists('bytes', $data)) {
-                require_once 'Zend/Service/Rackspace/Files/Exception.php';
+                // require_once 'Zend/Service/Rackspace/Files/Exception.php';
                 throw new Zend_Service_Rackspace_Files_Exception(
                     'You must pass the byte size of the object in the array (bytes)'
                 );
             }
             if (!array_key_exists('content_type', $data)) {
-                require_once 'Zend/Service/Rackspace/Files/Exception.php';
+                // require_once 'Zend/Service/Rackspace/Files/Exception.php';
                 throw new Zend_Service_Rackspace_Files_Exception(
                     'You must pass the content type of the object in the array (content_type)'
                 );
             }
             if (!array_key_exists('last_modified', $data)) {
-                require_once 'Zend/Service/Rackspace/Files/Exception.php';
+                // require_once 'Zend/Service/Rackspace/Files/Exception.php';
                 throw new Zend_Service_Rackspace_Files_Exception(
                     'You must pass the last modified data of the object in the array (last_modified)'
                 );
@@ -149,7 +149,7 @@ class Zend_Service_Rackspace_Files_Object
         } elseif (array_key_exists('subdir', $data)) {
             $this->name = $data['subdir'];
         } else {
-            require_once 'Zend/Service/Rackspace/Files/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Files/Exception.php';
             throw new Zend_Service_Rackspace_Files_Exception(
                 'You must pass the name of the object in the array (name)'
             );

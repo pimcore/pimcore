@@ -24,7 +24,7 @@
 /**
  * @see Zend_Http_Client_Adapter_Socket
  */
-require_once 'Zend/Http/Client/Adapter/Socket.php';
+// require_once 'Zend/Http/Client/Adapter/Socket.php';
 
 /**
  * Overrides the traditional socket-based adapter class for Zend_Http_Client to
