@@ -27,20 +27,6 @@ class Version {
      */
     public static $revision = 3501;
 
-    /**
-     * @var array
-     */
-   public static $svnInfo = array (
-  'Path' => 'trunk',
-  'URL' => 'http',
-  'Repository Root' => 'http',
-  'Repository UUID' => '1f8fe7d8-47f0-464c-8d0a-336f4953ab05',
-  'Revision' => '6565',
-  'Node Kind' => 'directory',
-  'Last Changed Author' => 'brusch',
-  'Last Changed Rev' => '6565',
-  'Last Changed Date' => '2015-06-03 12',
-);
 
     /**
      * @return string
@@ -55,13 +41,5 @@ class Version {
     public static function getRevision()
     {
         return self::$revision;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSvnInfo()
-    {
-        return self::$svnInfo;
     }
 }
