@@ -130,5 +130,16 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
 
     getType: function () {
         return "input";
+    },
+
+    setInherited: function($super, inherited, el) {
+
+        $super(inherited, el);
+
+        if(this.inherited) {
+            this.element.dom.setAttribute("contenteditable", false);
+        } else {
+            this.element.dom.setAttribute("contenteditable", true);
+        }
     }
 });

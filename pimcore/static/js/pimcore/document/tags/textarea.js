@@ -129,5 +129,16 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
     getType: function () {
         return "textarea";
+    },
+
+    setInherited: function($super, inherited, el) {
+
+        $super(inherited, el);
+
+        if(this.inherited) {
+            this.element.dom.setAttribute("contenteditable", false);
+        } else {
+            this.element.dom.setAttribute("contenteditable", true);
+        }
     }
 });
