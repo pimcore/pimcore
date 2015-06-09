@@ -188,7 +188,7 @@ CREATE TABLE `documents_hardlink` (
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
   `childsFromSource` tinyint(1) DEFAULT NULL,
-  UNIQUE KEY `id` (`id`)
+  PRIMARY KEY `id` (`id`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_link`;
@@ -757,7 +757,7 @@ CREATE TABLE `uuids` (
   `itemId` BIGINT(20) UNSIGNED NOT NULL,
   `type` VARCHAR(25) NOT NULL,
   `instanceIdentifier` VARCHAR(50) NOT NULL,
-  UNIQUE INDEX `itemId_type_uuid` (`itemId`, `type`, `uuid`)
+  PRIMARY KEY (`itemId`, `type`, `uuid`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `versions`;
