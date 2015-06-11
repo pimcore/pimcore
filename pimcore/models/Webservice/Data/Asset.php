@@ -82,6 +82,14 @@ class Asset extends Model\Webservice\Data {
      */
     public $customSettings;
 
+
+    /**
+     * @var
+     */
+    public $metadata;
+
+
+
     /**
      * @param $object
      * @param null $options
@@ -108,5 +116,22 @@ class Asset extends Model\Webservice\Data {
             }
         }
 
+        $this->metadata = $object->getMetadata();
+    }
+
+    /**
+     * @param $object
+     * @param bool $disableMappingExceptions
+     * @param null $idMapper
+     * @throws \Exception
+     */
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
+
+        $metadata = $this->metadata;
+        if (is_array($metadata)) {
+            $metadata = json_decode(json_encode($metadata), true);
+            $object->metadata = $metadata;
+        }
     }
 }
