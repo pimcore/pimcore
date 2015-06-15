@@ -79,6 +79,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                 editable: false,
                 triggerAction: 'all',
                 mode: "local",
+                width: 160,
                 listWidth: 200,
                 value: languageData,
                 listeners: {

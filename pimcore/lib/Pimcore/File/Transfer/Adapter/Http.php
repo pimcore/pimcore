@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-namespace Pimcore\FIle\Transfer\Adapter;
+namespace Pimcore\File\Transfer\Adapter;
 
 use Pimcore\File;
 
