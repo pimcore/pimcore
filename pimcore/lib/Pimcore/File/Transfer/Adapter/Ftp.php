@@ -6,7 +6,7 @@
  * Time: 10:05
  */
 
-namespace Pimcore\FIle\Transfer\Adapter;
+namespace Pimcore\File\Transfer\Adapter;
 
 use Pimcore\File;
 
