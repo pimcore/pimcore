@@ -6,7 +6,7 @@
  * Time: 10:05
  */
 
-namespace Pimcore\File\Transfer\Adapter;
+namespace Pimcore\FIle\Transfer\Adapter;
 
 use Pimcore\File;
 
@@ -47,6 +47,11 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
      * @var int
      */
     protected $transferMode = FTP_ASCII;
+
+    /**
+     * @var bool
+     */
+    protected $passive = false;
 
     /**
      * @return boolean
@@ -103,6 +108,22 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
     }
 
     /**
+     * @return boolean
+     */
+    public function isPassive()
+    {
+        return $this->passive;
+    }
+
+    /**
+     * @param boolean $passive
+     */
+    public function setPassive($passive)
+    {
+        $this->passive = $passive;
+    }
+
+    /**
      * Connects to the FTP-Host
      *
      * @return $this
@@ -127,6 +148,9 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
             $this->connect();
         }
         $this->setLoggedIn(ftp_login($this->getConnection(), $this->getUsername(), $this->getPassword()));
+
+        ftp_pasv($this->getConnection(), $this->isPassive());
+
         return $this;
     }
 
