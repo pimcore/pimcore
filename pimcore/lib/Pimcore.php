@@ -686,7 +686,7 @@ class Pimcore {
 
         // init configuration
         try {
-            $conf = Config::getSystemConfig();
+            $conf = Config::getSystemConfig(true);
 
             // set timezone
             if ($conf instanceof \Zend_Config) {

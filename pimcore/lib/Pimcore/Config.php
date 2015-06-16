@@ -22,14 +22,15 @@ use Pimcore\Model;
 class Config {
 
     /**
-     * @static
-     * @return \Zend_Config
+     * @param bool $forceReload
+     * @return mixed|null|\Zend_Config_Xml
+     * @throws \Zend_Exception
      */
-    public static function getSystemConfig () {
+    public static function getSystemConfig ($forceReload = false) {
 
         $config = null;
 
-        if(\Zend_Registry::isRegistered("pimcore_config_system")) {
+        if(\Zend_Registry::isRegistered("pimcore_config_system") && !$forceReload) {
             $config = \Zend_Registry::get("pimcore_config_system");
         } else  {
             try {

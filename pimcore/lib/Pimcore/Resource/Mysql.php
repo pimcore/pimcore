@@ -183,7 +183,7 @@ class Mysql {
                     // the following select causes an infinite loop (eg. when the connection is lost -> error handler)
                     //\Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
                     $db->closeResource();
-                    //$db->closeDDLResource();
+                    $db->closeWriteResource();
                 }
             }
         } catch (\Exception $e) {

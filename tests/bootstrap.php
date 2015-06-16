@@ -55,6 +55,11 @@ try {
         // if there's a configuration for the main project, use that one and replace the database name
         $dbConfig = $systemConfig["database"];
         $dbConfig["params"]["dbname"] = $dbConfig["params"]["dbname"] . "___phpunit";
+
+        // remove write only config
+        if(isset($dbConfig["writeOnly"])) {
+            unset($dbConfig["writeOnly"]);
+        }
     }
 
     // use mysqli for that, because Zend_Db requires a DB for a connection
@@ -77,6 +82,10 @@ if (defined('HHVM_VERSION')) {
 }
 
 echo "\n\nDatabase Config: ". print_r($dbConfig, true) . "\n\n";
+
+// force the db wrapper to use only one connection, regardless if read/write
+$db = \Pimcore\Resource::get();
+$db->setWriteResource($db->getResource());
 
 $setup = new Tool_Setup();
 $setup->config(array(
