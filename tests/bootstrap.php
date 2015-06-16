@@ -84,8 +84,10 @@ if (defined('HHVM_VERSION')) {
 echo "\n\nDatabase Config: ". print_r($dbConfig, true) . "\n\n";
 
 // force the db wrapper to use only one connection, regardless if read/write
-$db = \Pimcore\Resource::get();
-$db->setWriteResource($db->getResource());
+if(is_array($systemConfig)) {
+    $db = \Pimcore\Resource::get();
+    $db->setWriteResource($db->getResource());
+}
 
 $setup = new Tool_Setup();
 $setup->config(array(
@@ -140,4 +142,3 @@ Test_BaseRest::setTestConfig($testConfig);
 
 print("include path: " . get_include_path() . "\n");
 print("bootstrap    done\n");
-
