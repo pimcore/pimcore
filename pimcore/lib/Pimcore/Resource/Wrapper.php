@@ -25,39 +25,55 @@ class Wrapper {
     protected $resource;
 
     /**
-     * use a seperate connection for DDL queries to avoid implicit commits
+     * use a dedicated connection for write queries if configured
      * @var \Zend_Db_Adapter_Abstract
      */
-    //protected $DDLResource;
+    protected $writeResource = null;
 
     /**
-     * @param \Zend_Db_Adapter_Abstract $DDLResource
+     * @var bool
      */
-    /*public function setDDLResource($DDLResource)
+    protected $inTransaction = false;
+
+    /**
+     * @param $writeResource
+     * @return $this
+     */
+    public function setWriteResource($writeResource)
     {
-        $this->DDLResource = $DDLResource;
+        $this->writeResource = $writeResource;
         return $this;
-    }*/
+    }
 
     /**
      * @return \Zend_Db_Adapter_Abstract
      */
-    /*public function getDDLResource()
+    public function getWriteResource()
     {
-        if(!$this->DDLResource) {
+        if($this->writeResource === null) {
             // get the \Zend_Db_Adapter_Abstract not the wrapper
-            $this->DDLResource = Pimcore_Resource::getConnection(true);
+            try {
+                $this->writeResource = Resource::getConnection(true, true);
+            } catch (\Exception $e) {
+                $this->writeResource = false;
+            }
         }
-        return $this->DDLResource;
-    }*/
+
+        if($this->writeResource !== false) {
+            return $this->writeResource;
+        }
+
+        // use the default connection if we don't have a dedicated write connection config
+        return $this->getResource();
+    }
 
     /**
      *
      */
-    /*public function closeDDLResource() {
-        $this->closeConnectionResource($this->DDLResource);
-        $this->DDLResource = null;
-    }*/
+    public function closeWriteResource() {
+        $this->closeConnectionResource($this->writeResource);
+        $this->writeResource = null;
+    }
 
     /**
      * @param $resource
@@ -190,6 +206,22 @@ class Wrapper {
     }
 
     /**
+     * @return mixed
+     */
+    public function beginTransaction() {
+        $this->inTransaction = true;
+        return $this->__call("beginTransaction", []);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function commit() {
+        $this->inTransaction = false;
+        return $this->__call("commit", []);
+    }
+
+    /**
      * @throws \Exception
      * @param  $method
      * @param  $args
@@ -213,9 +245,9 @@ class Wrapper {
     public function callResourceMethod ($method, $args) {
 
         $resource = $this->getResource();
-        /*if($method == "query" && Pimcore_Resource::isDDLQuery($args[0])) {
-            $resource = $this->getDDLResource();
-        }*/
+        if($this->inTransaction || Resource::isWriteQuery($method, $args)) {
+            $resource = $this->getWriteResource();
+        }
 
         $capture = false;
 
