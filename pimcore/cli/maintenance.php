@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -15,10 +15,10 @@
 
 chdir(__DIR__);
 
-include_once("startup.php");    
+include_once("startup.php");
 
 use Pimcore\Log;
-use Pimcore\Model\Schedule; 
+use Pimcore\Model\Schedule;
 
 try {
     $optsConfig = array(
@@ -97,6 +97,8 @@ $manager->registerJob(new Schedule\Maintenance\Job("logmaintenance", new \Pimcor
 $manager->registerJob(new Schedule\Maintenance\Job("cleanuplogfiles", new \Pimcore\Log\Maintenance(), "cleanupLogFiles"));
 $manager->registerJob(new Schedule\Maintenance\Job("httperrorlog", new \Pimcore\Log\Maintenance(), "httpErrorLogCleanup"));
 $manager->registerJob(new Schedule\Maintenance\Job("usagestatistics", new \Pimcore\Log\Maintenance(), "usageStatistics"));
+$manager->registerJob(new Schedule\Maintenance\Job("checkErrorLogsDb", new \Pimcore\Log\Maintenance(), "checkErrorLogsDb"));
+$manager->registerJob(new Schedule\Maintenance\Job("archiveLogEntries", new \Pimcore\Log\Maintenance(), "archiveLogEntries"));
 $manager->registerJob(new Schedule\Maintenance\Job("sanitycheck", "\\Pimcore\\Model\\Element\\Service", "runSanityCheck"));
 $manager->registerJob(new Schedule\Maintenance\Job("versioncleanup", new \Pimcore\Model\Version(), "maintenanceCleanUp"));
 $manager->registerJob(new Schedule\Maintenance\Job("versioncompress", new \Pimcore\Model\Version(), "maintenanceCompress"));
