@@ -453,6 +453,10 @@ $scripts = array(
     "pimcore/extensionmanager/xmlEditor.js",
     "pimcore/extensionmanager/admin.js",
 
+    // application logging
+    "pimcore/log/admin.js",
+    "pimcore/log/detailwindow.js",
+
     // layout
     "pimcore/layout/portal.js",
     "pimcore/layout/portlets/abstract.js",

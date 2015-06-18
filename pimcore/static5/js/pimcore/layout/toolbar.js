@@ -273,6 +273,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("application_logging")) {
+            extrasItems.push({
+                text: t("log_applicationlog"),
+                iconCls: "pimcore_icon_log_admin",
+                handler: this.logAdmin
+            });
+        }
+
         if (extrasItems.length > 0) {
             extrasItems.push("-");
         }
@@ -1472,6 +1480,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("extensionmanager_admin", new pimcore.extensionmanager.admin());
+        }
+    },
+
+    logAdmin: function () {
+        try {
+            pimcore.globalmanager.get("pimcore_applicationlog_admin").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.log.admin());
         }
     },
 

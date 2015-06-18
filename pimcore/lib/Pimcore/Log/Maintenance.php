@@ -124,4 +124,93 @@ class Maintenance {
             }
         }
     }
+
+    public function checkErrorLogsDb(){
+        $conf = Config::getSystemConfig();
+        $config = $conf->applicationlog;
+
+        if($config->mail_notification->send_log_summary){
+
+            $receivers = preg_split("/,|;/",$config->mail_notification->mail_receiver);
+
+            array_walk($receivers, function (&$value){
+                $value = trim($value);
+            });
+
+            $logLevel = (int)$config->mail_notification->filter_priority;
+            $db = \Pimcore\Resource::get()->getResource();
+
+
+            $query = "SELECT * FROM ". \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
+
+            $rows = $db->fetchAll($query);
+            $limit = 100;
+            $rowsProcessed = 0;
+
+            $rowCount = count($rows);
+            if($rowCount){
+                while ($rowsProcessed < $rowCount) {
+                    $entries = array();
+
+                    if ($rowCount <= $limit) {
+                        $entries = $rows;
+                    } else {
+                        for ($i = $rowsProcessed; $i < $rowCount && count($entries) < $limit; $i++) {
+                            $entries[] = $rows[$i];
+                        }
+                    }
+
+                    $rowsProcessed += count($entries);
+
+                    $html = var_export($entries, true);
+                    $html = "<pre>$html</pre>";
+                    $mail = new \Pimcore_Mail();
+                    $mail->setBodyHtml($html);
+                    $mail->addTo($receivers);
+                    $mail->setSubject('Error Log ' . \Pimcore_Tool::getHostUrl());
+                    $mail->send();
+                }
+            }
+
+            $db->query("UPDATE " . \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " set maintenanceChecked = 1");
+        }
+    }
+
+
+    public function archiveLogEntries() {
+        $conf = Config::getSystemConfig();
+        $config = $conf->applicationlog;
+
+        $db = \Pimcore\Resource::get();
+
+        $tablename =  \Pimcore\Log\Helper::ERROR_LOG_ARCHIVE_TABLE_NAME . "_" . \Zend_Date::now()->get(\Zend_Date::MONTH_NAME) . '_' .\Zend_Date::now()->get(\Zend_Date::YEAR);
+
+        if($config->archive_alternative_database) {
+            $tablename = $config->archive_alternative_database . '.' . $tablename;
+        }
+
+        $archive_treshold = intval($config->archive_treshold) ? : 30;
+
+        $db->query("CREATE TABLE IF NOT EXISTS " . $tablename . " (
+                       id BIGINT(20) NOT NULL,
+                       `timestamp` DATETIME NOT NULL,
+                       message VARCHAR(1024),
+                       priority INT(10),
+                       fileobject VARCHAR(1024),
+                       info VARCHAR(1024),
+                       component VARCHAR(255),
+                       source VARCHAR(255) NULL DEFAULT NULL,
+                       relatedobject BIGINT(20),
+                       relatedobjecttype ENUM('object', 'document', 'asset'),
+                       maintenanceChecked TINYINT(4)
+                    ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
+
+
+        $timestamp = time();
+
+        $db->query("INSERT INTO " . $tablename . " SELECT * FROM " .  \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(" . $timestamp . "), INTERVAL " . $archive_treshold . " DAY);");
+        $db->query("DELETE FROM " .  \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(" . $timestamp . "), INTERVAL " . $archive_treshold . " DAY);");
+
+
+    }
 }

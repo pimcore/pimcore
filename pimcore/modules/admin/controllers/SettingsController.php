@@ -455,6 +455,15 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 "proxy_port" => $values["httpclient.proxy_port"],
                 "proxy_user" => $values["httpclient.proxy_user"],
                 "proxy_pass" => $values["httpclient.proxy_pass"],
+            ),
+            "applicationlog" => array(
+                "mail_notification" => array(
+                    "send_log_summary" => $values['applicationlog.mail_notification.send_log_summary'],
+                    "filter_priority" => $values['applicationlog.mail_notification.filter_priority'],
+                    "mail_receiver" => $values['applicationlog.mail_notification.mail_receiver'],
+                ),
+                "archive_treshold" => $values['applicationlog.archive_treshold'],
+                "archive_alternative_database" => $values['applicationlog.archive_alternative_database'],
             )
         );
 

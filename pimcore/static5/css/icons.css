@@ -248,6 +248,10 @@
     background: url(/pimcore/static/img/icon/plugin_edit.png) left center no-repeat !important;
 }
 
+.pimcore_icon_log_admin {
+    background: url(/pimcore/static/img/icon/text_signature.png) left center no-repeat !important;
+}
+
 .pimcore_icon_menu_plugin_download {
     background: url(/pimcore/static/img/icon/plugin_go.png) no-repeat !important;
 }
@@ -1393,4 +1397,8 @@
 
 .pimcore_icon_hourglass  {
     background: url(/pimcore/static/img/icon/hourglass.png) left center no-repeat !important;
+}
+
+.pimcore_icon_cancel  {
+    background: url(/pimcore/static/img/icon/cancel.png) left center no-repeat !important;
 }

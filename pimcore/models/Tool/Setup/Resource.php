@@ -144,6 +144,7 @@ class Resource extends Model\Resource\AbstractResource {
 
 
         $userPermissions = array(
+            array("key" => "application_logging"),
             array("key" => "assets"),
             array("key" => "classes"),
             array("key" => "clear_cache"),
