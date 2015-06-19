@@ -108,7 +108,7 @@ class Tool {
     }
 
     /**
-     * @return null
+     * @return null|string
      */
     public static function getDefaultLanguage() {
         $config = Config::getSystemConfig();
@@ -126,7 +126,8 @@ class Tool {
     }
 
     /**
-     * @static
+     * @return array|mixed
+     * @throws \Zend_Locale_Exception
      */
     public static function getSupportedLocales() {
 
