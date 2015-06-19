@@ -439,7 +439,7 @@ class Tool {
     /**
      * @param string $type
      * @param array $options
-     * @return mixed
+     * @return \Zend_Http_Client
      * @throws \Exception
      * @throws \Zend_Http_Client_Exception
      */
