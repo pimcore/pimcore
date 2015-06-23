@@ -616,7 +616,7 @@ pimcore.settings.system = Class.create({
                                                 ["", t('no_authentication')],
                                                 ["login","LOGIN"],
                                                 ["plain","PLAIN"],
-                                                ["cram-md5", "CRAM-MD5"]
+                                                ["crammd5", "CRAM-MD5"]
                                             ],
                                             mode: "local",
                                             triggerAction: "all",
