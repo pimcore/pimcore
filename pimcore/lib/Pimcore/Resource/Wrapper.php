@@ -217,8 +217,9 @@ class Wrapper {
      * @return mixed
      */
     public function commit() {
+        $return = $this->__call("commit", []);
         $this->inTransaction = false;
-        return $this->__call("commit", []);
+        return $return;
     }
 
     /**
