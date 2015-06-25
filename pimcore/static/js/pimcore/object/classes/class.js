@@ -63,7 +63,7 @@ pimcore.object.classes.klass = Class.create({
             },
             tbar: {
                 items: [
-                      "->",
+                    "->",
                     {
                         text: t("configure_custom_layouts"),
                         iconCls: "pimcore_icon_class_add",
@@ -434,6 +434,25 @@ pimcore.object.classes.klass = Class.create({
                     handler: this.attributes.reference.changeDataType.bind(this, this.attributes.object.type, dataComps, false)
                 }));
             }
+
+
+            menu.add(new Ext.menu.Item({
+                text: t('copy'),
+                iconCls: "pimcore_icon_copy",
+                hideOnClick: true,
+                handler: this.attributes.reference.copyNode.bind(this)
+            }));
+
+            if (pimcore && pimcore.classEditor && pimcore.classEditor.clipboard) {
+                menu.add(new Ext.menu.Item({
+                    text: t('paste'),
+                    iconCls: "pimcore_icon_paste",
+                    hideOnClick: true,
+                    handler: this.attributes.reference.dropNode.bind(this)
+                }));
+            }
+
+
         }
 
         var deleteAllowed = true;
@@ -453,6 +472,111 @@ pimcore.object.classes.klass = Class.create({
         }
 
         menu.show(this.ui.getAnchor());
+    },
+
+    cloneNode:  function(theReference, node) {
+        var nodeLabel = node.text;
+        var nodeType = node.attributes.type;
+
+        var config = {
+            text: nodeLabel,
+            type: nodeType,
+            leaf: node.leaf,
+            expanded: node.expanded
+        };
+
+
+        config.listeners = theReference.getTreeNodeListeners();
+
+        if (node.attributes.object) {
+            //config.iconCls = "pimcore_icon_" + node.attributes.object.type;
+            config.iconCls = node.attributes.object.getIconClass();
+        }
+
+        var newNode = new Ext.tree.TreeNode(config);
+
+        newNode.attributes.reference = theReference;
+
+
+        var theData = {};
+
+        if (node.attributes.object) {
+            theData = Ext.apply(theData, node.attributes.object.datax);
+        }
+
+        if (node.attributes.object) {
+            var definitions = newNode.attributes.object = pimcore.object.classes[nodeType];
+            var editorType = node.attributes.object.type;
+            var editor = definitions[editorType];
+
+            newNode.attributes.object = new editor(newNode, theData);
+        }
+
+        if (nodeType == "data") {
+            var availableFields = newNode.attributes.object.availableSettingsFields;
+            for (var i = 0; i < availableFields.length; i++) {
+                var field = availableFields[i];
+                if (node.attributes.object.datax[field]) {
+                    if (field != "name") {
+                        newNode.attributes.object.datax[field] = node.attributes.object.datax[field];
+                    }
+                }
+            }
+
+            newNode.attributes.object.applySpecialData(node.attributes.object);
+        }
+
+
+        var len = node.childNodes ? node.childNodes.length : 0;
+
+        var i = 0;
+
+        // Move child nodes across to the copy if required
+        for (i = 0; i < len; i++) {
+            var childNode = node.childNodes[i];
+            var clonedChildNode = childNode.attributes.reference.cloneNode(theReference, childNode);
+
+            newNode.appendChild(clonedChildNode);
+        }
+        return newNode;
+    },
+
+
+    copyNode: function() {
+        if (!pimcore.classEditor) {
+            pimcore.classEditor = {};
+        }
+
+        var newNode = this.attributes.reference.cloneNode(this.attributes.reference, this);
+        pimcore.classEditor.clipboard = newNode;
+
+    },
+
+    dropNode: function() {
+        var node = pimcore.classEditor.clipboard;
+
+        var fixReference = function(theReference, node) {
+
+            node = node.attributes.reference.cloneNode(node.attributes.reference, node);
+            node.attributes.reference = theReference;
+
+            var len = node.childNodes ? node.childNodes.length : 0;
+
+            var i = 0;
+
+            // Move child nodes across to the copy if required
+            for (i = 0; i < len; i++) {
+                var childNode = node.childNodes[i];
+                var fixedNode = fixReference(theReference, childNode);
+
+            }
+            return node;
+        };
+
+        var newNode = node.attributes.reference.cloneNode(this.attributes.reference, node);
+
+        this.appendChild(newNode);
+        this.getOwnerTree().doLayout();
     },
 
     getRestrictionsFromParent: function (node) {
@@ -869,7 +993,7 @@ pimcore.object.classes.klass = Class.create({
 
                     if(node.attributes.object.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
-                            +(implode(',',node.attributes.object.forbiddenNames));
+                        +(implode(',',node.attributes.object.forbiddenNames));
                     }
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
                         invalidFieldsText);
@@ -913,7 +1037,7 @@ pimcore.object.classes.klass = Class.create({
         var regresult = this.data["name"].match(/[a-zA-Z][a-zA-Z0-9]+/);
 
         if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
-            this.parentPanel.forbiddennames)) {
+                this.parentPanel.forbiddennames)) {
             delete this.data.layoutDefinitions;
 
             var m = Ext.encode(this.getData());
