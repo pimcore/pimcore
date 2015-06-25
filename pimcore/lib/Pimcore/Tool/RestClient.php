@@ -712,7 +712,8 @@ class RestClient
                     if ($assetType == "image" && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
                         // http://example.com/website/var/tmp/thumb_9__fancybox_thumb
-                        $uri = $protocol . $this->getHost() . "/website/var/tmp/thumb_" . $asset->getId() . "__" . $thumbnail;
+                        $tmpPath = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", PIMCORE_TEMPORARY_DIRECTORY);
+                        $uri = $protocol . $this->getHost() . $tmpPath . "/thumb_" . $asset->getId() . "__" . $thumbnail;
                         $client->setUri($uri);
 
                         if ($this->getLoggingEnabled()) {
