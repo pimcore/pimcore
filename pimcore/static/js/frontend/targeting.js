@@ -762,7 +762,7 @@
             } else if (/linux/.test(ua)) {
                 user["environment"]["os"] = "linux";
             } else if (/iphone|ipad/.test(ua)) {
-                user["environment"]["environment"]["os"] = "ios";
+                user["environment"]["os"] = "ios";
             } else if (/mac/.test(ua)) {
                 user["environment"]["os"] = "macos";
             } else if (/android/.test(ua)) {
