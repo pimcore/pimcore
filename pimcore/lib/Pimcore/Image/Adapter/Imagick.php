@@ -272,7 +272,11 @@ class Imagick extends Adapter {
             $profiles = $this->resource->getImageProfiles('*', false);
             $has_icc_profile = (array_search('icc', $profiles) !== false);
             if($has_icc_profile) {
-                $this->resource->profileImage('icc', self::getRGBColorProfile());
+                try {
+                    $this->resource->profileImage('icc', self::getRGBColorProfile());
+                } catch (\Exception $e) {
+                    \Logger::warn($e);
+                }
             }
         }
 
