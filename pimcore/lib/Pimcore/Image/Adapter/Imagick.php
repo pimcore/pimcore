@@ -273,6 +273,7 @@ class Imagick extends Adapter {
             $has_icc_profile = (array_search('icc', $profiles) !== false);
             if($has_icc_profile) {
                 try {
+                    // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
                 } catch (\Exception $e) {
                     \Logger::warn($e);
