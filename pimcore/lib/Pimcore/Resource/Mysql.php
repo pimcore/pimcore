@@ -259,7 +259,7 @@ class Mysql {
      */
     public static function isWriteQuery($method, $args) {
 
-        $methodsToCheck = array("update","delete","insert");
+        $methodsToCheck = array("update","delete","insert","lastInsertId");
         if(in_array($method, $methodsToCheck)) {
             return true;
         }
