@@ -44,10 +44,8 @@ class Resource extends Model\Element\Resource
     }
 
     /**
-     * Get the data for the document from database for the given path
-     *
-     * @param string $path
-     * @return void
+     * @param $path
+     * @throws \Exception
      */
     public function getByPath($path)
     {
@@ -179,12 +177,19 @@ class Resource extends Model\Element\Resource
         }
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function updateWorkspaces() {
         $this->db->update("users_workspaces_document", array(
             "cpath" => $this->model->getRealFullPath()
         ), "cid = " . $this->model->getId());
     }
 
+    /**
+     * @param $oldPath
+     * @return array
+     */
     public function updateChildsPaths($oldPath)
     {
         //get documents to empty their cache
@@ -356,6 +361,10 @@ class Resource extends Model\Element\Resource
 		return (bool)$c;
 	}
 
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     public function isLocked()
     {
 
@@ -379,6 +388,9 @@ class Resource extends Model\Element\Resource
         return false;
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function updateLocks()
     {
         // tree_locks
@@ -401,9 +413,13 @@ class Resource extends Model\Element\Resource
         return $lockIds;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @return bool
+     */
     public function isAllowed($type, $user)
     {
-
         // collect properties via parent - ids
         $parentIds = array(1);
 
@@ -446,11 +462,18 @@ class Resource extends Model\Element\Resource
         return false;
     }
 
+    /**
+     * @param $index
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function saveIndex($index)
     {
         $this->db->update("documents", array("index" => $index), $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
+    /**
+     * @return string
+     */
     public function getNextIndex()
     {
         $index = $this->db->fetchOne("SELECT MAX(`index`) FROM documents WHERE parentId = ?", array($this->model->getParentId()));
