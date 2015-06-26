@@ -285,11 +285,16 @@ class Imagick extends Adapter {
         // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
         // problem is described here: http://imagemagick.org/Usage/basics/#type
         // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
+        $currentLocale = setlocale(LC_ALL,"0"); // this locale hack thing is also a hack for imagick
+        setlocale(LC_ALL,""); // details see https://www.pimcore.org/issues/browse/PIMCORE-2728
+
         $draw = new \ImagickDraw();
         $draw->setFillColor("#ff0000");
         $draw->setfillopacity(.01);
         $draw->point(floor($this->getWidth()/2),floor($this->getHeight()/2)); // place it in the middle of the image
         $this->resource->drawImage($draw);
+
+        setlocale(LC_ALL, $currentLocale); // see setlocale() above, for details ;-)
 
         return $this;
     }
