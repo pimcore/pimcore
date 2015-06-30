@@ -90,7 +90,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             input.decimalPrecision = 20;
         }
 
-        this.component = new Ext.form.field.Spinner(input);
+        this.component = new Ext.form.field.Number(input);
         return this.component;
     },
 

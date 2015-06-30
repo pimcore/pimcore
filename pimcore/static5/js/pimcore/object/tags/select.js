@@ -18,6 +18,13 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     type: "select",
 
     initialize: function (data, fieldConfig) {
+        this.defaultValue = null;
+        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
+            data = fieldConfig.defaultValue;
+            this.defaultValue = data;
+        }
+
+
         this.data = data;
         this.fieldConfig = fieldConfig;
 
@@ -181,11 +188,44 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getValue: function () {
-        return this.component.getValue();
+    getValue:function () {
+        if (this.isRendered()) {
+            return this.component.getValue();
+        } else if (this.defaultValue) {
+            return this.defaultValue;
+        }
+        return this.data;
     },
+
 
     getName: function () {
         return this.fieldConfig.name;
+    },
+
+    isDirty:function () {
+        var dirty = false;
+
+        if(this.defaultValue) {
+            return true;
+        }
+
+        if (this.component && typeof this.component.isDirty == "function") {
+            if (this.component.rendered) {
+                dirty = this.component.isDirty();
+
+                // once a field is dirty it should be always dirty (not an ExtJS behavior)
+                if (this.component["__pimcore_dirty"]) {
+                    dirty = true;
+                }
+                if (dirty) {
+                    this.component["__pimcore_dirty"] = true;
+                }
+
+                return dirty;
+            }
+        }
+
+        return false;
     }
+
 });
