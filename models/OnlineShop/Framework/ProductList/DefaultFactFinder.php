@@ -362,7 +362,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
             if($id)
             {
-                $product = $this->tenantConfig->getObjectMockupById( $item['id'] );
+                $product = $this->tenantConfig->getObjectMockupById( $id );
                 if($product)
                 {
                     $this->products[] = $product;
@@ -370,7 +370,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
             }
             else
             {
-                $this->getLogger()->log(sprintf('object "%s" not found',$item['id']), Zend_Log::ERR);
+                $this->getLogger()->log(sprintf('object "%s" not found', $id), Zend_Log::ERR);
             }
         }
 
