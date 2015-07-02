@@ -32,8 +32,8 @@ License: Apache 2.0
 http://www.opensource.org/licenses/Apache-2.0
 
 ## CSV Reader By Luke Visinoni
-License: GPL  
-http://www.opensource.org/licenses/gpl-1.0
+License: LGPL
+http://opensource.org/licenses/lgpl-license
 
 ## Sabre by Rooftop Solutions
 License: Modified BSD License
