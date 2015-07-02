@@ -830,15 +830,29 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $image1 = new Imagick($fromFile);
             $image2 = new Imagick($toFile);
 
-            $result = $image1->compareImages($image2, Imagick::METRIC_MEANSQUAREERROR);
-            $result[0]->setImageFormat("png");
+            if($image1->getImageWidth() == $image2->getImageWidth() && $image1->getImageHeight() == $image2->getImageHeight()) {
+                $result = $image1->compareImages($image2, Imagick::METRIC_MEANSQUAREERROR);
+                $result[0]->setImageFormat("png");
 
-            $result[0]->writeImage($diffFile);
-            $this->view->image = base64_encode(file_get_contents($diffFile));
+                $result[0]->writeImage($diffFile);
+                $result[0]->clear();
+                $result[0]->destroy();
+
+                $this->view->image = base64_encode(file_get_contents($diffFile));
+                unlink($diffFile);
+            } else {
+                $this->view->image1 = base64_encode(file_get_contents($fromFile));
+                $this->view->image2 = base64_encode(file_get_contents($toFile));
+            }
+
+            // cleanup
+            $image1->clear();
+            $image1->destroy();
+            $image2->clear();
+            $image2->destroy();
 
             unlink($fromFile);
             unlink($toFile);
-            unlink($diffFile);
         } else {
             $this->renderScript("document/diff-versions-unsupported.php");
         }
