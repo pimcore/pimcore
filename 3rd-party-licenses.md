@@ -31,10 +31,6 @@ https://raw.github.com/sstephenson/prototype/master/LICENSE
 License: Apache 2.0  
 http://www.opensource.org/licenses/Apache-2.0
 
-## DaisyDiff by Guy Van den Broeck
-License: GPL  
-http://www.opensource.org/licenses/gpl-1.0
-
 ## CSV Reader By Luke Visinoni
 License: GPL  
 http://www.opensource.org/licenses/gpl-1.0
