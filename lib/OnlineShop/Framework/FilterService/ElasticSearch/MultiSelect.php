@@ -13,7 +13,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect extends Onlin
 
         $value = $params[$field];
 
-        if(empty($value) && !$params['is_reload'] && $preSelect) {
+        if(empty($value) && !$params['is_reload']) {
             $value = explode(",", $preSelect);
         } else if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
@@ -34,7 +34,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect extends Onlin
                         $productList->addCondition($value, $field);
                     }
                 } else {
-                    $productList->addCondition(['terms' => ["attributes." . $field => $quotedValues]], $field);
+                    $productList->addCondition(['terms' => ["attributes." . $field => $quotedValues]], "attributes." . $field);
                 }
             }
         }
