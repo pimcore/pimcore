@@ -4,7 +4,15 @@ The overal pimcore project is licensed under the terms of a modified BSD Licence
 
 
 ## ExtJS by Sencha Inc.
-pimcore includes the GPLv3 version of the ExtJS JavaScript framework under the Open Source License Exception for Applications (FLOSS).  
+pimcore includes the GPLv3 version of the ExtJS JavaScript framework (version 3) under the Open Source License Exception for Applications (FLOSS).
+
+There are two FLOSS exceptions available for use with this release for
+open source applications that are distributed under a license other than GPL. 
+
+* Open Source License Exception for Applications [view archived copy](https://www.pimcore.org/download/license/extjs-floss-exception-applications.png)
+* Open Source License Exception for Development [view archived copy](https://www.pimcore.org/download/license/extjs-floss-exception-development.png)
+
+Further information:
 http://www.sencha.com/license/
 
 ## Zend Framework by Zend Technologies Ltd.
