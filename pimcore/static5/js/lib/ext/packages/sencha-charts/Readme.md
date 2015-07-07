@@ -1,2 +1,0 @@
-# sencha-charts - Read Me
-
