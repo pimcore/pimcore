@@ -294,7 +294,7 @@ class Resource extends Model\Object\AbstractObject\Resource {
     /**
      *
      */
-    public function saveChilds() {
+    public function saveChildData() {
         $this->inheritanceHelper->doUpdate($this->model->getId());
         $this->inheritanceHelper->resetFieldsToCheck();
     }

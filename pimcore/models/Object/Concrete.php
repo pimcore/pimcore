@@ -201,15 +201,15 @@ class Concrete extends AbstractObject {
         // scheduled tasks are saved in $this->saveVersion();
 
         $this->saveVersion(false, false);
-        $this->saveChilds();
+        $this->saveChildData();
     }
 
     /**
      * @return void
      */
-    public function saveChilds () {
+    protected function saveChildData () {
         if($this->getClass()->getAllowInherit()) {
-            $this->getResource()->saveChilds();
+            $this->getResource()->saveChildData();
         }
     }
 
