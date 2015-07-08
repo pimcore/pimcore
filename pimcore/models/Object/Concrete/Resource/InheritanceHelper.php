@@ -141,7 +141,7 @@ class InheritanceHelper {
             $fields = ", `" . $fields . "`";
         }
 
-        $result = $this->db->fetchRow("SELECT " . $this->idField . " AS id" . $fields . " FROM " . $this->storetable . " WHERE " . $this->idField . " = ? FOR UPDATE", $oo_id);
+        $result = $this->db->fetchRow("SELECT " . $this->idField . " AS id" . $fields . " FROM " . $this->storetable . " WHERE " . $this->idField . " = ?", $oo_id);
         $o = new \stdClass();
         $o->id = $result['id'];
         $o->values = $result;
@@ -180,7 +180,7 @@ class InheritanceHelper {
         if($createMissingChildrenRows) {
             $idsToUpdate = $this->extractObjectIdsFromTreeChildren($o->childs);
             if(!empty($idsToUpdate)) {
-                $idsInTable = $this->db->fetchCol("SELECT " . $this->idField . " FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $idsToUpdate) . ") FOR UPDATE");
+                $idsInTable = $this->db->fetchCol("SELECT " . $this->idField . " FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $idsToUpdate) . ")");
 
                 $diff = array_diff($idsToUpdate, $idsInTable);
 
@@ -250,12 +250,12 @@ class InheritanceHelper {
         if ($affectedIds) {
 
             $objectsWithBrickIds = array();
-            $objectsWithBricks = $this->db->fetchAll("SELECT " . $this->idField . " FROM " . $this->storetable . " WHERE " . $this->idField . " IN (" . implode(",", $affectedIds) . ") FOR UPDATE");
+            $objectsWithBricks = $this->db->fetchAll("SELECT " . $this->idField . " FROM " . $this->storetable . " WHERE " . $this->idField . " IN (" . implode(",", $affectedIds) . ")");
             foreach ($objectsWithBricks as $item) {
                 $objectsWithBrickIds[] = $item["id"];
             }
 
-            $currentQueryItems = $this->db->fetchAll("SELECT * FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $affectedIds) . ") FOR UPDATE");
+            $currentQueryItems = $this->db->fetchAll("SELECT * FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $affectedIds) . ")");
 
             foreach ($currentQueryItems as $queryItem) {
                 $toBeRemoved = true;
@@ -287,7 +287,7 @@ class InheritanceHelper {
      * @return array
      */
     protected function buildTree($currentParentId, $fields = "") {
-        $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_parentId = ? GROUP BY b.o_id FOR UPDATE", $currentParentId);
+        $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_parentId = ? GROUP BY b.o_id", $currentParentId);
 
         $objects = array();
 
@@ -298,7 +298,7 @@ class InheritanceHelper {
             $o->type = $r["type"];
             $o->childs = $this->buildTree($r['id'], $fields);
 
-            $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname FOR UPDATE;", $r['id']);
+            $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", $r['id']);
 
             $objectRelations = array();
             if(!empty($objectRelationsResult)) {
@@ -414,7 +414,7 @@ class InheritanceHelper {
      */
     protected function updateQueryTable($oo_id, $ids, $fieldname) {
         if(!empty($ids)) {
-            $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ? FOR UPDATE", $oo_id);
+            $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
             $this->db->update($this->querytable, array($fieldname => $value), $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
