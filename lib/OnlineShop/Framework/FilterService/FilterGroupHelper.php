@@ -85,6 +85,7 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
                 }
             }
         } else {
+            $productList->prepareGroupByValues($field);
             $values = $productList->getGroupByValues($field);
 
             sort($values);
