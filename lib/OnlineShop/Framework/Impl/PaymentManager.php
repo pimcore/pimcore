@@ -13,7 +13,7 @@ class OnlineShop_Framework_Impl_PaymentManager implements OnlineShop_Framework_I
     /**
      * @var OnlineShop_Framework_IPayment[]
      */
-    protected $instance;
+    protected $instance = [];
 
     /**
      * @param Zend_Config $config
@@ -38,13 +38,13 @@ class OnlineShop_Framework_Impl_PaymentManager implements OnlineShop_Framework_I
         {
             if($provider->name == $name)
             {
-                if(!$this->instance)
+                if(!array_key_exists($name, $this->instance))
                 {
                     $class = $provider->class;
-                    $this->instance = new $class( $provider );
+                    $this->instance[$name] = new $class( $provider );
                 }
 
-                return $this->instance;
+                return $this->instance[$name];
             }
         }
     }
