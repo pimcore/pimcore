@@ -464,6 +464,26 @@ class Concrete extends AbstractObject {
      * @return mixed
      */
     public function getValueFromParent($key, $params = null) {
+
+        $parent = $this->getNextParentForInheritance();
+        if ($parent) {
+            $method = "get" . $key;
+            if (method_exists($parent, $method)) {
+                if (method_exists($parent, $method)) {
+                    return call_user_func(array($parent, $method), $params);
+                }
+            }
+        }
+
+        return;
+    }
+
+
+    /**
+     * @return AbstractObject|void
+     * @return AbstractObject|void
+     */
+    public function getNextParentForInheritance() {
         if ($this->getParent() instanceof AbstractObject) {
 
             $parent = $this->getParent();
@@ -473,19 +493,13 @@ class Concrete extends AbstractObject {
 
             if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
                 if ($parent->getClassId() == $this->getClassId()) {
-                    $method = "get" . $key;
-                    if (method_exists($parent, $method)) {
-                        if (method_exists($parent, $method)) {
-                            return call_user_func(array($parent, $method), $params);
-                        }
-                    }
+                    return $parent;
                 }
             }
         }
+
         return;
     }
-
-
 
     /**
      * Dummy which can be overwritten by a parent class, this is a hook executed in every getter of the properties in the object

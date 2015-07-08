@@ -82,10 +82,7 @@ class Resource extends Model\Resource\AbstractResource {
         // get data for query table 
         // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         // this is special because we have to call each getter to get the inherited values from a possible parent object
-
-
-        Object\AbstractObject::setGetInheritedValues(true);
-
+        
         $objectVars = get_object_vars($this->model);
 
         $data = array();
@@ -93,6 +90,20 @@ class Resource extends Model\Resource\AbstractResource {
         $data["fieldname"] = $this->model->getFieldname();
         $this->inheritanceHelper->resetFieldsToCheck();
         $oldData = $this->db->fetchRow("SELECT * FROM " . $querytable . " WHERE o_id = ?", $object->getId());
+
+        $inheritanceEnabled = $object->getClass()->getAllowInherit();
+        $parentData = null;
+        if($inheritanceEnabled) {
+            // get the next suitable parent for inheritance
+            $parentForInheritance = $object->getNextParentForInheritance();
+            if($parentForInheritance) {
+                // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
+                // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
+                // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
+                // so the data of the parent cannot be changed while this transaction is on progress
+                $parentData = $this->db->fetchRow("SELECT * FROM " . $querytable . " WHERE ooo_id = ? FOR UPDATE", $parentForInheritance->getId());
+            }
+        }
 
         foreach ($objectVars as $key => $value) {
             $fd = $this->model->getDefinition()->getFieldDefinition($key);
@@ -102,49 +113,60 @@ class Resource extends Model\Resource\AbstractResource {
                     //exclude untouchables if value is not an array - this means data has not been loaded
 
                     $method = "get" . $key;
-                    $insertData = $fd->getDataForQueryResource($this->model->$method(), $object);
+                    $fieldValue = $this->model->$method();
+                    $insertData = $fd->getDataForQueryResource($fieldValue, $object);
 
                     if (is_array($insertData)) {
+                        $columnNames = array_keys($insertData);
                         $data = array_merge($data, $insertData);
-                    }
-                    else {
+                    } else {
+                        $columnNames = [$key];
                         $data[$key] = $insertData;
                     }
 
-
-                    //get changed fields for inheritance
-                    if($fd->isRelationType()) {
-                        if (is_array($insertData)) {
-                            $doInsert = false;
-                            foreach($insertData as $insertDataKey => $insertDataValue) {
-                                if($oldData[$insertDataKey] != $insertDataValue) {
-                                    $doInsert = true;
-                                }
-                            }
-
-                            if($doInsert) {
-                                $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
-                            }
-                        } else {
-                            if($oldData[$key] != $insertData) {
-                                $this->inheritanceHelper->addRelationToCheck($key, $fd);
-                            }
-                        }
-
-                    } else {
-                        if (is_array($insertData)) {
-                            foreach($insertData as $insertDataKey => $insertDataValue) {
-                                if($oldData[$insertDataKey] != $insertDataValue) {
-                                    $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
-                                }
-                            }
-                        } else {
-                            if($oldData[$key] != $insertData) {
-                                $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                    // if the current value is empty and we have data from the parent, we just use it
+                    if($fd->isEmpty($fieldValue) && $parentData) {
+                        foreach($columnNames as $columnName) {
+                            if(array_key_exists($columnName, $parentData)) {
+                                $data[$columnName] = $parentData[$columnName];
                             }
                         }
                     }
 
+                    if($inheritanceEnabled) {
+                        //get changed fields for inheritance
+                        if ($fd->isRelationType()) {
+                            if (is_array($insertData)) {
+                                $doInsert = false;
+                                foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                    if ($oldData[$insertDataKey] != $insertDataValue) {
+                                        $doInsert = true;
+                                    }
+                                }
+
+                                if ($doInsert) {
+                                    $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
+                                }
+                            } else {
+                                if ($oldData[$key] != $insertData) {
+                                    $this->inheritanceHelper->addRelationToCheck($key, $fd);
+                                }
+                            }
+
+                        } else {
+                            if (is_array($insertData)) {
+                                foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                    if ($oldData[$insertDataKey] != $insertDataValue) {
+                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                                    }
+                                }
+                            } else {
+                                if ($oldData[$key] != $insertData) {
+                                    $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
