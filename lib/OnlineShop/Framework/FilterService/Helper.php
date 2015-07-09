@@ -94,7 +94,9 @@ class OnlineShop_Framework_FilterService_Helper
             $orderByList = array();
             if($orderByCollection) {
                 foreach($orderByCollection as $orderBy) {
-                    $orderByList[] = array($orderBy->getField(), $orderBy->getDirection());
+                    if($orderBy->getField()) {
+                        $orderByList[] = array($orderBy->getField(), $orderBy->getDirection());
+                    }
                 }
             }
             $productList->setOrderKey($orderByList);
