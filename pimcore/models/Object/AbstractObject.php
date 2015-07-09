@@ -845,7 +845,7 @@ class AbstractObject extends Model\Element\AbstractElement {
      */
     public function setParentId($o_parentId) {
         $this->o_parentId = (int) $o_parentId;
-        $this->o_parent = AbstractObject::getById($o_parentId);
+        $this->o_parent = null;
         return $this;
     }
 

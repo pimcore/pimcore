@@ -1,2 +1,0 @@
-# ext-locale - Read Me
-

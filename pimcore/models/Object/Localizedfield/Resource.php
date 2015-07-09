@@ -81,8 +81,8 @@ class Resource extends Model\Resource\AbstractResource {
 
             $this->db->insertOrUpdate($this->getTableName(), $insertData);
 
-            Object\AbstractObject::setGetInheritedValues(true);
 
+            // query table
             $data = array();
             $data["ooo_id"] = $this->model->getObject()->getId();
             $data["language"] = $language;
@@ -91,17 +91,25 @@ class Resource extends Model\Resource\AbstractResource {
             $this->inheritanceHelper->resetFieldsToCheck();
             $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
 
+            $oldData = [];
             try {
                 $oldData = $this->db->fetchRow($sql);
             } catch (\Exception $e) {
                 // if the table doesn't exist -> create it!
                 if(strpos($e->getMessage(), "exist")) {
-                    $this->model->commit();
 
+                    // the following is to ensure consistent data and atomic transactions, while having the flexibility
+                    // to add new languages on the fly without saving all classes having localized fields
+
+                    // first we need to roll back all modifications, because otherwise they would be implicitly committed
+                    // by the following DDL
+                    $this->db->rollBack();
+
+                    // this creates the missing table
                     $this->createUpdateTable();
 
-                    $this->model->beginTransaction();
-                    $oldData = $this->db->fetchRow($sql);
+                    // at this point we throw an exception so that the transaction gets repeated in Object::save()
+                    throw new \Exception("missing table created, start next run ... ;-)");
                 }
             }
 
@@ -109,6 +117,21 @@ class Resource extends Model\Resource\AbstractResource {
             $untouchable = array();
 
             // @TODO: currently we do not support lazyloading in localized fields
+
+
+            $inheritanceEnabled = $object->getClass()->getAllowInherit();
+            $parentData = null;
+            if($inheritanceEnabled) {
+                // get the next suitable parent for inheritance
+                $parentForInheritance = $object->getNextParentForInheritance();
+                if($parentForInheritance) {
+                    // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
+                    // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
+                    // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
+                    // so the data of the parent cannot be changed while this transaction is on progress
+                    $parentData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE ooo_id = ? AND language = ? FOR UPDATE", [$parentForInheritance->getId(), $language]);
+                }
+            }
 
             foreach ($fieldDefinitions as $fd) {
 
@@ -123,41 +146,53 @@ class Resource extends Model\Resource\AbstractResource {
                             $insertData = $fd->getDataForQueryResource($localizedValue, $object);
 
                             if (is_array($insertData)) {
+                                $columnNames = array_keys($insertData);
                                 $data = array_merge($data, $insertData);
-                            }
-                            else {
+                            } else {
+                                $columnNames = [$key];
                                 $data[$key] = $insertData;
                             }
 
-                            //get changed fields for inheritance
-                            if($fd->isRelationType()) {
-                                if (is_array($insertData)) {
-                                    $doInsert = false;
-                                    foreach($insertData as $insertDataKey => $insertDataValue) {
-                                        if($oldData[$insertDataKey] != $insertDataValue) {
-                                            $doInsert = true;
-                                        }
-                                    }
-
-                                    if($doInsert) {
-                                        $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
-                                    }
-                                } else {
-                                    if($oldData[$key] != $insertData) {
-                                        $this->inheritanceHelper->addRelationToCheck($key, $fd);
+                            // if the current value is empty and we have data from the parent, we just use it
+                            if($fd->isEmpty($localizedValue) && $parentData) {
+                                foreach($columnNames as $columnName) {
+                                    if(array_key_exists($columnName, $parentData)) {
+                                        $data[$columnName] = $parentData[$columnName];
                                     }
                                 }
+                            }
 
-                            } else {
-                                if (is_array($insertData)) {
-                                    foreach($insertData as $insertDataKey => $insertDataValue) {
-                                        if($oldData[$insertDataKey] != $insertDataValue) {
-                                            $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                            if($inheritanceEnabled) {
+                                //get changed fields for inheritance
+                                if ($fd->isRelationType()) {
+                                    if (is_array($insertData)) {
+                                        $doInsert = false;
+                                        foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                            if ($oldData[$insertDataKey] != $insertDataValue) {
+                                                $doInsert = true;
+                                            }
+                                        }
+
+                                        if ($doInsert) {
+                                            $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
+                                        }
+                                    } else {
+                                        if ($oldData[$key] != $insertData) {
+                                            $this->inheritanceHelper->addRelationToCheck($key, $fd);
                                         }
                                     }
+
                                 } else {
-                                    if($oldData[$key] != $insertData) {
-                                        $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                                    if (is_array($insertData)) {
+                                        foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                            if ($oldData[$insertDataKey] != $insertDataValue) {
+                                                $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                                            }
+                                        }
+                                    } else {
+                                        if ($oldData[$key] != $insertData) {
+                                            $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                                        }
                                     }
                                 }
                             }

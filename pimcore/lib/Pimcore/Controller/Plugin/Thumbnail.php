@@ -52,9 +52,9 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
                         }
                     } else {
                         //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
-                        if(preg_match("|document_(.*)\-(\d+)$|",$thumbnailName,$matches)){
-                            $thumbnailName = $matches[1];
-                            $page = (int)$matches[2];
+                        if(preg_match("|document_(.*)\-(\d+)$|",$thumbnailName,$matchesThumbs)){
+                            $thumbnailName = $matchesThumbs[1];
+                            $page = (int)$matchesThumbs[2];
                         }
                         // just check if the thumbnail exists -> throws exception otherwise
                         $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);

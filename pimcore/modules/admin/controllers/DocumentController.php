@@ -810,55 +810,52 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
     public function diffVersionsAction()
     {
-
-        include_once 'DaisyDiff/HTMLDiff.php';
-        include_once 'simple_html_dom.php';
-
         $versionFrom = Version::getById($this->getParam("from"));
-        $versionTo = Version::getById($this->getParam("to"));
-
         $docFrom = $versionFrom->loadData();
-        $docTo = $versionTo->loadData();
-
-        // unlock the current session to access the version files
-        session_write_close();
-
         $request = $this->getRequest();
 
-        $fromSourceHtml = Tool::getHttpData($request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=" . $this->getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
-        $toSourceHtml = Tool::getHttpData($request->getScheme() . "://" . $request->getHttpHost() . $docTo->getFullPath() . "?pimcore_version=" . $this->getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $sessionName = Tool\Session::getOption("name");
+        $prefix = $request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=";
+        $fromUrl = $prefix . $this->getParam("from") . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
+        $toUrl = $prefix . $this->getParam("to") . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
 
-        $fromSource = str_get_html($fromSourceHtml);
-        $toSource = str_get_html($toSourceHtml);
+        $fromFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
+        $toFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
+        $diffFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
 
-        if($fromSource && $toSource) {
-            if ($docFrom instanceof Document\Page) {
-                $from = $fromSource->find("body", 0);
-                $to = $toSource->find("body", 0);
+        if(\Pimcore\Image\HtmlToImage::isSupported() && class_exists("Imagick")) {
+            \Pimcore\Image\HtmlToImage::convert($fromUrl, $fromFile);
+            \Pimcore\Image\HtmlToImage::convert($toUrl, $toFile);
+
+            $image1 = new Imagick($fromFile);
+            $image2 = new Imagick($toFile);
+
+            if($image1->getImageWidth() == $image2->getImageWidth() && $image1->getImageHeight() == $image2->getImageHeight()) {
+                $result = $image1->compareImages($image2, Imagick::METRIC_MEANSQUAREERROR);
+                $result[0]->setImageFormat("png");
+
+                $result[0]->writeImage($diffFile);
+                $result[0]->clear();
+                $result[0]->destroy();
+
+                $this->view->image = base64_encode(file_get_contents($diffFile));
+                unlink($diffFile);
             } else {
-                $from = $fromSource;
-                $to = $toSource;
+                $this->view->image1 = base64_encode(file_get_contents($fromFile));
+                $this->view->image2 = base64_encode(file_get_contents($toFile));
             }
 
-            $diff = new HTMLDiffer();
-            $text = $diff->htmlDiff($from, $to);
+            // cleanup
+            $image1->clear();
+            $image1->destroy();
+            $image2->clear();
+            $image2->destroy();
 
-
-            if ($docFrom instanceof Document\Page) {
-                $fromSource->find("head", 0)->innertext = $fromSource->find("head", 0)->innertext . '<link rel="stylesheet" type="text/css" href="/pimcore/static/css/daisydiff.css" />';
-                $fromSource->find("body", 0)->innertext = $text;
-
-                echo $fromSource;
-            } else {
-                echo '<link rel="stylesheet" type="text/css" href="/pimcore/static/css/daisydiff.css" />';
-                echo $text;
-            }
+            unlink($fromFile);
+            unlink($toFile);
         } else {
-            echo "Unable to create diff";
+            $this->renderScript("document/diff-versions-unsupported.php");
         }
-
-
-        $this->removeViewRenderer();
     }
 
     /**

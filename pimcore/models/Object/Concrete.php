@@ -153,18 +153,7 @@ class Concrete extends AbstractObject {
                 AbstractObject::setGetInheritedValues($inheritedValues);
 
                 $value = $this->$getter();
-
                 $omitMandatoryCheck = $this->getOmitMandatoryCheck();
-
-                /*$timeSinceCreation = (time()-$this->getCreationDate());
-                if($timeSinceCreation <= 5){
-                    // legacy hack: in previous version there was no check for mandatory fields,
-                    // and everybody uses the save method for new object creation - so now let's evict the mandatory check
-                    // if the object was created within the last 5 seconds
-                    $omitMandatoryCheck=true;
-                    \Logger::debug("executing mandatory fields check for object [ ".$this->getId()." ]");
-                }
-                */
                 
                 //check throws Exception
                 try {
@@ -201,15 +190,15 @@ class Concrete extends AbstractObject {
         // scheduled tasks are saved in $this->saveVersion();
 
         $this->saveVersion(false, false);
-        $this->saveChilds();
+        $this->saveChildData();
     }
 
     /**
      * @return void
      */
-    public function saveChilds () {
+    protected function saveChildData () {
         if($this->getClass()->getAllowInherit()) {
-            $this->getResource()->saveChilds();
+            $this->getResource()->saveChildData();
         }
     }
 
@@ -475,6 +464,26 @@ class Concrete extends AbstractObject {
      * @return mixed
      */
     public function getValueFromParent($key, $params = null) {
+
+        $parent = $this->getNextParentForInheritance();
+        if ($parent) {
+            $method = "get" . $key;
+            if (method_exists($parent, $method)) {
+                if (method_exists($parent, $method)) {
+                    return call_user_func(array($parent, $method), $params);
+                }
+            }
+        }
+
+        return;
+    }
+
+
+    /**
+     * @return AbstractObject|void
+     * @return AbstractObject|void
+     */
+    public function getNextParentForInheritance() {
         if ($this->getParent() instanceof AbstractObject) {
 
             $parent = $this->getParent();
@@ -484,19 +493,13 @@ class Concrete extends AbstractObject {
 
             if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
                 if ($parent->getClassId() == $this->getClassId()) {
-                    $method = "get" . $key;
-                    if (method_exists($parent, $method)) {
-                        if (method_exists($parent, $method)) {
-                            return call_user_func(array($parent, $method), $params);
-                        }
-                    }
+                    return $parent;
                 }
             }
         }
+
         return;
     }
-
-
 
     /**
      * Dummy which can be overwritten by a parent class, this is a hook executed in every getter of the properties in the object

@@ -39,7 +39,12 @@ class Select extends Model\Object\ClassDefinition\Data {
     /**
      * @var integer
      */
-    public $width;    
+    public $width;
+
+    /**
+     * @var string
+     */
+    public $defaultValue;
     
     /**
      * Type for the column to query
@@ -218,5 +223,22 @@ class Select extends Model\Object\ClassDefinition\Data {
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
         $this->options = $masterDefinition->options;
     }
+
+    /**
+     * @return string
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
+     * @param string $defaultValue
+     */
+    public function setDefaultValue($defaultValue)
+    {
+        $this->defaultValue = $defaultValue;
+    }
+
 
 }

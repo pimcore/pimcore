@@ -197,6 +197,12 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 name: "width",
                 value: this.datax.width
             },
+            {
+                xtype: "textfield",
+                fieldLabel: t("default_value"),
+                name: "defaultValue",
+                value: this.datax.defaultValue
+            },
             this.valueGrid
         ]);
 

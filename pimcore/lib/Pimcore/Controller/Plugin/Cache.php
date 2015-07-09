@@ -170,7 +170,16 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
         $device = $deviceDetector->getDevice();
         $deviceDetector->setWasUsed(false);
 
-        $this->defaultCacheKey = "output_" . md5($request->getHttpHost() . $requestUri);
+        $appendKey = "";
+        // this is for example for the image-data-uri plugin
+        if ($request->getParam("pimcore_cache_tag_suffix")) {
+            $tags = $request->getParam("pimcore_cache_tag_suffix");
+            if (is_array($tags)) {
+                $appendKey = "_" . implode("_", $tags);
+            }
+        }
+
+        $this->defaultCacheKey = "output_" . md5($request->getHttpHost() . $requestUri . $appendKey);
         $cacheKeys = [
             $this->defaultCacheKey . "_" . $device,
             $this->defaultCacheKey,

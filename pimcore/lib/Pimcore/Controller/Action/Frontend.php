@@ -23,6 +23,7 @@ use Pimcore\Tool\Session;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model;
+use Pimcore\Translate;
 
 abstract class Frontend extends Action {
 
@@ -302,7 +303,9 @@ abstract class Frontend extends Action {
 
             if(\Zend_Registry::isRegistered("Zend_Translate")) {
                 $translator = \Zend_Registry::get("Zend_Translate");
-                $translator->setLocale($locale);
+                if($translator instanceof Translate) {
+                    $translator->setLocale($locale);
+                }
             }
         }
     }
