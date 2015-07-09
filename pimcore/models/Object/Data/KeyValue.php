@@ -146,6 +146,9 @@ class KeyValue extends Model\AbstractModel {
     public function getProperties($forEditMode = false) {
         $result = array();
         $object = Object::getById($this->objectId);
+        if(!$object){
+            throw new \Exception('Object with Id '. $this->objectId .' not found');
+        }
         $objectName = $object->getKey();
 
         $internalKeys = array();
