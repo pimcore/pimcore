@@ -129,7 +129,7 @@ class Resource extends Model\Resource\AbstractResource {
                     // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
                     // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                     // so the data of the parent cannot be changed while this transaction is on progress
-                    $parentData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE ooo_id = ? FOR UPDATE", $parentForInheritance->getId());
+                    $parentData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE ooo_id = ? AND language = ? FOR UPDATE", [$parentForInheritance->getId(), $language]);
                 }
             }
 
