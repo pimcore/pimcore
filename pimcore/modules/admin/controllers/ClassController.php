@@ -648,6 +648,9 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
                     $filteredList[] = $type;
+
+                    // mainly for objects-meta data-type
+                    Object\Service::enrichLayoutDefinition($type->getLayoutDefinitions());
                 }
             }
 
