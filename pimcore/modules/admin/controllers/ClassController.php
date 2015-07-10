@@ -550,8 +550,22 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
     public function fieldcollectionUpdateAction() {
 
         try {
+            $key = $this->getParam("key");
+
+            if($this->getParam("task") == "add") {
+                // check for existing fieldcollection with same name with different lower/upper cases
+                $list = new Object\Fieldcollection\Definition\Listing();
+                $list = $list->load();
+
+                foreach ($list as $item) {
+                    if (strtolower($key) === strtolower($item->getKey())) {
+                        throw new \Exception("FieldCollection with the same name already exists (lower/upper cases may be different)");
+                    }
+                }
+            }
+
             $fc = new Object\Fieldcollection\Definition();
-            $fc->setKey($this->getParam("key"));
+            $fc->setKey($key);
 
             if ($this->getParam("values")) {
                 $values = \Zend_Json::decode($this->getParam("values"));
@@ -730,8 +744,23 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
     public function objectbrickUpdateAction() {
 
         try {
+            $key = $this->getParam("key");
+
+            if($this->getParam("task") == "add") {
+                // check for existing brick with same name with different lower/upper cases
+                $list = new Object\Objectbrick\Definition\Listing();
+                $list = $list->load();
+
+                foreach ($list as $item) {
+                    if (strtolower($key) === strtolower($item->getKey())) {
+                        throw new \Exception("Brick with the same name already exists (lower/upper cases may be different)");
+                    }
+                }
+            }
+
+            // now we create a new definition
             $fc = new Object\Objectbrick\Definition();
-            $fc->setKey($this->getParam("key"));
+            $fc->setKey($key);
 
             if ($this->getParam("values")) {
                 $values = \Zend_Json::decode($this->getParam("values"));
