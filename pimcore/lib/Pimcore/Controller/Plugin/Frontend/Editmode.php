@@ -313,4 +313,11 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
         // IE compatibility
         //$this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
     }
+
+    /**
+     *
+     */
+    public function dispatchLoopShutdown() {
+        $this->getResponse()->setHeader("X-Frame-Options", "SAMEORIGIN", true);
+    }
 }
