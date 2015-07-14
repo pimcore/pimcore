@@ -15,16 +15,16 @@ class OnlineShop_Framework_FilterService_FactFinder_SelectCategory extends Onlin
 
         // init
         $field = $this->getField($filterDefinition);
-//        $preSelect = $this->getPreSelect($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
         $value = $params[$field];
 
 
         // set defaults
-//        if($value == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING){
-//            $value = null;
-//        } else if(empty($value) && !$params['is_reload']) {
-//            $value = $preSelect;
-//        }
+        //only works with Root categories!
+
+         if(empty($value) && !$params['is_reload']) {
+            $value[] = $preSelect->getId();
+        }
 
 
 //        $value = trim($value);
