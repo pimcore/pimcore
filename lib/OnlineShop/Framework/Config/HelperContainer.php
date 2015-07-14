@@ -27,8 +27,9 @@ class OnlineShop_Framework_Config_HelperContainer {
     public function __construct(Zend_Config $config, $identifier) {
         $this->defaultConfig = $config;
 
-        foreach((array)$config->tenants as $tenantName => $tenantConfig) {
+        foreach($config->tenants->toArray() as $tenantName => $tenantConfig) {
 
+            $tenantConfig = $config->tenants->{$tenantName};
             if($tenantConfig instanceof Zend_Config) {
                 if($tenantConfig->file) {
 
