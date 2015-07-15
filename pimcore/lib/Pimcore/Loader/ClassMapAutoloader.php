@@ -37,7 +37,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
             if(class_exists($class, false) || interface_exists($class, false)) {
                 // create an alias
                 $alias = str_replace("\\", "_", $class);
-                $alias = preg_replace("/_Abstract(.*)/", "_Abstract", $alias);
+                $alias = preg_replace("/_Abstract([^_]+)/", "_Abstract", $alias);
                 $alias = preg_replace("/_[^_]+Interface/", "_Interface", $alias);
                 $alias = str_replace("_Listing_", "_List_", $alias);
                 $alias = preg_replace("/_Listing$/", "_List", $alias);
