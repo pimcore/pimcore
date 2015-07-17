@@ -58,7 +58,7 @@
 $styles = array(
     "/admin/misc/admin-css?extjs5=1",
     "/pimcore/static5/css/icons.css",
-    "/pimcore/static5/js/lib/ext/packages/ext-theme-gray/build/resources/ext-theme-gray-all.css",
+    "/pimcore/static5/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
     "/pimcore/static5/js/lib/ext/packages/sencha-charts/build/classic/resources/sencha-charts-all-debug.css",
     "/pimcore/static5/css/ext-admin-overwrite.css",
     "/pimcore/static5/css/fontello.css"
@@ -89,11 +89,9 @@ $styles = array(
 <?php
 
 // SCRIPT LIBRARIES
-$scriptExtAdapter = "lib/ext/adapter/jquery/ext-jquery-adapter.js";
-$scriptExt = "lib/ext/ext-all.js";
+$debugSuffix = "";
 if (PIMCORE_DEVMODE) {
-    $scriptExtAdapter = "lib/ext/adapter/jquery/ext-jquery-adapter-debug.js";
-    $scriptExt = "lib/ext/ext-all-debug.js";
+    $debugSuffix = "-debug";
 }
 
 $scriptLibs = array(
@@ -101,19 +99,17 @@ $scriptLibs = array(
     // library
     "lib/prototype-light.js",
     "lib/jquery.min.js",
+    "lib/ext/ext-all" . $debugSuffix . ".js",
+    "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
 
-//    $scriptExtAdapter,
-    $scriptExt,
-    "lib/ext/packages/ext-theme-gray/build/ext-theme-gray-debug.js",      //TODO
-    "lib/ext/packages/sencha-charts/build/sencha-charts-debug.js",              // TODO
-    "lib/ext/examples/ux/statusbar/StatusBar.js",
-    "lib/swfobject/swfobject.js",
+//    "lib/ext/packages/sencha-charts/build/sencha-charts-debug.js",              // TODO
+//    "lib/ext/examples/ux/statusbar/StatusBar.js",
 
-    "lib/ext-plugins/ux5/PortalDropZone.js",
-    "lib/ext-plugins/ux5/Portlet.js",
-    "lib/ext-plugins/ux5/PortalColumn.js",
-    "lib/ext-plugins/ux5/PortalPanel.js",
-    "lib/ext-plugins/PimcoreFormLayout/panel.js",
+//    "lib/ext-plugins/ux5/PortalDropZone.js",
+//   "lib/ext-plugins/ux5/Portlet.js",
+//    "lib/ext-plugins/ux5/PortalColumn.js",
+//    "lib/ext-plugins/ux5/PortalPanel.js",
+//    "lib/ext-plugins/PimcoreFormLayout/panel.js",
 //    "lib/ext-plugins/SuperBoxSelect/SuperBoxSelect.js",
 //    "lib/ext-plugins/BoxSelect/BoxSelect.js",
 

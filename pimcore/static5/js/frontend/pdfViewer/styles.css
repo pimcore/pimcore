@@ -1,0 +1,230 @@
+
+.pimcore-pdfViewer {
+    width: 100%;
+    position: relative;
+    background: #f7f7f7;
+}
+
+.pimcore-pdfPages {
+    overflow: hidden;
+}
+
+.pimcore-pdfZoom {
+    background: #000;
+    position: absolute;
+    opacity: 0.6;
+    filter:alpha(opacity=60);
+    width: 10%;
+    height: 10%;
+    top: 45%;
+    left: 45%;
+    border-radius: 20%;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-family: "Arial Unicode MS","sans-serif";
+    font-weight: bold;
+    z-index: 3;
+}
+
+.pimcore-pdfPage {
+    float:left;
+    position: relative;
+    width: 50%;
+    *width: 49.9%; /* just for IE7 */
+}
+
+.pimcore-pdfPage.hidden {
+    position: absolute;
+    top: 0;
+    left: -10000px;
+}
+
+.pimcore-pdfPage-left img, .pimcore-pdfPage-left .pimcore-pdfPageContainer {
+    float: right;
+}
+
+.pimcore-pdfPage-right img, .pimcore-pdfPage-right .pimcore-pdfPageContainer {
+    float: left;
+}
+
+.pimcore-pdfPage img, .pimcore-pdfPageContainer {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.pimcore-pdfPageContainer {
+    position: relative;
+    overflow: hidden;
+}
+
+.pimcore-pdfHotspot {
+    position: absolute;
+    z-index: 300;
+    display:none;
+    background: #000;
+    opacity: 0.2;
+    filter:Alpha(opacity=20);
+    cursor: pointer;
+}
+
+.pimcore-pdfButton {
+    background: #000;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    width: 8%;
+    opacity: 0.6;
+    filter:Alpha(opacity=60);
+    cursor: pointer;
+    max-width: 50px;
+    z-index: 2;
+}
+
+.pimcore-pdfButtonLeft {
+    left: 0;
+}
+
+.pimcore-pdfButtonRight {
+    right: 0;
+}
+
+
+.pimcore-pdfArrowRight {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 0;
+    height: 0;
+    margin-right: 10px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #fff;
+}
+
+.pimcore-pdfArrowLeft {
+    position: absolute;
+    top: 50%;
+    left: 0;
+	width: 0;
+	height: 0;
+    margin-left: 10px;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+	border-right: 10px solid #fff;
+}
+
+.pimcore-pdfFullscreenClose {
+    display:none;
+    background: #000;
+    position: absolute;
+    opacity: 0.6;
+    filter:Alpha(opacity=60);
+    top: 3%;
+    right: 5%;
+    border-radius: 20%;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-family: "Arial Unicode MS","sans-serif";
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 30px;
+    height: 40px;
+    width: 40px;
+    text-align: center;
+    border-radius: 20px;
+    z-index: 4;
+}
+
+.pimcore-pdfDownload {
+    font-weight: bold;
+    display:none;
+    background: #000;
+    position: absolute;
+    opacity: 0.6;
+    filter:Alpha(opacity=60);
+    top: 3%;
+    right: 8%;
+    border-radius: 20%;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-family: "Arial Unicode MS","sans-serif";
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 30px;
+    height: 40px;
+    width: 40px;
+    text-align: center;
+    border-radius: 20px;
+    z-index: 4;
+}
+
+.pimcore-pdfFullscreen .pimcore-pdfZoom {
+    display: none !important;
+}
+
+.pimcore-pdfFullscreen .pimcore-pdfPage {
+    height: 100%;
+    max-height: 100%;
+}
+
+.pimcore-pdfFullscreen .pimcore-pdfFullscreenClose {
+    display:block;
+}
+
+.pimcore-pdfFullscreen .pimcore-pdfDownload {
+    display:block;
+}
+
+.pimcore-pdfFullscreen .pimcore-pdfPages, .pimcore-pdfFullscreen .pimcore-pdfPageContainer, .pimcore-pdfFullscreen .pimcore-pdfPage img {
+    height: 100%;
+    max-width: none;
+}
+
+.pimcore-pdfFullscreen .pimcore-pdfHotspot {
+    display:block;
+}
+
+
+.pimcore-pdfFullscreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    z-index: 2147483647;
+}
+
+
+
+
+
+
+
+
+
+/*
+.pimcore-pdfViewer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+}
+
+.pimcore-pdfPage {
+    height: 100%;
+    max-height: 100%;
+}
+
+.pimcore-pdfPages, .pimcore-pdfPageContainer, .pimcore-pdfPage img {
+    height: 100%;
+    display:block;
+}
+
+.pimcore-pdfHotspot {
+    display:block;
+}
+*/

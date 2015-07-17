@@ -1,0 +1,51 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+ 
+body {
+	font-weight: normal;
+	font-family: Tahoma, Arial, Verdana;
+	font-size: 11px;
+	color: #000;
+	margin: 0;
+	padding: 20px;
+}
+
+
+.preview {
+	border-left: 1px solid #d0d0d0;
+	width: 100%;
+}
+
+.preview td, .preview th {
+	border-bottom: 1px solid #d0d0d0;
+	border-right: 1px solid #d0d0d0;
+	padding: 4px;
+}
+
+.preview th {
+	background: url(/pimcore/static/js/lib/ext/resources/images/gray-extend/panel/white-top-bottom.gif);
+	color: #434343;
+}
+
+.preview .odd {
+	background: #fafafa;
+}
+
+.preview .modified {
+	background: #ffe5e5;
+}
+
+.system {
+    font-family: "courier new";
+}
