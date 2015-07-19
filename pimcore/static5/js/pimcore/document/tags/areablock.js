@@ -637,8 +637,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         this.editmodeWindow = new Ext.Window({
             modal: true,
-            width: 500,
-            height: 330,
+            width: 'auto',
+            height: 'auto',
+            autoHeight: true,
+            y: 50,
             title: "Edit Block",
             closeAction: "hide",
             bodyStyle: "padding: 10px;",
