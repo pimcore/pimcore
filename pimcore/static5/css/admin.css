@@ -35,10 +35,6 @@ body {
     background: #222;
 }
 
-.pimcore_body_inner {
-    background: none !important;
-}
-
 #pimcore_navigation {
     position: absolute;
     left: 11px;

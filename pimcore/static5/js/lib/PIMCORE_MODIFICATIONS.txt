@@ -31,3 +31,8 @@ needed components:
 \build\classic\theme-triton
 \build\classic\locale
 \packages\ux\classic\src => ux
+
+# styling
+
+#5fa2dd => #3c3f41
+

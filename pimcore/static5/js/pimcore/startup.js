@@ -478,10 +478,7 @@ Ext.onReady(function () {
                         Ext.create('Ext.panel.Panel',
                         {
                             region: 'west',
-                            //ctCls:"pimcore_body_inner",
                             id:'pimcore_panel_tree_left',
-                            //cls: "pimcore_panel_tree",
-                            title: t("user") + ": " + user["name"],
                             split:true,
                             width:250,
                             height: 300,
