@@ -57,6 +57,7 @@
 <?php
 $styles = array(
     "/admin/misc/admin-css?extjs5=1",
+    "/pimcore/static5/css/theme.css",
     "/pimcore/static5/css/icons.css",
     "/pimcore/static5/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
     "/pimcore/static5/js/lib/ext/packages/sencha-charts/build/classic/resources/sencha-charts-all-debug.css",
