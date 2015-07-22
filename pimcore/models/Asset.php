@@ -605,7 +605,7 @@ class Asset extends Element\AbstractElement {
      */
     protected function update() {
 
-        if (!$this->getFilename() && $this->getId() != 1) {
+        if (!$this->getFilename() && !is_numeric($this->getFilename()) && $this->getId() != 1) {
             $this->setFilename("---no-valid-filename---" . $this->getId());
             throw new \Exception("Asset requires filename, generated filename automatically");
         }
