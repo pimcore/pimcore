@@ -39,7 +39,8 @@ CREATE TABLE `assets` (
   UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
-  KEY `path` (`path`)
+  KEY `path` (`path`)),
+  KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `assets_metadata`;
@@ -157,7 +158,8 @@ CREATE TABLE `documents` (
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `path` (`path`),
-  KEY `published` (`published`)
+  KEY `published` (`published`),
+  KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_doctypes`;
@@ -413,7 +415,8 @@ CREATE TABLE `objects` (
   KEY `path` (`o_path`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
-  KEY `type` (`o_type`)
+  KEY `type` (`o_type`),
+  KEY `o_modificationDate` (`o_modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties`;
