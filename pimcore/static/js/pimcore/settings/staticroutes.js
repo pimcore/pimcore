@@ -170,7 +170,17 @@ pimcore.settings.staticroutes = Class.create({
             {header:t("reverse"), width:100, sortable:true, dataIndex:'reverse',
                 editor:new Ext.form.TextField({})},
             {header:t("module_optional"), width:50, sortable:false, dataIndex:'module',
-                editor:new Ext.form.TextField({})},
+                editor:new Ext.form.ComboBox({
+                    store: new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        url: "/admin/misc/get-available-modules",
+                        root: "data",
+                        fields: ["name"]
+                    }),
+                    triggerAction: "all",
+                    displayField: 'name',
+                    valueField: 'name'
+                })},
             {header:t("controller"), width:50, sortable:false, dataIndex:'controller',
                 editor:new Ext.form.ComboBox({
                     store:new Ext.data.JsonStore({
@@ -181,7 +191,17 @@ pimcore.settings.staticroutes = Class.create({
                     }),
                     triggerAction:"all",
                     displayField:'name',
-                    valueField:'name'
+                    valueField:'name',
+                    listeners:{
+                        "focus":function (el) {
+                            console.log();
+                            el.getStore().reload({
+                                params:{
+                                    moduleName:this.store.data.items[el.gridEditor.row].data.module
+                                }
+                            });
+                        }.bind(this)
+                    }
                 })},
             {header:t("action"), width:50, sortable:false, dataIndex:'action',
                 editor:new Ext.form.ComboBox({
@@ -199,6 +219,7 @@ pimcore.settings.staticroutes = Class.create({
                             console.log();
                             el.getStore().reload({
                                 params:{
+                                    moduleName:this.store.data.items[el.gridEditor.row].data.module,
                                     controllerName:this.store.data.items[el.gridEditor.row].data.controller
                                 }
                             });
