@@ -194,7 +194,6 @@ pimcore.settings.staticroutes = Class.create({
                     valueField:'name',
                     listeners:{
                         "focus":function (el) {
-                            console.log();
                             el.getStore().reload({
                                 params:{
                                     moduleName:this.store.data.items[el.gridEditor.row].data.module
@@ -216,7 +215,6 @@ pimcore.settings.staticroutes = Class.create({
                     valueField:'name',
                     listeners:{
                         "focus":function (el) {
-                            console.log();
                             el.getStore().reload({
                                 params:{
                                     moduleName:this.store.data.items[el.gridEditor.row].data.module,
