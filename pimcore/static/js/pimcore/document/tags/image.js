@@ -323,8 +323,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }
         }
 
-        console.log(path);
-
         var image = document.createElement("img");
         image.src = path;
 
