@@ -208,7 +208,7 @@ CSS;
         }
 
         //matches all links
-        preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript|data:)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
+        preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript|data:|#)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
         if (!empty($matches[0])) {
             foreach ($matches[0] as $key => $value) {
                 $fullMatch = $matches[0][$key];
