@@ -794,6 +794,34 @@ class Image extends Model\Document\Tag {
      */
     public function __sleep() {
 
+        // we need to write the marker and hotspot meta-data into a temporary property
+        // this is because we dont't wan't so serialize the objects but only the actual IDs
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as &$metaData) {
+                        if($metaData["value"] instanceof Element\ElementInterface) {
+                            $metaData["value"] = $metaData["value"]->getId();
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        $marker = $rewritePath($this->marker);
+        $hotspots = $rewritePath($this->hotspots);
+
+        $this->__tmpMarkerHotspot = [
+            "marker" => $marker,
+            "hotspots" => $hotspots
+        ];
+
         $finalVars = array();
         $parentVars = parent::__sleep();
 
@@ -806,5 +834,36 @@ class Image extends Model\Document\Tag {
         }
 
         return $finalVars;
+    }
+
+    /**
+     *
+     */
+    public function __wakeup() {
+        if(isset($this->__tmpMarkerHotspot)) {
+            $rewritePath = function ($data) {
+
+                if(!is_array($data)) {
+                    return array();
+                }
+
+                foreach ($data as &$element) {
+                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach($element["data"] as &$metaData) {
+                            if(in_array($metaData["type"], array("object","asset","document"))) {
+                                $el = Element\Service::getElementById($metaData["type"], $metaData["value"]);
+                                $metaData["value"] = $el;
+                            }
+                        }
+                    }
+                }
+                return $data;
+            };
+
+            $data["marker"] = $rewritePath($this->__tmpMarkerHotspot["marker"]);
+            if(!empty($this->__tmpMarkerHotspot["hotspots"])) {
+                $data["hotspots"] = $rewritePath($this->__tmpMarkerHotspot["hotspots"]);
+            }
+        }
     }
 }
