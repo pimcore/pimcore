@@ -205,7 +205,7 @@ class Thumbnail {
         $attr = array();
         $pictureAttribs = []; // this is used for the html5 <picture> element
 
-        if(!$this->deferred) {
+        if(!$this->deferred && !isset($attributes["disableWidthHeightAttributes"])) {
             if($this->getWidth()) {
                 $attr['width'] = 'width="'.$this->getWidth().'"';
             }
@@ -255,6 +255,12 @@ class Thumbnail {
         }
 
         foreach($attributes as $key => $value) {
+
+            // ignored attributes
+            if(in_array($key, ["disableWidthHeightAttributes"])) {
+                continue;
+            }
+
             //only include attributes with characters a-z and dashes in their name.
             if(preg_match("/^[a-z-]+$/i", $key)) {
                 $attr[$key] = $key . '="' . htmlspecialchars($value) . '"';

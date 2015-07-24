@@ -269,7 +269,7 @@ class Image extends Model\Document\Tag {
             $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
                 "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover",
                 "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup",
-                "onkeydown", "onkeypress", "onkeyup", "itemprop", "itemscope", "itemtype");
+                "onkeydown", "onkeypress", "onkeyup", "itemprop", "itemscope", "itemtype", "disableWidthHeightAttributes");
 
             $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap",
                 "vspace", "width", "class", "dir", "id", "lang",  "title");
@@ -285,7 +285,7 @@ class Image extends Model\Document\Tag {
             $attribs = [];
             $attribsRaw = [];
             foreach ($availableAttribs as $key => $value) {
-                if ((is_string($value) || is_numeric($value)) && (in_array($key, $allowedAttributes) || array_key_exists($key, $customAttributes))) {
+                if ((is_string($value) || is_numeric($value) || is_bool($value)) && (in_array($key, $allowedAttributes) || array_key_exists($key, $customAttributes))) {
                     $attribsRaw[$key] = $value;
 
                     if(in_array($key,$htmlEscapeAttributes)){
