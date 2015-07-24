@@ -55,9 +55,9 @@ abstract class Resource extends Model\Document\Resource {
             }
 
             $element = new $class();
-            $element->setDataFromResource($elementRaw["data"]);
             $element->setName($elementRaw["name"]);
             $element->setDocumentId($this->model->getId());
+            $element->setDataFromResource($elementRaw["data"]);
 
             $elements[$elementRaw["name"]] = $element;
             $this->model->setElement($elementRaw["name"], $element);
