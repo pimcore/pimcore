@@ -570,14 +570,16 @@ class AbstractObject extends Model\Element\AbstractElement {
                     $oldPath = $this->getResource()->getCurrentFullPath();
                 }
 
-                $this->update();
-
                 // if the old path is different from the new path, update all children
+                // we need to do the update of the children's path before $this->update() because the
+                // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
                 $updatedChildren = array();
                 if($oldPath && $oldPath != $this->getFullPath()) {
                     $this->getResource()->updateWorkspaces();
                     $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
                 }
+
+                $this->update();
 
                 self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -651,7 +653,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
             if (strlen($this->getKey()) < 1) {
                 $this->setKey("---no-valid-key---" . $this->getId());
-                throw new \Exception("Object requires key, generated key automatically");
+                throw new \Exception("Document requires key, generated key automatically");
             }
         } else if($this->getId() == 1) {
             // some data in root node should always be the same
