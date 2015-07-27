@@ -18,7 +18,8 @@
 namespace Pimcore\Model\Object\Concrete\Resource;
 
 use Pimcore\Model;
- 
+use Pimcore\Model\Object;
+
 class InheritanceHelper {
 
     /**
@@ -89,7 +90,7 @@ class InheritanceHelper {
     /**
      *
      */
-    public function resetFieldsToCheck() {  
+    public function resetFieldsToCheck() {
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();
@@ -286,34 +287,65 @@ class InheritanceHelper {
      * @param string $fields
      * @return array
      */
-    protected function buildTree($currentParentId, $fields = "") {
-        $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_parentId = ? GROUP BY b.o_id", $currentParentId);
+    protected function buildTree($currentParentId, $fields = "", $parentIdGroups = null) {
 
-        $objects = array();
+        if (!$parentIdGroups) {
+            $object = Object::getById($currentParentId);
 
-        foreach($result as $r) {
-            $o = new \stdClass();
-            $o->id = $r['id'];
-            $o->values = $r;
-            $o->type = $r["type"];
-            $o->childs = $this->buildTree($r['id'], $fields);
+            $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ? GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC", $object->getFullPath() . "/%");
 
-            $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", $r['id']);
+            $objects = array();
 
-            $objectRelations = array();
-            if(!empty($objectRelationsResult)) {
-                foreach($objectRelationsResult as $orr) {
-                    if($orr['COUNT'] > 0) {
-                        $objectRelations[$orr['fieldname']] = $orr['fieldname'];
-                    }
+            // group the results together based on the parent id's
+            $parentIdGroups = [];
+            foreach ($result as $r) {
+                if (!isset($parentIdGroups[$r["parentId"]])) {
+                    $parentIdGroups[$r["parentId"]] = [];
                 }
-                $o->relations = $objectRelations;
-            }
 
-            $objects[] = $o;
+                $parentIdGroups[$r["parentId"]][] = $r;
+            }
+        }
+
+        if(isset($parentIdGroups[$currentParentId])) {
+            foreach ($parentIdGroups[$currentParentId] as $r) {
+                $o = new \stdClass();
+                $o->id = $r['id'];
+                $o->values = $r;
+                $o->type = $r["type"];
+                $o->childs = $this->buildTree($r['id'], $fields, $parentIdGroups);
+
+                $objects[] = $o;
+            }
         }
 
         return $objects;
+    }
+
+    /**
+     * @param $node
+     * @return mixed
+     */
+    protected function getRelationsForNode($node) {
+
+        // if the relations are already set, skip here
+        if(isset($node->relations)) {
+            return $node;
+        }
+
+        $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", $node->id);
+
+        $objectRelations = array();
+        if(!empty($objectRelationsResult)) {
+            foreach($objectRelationsResult as $orr) {
+                if($orr['COUNT'] > 0) {
+                    $objectRelations[$orr['fieldname']] = $orr['fieldname'];
+                }
+            }
+            $node->relations = $objectRelations;
+        }
+
+        return $node;
     }
 
     /**
@@ -377,6 +409,7 @@ class InheritanceHelper {
      * @param $fieldname
      */
     protected function getIdsToCheckForDeletionForRelationfields($currentNode, $fieldname) {
+        $this->getRelationsForNode($currentNode);
         $value = $currentNode->relations[$fieldname];
         if(!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             return;
@@ -395,6 +428,7 @@ class InheritanceHelper {
      * @param $fieldname
      */
     protected function getIdsToUpdateForRelationfields($currentNode, $fieldname) {
+        $this->getRelationsForNode($currentNode);
         $value = $currentNode->relations[$fieldname];
         if($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode->id;

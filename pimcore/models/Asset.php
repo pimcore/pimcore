@@ -568,13 +568,16 @@ class Asset extends Element\AbstractElement {
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace("//", "/", $parent->getCurrentFullPath() . "/"));
             } else {
-                // parent document doesn't exist anymore, so delete this document
-                //$this->delete();
-
                 // parent document doesn't exist anymore, set the parent to to root
                 $this->setParentId(1);
                 $this->setPath("/");
             }
+
+            if (strlen($this->getFilename()) < 1) {
+                $this->setFilename("---no-valid-filename---" . $this->getId());
+                throw new \Exception("Asset requires filename, generated filename automatically");
+            }
+
         } else if($this->getId() == 1) {
             // some data in root node should always be the same
             $this->setParentId(0);
@@ -604,11 +607,6 @@ class Asset extends Element\AbstractElement {
      * @throws \Exception
      */
     protected function update() {
-
-        if (!$this->getFilename() && !is_numeric($this->getFilename()) && $this->getId() != 1) {
-            $this->setFilename("---no-valid-filename---" . $this->getId());
-            throw new \Exception("Asset requires filename, generated filename automatically");
-        }
 
         // set date
         $this->setModificationDate(time());

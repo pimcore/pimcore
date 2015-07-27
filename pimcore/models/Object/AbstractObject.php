@@ -570,14 +570,16 @@ class AbstractObject extends Model\Element\AbstractElement {
                     $oldPath = $this->getResource()->getCurrentFullPath();
                 }
 
-                $this->update();
-
                 // if the old path is different from the new path, update all children
+                // we need to do the update of the children's path before $this->update() because the
+                // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
                 $updatedChildren = array();
                 if($oldPath && $oldPath != $this->getFullPath()) {
                     $this->getResource()->updateWorkspaces();
                     $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
                 }
+
+                $this->update();
 
                 self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -644,12 +646,14 @@ class AbstractObject extends Model\Element\AbstractElement {
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace("//","/",$parent->getCurrentFullPath()."/"));
             } else {
-                // parent document doesn't exist anymore, so delete this document
-                //$this->delete();
-
                 // parent document doesn't exist anymore, set the parent to to root
                 $this->setParentId(1);
                 $this->setPath("/");
+            }
+
+            if (strlen($this->getKey()) < 1) {
+                $this->setKey("---no-valid-key---" . $this->getId());
+                throw new \Exception("Document requires key, generated key automatically");
             }
         } else if($this->getId() == 1) {
             // some data in root node should always be the same
@@ -675,11 +679,6 @@ class AbstractObject extends Model\Element\AbstractElement {
      * @throws \Exception
      */
     protected function update() {
-
-        if(is_null($this->getKey()) && $this->getId() != 1) {
-            $this->delete();
-            throw new \Exception("Object requires key, object with id " . $this->getId() . " deleted");
-        }
 
         // set mod date
         $this->setModificationDate(time());
