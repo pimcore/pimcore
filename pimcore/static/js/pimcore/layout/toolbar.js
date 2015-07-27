@@ -619,6 +619,13 @@ pimcore.layout.toolbar = Class.create({
                 });
 
                 objectMenu.menu.items.push({
+                    text: t("classificationstore_menu_config"),
+                    iconCls: "pimcore_icon_classificationstore",
+                    handler: this.editClassificationStoreConfig
+                });
+
+
+                objectMenu.menu.items.push({
                     text: t("custom_views"),
                     iconCls: "pimcore_icon_custom_views",
                     handler: this.editCustomViews
@@ -1332,6 +1339,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("keyvalue_config", new pimcore.object.keyvalue.configpanel());
+        }
+    },
+
+    editClassificationStoreConfig: function () {
+        try {
+            pimcore.globalmanager.get("classifcationstore_config").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("classifcationstore_config", new pimcore.object.classificationstore.configPanel());
         }
     },
 

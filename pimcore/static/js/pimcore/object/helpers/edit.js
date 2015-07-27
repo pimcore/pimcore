@@ -180,8 +180,8 @@ pimcore.object.helpers.edit = {
                 var metaData;
 
                 try {
-                    if (typeof this.getDataForField(l.name) != "function") {
-                        data = this.getDataForField(l.name);
+                    if (typeof this.getDataForField(l) != "function") {
+                        data = this.getDataForField(l);
                     }
                 } catch (e) {
                     data = null;
@@ -189,8 +189,8 @@ pimcore.object.helpers.edit = {
                 }
 
                 try {
-                    if (typeof this.getMetaDataForField(l.name) != "function") {
-                        metaData = this.getMetaDataForField(l.name);
+                    if (typeof this.getMetaDataForField(l) != "function") {
+                        metaData = this.getMetaDataForField(l);
                     }
                 } catch (e2) {
                     metaData = null;

@@ -690,7 +690,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
     /**
      *
      */
-    public function enrichLayoutDefinition() {
+    public function enrichLayoutDefinition($object) {
         $classId = $this->allowedClassId;
         $class = Object\ClassDefinition::getById($classId);
 

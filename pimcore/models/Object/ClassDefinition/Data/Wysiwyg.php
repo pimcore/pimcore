@@ -232,7 +232,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data {
         $data = "";
         if($object instanceof Object\Concrete) {
             $data = $object->{$this->getName()};
-        } else if ($object instanceof Object\Localizedfield) {
+        } else if ($object instanceof Object\Localizedfield || $object instanceof Object\Classificationstore) {
             $data = $params["data"];
         } else if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
