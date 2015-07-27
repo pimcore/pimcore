@@ -286,7 +286,7 @@ class Imagick extends Adapter {
         // problem is described here: http://imagemagick.org/Usage/basics/#type
         // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
         $currentLocale = setlocale(LC_ALL,"0"); // this locale hack thing is also a hack for imagick
-        setlocale(LC_ALL,""); // details see https://www.pimcore.org/issues/browse/PIMCORE-2728
+        setlocale(LC_ALL,"en"); // Set locale to "en" for ImagickDraw::point() to ensure the involved tostring() methods keep the decimal point
 
         $draw = new \ImagickDraw();
         $draw->setFillColor("#ff0000");
