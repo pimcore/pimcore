@@ -406,7 +406,7 @@ abstract class Adapter {
      * @param int $hue
      * @return $this
      */
-    public function brightnessSaturation($brightness = 0, $saturation = 0, $hue = 0) {
+    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100) {
         return $this;
     }
 
