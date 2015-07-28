@@ -809,8 +809,7 @@ CREATE TABLE `website_settings` (
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `siteId` (`siteId`)
-)
-DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
@@ -822,8 +821,7 @@ CREATE TABLE `classificationstore_groups` (
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
-)
-DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
@@ -836,8 +834,7 @@ CREATE TABLE `classificationstore_keys` (
 	`definition` LONGTEXT NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`)
-)
-DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
 CREATE TABLE `classificationstore_relations` (
@@ -847,6 +844,4 @@ CREATE TABLE `classificationstore_relations` (
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-)
-
-DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
