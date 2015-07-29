@@ -436,12 +436,6 @@ Ext.onReady(function () {
         statusbar.add("-");
     }
 
-    // check for flash player
-    if (!swfobject.hasFlashPlayerVersion("11")) {
-        statusbar.add('<div class="pimcore_statusbar_flash">' + t("update_flash") + "</div>");
-        statusbar.add("-");
-    }
-
     statusbar.add("->");
     statusbar.add('&copy by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
                 + 'pimcore GmbH</a> - pimcore Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
