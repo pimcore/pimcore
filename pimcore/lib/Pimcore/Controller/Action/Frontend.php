@@ -164,6 +164,9 @@ abstract class Frontend extends Action {
             // logged in users only
             if ($user) {
 
+                // set the user to registry so that it is available via \Pimcore\Tool\Admin::getCurrentUser();
+                \Zend_Registry::set("pimcore_admin_user", $this->user);
+
                 // document editmode
                 if ($this->getParam("pimcore_editmode")) {
                     \Zend_Registry::set("pimcore_editmode", true);
