@@ -46,6 +46,7 @@ class Processor {
         "sepia" => array(),
         "sharpen" => array('radius', 'sigma', 'amount', 'threshold'),
         "gaussianBlur" => array('radius', 'sigma'),
+        "brightnessSaturation" => array('brightness', 'saturation', "hue"),
         "mirror" => array("mode")
     );
 
@@ -296,8 +297,6 @@ class Processor {
             if(file_exists($file)) {
                 $originalFilesize = filesize($file);
                 \Pimcore\Image\Optimizer::optimize($file);
-                @chmod($file, File::getDefaultMode());
-
                 \Logger::debug("Optimized image: " . $file . " saved " . formatBytes($originalFilesize-filesize($file)));
             } else {
                 \Logger::debug("Skip optimizing of " . $file . " because it doesn't exist anymore");

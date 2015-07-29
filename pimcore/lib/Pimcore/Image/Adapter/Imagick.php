@@ -33,7 +33,7 @@ class Imagick extends Adapter {
     protected static $CMYKColorProfile;
 
     /**
-     * @var Imagick
+     * @var \Imagick
      */
     protected $resource;
 
@@ -718,6 +718,20 @@ class Imagick extends Adapter {
     public function gaussianBlur($radius = 0, $sigma = 1.0) {
         $this->preModify();
         $this->resource->gaussianBlurImage($radius, $sigma);
+        $this->postModify();
+
+        return $this;
+    }
+
+    /**
+     * @param int $brightness
+     * @param int $saturation
+     * @param int $hue
+     * @return $this
+     */
+    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100) {
+        $this->preModify();
+        $this->resource->modulateImage($brightness, $saturation, $hue);
         $this->postModify();
 
         return $this;
