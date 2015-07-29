@@ -118,8 +118,8 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      */
     public function emailLogsAction()
     {
-        if(!$this->getUser()->isAllowed("sent_emails")) {
-            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
         $list = new Tool\Email\Log\Listing();
@@ -175,8 +175,8 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      */
     public function showEmailLogAction()
     {
-        if(!$this->getUser()->isAllowed("sent_emails")) {
-            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
         $type = $this->getParam('type');
@@ -285,8 +285,8 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      */
     public function deleteEmailLogAction()
     {
-        if(!$this->getUser()->isAllowed("sent_emails")) {
-            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
         $success = false;
@@ -305,8 +305,8 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      */
     public function resendEmailAction(){
 
-        if(!$this->getUser()->isAllowed("sent_emails")) {
-            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+        if(!$this->getUser()->isAllowed("emails")) {
+            throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
         $success = false;
@@ -353,7 +353,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
     public function sendTestEmailAction() {
 
         if(!$this->getUser()->isAllowed("emails")) {
-            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+            throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
         $mail = new Mail();
@@ -377,7 +377,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
     public function blacklistAction() {
 
         if(!$this->getUser()->isAllowed("emails")) {
-            throw new \Exception("Permission denied, user needs 'sent_emails' permission.");
+            throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
         if ($this->getParam("data")) {
