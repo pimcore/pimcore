@@ -154,6 +154,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
         //copy config file
         if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/OnlineShopConfig.xml")) {
+            mkdir(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop", 0777, true);
             copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/OnlineShopConfig_sample.xml", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/OnlineShopConfig.xml");
             copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/.htaccess", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/.htaccess");
         }
