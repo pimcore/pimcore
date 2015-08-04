@@ -110,7 +110,8 @@ class Resource extends Model\Listing\Resource\AbstractResource {
     {
         if (count($this->model->getObjects()) == 0)
         {
-            $hasLimit = !empty($this->model->getLimit());
+            $limit = $this->model->getLimit();
+            $hasLimit = !empty($limit);
             $query = $this->getQuery();
 
             if(!$hasLimit)
