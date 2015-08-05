@@ -18,6 +18,13 @@ namespace Pimcore\Model\Listing;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Resource;
 
+
+/**
+ * Class AbstractListing
+ *
+ * @package Pimcore\Model\Listing
+ * @method \Zend_Db_Select getQuery()
+ */
 abstract class AbstractListing extends AbstractModel {
 
     /**
