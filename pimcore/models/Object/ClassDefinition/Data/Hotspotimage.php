@@ -116,27 +116,6 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
                 "crop" => $data->getCrop()
             );
 
-            $rewritePath = function ($data) {
-
-                if(!is_array($data)) {
-                    return array();
-                }
-
-                foreach ($data as &$element) {
-                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
-                        foreach($element["data"] as &$metaData) {
-                            if($metaData["value"] instanceof Element\ElementInterface) {
-                                $metaData["value"] = $metaData["value"]->getId();
-                            }
-                        }
-                    }
-                }
-                return $data;
-            };
-
-            $metaData["hotspots"] = $rewritePath($metaData["hotspots"]);
-            $metaData["marker"] = $rewritePath($metaData["marker"]);
-
             $metaData = Serialize::serialize($metaData);
 
             return array(
@@ -183,9 +162,9 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
                 foreach ($data as &$element) {
                     if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach($element["data"] as &$metaData) {
-                            if(in_array($metaData["type"], array("object","asset","document"))) {
-                                $el = Element\Service::getElementById($metaData["type"], $metaData["value"]);
-                                $metaData["value"] = $el;
+                            // this is for backward compatibility (Array vs. MarkerHotspotItem)
+                            if(is_array($metaData)) {
+                                $metaData = new Element\Data\MarkerHotspotItem($metaData);
                             }
                         }
                     }
@@ -246,6 +225,9 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
             $marker = $rewritePath($data->getMarker());
             $hotspots = $rewritePath($data->getHotspots());
 
+            $marker = object2array($marker);
+            $hotspots = object2array($hotspots);
+
             return array(
                 "image" => $imageId,
                 "hotspots" => $hotspots,
@@ -273,8 +255,9 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
             foreach ($data as &$element) {
                 if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
                     foreach($element["data"] as &$metaData) {
+                        $metaData = new Element\Data\MarkerHotspotItem($metaData);
                         if(in_array($metaData["type"], array("object","asset","document"))) {
-                            $el = Element\Service::getElementByPath($metaData["type"], $metaData["value"]);
+                            $el = Element\Service::getElementByPath($metaData["type"], $metaData->getValue());
                             $metaData["value"] = $el;
                         }
                     }

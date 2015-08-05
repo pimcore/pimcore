@@ -497,12 +497,14 @@ class Document extends Element\AbstractElement {
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace("//", "/", $parent->getCurrentFullPath() . "/"));
             } else {
-                // parent document doesn't exist anymore, so delete this document
-                //$this->delete();
-
                 // parent document doesn't exist anymore, set the parent to to root
                 $this->setParentId(1);
                 $this->setPath("/");
+            }
+
+            if (strlen($this->getKey()) < 1) {
+                $this->setKey("---no-valid-key---" . $this->getId());
+                throw new \Exception("Document requires key, generated key automatically");
             }
         } else if($this->getId() == 1) {
             // some data in root node should always be the same
@@ -528,11 +530,6 @@ class Document extends Element\AbstractElement {
      * @throws \Exception
      */
     protected function update() {
-
-        if (!$this->getKey() && $this->getId() != 1) {
-            $this->delete();
-            throw new \Exception("Document requires key, document with id " . $this->getId() . " deleted");
-        }
 
         $disallowedKeysInFirstLevel = array("install","admin","webservice","plugin");
         if($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {

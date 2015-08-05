@@ -1183,6 +1183,58 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
+    itemBrightnessSaturation: function (panel, data, getName) {
+
+        var niceName = t("brightness") + " / " + t("saturation") + " / " + t("hue") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'spinnerfield',
+                name: 'brightness',
+                fieldLabel: t('brightness'),
+                width: 50,
+                allowDecimals: false,
+                incrementValue: 1,
+                value: data.brightness || 100
+            },{
+                xtype: 'spinnerfield',
+                name: 'saturation',
+                fieldLabel: t('saturation'),
+                width: 50,
+                allowDecimals: false,
+                incrementValue: 1,
+                value: data.saturation || 100
+            },{
+                xtype: 'spinnerfield',
+                name: 'hue',
+                fieldLabel: t('hue'),
+                width: 50,
+                allowDecimals: false,
+                incrementValue: 1,
+                value: data.hue || 100
+            },{
+                xtype: 'hidden',
+                name: 'type',
+                value: 'brightnessSaturation'
+            }]
+        });
+
+        return item;
+    },
+
     itemTifforiginal: function (panel, data, getName) {
 
         var niceName = t("use_original_tiff");

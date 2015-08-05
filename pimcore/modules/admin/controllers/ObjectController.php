@@ -380,7 +380,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $objectData = $this->filterLocalizedFields($object, $objectData);
-            Object\Service::enrichLayoutDefinition($objectData["layout"]);
+            Object\Service::enrichLayoutDefinition($objectData["layout"], $object);
 
 
             //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -471,7 +471,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
 
             // following some exceptions for special data types (localizedfields, objectbricks)
-            if ($value && ($fieldData instanceof Object\Localizedfield)) {
+            if ($value && ($fieldData instanceof Object\Localizedfield || $fieldData instanceof Object\Classificationstore)) {
                 // make sure that the localized field participates in the inheritance detection process
                 $isInheritedValue = $value["inherited"];
             }

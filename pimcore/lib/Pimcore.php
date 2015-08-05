@@ -287,6 +287,7 @@ class Pimcore {
                 if(!headers_sent()) {
                     header("HTTP/1.0 404 Not Found");
                 }
+                \Logger::err($e);
                 throw new \Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
             } catch (\Exception $e) {
                 if(!headers_sent()) {

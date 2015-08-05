@@ -323,8 +323,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }
         }
 
-        console.log(path);
-
         var image = document.createElement("img");
         image.src = path;
 
@@ -438,7 +436,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax["hotspots"] = data["hotspots"];
             this.datax["marker"] = data["marker"];
         }.bind(this));
-        editor.open(true);
+        editor.open(false);
     },
 
     getValue: function () {

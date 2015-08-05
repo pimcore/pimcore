@@ -392,6 +392,25 @@ abstract class Adapter {
     }
 
     /**
+     * @param int $radius
+     * @param float $sigma
+     * @return $this|Adapter
+     */
+    public function gaussianBlur($radius = 0, $sigma = 1.0) {
+        return $this;
+    }
+
+    /**
+     * @param int $brightness
+     * @param int $saturation
+     * @param int $hue
+     * @return $this
+     */
+    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100) {
+        return $this;
+    }
+
+    /**
      * @abstract
      * @param  $imagePath
      * @return self

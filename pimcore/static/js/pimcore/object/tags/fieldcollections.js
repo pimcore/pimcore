@@ -353,11 +353,12 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.currentData = {};
     },
 
-    getDataForField: function (name) {
+    getDataForField: function (fieldConfig) {
+        var name = fieldConfig.name;
         return this.currentData[name];
     },
 
-    getMetaDataForField: function(name) {
+    getMetaDataForField: function(fieldConfig) {
         return null;
     },
 

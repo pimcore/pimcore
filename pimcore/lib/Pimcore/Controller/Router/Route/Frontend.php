@@ -84,6 +84,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      */
     public function match($path, $partial = false) {
 
+        // this allows the usage of UTF8 URLs and within static routes
+        $path = urldecode($path); 
+
         $front = \Zend_Controller_Front::getInstance();
         $matchFound = false;
         $config = Config::getSystemConfig();

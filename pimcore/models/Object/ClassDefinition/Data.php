@@ -603,6 +603,9 @@ abstract class Data
      */
     public function getFilterCondition($value, $operator)
     {
+        $db = \Pimcore\Resource::get();
+        $key = $db->quoteIdentifier($this->name);
+
         if ($value === "NULL") {
             if ($operator == '=') {
                 $operator = "IS";
@@ -611,14 +614,15 @@ abstract class Data
             }
         } else if (!is_array($value) && !is_object($value)) {
             if ($operator == "LIKE") {
-                $value = "'%" . $value . "%'";
+                $value = $db->quote("%" . $value . "%");
             } else {
-                $value = "'" . $value . "'";
+                $value = $db->quote($value);
             }
         }
 
         if (in_array($operator, Object\ClassDefinition\Data::$validFilterOperators)) {
-            return "`" . $this->name . "` " . $operator . " " . $value . " ";
+
+            return $key . " " . $operator . " " . $value . " ";
         } else return "";
     }
 

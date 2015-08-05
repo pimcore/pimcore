@@ -860,4 +860,26 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
         $this->allowedTypes = $masterDefinition->allowedTypes;
     }
+
+    /**
+     * This method is called in Object|Class::save() and is used to create the database table for the localized data
+     * @return void
+     */
+    public function classSaved($class)
+    {
+        if (is_array($this->allowedTypes)) {
+            foreach ($this->allowedTypes as $allowedType) {
+                $definition = Object\Objectbrick\Definition::getByKey($allowedType);
+                if ($definition) {
+                    $fieldDefinition = $definition->getFieldDefinitions();
+
+                    foreach ($fieldDefinition as $fd) {
+                        if (method_exists($fd, "classSaved")) {
+                            $fd->classSaved($class);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

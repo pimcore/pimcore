@@ -39,7 +39,8 @@ CREATE TABLE `assets` (
   UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
-  KEY `path` (`path`)
+  KEY `path` (`path`),
+  KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `assets_metadata`;
@@ -157,7 +158,8 @@ CREATE TABLE `documents` (
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `path` (`path`),
-  KEY `published` (`published`)
+  KEY `published` (`published`),
+  KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_doctypes`;
@@ -413,7 +415,8 @@ CREATE TABLE `objects` (
   KEY `path` (`o_path`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
-  KEY `type` (`o_type`)
+  KEY `type` (`o_type`),
+  KEY `o_modificationDate` (`o_modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties`;
@@ -806,5 +809,39 @@ CREATE TABLE `website_settings` (
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `siteId` (`siteId`)
-)
-DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `classificationstore_groups`;
+CREATE TABLE `classificationstore_groups` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`parentId` BIGINT(20) NOT NULL DEFAULT '0',
+	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`description` VARCHAR(255) NULL DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `classificationstore_keys`;
+CREATE TABLE `classificationstore_keys` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`description` TEXT NULL,
+	`type` ENUM('input','textarea','wysiwyg','checkbox','numeric','slider','select','multiselect','date','datetime','language','languagemultiselect','country','countrymultiselect','table') NULL DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`definition` LONGTEXT NULL,
+	`enabled` TINYINT(1) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `classificationstore_relations`;
+CREATE TABLE `classificationstore_relations` (
+	`groupId` BIGINT(20) NOT NULL,
+	`keyId` BIGINT(20) NOT NULL,
+	PRIMARY KEY (`groupId`, `keyId`),
+	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
+	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
+	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8;
