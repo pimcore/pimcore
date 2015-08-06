@@ -36,8 +36,8 @@ class ProductType implements IOrderListFilter
         }
 
         $orderList->getQuery()->where(
-            sprintf('orderItemObjects.o_className in("%s")'
-                , implode('","', $types)
+            sprintf('orderItemObjects.o_className IN (%s)'
+                , implode(',', $types)
             )
         );
     }
