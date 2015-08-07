@@ -58,7 +58,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
                 $metadata->setValues($data);
 
-                $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage());
+                $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem && $existingItem->getId() != $metadata->getId()) {
                     $this->_helper->json(array("message" => "rule_violation", "success" => false));
                 }
@@ -78,7 +78,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
                 $metadata->setValues($data);
 
-                $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage());
+                $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem) {
                     $this->_helper->json(array("message" => "rule_violation", "success" => false));
                 }
