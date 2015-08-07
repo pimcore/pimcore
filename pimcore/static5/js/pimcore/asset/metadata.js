@@ -49,7 +49,7 @@ pimcore.asset.metadata = Class.create({
 
             var customKey = new Ext.form.TextField({
                 name: 'key',
-                emptyText: t('key')
+                emptyText: t('name')
             });
 
             var customType = new Ext.form.ComboBox({
