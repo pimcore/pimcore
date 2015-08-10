@@ -515,6 +515,10 @@ class Staticroute extends AbstractModel {
                 }
             }
 
+            // we need to unset this 3 params here, because otherwise the defaults wouldn't have an effect if used
+            // in combination with dynamic action/controller/module configurations
+            unset($params["controller"], $params["action"], $params["module"]);
+
             $params = array_merge($this->getDefaultsArray(), $params);
 
             $variables = explode(",", $this->getVariables());
