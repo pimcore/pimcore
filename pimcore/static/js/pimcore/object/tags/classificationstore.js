@@ -451,7 +451,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
 
         var fieldset =  new Ext.form.FieldSet({
-                title: groupTitle,
+                title: ts(groupTitle),
                 items: groupedChildItems,
                 collapsible: true,
                 tools: [
