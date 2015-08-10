@@ -52,6 +52,9 @@ class KeyGroupRelation extends Model\AbstractModel {
      */
     public $type;
 
+    /** @var  int */
+    public $sorter;
+
     /**
      * @return Model\Object\Classificationstore\KeyGroupRelation
      */
@@ -156,6 +159,22 @@ class KeyGroupRelation extends Model\AbstractModel {
     public function setType($type)
     {
         $this->type = $type;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSorter()
+    {
+        return $this->sorter;
+    }
+
+    /**
+     * @param int $sorter
+     */
+    public function setSorter($sorter)
+    {
+        $this->sorter = $sorter;
     }
 
 

@@ -138,7 +138,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             trackMouseOver: true,
             region: "west",
             split: true,
-            width: 500,
+            //width: 750,
             hidden: true,
             viewConfig: {
                 forceFit: true
@@ -184,7 +184,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
     createGroupsGrid: function(response) {
-        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate'];
+        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate', 'sorter'];
 
         var readerFields = [];
         for (var i = 0; i < this.groupsFields.length; i++) {
@@ -233,8 +233,13 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id'});
         gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
+            tooltip: t("classificationstore_tooltip_sorter"),
+            editor: new Ext.ux.form.SpinnerField({
+                editable: true
 
+            })});
 
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
@@ -330,7 +335,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             trackMouseOver: true,
             region: "west",
             split: true,
-            width: 500,
+            width: 600,
             viewConfig: {
                 forceFit: true
             },

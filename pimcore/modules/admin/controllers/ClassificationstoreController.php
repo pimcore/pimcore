@@ -97,7 +97,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $data = array(
             "id" => $id,
             "name" => $config->getName(),
-            "description" => $config->getDescription()
+            "description" => $config->getDescription(),
+            "sorter" => $config->getSorter()
         );
 
         $this->_helper->json($data);
@@ -205,7 +206,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $item = array(
                     "id" => $config->getId(),
                     "name" => $name,
-                    "description" => $config->getDescription()
+                    "description" => $config->getDescription(),
+                    "sorter" => $config->getSorter()
                 );
                 if ($config->getCreationDate()) {
                     $item["creationDate"] = $config->getCreationDate();
@@ -513,7 +515,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             "name" => $name,
             "description" => $config->getDescription(),
             "type" => $config->getType() ? $config->getType() : "input",
-            "definition" => $config->getDefinition()
+            "definition" => $config->getDefinition(),
+            "sorter" => $config->getSorter()
 
         );
 

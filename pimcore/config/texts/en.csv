@@ -1624,3 +1624,5 @@
 "allowed_group_ids","Allowed Group Ids (csv)"
 "remove_group","Remove Group"
 "key_id","Key ID"
+"sorter","Sorter"
+"classificationstore_tooltip_sorter","Items with lower value will be listed first"

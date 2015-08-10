@@ -51,6 +51,9 @@ class GroupConfig extends Model\AbstractModel {
      */
     public $modificationDate;
 
+    /** @var  int */
+    public $sorter;
+
     /**
      * @param integer $id
      * @return Model\Object\Classificationstore\GroupConfig
@@ -230,4 +233,22 @@ class GroupConfig extends Model\AbstractModel {
     {
         return $this->creationDate;
     }
+
+    /**
+     * @return int
+     */
+    public function getSorter()
+    {
+        return $this->sorter;
+    }
+
+    /**
+     * @param int $sorter
+     */
+    public function setSorter($sorter)
+    {
+        $this->sorter = $sorter;
+    }
+
+
 }

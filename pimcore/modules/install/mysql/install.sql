@@ -820,6 +820,7 @@ CREATE TABLE `classificationstore_groups` (
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -833,6 +834,7 @@ CREATE TABLE `classificationstore_keys` (
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`definition` LONGTEXT NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
+	`sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 

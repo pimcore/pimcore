@@ -827,49 +827,62 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     public function enrichLayoutDefinition($object) {
-        $groupList = new Object\Classificationstore\GroupConfig\Listing();
-        $groupList = $groupList->load();
-
         $this->activeGroupDefinitions = array();
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
-        asort($activeGroupIds);
 
-        /** @var  $group Object\Classificationstore\GroupConfig */
+        if (!$activeGroupIds) {
+            return;
+        }
+
+        $filteredGroupIds = array();
+
         foreach ($activeGroupIds as $groupId => $enabled) {
             if ($enabled) {
-                $group = Object\Classificationstore\GroupConfig::getById($groupId);
-                $keyList = array();
-
-                $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
-                $relation->setCondition("groupId = " . $relation->quote($group->getId()));
-                $relation = $relation->load();
-                foreach ($relation as $key) {
-
-//                    $definition = $key->getDefinition();
-
-                    $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
-
-                    if (method_exists( $definition, "__wakeup")) {
-                        $definition->__wakeup();
-                    }
-
-                    $keyList[] = array(
-                        "name" => $key->getName(),
-                        "id" => $key->getKeyId(),
-                        "description" => $key->getDescription(),
-                        "definition" => $definition
-                    );
-                }
-
-                $this->activeGroupDefinitions[$group->getId()] = array(
-                    "name" => $group->getName(),
-                    "id" => $group->getId(),
-                    "description" => $group->getDescription(),
-                    "keys" => $keyList
-                );
-
+                $filteredGroupIds[] = $groupId;
             }
         }
+
+
+        $condition = "ID in (" . implode(',', $filteredGroupIds) . ")";
+        $groupList = new Object\Classificationstore\GroupConfig\Listing();
+        $groupList->setCondition($condition);
+        $groupList->setOrderKey(array("sorter", "id"));
+        $groupList->setOrder(array("ASC", "ASC"));
+        $groupList = $groupList->load();
+
+        /** @var  $group Object\Classificationstore\GroupConfig */
+        foreach ($groupList as $group) {
+            $keyList = array();
+
+            $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
+            $relation->setCondition("groupId = " . $relation->quote($group->getId()));
+            $relation->setOrderKey(array("sorter", "id"));
+            $relation->setOrder(array("ASC", "ASC"));
+            $relation = $relation->load();
+            foreach ($relation as $key) {
+                $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+
+                if (method_exists( $definition, "__wakeup")) {
+                    $definition->__wakeup();
+                }
+
+                $keyList[] = array(
+                    "name" => $key->getName(),
+                    "id" => $key->getKeyId(),
+                    "description" => $key->getDescription(),
+                    "definition" => $definition
+                );
+            }
+
+            $this->activeGroupDefinitions[$group->getId()] = array(
+                "name" => $group->getName(),
+                "id" => $group->getId(),
+                "description" => $group->getDescription(),
+                "keys" => $keyList
+            );
+
+        }
+
     }
 
     /**

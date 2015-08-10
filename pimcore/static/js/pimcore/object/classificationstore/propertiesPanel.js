@@ -43,7 +43,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
     createGrid: function(response) {
         this.fields = ['id', 'name', 'description', 'type',
-            'creationDate', 'modificationDate', 'definition', 'title'];
+            'creationDate', 'modificationDate', 'definition', 'title', 'sorter'];
 
         var readerFields = [];
         for (var i = 0; i < this.fields.length; i++) {
@@ -108,6 +108,13 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                     'date','datetime','language','languagemultiselect','country','countrymultiselect','table']
 
             })});
+        gridColumns.push({header: t('sorter'), width: 150, sortable: true, dataIndex: 'sorter',
+            tooltip: t("classificationstore_tooltip_sorter"),
+            editor: new Ext.ux.form.SpinnerField({
+                editable: true
+
+            })});
+
 
 
         gridColumns.push({
