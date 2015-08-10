@@ -417,6 +417,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $id = $idMapper->getMappedId("object", $id);
                 }
 
+                $relatedObject = null;
                 if ($id) {
                     $relatedObject = Object::getById($id);
                 }

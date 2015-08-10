@@ -28,82 +28,64 @@ class Resource extends Model\Object\Listing\Resource {
      */
     protected $firstException = true;
 
-     /**
+    /**
      * @var string
      */
     private $tableName = null;
 
     /**
-     * Loads a list of objects for the specified parameters, returns an array of Object\AbstractObject elements
+     * @var int
+     */
+    protected $totalCount = 0;
+
+
+    /**
+     * get select query
+     * @param bool|false $forceNew
      *
-     * @return array 
+     * @return \Zend_Db_Select
+     * @throws \Exception
      */
-    public function load() {
-        
-        $objects = array();
+    public function getQuery($forceNew = false)
+    {
+        if(!$this->query || $forceNew)
+        {
+            // init
+            $select = $this->db->select();
 
-        try {
+            // create base
             $field = $this->getTableName() . ".o_id";
-            $sql = "SELECT " . $this->getSelectPart($field,$field) . " AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit();
-            $objectsData = $this->db->fetchAll($sql, $this->model->getConditionVariables());
-        } catch (\Exception $e) {
-            return $this->exceptionHandler($e);
+            $select->from(
+                [ $this->getTableName() ]
+                , [
+                    new \Zend_Db_Expr(sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field)))
+                    , 'o_type'
+                ]
+            );
+
+
+            // add joins
+            $this->addJoins( $select );
+
+            // add condition
+            $this->addConditions( $select );
+
+            // group by
+            $this->addGroupBy( $select );
+
+            // order
+            $this->addOrder( $select );
+
+            // limit
+            $this->addLimit( $select );
+
+            // cache
+            $this->query = $select;
         }
 
-        foreach ($objectsData as $objectData) {
-            if($object = Object::getById($objectData["o_id"])) {
-                $objects[] = Object::getById($objectData["o_id"]);
-            }
-        }
-
-        $this->model->setObjects($objects);
-        return $objects;
+        return $this->query;
     }
 
-    /**
-     * Loads a list of object ids for the specified parameters, returns an array of ids
-     *
-     * @return array
-     */
-    public function loadIdList() {
-        try {
-            $field = $this->getTableName() . ".o_id";
-            $objectsData = $this->db->fetchCol("SELECT " . $this->getSelectPart($field,$field) . " AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
-            return $this->exceptionHandler($e);
-        }
-
-        return $objectsData;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTotalCount() {
-
-        try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
-            return $amount;
-        } catch (\Exception $e) {
-            return $this->exceptionHandler($e);
-        }
-    }
-
-    /**
-     * @return array|int
-     */
-    public function getCount() {
-        if (count($this->model->getObjects()) > 0) {
-            return count($this->model->getObjects());
-        }
-
-        try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-            return $amount;
-        } catch (\Exception $e) {
-            return $this->exceptionHandler($e);
-        }
-    }
 
     /**
      * @param $e
@@ -136,7 +118,7 @@ class Resource extends Model\Object\Listing\Resource {
      * @throws \Zend_Exception
      */
     protected function getTableName () {
- 
+
         if(empty($this->tableName)) {
 
             // default
@@ -174,45 +156,6 @@ class Resource extends Model\Object\Listing\Resource {
         return $this->tableName;
     }
 
-    /**
-     * @return string
-     */
-    protected function getJoins() {
-        $join = ""; 
-
-        $fieldCollections = $this->model->getFieldCollections();
-        if(!empty($fieldCollections)) {
-            foreach($fieldCollections as $fc) {
-                $join .= " LEFT JOIN object_collection_" . $fc['type'] . "_" . $this->model->getClassId();
-
-                $name = $fc['type'];
-                if(!empty($fc['fieldname'])) {
-                    $name .= "~" . $fc['fieldname'];
-                }
-
-                $join .= " " . $this->db->quoteIdentifier($name);
-                $join .= " ON (" . $this->db->quoteIdentifier($name) . ".o_id = " . $this->db->quoteIdentifier($this->getTableName()) . ".o_id";
-                if(!empty($fc['fieldname'])) {
-                    $join .= " AND " . $this->db->quoteIdentifier($name) . ".fieldname = '" . $fc['fieldname'] . "'";
-                }
-                $join .= ")";
-            }
-        }
-
-        $objectbricks = $this->model->getObjectbricks();
-        if(!empty($objectbricks)) {
-            foreach($objectbricks as $ob) {
-                $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $this->model->getClassId();
-
-                $name = $ob;
-
-                $join .= " `" . $name . "`";
-                $join .= " ON `" . $name . "`.o_id = `" . $this->getTableName() . "`.o_id";
-            }
-        }
-
-        return $join;
-    }
 
     /**
      * @param string $defaultString
@@ -226,5 +169,76 @@ class Resource extends Model\Object\Listing\Resource {
             $selectPart = "DISTINCT " . $column;
         }
         return $selectPart;
+    }
+
+
+    /**
+     * @param \Zend_DB_Select $select
+     *
+     * @return $this
+     */
+    protected function addJoins(\Zend_DB_Select $select)
+    {
+        // add fielcollection's
+        $fieldCollections = $this->model->getFieldCollections();
+        if(!empty($fieldCollections)) {
+            foreach($fieldCollections as $fc) {
+
+                // join info
+                $table = 'object_collection_' . $fc['type'] . '_' . $this->model->getClassId();
+                $name = $fc['type'];
+                if(!empty($fc['fieldname'])) {
+                    $name .= "~" . $fc['fieldname'];
+                }
+
+
+                // set join condition
+                $condition = <<<CONDITION
+1
+ AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+CONDITION;
+
+                if(!empty($fc['fieldname'])) {
+                    $condition .= <<<CONDITION
+ AND {$this->db->quoteIdentifier($name)}.fieldname = "{$fc['fieldname']}"
+CONDITION;
+                }
+
+
+                // add join
+                $select->joinLeft(
+                    [ $name => $table ]
+                    , $condition
+                    , ''
+                );
+            }
+        }
+
+
+        // add brick's
+        $objectbricks = $this->model->getObjectbricks();
+        if(!empty($objectbricks)) {
+            foreach($objectbricks as $ob) {
+
+                // join info
+                $table = 'object_brick_query_' . $ob . '_' . $this->model->getClassId();
+                $name = $ob;
+
+
+                // add join
+                $select->joinLeft(
+                    [ $name => $table ]
+                    , <<<CONDITION
+1
+AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+CONDITION
+                    , ''
+                );
+
+            }
+        }
+
+
+        return $this;
     }
 }

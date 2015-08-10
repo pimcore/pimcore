@@ -116,7 +116,8 @@ Ext.onReady(function () {
                 }
                 errorMessage += "Message: \n" + response.responseText;
             } catch (e) {
-                errorMessage = response.responseText;
+                errorMessage += "\n\n";
+                errorMessage += response.responseText;
             }
             pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
         }

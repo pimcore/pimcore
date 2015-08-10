@@ -412,6 +412,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
                     $id = $idMapper->getMappedId("object", $id);
                 }
 
+                $dest = null;
                 if ($id) {
                     $dest = Object::getById($id);
                 }

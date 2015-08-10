@@ -13,7 +13,7 @@ THE PREMIER OPEN-SOURCE CMS/CMF, PIM, ECOMMERCE-SUITE
 
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
-* Issue Tracker: - [Issues](http://www.pimcore.org/issues) - Report bugs here
+* Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
 * Forums: - http://www.pimcore.org/board/ - Get help
 
 
