@@ -497,7 +497,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data {
 
                 $col = new \stdClass();
                 $col->name = $name;
-                $col->type = $this->typeMapper($c['type']);
+                $col->type = $this->typeMapper($c['type'], $c['length']);
                 $dbCols[] = $col;
             }
         }
@@ -506,12 +506,13 @@ class StructuredTable extends Model\Object\ClassDefinition\Data {
     }
 
     /**
-     * @param $type
-     * @return mixed
+     * @param $type string text|number|bool
+     * @param $length int The length of the column, default is 255 for text
+     * @return string|null
      */
-    protected function typeMapper($type) {
+    protected function typeMapper($type, $length = null) {
         $mapper = array(
-            "text" => "varchar(255)",
+            "text" => "varchar(".($length > 0 ? $length : "255").")",
             "number" => "double",
             "bool" => "tinyint(1)"
         );
