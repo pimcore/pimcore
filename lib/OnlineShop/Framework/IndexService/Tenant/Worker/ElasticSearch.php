@@ -451,11 +451,11 @@ SQL;
      */
     protected function startReindexMode() {
         // start reindex mode with pimcore lock
-        $success = Tool\Lock::lock(self::REINDEX_LOCK_KEY);
-        if(!$success) {
+        if($this->isInReindexMode()){
             throw new Exception("Key " . self::REINDEX_LOCK_KEY . " already locked, should not be the case!");
+        }else{
+            Tool\Lock::lock(self::REINDEX_LOCK_KEY);
         }
-
         // increment version and recreate index structures
         $this->indexVersion++;
         Logger::info("Could not put index Mapping -> creating new Index. Version Number: " . $this->indexVersion);
@@ -469,7 +469,7 @@ SQL;
      * @return bool
      */
     protected function isInReindexMode() {
-        return Tool\Lock::isLocked(self::REINDEX_LOCK_KEY);
+        return Tool\Lock::isLocked(self::REINDEX_LOCK_KEY,3600*12);
     }
 
     /**
@@ -547,4 +547,3 @@ SQL;
 
 
 }
-
