@@ -167,22 +167,4 @@ class Frontend {
 
         return $content;
     }
-
-    /**
-     * @param $path
-     * @return mixed
-     */
-    public static function rewriteWebsiteVarLink($path) {
-
-        // usage
-        // $path = \Pimcore\Tool\Frontend::rewriteWebsiteVarLink($path);
-
-        $results = \Pimcore::getEventManager()->trigger("system.http-website-var-link", null, ["path" => $path]);
-        $lastResult = $results->last();
-        if($lastResult) {
-            $path = $lastResult;
-        }
-
-        return $path;
-    }
 }
