@@ -90,10 +90,14 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
                 $select->group('OrderId');
             }
 
-
             // TODO only commited orders
-            $select->where('`order`.orderState = ?', $this->getOrderState());
-
+            if (null !== $this->getOrderState()) {
+                if (is_array($this->getOrderState())) {
+                    $select->where('`order`.orderState IN (?)', $this->getOrderState());
+                } else {
+                    $select->where('`order`.orderState = ?', $this->getOrderState());
+                }
+            }
 
             $this->query = $select;
         }
