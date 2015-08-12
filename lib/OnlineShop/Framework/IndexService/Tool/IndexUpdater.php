@@ -137,7 +137,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
                     $round++;
                     self::log($loggername, "Starting round: " . $round);
 
-                    $result = $worker->processUpdateIndexQueue($maxRounds);
+                    $result = $worker->processUpdateIndexQueue();
                     self::log($loggername, "processed update index elements: " . $result);
 
                     Pimcore::collectGarbage();
