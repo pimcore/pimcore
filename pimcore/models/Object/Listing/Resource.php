@@ -22,61 +22,44 @@ use Pimcore\Model\Object;
 
 class Resource extends Model\Listing\Resource\AbstractResource {
 
-    /**
-     * @var \Zend_Db_Select
-     */
-    protected $query;
-
-    /**
-     * @var int
-     */
-    protected $totalCount = 0;
-
 
     /**
      * get select query
-     * @param bool|false $forceNew
      *
      * @return \Zend_Db_Select
      * @throws \Exception
      */
-    public function getQuery($forceNew = false)
+    public function getQuery()
     {
-        if(!$this->query || $forceNew)
-        {
-            // init
-            $select = $this->db->select();
+        // init
+        $select = $this->db->select();
 
-            // create base
-            $select->from(
-                [ 'objects' ]
-                , [
-                    new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS o_id')
-                    , 'o_type'
-                ]
-            );
+        // create base
+        $select->from(
+            [ 'objects' ]
+            , [
+                new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS o_id')
+                , 'o_type'
+            ]
+        );
 
 
-            // add joins
-            $this->addJoins( $select );
+        // add joins
+        $this->addJoins( $select );
 
-            // add condition
-            $this->addConditions( $select );
+        // add condition
+        $this->addConditions( $select );
 
-            // group by
-            $this->addGroupBy( $select );
+        // group by
+        $this->addGroupBy( $select );
 
-            // order
-            $this->addOrder( $select );
+        // order
+        $this->addOrder( $select );
 
-            // limit
-            $this->addLimit( $select );
+        // limit
+        $this->addLimit( $select );
 
-            // cache
-            $this->query = $select;
-        }
-
-        return $this->query;
+        return $select;
     }
 
 
@@ -108,26 +91,22 @@ class Resource extends Model\Listing\Resource\AbstractResource {
      */
     public function getTotalCount()
     {
-        if (count($this->model->getObjects()) == 0)
+        $limit = $this->model->getLimit();
+        $hasLimit = !empty($limit);
+        $query = $this->getQuery();
+
+        if(!$hasLimit)
         {
-            $limit = $this->model->getLimit();
-            $hasLimit = !empty($limit);
-            $query = $this->getQuery();
-
-            if(!$hasLimit)
-            {
-                $query->limit(1);
-            }
-
-            $this->loadIdList();
-
-            if(!$hasLimit)
-            {
-                $query->reset( \Zend_Db_Select::LIMIT_COUNT );
-            }
+            $query->limit(1);
         }
 
-        return (int)$this->totalCount;
+        $this->loadIdList();
+
+        if(!$hasLimit)
+        {
+            $query->reset( \Zend_Db_Select::LIMIT_COUNT );
+        }
+
     }
 
 
@@ -151,7 +130,7 @@ class Resource extends Model\Listing\Resource\AbstractResource {
      */
     public function loadIdList() {
 
-        $query = $this->getQuery();
+        $query = $this->getQuery(true);
         $objectIds = $this->db->fetchCol( $query, $this->model->getConditionVariables() );
         $this->totalCount = (int)$this->db->fetchOne( 'SELECT FOUND_ROWS()' );
 
@@ -229,6 +208,15 @@ class Resource extends Model\Listing\Resource\AbstractResource {
         {
             $select->where( $condition );
         }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function reset() {
+        $this->totalCount = 0;
 
         return $this;
     }

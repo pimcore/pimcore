@@ -258,7 +258,7 @@ abstract class AbstractListing extends AbstractModel {
 
     /**
      * @param string $condition
-     * @return void
+     * @return $this
      */
     public function setCondition($condition, $conditionVariables = null) {
         $this->condition = $condition;

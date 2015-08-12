@@ -48,42 +48,37 @@ class Resource extends Model\Object\Listing\Resource {
      */
     public function getQuery($forceNew = false)
     {
-        if(!$this->query || $forceNew)
-        {
-            // init
-            $select = $this->db->select();
 
-            // create base
-            $field = $this->getTableName() . ".o_id";
-            $select->from(
-                [ $this->getTableName() ]
-                , [
-                    new \Zend_Db_Expr(sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field)))
-                    , 'o_type'
-                ]
-            );
+        // init
+        $select = $this->db->select();
+
+        // create base
+        $field = $this->getTableName() . ".o_id";
+        $select->from(
+            [ $this->getTableName() ]
+            , [
+                new \Zend_Db_Expr(sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field)))
+                , 'o_type'
+            ]
+        );
 
 
-            // add joins
-            $this->addJoins( $select );
+        // add joins
+        $this->addJoins( $select );
 
-            // add condition
-            $this->addConditions( $select );
+        // add condition
+        $this->addConditions( $select );
 
-            // group by
-            $this->addGroupBy( $select );
+        // group by
+        $this->addGroupBy( $select );
 
-            // order
-            $this->addOrder( $select );
+        // order
+        $this->addOrder( $select );
 
-            // limit
-            $this->addLimit( $select );
+        // limit
+        $this->addLimit( $select );
 
-            // cache
-            $this->query = $select;
-        }
-
-        return $this->query;
+        return $select;
     }
 
 
