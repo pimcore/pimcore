@@ -245,6 +245,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $this->_helper->json(array("success" => true, "data" => $data));
         } else {
+            $mapping = array("keyName" => "name", "keyDescription" => "description");
 
             $start = 0;
             $limit = 15;
@@ -257,6 +258,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             if ($this->_getParam("sort")) {
                 $orderKey = $this->_getParam("sort");
+                $orderKey = $mapping[$orderKey];
             }
 
             if ($this->_getParam("overrideSort") == "true") {
@@ -293,7 +295,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                         $condition .= " OR ";
                     }
                     $count++;
-                    $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    $fieldname = $mapping[$f->field];
+                    $condition .= $db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
 
 

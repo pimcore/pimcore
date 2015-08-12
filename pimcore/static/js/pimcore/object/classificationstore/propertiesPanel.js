@@ -97,7 +97,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 editor: new Ext.form.TextField({})
             }
 
-        );gridColumns.push({header: t("title"), width: 200, sortable: true, dataIndex: 'title',editor: new Ext.form.TextField({})});
+        );gridColumns.push({header: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("definition"), width: 300, sortable: true, hidden: true, dataIndex: 'definition',editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("type"), width: 150, sortable: true, dataIndex: 'type',
@@ -216,10 +216,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             {
             type: "string",
             dataIndex: "name"
-            },
-            {
-                type: "string",
-                dataIndex: "title"
             },
             {
                 type: "string",

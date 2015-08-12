@@ -338,6 +338,27 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             emptyMsg: t(emptyMsg)
         });
 
+
+        var configuredFilters = [
+            {
+                type: "numeric",
+                dataIndex: "id"
+            },
+            {
+                type: "string",
+                dataIndex: "name"
+            },{
+                type: "string",
+                dataIndex: "description"
+            }];
+        var gridfilters = new Ext.ux.grid.GridFilters({
+            encode: true,
+            local: false,
+            filters: configuredFilters
+        });
+
+        var plugins = [gridfilters];
+
         this.gridPanel = new Ext.grid.GridPanel({
             store: this.store,
             border: false,
@@ -345,6 +366,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             loadMask: true,
             columnLines: true,
             stripeRows: true,
+            plugins: plugins,
             sm: new Ext.grid.RowSelectionModel({singleSelect:false}),
             bbar: this.pagingtoolbar,
             listeners: {

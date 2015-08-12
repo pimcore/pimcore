@@ -81,7 +81,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var gridColumns = [];
 
-        gridColumns.push({header: t("id"), width: 60, sortable: true, dataIndex: 'id'});
+        gridColumns.push({header: t("id"), width: 60, sortable: true, dataIndex: 'id', hidden: true});
         gridColumns.push({header: t("key_id"), width: 60, sortable: true, dataIndex: 'keyId'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'keyName'});
         gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'keyDescription'});
@@ -123,8 +123,25 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             emptyMsg: t("classificationstore_group_empty")
         });
 
+        var configuredFilters = [
+            {
+                type: "string",
+                dataIndex: "keyId"
+            },
+            {
+            type: "string",
+            dataIndex: "keyName"
+        },{
+            type: "string",
+            dataIndex: "keyDescription"
+        }];
+        var gridfilters = new Ext.ux.grid.GridFilters({
+            encode: true,
+            local: false,
+            filters: configuredFilters
+        });
 
-        var plugins = [this.gridfilters];
+        var plugins = [gridfilters];
 
         var gridConfig = {
             frame: false,
@@ -231,7 +248,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         var gridColumns = [];
 
         gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', hidden: true, editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
         gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
@@ -303,25 +320,28 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             store: this.groupsStore,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',
-            //TODO translate
             emptyMsg: t("classificationstore_no_groups")
         });
 
-        var selectFilterFields;
-        var configuredFilters = [{
+        var configuredFilters = [
+            {
+                type: "string",
+                dataIndex: "id"
+            },
+            {
             type: "string",
             dataIndex: "name"
         },{
             type: "string",
             dataIndex: "description"
         }];
-        this.gridfilters = new Ext.ux.grid.GridFilters({
+        var gridfilters = new Ext.ux.grid.GridFilters({
             encode: true,
             local: false,
             filters: configuredFilters
         });
 
-        var plugins = [this.gridfilters];
+        var plugins = [gridfilters];
 
         var gridConfig = {
             frame: false,
