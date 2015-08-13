@@ -497,9 +497,15 @@ class Backup {
      * @throws \Exception
      */
     public function complete () {
+
         $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/cache/.dummy", "dummy");
         $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/tmp/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/backup/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/log/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/system/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/webdav/.dummy", "dummy");
         $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/log/debug.log", "dummy");
+
         $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/index.php", "index.php");
         $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/.htaccess", ".htaccess");
 
