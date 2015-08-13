@@ -116,7 +116,8 @@ Ext.onReady(function () {
                 }
                 errorMessage += "Message: \n" + response.responseText;
             } catch (e) {
-                errorMessage = response.responseText;
+                errorMessage += "\n\n";
+                errorMessage += response.responseText;
             }
             pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
         }
@@ -320,12 +321,6 @@ Ext.onReady(function () {
     //check for mail settings
     if (!pimcore.settings.mail) {
         statusbar.add('<div class="pimcore_statusbar_mail">' + t("mail_settings_incomplete") + "</div>");
-        statusbar.add("-");
-    }
-
-    // check for flash player
-    if (!swfobject.hasFlashPlayerVersion("11")) {
-        statusbar.add('<div class="pimcore_statusbar_flash">' + t("update_flash") + "</div>");
         statusbar.add("-");
     }
 

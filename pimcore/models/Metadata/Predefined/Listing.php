@@ -81,7 +81,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @param $language
      * @return \Pimcore\Model\Metadata\Predefined
      */
-    public static function getByKeyAndLanguage($key, $language) {
+    public static function getByKeyAndLanguage($key, $language, $targetSubtype = null) {
 
         $db = \Pimcore\Resource::get();
         $list = new self();
@@ -91,6 +91,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
         } else {
             $condition .= " AND (language = '' OR LANGUAGE IS NULL)";
         }
+
+        if($targetSubtype) {
+            $condition .= " AND targetSubtype = " . $db->quote($targetSubtype);
+        }
+
         $list->setCondition($condition);
         $list = $list->load();
         if ($list) {

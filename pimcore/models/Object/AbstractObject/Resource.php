@@ -79,7 +79,7 @@ class Resource extends Model\Element\Resource
         ));
         $this->model->setId($this->db->lastInsertId());
 
-        if (!$this->model->getKey()) {
+        if (!$this->model->getKey() && !is_numeric($this->model->getKey())) {
             $this->model->setKey($this->db->lastInsertId());
         }
     }

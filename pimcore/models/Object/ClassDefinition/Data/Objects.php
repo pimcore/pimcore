@@ -417,6 +417,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $id = $idMapper->getMappedId("object", $id);
                 }
 
+                $relatedObject = null;
                 if ($id) {
                     $relatedObject = Object::getById($id);
                 }
@@ -607,7 +608,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      */
-    public function enrichLayoutDefinition() {
+    public function enrichLayoutDefinition($object) {
 
     }
 }

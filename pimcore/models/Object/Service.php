@@ -1170,16 +1170,16 @@ class Service extends Model\Element\Service {
     /** Enriches the layout definition before it is returned to the admin interface.
      * @param $layout
      */
-    public static function enrichLayoutDefinition(&$layout) {
+    public static function enrichLayoutDefinition(&$layout, $object = null) {
         if (method_exists($layout, "enrichLayoutDefinition")) {
-            $layout->enrichLayoutDefinition();
+            $layout->enrichLayoutDefinition($object);
         }
 
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    self::enrichLayoutDefinition($child);
+                    self::enrichLayoutDefinition($child, $object);
                 }
             }
         }

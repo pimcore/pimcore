@@ -412,6 +412,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
                     $id = $idMapper->getMappedId("object", $id);
                 }
 
+                $dest = null;
                 if ($id) {
                     $dest = Object::getById($id);
                 }
@@ -690,7 +691,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
     /**
      *
      */
-    public function enrichLayoutDefinition() {
+    public function enrichLayoutDefinition($object) {
         $classId = $this->allowedClassId;
         $class = Object\ClassDefinition::getById($classId);
 

@@ -178,7 +178,8 @@ pimcore.object.fieldcollection = Class.create({
             Ext.Ajax.request({
                 url: "/admin/class/fieldcollection-update",
                 params: {
-                    key: value
+                    key: value,
+                    task: "add"
                 },
                 success: function (response) {
                     this.tree.getRootNode().reload();
@@ -186,6 +187,8 @@ pimcore.object.fieldcollection = Class.create({
                     var data = Ext.decode(response.responseText);
                     if(data && data.success) {
                         this.openFieldcollection(data.id);
+                    } else {
+                        pimcore.helpers.showNotification(t("error"), data["message"], "error");
                     }
                 }.bind(this)
             });

@@ -18,6 +18,13 @@ namespace Pimcore\Model\Listing;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Resource;
 
+
+/**
+ * Class AbstractListing
+ *
+ * @package Pimcore\Model\Listing
+ * @method \Zend_Db_Select getQuery()
+ */
 abstract class AbstractListing extends AbstractModel {
 
     /**
@@ -251,7 +258,7 @@ abstract class AbstractListing extends AbstractModel {
 
     /**
      * @param string $condition
-     * @return void
+     * @return $this
      */
     public function setCondition($condition, $conditionVariables = null) {
         $this->condition = $condition;

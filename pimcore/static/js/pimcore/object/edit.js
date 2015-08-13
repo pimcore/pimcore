@@ -51,11 +51,13 @@ pimcore.object.edit = Class.create({
         return this.layout;
     },
 
-    getDataForField: function (name) {
+    getDataForField: function (fieldConfig) {
+        var name = fieldConfig.name;
         return this.object.data.data[name];
     },
 
-    getMetaDataForField: function (name) {
+    getMetaDataForField: function (fieldConfig) {
+        var name = fieldConfig.name;
         return this.object.data.metaData[name];
     },
 

@@ -313,11 +313,13 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             if (typeof this.options.thumbnail == "string") {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail
                     + "?" + Ext.urlEncode(this.datax);
-            }
-            else if (this.options.thumbnail.width || this.options.thumbnail.height) {
+            } else if (this.options.thumbnail.width || this.options.thumbnail.height) {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/"
                     + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?"
                     + Ext.urlEncode(this.datax);
+            } else {
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/?config="
+                    + encodeURIComponent(Ext.encode(this.options.thumbnail));
             }
         }
 
@@ -434,7 +436,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax["hotspots"] = data["hotspots"];
             this.datax["marker"] = data["marker"];
         }.bind(this));
-        editor.open(true);
+        editor.open(false);
     },
 
     getValue: function () {

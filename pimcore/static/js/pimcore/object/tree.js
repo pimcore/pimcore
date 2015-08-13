@@ -331,74 +331,93 @@ pimcore.object.tree = Class.create({
         var tmpMenuEntry;
         var tmpMenuEntryImport;
         var record, tmp;
+        var showGroup;
 
         for (var groupName in classGroups) {
+            showGroup = false;
 
             if (classGroups[groupName].length > 1) {
                 // handle group
 
-                tmpMenuEntry = {
-                    text: groupName,
-                    iconCls: "pimcore_icon_folder",
-                    hideOnClick: false,
-                    menu: {
-                        items: []
-                    }
-                };
-                tmpMenuEntryImport = {
-                    text: groupName,
-                    iconCls: "pimcore_icon_folder",
-                    handler: this.attributes.reference.importObjects.bind(this, classGroups[groupName][0].get("id"), classGroups[groupName][0].get("text")),
-                    menu: {
-                        items: []
-                    }
-                };
+                // check if there are any allowed classes
+                if (this.attributes.reference.config.allowedClasses != "all") {
 
-                // add items
-                for (var i = 0; i < classGroups[groupName].length; i++) {
-                    record = classGroups[groupName][i];
-                    if (this.attributes.reference.config.allowedClasses == "all" || in_array(record.get("id"),
-                        this.attributes.reference.config.allowedClasses)) {
-
-                        /* == menu entry: create new object == */
-
-                        // create menu item
-                        tmp = {
-                            text: record.get("translatedText"),
-                            iconCls: "pimcore_icon_object_add",
-                            handler: this.attributes.reference.addObject.bind(this, record.get("id"), record.get("text"))
-                        };
-
-                        // add special icon
-                        if (record.get("icon")) {
-                            tmp.icon = record.get("icon");
-                            tmp.iconCls = "";
+                    for (var i = 0; i < classGroups[groupName].length; i++) {
+                        if (showGroup) {
+                            break;
                         }
-
-                        tmpMenuEntry.menu.items.push(tmp);
-
-
-                        /* == menu entry: import object == */
-
-                        // create menu item
-                        tmp = {
-                            text: record.get("translatedText"),
-                            iconCls: "pimcore_icon_object_import",
-                            handler: this.attributes.reference.importObjects.bind(this, record.get("id"), record.get("text"))
-                        };
-
-                        // add special icon
-                        if (record.get("icon")) {
-                            tmp.icon = record.get("icon");
-                            tmp.iconCls = "";
+                        record = classGroups[groupName][i];
+                        if (in_array(record.get("id"), this.attributes.reference.config.allowedClasses)) {
+                            showGroup = true;
                         }
-
-                        tmpMenuEntryImport.menu.items.push(tmp);
                     }
+                } else {
+                    showGroup = true;
                 }
 
-                objectMenu.objects.push(tmpMenuEntry);
-                objectMenu.importer.push(tmpMenuEntryImport);
+                if( showGroup) {
+                    tmpMenuEntry = {
+                        text: groupName,
+                        iconCls: "pimcore_icon_folder",
+                        hideOnClick: false,
+                        menu: {
+                            items: []
+                        }
+                    };
+                    tmpMenuEntryImport = {
+                        text: groupName,
+                        iconCls: "pimcore_icon_folder",
+                        handler: this.attributes.reference.importObjects.bind(this, classGroups[groupName][0].get("id"), classGroups[groupName][0].get("text")),
+                        menu: {
+                            items: []
+                        }
+                    };
+
+                    // add items
+                    for (var i = 0; i < classGroups[groupName].length; i++) {
+                        record = classGroups[groupName][i];
+                        if (this.attributes.reference.config.allowedClasses == "all" || in_array(record.get("id"),
+                            this.attributes.reference.config.allowedClasses)) {
+
+                            /* == menu entry: create new object == */
+
+                            // create menu item
+                            tmp = {
+                                text: record.get("translatedText"),
+                                iconCls: "pimcore_icon_object_add",
+                                handler: this.attributes.reference.addObject.bind(this, record.get("id"), record.get("text"))
+                            };
+
+                            // add special icon
+                            if (record.get("icon")) {
+                                tmp.icon = record.get("icon");
+                                tmp.iconCls = "";
+                            }
+
+                            tmpMenuEntry.menu.items.push(tmp);
+
+                            /* == menu entry: import object == */
+
+                            // create menu item
+                            tmp = {
+                                text: record.get("translatedText"),
+                                iconCls: "pimcore_icon_object_import",
+                                handler: this.attributes.reference.importObjects.bind(this, record.get("id"), record.get("text"))
+                            };
+
+                            // add special icon
+                            if (record.get("icon")) {
+                                tmp.icon = record.get("icon");
+                                tmp.iconCls = "";
+                            }
+
+                            tmpMenuEntryImport.menu.items.push(tmp);
+                        }
+                    }
+
+                    objectMenu.objects.push(tmpMenuEntry);
+                    objectMenu.importer.push(tmpMenuEntryImport);
+                }
             }
             else {
                 record = classGroups[groupName][0];

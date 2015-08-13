@@ -99,6 +99,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         
         if(hasType) {
             fields.push('type');
+            fields.push('length');
             fields.push('width');
         }
         
@@ -180,7 +181,10 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 return types[value];
             }});
 
-            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width',
+            typesColumns.push({header: t("length"), width: 15, sortable: true, dataIndex: 'length',
+                                        editor: new Ext.form.NumberField({})});
+
+            typesColumns.push({header: t("width"), width: 15, sortable: true, dataIndex: 'width',
                                         editor: new Ext.form.NumberField({})});
 
         }

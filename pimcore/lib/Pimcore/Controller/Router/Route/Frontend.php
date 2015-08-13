@@ -84,6 +84,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      */
     public function match($path, $partial = false) {
 
+        // this allows the usage of UTF8 URLs and within static routes
+        $path = urldecode($path); 
+
         $front = \Zend_Controller_Front::getInstance();
         $matchFound = false;
         $config = Config::getSystemConfig();
@@ -170,7 +173,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                 header("Location: " . $url, true, 301);
 
                 // log all redirects to the redirect log
-                \Pimcore\Log\Simple::log("redirect", Tool::getAnonymizedClientIp() . " \t Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
+                \Pimcore\Log\Simple::log("redirect", Tool::getAnonymizedClientIp() . " \t Host-Redirect Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
                 exit;
             }
         } catch (\Exception $e) {
@@ -559,7 +562,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                         header("Location: " . $url, true, $redirect->getStatusCode());
 
                         // log all redirects to the redirect log
-                        \Pimcore\Log\Simple::log("redirect", Tool::getAnonymizedClientIp() . " \t Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
+                        \Pimcore\Log\Simple::log("redirect", Tool::getAnonymizedClientIp() . " \t Custom-Redirect ID: " . $redirect->getId() . " , Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
                         exit;
                     }
                 }

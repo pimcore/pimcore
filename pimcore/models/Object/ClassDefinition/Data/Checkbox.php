@@ -227,4 +227,17 @@ class Checkbox extends Model\Object\ClassDefinition\Data
         $this->defaultValue = $masterDefinition->defaultValue;
     }
 
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     * @param  $value
+     * @param  $operator
+     * @return string
+     *
+     */
+    public function getFilterCondition($value, $operator) {
+        $db = \Pimcore\Resource::get();
+        $value = $db->quote($value);
+        $key = $db->quoteIdentifier($this->name, $this->name);
+        return "IFNULL(" . $key . ", 0) = " . $value . " ";
+    }
 }

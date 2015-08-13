@@ -301,8 +301,7 @@ class Link extends Model\Document
     {
         if ($this->object instanceof Document || $this->object instanceof Asset) {
             return $this->object;
-        }
-        else {
+        } else {
             if ($this->setObjectFromId()) {
                 return $this->object;
             }
@@ -320,16 +319,18 @@ class Link extends Model\Document
     }
 
     /**
-     * @return void
+     * @return Asset|Document
      */
     public function setObjectFromId()
     {
-        if ($this->internalType == "document") {
-            $this->object = Document::getById($this->internal);
+        if($this->internal) {
+            if ($this->internalType == "document") {
+                $this->object = Document::getById($this->internal);
+            } else if ($this->internalType == "asset") {
+                $this->object = Asset::getById($this->internal);
+            }
         }
-        else if ($this->internalType == "asset") {
-            $this->object = Asset::getById($this->internal);
-        }
+
         return $this->object;
     }
 
@@ -472,5 +473,24 @@ class Link extends Model\Document
         }
 
         return '<a href="' . $this->getLink() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getProperty("navigation_name")) . '</a>';
+    }
+
+    /**
+     *
+     */
+    public function __sleep() {
+
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+
+        $blockedVars = ["object"];
+
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
     }
 }

@@ -1850,7 +1850,15 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                             {
                                 fieldLabel: t('text'),
                                 name: 'text',
-                                value: data.text
+                                value: data.text,
+                                listeners: {
+                                    afterrender: function (el) {
+                                        // nobody knows why we need a timeout here ;-)
+                                        window.setTimeout(function () {
+                                            el.focus();
+                                        }, 200);
+                                    }
+                                }
                             },
                             {
                                 xtype: "compositefield",
@@ -1968,7 +1976,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
     });
 
 
-    var window = new Ext.Window({
+    var win = new Ext.Window({
         modal: false,
         width: 500,
         height: 330,
@@ -1977,9 +1985,9 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         layout: "fit"
     });
 
-    window.show();
+    win.show();
 
-    return window;
+    return win;
 };
 
 

@@ -33,7 +33,7 @@ RewriteRule ^pimcore/static.* - [PT,L]
 RewriteRule ^website/var/(?!tmp|assets|plugins|areas) / [F,L]
 RewriteRule ^plugins/.*$ / [F,L]
 RewriteRule ^pimcore/.*$ / [F,L]
-RewriteRule ^composer.json / [F,L]
+RewriteRule ^composer.(json|lock)$ / [F,L]
 
 # basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html
 RewriteCond %{REQUEST_FILENAME} -d [OR]

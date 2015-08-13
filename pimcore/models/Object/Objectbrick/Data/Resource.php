@@ -115,6 +115,7 @@ class Resource extends Model\Resource\AbstractResource {
                     $method = "get" . $key;
                     $fieldValue = $this->model->$method();
                     $insertData = $fd->getDataForQueryResource($fieldValue, $object);
+                    $isEmpty = $fd->isEmpty($fieldValue);
 
                     if (is_array($insertData)) {
                         $columnNames = array_keys($insertData);
@@ -125,7 +126,7 @@ class Resource extends Model\Resource\AbstractResource {
                     }
 
                     // if the current value is empty and we have data from the parent, we just use it
-                    if($fd->isEmpty($fieldValue) && $parentData) {
+                    if($isEmpty && $parentData) {
                         foreach($columnNames as $columnName) {
                             if(array_key_exists($columnName, $parentData)) {
                                 $data[$columnName] = $parentData[$columnName];
@@ -139,8 +140,11 @@ class Resource extends Model\Resource\AbstractResource {
                             if (is_array($insertData)) {
                                 $doInsert = false;
                                 foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                    if ($oldData[$insertDataKey] != $insertDataValue) {
+                                    if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
+                                        // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                    } else if ($oldData[$insertDataKey] != $insertDataValue) {
                                         $doInsert = true;
+                                        break;
                                     }
                                 }
 
@@ -148,7 +152,9 @@ class Resource extends Model\Resource\AbstractResource {
                                     $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
                                 }
                             } else {
-                                if ($oldData[$key] != $insertData) {
+                                if ($isEmpty && $oldData[$key] == $parentData[$key]) {
+                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                } else if ($oldData[$key] != $insertData) {
                                     $this->inheritanceHelper->addRelationToCheck($key, $fd);
                                 }
                             }
@@ -156,12 +162,17 @@ class Resource extends Model\Resource\AbstractResource {
                         } else {
                             if (is_array($insertData)) {
                                 foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                    if ($oldData[$insertDataKey] != $insertDataValue) {
+                                    if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
+                                        // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                    } else if ($oldData[$insertDataKey] != $insertDataValue) {
                                         $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
                                     }
                                 }
                             } else {
-                                if ($oldData[$key] != $insertData) {
+                                if ($isEmpty && $oldData[$key] == $parentData[$key]) {
+                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                } else if ($oldData[$key] != $insertData) {
+                                    // data changed, do check and update
                                     $this->inheritanceHelper->addFieldToCheck($key, $fd);
                                 }
                             }

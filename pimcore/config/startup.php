@@ -97,16 +97,15 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     }
 }
 
+$composerStartup = PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php";
+if(@is_file($composerStartup)) {
+    include_once($composerStartup);
+}
 
 // do some general stuff
 $websiteStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/startup.php";
 if(@is_file($websiteStartup)) {
     include_once($websiteStartup);
-}
-
-$composerStartup = PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php";
-if(@is_file($composerStartup)) {
-    include_once($composerStartup);
 }
 
 // on pimcore shutdown

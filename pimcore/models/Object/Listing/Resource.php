@@ -22,6 +22,47 @@ use Pimcore\Model\Object;
 
 class Resource extends Model\Listing\Resource\AbstractResource {
 
+
+    /**
+     * get select query
+     *
+     * @return \Zend_Db_Select
+     * @throws \Exception
+     */
+    public function getQuery()
+    {
+        // init
+        $select = $this->db->select();
+
+        // create base
+        $select->from(
+            [ 'objects' ]
+            , [
+                new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS o_id')
+                , 'o_type'
+            ]
+        );
+
+
+        // add joins
+        $this->addJoins( $select );
+
+        // add condition
+        $this->addConditions( $select );
+
+        // group by
+        $this->addGroupBy( $select );
+
+        // order
+        $this->addOrder( $select );
+
+        // limit
+        $this->addLimit( $select );
+
+        return $select;
+    }
+
+
     /**
      * Loads a list of objects for the specicifies parameters, returns an array of Object\AbstractObject elements
      *
@@ -29,11 +70,13 @@ class Resource extends Model\Listing\Resource\AbstractResource {
      */
     public function load() {
 
-        $objects = array();
-        $objectsData = $this->db->fetchAll("SELECT o_id,o_type FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        // load id's
+        $list = $this->loadIdList();
 
-        foreach ($objectsData as $objectData) {
-            if($object = Object::getById($objectData["o_id"])) {
+
+        $objects = array();
+        foreach ($list as $o_id) {
+            if($object = Object::getById($o_id)) {
                 $objects[] = $object;
             }
         }
@@ -42,24 +85,42 @@ class Resource extends Model\Listing\Resource\AbstractResource {
         return $objects;
     }
 
+
     /**
      * @return int
      */
-    public function getCount() {
-        if (count($this->model->getObjects()) > 0) {
-            return count($this->model->getObjects());
+    public function getTotalCount()
+    {
+        $limit = $this->model->getLimit();
+        $hasLimit = !empty($limit);
+        $query = $this->getQuery();
+
+        if(!$hasLimit)
+        {
+            $query->limit(1);
         }
 
-        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-        return $amount;
+        $this->loadIdList();
+
+        if(!$hasLimit)
+        {
+            $query->reset( \Zend_Db_Select::LIMIT_COUNT );
+        }
+
     }
 
+
     /**
-     * @return string
+     * @return int
      */
-    public function getTotalCount() {
-        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
-        return $amount;
+    public function getCount()
+    {
+        if (count($this->model->getObjects()) == 0)
+        {
+            $this->load();
+        }
+
+        return count($this->model->getObjects());
     }
 
     /**
@@ -68,9 +129,14 @@ class Resource extends Model\Listing\Resource\AbstractResource {
      * @return array
      */
     public function loadIdList() {
-        $objectIds = $this->db->fetchCol("SELECT o_id FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
+        $query = $this->getQuery(true);
+        $objectIds = $this->db->fetchCol( $query, $this->model->getConditionVariables() );
+        $this->totalCount = (int)$this->db->fetchOne( 'SELECT FOUND_ROWS()' );
+
         return $objectIds;
     }
+
 
     /**
      * @return string
@@ -96,5 +162,62 @@ class Resource extends Model\Listing\Resource\AbstractResource {
             return " WHERE o_published = 1";
         }
         return "";
+    }
+
+
+
+    /**
+     * @param \Zend_DB_Select $select
+     *
+     * @return $this
+     */
+    protected function addJoins(\Zend_DB_Select $select)
+    {
+        return $this;
+    }
+
+
+    /**
+     * @param \Zend_DB_Select $select
+     *
+     * @return $this
+     */
+    protected function addConditions(\Zend_DB_Select $select)
+    {
+        $condition = $this->model->getCondition();
+        $objectTypes = $this->model->getObjectTypes();
+
+        if(!empty($objectTypes)) {
+            if(!empty($condition)) {
+                $condition .= " AND ";
+            }
+            $condition .= " o_type IN ('" . implode("','", $objectTypes) . "')";
+        }
+
+        if ($condition) {
+            if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+                $condition = "(" . $condition . ") AND o_published = 1";
+            }
+        }
+        else if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+            $condition = "o_published = 1";
+        }
+
+
+        if($condition)
+        {
+            $select->where( $condition );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function reset() {
+        $this->totalCount = 0;
+
+        return $this;
     }
 }

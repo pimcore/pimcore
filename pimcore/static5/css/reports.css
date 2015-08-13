@@ -1,0 +1,76 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-family: Arial, Verdana, Tahoma;
+}
+
+#report {
+    margin: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    overflow: hidden;
+}
+
+
+h1 {
+    font-size: 30px;
+}
+
+hr {
+    height:1px;
+    border: 0;
+    background: #ccc;
+    margin: 10px 0 10px 0;
+    display: block;
+    clear: both;
+}
+
+.columns2 {
+    width: 50%;
+    float: left;
+}
+
+
+
+.smallchart {
+    clear: both;
+    font-size: 24px;
+    line-height: 20px;
+    padding-bottom: 20px;
+    float: left;
+}
+
+.smallchart .chart {
+    float: left;
+    padding: 0 10px 0 0;
+}
+
+.smallchart .label {
+    float: left;
+    color: #315678;
+    padding-top: 20px;
+}
+
+.smallchart .value {
+    float: left;
+    padding:0 5px 0 0;
+    padding-top: 20px;
+}
+
+

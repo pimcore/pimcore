@@ -27,7 +27,7 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
 
         $config = \Pimcore\Config::getSystemConfig();
 
-        if(!$config->general->show_cookie_notice || !Tool::isHtmlResponse($this->getResponse())) {
+        if(!$config->general->show_cookie_notice || !Tool::useFrontendOutputFilters($this->getRequest()) || !Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 

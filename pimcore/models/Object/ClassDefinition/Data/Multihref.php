@@ -641,6 +641,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     if ($idMapper) {
                         $id = $idMapper->getMappedId($type, $id);
                     }
+
+                    $e = null;
                     if ($id) {
                         $e = Element\Service::getElementById($type, $id);
                     }

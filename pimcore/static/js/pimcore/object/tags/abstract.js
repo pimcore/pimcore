@@ -177,7 +177,8 @@ pimcore.object.tags.abstract = Class.create({
 
     isInvalidMandatory:function () {
 
-        if (!this.isRendered() && this.getInitialData().length > 0) {
+        var initialData = this.getInitialData();
+        if (!this.isRendered() && initialData && initialData.length > 0) {
             return false;
         } else if (!this.isRendered()) {
             return true;
