@@ -22,6 +22,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         if (this.layout == null) {
             this.layout = new Ext.Panel({
                 title: t("classificationstore_properties"),
+                iconCls: "pimcore_icon_key",
                 border: false,
                 layout: "fit",
                 region: "center"
@@ -330,8 +331,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                                     if (rowIndex != -1) {
                                         var sm = this.grid.getSelectionModel();
                                         sm.selectRow(rowIndex);
-                                        // alert(sm);
-
                                     }
 
                                     var lastOptions = this.store.lastOptions;

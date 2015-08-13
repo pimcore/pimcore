@@ -125,7 +125,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 items: [],
                 deferredRender: true,
                 forceLayout: true,
-                //hideMode: "offsets",
                 enableTabScroll: true,
                 tbar: {
                     items: [
@@ -133,7 +132,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                             xtype: 'button',
                             iconCls: "pimcore_icon_add",
                             handler: function() {
-                                var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false);
+                                var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false, true);
                                 window.setRestriction(this.object, this.fieldConfig.name);
                                 window.show();
                             }.bind(this)
@@ -223,7 +222,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 }
 
                 var item = new Ext.Panel({
-                    //layout: "pimcoreform",
                     border:false,
                     //autoScroll: true,
                     height: 'auto',
@@ -430,7 +428,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         return isInvalid;
     },
 
-    createGroupFieldset: function(language, group, groupedChildItems) {
+    createGroupFieldset: function(language, group, groupedChildItems, cls) {
         var groupId = group.id;
         var groupTitle = group.description ? group.name + " - " + group.description : group.name;
 
@@ -450,21 +448,25 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         }
 
 
-        var fieldset =  new Ext.form.FieldSet({
-                title: ts(groupTitle),
-                items: groupedChildItems,
-                collapsible: true,
-                tools: [
-                    {
+        config = {
+            title: ts(groupTitle),
+            items: groupedChildItems,
+            collapsible: true,
+            tools: [
+                {
                     id: 'close',
                     qtip: t('remove_group'),
-                   handler: function () {
-                       this.deleteGroup(groupId);
-                   }.bind(this)
+                    handler: function () {
+                        this.deleteGroup(groupId);
+                    }.bind(this)
 
                 }]
-            })
-            ;
+        };
+        if (cls) {
+            config.cls = cls;
+        }
+
+        var fieldset =  new Ext.form.FieldSet(config);
 
         this.groupElements[language][groupId]  = fieldset;
         return fieldset;
@@ -474,13 +476,18 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var currentLanguage;
 
         this.groupModified = true;
+        var itemHeight = 0;
 
         for (var i=0; i < this.frontendLanguages.length; i++) {
 
             currentLanguage = this.frontendLanguages[i];
 
-            fieldset = this.groupElements[currentLanguage][groupId];
+            var fieldset = this.groupElements[currentLanguage][groupId];
             if (fieldset) {
+
+                if (fieldset.getResizeEl()) {
+                    itemHeight = fieldset.getHeight();
+                }
                 fieldset.destroy();
                 var languagePanel = this.languagePanels[currentLanguage];
                 languagePanel.doLayout();
@@ -500,6 +507,12 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             }
         }
 
+        if (itemHeight > 0) {
+            var height = this.component.getHeight();
+            this.component.setHeight(height - itemHeight);
+            this.component.doLayout();
+        }
+
         delete this.activeGroups[groupId];
 
     },
@@ -512,9 +525,11 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var numberOfGroups = data.length;
         var nrOfLanguages = this.frontendLanguages.length;
 
+        var activeLanguage = this.currentLanguage;
+
         for (var i=0; i < nrOfLanguages; i++) {
             var currentLanguage = this.frontendLanguages[i];
-            this.languageElements[this.currentLanguage] = [];
+            this.currentLanguage = currentLanguage;
 
             var childItems = [];
 
@@ -529,31 +544,37 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                         continue;
                     }
 
-                    var fieldset = this.createGroupFieldset(currentLanguage, group, groupedChildItems);
+                    addedGroups[groupId] = true;
+
+                    var fieldset = this.createGroupFieldset(currentLanguage, group, groupedChildItems, "pimcore_new_cs_group");
                     var panel = this.languagePanels[currentLanguage];
 
 
-                    fieldset.on("afterlayout", function(panel, item) {
-                        var itemHeight = item.getHeight();
-
-                        if (!handledGroups[groupId]) {
-                            handledGroups[groupId] = true;
-
+                    fieldset.on("afterlayout", function(groupId, panel, item) {
+                        try {
                             var itemHeight = item.getHeight();
-                            var height = this.component.getHeight();
-                            this.component.setHeight(height + itemHeight);
-                            this.component.doLayout();
 
+                            if (!handledGroups[groupId]) {
+                                handledGroups[groupId] = true;
+
+                                var itemHeight = item.getHeight();
+                                var height = this.component.getHeight();
+                                this.component.setHeight(height + itemHeight);
+
+                                this.component.doLayout();
+
+                            }
+                        } catch (e) {
+                            console.log(e);
                         }
 
-                    }.bind(this, panel));
+                    }.bind(this, groupId, panel));
 
                     panel.add(fieldset);
+                    fieldset.doLayout();
 
                     this.groupModified = true;
-
                 }
-
             }
         }
 
@@ -562,6 +583,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         }
 
         this.component.doLayout();
+        this.currentLanguage = activeLanguage;
 
     },
 

@@ -484,6 +484,7 @@ $scripts = array(
     "pimcore/object/classificationstore/configPanel.js",
     "pimcore/object/classificationstore/groupsPanel.js",
     "pimcore/object/classificationstore/propertiesPanel.js",
+    "pimcore/object/classificationstore/collectionsPanel.js",
     "pimcore/object/classificationstore/keyDefinitionWindow.js",
     "pimcore/object/classificationstore/keySelectionWindow.js"
 

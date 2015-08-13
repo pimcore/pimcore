@@ -847,3 +847,22 @@ CREATE TABLE `classificationstore_relations` (
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `classificationstore_collections`;
+CREATE TABLE `classificationstore_collections` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`description` VARCHAR(255) NULL DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
+CREATE TABLE `classificationstore_collectionrelations` (
+	`colId` BIGINT(20) NOT NULL,
+	`groupId` BIGINT(20) NOT NULL,
+	PRIMARY KEY (`colId`, `groupId`),
+	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8;

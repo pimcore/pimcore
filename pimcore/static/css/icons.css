@@ -1410,7 +1410,10 @@
     background: url(/pimcore/static/img/icon/classificationstore-subgroup.png) left center no-repeat !important;
 }
 
+.pimcore_icon_classificationstore_icon_cs_collections  {
+    background: url(/pimcore/static/img/icon/application_view_tile.png) left center no-repeat !important;
+}
+
 .pimcore_icon_white_flag  {
     background: url(/pimcore/static/img/icon/white_flag.png) left center no-repeat !important;
 }
-

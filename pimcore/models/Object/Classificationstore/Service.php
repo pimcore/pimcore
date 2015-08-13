@@ -30,16 +30,28 @@ class Service {
     public static function getFieldDefinitionFromKeyConfig($keyConfig) {
         $definition = $keyConfig->getDefinition();
         $definition = json_decode($definition, true);
+        $type = $keyConfig->getType();
+        $fd = self::getFieldDefinitionFromJson($definition, $type);
+        return $fd;
+    }
 
-        $type = $keyConfig->getType() ? $keyConfig->getType() : "input";
+    /**
+     * @param $definition
+     * @param $type
+     * @return Object\ClassDefinition\Data
+     */
+    public static function getFieldDefinitionFromJson($definition, $type)
+    {
+        if (!$type) {
+            $type = "input";
+        }
         $className = "\\Pimcore\\Model\\Object\\ClassDefinition\\Data\\" . ucfirst($type);
         /** @var  $dataDefinition \Pimcore\Model\Object\ClassDefinition\Data */
         $dataDefinition = new $className();
 
         $dataDefinition->setValues($definition);
         return $dataDefinition;
-
-
     }
+
 
 }

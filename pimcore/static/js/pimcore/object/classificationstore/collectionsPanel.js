@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.object.classificationstore.groupsPanel");
-pimcore.object.classificationstore.groupsPanel = Class.create({
+pimcore.registerNS("pimcore.object.classificationstore.collectionsPanel");
+pimcore.object.classificationstore.collectionsPanel = Class.create({
 
     initialize: function () {
 
@@ -22,12 +22,12 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
     getPanel: function () {
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t("classificationstore_group_definition"),
-                iconCls: "pimcore_icon_keys",
+                title: t("classificationstore_collection_definition"),
+                iconCls: "pimcore_icon_classificationstore_icon_cs_collections",
                 border: false,
                 layout: "border",
                 items: [
-                    this.createGroupsGrid(),
+                    this.createCollectionsGrid(),
                     this.createRelationsGrid()
                 ]
 
@@ -39,7 +39,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
     createRelationsGrid: function() {
-        this.relationsFields = ['id', 'keyId', 'groupId', 'keyName', 'keyDescription'];
+        this.relationsFields = ['id', 'colId', 'groupId', 'groupName', 'groupDescription'];
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
@@ -47,7 +47,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         }
 
         var proxy = new Ext.data.HttpProxy({
-            url: "/admin/classificationstore/relations",
+            url: "/admin/classificationstore/collection-relations",
             method: 'post'
         });
 
@@ -59,7 +59,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         listeners.exception = function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), response);
-                this.groupsStore.rejectChanges();
+                this.collectionsStore.rejectChanges();
             }
         }.bind(this);
 
@@ -79,13 +79,12 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             listeners: listeners
         });
 
-
         var gridColumns = [];
 
         gridColumns.push({header: t("id"), width: 60, sortable: true, dataIndex: 'id', hidden: true});
-        gridColumns.push({header: t("key_id"), width: 60, sortable: true, dataIndex: 'keyId'});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'keyName'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'keyDescription'});
+        gridColumns.push({header: t("group_id"), width: 60, sortable: true, dataIndex: 'groupId'});
+        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'groupName'});
+        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'groupDescription'});
 
         gridColumns.push({
             hideable: false,
@@ -97,13 +96,13 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                     icon: "/pimcore/static/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
-                        var keyId = data.data.keyId;
+                        var colId = data.data.colId;
                         var groupId = data.data.groupId;
 
                         Ext.Ajax.request({
-                            url: "/admin/classificationstore/delete-relation",
+                            url: "/admin/classificationstore/delete-collection-relation",
                             params: {
-                                keyId: keyId,
+                                colId: colId,
                                 groupId: groupId
                             },
                             success: function (response) {
@@ -120,21 +119,20 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             store: this.relationsStore,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',
-            //TODO translate
-            emptyMsg: t("classificationstore_group_empty")
+            emptyMsg: t("classificationstore_collection_empty")
         });
 
         var configuredFilters = [
             {
                 type: "string",
-                dataIndex: "keyId"
+                dataIndex: "groupId"
             },
             {
             type: "string",
-            dataIndex: "keyName"
+            dataIndex: "groupName"
         },{
             type: "string",
-            dataIndex: "keyDescription"
+            dataIndex: "groupDescription"
         }];
         var gridfilters = new Ext.ux.grid.GridFilters({
             encode: true,
@@ -156,7 +154,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             trackMouseOver: true,
             region: "west",
             split: true,
-            //width: 750,
             hidden: true,
             viewConfig: {
                 forceFit: true
@@ -167,19 +164,13 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
                 {
                     text: t('add'),
-                    handler: this.onAddKey.bind(this),
+                    handler: this.onAddGroup.bind(this),
                     iconCls: "pimcore_icon_add"
                 }
-            ],
-            listeners: {
-                rowdblclick: function (grid, rowIndex, ev) {
-
-                }.bind(this)
-            }
+            ]
         } ;
 
         this.relationsGrid = new Ext.grid.EditorGridPanel(gridConfig);
-
 
         this.relationsPanel = new Ext.Panel({
             title: t("relations"),
@@ -194,24 +185,20 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         });
 
-        //this.relationsStore.load();
-
         return this.relationsPanel;
-
     },
 
 
-    createGroupsGrid: function(response) {
-        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate', 'sorter'];
+    createCollectionsGrid: function(response) {
+        this.groupsFields = ['id', 'name', 'description', 'creationDate', 'modificationDate'];
 
         var readerFields = [];
         for (var i = 0; i < this.groupsFields.length; i++) {
             readerFields.push({name: this.groupsFields[i], allowBlank: true});
         }
 
-
         var proxy = new Ext.data.HttpProxy({
-            url: "/admin/classificationstore/groups",
+            url: "/admin/classificationstore/collections",
             method: 'post'
         });
 
@@ -229,12 +216,12 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         listeners.exception = function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
-                this.groupsStore.rejectChanges();
+                this.collectionsStore.rejectChanges();
             }
         }.bind(this);
 
 
-        this.groupsStore = new Ext.data.Store({
+        this.collectionsStore = new Ext.data.Store({
             restful: false,
             idProperty: 'id',
             remoteSort: true,
@@ -249,15 +236,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         var gridColumns = [];
 
         gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', hidden: true, editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
-            tooltip: t("classificationstore_tooltip_sorter"),
-            editor: new Ext.ux.form.SpinnerField({
-                editable: true
-
-            })});
 
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
@@ -304,24 +284,24 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         this.relationsPanel.disable();
 
                         Ext.Ajax.request({
-                            url: "/admin/classificationstore/deletegroup",
+                            url: "/admin/classificationstore/delete-collection",
                             params: {
                                 id: id
                             },
                             success: function (response) {
-                                this.groupsStore.reload();
+                                this.collectionsStore.reload();
                             }.bind(this)});
                     }.bind(this)
                 }
             ]
         });
 
-        this.groupsPagingtoolbar = new Ext.PagingToolbar({
+        this.collectionsPagingtoolbar = new Ext.PagingToolbar({
             pageSize: 15,
-            store: this.groupsStore,
+            store: this.collectionsStore,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("classificationstore_no_groups")
+            emptyMsg: t("classificationstore_no_collections")
         });
 
         var configuredFilters = [
@@ -346,7 +326,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var gridConfig = {
             frame: false,
-            store: this.groupsStore,
+            store: this.collectionsStore,
             border: true,
             columns: gridColumns,
             loadMask: true,
@@ -361,7 +341,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 forceFit: true
             },
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
-            bbar: this.groupsPagingtoolbar,
+            bbar: this.collectionsPagingtoolbar,
             tbar: [
 
                 {
@@ -371,23 +351,18 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 }
             ],
             listeners: {
-                rowdblclick: function (grid, rowIndex, ev) {
-
-                }.bind(this),
 
                 rowclick: function (grid, rowIndex, ev) {
-                    // TODO
+                    var record = this.collectionsStore.getAt(rowIndex);
+                    var collectionId = record.data.id;
+                    var collectionName = record.data.name;
 
-                    var record = this.groupsStore.getAt(rowIndex);
-                    var groupId = record.data.id;
-                    var groupName = record.data.name;
+                    this.collectionId = collectionId;
 
-                    this.groupId = groupId;
-
-                    this.relationsPanel.setTitle(t("relations") + " - "  + t("group") +  " " + record.data.id + " - " + groupName);
+                    this.relationsPanel.setTitle(t("relations") + " - "  + t("collection") +  " " + record.data.id + " - " + collectionName);
                     this.relationsPanel.enable();
                     this.relationsStore.removeAll(true);
-                    this.relationsStore.setBaseParam("groupId", groupId);
+                    this.relationsStore.setBaseParam("colId", collectionId);
                     this.relationsStore.reload();
                     this.relationsGrid.show();
 
@@ -399,25 +374,19 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
 
-        this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
-        }.bind(this));
 
         this.grid.on("sortchange", function(grid, sortinfo) {
             this.sortinfo = sortinfo;
         }.bind(this));
 
-        this.groupsStore.load();
+        this.collectionsStore.load();
 
         return this.grid
     },
 
-    updateGridHeaderContextMenu: function(grid) {
-        // not needed for now.
-    },
 
-    onAddKey: function() {
-        var window = new pimcore.object.classificationstore.keySelectionWindow(this, false, true, false);
+    onAddGroup: function() {
+        var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false, false);
         window.show();
     },
 
@@ -431,7 +400,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         value = value.trim();
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
-                url: "/admin/classificationstore/create-group",
+                url: "/admin/classificationstore/create-collection",
                 params: {
                     name: value
                 },
@@ -439,18 +408,18 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                     var data = Ext.decode(response.responseText);
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t("classificationstore_error_addgroup_title"), t("classificationstore_error_addgroup_msg"));
+                        Ext.Msg.alert(t("error"), t("classificationstore_error_addcollection_msg"));
                     } else {
-                        this.groupsStore.reload({
+                        this.collectionsStore.reload({
                                 callback: function() {
-                                    var rowIndex = this.groupsStore.find('name', value);
+                                    var rowIndex = this.collectionsStore.find('name', value);
                                     // alert(rowIndex);
                                     if (rowIndex != -1) {
                                         var sm = this.grid.getSelectionModel();
                                         sm.selectRow(rowIndex);
                                     }
 
-                                    var lastOptions = this.groupsStore.lastOptions;
+                                    var lastOptions = this.collectionsStore.lastOptions;
                                     Ext.apply(lastOptions.params, {
                                         overrideSort: "false"
                                     });
@@ -481,23 +450,25 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
     },
 
-    handleAddKeys: function (response) {
+    handleAddGroups: function (response) {
         var data = Ext.decode(response.responseText);
 
-        if(data && data.success) {
-            for (var i=0; i < data.data.length; i++) {
-                var keyDef = data.data[i];
+        if(data) {
+            for (groupId in data) {
+                if (data.hasOwnProperty(groupId)) {
+                    var groupDef = data[groupId];
 
-                var colData = {};
-                colData.keyId = keyDef.id;
-                colData.keyName = keyDef.name;
-                colData.keyDescription = keyDef.description;
-                colData.groupId = this.groupId;
-                colData.id = this.groupId + "-" + colData.keyId;
+                    var colData = {};
+                    colData.groupId = groupDef.id;
+                    colData.groupName = groupDef.name;
+                    colData.gropDescription = groupDef.description;
+                    colData.colId = this.collectionId;
+                    colData.id = this.collectionId + "-" + colData.groupId;
 
-                var match = this.relationsStore.findExact("id" , colData.id);
-                if (match == -1) {
-                    this.relationsStore.add(new this.relationsStore.recordType(colData));
+                    var match = this.relationsStore.findExact("id", colData.id);
+                    if (match == -1) {
+                        this.relationsStore.add(new this.relationsStore.recordType(colData));
+                    }
                 }
             }
         }

@@ -35,10 +35,10 @@ pimcore.object.classificationstore.configPanel = Class.create({
                 closable: true,
                 deferredRender: false,
                 forceLayout: true,
-                activeTab: 0,               // yes, this is really needed
+                activeTab: 1,
                 id: "pimcore_object_classificationstore_configpanel",
                 iconCls: "pimcore_icon_classificationstore",
-                items: [this.getGroupsPanel(), this.getPropertiesPanel()],
+                items: [this.getCollectionsPanel(), this.getGroupsPanel(), this.getPropertiesPanel()],
                 buttons: panelButtons
             });
 
@@ -56,15 +56,17 @@ pimcore.object.classificationstore.configPanel = Class.create({
         return this.panel;
     },
 
+    getCollectionsPanel: function () {
+        var panel = new pimcore.object.classificationstore.collectionsPanel();
+        return panel.getPanel();
+    },
 
     getGroupsPanel: function () {
         var groupsPanel = new pimcore.object.classificationstore.groupsPanel();
         return groupsPanel.getPanel();
     },
 
-
     getPropertiesPanel: function () {
-        // TODO
         var propertiesPanel = new pimcore.object.classificationstore.propertiespanel();
         return propertiesPanel.getPanel();
     }
