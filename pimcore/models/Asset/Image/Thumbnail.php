@@ -197,15 +197,16 @@ class Thumbnail {
     * Width and Height attribute can be overridden. SRC-attribute not.
     * Values of attributes are escaped.
     * @param array $attributes Listof key-value pairs of HTML attributes.
+    * @param array $removeAttributes Listof key-value pairs of HTML attributes that should be removed
     * @return string IMG-element with at least the attributes src, width, height, alt.
     */
-    public function getHTML($attributes = array()) {
+    public function getHTML($attributes = array(), $removeAttributes = []) {
 
         $image = $this->getAsset();
         $attr = array();
         $pictureAttribs = []; // this is used for the html5 <picture> element
 
-        if(!$this->deferred && !isset($attributes["disableWidthHeightAttributes"])) {
+        if(!$this->deferred) {
             if($this->getWidth()) {
                 $attr['width'] = 'width="'.$this->getWidth().'"';
             }
@@ -292,6 +293,11 @@ class Thumbnail {
                 $srcSetValues[] = $srcsetEntry;
             }
             $attr['srcset'] = 'srcset="'. implode(", ", $srcSetValues) .'"';
+        }
+
+        foreach($removeAttributes as $attribute) {
+            unset($attr[$attribute]);
+            unset($pictureAttribs[$attribute]);
         }
 
         // build html tag

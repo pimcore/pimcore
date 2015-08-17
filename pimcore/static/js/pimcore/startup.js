@@ -103,7 +103,9 @@ Ext.onReady(function () {
             var errorMessage = "";
 
             try {
-                errorMessage = "Status: " + response.status + " | " + response.statusText + "\n";
+                var date = new Date();
+                errorMessage += "Date: " + date.toISOString() + "\n";
+                errorMessage += "Status: " + response.status + " | " + response.statusText + "\n";
                 errorMessage += "URL: " + options.url + "\n";
                 if(options["params"]) {
                     errorMessage += "Params:\n";
