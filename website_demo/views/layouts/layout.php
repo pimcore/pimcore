@@ -37,18 +37,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le styles -->
-    <link href="/website/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <?php
+        // we use the view helper here to have the cache buster functionality
+        $this->headLink()->appendStylesheet('/website/static/bootstrap/css/bootstrap.css');
+        $this->headLink()->appendStylesheet('/website/static/css/global.css');
+        $this->headLink()->appendStylesheet('/website/static/lib/video-js/video-js.min.css', "screen");
+        $this->headLink()->appendStylesheet('/website/static/lib/magnific/magnific.css', "screen");
 
-    <link href="/website/static/css/global.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="/website/static/lib/video-js/video-js.min.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="/website/static/lib/magnific/magnific.css" type="text/css" media="screen" />
+        if($this->editmode) {
+            $this->headLink()->appendStylesheet('/website/static/css/editmode.css', "screen");
+        }
+    ?>
 
     <?= $this->headLink(); ?>
-
-    <?php if($this->editmode) { ?>
-        <link href="/website/static/css/editmode.css?_dc=<?= time(); ?>" rel="stylesheet">
-    <?php } ?>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -164,13 +165,17 @@
 <?php
     // include a document-snippet - in this case the footer document
     echo $this->inc("/" . $this->language . "/shared/includes/footer");
+
+    // global scripts, we use the view helper here to have the cache buster functionality
+    $this->headScript()->appendFile('/website/static/js/jquery-1.11.0.min.js');
+    $this->headScript()->appendFile('/website/static/bootstrap/js/bootstrap.js');
+    $this->headScript()->appendFile('/website/static/lib/magnific/magnific.js');
+    $this->headScript()->appendFile('/website/static/lib/video-js/video.js');
+    $this->headScript()->appendFile('/website/static/js/srcset-polyfill.min.js');
+
+    echo $this->headScript();
 ?>
 
-<script src="/website/static/js/jquery-1.11.0.min.js"></script>
-<script src="/website/static/bootstrap/js/bootstrap.js"></script>
-
-<script src="/website/static/lib/magnific/magnific.js"></script>
-<script src="/website/static/lib/video-js/video.js"></script>
 <script>
     videojs.options.flash.swf = "/website/static/lib/video-js/video-js.swf";
 </script>
@@ -243,7 +248,6 @@
 
     <?php } ?>
 </script>
-<script type="text/javascript" src="/website/static/js/srcset-polyfill.min.js"></script>
 
 </body>
 </html>
