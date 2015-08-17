@@ -39,7 +39,7 @@ class Placeholder
      *
      * @var string
      */
-    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', "\\Pimcore\\Placeholder\\"];
+    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', "\\Pimcore\\Placeholder\\","\\Website\\Placeholder\\"];
 
     /**
      * Contains the document object
