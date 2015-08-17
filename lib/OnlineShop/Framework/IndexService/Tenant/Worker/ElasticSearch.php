@@ -483,7 +483,7 @@ SQL;
     /**
      * resets the store table to initiate a re-indexing
      */
-    protected function resetIndexingQueue() {
+    public function resetIndexingQueue() {
         Logger::info('IN reset index que');
         $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
                         worker_id = null,
