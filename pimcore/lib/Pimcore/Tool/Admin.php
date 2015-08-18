@@ -29,9 +29,9 @@ class Admin {
     public static function getLanguageFile($language){
 
         //first try website languages dir, as fallback the core dir
-        $languageFile = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $language . ".csv";
+        $languageFile = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $language . ".json";
         if(!is_file($languageFile)){
-            $languageFile =  PIMCORE_PATH . "/config/texts/" . $language . ".csv";
+            $languageFile =  PIMCORE_PATH . "/config/texts/" . $language . ".json";
         }
         return $languageFile;
 
@@ -53,7 +53,7 @@ class Admin {
                 foreach ($files as $file) {
                     if (is_file($filesDir . $file)) {
                         $parts = explode(".", $file);
-                        if ($parts[1] == "csv") {
+                        if ($parts[1] == "json") {
                             if (\Zend_Locale::isLocale($parts[0])) {
                                 $languages[] = $parts[0];
                             }

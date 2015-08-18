@@ -236,7 +236,7 @@ abstract class Admin extends Action {
 
         //add translations to registry
         $coreLanguageFile = AdminTool::getLanguageFile("en");
-        $translator = new \Zend_Translate('csv', $coreLanguageFile, 'en', array('delimiter' => ','));
+        $translator = new \Zend_Translate('Pimcore\Translate\Adapter\Json', $coreLanguageFile, 'en');
         
         $availableLanguages = AdminTool::getLanguages();
         

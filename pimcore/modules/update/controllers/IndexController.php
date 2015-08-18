@@ -86,45 +86,8 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin {
             $status = Update::executeScript($this->getParam("revision"), "postupdate");
         } else if ($this->getParam("type") == "cleanup") {
             Update::cleanup();
-        } else if ($this->getParam("type") == "languages") {
-            Update::downloadLanguage();
         }
 
         $this->_helper->json($status);
-    }
-    
-    
-    public function getLanguagesAction() {
-        
-        $languagesJson = \Pimcore\Tool::getHttpData("http://www.pimcore.org/?controller=translation&action=json");
-        
-        echo $languagesJson;
-        exit;
-        
-        $languagesData = \Zend_Json_Decoder::decode($languagesJson);
-        $languages = $languagesData["languages"];
-        if (is_array($languages)) {
-            for ($i = 0; $i < count($languages); $i++) {
-                if (is_file($filesDir = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $languages[$i]['key'] . ".csv")) {
-                    $languages[$i]["exists"] = true;
-                } else {
-                    $languages[$i]["exists"] = false;
-                }
-            }
-        }
-        
-        $this->_helper->json(array(
-            "languages" => $languages
-        ));
-    }
-
-    public function downloadLanguageAction() {
-
-        $lang = $this->getParam("language");
-        $success = Update::downloadLanguage($lang);
-        
-        $this->_helper->json(array(
-            "success" => $success
-        ));
     }
 }

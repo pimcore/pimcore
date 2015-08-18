@@ -44,21 +44,25 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $language = $this->getParam("language");
 
-        $languageFile = Tool\Admin::getLanguageFile($language);
-        if (!is_file($languageFile)) {
-            $languageFile = Tool\Admin::getLanguageFile("en");
-        }
+        $languageFiles = [
+            $language => Tool\Admin::getLanguageFile($language),
+            "en" => Tool\Admin::getLanguageFile("en")
+        ];
 
-        $row = 1;
-        $handle = fopen($languageFile, "r");
-        while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
-            $translations[$data[0]] = $data[1];
+        $translations = [];
+        foreach($languageFiles as $langKey => $languageFile) {
+            if(file_exists($languageFile)) {
+                $rawTranslations = json_decode(file_get_contents($languageFile), true);
+                foreach ($rawTranslations as $entry) {
+                    if(!isset($translations[$entry["term"]])) {
+                        $translations[$entry["term"]] = $entry["definition"];
+                    }
+                }
+            }
         }
-        fclose($handle);
 
         $broker = \Pimcore\API\Plugin\Broker::getInstance();
         $pluginTranslations = $broker->getTranslations($language);
-        //$pluginTranslations = $this->getApiPluginBroker()->getTranslations($language);
         $translations = array_merge($pluginTranslations, $translations);
 
         $this->view->translations = $translations;

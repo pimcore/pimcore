@@ -167,10 +167,6 @@ class Update {
                 $jobs["procedural"][] = $updateScripts[$revision]["postupdate"];
             }
         }
-        
-        $jobs["procedural"][] = array(
-            "type" => "languages"
-        );
  
         $jobs["procedural"][] = array(
             "type" => "clearcache"
@@ -337,85 +333,6 @@ class Update {
         //delete tmp data
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update", true);
     }
-    
- 
- 
- 
- 
- 
- 
- 
- 
- 
-    /**
-     * download language files for all existing system languages for pimcore core and plugins
-     * @static
-     * @return bool
-     */
-    public static function downloadLanguages() {
-        return self::downloadLanguage();
-    }
-
-
-    /**
-     * Download language files for a specific language for pimcore core and all plugins or
-     * download language files for all existing system languages for pimcore core and plugins if parameter is null
-     * @static
-     * @param  $language
-     * @return bool
-     */
-    public static function downloadLanguage($lang = null) {
-
-        $languages = Tool\Admin::getLanguages();
-        if (!empty($lang)) {
-            $languages = array($lang);
-        } else {
-            //omit core language
-            $additonalLanguages = array();
-            foreach($languages as $lang){
-                if($lang != "en"){
-                    $additonalLanguages[]=$lang;
-                }
-            }
-            $languages=$additonalLanguages;
-        }
-
-        //directory for additional languages
-        $langDir = PIMCORE_CONFIGURATION_DIRECTORY . "/texts";
-        if (!is_dir($langDir)) {
-            File::mkdir($langDir);
-        }
-
-        $success = is_dir($langDir);
-        if ($success) {
-            if(is_array($languages)) {
-                foreach ($languages as $language) {
-                    //TODO: remove hard coded
-                    $src = "http://www.pimcore.org/?controller=translation&action=download&language=" . $language;
-                    $data = Tool::getHttpData($src);
-    
-                    if (!empty($language) and !empty($data)) {
-                        try {
-                            $languageFile = $langDir . "/" . $language . ".csv";
-                            $fh = fopen($languageFile, 'w');
-                            fwrite($fh, $data);
-                            fclose($fh);
-    
-                        } catch (\Exception $e) {
-                            \Logger::error("could not download language file");
-                            \Logger::error($e);
-                            $success = false;
-                        }
-                    }
-                }
-            }
-        } else {
-            \Logger::warning("Pimcore_Update: Could not create language dir [  $langDir ]");
-        }
-        return $success;
-
-    }
-
 
     public static function updateMaxmindDb () {
 
