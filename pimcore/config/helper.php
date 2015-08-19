@@ -395,3 +395,24 @@ function isAssocArray(array $arr)
 {
     return array_keys($arr) !== range(0, count($arr) - 1);
 }
+
+/**
+ * this is an alternative for realpath() which isn't able to handle symlinks correctly
+ * @param $filename
+ * @return string
+ */
+function resolvePath($filename)
+{
+    $filename = str_replace('//', '/', $filename);
+    $parts = explode('/', $filename);
+    $out = array();
+    foreach ($parts as $part){
+        if ($part == '.') continue;
+        if ($part == '..') {
+            array_pop($out);
+            continue;
+        }
+        $out[] = $part;
+    }
+    return implode('/', $out);
+}

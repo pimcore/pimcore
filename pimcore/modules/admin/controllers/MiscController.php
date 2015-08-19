@@ -298,7 +298,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     private function getFileexplorerPath($paramName = 'node')
     {
         $path = preg_replace("/^\/fileexplorer/", "", $this->getParam($paramName));
-        $path = realpath(PIMCORE_DOCUMENT_ROOT . $path);
+        $path = resolvePath(PIMCORE_DOCUMENT_ROOT . $path);
 
         if (strpos($path, PIMCORE_DOCUMENT_ROOT) !== 0) {
             throw new \Exception('operation permitted, permission denied');
