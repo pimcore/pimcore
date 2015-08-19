@@ -35,7 +35,10 @@ class Url extends \Zend_View_Helper_Url {
             $urlOptions = array();
         }
 
-        if(!$name) {
+        // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
+        // but just the query string generation using the given parameters
+        // eg. $this->url(["foo" => "bar"], false) => /?foo=bar
+        if($name === null) {
             if(Staticroute::getCurrentRoute() instanceof Staticroute) {
                 $name = Staticroute::getCurrentRoute()->getName();
             }
