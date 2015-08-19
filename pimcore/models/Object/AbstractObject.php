@@ -18,14 +18,16 @@
 namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
-use Pimcore\Model\Cache; 
-use Pimcore\Tool; 
+use Pimcore\Model\Cache;
+use Pimcore\Tool;
 
 class AbstractObject extends Model\Element\AbstractElement {
 
     const OBJECT_TYPE_FOLDER = "folder";
     const OBJECT_TYPE_OBJECT = "object";
     const OBJECT_TYPE_VARIANT = "variant";
+
+    static $doNotRestoreKeyAndPath = false;
 
     /**
      * possible types of a document
@@ -1054,7 +1056,7 @@ class AbstractObject extends Model\Element\AbstractElement {
      *
      */
     public function __wakeup() {
-        if(isset($this->_fulldump)) {
+        if(isset($this->_fulldump) && !self::$doNotRestoreKeyAndPath) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = AbstractObject::getById($this->getId());
             if($originalElement) {
@@ -1126,4 +1128,22 @@ class AbstractObject extends Model\Element\AbstractElement {
 
         return parent::__call($method, $args);
     }
+
+    /**
+     * @return boolean
+     */
+    public static function doNotRestoreKeyAndPath()
+    {
+        return self::$doNotRestoreKeyAndPath;
+    }
+
+    /**
+     * @param boolean $doNotRestoreKeyAndPath
+     */
+    public static function setDoNotRestoreKeyAndPath($doNotRestoreKeyAndPath)
+    {
+        self::$doNotRestoreKeyAndPath = $doNotRestoreKeyAndPath;
+    }
+
+
 }
