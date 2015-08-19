@@ -265,7 +265,9 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                 if($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
                     $this->prepareDataForIndex($object);
                 } else {
-                    $this->deleteFromIndex($object);
+                    //delete entry with id which was retrieved from index before
+                    Logger::warn("Element with ID $objectId in product index but cannot be found in pimcore -> deleting element from index.");
+                    $this->doDeleteFromIndex($objectId);
                 }
             }
             return count($entries);
