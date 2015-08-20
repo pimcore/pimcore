@@ -596,6 +596,9 @@ class AbstractObject extends Model\Element\AbstractElement {
                     \Logger::info($er);
                 }
 
+                // set "HideUnpublished" back to the value it was originally
+                self::setHideUnpublished($hideUnpublishedBackup);
+
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
                     $run = $retries+1;
