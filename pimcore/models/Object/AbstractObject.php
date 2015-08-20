@@ -546,13 +546,13 @@ class AbstractObject extends Model\Element\AbstractElement {
         $maxRetries = 5;
         for($retries=0; $retries<$maxRetries; $retries++) {
 
+            // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+            $hideUnpublishedBackup = self::getHideUnpublished();
+            self::setHideUnpublished(false);
+
             $this->beginTransaction();
 
             try {
-                // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
-                $hideUnpublishedBackup = self::getHideUnpublished();
-                self::setHideUnpublished(false);
-
                 if(!Tool::isValidKey($this->getKey()) && $this->getId() != 1){
                     throw new \Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
                 }
