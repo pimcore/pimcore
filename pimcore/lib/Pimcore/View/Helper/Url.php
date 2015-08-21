@@ -106,7 +106,7 @@ class Url extends \Zend_View_Helper_Url {
         try {
             return parent::url($urlOptions, $name, $reset, $encode);
         } catch (\Exception $e) {
-            if(!Tool::isFrontentRequestByAdmin()) {
+            if(Tool::isFrontentRequestByAdmin()) {
                 // routes can be site specific, so in editmode it's possible that we don't get
                 // the right route (sites are not registered in editmode), so we cannot throw exceptions there
                 return "ERROR_IN_YOUR_URL_CONFIGURATION:~ROUTE--" . $name . "--DOES_NOT_EXIST";
