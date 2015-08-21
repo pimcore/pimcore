@@ -416,3 +416,27 @@ function resolvePath($filename)
     }
     return implode('/', $out);
 }
+
+/**
+ * @param Closure $closure
+ * @return string
+ */
+function closureHash (Closure $closure)
+{
+    $ref  = new ReflectionFunction($closure);
+    $file = new SplFileObject($ref->getFileName());
+    $file->seek($ref->getStartLine()-1);
+    $content = '';
+    while ($file->key() < $ref->getEndLine()) {
+        $content .= $file->current();
+        $file->next();
+    }
+
+    $hash = md5(json_encode(array(
+        $content,
+        $ref->getStaticVariables()
+    )));
+
+    return $hash;
+}
+

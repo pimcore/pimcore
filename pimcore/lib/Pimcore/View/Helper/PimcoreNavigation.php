@@ -127,19 +127,24 @@ class PimcoreNavigationController
             $navigationRootDocument = Document::getById(1);
         }
 
-        $siteSuffix = "";
+        $cacheKeys = []; 
+
         if(Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-            $siteSuffix = "__site_" . $site->getId();
+            $cacheKeys[] = "site__" . $site->getId();
         }
 
 
-        $cacheId = $navigationRootDocument->getId();
+        $cacheKeys[] = "root_id__" . $navigationRootDocument->getId();
         if(is_string($cache)) {
-            $cacheId .= "_" . $cache;
+            $cacheKeys[] = "custom__" . $cache;
         }
 
-        $cacheKey = "navigation_" . $cacheId . $siteSuffix;
+        if($pageCallback instanceof \Closure) {
+            $cacheKeys[] = "pageCallback_" . closureHash($pageCallback);
+        }
+
+        $cacheKey = "nav_" . md5(serialize($cacheKeys));
         $navigation = CacheManager::load($cacheKey);
 
         if(!$navigation || !$cacheEnabled) {
@@ -302,7 +307,7 @@ class PimcoreNavigationController
 
                     $page->setClass($page->getClass() . $classes);
 
-                    if($pageCallback) {
+                    if($pageCallback instanceof \Closure) {
                         $pageCallback($page, $child);
                     }
 
