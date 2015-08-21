@@ -194,7 +194,7 @@ class Agent implements IOrderAgent
 
 
         // change
-        $item->setOrderState( $oldState );
+        $item->setOrderState( $state );
 
 
         // save
