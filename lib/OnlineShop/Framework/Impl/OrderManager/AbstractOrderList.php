@@ -215,7 +215,10 @@ abstract class AbstractOrderList implements IOrderList
     public function current()
     {
         $this->load();
-        return $this->createResultItem( $this->list->current() );
+        if($this->count() > 0)
+        {
+            return $this->createResultItem( $this->list->current() );
+        }
     }
 
     /**

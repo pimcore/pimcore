@@ -244,7 +244,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
 
             // order count
-            $addOrderCount = function () use($customer, $arrCustomerAccount) {
+            $addOrderCount = function () use($customer, &$arrCustomerAccount) {
                 $order = new Object_OnlineShopOrder();
                 $field = $order->getClass()->getFieldDefinition('customer');
                 if($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href)

@@ -584,7 +584,11 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
                     if($condition) {
                         $condition .= " AND ";
                     }
-                    $condition .= "(" . $cond . ")";
+                    
+                    $condition .= is_array($cond)
+                        ? sprintf(' ( %1$s IN (%2$s) )', $fieldname, implode(',', $cond))
+                        : '(' . $cond . ')'
+                    ;
                 }
             }
         }

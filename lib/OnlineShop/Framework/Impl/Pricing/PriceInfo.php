@@ -120,22 +120,15 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
      */
     public function getPrice()
     {
-        // init
-        $price = $this->priceInfo->getPrice();
-        if($price == null)
-        {
+        $price = clone $this->priceInfo->getPrice();
+        if($price == null) {
             return null;
         }
 
-
-        // apply pricing rules
-        if(!$this->rulesApplied)
-        {
-            // set original price
+        if(!$this->rulesApplied) {
             $this->setAmount( $price->getAmount() );
-
-            // apply
             $env = $this->getEnvironment();
+
             foreach($this->getRules() as $rule)
             {
                 /* @var OnlineShop_Framework_Pricing_IRule $rule */
@@ -145,9 +138,14 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
                 $rule->executeOnProduct( $env );
             }
             $this->rulesApplied = true;
+
+            if($this->getAmount() < 0)
+            {
+                $this->setAmount( 0 );
+            }
         }
 
-        // update pricing rule price
+
         $price->setAmount( $this->getAmount() );
         return $price;
     }
@@ -268,5 +266,44 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     public function getOriginalTotalPrice()
     {
         return $this->priceInfo->getTotalPrice();
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function hasDiscount()
+    {
+        return $this->getPrice()->getAmount() < $this->getOriginalPrice()->getAmount();
+    }
+
+
+    /**
+     * get discount rate
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getDiscount()
+    {
+        $discount = $this->getPrice()->getAmount() - $this->getOriginalPrice()->getAmount();
+        $price = clone $this->priceInfo->getPrice();
+
+        $price->setAmount( $discount );
+
+        return $price;
+    }
+
+
+    /**
+     * get discount in percent
+     * @return float
+     */
+    public function getDiscountPercent()
+    {
+        $org = $this->getOriginalPrice()->getAmount() / 100;
+        $new = $this->getPrice()->getAmount();
+
+        $percent = 100 - ($new / $org);
+
+        return round($percent, 2);
     }
 }

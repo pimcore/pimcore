@@ -156,7 +156,7 @@ class Agent implements IOrderAgent
      * @param OrderItem $item
      * @param float     $quantity
      *
-     * @return $this
+     * @return Note
      */
     public function itemComplaint(OrderItem $item, $quantity)
     {
@@ -180,7 +180,7 @@ class Agent implements IOrderAgent
      * @param OrderItem $item
      * @param string    $state
      *
-     * @return $this
+     * @return Note
      */
     public function itemSetState(OrderItem $item, $state)
     {
@@ -230,8 +230,7 @@ class Agent implements IOrderAgent
      */
     public function hasPayment()
     {
-        $paymentInfo = $this->getOrder()->getPaymentInfo();
-        return !empty($paymentInfo);
+        return !empty($this->getOrder()->getPaymentInfo());
     }
 
 

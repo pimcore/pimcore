@@ -137,7 +137,7 @@ interface OnlineShop_Framework_ICart {
     /**
      * @param int $count
      *
-     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
+     * @return OnlineShop_Framework_ICartItem[]
      */
     public function getRecentlyAddedItems($count);
 

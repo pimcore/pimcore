@@ -11,6 +11,8 @@ namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing;
 use OnlineShop\Framework\OrderManager;
 use OnlineShop\Framework\OrderManager\IOrderListItem;
 use OnlineShop\Framework\Impl\OrderManager\AbstractOrderListItem;
+use OnlineShop_Framework_AbstractOrder as Order;
+use OnlineShop_Framework_AbstractOrderItem as OrderItem;
 
 class Item extends AbstractOrderListItem implements IOrderListItem
 {
@@ -38,7 +40,7 @@ class Item extends AbstractOrderListItem implements IOrderListItem
             return $this->resultRow[ $field ];
         }
 
-        $object = \Pimcore\Model\Object\AbstractObject::getById( $this->getId() );
+        $object = $this->reference();
         if($object)
         {
             return call_user_func_array(array($object, $method), $args);
@@ -47,5 +49,13 @@ class Item extends AbstractOrderListItem implements IOrderListItem
         {
             throw new \Exception("Object with {$this->getId()} not found.");
         }
+    }
+
+    /**
+     * @return Order|OrderItem
+     */
+    public function reference()
+    {
+        return \Pimcore\Model\Object\Concrete::getById( $this->getId() );
     }
 }

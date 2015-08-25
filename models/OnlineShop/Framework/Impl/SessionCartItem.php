@@ -29,7 +29,7 @@ class OnlineShop_Framework_Impl_SessionCartItem extends OnlineShop_Framework_Abs
      * @return OnlineShop_Framework_ICartItem[]
      */
     public function getSubItems() {
-        return $this->subItems;
+        return (array)$this->subItems;
     }
 
 
