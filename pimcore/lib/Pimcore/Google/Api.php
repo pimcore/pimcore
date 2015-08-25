@@ -88,16 +88,22 @@ class Api {
     }
 
     /**
-     * @return \Google_Client
+     * @param null $scope
+     * @return bool|\Google_Client
      * @throws \Zend_Json_Exception
      */
-    public static function getServiceClient () {
+    public static function getServiceClient ($scope = null) {
 
         if(!self::isServiceConfigured()) {
             return false;
         }
 
         $config = self::getConfig();
+
+        if(!$scope) {
+            // default scope
+            $scope = ['https://www.googleapis.com/auth/analytics.readonly'];
+        }
 
         $clientConfig = new \Google_Config();
         $clientConfig->setClassConfig("Google_Cache_File", "directory", PIMCORE_CACHE_DIRECTORY);
@@ -108,7 +114,7 @@ class Api {
         $key = file_get_contents(self::getPrivateKeyPath());
         $client->setAssertionCredentials(new \Google_Auth_AssertionCredentials(
             $config->email,
-            array('https://www.googleapis.com/auth/analytics.readonly',"https://www.google.com/webmasters/tools/feeds/"),
+            $scope,
             $key)
         );
 
