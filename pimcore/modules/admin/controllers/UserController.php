@@ -242,7 +242,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin {
 
             // only admins are allowed to create admin users
             // if the logged in user isn't an admin, set admin always to false
-            if(!$this->getUser()->isAdmin()) {
+            if(!$this->getUser()->isAdmin() && $user instanceof User) {
                 $user->setAdmin(false);
             }
 
