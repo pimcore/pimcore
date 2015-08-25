@@ -121,7 +121,8 @@ class Api {
         $client->setClientId($config->client_id);
 
         // token cache
-        $tokenId =  "google-api.token";
+        $hash = crc32(serialize([$scope]));
+        $tokenId =  "google-api.token." . $hash;
         if($tokenData = TmpStore::get($tokenId)) {
             $tokenInfo = \Zend_Json::decode($tokenData->getData());
             if( ($tokenInfo["created"] + $tokenInfo["expires_in"]) > (time()-900) )  {
