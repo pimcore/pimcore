@@ -6,28 +6,28 @@ use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListFilter;
 
 /**
- * Search filter with flexible variable definition
+ * Search filter with flexible column definition
  */
 class Search extends AbstractSearch
 {
     /**
-     * Search variable
+     * Search column
      * @var string
      */
-    protected $variable;
+    protected $column;
 
     /**
      * @param string $value
-     * @param string $variable
+     * @param string $column
      */
-    public function __construct($value, $variable)
+    public function __construct($value, $column)
     {
         parent::__construct($value);
-        $this->variable = $variable;
+        $this->column = $column;
     }
 
-    protected function getConditionVariable()
+    protected function getConditionColumn()
     {
-        return $this->variable;
+        return $this->column;
     }
 }
