@@ -16,12 +16,11 @@
  */
 
 /**
- * Service definition for Cloudsearch (v1).
+ * Service definition for Playmoviespartner (v1).
  *
  * <p>
- * The Google Cloud Search API defines an application interface to index
- * documents that contain structured data and to search those indexes. It
- * supports full text search.</p>
+ * An API providing Google Play Movies Partners a way to get the delivery status
+ * of their titles.</p>
  *
  * <p>
  * For more information about this service, see the API
@@ -30,7 +29,7 @@
  *
  * @author Google, Inc.
  */
-class Google_Service_Cloudsearch extends Google_Service
+class Google_Service_Playmoviespartner extends Google_Service
 {
 
 
@@ -38,16 +37,17 @@ class Google_Service_Cloudsearch extends Google_Service
   
 
   /**
-   * Constructs the internal representation of the Cloudsearch service.
+   * Constructs the internal representation of the Playmoviespartner service.
    *
    * @param Google_Client $client
    */
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://playmoviespartner.googleapis.com/';
     $this->servicePath = '';
     $this->version = 'v1';
-    $this->serviceName = 'cloudsearch';
+    $this->serviceName = 'playmoviespartner';
 
   }
 }
