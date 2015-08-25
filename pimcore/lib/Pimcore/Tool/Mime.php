@@ -91,6 +91,7 @@ class Mime {
         'dcr'       => 'application/x-director',
         'dir'       => 'application/x-director',
         'dxr'       => 'application/x-director',
+	'dxf'       => 'application/x-autocad',
         'dvi'       => 'application/x-dvi',
         'spl'       => 'application/x-futuresplash',
         'tgz'       => 'application/x-gtar',
