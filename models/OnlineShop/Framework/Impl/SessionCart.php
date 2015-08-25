@@ -2,7 +2,7 @@
 
 class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_AbstractCart implements OnlineShop_Framework_ICart {
 
-    const SESSION_CART_NAMESPACE = "onlineshop_sessioncarts";
+    protected static $sessionNamespace = "onlineshop_sessioncarts";
 
     /**
      * @return string
@@ -19,7 +19,7 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
     }
 
     protected static function getSession() {
-        $session = new Zend_Session_Namespace(self::SESSION_CART_NAMESPACE);
+        $session = new Zend_Session_Namespace(self::$sessionNamespace);
         if(empty($session->carts)) {
             $session->carts = array();
         }
@@ -94,14 +94,32 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
         return self::$unserializedCarts;
     }
 
-/*
-    public function setValues($data = array()) {
-        if ($data instanceof stdClass && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $this->setValue($key,$value);
+    /**
+     * @return string
+     */
+    public static function getSessionNamespace()
+    {
+        return self::$sessionNamespace;
+    }
+
+    /**
+     * @param string $sessionNamespace
+     */
+    public static function setSessionNamespace($sessionNamespace)
+    {
+        self::$sessionNamespace = $sessionNamespace;
+    }
+
+
+
+    /*
+        public function setValues($data = array()) {
+            if ($data instanceof stdClass && count($data) > 0) {
+                foreach ($data as $key => $value) {
+                    $this->setValue($key,$value);
+                }
             }
-        }
-    }*/
+        }*/
 
 
 

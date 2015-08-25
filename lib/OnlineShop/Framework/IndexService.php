@@ -42,6 +42,17 @@ class OnlineShop_Framework_IndexService {
     }
 
     /**
+     * Returns a specific Tenant Worker
+     *
+     * @param string $name
+     *
+     * @return OnlineShop_Framework_IndexService_Tenant_IWorker
+     */
+    public function getTenantWorker($name){
+        return $this->tenantWorkers[$name];
+    }
+
+    /**
      * @deprecated
      *
      * @param null $tenant
@@ -289,4 +300,3 @@ class OnlineShop_Framework_IndexService {
         }
     }
 }
-
