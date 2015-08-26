@@ -179,7 +179,7 @@ class PimcoreNavigationController
             foreach($allPages as $page) {
                 $activeTrail = false;
 
-                if (strpos($activeDocument->getRealFullPath(), $page->getRealFullPath() . "/") === 0) {
+                if (strpos($activeDocument->getRealFullPath(), $page->getUri() . "/") === 0) {
                     $activeTrail = true;
                 }
 
