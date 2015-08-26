@@ -125,26 +125,30 @@ abstract class OnlineShop_Framework_AbstractCartItem extends \Pimcore\Model\Abst
     /**
      * @return OnlineShop_Framework_IPrice
      */
-    public function getPrice() {
-        if ($this->getProduct() instanceof OnlineShop_Framework_AbstractSetProduct) {
-            return $this->getProduct()->getOSPrice($this->getCount(),$this->getSetEntries());
-
-        } else {
-            return $this->getProduct()->getOSPrice($this->getCount());
-        }
+    public function getPrice()
+    {
+        return $this->getPriceInfo()->getPrice();
     }
 
 
 
     /**
-     * @return stdClass
+     * @return OnlineShop_Framework_IPriceInfo
      */
     public function getPriceInfo() {
+
         if ($this->getProduct() instanceof OnlineShop_Framework_AbstractSetProduct) {
-            return $this->getProduct()->getOSPriceInfo($this->getCount(),$this->getSetEntries());
+            $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount(),$this->getSetEntries());
         } else {
-            return $this->getProduct()->getOSPriceInfo($this->getCount());
+            $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
         }
+
+        if($priceInfo instanceof OnlineShop_Framework_Pricing_IPriceInfo)
+        {
+            $priceInfo->getEnvironment()->setCart( $this->getCart() );
+        }
+
+        return $priceInfo;
     }
 
     /**

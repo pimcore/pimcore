@@ -294,6 +294,21 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
 
 
     /**
+     * get total discount rate
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getTotalDiscount()
+    {
+        $discount = $this->getTotalPrice()->getAmount() - $this->getOriginalTotalPrice()->getAmount();
+        $price = clone $this->priceInfo->getPrice();
+
+        $price->setAmount( $discount );
+
+        return $price;
+    }
+
+
+    /**
      * get discount in percent
      * @return float
      */

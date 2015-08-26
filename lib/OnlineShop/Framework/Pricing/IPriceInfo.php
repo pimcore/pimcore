@@ -63,4 +63,25 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
      * @return OnlineShop_Framework_IPriceInfo
      */
     public function setEnvironment(OnlineShop_Framework_Pricing_IEnvironment $environment);
+
+    /**
+     * @return bool
+     */
+    public function hasDiscount();
+
+    /**
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getDiscount();
+
+    /**
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getTotalDiscount();
+
+    /**
+     * get discount in percent
+     * @return float
+     */
+    public function getDiscountPercent();
 }

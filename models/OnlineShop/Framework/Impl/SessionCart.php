@@ -111,18 +111,6 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
     }
 
 
-
-    /*
-        public function setValues($data = array()) {
-            if ($data instanceof stdClass && count($data) > 0) {
-                foreach ($data as $key => $value) {
-                    $this->setValue($key,$value);
-                }
-            }
-        }*/
-
-
-
     /**
      * @return array
      */
@@ -147,6 +135,13 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
      */
     public function __wakeup() {
         $this->setIgnoreReadonly();
+
+        // set current cart
+        foreach($this->getItems() as $item)
+        {
+            $item->setCart( $this );
+        }
+
         $this->modified();
         $this->unsetIgnoreReadonly();
     }

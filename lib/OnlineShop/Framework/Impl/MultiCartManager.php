@@ -273,11 +273,4 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
     public function getCartPriceCalculator(OnlineShop_Framework_ICart $cart) {
         return new $this->config->pricecalculator->class($this->config->pricecalculator->config, $cart);
     }
-
-
-    public function reset()
-    {
-        $this->carts = [];
-        $this->initialized = false;
-    }
 }
