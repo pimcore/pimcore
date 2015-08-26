@@ -27,7 +27,7 @@ class OrderDateTime implements IOrderListFilter
     /**
      * @var string
      */
-    protected $variable = 'order.orderDate';
+    protected $column = 'order.orderDate';
 
     /**
      * @param IOrderList $orderList
@@ -41,12 +41,12 @@ class OrderDateTime implements IOrderListFilter
 
         if($this->getFrom())
         {
-            $query->where($this->getVariable() . ' >= ?', $this->getFrom()->getTimestamp());
+            $query->where($this->getColumn() . ' >= ?', $this->getFrom()->getTimestamp());
         }
 
         if($this->getTill())
         {
-            $query->where($this->getVariable() . ' <= ?', $this->getTill()->getTimestamp());
+            $query->where($this->getColumn() . ' <= ?', $this->getTill()->getTimestamp());
         }
     }
 
@@ -91,16 +91,16 @@ class OrderDateTime implements IOrderListFilter
     /**
      * @return string
      */
-    public function getVariable()
+    public function getColumn()
     {
-        return $this->variable;
+        return $this->column;
     }
 
     /**
-     * @param string $variable
+     * @param string $column
      */
-    public function setVariable($variable)
+    public function setColumn($column)
     {
-        $this->variable = $variable;
+        $this->column = $column;
     }
 }

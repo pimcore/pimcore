@@ -10,7 +10,7 @@ class PaymentReference extends AbstractSearch
     /**
      * @return string
      */
-    protected function getConditionVariable()
+    protected function getConditionColumn()
     {
         return 'paymentInfo.paymentReference';
     }

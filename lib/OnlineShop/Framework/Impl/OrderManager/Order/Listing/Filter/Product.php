@@ -1,12 +1,12 @@
 <?php
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Item;
+namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter;
 
 use OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\AbstractItem;
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListFilter;
 
-class Product extends AbstractItem
+class Product implements IOrderListFilter
 {
     /**
      * @var \Object_Concrete
@@ -27,8 +27,6 @@ class Product extends AbstractItem
      */
     public function apply(IOrderList $orderList)
     {
-        parent::apply($orderList);
-
         $ids = [
             $this->product->getId()
         ];

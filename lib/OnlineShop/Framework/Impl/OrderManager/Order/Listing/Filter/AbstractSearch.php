@@ -7,7 +7,7 @@ use OnlineShop\Framework\OrderManager\IOrderListFilter;
 
 /**
  * Base filter for LIKE queries. For simple queries you'll just
- * need to override the getConditionVariable() method and return
+ * need to override the getConditionColumn() method and return
  * the query part coming before LIKE.
  */
 abstract class AbstractSearch implements IOrderListFilter
@@ -31,7 +31,7 @@ abstract class AbstractSearch implements IOrderListFilter
      *
      * @return string
      */
-    abstract protected function getConditionVariable();
+    abstract protected function getConditionColumn();
 
     /**
      * Pad the value with wildcards
@@ -55,7 +55,7 @@ abstract class AbstractSearch implements IOrderListFilter
 
         $this->prepareApply($orderList);
 
-        $query = sprintf('%s LIKE ?', $this->getConditionVariable());
+        $query = sprintf('%s LIKE ?', $this->getConditionColumn());
         $value = $this->getConditionValue();
 
         $orderList->addCondition($query, $value);

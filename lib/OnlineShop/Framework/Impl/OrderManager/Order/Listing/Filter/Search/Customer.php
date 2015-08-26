@@ -9,7 +9,7 @@ class Customer extends AbstractSearch
     /**
      * @return string
      */
-    protected function getConditionVariable()
+    protected function getConditionColumn()
     {
         return 'CONCAT(order.invoiceFirstName, " ", order.invoiceLastName)';
     }
