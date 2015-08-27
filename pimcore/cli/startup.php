@@ -16,11 +16,13 @@
 use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 
+// determines if we're in Pimcore\Console mode
+$pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
+
 $workingDirectory = getcwd();
 chdir(__DIR__);
 include_once("../config/startup.php");
 chdir($workingDirectory);
-
 
 // CLI \Zend_Controller_Front Setup, this is required to make it possible to make use of all rendering features
 // this includes $this->action() in templates, ...
@@ -60,8 +62,11 @@ Object\Localizedfield::setGetFallbackValues(true);
 @ini_set("display_startup_errors", "On");
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
-// skip if maintenance mode is on and the flag is not set
-// we cannot use \Zend_Console_Getopt here because it doesn't allow to be called twice (unrecognized parameter, ...)
-if(\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array("--ignore-maintenance-mode", $_SERVER['argv'])) {
-    die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution \n");
+// Pimcore\Console handles maintenance mode through the AbstractCommand
+if (!$pimcoreConsole) {
+    // skip if maintenance mode is on and the flag is not set
+    // we cannot use \Zend_Console_Getopt here because it doesn't allow to be called twice (unrecognized parameter, ...)
+    if(\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array("--ignore-maintenance-mode", $_SERVER['argv'])) {
+        die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution \n");
+    }
 }
