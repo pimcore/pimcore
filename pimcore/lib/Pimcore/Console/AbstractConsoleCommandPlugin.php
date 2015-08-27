@@ -25,7 +25,7 @@ abstract class AbstractConsoleCommandPlugin extends AbstractPlugin implements Pl
 {
     use ConsoleCommandPluginTrait;
 
-    public function dinit()
+    public function init()
     {
         parent::init();
         $this->initConsoleCommands();
