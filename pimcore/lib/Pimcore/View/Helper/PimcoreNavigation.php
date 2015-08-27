@@ -164,7 +164,22 @@ class PimcoreNavigationController
         }
 
         // set active path
-        $activePage = $navigation->findOneBy("realFullPath", $activeDocument->getRealFullPath());
+        $front = \Zend_Controller_Front::getInstance();
+        $request = $front->getRequest();
+
+        // try to find a page matching exactly the request uri
+        $activePage = $navigation->findOneBy("uri", $request->getRequestUri());
+
+        if(!$activePage) {
+            // try to find a page matching the path info
+            $activePage = $navigation->findOneBy("uri", $request->getPathInfo());
+        }
+
+        if(!$activePage) {
+            // use the provided pimcore document
+            $activePage = $navigation->findOneBy("realFullPath", $activeDocument->getRealFullPath());
+        }
+
         if(!$activePage) {
             // find by link target
             $activePage = $navigation->findOneBy("uri", $activeDocument->getRealFullPath());
@@ -310,13 +325,13 @@ class PimcoreNavigationController
 
                     $page->setClass($page->getClass() . $classes);
 
-                    if($pageCallback instanceof \Closure) {
-                        $pageCallback($page, $child);
-                    }
-
                     if ($child->hasChilds()) {
                         $childPages = $this->buildNextLevel($child, false, $pageCallback);
                         $page->setPages($childPages);
+                    }
+
+                    if($pageCallback instanceof \Closure) {
+                        $pageCallback($page, $child);
                     }
 
                     $pages[] = $page;
