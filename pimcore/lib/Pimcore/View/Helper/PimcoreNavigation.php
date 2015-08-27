@@ -19,6 +19,7 @@ namespace Pimcore\View\Helper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Cache as CacheManager;
 use Pimcore\Model\Site;
+use Pimcore\Navigation\Page\Uri;
 
 class PimcoreNavigation extends \Zend_View_Helper_Navigation
 {
@@ -183,9 +184,11 @@ class PimcoreNavigationController
                     $activeTrail = true;
                 }
 
-                if($page->getDocumentType() == "link") {
-                    if (strpos($activeDocument->getFullPath(), $page->getUri() . "/") === 0) {
-                        $activeTrail = true;
+                if($page instanceof Uri) {
+                    if ($page->getDocumentType() == "link") {
+                        if (strpos($activeDocument->getFullPath(), $page->getUri() . "/") === 0) {
+                            $activeTrail = true;
+                        }
                     }
                 }
 
