@@ -15,6 +15,7 @@
 
 namespace Pimcore\Console;
 
+use Pimcore\Console\Log\Writer;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -52,6 +53,28 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         if (Admin::isInMaintenanceMode() && !$input->getOption('ignore-maintenance-mode')) {
             throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
         }
+    }
+
+    /**
+     * Hook into the pimcore logger using the Pimcore\Console\Log\Writer
+     *
+     * @throws \Zend_Log_Exception
+     */
+    protected function initializePimcoreLogging()
+    {
+        $writer = new Writer($this->output);
+        $logger = new \Zend_Log($writer);
+
+        $filterPriority = \Zend_Log::INFO;
+        if ($this->output->isVerbose()) {
+            $filterPriority = null;
+        }
+
+        if (null !== $filterPriority) {
+            $logger->addFilter(new \Zend_Log_Filter_Priority($filterPriority));
+        }
+
+        \Logger::addLogger($logger);
     }
 
     /**
