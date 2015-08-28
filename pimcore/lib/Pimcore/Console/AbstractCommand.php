@@ -74,6 +74,8 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
             $logger->addFilter(new \Zend_Log_Filter_Priority($filterPriority));
         }
 
+        // our filter handles verbosity
+        \Logger::setVerbosePriorities();
         \Logger::addLogger($logger);
     }
 
