@@ -58,14 +58,13 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     /**
      * Hook into the pimcore logger using the Pimcore\Console\Log\Writer
      *
-     * @throws \Zend_Log_Exception
+     * @param int $filterPriority
      */
-    protected function initializePimcoreLogging()
+    protected function initializePimcoreLogging($filterPriority = \Zend_Log::INFO)
     {
         $writer = new Writer($this->output);
         $logger = new \Zend_Log($writer);
 
-        $filterPriority = \Zend_Log::INFO;
         if ($this->output->isVerbose()) {
             $filterPriority = null;
         }
@@ -74,7 +73,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
             $logger->addFilter(new \Zend_Log_Filter_Priority($filterPriority));
         }
 
-        // our filter handles verbosity
+        // the filter handles verbosity
         \Logger::setVerbosePriorities();
         \Logger::addLogger($logger);
     }
