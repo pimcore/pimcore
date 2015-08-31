@@ -40,38 +40,33 @@ class CacheWarmingCommand extends AbstractCommand
      * @var array
      */
     protected $validDocumentTypes = [
-        'folder',
-        'link',
         'page',
         'snippet',
+        'folder',
+        'link',
     ];
 
     /**
      * @var array
      */
     protected $validAssetTypes = [
+        'archive',
+        'audio',
+        'document',
         'folder',
         'image',
         'text',
-        'audio',
-        'video',
-        'document',
-        'archive',
         'unknown',
+        'video',
     ];
 
     /**
      * @var array
      */
     protected $validObjectTypes = [
-        'archive',
-        'audio',
-        'document',
+        'object',
         'folder',
-        'image',
-        'text',
-        'unknown',
-        'video',
+        'variant',
     ];
 
     protected function configure()
@@ -117,8 +112,6 @@ class CacheWarmingCommand extends AbstractCommand
         ;
     }
 
-
-
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         parent::initialize($input, $output);
@@ -127,7 +120,7 @@ class CacheWarmingCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // $this->enableMaintenanceMode();
+        $this->enableMaintenanceMode();
 
         try {
             $types         = $this->getArrayOption('types', 'validTypes', 'type', true);
@@ -139,36 +132,64 @@ class CacheWarmingCommand extends AbstractCommand
             return 1;
         }
 
-        var_dump('TYPES');
-        var_dump($types);
-
         if (in_array('document', $types)) {
-            var_dump('DOCUMENT TYPES');
-            var_dump($documentTypes);
-
-            // Warming::documents($documentTypes);
+            $this->writeWarmingMessage('document', $documentTypes);
+            Warming::documents($documentTypes);
         }
 
         if (in_array('asset', $types)) {
-            var_dump('ASSET TYPES');
-            var_dump($assetTypes);
-
-            // Warming::assets($assetTypes);
+            $this->writeWarmingMessage('asset', $assetTypes);
+            Warming::assets($assetTypes);
         }
 
         if (in_array('object', $types)) {
-            var_dump('OBJECT TYPES');
-            var_dump($objectTypes);
-
-            // Warming::assets($assetTypes);
+            $this->writeWarmingMessage('object', $objectTypes);
+            Warming::assets($assetTypes);
         }
 
-        // $this->disableMaintenanceMode();
+        $this->disableMaintenanceMode();
+    }
+
+    protected function writeWarmingMessage($type, $types)
+    {
+        $output = sprintf('Warming <comment>%s</comment> cache', $type);
+        if (null !== $types && count($types) > 0) {
+            $output .= sprintf(' for types %s', $this->humanList($types, 'and', '<info>%s</info>'));
+        } else {
+            $output .= sprintf(' for <info>all</info> types');
+        }
+
+        $output .= '...';
+        $this->output->writeln($output);
     }
 
     /**
-     * Get one of types, document types or object types and
-     * handle "all" value and input validation.
+     * A,B,C -> A, B or C (with an optional template for each item)
+     *
+     * @param $list
+     * @param string $glue
+     * @param null $template
+     * @return string
+     */
+    protected function humanList($list, $glue = 'or', $template = null)
+    {
+        if (null !== $template) {
+            array_walk($list, function(&$item) use ($template) {
+                $item = sprintf($template, $item);
+            });
+        }
+
+        if (count($list) > 1) {
+            $lastElement = array_pop($list);
+            return implode(', ', $list) . ' ' . $glue . ' ' . $lastElement;
+        } else {
+            return implode(', ', $list);
+        }
+    }
+
+    /**
+     * Get one of types, document, asset or object types, handle "all" value
+     * and list input validation.
      *
      * @param $option
      * @param $property
@@ -203,8 +224,6 @@ class CacheWarmingCommand extends AbstractCommand
 
     /**
      * Enable maintenance mode if --maintenanceMode option was passed
-     *
-     * @throws \Exception
      */
     protected function enableMaintenanceMode()
     {
@@ -212,12 +231,12 @@ class CacheWarmingCommand extends AbstractCommand
         if ($this->input->getOption('maintenanceMode')) {
             $maintenanceModeId = 'cache-warming-dummy-session-id';
 
-            $this->output->isVerbose() && $this->output->writeln('--maintenanceMode option was passed...activating maintenance mode with ID <comment>%s</comment>...', $maintenanceModeId);
+            $this->output->writeln('Activating maintenance mode with ID <comment>%s</comment>...', $maintenanceModeId);
 
             Admin::activateMaintenanceMode($maintenanceModeId);
 
             // set the timeout between each iteration to 0 if maintenance mode is on, because
-            //we don't have to care about the load on the server
+            // we don't have to care about the load on the server
             Warming::setTimoutBetweenIteration(0);
         }
     }
@@ -225,18 +244,8 @@ class CacheWarmingCommand extends AbstractCommand
     protected function disableMaintenanceMode()
     {
         if ($this->input->getOption('maintenanceMode')) {
-            $this->output->isVerbose() && $this->output->writeln('Deactivating maintenance mode...');
+            $this->output->writeln('Deactivating maintenance mode...');
             Admin::deactivateMaintenanceMode();
-        }
-    }
-
-    protected function humanList($list)
-    {
-        if (count($list) > 1) {
-            $lastElement = array_pop($list);
-            return implode(', ', $list) . ' or ' . $lastElement;
-        } else {
-            return implode(', ', $list);
         }
     }
 }
