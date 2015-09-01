@@ -16,7 +16,7 @@
  */
 
 /**
- * Service definition for Deploymentmanager (v2beta1).
+ * Service definition for DeploymentManager (v2beta2).
  *
  * <p>
  * The Deployment Manager API allows users to declaratively configure, deploy
@@ -29,7 +29,7 @@
  *
  * @author Google, Inc.
  */
-class Google_Service_Deploymentmanager extends Google_Service
+class Google_Service_DeploymentManager extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
   const CLOUD_PLATFORM =
@@ -49,18 +49,19 @@ class Google_Service_Deploymentmanager extends Google_Service
   
 
   /**
-   * Constructs the internal representation of the Deploymentmanager service.
+   * Constructs the internal representation of the DeploymentManager service.
    *
    * @param Google_Client $client
    */
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
-    $this->servicePath = 'deploymentmanager/v2beta1/projects/';
-    $this->version = 'v2beta1';
+    $this->rootUrl = 'https://www.googleapis.com/';
+    $this->servicePath = 'deploymentmanager/v2beta2/projects/';
+    $this->version = 'v2beta2';
     $this->serviceName = 'deploymentmanager';
 
-    $this->deployments = new Google_Service_Deploymentmanager_Deployments_Resource(
+    $this->deployments = new Google_Service_DeploymentManager_Deployments_Resource(
         $this,
         $this->serviceName,
         'deployments',
@@ -115,6 +116,10 @@ class Google_Service_Deploymentmanager extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -124,11 +129,65 @@ class Google_Service_Deploymentmanager extends Google_Service
                   'type' => 'integer',
                 ),
               ),
+            ),'patch' => array(
+              'path' => '{project}/global/deployments/{deployment}',
+              'httpMethod' => 'PATCH',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'deployment' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'deletePolicy' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'updatePolicy' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'createPolicy' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
+            ),'update' => array(
+              'path' => '{project}/global/deployments/{deployment}',
+              'httpMethod' => 'PUT',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'deployment' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'deletePolicy' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'updatePolicy' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'createPolicy' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
             ),
           )
         )
     );
-    $this->manifests = new Google_Service_Deploymentmanager_Manifests_Resource(
+    $this->manifests = new Google_Service_DeploymentManager_Manifests_Resource(
         $this,
         $this->serviceName,
         'manifests',
@@ -168,6 +227,10 @@ class Google_Service_Deploymentmanager extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -181,7 +244,7 @@ class Google_Service_Deploymentmanager extends Google_Service
           )
         )
     );
-    $this->operations = new Google_Service_Deploymentmanager_Operations_Resource(
+    $this->operations = new Google_Service_DeploymentManager_Operations_Resource(
         $this,
         $this->serviceName,
         'operations',
@@ -211,6 +274,10 @@ class Google_Service_Deploymentmanager extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -224,7 +291,7 @@ class Google_Service_Deploymentmanager extends Google_Service
           )
         )
     );
-    $this->resources = new Google_Service_Deploymentmanager_Resources_Resource(
+    $this->resources = new Google_Service_DeploymentManager_Resources_Resource(
         $this,
         $this->serviceName,
         'resources',
@@ -264,6 +331,10 @@ class Google_Service_Deploymentmanager extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -277,7 +348,7 @@ class Google_Service_Deploymentmanager extends Google_Service
           )
         )
     );
-    $this->types = new Google_Service_Deploymentmanager_Types_Resource(
+    $this->types = new Google_Service_DeploymentManager_Types_Resource(
         $this,
         $this->serviceName,
         'types',
@@ -291,6 +362,10 @@ class Google_Service_Deploymentmanager extends Google_Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
                 ),
                 'pageToken' => array(
                   'location' => 'query',
@@ -313,78 +388,121 @@ class Google_Service_Deploymentmanager extends Google_Service
  * The "deployments" collection of methods.
  * Typical usage is:
  *  <code>
- *   $deploymentmanagerService = new Google_Service_Deploymentmanager(...);
+ *   $deploymentmanagerService = new Google_Service_DeploymentManager(...);
  *   $deployments = $deploymentmanagerService->deployments;
  *  </code>
  */
-class Google_Service_Deploymentmanager_Deployments_Resource extends Google_Service_Resource
+class Google_Service_DeploymentManager_Deployments_Resource extends Google_Service_Resource
 {
 
   /**
-   * ! Deletes a deployment and all of the resources in the deployment.
+   * Deletes a deployment and all of the resources in the deployment.
    * (deployments.delete)
    *
-   * @param string $project ! The project ID for this request.
-   * @param string $deployment ! The name of the deployment for this request.
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Deploymentmanager_Operation
+   * @return Google_Service_DeploymentManager_Operation
    */
   public function delete($project, $deployment, $optParams = array())
   {
     $params = array('project' => $project, 'deployment' => $deployment);
     $params = array_merge($params, $optParams);
-    return $this->call('delete', array($params), "Google_Service_Deploymentmanager_Operation");
+    return $this->call('delete', array($params), "Google_Service_DeploymentManager_Operation");
   }
 
   /**
-   * ! Gets information about a specific deployment. (deployments.get)
+   * Gets information about a specific deployment. (deployments.get)
    *
-   * @param string $project ! The project ID for this request.
-   * @param string $deployment ! The name of the deployment for this request.
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Deploymentmanager_Deployment
+   * @return Google_Service_DeploymentManager_Deployment
    */
   public function get($project, $deployment, $optParams = array())
   {
     $params = array('project' => $project, 'deployment' => $deployment);
     $params = array_merge($params, $optParams);
-    return $this->call('get', array($params), "Google_Service_Deploymentmanager_Deployment");
+    return $this->call('get', array($params), "Google_Service_DeploymentManager_Deployment");
   }
 
   /**
-   * ! Creates a deployment and all of the resources described by the ! deployment
+   * Creates a deployment and all of the resources described by the deployment
    * manifest. (deployments.insert)
    *
-   * @param string $project ! The project ID for this request.
+   * @param string $project The project ID for this request.
    * @param Google_Deployment $postBody
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Deploymentmanager_Operation
+   * @return Google_Service_DeploymentManager_Operation
    */
-  public function insert($project, Google_Service_Deploymentmanager_Deployment $postBody, $optParams = array())
+  public function insert($project, Google_Service_DeploymentManager_Deployment $postBody, $optParams = array())
   {
     $params = array('project' => $project, 'postBody' => $postBody);
     $params = array_merge($params, $optParams);
-    return $this->call('insert', array($params), "Google_Service_Deploymentmanager_Operation");
+    return $this->call('insert', array($params), "Google_Service_DeploymentManager_Operation");
   }
 
   /**
-   * ! Lists all deployments for a given project. (deployments.listDeployments)
+   * Lists all deployments for a given project. (deployments.listDeployments)
    *
-   * @param string $project ! The project ID for this request.
+   * @param string $project The project ID for this request.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken ! Specifies a nextPageToken returned by a
-   * previous list request. This ! token can be used to request the next page of
-   * results from a previous ! list request.
-   * @opt_param int maxResults ! Maximum count of results to be returned. !
-   * Acceptable values are 0 to 100, inclusive. (Default: 50)
-   * @return Google_Service_Deploymentmanager_DeploymentsListResponse
+   * @opt_param string filter Filter expression for filtering listed resources.
+   * @opt_param string pageToken Tag returned by a previous list request when that
+   * list was truncated to maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Maximum count of results to be returned.
+   * @return Google_Service_DeploymentManager_DeploymentsListResponse
    */
   public function listDeployments($project, $optParams = array())
   {
     $params = array('project' => $project);
     $params = array_merge($params, $optParams);
-    return $this->call('list', array($params), "Google_Service_Deploymentmanager_DeploymentsListResponse");
+    return $this->call('list', array($params), "Google_Service_DeploymentManager_DeploymentsListResponse");
+  }
+
+  /**
+   * Updates a deployment and all of the resources described by the deployment
+   * manifest. This method supports patch semantics. (deployments.patch)
+   *
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
+   * @param Google_Deployment $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string deletePolicy Sets the policy to use for deleting resources.
+   * @opt_param string updatePolicy Sets the policy to use for updating resources.
+   * @opt_param string createPolicy Sets the policy to use for creating new
+   * resources.
+   * @return Google_Service_DeploymentManager_Operation
+   */
+  public function patch($project, $deployment, Google_Service_DeploymentManager_Deployment $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'deployment' => $deployment, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('patch', array($params), "Google_Service_DeploymentManager_Operation");
+  }
+
+  /**
+   * Updates a deployment and all of the resources described by the deployment
+   * manifest. (deployments.update)
+   *
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
+   * @param Google_Deployment $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string deletePolicy Sets the policy to use for deleting resources.
+   * @opt_param string updatePolicy Sets the policy to use for updating resources.
+   * @opt_param string createPolicy Sets the policy to use for creating new
+   * resources.
+   * @return Google_Service_DeploymentManager_Operation
+   */
+  public function update($project, $deployment, Google_Service_DeploymentManager_Deployment $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'deployment' => $deployment, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('update', array($params), "Google_Service_DeploymentManager_Operation");
   }
 }
 
@@ -392,48 +510,47 @@ class Google_Service_Deploymentmanager_Deployments_Resource extends Google_Servi
  * The "manifests" collection of methods.
  * Typical usage is:
  *  <code>
- *   $deploymentmanagerService = new Google_Service_Deploymentmanager(...);
+ *   $deploymentmanagerService = new Google_Service_DeploymentManager(...);
  *   $manifests = $deploymentmanagerService->manifests;
  *  </code>
  */
-class Google_Service_Deploymentmanager_Manifests_Resource extends Google_Service_Resource
+class Google_Service_DeploymentManager_Manifests_Resource extends Google_Service_Resource
 {
 
   /**
-   * ! Gets information about a specific manifest. (manifests.get)
+   * Gets information about a specific manifest. (manifests.get)
    *
-   * @param string $project ! The project ID for this request.
-   * @param string $deployment ! The name of the deployment for this request.
-   * @param string $manifest ! The name of the manifest for this request.
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
+   * @param string $manifest The name of the manifest for this request.
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Deploymentmanager_Manifest
+   * @return Google_Service_DeploymentManager_Manifest
    */
   public function get($project, $deployment, $manifest, $optParams = array())
   {
     $params = array('project' => $project, 'deployment' => $deployment, 'manifest' => $manifest);
     $params = array_merge($params, $optParams);
-    return $this->call('get', array($params), "Google_Service_Deploymentmanager_Manifest");
+    return $this->call('get', array($params), "Google_Service_DeploymentManager_Manifest");
   }
 
   /**
-   * ! Lists all manifests for a given deployment. (manifests.listManifests)
+   * Lists all manifests for a given deployment. (manifests.listManifests)
    *
-   * @param string $project ! The project ID for this request.
-   * @param string $deployment ! The name of the deployment for this request.
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken ! Specifies a nextPageToken returned by a
-   * previous list request. This ! token can be used to request the next page of
-   * results from a previous ! list request.
-   * @opt_param int maxResults ! Maximum count of results to be returned. !
-   * Acceptable values are 0 to 100, inclusive. (Default: 50)
-   * @return Google_Service_Deploymentmanager_ManifestsListResponse
+   * @opt_param string filter Filter expression for filtering listed resources.
+   * @opt_param string pageToken Tag returned by a previous list request when that
+   * list was truncated to maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Maximum count of results to be returned.
+   * @return Google_Service_DeploymentManager_ManifestsListResponse
    */
   public function listManifests($project, $deployment, $optParams = array())
   {
     $params = array('project' => $project, 'deployment' => $deployment);
     $params = array_merge($params, $optParams);
-    return $this->call('list', array($params), "Google_Service_Deploymentmanager_ManifestsListResponse");
+    return $this->call('list', array($params), "Google_Service_DeploymentManager_ManifestsListResponse");
   }
 }
 
@@ -441,46 +558,45 @@ class Google_Service_Deploymentmanager_Manifests_Resource extends Google_Service
  * The "operations" collection of methods.
  * Typical usage is:
  *  <code>
- *   $deploymentmanagerService = new Google_Service_Deploymentmanager(...);
+ *   $deploymentmanagerService = new Google_Service_DeploymentManager(...);
  *   $operations = $deploymentmanagerService->operations;
  *  </code>
  */
-class Google_Service_Deploymentmanager_Operations_Resource extends Google_Service_Resource
+class Google_Service_DeploymentManager_Operations_Resource extends Google_Service_Resource
 {
 
   /**
-   * ! Gets information about a specific Operation. (operations.get)
+   * Gets information about a specific operation. (operations.get)
    *
-   * @param string $project ! The project ID for this request.
-   * @param string $operation ! The name of the operation for this request.
+   * @param string $project The project ID for this request.
+   * @param string $operation The name of the operation for this request.
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Deploymentmanager_Operation
+   * @return Google_Service_DeploymentManager_Operation
    */
   public function get($project, $operation, $optParams = array())
   {
     $params = array('project' => $project, 'operation' => $operation);
     $params = array_merge($params, $optParams);
-    return $this->call('get', array($params), "Google_Service_Deploymentmanager_Operation");
+    return $this->call('get', array($params), "Google_Service_DeploymentManager_Operation");
   }
 
   /**
-   * ! Lists all Operations for a project. (operations.listOperations)
+   * Lists all operations for a project. (operations.listOperations)
    *
-   * @param string $project ! The project ID for this request.
+   * @param string $project The project ID for this request.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken ! Specifies a nextPageToken returned by a
-   * previous list request. This ! token can be used to request the next page of
-   * results from a previous ! list request.
-   * @opt_param int maxResults ! Maximum count of results to be returned. !
-   * Acceptable values are 0 to 100, inclusive. (Default: 50)
-   * @return Google_Service_Deploymentmanager_OperationsListResponse
+   * @opt_param string filter Filter expression for filtering listed resources.
+   * @opt_param string pageToken Tag returned by a previous list request when that
+   * list was truncated to maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Maximum count of results to be returned.
+   * @return Google_Service_DeploymentManager_OperationsListResponse
    */
   public function listOperations($project, $optParams = array())
   {
     $params = array('project' => $project);
     $params = array_merge($params, $optParams);
-    return $this->call('list', array($params), "Google_Service_Deploymentmanager_OperationsListResponse");
+    return $this->call('list', array($params), "Google_Service_DeploymentManager_OperationsListResponse");
   }
 }
 
@@ -488,48 +604,47 @@ class Google_Service_Deploymentmanager_Operations_Resource extends Google_Servic
  * The "resources" collection of methods.
  * Typical usage is:
  *  <code>
- *   $deploymentmanagerService = new Google_Service_Deploymentmanager(...);
+ *   $deploymentmanagerService = new Google_Service_DeploymentManager(...);
  *   $resources = $deploymentmanagerService->resources;
  *  </code>
  */
-class Google_Service_Deploymentmanager_Resources_Resource extends Google_Service_Resource
+class Google_Service_DeploymentManager_Resources_Resource extends Google_Service_Resource
 {
 
   /**
-   * ! Gets information about a single resource. (resources.get)
+   * Gets information about a single resource. (resources.get)
    *
-   * @param string $project ! The project ID for this request.
-   * @param string $deployment ! The name of the deployment for this request.
-   * @param string $resource ! The name of the resource for this request.
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
+   * @param string $resource The name of the resource for this request.
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Deploymentmanager_DeploymentmanagerResource
+   * @return Google_Service_DeploymentManager_DeploymentmanagerResource
    */
   public function get($project, $deployment, $resource, $optParams = array())
   {
     $params = array('project' => $project, 'deployment' => $deployment, 'resource' => $resource);
     $params = array_merge($params, $optParams);
-    return $this->call('get', array($params), "Google_Service_Deploymentmanager_DeploymentmanagerResource");
+    return $this->call('get', array($params), "Google_Service_DeploymentManager_DeploymentmanagerResource");
   }
 
   /**
-   * ! Lists all resources in a given deployment. (resources.listResources)
+   * Lists all resources in a given deployment. (resources.listResources)
    *
-   * @param string $project ! The project ID for this request.
-   * @param string $deployment ! The name of the deployment for this request.
+   * @param string $project The project ID for this request.
+   * @param string $deployment The name of the deployment for this request.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken ! Specifies a nextPageToken returned by a
-   * previous list request. This ! token can be used to request the next page of
-   * results from a previous ! list request.
-   * @opt_param int maxResults ! Maximum count of results to be returned. !
-   * Acceptable values are 0 to 100, inclusive. (Default: 50)
-   * @return Google_Service_Deploymentmanager_ResourcesListResponse
+   * @opt_param string filter Filter expression for filtering listed resources.
+   * @opt_param string pageToken Tag returned by a previous list request when that
+   * list was truncated to maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Maximum count of results to be returned.
+   * @return Google_Service_DeploymentManager_ResourcesListResponse
    */
   public function listResources($project, $deployment, $optParams = array())
   {
     $params = array('project' => $project, 'deployment' => $deployment);
     $params = array_merge($params, $optParams);
-    return $this->call('list', array($params), "Google_Service_Deploymentmanager_ResourcesListResponse");
+    return $this->call('list', array($params), "Google_Service_DeploymentManager_ResourcesListResponse");
   }
 }
 
@@ -537,46 +652,53 @@ class Google_Service_Deploymentmanager_Resources_Resource extends Google_Service
  * The "types" collection of methods.
  * Typical usage is:
  *  <code>
- *   $deploymentmanagerService = new Google_Service_Deploymentmanager(...);
+ *   $deploymentmanagerService = new Google_Service_DeploymentManager(...);
  *   $types = $deploymentmanagerService->types;
  *  </code>
  */
-class Google_Service_Deploymentmanager_Types_Resource extends Google_Service_Resource
+class Google_Service_DeploymentManager_Types_Resource extends Google_Service_Resource
 {
 
   /**
-   * ! Lists all Types for Deployment Manager. (types.listTypes)
+   * Lists all resource types for Deployment Manager. (types.listTypes)
    *
-   * @param string $project ! The project ID for this request.
+   * @param string $project The project ID for this request.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken ! Specifies a nextPageToken returned by a
-   * previous list request. This ! token can be used to request the next page of
-   * results from a previous ! list request.
-   * @opt_param int maxResults ! Maximum count of results to be returned. !
-   * Acceptable values are 0 to 100, inclusive. (Default: 50)
-   * @return Google_Service_Deploymentmanager_TypesListResponse
+   * @opt_param string filter Filter expression for filtering listed resources.
+   * @opt_param string pageToken Tag returned by a previous list request when that
+   * list was truncated to maxResults. Used to continue a previous list request.
+   * @opt_param string maxResults Maximum count of results to be returned.
+   * @return Google_Service_DeploymentManager_TypesListResponse
    */
   public function listTypes($project, $optParams = array())
   {
     $params = array('project' => $project);
     $params = array_merge($params, $optParams);
-    return $this->call('list', array($params), "Google_Service_Deploymentmanager_TypesListResponse");
+    return $this->call('list', array($params), "Google_Service_DeploymentManager_TypesListResponse");
   }
 }
 
 
 
 
-class Google_Service_Deploymentmanager_Deployment extends Google_Model
+class Google_Service_DeploymentManager_Deployment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
   );
   public $description;
+  public $fingerprint;
   public $id;
+  public $insertTime;
+  public $intent;
   public $manifest;
   public $name;
-  public $targetConfig;
+  public $state;
+  protected $targetType = 'Google_Service_DeploymentManager_TargetConfiguration';
+  protected $targetDataType = '';
+  protected $updateType = 'Google_Service_DeploymentManager_DeploymentUpdate';
+  protected $updateDataType = '';
+  public $updateTime;
 
 
   public function setDescription($description)
@@ -587,62 +709,13 @@ class Google_Service_Deploymentmanager_Deployment extends Google_Model
   {
     return $this->description;
   }
-  public function setId($id)
+  public function setFingerprint($fingerprint)
   {
-    $this->id = $id;
+    $this->fingerprint = $fingerprint;
   }
-  public function getId()
+  public function getFingerprint()
   {
-    return $this->id;
-  }
-  public function setManifest($manifest)
-  {
-    $this->manifest = $manifest;
-  }
-  public function getManifest()
-  {
-    return $this->manifest;
-  }
-  public function setName($name)
-  {
-    $this->name = $name;
-  }
-  public function getName()
-  {
-    return $this->name;
-  }
-  public function setTargetConfig($targetConfig)
-  {
-    $this->targetConfig = $targetConfig;
-  }
-  public function getTargetConfig()
-  {
-    return $this->targetConfig;
-  }
-}
-
-class Google_Service_Deploymentmanager_DeploymentmanagerResource extends Google_Collection
-{
-  protected $collection_key = 'errors';
-  protected $internal_gapi_mappings = array(
-  );
-  public $errors;
-  public $id;
-  public $intent;
-  public $manifest;
-  public $name;
-  public $state;
-  public $type;
-  public $url;
-
-
-  public function setErrors($errors)
-  {
-    $this->errors = $errors;
-  }
-  public function getErrors()
-  {
-    return $this->errors;
+    return $this->fingerprint;
   }
   public function setId($id)
   {
@@ -651,6 +724,14 @@ class Google_Service_Deploymentmanager_DeploymentmanagerResource extends Google_
   public function getId()
   {
     return $this->id;
+  }
+  public function setInsertTime($insertTime)
+  {
+    $this->insertTime = $insertTime;
+  }
+  public function getInsertTime()
+  {
+    return $this->insertTime;
   }
   public function setIntent($intent)
   {
@@ -684,6 +765,124 @@ class Google_Service_Deploymentmanager_DeploymentmanagerResource extends Google_
   {
     return $this->state;
   }
+  public function setTarget(Google_Service_DeploymentManager_TargetConfiguration $target)
+  {
+    $this->target = $target;
+  }
+  public function getTarget()
+  {
+    return $this->target;
+  }
+  public function setUpdate(Google_Service_DeploymentManager_DeploymentUpdate $update)
+  {
+    $this->update = $update;
+  }
+  public function getUpdate()
+  {
+    return $this->update;
+  }
+  public function setUpdateTime($updateTime)
+  {
+    $this->updateTime = $updateTime;
+  }
+  public function getUpdateTime()
+  {
+    return $this->updateTime;
+  }
+}
+
+class Google_Service_DeploymentManager_DeploymentUpdate extends Google_Collection
+{
+  protected $collection_key = 'errors';
+  protected $internal_gapi_mappings = array(
+  );
+  public $errors;
+  public $manifest;
+
+
+  public function setErrors($errors)
+  {
+    $this->errors = $errors;
+  }
+  public function getErrors()
+  {
+    return $this->errors;
+  }
+  public function setManifest($manifest)
+  {
+    $this->manifest = $manifest;
+  }
+  public function getManifest()
+  {
+    return $this->manifest;
+  }
+}
+
+class Google_Service_DeploymentManager_DeploymentmanagerResource extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $finalProperties;
+  public $id;
+  public $insertTime;
+  public $manifest;
+  public $name;
+  public $properties;
+  public $type;
+  protected $updateType = 'Google_Service_DeploymentManager_ResourceUpdate';
+  protected $updateDataType = '';
+  public $updateTime;
+  public $url;
+
+
+  public function setFinalProperties($finalProperties)
+  {
+    $this->finalProperties = $finalProperties;
+  }
+  public function getFinalProperties()
+  {
+    return $this->finalProperties;
+  }
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setInsertTime($insertTime)
+  {
+    $this->insertTime = $insertTime;
+  }
+  public function getInsertTime()
+  {
+    return $this->insertTime;
+  }
+  public function setManifest($manifest)
+  {
+    $this->manifest = $manifest;
+  }
+  public function getManifest()
+  {
+    return $this->manifest;
+  }
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  public function getName()
+  {
+    return $this->name;
+  }
+  public function setProperties($properties)
+  {
+    $this->properties = $properties;
+  }
+  public function getProperties()
+  {
+    return $this->properties;
+  }
   public function setType($type)
   {
     $this->type = $type;
@@ -691,6 +890,22 @@ class Google_Service_Deploymentmanager_DeploymentmanagerResource extends Google_
   public function getType()
   {
     return $this->type;
+  }
+  public function setUpdate(Google_Service_DeploymentManager_ResourceUpdate $update)
+  {
+    $this->update = $update;
+  }
+  public function getUpdate()
+  {
+    return $this->update;
+  }
+  public function setUpdateTime($updateTime)
+  {
+    $this->updateTime = $updateTime;
+  }
+  public function getUpdateTime()
+  {
+    return $this->updateTime;
   }
   public function setUrl($url)
   {
@@ -702,12 +917,12 @@ class Google_Service_Deploymentmanager_DeploymentmanagerResource extends Google_
   }
 }
 
-class Google_Service_Deploymentmanager_DeploymentsListResponse extends Google_Collection
+class Google_Service_DeploymentManager_DeploymentsListResponse extends Google_Collection
 {
   protected $collection_key = 'deployments';
   protected $internal_gapi_mappings = array(
   );
-  protected $deploymentsType = 'Google_Service_Deploymentmanager_Deployment';
+  protected $deploymentsType = 'Google_Service_DeploymentManager_Deployment';
   protected $deploymentsDataType = 'array';
   public $nextPageToken;
 
@@ -730,13 +945,44 @@ class Google_Service_Deploymentmanager_DeploymentsListResponse extends Google_Co
   }
 }
 
-class Google_Service_Deploymentmanager_Manifest extends Google_Model
+class Google_Service_DeploymentManager_ImportFile extends Google_Model
 {
+  protected $internal_gapi_mappings = array(
+  );
+  public $content;
+  public $name;
+
+
+  public function setContent($content)
+  {
+    $this->content = $content;
+  }
+  public function getContent()
+  {
+    return $this->content;
+  }
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  public function getName()
+  {
+    return $this->name;
+  }
+}
+
+class Google_Service_DeploymentManager_Manifest extends Google_Collection
+{
+  protected $collection_key = 'imports';
   protected $internal_gapi_mappings = array(
   );
   public $config;
   public $evaluatedConfig;
   public $id;
+  protected $importsType = 'Google_Service_DeploymentManager_ImportFile';
+  protected $importsDataType = 'array';
+  public $insertTime;
+  public $layout;
   public $name;
   public $selfLink;
 
@@ -765,6 +1011,30 @@ class Google_Service_Deploymentmanager_Manifest extends Google_Model
   {
     return $this->id;
   }
+  public function setImports($imports)
+  {
+    $this->imports = $imports;
+  }
+  public function getImports()
+  {
+    return $this->imports;
+  }
+  public function setInsertTime($insertTime)
+  {
+    $this->insertTime = $insertTime;
+  }
+  public function getInsertTime()
+  {
+    return $this->insertTime;
+  }
+  public function setLayout($layout)
+  {
+    $this->layout = $layout;
+  }
+  public function getLayout()
+  {
+    return $this->layout;
+  }
   public function setName($name)
   {
     $this->name = $name;
@@ -783,12 +1053,12 @@ class Google_Service_Deploymentmanager_Manifest extends Google_Model
   }
 }
 
-class Google_Service_Deploymentmanager_ManifestsListResponse extends Google_Collection
+class Google_Service_DeploymentManager_ManifestsListResponse extends Google_Collection
 {
   protected $collection_key = 'manifests';
   protected $internal_gapi_mappings = array(
   );
-  protected $manifestsType = 'Google_Service_Deploymentmanager_Manifest';
+  protected $manifestsType = 'Google_Service_DeploymentManager_Manifest';
   protected $manifestsDataType = 'array';
   public $nextPageToken;
 
@@ -811,22 +1081,25 @@ class Google_Service_Deploymentmanager_ManifestsListResponse extends Google_Coll
   }
 }
 
-class Google_Service_Deploymentmanager_Operation extends Google_Collection
+class Google_Service_DeploymentManager_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
   protected $internal_gapi_mappings = array(
   );
+  public $clientOperationId;
   public $creationTimestamp;
   public $endTime;
-  protected $errorType = 'Google_Service_Deploymentmanager_OperationError';
+  protected $errorType = 'Google_Service_DeploymentManager_OperationError';
   protected $errorDataType = '';
   public $httpErrorMessage;
   public $httpErrorStatusCode;
   public $id;
   public $insertTime;
+  public $kind;
   public $name;
   public $operationType;
   public $progress;
+  public $region;
   public $selfLink;
   public $startTime;
   public $status;
@@ -834,10 +1107,19 @@ class Google_Service_Deploymentmanager_Operation extends Google_Collection
   public $targetId;
   public $targetLink;
   public $user;
-  protected $warningsType = 'Google_Service_Deploymentmanager_OperationWarnings';
+  protected $warningsType = 'Google_Service_DeploymentManager_OperationWarnings';
   protected $warningsDataType = 'array';
+  public $zone;
 
 
+  public function setClientOperationId($clientOperationId)
+  {
+    $this->clientOperationId = $clientOperationId;
+  }
+  public function getClientOperationId()
+  {
+    return $this->clientOperationId;
+  }
   public function setCreationTimestamp($creationTimestamp)
   {
     $this->creationTimestamp = $creationTimestamp;
@@ -854,7 +1136,7 @@ class Google_Service_Deploymentmanager_Operation extends Google_Collection
   {
     return $this->endTime;
   }
-  public function setError(Google_Service_Deploymentmanager_OperationError $error)
+  public function setError(Google_Service_DeploymentManager_OperationError $error)
   {
     $this->error = $error;
   }
@@ -894,6 +1176,14 @@ class Google_Service_Deploymentmanager_Operation extends Google_Collection
   {
     return $this->insertTime;
   }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
   public function setName($name)
   {
     $this->name = $name;
@@ -917,6 +1207,14 @@ class Google_Service_Deploymentmanager_Operation extends Google_Collection
   public function getProgress()
   {
     return $this->progress;
+  }
+  public function setRegion($region)
+  {
+    $this->region = $region;
+  }
+  public function getRegion()
+  {
+    return $this->region;
   }
   public function setSelfLink($selfLink)
   {
@@ -982,14 +1280,22 @@ class Google_Service_Deploymentmanager_Operation extends Google_Collection
   {
     return $this->warnings;
   }
+  public function setZone($zone)
+  {
+    $this->zone = $zone;
+  }
+  public function getZone()
+  {
+    return $this->zone;
+  }
 }
 
-class Google_Service_Deploymentmanager_OperationError extends Google_Collection
+class Google_Service_DeploymentManager_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
   protected $internal_gapi_mappings = array(
   );
-  protected $errorsType = 'Google_Service_Deploymentmanager_OperationErrorErrors';
+  protected $errorsType = 'Google_Service_DeploymentManager_OperationErrorErrors';
   protected $errorsDataType = 'array';
 
 
@@ -1003,7 +1309,7 @@ class Google_Service_Deploymentmanager_OperationError extends Google_Collection
   }
 }
 
-class Google_Service_Deploymentmanager_OperationErrorErrors extends Google_Model
+class Google_Service_DeploymentManager_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
   );
@@ -1038,13 +1344,13 @@ class Google_Service_Deploymentmanager_OperationErrorErrors extends Google_Model
   }
 }
 
-class Google_Service_Deploymentmanager_OperationWarnings extends Google_Collection
+class Google_Service_DeploymentManager_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
   protected $internal_gapi_mappings = array(
   );
   public $code;
-  protected $dataType = 'Google_Service_Deploymentmanager_OperationWarningsData';
+  protected $dataType = 'Google_Service_DeploymentManager_OperationWarningsData';
   protected $dataDataType = 'array';
   public $message;
 
@@ -1075,7 +1381,7 @@ class Google_Service_Deploymentmanager_OperationWarnings extends Google_Collecti
   }
 }
 
-class Google_Service_Deploymentmanager_OperationWarningsData extends Google_Model
+class Google_Service_DeploymentManager_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
   );
@@ -1101,13 +1407,13 @@ class Google_Service_Deploymentmanager_OperationWarningsData extends Google_Mode
   }
 }
 
-class Google_Service_Deploymentmanager_OperationsListResponse extends Google_Collection
+class Google_Service_DeploymentManager_OperationsListResponse extends Google_Collection
 {
   protected $collection_key = 'operations';
   protected $internal_gapi_mappings = array(
   );
   public $nextPageToken;
-  protected $operationsType = 'Google_Service_Deploymentmanager_Operation';
+  protected $operationsType = 'Google_Service_DeploymentManager_Operation';
   protected $operationsDataType = 'array';
 
 
@@ -1129,13 +1435,76 @@ class Google_Service_Deploymentmanager_OperationsListResponse extends Google_Col
   }
 }
 
-class Google_Service_Deploymentmanager_ResourcesListResponse extends Google_Collection
+class Google_Service_DeploymentManager_ResourceUpdate extends Google_Collection
+{
+  protected $collection_key = 'errors';
+  protected $internal_gapi_mappings = array(
+  );
+  public $errors;
+  public $finalProperties;
+  public $intent;
+  public $manifest;
+  public $properties;
+  public $state;
+
+
+  public function setErrors($errors)
+  {
+    $this->errors = $errors;
+  }
+  public function getErrors()
+  {
+    return $this->errors;
+  }
+  public function setFinalProperties($finalProperties)
+  {
+    $this->finalProperties = $finalProperties;
+  }
+  public function getFinalProperties()
+  {
+    return $this->finalProperties;
+  }
+  public function setIntent($intent)
+  {
+    $this->intent = $intent;
+  }
+  public function getIntent()
+  {
+    return $this->intent;
+  }
+  public function setManifest($manifest)
+  {
+    $this->manifest = $manifest;
+  }
+  public function getManifest()
+  {
+    return $this->manifest;
+  }
+  public function setProperties($properties)
+  {
+    $this->properties = $properties;
+  }
+  public function getProperties()
+  {
+    return $this->properties;
+  }
+  public function setState($state)
+  {
+    $this->state = $state;
+  }
+  public function getState()
+  {
+    return $this->state;
+  }
+}
+
+class Google_Service_DeploymentManager_ResourcesListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
   protected $internal_gapi_mappings = array(
   );
   public $nextPageToken;
-  protected $resourcesType = 'Google_Service_Deploymentmanager_DeploymentmanagerResource';
+  protected $resourcesType = 'Google_Service_DeploymentManager_DeploymentmanagerResource';
   protected $resourcesDataType = 'array';
 
 
@@ -1157,7 +1526,35 @@ class Google_Service_Deploymentmanager_ResourcesListResponse extends Google_Coll
   }
 }
 
-class Google_Service_Deploymentmanager_Type extends Google_Model
+class Google_Service_DeploymentManager_TargetConfiguration extends Google_Collection
+{
+  protected $collection_key = 'imports';
+  protected $internal_gapi_mappings = array(
+  );
+  public $config;
+  protected $importsType = 'Google_Service_DeploymentManager_ImportFile';
+  protected $importsDataType = 'array';
+
+
+  public function setConfig($config)
+  {
+    $this->config = $config;
+  }
+  public function getConfig()
+  {
+    return $this->config;
+  }
+  public function setImports($imports)
+  {
+    $this->imports = $imports;
+  }
+  public function getImports()
+  {
+    return $this->imports;
+  }
+}
+
+class Google_Service_DeploymentManager_Type extends Google_Model
 {
   protected $internal_gapi_mappings = array(
   );
@@ -1174,15 +1571,24 @@ class Google_Service_Deploymentmanager_Type extends Google_Model
   }
 }
 
-class Google_Service_Deploymentmanager_TypesListResponse extends Google_Collection
+class Google_Service_DeploymentManager_TypesListResponse extends Google_Collection
 {
   protected $collection_key = 'types';
   protected $internal_gapi_mappings = array(
   );
-  protected $typesType = 'Google_Service_Deploymentmanager_Type';
+  public $nextPageToken;
+  protected $typesType = 'Google_Service_DeploymentManager_Type';
   protected $typesDataType = 'array';
 
 
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
   public function setTypes($types)
   {
     $this->types = $types;

@@ -16,7 +16,7 @@
  */
 
 if (!class_exists('Google_Client')) {
-  // pimcore modification: removed autoloader include
+  require_once dirname(__FILE__) . '/../autoload.php';
 }
 
 /**
@@ -72,7 +72,7 @@ class Google_Service_Resource
   }
 
   /**
-   * TODO(ianbarber): This function needs simplifying.
+   * TODO: This function needs simplifying.
    * @param $name
    * @param $arguments
    * @param $expected_class - optional, the expected class name
@@ -118,7 +118,7 @@ class Google_Service_Resource
       unset($parameters['postBody']);
     }
 
-    // TODO(ianbarber): optParams here probably should have been
+    // TODO: optParams here probably should have been
     // handled already - this may well be redundant code.
     if (isset($parameters['optParams'])) {
       $optParams = $parameters['optParams'];
