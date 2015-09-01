@@ -634,9 +634,6 @@ class Concrete extends AbstractObject {
     {
         parent::__clone();
 
-        foreach($this->getLazyLoadedFields() as $field)
-        {
-            $this->{'get' . $field}();
-        }
+        Service::loadAllObjectFields($this);
     }
 }
