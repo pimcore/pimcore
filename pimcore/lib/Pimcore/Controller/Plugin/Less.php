@@ -70,45 +70,9 @@ class Less extends \Zend_Controller_Plugin_Abstract {
 
             include_once("simple_html_dom.php");
 
-            if($this->getRequest()->getParam("pimcore_editmode")) {
-                $this->editmode();
-            } else {
-                $this->frontend();
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    protected function frontend () {
-
-        $body = $this->getResponse()->getBody();
-
-        $body = \Pimcore\Tool\Less::processHtml($body);
-
-        $this->getResponse()->setBody($body);
-    }
-
-    /**
-     *
-     */
-    protected function editmode () {
-        $body = $this->getResponse()->getBody();
-        $body = \Pimcore\Tool\Less::processHtml($body);
-        $html = str_get_html($body);
-
-        if($html) {
-            $head = $html->find("head",0);
-            if($head) {
-                $head->innertext = $head->innertext . "\n" . '<script type="text/javascript">var less = {"env": "development"};</script><script type="text/javascript" src="/pimcore/static/js/lib/less.js"></script>'."\n";
-
-                $body = $html->save();
-                $this->getResponse()->setBody($body);
-            }
-
-            $html->clear();
-            unset($html);
+            $body = $this->getResponse()->getBody();
+            $body = \Pimcore\Tool\Less::processHtml($body);
+            $this->getResponse()->setBody($body);
         }
     }
 }
