@@ -95,7 +95,7 @@ class Less extends \Zend_Controller_Plugin_Abstract {
      */
     protected function editmode () {
         $body = $this->getResponse()->getBody();
-
+        $body = \Pimcore\Tool\Less::processHtml($body);
         $html = str_get_html($body);
 
         if($html) {
