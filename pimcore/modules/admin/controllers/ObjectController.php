@@ -1195,9 +1195,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
     public function previewVersionAction()
     {
+        Pimcore\Model\Object\AbstractObject::setDoNotRestoreKeyAndPath(true);
+
         $id = intval($this->getParam("id"));
         $version = Model\Version::getById($id);
         $object = $version->loadData();
+
+        Pimcore\Model\Object\AbstractObject::setDoNotRestoreKeyAndPath(false);
 
         if($object) {
             if ($object->isAllowed("versions")) {
@@ -1213,6 +1217,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     public function diffVersionsAction()
     {
 
+        Pimcore\Model\Object\AbstractObject::setDoNotRestoreKeyAndPath(true);
+
         $id1 = intval($this->getParam("from"));
         $id2 = intval($this->getParam("to"));
 
@@ -1221,6 +1227,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         $version2 = Model\Version::getById($id2);
         $object2 = $version2->loadData();
+
+        Pimcore\Model\Object\AbstractObject::setDoNotRestoreKeyAndPath(false);
 
         if($object1 && $object2) {
             if ($object1->isAllowed("versions") && $object2->isAllowed("versions")) {

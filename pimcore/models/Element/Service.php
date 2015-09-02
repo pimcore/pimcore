@@ -543,7 +543,9 @@ class Service extends Model\AbstractModel {
                             $data->setKey($originalElement->getKey());
                         }
 
-                        $data->setPath($originalElement->getPath());
+                        if (!Object\AbstractObject::doNotRestoreKeyAndPath()) {
+                            $data->setPath($originalElement->getPath());
+                        }
                     }
                 }
 

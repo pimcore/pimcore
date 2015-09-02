@@ -18,14 +18,16 @@
 namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
-use Pimcore\Model\Cache; 
-use Pimcore\Tool; 
+use Pimcore\Model\Cache;
+use Pimcore\Tool;
 
 class AbstractObject extends Model\Element\AbstractElement {
 
     const OBJECT_TYPE_FOLDER = "folder";
     const OBJECT_TYPE_OBJECT = "object";
     const OBJECT_TYPE_VARIANT = "variant";
+
+    static $doNotRestoreKeyAndPath = false;
 
     /**
      * possible types of a document
@@ -544,13 +546,13 @@ class AbstractObject extends Model\Element\AbstractElement {
         $maxRetries = 5;
         for($retries=0; $retries<$maxRetries; $retries++) {
 
+            // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+            $hideUnpublishedBackup = self::getHideUnpublished();
+            self::setHideUnpublished(false);
+
             $this->beginTransaction();
 
             try {
-                // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
-                $hideUnpublishedBackup = self::getHideUnpublished();
-                self::setHideUnpublished(false);
-
                 if(!Tool::isValidKey($this->getKey()) && $this->getId() != 1){
                     throw new \Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
                 }
@@ -593,6 +595,9 @@ class AbstractObject extends Model\Element\AbstractElement {
                     // PDO adapter throws exceptions if rollback fails
                     \Logger::info($er);
                 }
+
+                // set "HideUnpublished" back to the value it was originally
+                self::setHideUnpublished($hideUnpublishedBackup);
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
@@ -1054,7 +1059,7 @@ class AbstractObject extends Model\Element\AbstractElement {
      *
      */
     public function __wakeup() {
-        if(isset($this->_fulldump)) {
+        if(isset($this->_fulldump) && !self::$doNotRestoreKeyAndPath) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = AbstractObject::getById($this->getId());
             if($originalElement) {
@@ -1126,4 +1131,22 @@ class AbstractObject extends Model\Element\AbstractElement {
 
         return parent::__call($method, $args);
     }
+
+    /**
+     * @return boolean
+     */
+    public static function doNotRestoreKeyAndPath()
+    {
+        return self::$doNotRestoreKeyAndPath;
+    }
+
+    /**
+     * @param boolean $doNotRestoreKeyAndPath
+     */
+    public static function setDoNotRestoreKeyAndPath($doNotRestoreKeyAndPath)
+    {
+        self::$doNotRestoreKeyAndPath = $doNotRestoreKeyAndPath;
+    }
+
+
 }

@@ -95,13 +95,17 @@ trait Wrapper {
             $childs = array();
 
             if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $childs = parent::getChilds();
-                foreach($childs as &$c) {
+                foreach(parent::getChilds() as $c) {
                     $sourceDocument = $c;
                     $c = Service::wrap($c);
-                    $c->setHardLinkSource($hardLink);
-                    $c->setSourceDocument($sourceDocument);
-                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
+
+                    if($c) {
+                        $c->setHardLinkSource($hardLink);
+                        $c->setSourceDocument($sourceDocument);
+                        $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
+
+                        $childs[] = $c;
+                    }
                 }
             }
 

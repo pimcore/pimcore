@@ -44,21 +44,25 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $language = $this->getParam("language");
 
-        $languageFile = Tool\Admin::getLanguageFile($language);
-        if (!is_file($languageFile)) {
-            $languageFile = Tool\Admin::getLanguageFile("en");
-        }
+        $languageFiles = [
+            $language => Tool\Admin::getLanguageFile($language),
+            "en" => Tool\Admin::getLanguageFile("en")
+        ];
 
-        $row = 1;
-        $handle = fopen($languageFile, "r");
-        while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
-            $translations[$data[0]] = $data[1];
+        $translations = [];
+        foreach($languageFiles as $langKey => $languageFile) {
+            if(file_exists($languageFile)) {
+                $rawTranslations = json_decode(file_get_contents($languageFile), true);
+                foreach ($rawTranslations as $entry) {
+                    if(!isset($translations[$entry["term"]])) {
+                        $translations[$entry["term"]] = $entry["definition"];
+                    }
+                }
+            }
         }
-        fclose($handle);
 
         $broker = \Pimcore\API\Plugin\Broker::getInstance();
         $pluginTranslations = $broker->getTranslations($language);
-        //$pluginTranslations = $this->getApiPluginBroker()->getTranslations($language);
         $translations = array_merge($pluginTranslations, $translations);
 
         $this->view->translations = $translations;
@@ -294,7 +298,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     private function getFileexplorerPath($paramName = 'node')
     {
         $path = preg_replace("/^\/fileexplorer/", "", $this->getParam($paramName));
-        $path = realpath(PIMCORE_DOCUMENT_ROOT . $path);
+        $path = resolvePath(PIMCORE_DOCUMENT_ROOT . $path);
 
         if (strpos($path, PIMCORE_DOCUMENT_ROOT) !== 0) {
             throw new \Exception('operation permitted, permission denied');

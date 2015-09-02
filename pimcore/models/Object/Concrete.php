@@ -624,4 +624,16 @@ class Concrete extends AbstractObject {
             $this->localizedfields->setObject($this);
         }
     }
+
+
+    /**
+     * load lazy loaded fields before cloning
+     * @return void
+     */
+    public function __clone()
+    {
+        parent::__clone();
+
+        Service::loadAllObjectFields($this);
+    }
 }

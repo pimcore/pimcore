@@ -137,6 +137,15 @@ class Translate extends \Zend_Translate_Adapter {
             $locale = $this->_options['locale'];
         }
 
+        // check if the given locale is available, if not try again just the language without the region
+        if(!Tool::isValidLanguage($locale)) {
+            $originalLocale = new \Zend_Locale((string) $locale);
+            if(Tool::isValidLanguage($originalLocale->getLanguage())) {
+                $locale = $originalLocale->getLanguage();
+                $this->setLocale($locale);
+            }
+        }
+
         // list isn't cacheable, just get a single item
         if(!$this->isCacheable) {
             $backend = self::getBackend();

@@ -73,10 +73,10 @@ class Resource extends Model\Element\Resource
      */
     public function create()
     {
-        $this->db->insert("objects", array(
+        $this->db->insert("objects", [
             "o_key" => $this->model->getKey(),
             "o_path" => $this->model->getPath()
-        ));
+        ]);
         $this->model->setId($this->db->lastInsertId());
 
         if (!$this->model->getKey() && !is_numeric($this->model->getKey())) {
@@ -85,9 +85,8 @@ class Resource extends Model\Element\Resource
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
+     * @throws \Zend_Db_Adapter_Exception
      */
     public function update()
     {
@@ -101,6 +100,15 @@ class Resource extends Model\Element\Resource
                     $value = (int)$value;
                 }
                 $data[$key] = $value;
+            }
+        }
+
+        // check the type before updating, changing the type or class of an object is not possible
+        $checkColumns = ["o_type","o_classId","o_className"];
+        $existingData = $this->db->fetchRow("SELECT " . implode(",", $checkColumns) . " FROM objects WHERE o_id = ?", [$this->model->getId()]);
+        foreach($checkColumns as $column) {
+            if(!empty($existingData[$column]) && $data[$column] != $existingData[$column]) {
+                throw new \Exception("Unable to save object: type, classId or className mismatch");
             }
         }
 

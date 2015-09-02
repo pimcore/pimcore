@@ -331,14 +331,6 @@ pimcore.layout.toolbar = Class.create({
             });
 
             extrasItems.push({
-                text: t("language_download"),
-                iconCls: "pimcore_icon_languages",
-                handler: function () {
-                    var update = new pimcore.settings.languages();
-                }
-            });
-
-            extrasItems.push({
                 text: t("maintenance_mode"),
                 iconCls: "pimcore_icon_maintenance",
                 handler: this.showMaintenance

@@ -107,6 +107,7 @@ class Resource extends Model\Listing\Resource\AbstractResource {
             $query->reset( \Zend_Db_Select::LIMIT_COUNT );
         }
 
+        return (int)$this->totalCount;
     }
 
 

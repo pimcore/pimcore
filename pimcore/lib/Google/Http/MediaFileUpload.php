@@ -16,7 +16,7 @@
  */
 
 if (!class_exists('Google_Client')) {
-  // pimcore modification: removed autoloader include
+  require_once dirname(__FILE__) . '/../autoload.php';
 }
 
 /**
@@ -287,7 +287,7 @@ class Google_Http_MediaFileUpload
     }
     $message = $code;
     $body = @json_decode($response->getResponseBody());
-    if (!empty( $body->error->errors ) ) {
+    if (!empty($body->error->errors) ) {
       $message .= ': ';
       foreach ($body->error->errors as $error) {
         $message .= "{$error->domain}, {$error->message};";

@@ -20,7 +20,7 @@
  */
 
 if (!class_exists('Google_Client')) {
-  // pimcore modification: removed autoloader include
+  require_once dirname(__FILE__) . '/../autoload.php';
 }
 
 abstract class Google_IO_Abstract

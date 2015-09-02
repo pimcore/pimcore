@@ -25,6 +25,11 @@ class Tool {
     protected static $notFoundClassNames = [];
 
     /**
+     * @var array
+     */
+    protected static $validLanguages = [];
+
+    /**
      * @static
      * @param string $key
      * @return bool
@@ -69,21 +74,25 @@ class Tool {
      */
     public static function getValidLanguages() {
 
-        $config = Config::getSystemConfig();
-        $validLanguages = strval($config->general->validLanguages);
+        if(empty(self::$validLanguages)) {
+            $config = Config::getSystemConfig();
+            $validLanguages = strval($config->general->validLanguages);
 
-        if (empty($validLanguages)) {
-            return array();
+            if (empty($validLanguages)) {
+                return array();
+            }
+
+            $validLanguages = str_replace(" ", "", $validLanguages);
+            $languages = explode(",", $validLanguages);
+
+            if (!is_array($languages)) {
+                $languages = array();
+            }
+
+            self::$validLanguages = $languages;
         }
 
-        $validLanguages = str_replace(" ", "", $validLanguages);
-        $languages = explode(",", $validLanguages);
-
-        if (!is_array($languages)) {
-            $languages = array();
-        }
-
-        return $languages;
+        return self::$validLanguages;
     }
 
     /**
