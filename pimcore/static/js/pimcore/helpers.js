@@ -302,10 +302,29 @@ pimcore.helpers.getElementTypeByObject = function (object) {
     return type;
 };
 
-pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
+pimcore.helpers.getNodeCopiesInCustomviews = function(nodeId) {
+    var nodeCopies = [];
+
+    for (var i = 0; i < pimcore.settings.customviews.length; i++) {
+        var customview = pimcore.settings.customviews[i];
+        // check whether customview tree exists
+        if (!pimcore.globalmanager.get("layout_customview_tree_" + customview.id).tree) continue;
+        var node = pimcore.globalmanager.get("layout_customview_tree_" + customview.id).tree.getNodeById(nodeId);
+        if (node) nodeCopies[customview.id] = node;
+    }
+
+    return nodeCopies;
+}
+
+pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id, cvTreeId) {
     // display loading indicator on treenode
     try {
-        var tree = pimcore.globalmanager.get("layout_" + type + "_tree");
+        var tree = null;
+        if (type == "customview" && cvTreeId) {
+            tree = pimcore.globalmanager.get("layout_" + type + "_tree_" + cvTreeId);
+        } else {
+            tree = pimcore.globalmanager.get("layout_" + type + "_tree");
+        }
         var node = tree.tree.getNodeById(id);
         if (node) {
 
@@ -323,10 +342,15 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
     }
 };
 
-pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
+pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id, cvTreeId) {
     // remove loading indicator on treenode
     try {
-        var tree = pimcore.globalmanager.get("layout_" + type + "_tree");
+        var tree = null;
+        if (type == "customview" && cvTreeId) {
+            tree = pimcore.globalmanager.get("layout_" + type + "_tree_" + cvTreeId);
+        } else {
+            tree = pimcore.globalmanager.get("layout_" + type + "_tree");
+        }
         var node = tree.tree.getNodeById(id);
 
         if (node.originalIconSrc) {
@@ -917,11 +941,18 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
     if (button == "ok" && r.deletejobs) {
 
         var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
+        var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
         pimcore.helpers.addTreeNodeLoadingIndicator("object", id);
 
         if(node) {
             node.getUI().addClass("pimcore_delete");
         }
+        for(var customviewId in nodeCopies) {
+            if (!nodeCopies.hasOwnProperty(customviewId)) continue;
+            pimcore.helpers.addTreeNodeLoadingIndicator("customview", id, customviewId);
+            nodeCopies[customviewId].getUI().addClass("pimcore_delete");
+        }
+
         /*this.originalClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
          Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
 
@@ -955,9 +986,17 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
             success: function (id, callback) {
 
                 var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
+                var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
+                var customviewId = null;
                 try {
                     if(node) {
                         node.getUI().removeClass("pimcore_delete");
+                    }
+                    for(customviewId in nodeCopies) {
+                        if (!nodeCopies.hasOwnProperty(customviewId)) continue;
+                        nodeCopies[customviewId].getUI().removeClass("pimcore_delete");
+                        pimcore.helpers.addTreeNodeLoadingIndicator("customview", id, customviewId);
+                        nodeCopies[customviewId].remove();
                     }
                     //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
                     pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
@@ -970,6 +1009,10 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
                     pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error");
                     if(node) {
                         node.parentNode.reload();
+                    }
+                    for(customviewId in nodeCopies) {
+                        if (!nodeCopies.hasOwnProperty(customviewId)) continue;
+                        nodeCopies[customviewId].parentNode.reload();
                     }
                 }
 
@@ -996,8 +1039,13 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
                 pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error", t(message));
 
                 var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
+                var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
                 if(node) {
                     node.parentNode.reload();
+                }
+                for(var customviewId in nodeCopies) {
+                    if (!nodeCopies.hasOwnProperty(customviewId)) continue;
+                    nodeCopies[customviewId].parentNode.reload();
                 }
             }.bind(this, id),
             jobs: r.deletejobs
