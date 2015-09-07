@@ -99,19 +99,12 @@ pimcore.object.tree = Class.create({
             region: "center",
             autoLoad: false,
             iconCls: this.config.treeIconCls,
-            //useArrows: true,
             id: this.config.treeId,
             title: this.config.treeTitle,
-            //iconCls: this.config.treeIconCls,
             autoScroll: true,
             animate: true,
-            //enableDD: true,
-            //ddAppendOnly: true,
-
-            //containerScroll: true,
-            //rootVisible: this.config.rootVisible,
             rootVisible: true,
-            border: true,
+            border: false,
             listeners: this.getTreeNodeListeners(),
             viewConfig: {
                 plugins: {

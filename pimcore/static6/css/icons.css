@@ -119,51 +119,51 @@
 /* assets */
 
 .pimcore_icon_doc, .pimcore_icon_docx {
-    background: url(/pimcore/static/img/icon/page_word.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_word.png) left center no-repeat !important;
 }
 
 .pimcore_icon_zip, .pimcore_icon_rar, .pimcore_icon_ace, .pimcore_icon_7z, .pimcore_icon_gz, .pimcore_icon_tar {
-    background: url(/pimcore/static/img/icon/box.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/box.png) left center no-repeat !important;
 }
 
 .pimcore_icon_sql, .pimcore_icon_mdb {
-    background: url(/pimcore/static/img/icon/database.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/database.png) left center no-repeat !important;
 }
 
 .pimcore_icon_swf, .pimcore_icon_fla {
-    background: url(/pimcore/static/img/icon/page_white_flash.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_white_flash.png) left center no-repeat !important;
 }
 
 .pimcore_icon_jpeg, .pimcore_icon_jpg, .pimcore_icon_png, .pimcore_icon_gif, .pimcore_icon_tif, .pimcore_icon_psd, .pimcore_icon_eps, .pimcore_icon_ai, .pimcore_icon_svg, .pimcore_icon_svgz, .pimcore_icon_bmp, .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf {
-    background: url(/pimcore/static/img/icon/picture.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/picture.png) left center no-repeat !important;
 }
 
 .pimcore_icon_pdf {
-    background: url(/pimcore/static/img/icon/page_white_acrobat.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_white_acrobat.png) left center no-repeat !important;
 }
 
 .pimcore_icon_eps {
-    background: url(/pimcore/static/img/icon/page_white_paint.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_white_paint.png) left center no-repeat !important;
 }
 
 .pimcore_icon_svg {
-    background: url(/pimcore/static/img/icon/script_code_red.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/script_code_red.png) left center no-repeat !important;
 }
 
 .pimcore_icon_php, .pimcore_icon_phps, .pimcore_icon_php4, .pimcore_icon_php5 .pimcore_icon_php3 {
-    background: url(/pimcore/static/img/icon/page_white_php.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_white_php.png)  left center no-repeat !important;
 }
 
 .pimcore_icon_xls, .pimcore_icon_xlsx {
-    background: url(/pimcore/static/img/icon/page_white_excel.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_white_excel.png)  left center no-repeat !important;
 }
 
 .pimcore_icon_ppt, .pimcore_icon_pps, .pimcore_icon_ppsx, .pimcore_icon_pptx {
-    background: url(/pimcore/static/img/icon/page_white_powerpoint.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_white_powerpoint.png) left center no-repeat !important;
 }
 
 .pimcore_icon_txt, .pimcore_icon_log {
-    background: url(/pimcore/static/img/icon/page_white_text.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/page_white_text.png) left center no-repeat !important;
 }
 
 .pimcore_icon_html, .pimcore_icon_htm {
@@ -179,11 +179,11 @@
 }
 
 .pimcore_icon_js {
-    background: url(/pimcore/static/img/icon/script.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/script.png) left center no-repeat !important;
 }
 
 .pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv, .pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm {
-    background: url(/pimcore/static/img/icon/film.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/film.png) left center no-repeat !important;
 }
 
 

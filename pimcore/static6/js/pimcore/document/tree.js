@@ -110,12 +110,9 @@ pimcore.document.tree = Class.create({
             id: this.config.treeId,
             title: this.config.treeTitle,
             iconCls: this.config.treeIconCls,
-            useArrows:true,
             autoScroll:true,
             autoLoad: false,
             animate:true,
-            //enableDD:true,
-
             containerScroll: true,
             rootVisible: this.config.rootVisible,
             border: false,
