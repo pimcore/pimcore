@@ -1386,36 +1386,18 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $start = $this->getParam("start");
             }
 
-            $sortParam = $this->getParam("sort");
-            if (\Pimcore\Tool\Admin::isExtJS6()) {
-                if ($sortParam) {
-                    $sortParam = json_decode($sortParam, true);
-                    $sortParam = $sortParam[0];
-                    $orderKey = $sortParam["property"];
-                    $order = $sortParam["direction"];
 
-                    if (!(substr($orderKey, 0, 1) == "~")) {
-                        if (array_key_exists($orderKey, $colMappings)) {
-                            $orderKey = $colMappings[$orderKey];
-                        }
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+
+            if($sortingSettings['order']) {
+                $order = $sortingSettings['order'];
+            }
+            if (strlen($sortingSettings['orderKey']) > 0) {
+                $orderKey = $sortingSettings['orderKey'];
+                if (!(substr($orderKey, 0, 1) == "~")) {
+                    if (array_key_exists($orderKey, $colMappings)) {
+                        $orderKey = $colMappings[$orderKey];
                     }
-                }
-
-            } else {
-                if (strlen($sortParam) > 0) {
-                    if (!(substr($sortParam, 0, 1) == "~")) {
-                        if ($this->getParam("sort")) {
-                            if (array_key_exists($this->getParam("sort"), $colMappings)) {
-                                $orderKey = $colMappings[$this->getParam("sort")];
-                            } else {
-                                $orderKey = $this->getParam("sort");
-                            }
-                        }
-                    }
-                }
-
-                if ($this->getParam("dir")) {
-                    $order = $this->getParam("dir");
                 }
             }
 
