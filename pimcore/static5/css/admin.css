@@ -12,21 +12,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-body {
-    background: #fff;
-}
-
-#pimcore_loading {
-    margin: 0 auto;
-    width: 300px;
-    padding: 300px 0 0 0;
-    text-align: center;
-}
-
-#pimcore_loading .logo {
-    padding: 0 0 10px 0;
-}
-
 #pimcore_body {
     /*padding: 0 0 0 5px;*/
     padding-top: 10px !important;
@@ -1100,4 +1085,15 @@ span.warning {
 
 
 /* ExtJS 6.0 */
+
+#pimcore_panel_tabs > .x-tab-bar {
+    background: #222222;
+}
+
+.x-tab-default-top {
+    border-color: #3c3f41;
+    background-color: #3c3f41;
+}
+
+
 
