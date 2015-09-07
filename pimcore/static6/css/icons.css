@@ -107,7 +107,7 @@
 }
 
 .pimcore_icon_home, .pimcore_icon_site {
-    background: url(/pimcore/static/img/icon/home.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/home.png) left center no-repeat !important;
 }
 
 .pimcore_icon_reload {

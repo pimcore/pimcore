@@ -17,6 +17,7 @@
     padding-top: 10px !important;
     padding-right: 10px !important;
     padding-left: 70px !important;
+    padding-bottom: 20px !important;
     background: #222;
 }
 
@@ -1101,6 +1102,10 @@ span.warning {
     background-color: #d0d0d0;
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+.x-btn-icon .x-btn-icon-el {
+    background-size: contain !important;
 }
 
 
