@@ -528,8 +528,7 @@ Ext.onReady(function () {
                             hideMode:"offsets",
                             items:[]
                         }
-                    ],
-                    bbar:statusbar
+                    ]
                 }
             ],
             listeners:{
