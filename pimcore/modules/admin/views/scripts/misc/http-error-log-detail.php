@@ -41,19 +41,19 @@
 
 <body>
 
-<h2><?php echo $this->data["code"]; ?> | <?php echo $this->data["uri"]; ?></h2>
+<h2><?= $this->data["code"]; ?> | <?= $this->data["uri"]; ?></h2>
 
 <?php foreach ($this->data as $key => $value) { ?>
     <?php if(in_array($key, array("parametersGet", "parametersPost", "serverVars", "cookies"))) { ?>
 
         <?php if (!empty($value)) { ?>
-        <h2 class="sub"><?php echo $this->translate($key); ?></h2>
+        <h2 class="sub"><?= $this->translate($key); ?></h2>
 
         <table>
             <?php foreach ($value as $k => $v) { ?>
                 <tr>
-                    <th valign="top"><?php echo $k; ?></th>
-                    <td valign="top"><?php echo $v; ?></td>
+                    <th valign="top"><?= $k; ?></th>
+                    <td valign="top"><?= $v; ?></td>
                 </tr>
             <?php } ?>
         </table>

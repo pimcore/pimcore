@@ -9,10 +9,10 @@
 <script type="text/javascript">
 
     parent.setTimeout(function () {
-        this.pimcore.helpers.openAsset(<?php echo $this->asset->getId() ?>, "image");
+        this.pimcore.helpers.openAsset(<?= $this->asset->getId() ?>, "image");
     }.bind(parent), 1000);
 
-    parent.pimcore.helpers.closeAsset(<?php echo $this->asset->getId() ?>);
+    parent.pimcore.helpers.closeAsset(<?= $this->asset->getId() ?>);
 
 </script>
 </body>

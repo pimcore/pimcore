@@ -3,7 +3,7 @@
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js?_dc=<?php echo \Pimcore\Version::getVersion(); ?>"></script>
+    <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js?_dc=<?= \Pimcore\Version::getVersion(); ?>"></script>
 
     <style type="text/css">
 
@@ -76,7 +76,7 @@
 <body>
 
 <div id="frameContainer" class="iphone">
-    <iframe id="frame" name="frame" style="" onload="adjustZoom()" src="<?php echo $this->previewUrl; ?>"></iframe>
+    <iframe id="frame" name="frame" style="" onload="adjustZoom()" src="<?= $this->previewUrl; ?>"></iframe>
     <div id="background" onclick="flipToggle()"></div>
 </div>
 

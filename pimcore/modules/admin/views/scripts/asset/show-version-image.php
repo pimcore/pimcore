@@ -39,7 +39,7 @@
 <table id="wrapper" cellpadding="0" cellspacing="0" border="0">
     <tr>
         <td align="center">
-            <img src="<?php echo $thumbnail ?>"/>
+            <img src="<?= $thumbnail ?>"/>
         </td>
     </tr>
 </table>

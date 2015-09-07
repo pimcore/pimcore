@@ -21,8 +21,8 @@
     <?php foreach ($this->customviews as $cv) { ?>
     
     <?php if ($cv["icon"]) { ?>
-    .pimcore_object_customviews_icon_<?php echo $cv["id"]; ?> {
-        background: url(<?php echo $cv["icon"]; ?>) left center no-repeat !important;
+    .pimcore_object_customviews_icon_<?= $cv["id"]; ?> {
+        background: url(<?= $cv["icon"]; ?>) left center no-repeat !important;
     }
     <?php } ?> 
     

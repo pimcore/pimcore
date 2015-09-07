@@ -46,7 +46,7 @@ limitations under the License.
     <script type="text/javascript">
         PDFJS.imageResourcesPath = '/pimcore/static/js/lib/pdf.js/web/images/';
         PDFJS.workerSrc = '/pimcore/static/js/lib/pdf.js/build/pdf.worker.js';
-        DEFAULT_URL = '<?php echo $pdfPath; ?>';
+        DEFAULT_URL = '<?= $pdfPath; ?>';
         SETTINGS_MEMORY = 50;
     </script>
 

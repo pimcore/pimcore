@@ -27,20 +27,20 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     <tr class="system">
         <td>Date</td>
         <td>o_modificationDate</td>
-        <td><?php echo date('Y-m-d H:i:s', $this->object1->getModificationDate()); ?></td>
-        <td><?php echo date('Y-m-d H:i:s', $this->object2->getModificationDate()); ?></td>
+        <td><?= date('Y-m-d H:i:s', $this->object1->getModificationDate()); ?></td>
+        <td><?= date('Y-m-d H:i:s', $this->object2->getModificationDate()); ?></td>
     </tr>
     <tr class="system">
         <td>Path</td>
         <td>o_path</td>
-        <td><?php echo $this->object1->getFullpath(); ?></td>
-        <td><?php echo $this->object2->getFullpath(); ?></td>
+        <td><?= $this->object1->getFullpath(); ?></td>
+        <td><?= $this->object2->getFullpath(); ?></td>
     </tr>
     <tr class="system">
         <td>Published</td>
         <td>o_published</td>
-        <td><?php echo \Zend_Json::encode($this->object1->getPublished()); ?></td>
-        <td><?php echo \Zend_Json::encode($this->object2->getPublished()); ?></td>
+        <td><?= \Zend_Json::encode($this->object1->getPublished()); ?></td>
+        <td><?= \Zend_Json::encode($this->object2->getPublished()); ?></td>
     </tr>
 
     <tr class="">
@@ -59,10 +59,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                     $v2 = $lfd->getVersionPreview($this->object2->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
                 ?>
                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                    <td><?php echo $lfd->getTitle() ?> (<?php echo $language; ?>)</td>
-                    <td><?php echo $lfd->getName() ?></td>
-                    <td><?php echo $v1 ?></td>
-                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?php echo $v2 ?></td>
+                    <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>
+                    <td><?= $lfd->getName() ?></td>
+                    <td><?= $v1 ?></td>
+                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                 </tr>
                 <?php
                 $c++;
@@ -100,10 +100,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?php echo ucfirst($asAllowedType) . " - " . $lfd->getTitle() ?></td>
-                            <td><?php echo $lfd->getName() ?></td>
-                            <td><?php echo $v1 ?></td>
-                            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?php echo $v2 ?></td>
+                            <td><?= ucfirst($asAllowedType) . " - " . $lfd->getTitle() ?></td>
+                            <td><?= $lfd->getName() ?></td>
+                            <td><?= $v1 ?></td>
+                            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                         </tr>
                         <?php
                         $c++;
@@ -116,10 +116,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             $v2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
         ?>
         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-            <td><?php echo $definition->getTitle() ?></td>
-            <td><?php echo $definition->getName() ?></td>
-            <td><?php echo $v1 ?></td>
-            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?php echo $v2 ?></td>
+            <td><?= $definition->getTitle() ?></td>
+            <td><?= $definition->getName() ?></td>
+            <td><?= $v1 ?></td>
+            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
         </tr>
     <?php } ?>
     <?php $c++;

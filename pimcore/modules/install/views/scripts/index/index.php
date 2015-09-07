@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title><?php echo htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
+    <title><?= htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
 
 
     <!-- libraries and stylesheets -->
@@ -19,7 +19,7 @@
 <body>
 
 <script type="text/javascript">
-    var pimcore_version = "<?php echo \Pimcore\Version::getVersion() ?>";
+    var pimcore_version = "<?= \Pimcore\Version::getVersion() ?>";
 </script>
 
 <?php
@@ -35,13 +35,13 @@ $scripts = array(
 ?>
 
 <?php foreach ($scripts as $scriptUrl) { ?>
-<script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>"></script>
+<script type="text/javascript" src="/pimcore/static/js/<?= $scriptUrl ?>"></script>
 <?php } ?>
 
 
 <script type="text/javascript">
 
-    var errorMessages = '<?php echo implode("<br />", $this->errors) ?>';
+    var errorMessages = '<?= implode("<br />", $this->errors) ?>';
     var installdisabled = false;
 
     <?php if (!empty($this->errors)) { ?>

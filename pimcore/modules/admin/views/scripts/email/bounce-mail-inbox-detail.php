@@ -37,24 +37,24 @@
 
 <body>
 
-<h2><?php echo iconv(mb_detect_encoding($message->subject), "UTF-8", $this->message->subject); ?></h2>
+<h2><?= iconv(mb_detect_encoding($message->subject), "UTF-8", $this->message->subject); ?></h2>
 
 <table>
     <tr>
-        <th><?php echo $this->translate("from"); ?></th>
-        <td><?php echo $this->message->from; ?></td>
+        <th><?= $this->translate("from"); ?></th>
+        <td><?= $this->message->from; ?></td>
     </tr>
     <tr>
-        <th><?php echo $this->translate("to"); ?></th>
-        <td><?php echo $this->message->to; ?></td>
+        <th><?= $this->translate("to"); ?></th>
+        <td><?= $this->message->to; ?></td>
     </tr>
 </table>
 
-<h3><?php echo $this->translate("message_parts"); ?></h3>
+<h3><?= $this->translate("message_parts"); ?></h3>
 
 <?php if(!$this->message->isMultiPart()) { ?>
     <pre>
-        <?php echo iconv(mb_detect_encoding($this->message->getContent()), "UTF-8", $this->message->getContent()); ?>
+        <?= iconv(mb_detect_encoding($this->message->getContent()), "UTF-8", $this->message->getContent()); ?>
     </pre>
 <?php } else { ?>
     <?php

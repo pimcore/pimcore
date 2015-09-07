@@ -57,7 +57,7 @@
 
     <div>
         <h1>
-            <?php echo $this->translate("change_persona_to"); ?>:
+            <?= $this->translate("change_persona_to"); ?>:
         </h1>
 
         <ul>
@@ -67,7 +67,7 @@
         </ul>
 
         <h1>
-            <?php echo $this->translate("change_persona_to"); ?>:
+            <?= $this->translate("change_persona_to"); ?>:
         </h1>
 
         <pre id="json" class="source"></pre>
