@@ -292,7 +292,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             // get avatar
             $user = Pimcore_Model_User::getById( $note->getUser() );
             /* @var \Pimcore\Model\User $user */
-            $avatar = sprintf('/admin/user/get-image?id=%d', $user->getId());
+            $avatar = $user ? sprintf('/admin/user/get-image?id=%d', $user->getId()) : null;
 
 
             // group events
@@ -317,7 +317,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
                 , 'type' => $note->getTitle()
                 , 'date' => $date->setTimestamp( $note->getDate() )->get(Zend_Date::DATETIME_MEDIUM)
                 , 'avatar' => $avatar
-                , 'user' => $user->getName()
+                , 'user' => $user ? $user->getName() : null
                 , 'message' => $note->getData()['message']['data']
                 , 'title' => $title ?: $note->getTitle()
             ];

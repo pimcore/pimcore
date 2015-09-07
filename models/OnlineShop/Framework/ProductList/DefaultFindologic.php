@@ -641,6 +641,32 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
                 }
 
             }
+            else if($fieldname === 'cat')
+            {
+                $rec = function (array $items) use (&$rec, &$groups) {
+
+                    foreach($items as $item)
+                    {
+                        $groups[$item->name] = [
+                            'value' => $item->name
+                            , 'label' => $item->name
+                            , 'count' => $item->frequency
+                            , 'parameter' => $item->parameters
+                        ];
+
+                        if($item->items)
+                        {
+                            $list = is_array($item->items->item)
+                                ? $item->items->item
+                                : [$item->items->item]
+                            ;
+                            $rec( $list );
+                        }
+                    }
+                };
+
+                $rec($field->items->item);
+            }
 
             $hits = $field->items->item instanceof stdClass
                 ? [$field->items->item]
@@ -753,9 +779,11 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
 //        var_dump($params);
 
         // start request
+        $start = microtime(true);
         $client = new \Zend_Http_Client( $url );
         $client->setMethod(\Zend_Http_Client::GET);
         $response = $client->request();
+        $this->getLogger()->log('Duration: ' . number_format(microtime(true) - $start, 3), Zend_Log::INFO);
 
 
         if($response->getStatus() != 200)
