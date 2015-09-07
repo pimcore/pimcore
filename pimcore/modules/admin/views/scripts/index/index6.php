@@ -58,7 +58,7 @@
 <body>
 
 <div id="pimcore_logo" style="display: none;">
-    <img src="/pimcore/static5/img/logo.png"/>
+    <img src="/pimcore/static6/img/logo.png"/>
 </div>
 
 <div id="pimcore_loading">
@@ -89,13 +89,13 @@
 <?php // define stylesheets ?>
 <?php
 $styles = array(
-    "/admin/misc/admin-css?extjs5=1",
-    "/pimcore/static5/css/icons.css",
-    "/pimcore/static5/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-    "/pimcore/static5/js/lib/ext/packages/sencha-charts/build/classic/resources/sencha-charts-all-debug.css",
-    "/pimcore/static5/css/ext-admin-overwrite.css",
-    "/pimcore/static5/css/fontello.css",
-    "/pimcore/static5/css/admin.css"
+    "/admin/misc/admin-css?extjs6=1",
+    "/pimcore/static6/css/icons.css",
+    "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
+    "/pimcore/static6/js/lib/ext/packages/sencha-charts/build/classic/resources/sencha-charts-all-debug.css",
+    "/pimcore/static6/css/ext-admin-overwrite.css",
+    "/pimcore/static6/css/fontello.css",
+    "/pimcore/static6/css/admin.css"
 );
 ?>
 
@@ -568,7 +568,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 <!-- library scripts -->
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
-    <script type="text/javascript" src="/pimcore/static5/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script type="text/javascript" src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 
 
@@ -576,14 +576,14 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 <!-- internal scripts -->
 <?php if (PIMCORE_DEVMODE) { ?>
     <?php foreach ($scripts as $scriptUrl) { ?>
-    <script type="text/javascript" src="/pimcore/static5/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script type="text/javascript" src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 <?php } else { ?>
 <?php
 $scriptContents = "";
 foreach ($scripts as $scriptUrl) {
-    if(is_file(PIMCORE_PATH."/static5/js/".$scriptUrl)) {
-        $scriptContents .= file_get_contents(PIMCORE_PATH."/static5/js/".$scriptUrl) . "\n\n\n";
+    if(is_file(PIMCORE_PATH."/static6/js/".$scriptUrl)) {
+        $scriptContents .= file_get_contents(PIMCORE_PATH."/static6/js/".$scriptUrl) . "\n\n\n";
     }
 }
 ?>
@@ -638,6 +638,6 @@ catch (\Exception $e) {}
 ?>
 
 <?php // MUST BE THE LAST LINE ?>
-<script type="text/javascript" src="/pimcore/static5/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/pimcore/static6/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 </body>
 </html>

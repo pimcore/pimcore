@@ -208,11 +208,11 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("extjs_version"),
                                 //xtype: "combo",
                                 xtype: "hidden",
-                                name: "general.extjs5",
-                                value: this.getValue("general.extjs5"),
+                                name: "general.extjs6",
+                                value: this.getValue("general.extjs6"),
                                 store: [
                                     ["0",t("extjs_34")],
-                                    ["1",t("extjs_5")]
+                                    ["1",t("extjs_6")]
                                 ],
                                 mode: "local",
                                 triggerAction: "all"

@@ -42,50 +42,50 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
 
         // add scripts to editmode
 
-        if (\Pimcore\Tool\Admin::isExtJS5()) {
+        if (\Pimcore\Tool\Admin::isExtJS6()) {
             $editmodeLibraries = array(
-                "/pimcore/static5/js/pimcore/namespace.js",
-                "/pimcore/static5/js/pimcore/document/edit/sandbox.js",
-                "/pimcore/static5/js/lib/prototype-light.js",
-                "/pimcore/static5/js/lib/jquery.min.js",
-                "/pimcore/static5/js/lib/ext/ext-all-debug.js",
-                "/pimcore/static5/js/lib/ckeditor/ckeditor.js"
+                "/pimcore/static6/js/pimcore/namespace.js",
+                "/pimcore/static6/js/pimcore/document/edit/sandbox.js",
+                "/pimcore/static6/js/lib/prototype-light.js",
+                "/pimcore/static6/js/lib/jquery.min.js",
+                "/pimcore/static6/js/lib/ext/ext-all-debug.js",
+                "/pimcore/static6/js/lib/ckeditor/ckeditor.js"
             );
 
             $editmodeScripts = array(
-                "/pimcore/static5/js/pimcore/functions.js",
-                "/pimcore/static5/js/pimcore/element/tag/imagehotspotmarkereditor.js",
-                "/pimcore/static5/js/pimcore/element/tag/imagecropper.js",
-                "/pimcore/static5/js/pimcore/document/edit/helper.js",
-                "/pimcore/static5/js/pimcore/document/edit/dnd.js",
-                "/pimcore/static5/js/pimcore/document/tag.js",
-                "/pimcore/static5/js/pimcore/document/tags/block.js",
-                "/pimcore/static5/js/pimcore/document/tags/date.js",
-                "/pimcore/static5/js/pimcore/document/tags/href.js",
-                "/pimcore/static5/js/pimcore/document/tags/multihref.js",
-                "/pimcore/static5/js/pimcore/document/tags/checkbox.js",
-                "/pimcore/static5/js/pimcore/document/tags/image.js",
-                "/pimcore/static5/js/pimcore/document/tags/input.js",
-                "/pimcore/static5/js/pimcore/document/tags/link.js",
-                "/pimcore/static5/js/pimcore/document/tags/select.js",
-                "/pimcore/static5/js/pimcore/document/tags/snippet.js",
-                "/pimcore/static5/js/pimcore/document/tags/textarea.js",
-                "/pimcore/static5/js/pimcore/document/tags/numeric.js",
-                "/pimcore/static5/js/pimcore/document/tags/wysiwyg.js",
-                "/pimcore/static5/js/pimcore/document/tags/renderlet.js",
-                "/pimcore/static5/js/pimcore/document/tags/table.js",
-                "/pimcore/static5/js/pimcore/document/tags/video.js",
-                "/pimcore/static5/js/pimcore/document/tags/multiselect.js",
-                "/pimcore/static5/js/pimcore/document/tags/areablock.js",
-                "/pimcore/static5/js/pimcore/document/tags/area.js",
-                "/pimcore/static5/js/pimcore/document/tags/pdf.js",
-                "/pimcore/static5/js/pimcore/document/edit/helper.js"
+                "/pimcore/static6/js/pimcore/functions.js",
+                "/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js",
+                "/pimcore/static6/js/pimcore/element/tag/imagecropper.js",
+                "/pimcore/static6/js/pimcore/document/edit/helper.js",
+                "/pimcore/static6/js/pimcore/document/edit/dnd.js",
+                "/pimcore/static6/js/pimcore/document/tag.js",
+                "/pimcore/static6/js/pimcore/document/tags/block.js",
+                "/pimcore/static6/js/pimcore/document/tags/date.js",
+                "/pimcore/static6/js/pimcore/document/tags/href.js",
+                "/pimcore/static6/js/pimcore/document/tags/multihref.js",
+                "/pimcore/static6/js/pimcore/document/tags/checkbox.js",
+                "/pimcore/static6/js/pimcore/document/tags/image.js",
+                "/pimcore/static6/js/pimcore/document/tags/input.js",
+                "/pimcore/static6/js/pimcore/document/tags/link.js",
+                "/pimcore/static6/js/pimcore/document/tags/select.js",
+                "/pimcore/static6/js/pimcore/document/tags/snippet.js",
+                "/pimcore/static6/js/pimcore/document/tags/textarea.js",
+                "/pimcore/static6/js/pimcore/document/tags/numeric.js",
+                "/pimcore/static6/js/pimcore/document/tags/wysiwyg.js",
+                "/pimcore/static6/js/pimcore/document/tags/renderlet.js",
+                "/pimcore/static6/js/pimcore/document/tags/table.js",
+                "/pimcore/static6/js/pimcore/document/tags/video.js",
+                "/pimcore/static6/js/pimcore/document/tags/multiselect.js",
+                "/pimcore/static6/js/pimcore/document/tags/areablock.js",
+                "/pimcore/static6/js/pimcore/document/tags/area.js",
+                "/pimcore/static6/js/pimcore/document/tags/pdf.js",
+                "/pimcore/static6/js/pimcore/document/edit/helper.js"
             );
 
             $editmodeStylesheets = array(
-                "/pimcore/static5/css/icons.css",
-                "/pimcore/static5/js/lib/ext/packages/ext-theme-classic-sandbox/build/resources/ext-theme-classic-sandbox-all-debug.css",
-                "/pimcore/static5/css/editmode-classic.css?asd=" . time()
+                "/pimcore/static6/css/icons.css",
+                "/pimcore/static6/js/lib/ext/packages/ext-theme-classic-sandbox/build/resources/ext-theme-classic-sandbox-all-debug.css",
+                "/pimcore/static6/css/editmode-classic.css?asd=" . time()
             );
 
 
@@ -293,8 +293,8 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
                 if($head && $bodyElement && $htmlElement) {
                     $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
                     $bodyElement->onunload = "pimcoreOnUnload();";
-                    if (\Pimcore\Tool\Admin::isExtJS5()) {
-                        $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static5/js/pimcore/document/edit/startup.js?_dc=' . Version::$revision . '"></script>' . "\n\n";
+                    if (\Pimcore\Tool\Admin::isExtJS6()) {
+                        $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static6/js/pimcore/document/edit/startup.js?_dc=' . Version::$revision . '"></script>' . "\n\n";
                     } else {
                         $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Version::$revision . '"></script>' . "\n\n";
                     }

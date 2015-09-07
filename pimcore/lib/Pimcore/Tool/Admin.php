@@ -209,18 +209,18 @@ class Admin {
     /**
      * @return true if in EXT JS5 mode
      */
-    public static function isExtJS5() {
+    public static function isExtJS6() {
         if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] == 5) {
             return true;
         }
 
         $config = \Pimcore\Config::getSystemConfig();
 
-        if(isset($_REQUEST["extjs5"])) {
-            return (bool) $_REQUEST["extjs5"];
+        if(isset($_REQUEST["extjs6"])) {
+            return (bool) $_REQUEST["extjs6"];
         }
 
-        $mainSwitch = $config->general->extjs5;
+        $mainSwitch = $config->general->extjs6;
         if ($mainSwitch) {
             return true;
         }

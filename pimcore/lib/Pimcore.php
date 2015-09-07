@@ -557,16 +557,16 @@ class Pimcore {
                     }
 
                     $jsPaths = array();
-                    $isExtJs5 = \Pimcore\Tool\Admin::isExtJS5();
+                    $isExtJs6 = \Pimcore\Tool\Admin::isExtJS6();
 
-                    if ($isExtJs5 && is_array($p['plugin']['pluginJsPaths-extjs5'])
-                        && isset($p['plugin']['pluginJsPaths-extjs5']['path'])
-                        && is_array($p['plugin']['pluginJsPaths-extjs5']['path'])) {
-                        $jsPaths = $p['plugin']['pluginJsPaths-extjs5']['path'];
+                    if ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
+                        && isset($p['plugin']['pluginJsPaths-extjs6']['path'])
+                        && is_array($p['plugin']['pluginJsPaths-extjs6']['path'])) {
+                        $jsPaths = $p['plugin']['pluginJsPaths-extjs6']['path'];
                     }
-                    else if ($isExtJs5 && is_array($p['plugin']['pluginJsPaths-extjs5'])
-                        && $p['plugin']['pluginJsPaths-extjs5']['path'] != null) {
-                        $jsPaths[0] = $p['plugin']['pluginJsPaths-extjs5']['path'];
+                    else if ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
+                        && $p['plugin']['pluginJsPaths-extjs6']['path'] != null) {
+                        $jsPaths[0] = $p['plugin']['pluginJsPaths-extjs6']['path'];
                     } else  if (is_array($p['plugin']['pluginJsPaths'])
                         && isset($p['plugin']['pluginJsPaths']['path'])
                         && is_array($p['plugin']['pluginJsPaths']['path'])) {
@@ -586,14 +586,14 @@ class Pimcore {
                     }
 
                     $cssPaths = array();
-                    if ($isExtJs5 && is_array($p['plugin']['pluginCssPaths-extjs5'])
-                        && isset($p['plugin']['pluginCssPaths-extjs5']['path'])
-                        && is_array($p['plugin']['pluginCssPaths-extjs5']['path'])) {
-                        $cssPaths = $p['plugin']['pluginCssPaths-extjs5']['path'];
+                    if ($isExtJs6 && is_array($p['plugin']['pluginCssPaths-extjs6'])
+                        && isset($p['plugin']['pluginCssPaths-extjs6']['path'])
+                        && is_array($p['plugin']['pluginCssPaths-extjs6']['path'])) {
+                        $cssPaths = $p['plugin']['pluginCssPaths-extjs6']['path'];
                     }
-                    else if ($isExtJs5 && is_array($p['plugin']['pluginCssPaths-extjs5'])
-                        && $p['plugin']['pluginCssPaths-extjs5']['path'] != null) {
-                        $cssPaths[0] = $p['plugin']['pluginCssPaths-extjs5']['path'];
+                    else if ($isExtJs6 && is_array($p['plugin']['pluginCssPaths-extjs6'])
+                        && $p['plugin']['pluginCssPaths-extjs6']['path'] != null) {
+                        $cssPaths[0] = $p['plugin']['pluginCssPaths-extjs6']['path'];
                     } else  if (is_array($p['plugin']['pluginCssPaths'])
                         && isset($p['plugin']['pluginCssPaths']['path'])
                         && is_array($p['plugin']['pluginCssPaths']['path'])) {

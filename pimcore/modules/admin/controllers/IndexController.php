@@ -105,18 +105,18 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin {
             return $adminSession->csrfToken;
         });
 
-        if ($this->getParam("extjs5")) {
-            $this->forward("index5");
+        if ($this->getParam("extjs6")) {
+            $this->forward("index6");
         } else {
             $config = \Pimcore\Config::getSystemConfig();
-            if ($config->general->extjs5) {
-                $this->forward("index5");
+            if ($config->general->extjs6) {
+                $this->forward("index6");
             }
 
         }
     }
 
-    public function index5Action() {
+    public function index6Action() {
 
     }
 }

@@ -54,7 +54,7 @@ Ext.Loader.setConfig({
     enabled: true
 });
 
-Ext.Loader.setPath('Ext.ux', '/pimcore/static5/js/lib/ext/ux');
+Ext.Loader.setPath('Ext.ux', '/pimcore/static6/js/lib/ext/ux');
 
 Ext.require([
     'Ext.button.Split',
@@ -418,7 +418,7 @@ Ext.onReady(function () {
 
     // check for debug
     if (pimcore.settings.debug) {
-        statusbar.add('<div class="pimcore_statusbar_extjs5">ExtJS ' + Ext.getVersion().getMajor() + '.' + Ext.getVersion().getMinor() + '.' + Ext.getVersion().getPatch() + ' - Beta Feauture </div>');
+        statusbar.add('<div class="pimcore_statusbar_extjs6">ExtJS ' + Ext.getVersion().getMajor() + '.' + Ext.getVersion().getMinor() + '.' + Ext.getVersion().getPatch() + ' - Beta Feauture </div>');
         statusbar.add("-");
     }
 

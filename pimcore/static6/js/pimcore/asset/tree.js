@@ -938,7 +938,7 @@ pimcore.asset.tree = Class.create({
     },
 
     addHtml5DragListener: function (node) {
-        //TODO EXTJS5
+        //TODO EXTJS6
         //
         //
         //try {

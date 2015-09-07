@@ -222,7 +222,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
                     $t = $class::getByKey($data["key"]);
                 } else {
                     $t = $class::getByKey($data);
@@ -293,7 +293,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             $list->setOrder("asc");
             $list->setOrderKey("key");
 
-            if (\Pimcore\Tool\Admin::isExtJS5()) {
+            if (\Pimcore\Tool\Admin::isExtJS6()) {
                 $sortParam = $this->getParam("sort");
                 if ($sortParam) {
                     $sortParam = json_decode($sortParam, true);

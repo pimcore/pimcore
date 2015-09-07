@@ -38,7 +38,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             if ($this->getParam("xaction") == "destroy") {
 
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
                     $id = $data["id"];
                 } else {
                     $id = $data;
@@ -142,7 +142,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             if ($this->getParam("xaction") == "destroy") {
 
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
                     $id = $data["id"];
                 } else {
                     $id = $data;
@@ -362,7 +362,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 "defaultLanguage" => $values["general.defaultLanguage"],
                 "theme" => $values["general.theme"],
                 "contactemail" => $values["general.contactemail"],
-                "extjs5" => $values["general.extjs5"],
+                "extjs6" => $values["general.extjs6"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
                 "debug" => $values["general.debug"],
@@ -597,7 +597,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
                     $id = $data["id"];
                 } else {
                     $id = $data;
@@ -696,7 +696,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
                     $id = $data["id"];
                 } else {
                     $id = $data;
@@ -808,7 +808,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             if ($this->getParam("xaction") == "destroy") {
 
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS5()) {
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
                     $id = $data["id"];
                 } else {
                     $id = $data;
@@ -1351,7 +1351,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 }
 
                 if ($this->getParam("xaction") == "destroy") {
-                    if (\Pimcore\Tool\Admin::isExtJS5()) {
+                    if (\Pimcore\Tool\Admin::isExtJS6()) {
                         $id = $data["id"];
                     } else {
                         $id = $data;

@@ -174,7 +174,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
      */
     public function getDataFromEditmode($data, $object = null) {
         if($data) {
-            if (\Pimcore\Tool\Admin::isExtJS5()) {
+            if (\Pimcore\Tool\Admin::isExtJS6()) {
                 return $data;
             } else {
                 return explode(",", $data);

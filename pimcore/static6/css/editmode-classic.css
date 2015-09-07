@@ -88,23 +88,23 @@
 }
 
 .pimcore_icon_plus {
-	background: url(/pimcore/static5/img/icon/add.png) !important;
+	background: url(/pimcore/static6/img/icon/add.png) !important;
 }
 
 .pimcore_icon_minus {
-	background: url(/pimcore/static5/img/icon/delete.png) !important;
+	background: url(/pimcore/static6/img/icon/delete.png) !important;
 }
 
 .pimcore_icon_up {
-	background: url(/pimcore/static5/img/icon/arrow_up.png) !important;
+	background: url(/pimcore/static6/img/icon/arrow_up.png) !important;
 }
 
 .pimcore_icon_down {
-	background: url(/pimcore/static5/img/icon/arrow_down.png) !important;
+	background: url(/pimcore/static6/img/icon/arrow_down.png) !important;
 }
 
 .pimcore_icon_edit {
-	background: url(/pimcore/static5/img/icon/pencil_go.png) !important;
+	background: url(/pimcore/static6/img/icon/pencil_go.png) !important;
 }
 
 
@@ -154,28 +154,28 @@
 
 .pimcore_tag_snippet_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static5/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
 }
 
 .pimcore_tag_image_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static5/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
 }
 
 .pimcore_tag_video_empty {
 	border: 1px solid #d0d0d0 !important;
-	/*background:url(/pimcore/static5/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
-    background:url(/pimcore/static5/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
+	/*background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
+    background:url(/pimcore/static6/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
     cursor: pointer;
 }
 
 .pimcore_tag_href input{
-	background: url(/pimcore/static5/img/icon/drop-16.png) right 2px no-repeat #fff;
+	background: url(/pimcore/static6/img/icon/drop-16.png) right 2px no-repeat #fff;
 	cursor: default;
 }
 
 .pimcore_tag_droptarget {
-    background: url(/pimcore/static5/img/icon/drop-16.png) center center no-repeat;
+    background: url(/pimcore/static6/img/icon/drop-16.png) center center no-repeat;
     position:absolute;
     width:20px;
     height:20px;
@@ -215,7 +215,7 @@
 }
 
 .pimcore_droptarget_input  {
-	background: url(/pimcore/static5/img/icon/drop-16.png) right 2px no-repeat #fff !important;
+	background: url(/pimcore/static6/img/icon/drop-16.png) right 2px no-repeat #fff !important;
 	cursor: default;
 }
 
@@ -279,7 +279,7 @@
 }
 
 .pimcore_image_marker {
-    background: url(/pimcore/static5/img/icon/marker.png);
+    background: url(/pimcore/static6/img/icon/marker.png);
     width: 20px;
     height: 35px;
     cursor: pointer;
@@ -301,7 +301,7 @@
 }
 
 .pimcore_tag_multihref .x5-panel, .pimcore_tag_table .x5-panel  {
-    border:1px solid #000;
+    /*border:1px solid #000;*/
 }
 
 .pimcore_tag_select, .pimcore_tag_checkbox {
@@ -366,7 +366,7 @@
 /* all ext windows have to be above the dnd masks (wysiwyg, iframe) */
 .x5-window {
     z-index: 9998 !important;
-    background: #000;
+    /*background: #000;*/
     padding: 5px;
     border-radius: 2px;
     border:1px solid #363636;
@@ -375,12 +375,12 @@
 
 .x5-window-header {
     height: 20px;
-    color: #fff;
+    /*color: #fff;*/
 }
 
 
 .x5-window-body {
-    background-color: #fff;
+    /*background-color: #fff;*/
     width: 100%;
 }
 
@@ -416,7 +416,7 @@
     http://www.pimcore.org/issues/browse/PIMCORE-1208
 */
 .x5-form-field {
-    color: #000000;
+    /*color: #000000;*/
 }
 
 
@@ -428,22 +428,22 @@
     border-radius: 2px;
     text-decoration: none;
     display: inline-block;
-    background-color: #363636;
+    /*background-color: #363636;*/
     display: inline-block;
     background-image: none;
 }
 
 .x5-btn-default-small {
-    border-color: #363636;
+    /*border-color: #363636;*/
 }
 
 
 .x5-btn-inner-default-small {
-    color: #fff;
+    /*color: #fff;*/
 }
 
 .x5-btn-over {
-    background-color: #222;
+    /*background-color: #222;*/
 }
 
 .x5-btn th, .x5-btn td, .x5-btn tbody, .x5-btn tr {
@@ -462,7 +462,7 @@
     display: inline-block;
     border:0;
     margin: 0;
-    color:#fff;
+    /*color:#fff;*/
 
     background-color: transparent;
     background-position: left center !important;
@@ -511,11 +511,11 @@
 /*}*/
 
 .x5-menu-body {
-    background-color: #000;
+    /*background-color: #000;*/
 }
 
 .x5-menu-item-text-default {
-    color: #fff;
+    /*color: #fff;*/
 }
 
 .x5-menu-item-text-default.x5-menu-item-indent {
@@ -526,8 +526,8 @@
 .x5-menu-list {
     padding: 5px;
     list-style: none;
-    background: #000;
-    color: #fff;
+    /*background: #000;*/
+    /*color: #fff;*/
     border-radius: 2px;
     margin: 2px 0 0 0;
     height: auto !important;
@@ -544,7 +544,7 @@
 }
 
 .x5-menu-item {
-    color:#fff;
+    /*color:#fff;*/
     padding: 2px 5px 2px 25px;
     outline: 0 none;
     position: relative;
@@ -560,7 +560,7 @@
 .x5-menu-item:link, .x5-menu-item:visited, .x5-menu-item:focus, .x5-menu-item:active, .x5-menu-item:hover {
     outline: 0 none;
     text-decoration: none;
-    color: #fff;
+    /*color: #fff;*/
 }
 
 /*.x5-menu-item-active .x5-menu-item, .x5-menu-item:hover {*/
@@ -582,8 +582,8 @@
 }
 
 .x5-tip {
-    background: #000;
-    color: #fff;
+    /*background: #000;*/
+    /*color: #fff;*/
     padding: 5px;
     border-radius: 2px;
     width: auto !important;
@@ -650,8 +650,8 @@
     left:0;top:0;
     opacity:.65;
     -moz-opacity:.65;
-    filter:alpha(opacity=65);
-    background-color:#f2f2f2;
+    /*filter:alpha(opacity=65);*/
+    /*background-color:#f2f2f2;*/
 }
 
 .x5-panel-ghost ul {
@@ -693,19 +693,19 @@
     cursor: pointer;
     position: absolute;
     top: 0;
-    background: #000 no-repeat center center;
+    /*background: #000 no-repeat center center;*/
     border-bottom-right-radius: 2px;
     border-top-right-radius: 2px;
 }
 
 .x5-form-field-wrap .x5-form-arrow-trigger {
-    background-image: url(/pimcore/static5/img/icon/bullet_arrow_down.png);
+    background-image: url(/pimcore/static6/img/icon/bullet_arrow_down.png);
     background-repeat: no-repeat;
     background-position: center center;
 }
 
 .x5-form-field-wrap .x5-form-spinner-trigger {
-    background-image: url(/pimcore/static5/img/icon/arrow_ns.png);
+    background-image: url(/pimcore/static6/img/icon/arrow_ns.png);
     background-repeat: no-repeat;
     background-position: center center;
     width: 15px;
@@ -781,7 +781,7 @@
 }
 
 .x5-grid-header {
-    background: #EDEDED;
+    /*background: #EDEDED;*/
     border-bottom: 1px solid #ccc;
 }
 
@@ -823,15 +823,15 @@
 }
 
 .x5-grid-cell-selected {
-    background-color: #DEDEDE;
+    /*background-color: #DEDEDE;*/
 }
 
 .x5-grid-row-selected {
-    background-color: #DEDEDE;
+    /*background-color: #DEDEDE;*/
 }
 
 .x5-grid-row-over {
-    background-color: #EDEDED;
+    /*background-color: #EDEDED;*/
 }
 
 .x5-grid-editor .x5-form-text {
@@ -868,11 +868,11 @@
 }
 
 .x5-list-body .ux5-mselect-selected {
-    background: #EDEDED;
+    /*background: #EDEDED;*/
 }
 
 .x5-combo-list {
-    background: #000;
+    /*background: #000;*/
     padding: 5px;
     overflow: hidden;
     box-sizing: content-box;
@@ -885,12 +885,12 @@
 
 .x5-combo-list .x5-combo-list-item {
     padding: 2px 5px;
-    color:#fff;
+    /*color:#fff;*/
 }
 
 .x5-combo-list .x5-combo-selected {
-    color:#000;
-    background:#fff;
+    /*color:#000;*/
+    /*background:#fff;*/
     border-radius: 2px;
     cursor: pointer;
 }
@@ -926,11 +926,11 @@
 }
 
 .x5-date-right a {
-    background: url(/pimcore/static5/img/icon/bullet_right.png) center center no-repeat;
+    background: url(/pimcore/static6/img/icon/bullet_right.png) center center no-repeat;
 }
 
 .x5-date-left a {
-    background: url(/pimcore/static5/img/icon/bullet_left.png) center center no-repeat;
+    background: url(/pimcore/static6/img/icon/bullet_left.png) center center no-repeat;
 }
 
 .x5-date-mp {
@@ -944,26 +944,26 @@
 }
 
 .x5-date-mp-sel {
-    background:#000;
+    /*background:#000;*/
 }
 
 .x5-date-mp a {
-    color: #fff;
+    /*color: #fff;*/
     text-decoration: none;
 }
 
 .x5-date-mp-ok, .x5-date-mp-cancel {
     color: #000;
     padding: 3px;
-    background: #fff;
+    /*background: #fff;*/
     border-radius: 2px;
     border: 0;
     margin-right: 3px;
 }
 
 .x5-panel-header {
-    background: #000;
-    color: #fff;
+    /*background: #000;*/
+    /*color: #fff;*/
     font-weight: bold;
     padding: 5px;
 }
@@ -989,7 +989,7 @@
 
 .ext-el-mask {
     position: absolute;
-    background: #ccc;
+    /*background: #ccc;*/
     opacity: .5;
     width: 100%;
     height: 100%;
@@ -1019,28 +1019,28 @@
 /** new */
 .x5-toolbar-default {
     background-image: none;
-    background: #000;
+    /*background: #000;*/
 }
 
 
 
-.x5-form-trigger-default {
-    background-image: url(/pimcore/static5/img/icon/bullet_arrow_down.png);
-    background-repeat: no-repeat;
-    background-position: center center;
-    border-color: #000000;
-}
+/*.x5-form-trigger-default {*/
+    /*background-image: url(/pimcore/static6/img/icon/bullet_arrow_down.png);*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: center center;*/
+    /*border-color: #000000;*/
+/*}*/
 
 .x5-menu-item-default.x5-menu-item-active {
     background-image: none;
-    background-color: #FFFFFF;
+    /*background-color: #FFFFFF;*/
     background-image: none;
     border-radius: 3px;
-    border-color: #FFFFFF;
+    /*border-color: #FFFFFF;*/
 }
 
 .x5-menu-item-default.x5-menu-item-active .x5-btn-text {
-    color: #FFF !important;
+    /*color: #FFF !important;*/
 }
 
 

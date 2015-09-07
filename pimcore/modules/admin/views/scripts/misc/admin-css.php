@@ -46,7 +46,7 @@
     }
 
 
-    <?php if (!\Pimcore\Tool\Admin::isExtJS5()) { ?>
+    <?php if (!\Pimcore\Tool\Admin::isExtJS6()) { ?>
     /* grid column header icon in translations [ <?= $language ?> ] */
     .x-grid3-hd-translation_column_<?= strtolower($language) ?> {
         background: url(<?= $iconFile ?>) no-repeat 3px 3px ! important;

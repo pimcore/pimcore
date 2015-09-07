@@ -171,7 +171,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         $tmpObject["allowChildren"] = true;
 
-        if (\Pimcore\Tool\Admin::isExtJS5()) {
+        if (\Pimcore\Tool\Admin::isExtJS6()) {
             $tmpObject["leaf"] = !$hasChildren;
         } else {
             $tmpObject["leaf"] = false;
@@ -1387,7 +1387,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $sortParam = $this->getParam("sort");
-            if (\Pimcore\Tool\Admin::isExtJS5()) {
+            if (\Pimcore\Tool\Admin::isExtJS6()) {
                 if ($sortParam) {
                     $sortParam = json_decode($sortParam, true);
                     $sortParam = $sortParam[0];
