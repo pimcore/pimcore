@@ -23,7 +23,7 @@
 #pimcore_navigation {
     position: absolute;
     left: 11px;
-    top: 10px;
+    top: -3px;
 }
 
 #pimcore_navigation ul {
@@ -1045,10 +1045,6 @@ span.warning {
     vertical-align: middle;
 }
 
-.x-grid-cell-inner-treecolumn {
-    padding: 2px 6px 2px 0 !important;
-}
-
 .pimcore_pagingtoolbar_container .x-form-text-default {
     min-height: 18px !important;
 }
@@ -1084,16 +1080,85 @@ span.warning {
 
 
 
-/* ExtJS 6.0 */
+/* ExtJS 6.0 specific styles */
+
+#pimcore_panel_tabs-body {
+    background-image: url(/pimcore/static/img/logo-gray.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
 
 #pimcore_panel_tabs > .x-tab-bar {
     background: #222222;
 }
+
+#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body {
+    padding-top: 0;
+}
+
+
+#pimcore_panel_tree_left > .x-panel-header-default-horizontal.x-header-noborder {
+    background-color: #d0d0d0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+
+/* ExtJS 6.0 default styles */
 
 .x-tab-default-top {
     border-color: #3c3f41;
     background-color: #3c3f41;
 }
 
+.x-tab-over.x-tab-default.x-tab-over {
+    background-color: #2b2d2e;
+}
 
+.x-tab-over.x-tab-default.x-tab-over.x-tab-active {
+    background-color: #fff;
+}
+
+.x-tab-default-top {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.x-grid-cell-inner-treecolumn {
+    padding: 0 6px 0 0;
+}
+
+.x-fieldset {
+    background: none;
+}
+
+.x-accordion-item .x-accordion-hd {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.x-view-item-focused {
+    outline: 0;
+}
+
+.x-grid-item-focused .x-grid-cell-inner:before {
+    border: 0;
+}
+
+.x-tab-focus.x-tab-default {
+    outline: none;
+}
+
+.x-column-header-inner {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.x-panel-header-default {
+    background: #222;
+}
+
+.x-tab-bar-horizontal > .x-tab-bar-body-default {
+    min-height: 30px;
+}
 

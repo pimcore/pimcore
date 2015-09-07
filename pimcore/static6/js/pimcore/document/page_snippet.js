@@ -110,7 +110,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             this.toolbarButtons.save = new Ext.SplitButton({
                 text: t('save'),
                 iconCls: "pimcore_icon_save_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.unpublish.bind(this),
                 menu: [{
                     text: t('save_close'),
@@ -123,7 +123,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             this.toolbarButtons.publish = new Ext.SplitButton({
                 text: t('save_and_publish'),
                 iconCls: "pimcore_icon_publish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.publish.bind(this),
                 menu: [
                     {
@@ -147,14 +147,14 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
                 iconCls: "pimcore_icon_unpublish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.unpublish.bind(this)
             });
 
             this.toolbarButtons.reload = new Ext.Button({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.reload.bind(this)
             });
 
@@ -195,7 +195,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.toolbarButtons.extras = new Ext.Button({
                     text: t('extras'),
                     iconCls: "pimcore_icon_extras_medium",
-                    scale: "medium",
+                    scale: "small",
                     hideOnClick: false,
                     menu: extrasMenu
                 });
@@ -204,7 +204,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.remove.bind(this)
             });
 
@@ -232,13 +232,13 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             buttons.push({
                 text: t('show_in_tree'),
                 iconCls: "pimcore_icon_download_showintree",
-                scale: "medium",
+                scale: "small",
                 handler: this.selectInTree.bind(this)
             });
 
             buttons.push({
                 text: t("show_metainfo"),
-                scale: "medium",
+                scale: "small",
                 iconCls: "pimcore_icon_info_large",
                 handler: this.showMetaInfo.bind(this)
             });
@@ -255,7 +255,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             buttons.push({
                 text: t("open"),
                 iconCls: "pimcore_icon_cursor_medium",
-                scale: "medium",
+                scale: "small",
                 handler: function () {
                     var date = new Date();
                     var link = this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime();
@@ -274,7 +274,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             buttons.push({
                 xtype: 'tbtext',
                 text: this.data.id,
-                scale: "medium"
+                scale: "small"
             });
 
             // version notification
@@ -282,7 +282,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 xtype: 'tbtext',
                 text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
                     + t("this_is_a_newer_not_published_version"),
-                scale: "medium",
+                scale: "small",
                 hidden: true
             });
 

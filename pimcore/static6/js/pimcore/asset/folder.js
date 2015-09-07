@@ -200,7 +200,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             this.toolbarButtons.publish = new Ext.Button({
                 text: t("save"),
                 iconCls: "pimcore_icon_publish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.save.bind(this)
             });
 
@@ -211,7 +211,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete_folder'),
                 iconCls: "pimcore_icon_delete_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.remove.bind(this)
             });
             if (this.isAllowed("delete") && !this.data.locked && this.data.id != 1) {
@@ -221,7 +221,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             this.toolbarButtons.download = new Ext.Button({
                 text: t("download_as_zip"),
                 iconCls: "pimcore_icon_download_zip_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.downloadZip.bind(this)
             });
             buttons.push(this.toolbarButtons.download);
@@ -231,7 +231,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             this.toolbarButtons.reload = new Ext.Button({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.reload.bind(this)
             });
             buttons.push(this.toolbarButtons.reload);
@@ -239,7 +239,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             buttons.push({
                 text: t('show_in_tree'),
                 iconCls: "pimcore_icon_download_showintree",
-                scale: "medium",
+                scale: "small",
                 handler: this.selectInTree.bind(this)
             });
 
@@ -247,7 +247,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             if (user.admin) {
                 buttons.push({
                     text: t("show_metainfo"),
-                    scale: "medium",
+                    scale: "small",
                     iconCls: "pimcore_icon_info_large",
                     handler: this.showMetaInfo.bind(this)
                 });
@@ -257,7 +257,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             buttons.push({
                 xtype: 'tbtext',
                 text: this.data.id,
-                scale: "medium"
+                scale: "small"
             });
 
             this.toolbar = new Ext.Toolbar({

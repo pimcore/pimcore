@@ -151,14 +151,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.publish = new Ext.Button({
                 text: t('save'),
                 iconCls: "pimcore_icon_publish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.save.bind(this)
             });
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete_folder'),
                 iconCls: "pimcore_icon_delete_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.remove.bind(this)
             });
 
@@ -176,7 +176,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.reload = new Ext.Button({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.reload.bind(this)
             });
             buttons.push("-");
@@ -185,14 +185,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             buttons.push({
                 text: t('show_in_tree'),
                 iconCls: "pimcore_icon_download_showintree",
-                scale: "medium",
+                scale: "small",
                 handler: this.selectInTree.bind(this, "folder")
             });
 
 
             buttons.push({
                 text: t("show_metainfo"),
-                scale: "medium",
+                scale: "small",
                 iconCls: "pimcore_icon_info_large",
                 handler: this.showMetaInfo.bind(this)
             });
@@ -202,7 +202,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             buttons.push({
                 xtype: 'tbtext',
                 text: this.data.general.o_id,
-                scale: "medium"
+                scale: "small"
             });
 
             this.toolbar = new Ext.Toolbar({

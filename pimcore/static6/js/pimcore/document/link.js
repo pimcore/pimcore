@@ -119,7 +119,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             this.toolbarButtons.publish = new Ext.Button({
                 text: t('save_and_publish'),
                 iconCls: "pimcore_icon_publish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.publish.bind(this)
             });
 
@@ -127,14 +127,14 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
                 iconCls: "pimcore_icon_unpublish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.unpublish.bind(this)
             });
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.remove.bind(this)
             });
 
@@ -157,7 +157,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             this.toolbarButtons.reload = new Ext.Button({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.reload.bind(this)
             });
             buttons.push(this.toolbarButtons.reload);
@@ -165,7 +165,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             buttons.push({
                 text: t('show_in_tree'),
                 iconCls: "pimcore_icon_download_showintree",
-                scale: "medium",
+                scale: "small",
                 handler: this.selectInTree.bind(this)
             });
 
@@ -173,7 +173,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             buttons.push({
                 xtype: 'tbtext',
                 text: this.data.id,
-                scale: "medium"
+                scale: "small"
             });
 
             this.toolbar = new Ext.Toolbar({

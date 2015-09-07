@@ -133,7 +133,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 this.toolbarButtons.publish = Ext.create("Ext.button.Split", {
                     text: t("save_and_publish"),
                     iconCls: "pimcore_icon_publish_medium",
-                    scale: "medium",
+                    scale: "small",
                     handler: this.save.bind(this),
                     menu: [{
                         text: t('save_pubish_close'),
@@ -155,7 +155,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 this.toolbarButtons.remove = new Ext.Button({
                     text: t('delete'),
                     iconCls: "pimcore_icon_delete_medium",
-                    scale: "medium",
+                    scale: "small",
                     handler: this.remove.bind(this)
                 });
                 buttons.push(this.toolbarButtons.remove);
@@ -167,7 +167,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 this.toolbarButtons.upload = new Ext.Button({
                     text: t("upload"),
                     iconCls: "pimcore_icon_upload_medium",
-                    scale: "medium",
+                    scale: "small",
                     handler: this.upload.bind(this)
                 });
                 buttons.push(this.toolbarButtons.upload);
@@ -178,21 +178,21 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.reload.bind(this)
             });
 
             buttons.push({
                 text: t('show_in_tree'),
                 iconCls: "pimcore_icon_download_showintree",
-                scale: "medium",
+                scale: "small",
                 handler: this.selectInTree.bind(this)
             });
 
 
             buttons.push({
                 text: t("show_metainfo"),
-                scale: "medium",
+                scale: "small",
                 iconCls: "pimcore_icon_info_large",
                 handler: this.showMetaInfo.bind(this)
             });
@@ -203,7 +203,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push({
                 text: this.data.path + this.data.filename,
                 iconCls: "pimcore_icon_download_medium",
-                scale: "medium",
+                scale: "small",
                 handler: function () {
                     pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
                 }.bind(this)
@@ -214,7 +214,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 buttons.push({
                     text: t("clear_thumbnails"),
                     iconCls: "pimcore_icon_menu_clear_thumbnails",
-                    scale: "medium",
+                    scale: "small",
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/asset/clear-thumbnail",
@@ -230,7 +230,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push({
                 xtype: 'tbtext',
                 text: t("id") + " " + this.data.id,
-                scale: "medium"
+                scale: "small"
             });
 
 

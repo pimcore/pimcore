@@ -301,7 +301,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.save = new Ext.SplitButton({
                 text: t('save'),
                 iconCls: "pimcore_icon_save_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.unpublish.bind(this),
                 menu:[{
                     text: t('save_close'),
@@ -314,7 +314,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.publish = new Ext.SplitButton({
                 text: t('save_and_publish'),
                 iconCls: "pimcore_icon_publish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.publish.bind(this),
                 menu: [{
                     text: t('save_pubish_close'),
@@ -338,14 +338,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
                 iconCls: "pimcore_icon_unpublish_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.unpublish.bind(this)
             });
 
             var reloadConfig = {
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.reload.bind(this, this.data.currentLayoutId)
             }
 
@@ -372,7 +372,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.remove = new Ext.Button({
                 text: t("delete"),
                 iconCls: "pimcore_icon_delete_medium",
-                scale: "medium",
+                scale: "small",
                 handler: this.remove.bind(this)
             });
 
@@ -398,7 +398,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 buttons.push({
                     text: t('show_in_tree'),
                     iconCls: "pimcore_icon_download_showintree",
-                    scale: "medium",
+                    scale: "small",
                     handler: this.selectInTree.bind(this, this.data.general.o_type)
                 });
             }
@@ -406,7 +406,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             buttons.push({
                 text: t("show_metainfo"),
-                scale: "medium",
+                scale: "small",
                 iconCls: "pimcore_icon_info_large",
                 handler: this.showMetaInfo.bind(this)
             });
@@ -416,14 +416,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push({
                 xtype: 'tbtext',
                 text: t("id") + " " + this.data.general.o_id,
-                scale: "medium"
+                scale: "small"
             });
 
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
                 text: ts(this.data.general.o_className),
-                scale: "medium"
+                scale: "small"
             });
 
             // version notification
@@ -431,7 +431,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 xtype: 'tbtext',
                 text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
                     + t("this_is_a_newer_not_published_version"),
-                scale: "medium",
+                scale: "small",
                 hidden: true
             });
 
