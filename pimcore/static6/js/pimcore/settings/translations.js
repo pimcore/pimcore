@@ -288,7 +288,7 @@ pimcore.settings.translations = Class.create({
                 [100, "100"]
             ],
             mode: "local",
-            width: 50,
+            width: 80,
             value: 20,
             triggerAction: "all",
             listeners: {
@@ -305,34 +305,9 @@ pimcore.settings.translations = Class.create({
             clicksToEdit: 1
         });
 
-
-        this.grid = Ext.create('Ext.grid.Panel', {
-            frame: false,
-            autoScroll: true,
-            store: this.store,
-            columnLines: true,
-            stripeRows: true,
-            columns : {
-                items: typesColumns,
-                defaults: {
-                    flex: 1
-                }
-            },
-            trackMouseOver: true,
-            bbar: this.pagingtoolbar,
-            stateful: true,
-            stateId: stateId,
-            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
-            selModel: Ext.create('Ext.selection.RowModel', {}),
-            plugins: [
-                "gridfilters",
-                this.cellEditing,
-                {
-                    ptype: 'datatip',
-                    tpl: t('click_to_edit')
-                }
-            ],
-            tbar: [
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [
                 {
                     text: t('add'),
                     handler: this.onAdd.bind(this),
@@ -371,7 +346,36 @@ pimcore.settings.translations = Class.create({
                     xtype: "tbtext",
                     style: "margin: 0 10px 0 0;"
                 },this.filterField
+            ]
+        });
+
+        this.grid = Ext.create('Ext.grid.Panel', {
+            frame: false,
+            autoScroll: true,
+            store: this.store,
+            columnLines: true,
+            stripeRows: true,
+            columns : {
+                items: typesColumns,
+                defaults: {
+                    flex: 1
+                }
+            },
+            trackMouseOver: true,
+            bbar: this.pagingtoolbar,
+            stateful: true,
+            stateId: stateId,
+            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
+            selModel: Ext.create('Ext.selection.RowModel', {}),
+            plugins: [
+                "gridfilters",
+                this.cellEditing,
+                {
+                    ptype: 'datatip',
+                    tpl: t('click_to_edit')
+                }
             ],
+            tbar: toolbar,
             viewConfig: {
                 forceFit: true,
                 loadingText: t('loading_texts')

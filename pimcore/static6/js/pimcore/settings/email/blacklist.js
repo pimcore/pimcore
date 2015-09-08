@@ -58,48 +58,15 @@ pimcore.settings.email.blacklist = Class.create({
         var itemsPerPage = 20;
         var url ='/admin/email/blacklist?';
 
-        var proxy = {
-            type: 'ajax',
-            extraParams:{
-                limit:itemsPerPage,
-                filter:""
-            },
-            reader: {
-                type: 'json',
-                rootProperty: 'data',
-                idProperty: "address"
-            },
-            writer: {
-                type: 'json',
-                writeAllFields: true,
-                rootProperty: 'data',
-                encode: 'true'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
-            },
-            actionMethods: {
-                create : 'POST',
-                read   : 'POST',
-                update : 'POST',
-                destroy: 'POST'
-            }
-        };
-
-        this.store = new Ext.data.Store({
-            proxy:proxy,
-            remoteSort:true,
-            autoSync: true,
-            autoLoad: true,
-            fields: [
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url,
+            [
                 {name:'address', allowBlank: false},
                 {name:'creationDate'},
                 {name:'modificationDate'}
-            ]
-        });
+            ],
+            itemsPerPage
+        );
 
 
         this.filterField = new Ext.form.TextField({
@@ -119,42 +86,7 @@ pimcore.settings.email.blacklist = Class.create({
             }
         });
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize:itemsPerPage,
-            store:this.store,
-            displayInfo:true,
-            displayMsg:'{0} - {1} / {2}',
-            emptyMsg:t("no_items_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text:t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store:[
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode:"local",
-            width:50,
-            value:20,
-            triggerAction:"all",
-            listeners:{
-                select:function (box, rec, index) {
-                    var pageSize = intval(rec.data.field1);
-                    this.store.getProxy().extraParams.limit = pageSize;
-                    this.pagingtoolbar.pageSize = pageSize;
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
         var typesColumns = [
             {header:t("email_address"), flex:50, sortable:true, dataIndex:'address', editable: false},
@@ -201,6 +133,24 @@ pimcore.settings.email.blacklist = Class.create({
             clicksToEdit: 1
         });
 
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [
+                {
+                    text:t('add'),
+                    handler:this.onAdd.bind(this),
+                    iconCls:"pimcore_icon_add"
+                },
+                "->",
+                {
+                    text:t("filter") + "/" + t("search"),
+                    xtype:"tbtext",
+                    style:"margin: 0 10px 0 0;"
+                },
+                this.filterField
+            ]
+        });
+
         this.grid = Ext.create('Ext.grid.Panel', {
             frame:false,
             autoScroll:true,
@@ -214,20 +164,7 @@ pimcore.settings.email.blacklist = Class.create({
                 this.cellEditing
             ],
             bbar:this.pagingtoolbar,
-            tbar:[
-                {
-                    text:t('add'),
-                    handler:this.onAdd.bind(this),
-                    iconCls:"pimcore_icon_add"
-                },
-                "->",
-                {
-                    text:t("filter") + "/" + t("search"),
-                    xtype:"tbtext",
-                    style:"margin: 0 10px 0 0;"
-                },
-                this.filterField
-            ],
+            tbar: toolbar,
             viewConfig:{
                 forceFit:true
             }

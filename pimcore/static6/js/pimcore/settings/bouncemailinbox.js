@@ -55,23 +55,12 @@ pimcore.settings.bouncemailinbox = Class.create({
 
     getGrid: function () {
 
-        this.store = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: '/admin/email/bounce-mail-inbox-list',
-                extraParams: {
-                    limit: 40
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'data'
-                }
-            },
-            remoteSort: true,
-            fields: ["id","subject", "to", "from","date"]
-
-        });
-        this.store.load();
+        var itemsPerPage = 20;
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            '/admin/email/bounce-mail-inbox-list?',
+            ["id","subject", "to", "from","date"],
+            itemsPerPage
+        );
 
         var typesColumns = [
             {header: "ID", flex: 50, sortable: false, hidden: true, dataIndex: 'id'},
@@ -92,38 +81,17 @@ pimcore.settings.bouncemailinbox = Class.create({
             }
         ];
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 40,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_items_found")
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [{
+                text: t("refresh"),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            }]
         });
 
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text: t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store: [
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode: "local",
-            width: 50,
-            value: 40,
-            triggerAction: "all",
-            listeners: {
-                select: function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));
 
         this.grid = new Ext.grid.GridPanel({
             frame: false,
@@ -143,11 +111,7 @@ pimcore.settings.bouncemailinbox = Class.create({
             viewConfig: {
                 forceFit: true
             },
-            tbar: [{
-                text: t("refresh"),
-                iconCls: "pimcore_icon_reload",
-                handler: this.reload.bind(this)
-            }]
+            tbar: toolbar
         });
 
         return this.grid;

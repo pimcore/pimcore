@@ -38,6 +38,11 @@ pimcore.tool.genericiframewindow = Class.create({
             handler: this.reload.bind(this)
         });
 
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [this.reloadButton]
+        });
+
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_iframe_" + this.id,
@@ -49,7 +54,7 @@ pimcore.tool.genericiframewindow = Class.create({
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe src="about:blank" frameborder="0" width="100%" id="pimcore_iframe_frame_'
                                     + this.id + '"></iframe>',
-                tbar: [this.reloadButton]
+                tbar: toolbar
             });
 
             this.panel.on("resize", this.onLayoutResize.bind(this));

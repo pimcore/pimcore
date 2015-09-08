@@ -228,20 +228,9 @@ pimcore.settings.redirects = Class.create({
             clicksToEdit: 1
         });
 
-        this.grid = Ext.create('Ext.grid.Panel', {
-            frame: false,
-            autoScroll: true,
-            store: this.store,
-			columns : typesColumns,
-            trackMouseOver: true,
-            columnLines: true,
-            selModel: Ext.create('Ext.selection.RowModel', {}),
-            plugins: [
-                this.cellEditing
-            ],
-            stripeRows: true,
-            bbar: this.pagingtoolbar,
-            tbar: [
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [
                 {
                     xtype: "splitbutton",
                     text: t('add'),
@@ -257,12 +246,28 @@ pimcore.settings.redirects = Class.create({
                         handler: this.openWizard.bind(this)
                     }]
                 }, "->", {
-                  text: t("filter") + "/" + t("search"),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
+                    text: t("filter") + "/" + t("search"),
+                    xtype: "tbtext",
+                    style: "margin: 0 10px 0 0;"
                 },
                 this.filterField
+            ]
+        });
+
+        this.grid = Ext.create('Ext.grid.Panel', {
+            frame: false,
+            autoScroll: true,
+            store: this.store,
+			columns : typesColumns,
+            trackMouseOver: true,
+            columnLines: true,
+            selModel: Ext.create('Ext.selection.RowModel', {}),
+            plugins: [
+                this.cellEditing
             ],
+            stripeRows: true,
+            bbar: this.pagingtoolbar,
+            tbar: toolbar,
             viewConfig: {
                 forceFit: true,
                 listeners: {

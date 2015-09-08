@@ -28,8 +28,9 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin {
         $limit = $this->_getParam("limit");
 
         $orderby = "ORDER BY id DESC";
-        if($this->_getParam("sort") && $this->_getParam("dir")) {
-            $orderby = "ORDER BY " . $this->_getParam("sort") . " " . $this->_getParam("dir");
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if($sortingSettings['orderKey']) {
+            $orderby = "ORDER BY " . $sortingSettings['orderKey'] . " " . $sortingSettings['order'];
         }
 
 

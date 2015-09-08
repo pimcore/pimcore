@@ -48,8 +48,6 @@ pimcore.element.notes = Class.create({
         if (this.layout == null) {
 
             var itemsPerPage = 20;
-
-            var itemsPerPage = 20;
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/element/note-list?',
                 ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
@@ -86,11 +84,18 @@ pimcore.element.notes = Class.create({
             this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
 
-            var tbar = ["->", {
-              text: t("filter") + "/" + t("search"),
-              xtype: "tbtext",
-              style: "margin: 0 10px 0 0;"
-            }, this.filterField];
+            var tbar = Ext.create('Ext.Toolbar', {
+                cls: 'main-toolbar',
+                items: [
+                    "->",
+                    {
+                        text: t("filter") + "/" + t("search"),
+                        xtype: "tbtext",
+                        style: "margin: 0 10px 0 0;"
+                    },
+                    this.filterField
+                ]
+            });
 
             // only when used in element context
             if(this.inElementContext) {
@@ -172,7 +177,6 @@ pimcore.element.notes = Class.create({
 
             this.layout = new Ext.Panel({
                 title: t('notes') + " & " + t("events"),
-                border: true,
                 iconCls: "pimcore_icon_tab_notes",
                 items: [this.grid, this.detailView],
                 layout: "border",

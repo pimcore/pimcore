@@ -337,12 +337,6 @@ pimcore.layout.toolbar = Class.create({
             });
 
             extrasItems.push({
-                text: t("systemlog"),
-                iconCls: "pimcore_icon_systemlog",
-                handler: this.showLog
-            });
-
-            extrasItems.push({
                 text: t("system_infos_and_tools"),
                 iconCls: "pimcore_icon_info",
                 hideOnClick: false,

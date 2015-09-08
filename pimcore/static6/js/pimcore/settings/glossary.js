@@ -190,6 +190,22 @@ pimcore.settings.glossary = Class.create({
             clicksToEdit: 1
         });
 
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [
+                {
+                    text: t('add'),
+                    handler: this.onAdd.bind(this),
+                    iconCls: "pimcore_icon_add"
+                },"->",{
+                    text: t("filter") + "/" + t("search"),
+                    xtype: "tbtext",
+                    style: "margin: 0 10px 0 0;"
+                },
+                this.filterField
+            ]
+        });
+
         this.grid = Ext.create('Ext.grid.Panel', {
             autoScroll: true,
             store: this.store,
@@ -203,18 +219,7 @@ pimcore.settings.glossary = Class.create({
             columnLines: true,
             bbar: this.pagingtoolbar,
             stripeRows: true,
-            tbar: [
-                {
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                },"->",{
-                  text: t("filter") + "/" + t("search"),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
-                },
-                this.filterField
-            ],
+            tbar: toolbar,
             viewConfig: {
                 forceFit: true,
                 listeners: {

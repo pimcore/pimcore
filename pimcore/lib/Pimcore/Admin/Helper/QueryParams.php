@@ -45,5 +45,14 @@ class QueryParams {
         return ['orderKey' => $orderKey, "order" => $order];
     }
 
+    public static function getRecordIdForGridRequest($param) {
+        if (!\Pimcore\Tool\Admin::isExtJS6() && is_numeric($param)) {
+            return intval($param);
+        } else {
+            $param = json_decode($param, true);
+            return $param['id'];
+        }
+    }
+
 
 }

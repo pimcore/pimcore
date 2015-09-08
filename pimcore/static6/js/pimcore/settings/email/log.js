@@ -106,6 +106,7 @@ pimcore.settings.email.log = Class.create({
             dataIndex: "sentDate",
             width: 130,
             flex: false,
+            sortable: false,
             renderer: function (d) {
                 var date = new Date(intval(d) * 1000);
                 return Ext.Date.format(date, "Y-m-d H:i:s");
@@ -113,31 +114,37 @@ pimcore.settings.email.log = Class.create({
         },
         {
             header: t('email_log_from'),
+            sortable: false,
             dataIndex: "from",
             flex: 120
         },
         {
             header: t('email_log_to'),
+            sortable: false,
             dataIndex: "to",
             flex: 120
         },
         {
             header: t('email_log_cc'),
+            sortable: false,
             dataIndex: "cc",
             flex: 120
         },
         {
             header: t('email_log_bcc'),
+            sortable: false,
             dataIndex: "bcc",
             flex: 120
         },
         {
             header: t('email_log_subject'),
+            sortable: false,
             dataIndex: "subject",
             flex: 220
         },
         {
             xtype: 'actioncolumn',
+            sortable: false,
             width: 50,
             dataIndex: "emailLogExistsHtml",
             header: t('email_log_html'),
@@ -168,6 +175,7 @@ pimcore.settings.email.log = Class.create({
         },
         {
             xtype: 'actioncolumn',
+            sortable: false,
             width: 50,
             dataIndex: "emailLogExistsText",
             header: t('email_log_text'),
@@ -199,6 +207,7 @@ pimcore.settings.email.log = Class.create({
         },
         {
             xtype: 'actioncolumn',
+            sortable: false,
             width: 120,
             dataIndex: "params",
             hidden: true,
@@ -334,32 +343,29 @@ pimcore.settings.email.log = Class.create({
                           "emailLogExistsText"];
 
 
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            '/admin/email/email-logs?',
+            storeFields,
+            itemsPerPage
+        );
 
-       this.store = new Ext.data.Store({
-            proxy: {
-               url: "/admin/email/email-logs/",
-               type: 'ajax',
-                extraParams: {
-                    limit: itemsPerPage,
-                    documentId: this.document ? this.document.id : null
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'data'
-                }
-            },
-            remoteSort: true,
+        if(this.document) {
+            var proxy = this.store.getProxy();
+            proxy.extraParams["documentId"] = this.document.id;
+        }
 
-            fields: storeFields
-        });
-        this.store.load();
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: itemsPerPage,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_items_found")
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [
+                "->",
+                {
+                    text: t("filter") + "/" + t("search"),
+                    xtype: "tbtext",
+                    style: "margin: 0 10px 0 0;"
+                },this.filterField
+            ]
         });
 
         this.grid = new Ext.grid.GridPanel({
@@ -374,14 +380,7 @@ pimcore.settings.email.log = Class.create({
             viewConfig: {
                 forceFit: true
             },
-            tbar: [
-                    "->",
-                    {
-                      text: t("filter") + "/" + t("search"),
-                      xtype: "tbtext",
-                      style: "margin: 0 10px 0 0;"
-                    },this.filterField
-                  ],
+            tbar: toolbar,
             bbar: this.pagingtoolbar
         });
 

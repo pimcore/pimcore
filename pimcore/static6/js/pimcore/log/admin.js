@@ -9,263 +9,252 @@ pimcore.log.admin = Class.create({
 
 	activate: function () {
 		var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-		tabPanel.setActiveItem("errorlog");
+		tabPanel.setActiveItem("pimcore_applicationlog_admin");
 	},
 
 	getTabPanel: function () {
 		if(!this.panel) {
-                    this.panel = new Ext.Panel({
-                        id: "errorlog",
-                        title: t("log_applicationlog"),
-                        border: false,
-                        layout: "fit",
-                        iconCls: "pimcore_icon_log_admin",
-                        closable:true
-                    });
+            this.panel = new Ext.Panel({
+                id: "pimcore_applicationlog_admin",
+                title: t("log_applicationlog"),
+                border: false,
+                layout: "fit",
+                iconCls: "pimcore_icon_log_admin",
+                closable:true
+            });
 
-                    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-                    tabPanel.add(this.panel);
-                    tabPanel.setActiveItem("errorlog");
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.add(this.panel);
+            tabPanel.setActiveItem("pimcore_applicationlog_admin");
 
-                    this.panel.on("destroy", function () {
-                        pimcore.globalmanager.remove("errorlog");
-                    }.bind(this));
+            this.panel.on("destroy", function () {
+                pimcore.globalmanager.remove("pimcore_applicationlog_admin");
+            }.bind(this));
 
+            var itemsPerPage = 20;
+            this.store = pimcore.helpers.grid.buildDefaultStore(
+                '/admin/log/show?',
+                [
+                    'id', 'message', 'priority', 'timestamp', 'fileobject', 'filename', 'component', 'relatedobject', 'source'
+                ],
+                itemsPerPage
+            );
+            var reader = this.store.getProxy().getReader();
+            reader.setRootProperty('p_results');
+            reader.setTotalProperty('p_totalCount');
 
-                   // create the Data Store
-                   this.store = new Ext.data.Store({
-                       proxy: {
-                           type: 'ajax',
-                           url: '/admin/log/show',
-                           reader: {
-                               type: 'json',
-                               rootProperty: 'p_results',
-                               totalProperty: 'p_totalCount',
-                               idProperty: 'id'
-                           }
-                       },
-                       remoteSort: true,
-                       fields: [
-                           'id', 'message', 'priority', 'timestamp', 'fileobject', 'filename', 'component', 'relatedobject', 'source'
-                       ]
-                    });
+            this.pagingToolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
-                   function renderLink(value, p, record){
-                        return Ext.String.format('<a href="{0}" target="_blank">{1}</a>', record.data.fileobject, record.data.fileobject);
-                   }
+            this.resultpanel = new Ext.grid.GridPanel({
+                    store: this.store,
+                    title: t("log_applicationlog"),
+                    trackMouseOver:false,
+                    disableSelection:true,
+                    loadMask: true,
+                    autoScroll: true,
+                    region: "center",
+                    columns:[{
+                        header: t("log_timestamp"),
+                        dataIndex: 'timestamp',
+                        width: 150,
+                        align: 'left',
+                        /*hidden: true,*/
+                        sortable: true
+                    },{
+                        id: 'p_message',
+                        header: t("log_message"),
+                        dataIndex: 'message',
+                        flex: 220,
+                        sortable: true
+                    },{
+                        header: t("log_type"),
+                        dataIndex: 'priority',
+                        flex: 25,
+                        sortable: true
+                    },{
+                        header: t("log_fileobject"),
+                        dataIndex: 'fileobject',
+                        flex: 70,
+                        renderer: function(value, p, record){
+                            return Ext.String.format('<a href="{0}" target="_blank">{1}</a>', record.data.fileobject, record.data.fileobject);
+                        },
+                        sortable: true
+                    },{
+                        header: t("log_relatedobject"),
+                        dataIndex: 'relatedobject',
+                        flex: 20,
+                        sortable: false
+                    },{
+                        header: t("log_component"),
+                        dataIndex: 'component',
+                        flex: 50,
+                        sortable: true
+                    },{
+                        header: t("log_source"),
+                        dataIndex: 'source',
+                        flex: 50,
+                        sortable: true
+                    }],
 
-                    this.resultpanel = new Ext.grid.GridPanel({
-                            store: this.store,
-                            title: t("log_applicationlog"),
-                            trackMouseOver:false,
-                            disableSelection:true,
-                            loadMask: true,
-                            autoScroll: true,
-                            region: "center",
-                            columns:[{
-                                header: t("log_timestamp"),
-                                dataIndex: 'timestamp',
-                                width: 140,
-                                align: 'left',
-                                /*hidden: true,*/
-                                sortable: true
-                            },{
-                                id: 'p_message',
-                                header: t("log_message"),
-                                dataIndex: 'message',
-                                flex: 220,
-                                sortable: true
-                            },{
-                                header: t("log_type"),
-                                dataIndex: 'priority',
-                                flex: 15,
-                                sortable: true
-                            },{
-                                header: t("log_fileobject"),
-                                dataIndex: 'fileobject',
-                                flex: 70,
-                                renderer: renderLink,
-                                sortable: true
-                            },{
-                                header: t("log_relatedobject"),
-                                dataIndex: 'relatedobject',
-                                flex: 15,
-                                sortable: false
-                            },{
-                                header: t("log_component"),
-                                dataIndex: 'component',
-                                flex: 50,
-                                sortable: true
-                            },{
-                                header: t("log_source"),
-                                dataIndex: 'source',
-                                flex: 50,
-                                sortable: true
-                            }],
+                    // customize view config
+                    viewConfig: {
+                        forceFit:true,
+                        getRowClass: function(record) {
+                            return 'log-type-' + record.get('priority');
+                        }
+                    },
 
-                            // customize view config
-                            viewConfig: {
-                                forceFit:true,
-                                getRowClass: function(record) {
-                                    return 'log-type-' + record.get('priority');
-                                }
-                            },
+                    listeners: {
+                        rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
+                            new pimcore.log.detailwindow(this.store.getAt(rowIndex).data);
+                        }.bind(this)
+                    },
 
-                            listeners: {
-                                rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
-                                    new pimcore.log.detailwindow(this.store.getAt(rowIndex).data);
-                                }.bind(this)
-                            },
+                    // paging bar on the bottom
+                    bbar: this.pagingToolbar
+               });
 
-                            // paging bar on the bottom
-                            bbar: new Ext.PagingToolbar({
-                                pageSize: this.searchParams.limit,
-                                store: this.store,
-                                displayInfo: true,
-                                displayMsg: '{0} - {1} / {2}',
-                                emptyMsg: t("no_items_found"),
-                                items:[]
-                            })
-                       });
+            this.fromDate = new Ext.form.DateField({
+                id: 'from_date',
+                name: 'from_date',
+                width: 130,
+                xtype: 'datefield'
+            });
 
-                    this.fromDate = new Ext.form.DateField({
-                                id: 'from_date',
-                                name: 'from_date',
-                                xtype: 'datefield'
-                            });
+            this.fromTime = new Ext.form.TimeField({
+                id: 'from_time',
+                name: 'from_time',
+                width: 100,
+                xtype: 'timefield'
+            });
 
-                    this.fromTime = new Ext.form.TimeField({
-                                id: 'from_time',
-                                name: 'from_time',
-                                width: 60,
-                                xtype: 'timefield'
-                            });
+            this.toDate = new Ext.form.DateField({
+                id: 'to_date',
+                name: 'to_date',
+                width: 130,
+                xtype: 'datefield'
+            });
 
-                    this.toDate = new Ext.form.DateField({
-                                id: 'to_date',
-                                name: 'to_date',
-                                xtype: 'datefield'
-                            });
+            this.toTime = new Ext.form.TimeField({
+                id: 'to_time',
+                name: 'to_time',
+                width: 100,
+                xtype: 'timefield'
+            });
 
-                    this.toTime = new Ext.form.TimeField({
-                                id: 'to_time',
-                                name: 'to_time',
-                                width: 60,
-                                xtype: 'timefield'
-                            });
-
-                    this.searchpanel = new Ext.FormPanel({
-                        region: "east",
-                        title: t("log_search_form"),
-                        width: 340,
-                        height: 500,
-                        border: true,
-                        autoScroll: true,
-                        buttons: [{
-                            text: t("log_reset_search"),
-                            handler: this.clearValues.bind(this),
-                            iconCls: "pimcore_icon_cancel"
+            this.searchpanel = new Ext.FormPanel({
+                region: "east",
+                title: t("log_search_form"),
+                width: 370,
+                height: 500,
+                border: false,
+                autoScroll: true,
+                buttons: [{
+                    text: t("log_reset_search"),
+                    handler: this.clearValues.bind(this),
+                    iconCls: "pimcore_icon_cancel"
+                },{
+                    text: t("log_search"),
+                    handler: this.find.bind(this),
+                    iconCls: "pimcore_icon_tab_search"
+                }],
+                items: [ {
+                    xtype:'fieldset',
+                    id:'log_search_form',
+                    autoHeight:true,
+                    labelWidth: 150,
+                    items :[
+                        {
+                            xtype: 'fieldcontainer',
+                            layout: 'hbox',
+                            fieldLabel: t('log_search_from'),
+                            combineErrors: true,
+                            name: 'from',
+                            items: [this.fromDate, this.fromTime]
                         },{
-                            text: t("log_search"),
-                            handler: this.find.bind(this),
-                            iconCls: "pimcore_icon_tab_search"
-                        }],
-                        items: [ {
-                            xtype:'fieldset',
-                            id:'log_search_form',
-                            autoHeight:true,
-                            labelWidth: 150,
-                            items :[
-                                {
-                                    xtype: 'fieldcontainer',
-                                    layout: 'hbox',
-                                    fieldLabel: t('log_search_from'),
-                                    combineErrors: true,
-                                    name: 'from',
-                                    items: [this.fromDate, this.fromTime]
-                                },{
-                                    xtype: 'fieldcontainer',
-                                    layout: 'hbox',
-                                    fieldLabel: t('log_search_to'),
-                                    combineErrors: true,
-                                    name: 'to',
-                                    items: [this.toDate, this.toTime]
-                                },{
-                                    xtype:'combo',
-                                    name: 'priority',
-                                    fieldLabel: t('log_search_type'),
-                                    width: 250,
-                                    listWidth: 150,
-                                    mode: 'local',
-                                    typeAhead:true,
-                                    forceSelection: true,
-                                    triggerAction: 'all',
-                                    store: new Ext.data.JsonStore({
-                                        autoDestroy: true,
-                                        proxy: {
-                                            type: 'ajax',
-                                            url: '/admin/log/priority-json',
-                                            reader: {
-                                                rootProperty: 'priorities',
-                                                idProperty: 'key'
-                                            }
-                                        },
-                                        autoLoad: true,
-                                        fields: ['key', 'value']
-                                    }),
-                                    displayField: 'value',
-                                    valueField: 'key'
-                                },{
-                                    xtype:'combo',
-                                    name: 'component',
-                                    fieldLabel: t('log_search_component'),
-                                    width: 250,
-                                    listWidth: 150,
-                                    mode: 'local',
-                                    typeAhead:true,
-                                    forceSelection: true,
-                                    triggerAction: 'all',
-                                    store: new Ext.data.JsonStore({
-                                        autoDestroy: true,
-                                        proxy: {
-                                            type: 'ajax',
-                                            url: '/admin/log/component-json',
-                                            reader: {
-                                                type: 'json',
-                                                rootProperty: 'components',
-                                                idProperty: 'key'
-                                            }
-                                        },
-                                        autoLoad: true,
-                                        fields: ['key', 'value']
-                                    }),
-                                    displayField: 'value',
-                                    valueField: 'key'
-                                },{
-                                    xtype:'textfield',
-                                    name: 'relatedobject',
-                                    fieldLabel: t('log_search_relatedobject'),
-                                    width: 250,
-                                    listWidth: 150
-                                },{
-                                    xtype:'textfield',
-                                    name: 'message',
-                                    fieldLabel: t('log_search_message'),
-                                    width: 250,
-                                    listWidth: 150
-                                }]
-                            }]});
+                            xtype: 'fieldcontainer',
+                            layout: 'hbox',
+                            fieldLabel: t('log_search_to'),
+                            combineErrors: true,
+                            name: 'to',
+                            items: [this.toDate, this.toTime]
+                        },{
+                            xtype:'combo',
+                            name: 'priority',
+                            fieldLabel: t('log_search_type'),
+                            width: 335,
+                            listWidth: 150,
+                            mode: 'local',
+                            typeAhead:true,
+                            forceSelection: true,
+                            triggerAction: 'all',
+                            store: new Ext.data.JsonStore({
+                                autoDestroy: true,
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/admin/log/priority-json',
+                                    reader: {
+                                        rootProperty: 'priorities',
+                                        idProperty: 'key'
+                                    }
+                                },
+                                autoLoad: true,
+                                fields: ['key', 'value']
+                            }),
+                            displayField: 'value',
+                            valueField: 'key'
+                        },{
+                            xtype:'combo',
+                            name: 'component',
+                            fieldLabel: t('log_search_component'),
+                            width: 333,
+                            listWidth: 150,
+                            mode: 'local',
+                            typeAhead:true,
+                            forceSelection: true,
+                            triggerAction: 'all',
+                            store: new Ext.data.JsonStore({
+                                autoDestroy: true,
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/admin/log/component-json',
+                                    reader: {
+                                        type: 'json',
+                                        rootProperty: 'components',
+                                        idProperty: 'key'
+                                    }
+                                },
+                                autoLoad: true,
+                                fields: ['key', 'value']
+                            }),
+                            displayField: 'value',
+                            valueField: 'key'
+                        },{
+                            xtype:'textfield',
+                            name: 'relatedobject',
+                            fieldLabel: t('log_search_relatedobject'),
+                            width: 335,
+                            listWidth: 150
+                        },{
+                            xtype:'textfield',
+                            name: 'message',
+                            fieldLabel: t('log_search_message'),
+                            width: 335,
+                            listWidth: 150
+                        }]
+                    }]});
 
-                    this.layout = new Ext.Panel({
-                            border: false,
-                            layout: "border",
-                            items: [this.searchpanel, this.resultpanel]
-                    });
+            this.layout = new Ext.Panel({
+                    border: false,
+                    layout: "border",
+                    items: [this.searchpanel, this.resultpanel]
+            });
 
 
-                   this.panel.add(this.layout);
-                   this.store.load({params:this.searchParams});
-                   pimcore.layout.refresh();
+            this.panel.add(this.layout);
+            this.store.load();
+            //this.store.load({params:this.searchParams});
+            pimcore.layout.refresh();
 		}
 		return this.panel;
 	},
@@ -299,11 +288,13 @@ pimcore.log.admin = Class.create({
         this.searchParams.relatedobject = formValues.relatedobject;
         this.searchParams.message = formValues.message;
 
-        this.store.baseParams = this.searchParams;
+        var proxy = this.store.getProxy();
+        proxy.extraParams = this.searchParams;
+        //this.store.baseParams = this.searchParams;
 
-        this.store.reload({
-            params:this.searchParams
-        });
+        this.pagingToolbar.moveFirst();
+
+        //this.store.reload();
     }
 
 

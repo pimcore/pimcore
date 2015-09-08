@@ -55,10 +55,10 @@ pimcore.settings.recyclebin = Class.create({
 
     getGrid: function () {
 
-
-        Ext.define('pimcore.model.recyclebin', {
-            extend: 'Ext.data.Model',
-            fields: [
+        var itemsPerPage = 20;
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            '/admin/recyclebin/list?',
+            [
                 {name: 'id'},
                 {name: 'type'},
                 {name: 'subtype'},
@@ -67,42 +67,14 @@ pimcore.settings.recyclebin = Class.create({
                 {name: 'deletedby'},
                 {name: 'date'}
             ],
-            proxy: {
-                type: 'ajax',
-                url: '/admin/recyclebin/list',
-                extraParams: {
-                    limit: itemsPerPage,
-                    filterFullText: ""
-                },
-                // Reader is now on the proxy, as the message was explaining
-                reader: {
-                    rootProperty: 'data',
-                    type: 'json'
-                    //totalProperty:'total',            // default
-                    //successProperty:'success'         // default
-                }
-                //,                                     // default
-                //writer: {
-                //    type: 'json'
-                //}
-            }
-        });
+            itemsPerPage
+        );
 
-        var itemsPerPage = 20;
-
-        this.store = new Ext.data.Store({
-            model: 'pimcore.model.recyclebin',
-            pageSize: itemsPerPage,
-            remoteSort: true,
-            listeners: {
-                load: function () {
-                    if(this.store.getCount() > 0) {
-                        Ext.getCmp("pimcore_recyclebin_button_flush").enable();
-                    }
-                }.bind(this)
+        this.store.addListener('load', function () {
+            if(this.store.getCount() > 0) {
+                Ext.getCmp("pimcore_recyclebin_button_flush").enable();
             }
-        });
-        this.store.load();
+        }.bind(this));
 
 
         this.filterField = new Ext.form.TextField({
@@ -122,42 +94,7 @@ pimcore.settings.recyclebin = Class.create({
             }
         });
 
-        this.pagingtoolbar = Ext.create('Ext.toolbar.Paging', {
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text: t("items_per_page")
-        }));
-        var combo = Ext.create('Ext.form.field.ComboBox', {
-            store: [
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode: "local",
-            width: 50,
-            value: 20,
-            triggerAction: "all",
-            listeners: {
-                select: function (box, rec, index) {
-                    var store = this.pagingtoolbar.getStore();
-                    store.setPageSize(intval(rec.data.field1));
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        });
-
-        this.pagingtoolbar.add(combo);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
         var typesColumns = [
             {header: t("type"), flex: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
@@ -187,18 +124,9 @@ pimcore.settings.recyclebin = Class.create({
             }
         ];
 
-
-        this.grid = new Ext.grid.GridPanel({
-            frame: false,
-            autoScroll: true,
-            store: this.store,
-            columnLines: true,
-            bbar: this.pagingtoolbar,
-            stripeRows: true,
-            selModel: Ext.create('Ext.selection.RowModel', {}),
-            plugins: ['gridfilters'],
-            columns : typesColumns,
-            tbar: [
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [
                 {
                     text: t('restore'),
                     handler: this.onRestore.bind(this),
@@ -219,12 +147,26 @@ pimcore.settings.recyclebin = Class.create({
                     disabled: true
                 },
                 '->',{
-                  text: t("filter") + "/" + t("search"),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
+                    text: t("filter") + "/" + t("search"),
+                    xtype: "tbtext",
+                    style: "margin: 0 10px 0 0;"
                 },
                 this.filterField
-            ],
+            ]
+        });
+
+
+        this.grid = new Ext.grid.GridPanel({
+            frame: false,
+            autoScroll: true,
+            store: this.store,
+            columnLines: true,
+            bbar: this.pagingtoolbar,
+            stripeRows: true,
+            selModel: Ext.create('Ext.selection.RowModel', {}),
+            plugins: ['gridfilters'],
+            columns : typesColumns,
+            tbar: toolbar,
             listeners: {
                 "rowclick": function () {
                     var rec = this.grid.getSelectionModel().getSelected();

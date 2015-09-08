@@ -37,7 +37,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
     public function listAction () {
         
         if($this->getParam("xaction") == "destroy") {
-            $item = Recyclebin\Item::getById($this->getParam("data"));
+            $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($this->getParam("data")));
             $item->delete();
  
             $this->_helper->json(array("success" => true, "data" => array()));
