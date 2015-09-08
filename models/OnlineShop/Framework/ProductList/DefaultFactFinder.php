@@ -680,6 +680,13 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         $url .= http_build_query($params);
         $url .= '&format=json';
 
+        $internalIPAddresses = explode_and_trim(',',$this->tenantConfig->getClientConfig('internalIPAddresses'));
+        if(!empty($internalIPAddresses)){
+            if(in_array(\Pimcore\Tool::getClientIp(),$internalIPAddresses)){
+                $url .= '&log=internal';
+            }
+        }
+
         $this->getLogger()->log('Request: ' . $url, Zend_Log::INFO);
 
 
