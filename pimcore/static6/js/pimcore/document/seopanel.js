@@ -138,6 +138,8 @@ pimcore.document.seopanel = Class.create({
                 rootVisible: true,
                 root: rootNodeConfig,
                 border: false,
+                lines: true,
+                cls: "pimcore_document_seo_tree",
                 listeners: {
                     "itemclick": this.openEditPanel.bind(this),
                     "itemcontextmenu": this.onRightClick.bind(this),
@@ -227,7 +229,7 @@ pimcore.document.seopanel = Class.create({
         this.editWindow = new Ext.Window({
             modal: true,
             width: 500,
-            height: 200,
+            height: 250,
             closable: true,
             items: [this.formPanel],
             buttons: [{

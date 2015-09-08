@@ -47,7 +47,7 @@ pimcore.settings.robotstxt = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_robotstxt");
+        tabPanel.setActiveItem("pimcore_robotstxt");
     },
 
     getTabPanel: function () {
@@ -65,7 +65,7 @@ pimcore.settings.robotstxt = Class.create({
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.activate("pimcore_robotstxt");
+            tabPanel.setActiveItem("pimcore_robotstxt");
 
 
             this.panel.on("destroy", function () {
@@ -92,6 +92,8 @@ pimcore.settings.robotstxt = Class.create({
                     xtype: "textarea",
                     name: "data",
                     value: this.data.data,
+                    width: "100%",
+                    height: "100%",
                     style: "font-family: 'Courier New', Courier, monospace;"
                 });
             }

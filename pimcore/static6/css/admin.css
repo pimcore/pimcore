@@ -1190,7 +1190,7 @@ span.warning {
     border-top: 3px solid #fff;
 }
 
-.x-grid-cell-inner-treecolumn {
+.x-grid-cell-inner-treecolumn, .pimcore_document_seo_tree .x-grid-cell-inner  {
     padding: 0 6px 0 0;
 }
 

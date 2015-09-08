@@ -55,7 +55,20 @@ pimcore.settings.httpErrorLog = Class.create({
 
     getGrid: function () {
 
-        this.store = new Ext.data.Store({
+        var itemsPerPage = 20;
+        var url = '/admin/misc/http-error-log?';
+
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url,
+            ["id","path", "code", "date","amount"],
+            itemsPerPage
+        );
+        var proxy = this.store.getProxy();
+        proxy.extraParams["group"] = 1;
+
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+
+        /*this.store = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: '/admin/misc/http-error-log',
@@ -74,6 +87,7 @@ pimcore.settings.httpErrorLog = Class.create({
 
         });
         this.store.load();
+        */
 
         var typesColumns = [
             {header: "ID", width: 50, sortable: true, hidden: true, dataIndex: 'id'},
@@ -117,7 +131,7 @@ pimcore.settings.httpErrorLog = Class.create({
             }
         });
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
+        /*this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: 20,
             store: this.store,
             displayInfo: true,
@@ -149,7 +163,7 @@ pimcore.settings.httpErrorLog = Class.create({
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
-        }));
+        }));*/
 
         this.grid = new Ext.grid.GridPanel({
             frame: false,
