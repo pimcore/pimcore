@@ -277,16 +277,19 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     }
 
-    protected function doDeleteFromIndex($objectId) {
-
+    public function doDeleteFromIndex($objectId) {
         $esClient = $this->getElasticSearchClient();
         try {
             $esClient->delete(['index' => $this->indexName, 'type' => "product", 'id' => $objectId]);
             $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
         } catch(Exception $e) {
-            \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+            $check = \Zend_Json::decode($e->getMessage());
+            if(!$check['found']){ //not in es index -> we can delete it from store table
+                $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
+            }else{
+                \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+            }
         }
-
     }
 
     /**
@@ -355,6 +358,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
             } else {
                 $this->bulkIndexData[] = ['index' => ['index' => $this->indexName, 'type' => 'product', '_id' => $objectId]];
             }
+            \Logger::info('Added to Bulk index:  ' . $objectId);
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
             //save new indexed element to mockup cache
@@ -398,6 +402,7 @@ SQL;
                         , 'error' => $response['index']['error']
                         , 'id' => $response['index']['_id']
                     ]);
+                    Logger::error('Faild to Index Object with Id:' . $response['index']['_id']);
                 }
             }
             $this->db->commit();
@@ -502,8 +507,8 @@ SQL;
      * @throws Exception
      */
     protected function completeReindexMode() {
-        Logger::info('in completeReindexMode');
         if($this->isInReindexMode()) {
+            Logger::info('in completeReindexMode');
 
             // check if all entries are updated
             $query = "SELECT count(*) FROM " . $this->getStoreTableName() . " WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
