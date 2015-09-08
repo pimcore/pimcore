@@ -146,51 +146,51 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 panelConf.autoHeight = false;
             }
 
-            // this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
-            panelConf.listeners = {
-
-                afterlayout: function () {
-
-                    if (this.component.heightAlreadyFixed) {
-                        return;
-                    }
-
-                    // if there's already an interval => clear it!
-                    if(this.tabPanelAdjustInterval) {
-                        clearInterval(this.tabPanelAdjustInterval);
-                    }
-
-                    this.tabPanelAdjustIntervalCounter = 0;
-                    this.tabPanelAdjustInterval = window.setInterval(function () {
-                        if(!this.fieldConfig.height && !this.fieldConfig.region) {
-                            this.tabPanelAdjustIntervalCounter++;
-                            if(this.tabPanelAdjustIntervalCounter > 20) {
-                                clearInterval(this.tabPanelAdjustInterval);
-                            }
-
-                            try {
-                                var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
-                                var panelBody = Ext.get(panelBodies[0]);
-                                panelBody.applyStyles("height: auto;");
-                                var height = panelBody.getHeight();
-                                if (height > 0) {
-                                    // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
-                                    this.component.setHeight(height+130);
-                                    clearInterval(this.tabPanelAdjustInterval);
-
-                                    //this.tabPanel.getEl().applyStyles("position:relative;");
-                                    this.component.doLayout();
-                                    this.component.heightAlreadyFixed = true;
-
-                                }
-
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }
-                    }.bind(this), 100);
-                }.bind(this)
-            };
+            //// this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
+            //panelConf.listeners = {
+            //
+            //    afterlayout: function () {
+            //
+            //        if (this.component.heightAlreadyFixed) {
+            //            return;
+            //        }
+            //
+            //        // if there's already an interval => clear it!
+            //        if(this.tabPanelAdjustInterval) {
+            //            clearInterval(this.tabPanelAdjustInterval);
+            //        }
+            //
+            //        this.tabPanelAdjustIntervalCounter = 0;
+            //        this.tabPanelAdjustInterval = window.setInterval(function () {
+            //            if(!this.fieldConfig.height && !this.fieldConfig.region) {
+            //                this.tabPanelAdjustIntervalCounter++;
+            //                if(this.tabPanelAdjustIntervalCounter > 20) {
+            //                    clearInterval(this.tabPanelAdjustInterval);
+            //                }
+            //
+            //                try {
+            //                    var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
+            //                    var panelBody = Ext.get(panelBodies[0]);
+            //                    panelBody.applyStyles("height: auto;");
+            //                    var height = panelBody.getHeight();
+            //                    if (height > 0) {
+            //                        // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
+            //                        this.component.setHeight(height+130);
+            //                        clearInterval(this.tabPanelAdjustInterval);
+            //
+            //                        //this.tabPanel.getEl().applyStyles("position:relative;");
+            //                        this.component.updateLayout();
+            //                        this.component.heightAlreadyFixed = true;
+            //
+            //                    }
+            //
+            //                } catch (e) {
+            //                    console.log(e);
+            //                }
+            //            }
+            //        }.bind(this), 100);
+            //    }.bind(this)
+            //};
 
             for (var i=0; i < nrOfLanguages; i++) {
                 this.currentLanguage = this.frontendLanguages[i];
@@ -254,7 +254,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         this.component = new Ext.Panel(wrapperConfig);
 
-        this.component.doLayout();
+        this.component.updateLayout();
         return this.component;
 
 
@@ -490,7 +490,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 }
                 fieldset.destroy();
                 var languagePanel = this.languagePanels[currentLanguage];
-                languagePanel.doLayout();
+                languagePanel.updateLayout();
             } else {
                 console.log("no fieldset???");
             }
@@ -510,7 +510,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         if (itemHeight > 0) {
             var height = this.component.getHeight();
             this.component.setHeight(height - itemHeight);
-            this.component.doLayout();
+            this.component.updateLayout();
         }
 
         delete this.activeGroups[groupId];
@@ -561,7 +561,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                                 var height = this.component.getHeight();
                                 this.component.setHeight(height + itemHeight);
 
-                                this.component.doLayout();
+                                this.component.updateLayout();
 
                             }
                         } catch (e) {
@@ -571,7 +571,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                     }.bind(this, groupId, panel));
 
                     panel.add(fieldset);
-                    fieldset.doLayout();
+                    fieldset.updateLayout();
 
                     this.groupModified = true;
                 }
@@ -582,7 +582,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             this.activeGroups[groupId] = true;
         }
 
-        this.component.doLayout();
+        this.component.updateLayout();
         this.currentLanguage = activeLanguage;
 
     },

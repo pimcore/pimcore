@@ -43,7 +43,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
-            readerFields.push({name: this.relationsFields[i], allowBlank: true});
+            readerFields.push({name: this.relationsFields[i], allowBlank: true, type: 'string'});
         }
 
         var url = "/admin/classificationstore/relations?";
@@ -51,28 +51,30 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             type: 'ajax',
             reader: {
                 type: 'json',
-                rootProperty: 'data'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
+                rootProperty: 'data',
+                idProperty: 'id'
             },
             writer: {
                 type: 'json',
                 writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true'
+            },
+            api: {
+                create  : url + "xaction=create",
+                read    : url + "xaction=read",
+                update  : url + "xaction=update",
+                destroy : url + "xaction=destroy"
             }
         };
 
         var listeners = {};
 
+        listeners.write = function(store, action, result, response, rs) {};
         listeners.exception = function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), response);
-                this.groupsStore.rejectChanges();
+                this.relationsStore.rejectChanges();
             }
         }.bind(this);
 
@@ -85,7 +87,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var gridColumns = [];
 
-        gridColumns.push({header: t("id"), flex: 60, sortable: true, dataIndex: 'id', hidden: true});
         gridColumns.push({header: t("key_id"), flex: 60, sortable: true, dataIndex: 'keyId', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'keyName', filter: 'string'});
         gridColumns.push({header: t("description"), flex: 200, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
@@ -158,12 +159,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                     handler: this.onAddKey.bind(this),
                     iconCls: "pimcore_icon_add"
                 }
-            ],
-            listeners: {
-                rowdblclick: function (grid, rowIndex, ev) {
-
-                }.bind(this)
-            }
+            ]
         } ;
 
         this.relationsGrid = Ext.create('Ext.grid.Panel', gridConfig);
@@ -345,9 +341,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 }
             ],
             listeners: {
-                rowdblclick: function (grid, rowIndex, ev) {
-
-                }.bind(this),
 
                 rowclick: function(grid, record, tr, rowIndex, e, eOpts ) {
                     var record = this.groupsStore.getAt(rowIndex);
@@ -358,7 +351,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
                     this.relationsPanel.setTitle(t("relations") + " - "  + t("group") +  " " + record.data.id + " - " + groupName);
                     this.relationsPanel.enable();
-                    this.relationsStore.removeAll(true);
                     this.relationsStore.getProxy().setExtraParam("groupId", groupId);
                     this.relationsStore.reload();
                     this.relationsGrid.show();
@@ -446,9 +438,10 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 colData.keyName = keyDef.name;
                 colData.keyDescription = keyDef.description;
                 colData.groupId = this.groupId;
-                colData.id = this.groupId + "-" + colData.keyId;
 
-                var match = this.relationsStore.findExact("id" , colData.id);
+                var tempId = this.groupId + "-" + colData.keyId;
+
+                var match = this.relationsStore.findExact("id" , tempId);
                 if (match == -1) {
                     this.relationsStore.add(colData);
                 }

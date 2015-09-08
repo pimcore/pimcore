@@ -85,7 +85,6 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         var gridColumns = [];
 
-        gridColumns.push({header: t("id"), flex: 60, sortable: true, dataIndex: 'id', hidden: true});
         gridColumns.push({header: t("group_id"), flex: 60, sortable: true, dataIndex: 'groupId', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'groupName', filter: 'string'});
         gridColumns.push({header: t("description"), flex: 200, sortable: true, dataIndex: 'groupDescription', filter: 'string'});
@@ -334,7 +333,6 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
                     this.relationsPanel.setTitle(t("relations") + " - "  + t("collection") +  " " + record.data.id + " - " + collectionName);
                     this.relationsPanel.enable();
-                    this.relationsStore.removeAll(true);
                     var proxy = this.relationsStore.getProxy();
                     proxy.setExtraParam("colId", collectionId);
                     this.relationsStore.reload();
@@ -425,9 +423,9 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                     colData.groupName = groupDef.name;
                     colData.gropDescription = groupDef.description;
                     colData.colId = this.collectionId;
-                    colData.id = this.collectionId + "-" + colData.groupId;
+                    var tmpId = this.collectionId + "-" + colData.groupId;
 
-                    var match = this.relationsStore.findExact("id", colData.id);
+                    var match = this.relationsStore.findExact("id", tmpId);
                     if (match == -1) {
                         this.relationsStore.add(colData);
                     }

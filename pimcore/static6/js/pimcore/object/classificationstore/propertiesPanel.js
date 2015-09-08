@@ -69,8 +69,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true'
-            },
-            extraParams: this.baseParams
+            }
         };
 
         var listeners = {};
