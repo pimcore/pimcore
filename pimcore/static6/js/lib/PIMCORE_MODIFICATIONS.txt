@@ -36,4 +36,4 @@ needed components:
 
 #5fa2dd => #3c3f41
 #eaeff4 => #e4e4e4
-
+#7fb5e4 => #3c3f41

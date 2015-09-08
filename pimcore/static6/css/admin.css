@@ -1120,10 +1120,19 @@ span.warning {
     color: #606060;
 }
 
+#pimcore_panel_tabs > .x-panel-body > .x-tabpanel-child {
+    border-color: #ececec;
+    border-top-width: 5px;
+}
+
 #pimcore_panel_tree_left > .x-panel-header-default-horizontal.x-header-noborder {
     background-color: #d0d0d0;
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+#pimcore_body-body > .x-border-item {
+    border:0;
 }
 
 .x-btn-icon .x-btn-icon-el {
@@ -1158,6 +1167,7 @@ span.warning {
 
 .x-tab-bar-default {
     background: #ececec;
+    border-bottom: 1px solid #fff;
 }
 
 .x-tab-focus.x-tab-default {
@@ -1168,8 +1178,16 @@ span.warning {
     color: #919191;
 }
 
+.x-tab-default.x-tab-over .x-tab-close-btn {
+    color: #919191;
+}
+
 .x-tab-bar-horizontal > .x-tab-bar-body-default {
     min-height: 30px;
+}
+
+.x-tabpanel-child {
+    border-top: 3px solid #fff;
 }
 
 .x-grid-cell-inner-treecolumn {
@@ -1198,16 +1216,12 @@ span.warning {
     padding-bottom: 3px;
 }
 
-.x-panel-header-default {
-    background: #222;
-}
-
 .x-mask.x-focus {
     border:0;
 }
 
 .x-panel-header-default {
-    background-color: #d0d0d0;
+    background-color: #ececec;
 }
 
 .x-panel-header-title-default {
@@ -1228,5 +1242,28 @@ span.warning {
     background-color: #d0d0d0;
 }
 
+body > .x-mask {
+    background-color: rgba(246, 246, 246, 0.75);
+}
 
+.x-border-item {
+    border-right: 1px solid #ececec;
+}
+
+.x-toolbar-default {
+    background-color: #ececec;
+}
+
+.x-btn-default-small, .x-btn-default-medium, .x-btn-default-large {
+    border-color: #000;
+}
+
+.x-btn-over.x-btn-default-small, .x-btn-over.x-btn-default-medium, .x-btn-over.x-btn-default-large {
+    border-color: #000;
+    background-color: #000;
+}
+
+.x-form-trigger-wrap-default.x-form-trigger-wrap-focus {
+    border-color: #000;
+}
 
