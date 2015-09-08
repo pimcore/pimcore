@@ -302,11 +302,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     save : function (only, callback) {
 
-        if(this.tab.disabled) {
+        if(this.tab.disabled || this.tab.isMasked()) {
             return;
         }
 
-        this.tab.disable();
+        this.tab.mask();
         Ext.Ajax.request({
             url: '/admin/asset/save/',
             method: "post",
@@ -330,14 +330,14 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     }
                 }
 
-                this.tab.enable();
+                this.tab.unmask();
 
                 if(typeof callback == "function") {
                     callback();
                 }
             }.bind(this),
             failure: function () {
-                this.tab.enable();
+                this.tab.unmask();
             },
             params: this.getSaveData(only)
         });

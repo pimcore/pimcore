@@ -286,11 +286,11 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     save : function (task) {
 
-        if(this.tab.disabled) {
+        if(this.tab.disabled || this.tab.isMasked()) {
             return;
         }
 
-        this.tab.disable();
+        this.tab.mask();
 
         Ext.Ajax.request({
             url: '/admin/object/save-folder/task/' + task,
@@ -311,10 +311,10 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                     pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
                 }
 
-                this.tab.enable();
+                this.tab.unmask();
             }.bind(this),
             failure: function () {
-                this.tab.enable();
+                this.tab.unmask();
             }
         });
 

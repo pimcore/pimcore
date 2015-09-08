@@ -67,16 +67,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     activate: function () {
         var tabId = "document_" + this.id;
-        this.tabPanel.setActiveItem(tabId);
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.setActiveItem(tabId);
     },
 
     save : function (task, only, callback) {
 
-        if(this.tab.disabled) {
+        if(this.tab.disabled || this.tab.isMasked()) {
             return;
         }
 
-        this.tab.disable();
+        this.tab.mask();
         var saveData = this.getSaveData(only);
 
         if (saveData) {
@@ -124,18 +125,18 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         }
                     }
 
-                    this.tab.enable();
+                    this.tab.unmask();
 
                     if(typeof callback == "function") {
                         callback();
                     }
                 }.bind(this),
                 failure: function () {
-                    this.tab.enable();
+                    this.tab.unmask();
                 }
             });
         } else {
-            this.tab.enable();
+            this.tab.unmask();
         }
     },
     
