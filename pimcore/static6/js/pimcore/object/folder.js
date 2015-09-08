@@ -209,7 +209,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 id: "object_toolbar_" + this.id,
                 region: "north",
                 border: false,
-                cls: "document_toolbar",
+                cls: "main-toolbar",
                 items: buttons
             });
         }
