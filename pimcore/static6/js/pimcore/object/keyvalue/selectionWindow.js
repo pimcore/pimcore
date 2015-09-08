@@ -296,7 +296,7 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
         });
 
         if (this.encodedFilter) {
-            this.store.getPropxy().setExtraParam("filter", this.encodedFilter);
+            this.store.getProxy().setExtraParam("filter", this.encodedFilter);
         }
 
         var emptyMsg;

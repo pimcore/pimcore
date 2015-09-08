@@ -365,37 +365,29 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         gridColumns.push({header: t("name"), width: nameWidth, sortable: true, dataIndex: 'name'});
         gridColumns.push({header: t("description"), width: descWidth, sortable: true, dataIndex: 'description'});
 
-        var proxy = new Ext.data.HttpProxy({
+
+        var proxy = {
+            type: 'ajax',
             url: "/admin/classificationstore/" + postFix,
-            method: 'post'
-        });
-
-        var reader = new Ext.data.JsonReader({
-            totalProperty: 'total',
-            successProperty: 'success',
-            root: 'data'
-        }, readerFields);
-
-        var storeConfig = {
-            restful: false,
-            idProperty: 'id',
-            remoteSort: true,
-            proxy: proxy,
-            reader: reader
+            reader: {
+                type: 'json',
+                rootProperty: 'data'
+            }
         };
 
         if (this.object) {
-            storeConfig.baseParams = {
+            proxy.extraParams = {
                 "oid": this.object.id,
                 "fieldname": this.fieldname
             };
         }
 
-        this.store = new Ext.data.Store(storeConfig);
+        this.store = new Ext.data.Store({
+            remoteSort: true,
+            proxy: proxy,
+            fields: readerFields
+        });
 
-        if (this.encodedFilter) {
-            this.store.setBaseParam("filter", this.encodedFilter);
-        }
 
         var emptyMsg;
         if (this.isCollectionSearch) {
@@ -415,26 +407,6 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         });
 
 
-        var configuredFilters = [
-            {
-                type: "numeric",
-                dataIndex: "id"
-            },
-            {
-                type: "string",
-                dataIndex: "name"
-            }, {
-                type: "string",
-                dataIndex: "description"
-            }];
-        var gridfilters = new Ext.ux.grid.GridFilters({
-            encode: true,
-            local: false,
-            filters: configuredFilters
-        });
-
-        var plugins = [gridfilters];
-
         this.gridPanel = new Ext.grid.GridPanel({
             store: this.store,
             border: false,
@@ -442,11 +414,10 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             loadMask: true,
             columnLines: true,
             stripeRows: true,
-            plugins: plugins,
-            sm: new Ext.grid.RowSelectionModel({singleSelect: false}),
+            selModel: Ext.create('Ext.selection.RowModel', {}),
             bbar: this.pagingtoolbar,
             listeners: {
-                rowdblclick: function (grid, rowIndex, ev) {
+                rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
                     var data = [grid.getStore().getAt(rowIndex).id];
 
                     if (this.isCollectionSearch) {
@@ -466,7 +437,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
 
         this.resultPanel.removeAll();
         this.resultPanel.add(this.gridPanel);
-        this.resultPanel.doLayout();
+        this.resultPanel.updateLayout();
     }
 
 });

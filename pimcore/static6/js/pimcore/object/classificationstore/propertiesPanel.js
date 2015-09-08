@@ -75,7 +75,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         var listeners = {};
 
-        listeners.write = function(store, action, result, response, rs) {};
         listeners.exception = function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
@@ -216,7 +215,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         });
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            //clicksToEdit: 2
         });
 
         var plugins = [cellEditing];
@@ -324,12 +323,10 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                                         overrideSort: "false"
                                     });
 
-
                                 }.bind(this),
                                 params: {
                                     "overrideSort": "true"
                                 }
-
                             }
 
                         );

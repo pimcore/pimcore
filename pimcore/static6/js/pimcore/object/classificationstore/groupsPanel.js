@@ -46,16 +46,29 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             readerFields.push({name: this.relationsFields[i], allowBlank: true});
         }
 
-        var proxy = new Ext.data.HttpProxy({
-            url: "/admin/classificationstore/relations",
-            method: 'post'
-        });
-
-        var writer = new Ext.data.JsonWriter();
+        var url = "/admin/classificationstore/relations?";
+        var proxy = {
+            type: 'ajax',
+            reader: {
+                type: 'json',
+                rootProperty: 'data'
+            },
+            api: {
+                create  : url + "xaction=create",
+                read    : url + "xaction=read",
+                update  : url + "xaction=update",
+                destroy : url + "xaction=destroy"
+            },
+            writer: {
+                type: 'json',
+                writeAllFields: true,
+                rootProperty: 'data',
+                encode: 'true'
+            }
+        };
 
         var listeners = {};
 
-        listeners.write = function(store, action, result, response, rs) {};
         listeners.exception = function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), response);
@@ -63,29 +76,19 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             }
         }.bind(this);
 
-        var reader = new Ext.data.JsonReader({
-            totalProperty: 'total',
-            successProperty: 'success',
-            root: 'data'
-        }, readerFields);
-
         this.relationsStore = new Ext.data.Store({
-            restful: false,
-            idProperty: 'id',
-            remoteSort: true,
+            autoSync: true,
             proxy: proxy,
-            reader: reader,
-            writer: writer,
+            fields: readerFields,
             listeners: listeners
         });
 
-
         var gridColumns = [];
 
-        gridColumns.push({header: t("id"), width: 60, sortable: true, dataIndex: 'id', hidden: true});
-        gridColumns.push({header: t("key_id"), width: 60, sortable: true, dataIndex: 'keyId', filter: 'string'});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'keyName', filter: 'string'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
+        gridColumns.push({header: t("id"), flex: 60, sortable: true, dataIndex: 'id', hidden: true});
+        gridColumns.push({header: t("key_id"), flex: 60, sortable: true, dataIndex: 'keyId', filter: 'string'});
+        gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'keyName', filter: 'string'});
+        gridColumns.push({header: t("description"), flex: 200, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
 
         gridColumns.push({
             hideable: false,
@@ -125,7 +128,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 2
         });
 
         var plugins = [cellEditing];
@@ -142,7 +145,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             trackMouseOver: true,
             region: "west",
             split: true,
-            //width: 750,
             hidden: true,
             viewConfig: {
                 forceFit: true
@@ -180,8 +182,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         });
 
-        //this.relationsStore.load();
-
         return this.relationsPanel;
 
     },
@@ -195,23 +195,29 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             readerFields.push({name: this.groupsFields[i], allowBlank: true});
         }
 
-
-        var proxy = new Ext.data.HttpProxy({
-            url: "/admin/classificationstore/groups",
-            method: 'post'
-        });
-
-        var reader = new Ext.data.JsonReader({
-            totalProperty: 'total',
-            successProperty: 'success',
-            root: 'data'
-        }, readerFields);
-
-        var writer = new Ext.data.JsonWriter();
+        var url = "/admin/classificationstore/groups?";
+        var proxy = {
+            type: 'ajax',
+            reader: {
+                type: 'json',
+                rootProperty: 'data'
+            },
+            api: {
+                create  : url + "xaction=create",
+                read    : url + "xaction=read",
+                update  : url + "xaction=update",
+                destroy : url + "xaction=destroy"
+            },
+            writer: {
+                type: 'json',
+                writeAllFields: true,
+                rootProperty: 'data',
+                encode: 'true'
+            }
+        };
 
         var listeners = {};
 
-        listeners.write = function(store, action, result, response, rs) {};
         listeners.exception = function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
@@ -221,12 +227,9 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
         this.groupsStore = new Ext.data.Store({
-            restful: false,
-            idProperty: 'id',
-            remoteSort: true,
+            autoSync: true,
             proxy: proxy,
-            reader: reader,
-            writer: writer,
+            fields: readerFields,
             listeners: listeners
         });
 
@@ -310,7 +313,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            //clicksToEdit: 2
         });
 
         var plugins = [cellEditing];
@@ -346,9 +349,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
                 }.bind(this),
 
-                rowclick: function (grid, rowIndex, ev) {
-                    // TODO
-
+                rowclick: function(grid, record, tr, rowIndex, e, eOpts ) {
                     var record = this.groupsStore.getAt(rowIndex);
                     var groupId = record.data.id;
                     var groupName = record.data.name;
@@ -358,7 +359,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                     this.relationsPanel.setTitle(t("relations") + " - "  + t("group") +  " " + record.data.id + " - " + groupName);
                     this.relationsPanel.enable();
                     this.relationsStore.removeAll(true);
-                    this.relationsStore.setBaseParam("groupId", groupId);
+                    this.relationsStore.getProxy().setExtraParam("groupId", groupId);
                     this.relationsStore.reload();
                     this.relationsGrid.show();
 
@@ -368,23 +369,9 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         this.grid =  Ext.create('Ext.grid.Panel', gridConfig);
 
-        this.grid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
-
-        this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
-        }.bind(this));
-
-        this.grid.on("sortchange", function(grid, sortinfo) {
-            this.sortinfo = sortinfo;
-        }.bind(this));
-
         this.groupsStore.load();
 
         return this.grid
-    },
-
-    updateGridHeaderContextMenu: function(grid) {
-        // not needed for now.
     },
 
     onAddKey: function() {
@@ -415,10 +402,9 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         this.groupsStore.reload({
                                 callback: function() {
                                     var rowIndex = this.groupsStore.find('name', value);
-                                    // alert(rowIndex);
                                     if (rowIndex != -1) {
                                         var sm = this.grid.getSelectionModel();
-                                        sm.selectRow(rowIndex);
+                                        sm.select(rowIndex);
                                     }
 
                                     var lastOptions = this.groupsStore.lastOptions;
@@ -444,10 +430,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
     },
 
 
-    onRowContextmenu: function (grid, rowIndex, event) {
-        // no context menu
-    },
-
     handleSelectionWindowClosed: function() {
 
     },
@@ -468,7 +450,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
                 var match = this.relationsStore.findExact("id" , colData.id);
                 if (match == -1) {
-                    this.relationsStore.add(new this.relationsStore.recordType(colData));
+                    this.relationsStore.add(colData);
                 }
             }
         }
