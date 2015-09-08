@@ -338,7 +338,7 @@ pimcore.report.newsletter.item = Class.create({
             border: false,
             layout: "border",
             closable: true,
-            bodyStyle: "padding: 20px;",
+            //bodyStyle: "padding: 20px;",
             title: this.data.name,
             id: "pimcore_newsletter_panel_" + this.data.name,
             items: [this.form],

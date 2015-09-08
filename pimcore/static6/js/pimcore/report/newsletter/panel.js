@@ -77,7 +77,6 @@ pimcore.report.newsletter.panel = Class.create({
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,
-                border: true,
                 width: 250,
                 split: true,
                 root: {
@@ -130,7 +129,7 @@ pimcore.report.newsletter.panel = Class.create({
                 newChildNode.data.leaf = true;
                 newChildNode.data.iconCls = "pimcore_icon_newsletter";
             }
-        }
+        };
         return treeNodeListeners;
     },
 
@@ -143,7 +142,7 @@ pimcore.report.newsletter.panel = Class.create({
 
         var existingPanel = Ext.getCmp("pimcore_newsletter_panel_" + id);
         if(existingPanel) {
-            this.editPanel.activate(existingPanel);
+            this.editPanel.setActiveItem(existingPanel);
             return;
         }
 
