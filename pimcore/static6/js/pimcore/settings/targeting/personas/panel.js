@@ -93,7 +93,7 @@ pimcore.settings.targeting.personas.panel= Class.create({
                 newChildNode.data.leaf = true;
                 newChildNode.data.iconCls = "pimcore_icon_personas";
             }
-        }
+        };
         return treeNodeListeners;
     },
 
@@ -177,7 +177,7 @@ pimcore.settings.targeting.personas.panel= Class.create({
 
         var existingPanel = Ext.getCmp("pimcore_personas_panel_" + node);
         if(existingPanel) {
-            this.panel.activate(existingPanel);
+            this.panel.setActiveItem(existingPanel);
             return;
         }
 

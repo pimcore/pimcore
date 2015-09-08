@@ -47,24 +47,14 @@ pimcore.settings.targeting.conditions = {
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
                 var index = pimcore.settings.targeting.conditions.detectBlockIndex(blockElement, container);
-                var tmpContainer = pimcore.viewport;
 
                 var newIndex = index-1;
                 if(newIndex < 0) {
                     newIndex = 0;
                 }
 
-                // move this node temorary to an other so ext recognizes a change
                 container.remove(blockElement, false);
-                tmpContainer.add(blockElement);
-                container.updateLayout();
-                tmpContainer.updateLayout();
-
-                // move the element to the right position
-                tmpContainer.remove(blockElement,false);
                 container.insert(newIndex, blockElement);
-                container.updateLayout();
-                tmpContainer.updateLayout();
 
                 parent.recalculateButtonStatus();
                 parent.recalculateBracketIdent(parent.conditionsContainer.items);
@@ -74,23 +64,12 @@ pimcore.settings.targeting.conditions = {
         },{
             iconCls: "pimcore_icon_down",
             handler: function (blockId, parent) {
-
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
                 var index = pimcore.settings.targeting.conditions.detectBlockIndex(blockElement, container);
-                var tmpContainer = pimcore.viewport;
 
-                // move this node temorary to an other so ext recognizes a change
                 container.remove(blockElement, false);
-                tmpContainer.add(blockElement);
-                container.updateLayout();
-                tmpContainer.updateLayout();
-
-                // move the element to the right position
-                tmpContainer.remove(blockElement,false);
                 container.insert(index+1, blockElement);
-                container.updateLayout();
-                tmpContainer.updateLayout();
 
                 parent.recalculateButtonStatus();
                 parent.recalculateBracketIdent(parent.conditionsContainer.items);
@@ -415,7 +394,7 @@ pimcore.settings.targeting.conditions = {
 
                     var searchWindow = new Ext.Window({
                         modal: true,
-                        width: 600,
+                        width: 700,
                         height: 500,
                         resizable: false,
                         tbar: [currentLocationTextNode],

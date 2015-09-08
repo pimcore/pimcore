@@ -94,7 +94,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                 newChildNode.data.leaf = true;
                 newChildNode.data.iconCls = "pimcore_icon_targeting";
             }
-        }
+        };
         return treeNodeListeners;
     },
 
@@ -176,7 +176,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
 
         var existingPanel = Ext.getCmp("pimcore_targeting_panel_" + node);
         if(existingPanel) {
-            this.panel.activate(existingPanel);
+            this.panel.setActiveItem(existingPanel);
             return;
         }
 

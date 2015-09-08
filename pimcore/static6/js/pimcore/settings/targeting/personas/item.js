@@ -125,7 +125,7 @@ pimcore.settings.targeting.personas.item = Class.create({
         // add logic for brackets
         var tab = this;
         item.on("afterrender", function (el) {
-            el.getEl().applyStyles({position: "relative", "min-height": "40px"});
+            el.getEl().applyStyles({position: "relative", "min-height": "40px", "border-bottom": "1px solid #d0d0d0"});
             var leftBracket = el.getEl().insertHtml("beforeEnd",
                 '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
             var rightBracket = el.getEl().insertHtml("beforeEnd",
@@ -259,8 +259,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             if(ident > 0)
                 item.applyStyles({
                     "border-left": "1px solid " + colors[ident],
-                    "border-right": "1px solid " + colors[ident],
-                    "padding": "0px 1px"
+                    "border-right": "1px solid " + colors[ident]
                 });
             else
                 item.applyStyles({
@@ -277,8 +276,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             else if(ident == lastIdent)
                 item.applyStyles({
                     "margin-top": "0px",
-                    "margin-bottom": "0px",
-                    "padding": "1px"
+                    "margin-bottom": "0px"
                 });
             else
                 item.applyStyles({
@@ -302,6 +300,7 @@ pimcore.settings.targeting.personas.item = Class.create({
                     ident--;
             }
         });
+        this.conditionsContainer.updateLayout();
     }
 
 });
