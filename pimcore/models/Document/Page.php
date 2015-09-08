@@ -269,6 +269,9 @@ class Page extends Model\Document\PageSnippet {
      */
     public function setPersonas($personas)
     {
+        if(is_array($personas)) {
+            $personas = implode(",", $personas);
+        }
         $personas = trim($personas, " ,");
         if(!empty($personas)) {
             $personas = "," . $personas . ",";

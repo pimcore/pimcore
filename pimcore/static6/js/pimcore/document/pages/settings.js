@@ -83,7 +83,6 @@ pimcore.document.pages.settings = Class.create({
                     iconCls: "pimcore_icon_delete",
                     style: "float:left;",
                     handler: function (compositeField, el) {
-                        this.urlAliasPanel.remove(compositeField);
                         this.urlAliasPanel.updateLayout();
                     }.bind(this, compositeField)
                 },{
@@ -103,8 +102,7 @@ pimcore.document.pages.settings = Class.create({
                 title: t("path_aliases") + " (" + t("redirects") + ")",
                 collapsible: false,
                 autoHeight: true,
-                style: "margin-top: 20px;",
-                disabled: !user.isAllowed("redirects"),
+                style: "margin-top: 0;",
                 items: []
             });
 
@@ -112,6 +110,7 @@ pimcore.document.pages.settings = Class.create({
                 border: false,
                 layout: 'fit',
                 width: 700,
+                disabled: !user.isAllowed("redirects"),
                 items: [this.urlAliasPanelInner],
                 buttons: [{
                     text: t("add"),
@@ -673,11 +672,6 @@ pimcore.document.pages.settings = Class.create({
         if (!this.layout.rendered) {
             throw "settings not available";
         }
-
-        var fields = ["module","controller","action","template"];
-        var form = this.getLayout().getForm();
-        var element = null;
-
 
         // get values
         var settings = this.getLayout().getForm().getFieldValues();
