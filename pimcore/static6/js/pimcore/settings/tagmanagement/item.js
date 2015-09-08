@@ -208,6 +208,7 @@ pimcore.settings.tagmanagement.item = Class.create({
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
+            border: true,
             tbar: ["->",{
                 iconCls: "pimcore_icon_delete",
                 handler: function (myId) {
@@ -254,12 +255,13 @@ pimcore.settings.tagmanagement.item = Class.create({
 
     save: function () {
 
-        var m = Ext.encode(this.panel.getForm().getFieldValues());
+        var formValues = this.panel.getForm().getFieldValues();
+        formValues.name = this.data.name;
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-update",
             method: "post",
             params: {
-                configuration: m,
+                configuration: Ext.encode(formValues),
                 name: this.data.name
             },
             success: this.saveOnComplete.bind(this)
