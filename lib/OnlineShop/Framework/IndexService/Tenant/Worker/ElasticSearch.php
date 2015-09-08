@@ -282,8 +282,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         $esClient = $this->getElasticSearchClient();
         try {
             $esClient->delete(['index' => $this->indexName, 'type' => "product", 'id' => $objectId]);
+            $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
         } catch(Exception $e) {
-            //TODO decide what to do with exceptions
+            \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
         }
 
     }
