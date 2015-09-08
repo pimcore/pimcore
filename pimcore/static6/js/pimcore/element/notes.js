@@ -84,27 +84,29 @@ pimcore.element.notes = Class.create({
             this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
 
-            var tbar = Ext.create('Ext.Toolbar', {
-                cls: 'main-toolbar',
-                items: [
-                    "->",
-                    {
-                        text: t("filter") + "/" + t("search"),
-                        xtype: "tbtext",
-                        style: "margin: 0 10px 0 0;"
-                    },
-                    this.filterField
-                ]
-            });
+            var tbarItems = [
+                "->",
+                {
+                    text: t("filter") + "/" + t("search"),
+                    xtype: "tbtext",
+                    style: "margin: 0 10px 0 0;"
+                },
+                this.filterField
+            ];
 
             // only when used in element context
             if(this.inElementContext) {
-                tbar.unshift({
+                tbarItems.unshift({
                     text: t('add'),
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 });
             }
+
+            var tbar = Ext.create('Ext.Toolbar', {
+                cls: 'main-toolbar',
+                items: tbarItems
+            });
 
             this.grid = new Ext.grid.GridPanel({
                 store: this.store,
