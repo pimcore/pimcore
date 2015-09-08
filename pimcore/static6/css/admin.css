@@ -1186,7 +1186,7 @@ span.warning {
     min-height: 30px;
 }
 
-.x-tabpanel-child {
+.x-panel-default.x-tabpanel-child {
     border-top: 3px solid #fff;
 }
 
