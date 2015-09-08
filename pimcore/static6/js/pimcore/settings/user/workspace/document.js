@@ -71,11 +71,17 @@ pimcore.settings.user.workspace.document = Class.create({
         });
 
         this.store = new Ext.data.JsonStore({
-           autoDestroy: true,
-           root: 'workspacesDocument',
-           fields: storeFields,
-           data: this.data
-       });
+            autoDestroy: true,
+            proxy: {
+                type: 'memory',
+                reader: {
+
+                    rootProperty: 'workspacesDocument'
+                }
+            },
+            fields: storeFields,
+            data: this.data
+        });
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
