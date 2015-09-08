@@ -2732,7 +2732,7 @@
 }
 /* http://localhost:1843/packages/core/sass/src/list/TreeItem.scss:339 */
 .x-treelist-row:hover {
-    background-color: #eaeff4;
+    background-color: #e4e4e4;
 }
 /* http://localhost:1843/packages/core/sass/src/list/TreeItem.scss:342 */
 .x-treelist-row:hover > * > .x-treelist-item-icon {
@@ -14084,7 +14084,7 @@ a.x-color-picker-item:hover {
 /* http://localhost:1843/classic/theme-neutral/sass/src/view/Table.scss:42 */
 .x-grid-item-over {
     color: #404040;
-    background-color: #eaeff4;
+    background-color: #e4e4e4;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/view/Table.scss:49 */
 .x-grid-item-focused {
@@ -14329,7 +14329,7 @@ a.x-color-picker-item:hover {
 /* http://localhost:1843/classic/theme-neutral/sass/src/grid/column/Column.scss:77 */
 .x-column-header-over {
     background-image: none;
-    background-color: #eaeff4;
+    background-color: #e4e4e4;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/grid/column/Column.scss:81 */
 .x-column-header-sort-ASC,
@@ -14339,7 +14339,7 @@ a.x-color-picker-item:hover {
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/grid/column/Column.scss:109 */
 .x-column-header-open {
-    background-color: #eaeff4;
+    background-color: #e4e4e4;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/grid/column/Column.scss:112 */
 .x-column-header-open .x-column-header-trigger {
