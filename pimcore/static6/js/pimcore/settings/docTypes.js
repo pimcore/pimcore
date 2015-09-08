@@ -135,7 +135,7 @@ pimcore.settings.document.doctypes = Class.create({
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
-        })
+        });
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,

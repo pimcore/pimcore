@@ -209,6 +209,7 @@ $scripts = array(
     "pimcore/functions.js",
     "pimcore/globalmanager.js",
     "pimcore/helpers.js",
+    "pimcore/helpers/generic-grid.js",
     "pimcore/experimental.js",
 
     "pimcore/user.js",

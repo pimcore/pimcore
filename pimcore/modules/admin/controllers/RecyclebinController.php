@@ -47,8 +47,15 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            $list->setOrderKey($this->getParam("sort", "date"));
-            $list->setOrder($this->getParam("dir", "DESC"));
+            $list->setOrderKey("date");
+            $list->setOrder("DESC");
+
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
+            }
+
 
             $conditionFilters = array();
 
