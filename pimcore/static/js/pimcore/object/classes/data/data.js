@@ -58,7 +58,7 @@ pimcore.object.classes.data.data = Class.create({
     },
 
     getGroup: function () {
-        return "other";   
+        return "other";
     },
 
     getType: function () {

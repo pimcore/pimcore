@@ -249,10 +249,12 @@ pimcore.object.classes.data.data = Class.create({
             return true;
         });
 
-        for (var i = 0; i < items.length; i++) {
-            if (items[i].name == "name") {
-                this.treeNode.set("text", items[i].getValue());
-                break;
+        if (this.treeNode) {
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].name == "name") {
+                    this.treeNode.set("text", items[i].getValue());
+                    break;
+                }
             }
         }
     },

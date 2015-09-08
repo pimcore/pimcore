@@ -264,11 +264,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.currentMetaData = {};
     },
 
-    getDataForField: function (name) {
+    getDataForField: function (fieldConfig) {
+        var name = fieldConfig.name;
         return this.currentData[name];
     },
 
-    getMetaDataForField: function(name) {
+    getMetaDataForField: function(fieldConfig) {
+        var name = fieldConfig.name;
         return this.currentMetaData[name];
     },
 

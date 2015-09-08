@@ -299,7 +299,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         return this.component;
     },
 
-    getDataForField: function (name) {
+    getDataForField: function (fieldConfig) {
+        var name = fieldConfig.name;
         try {
             if (this.data[this.currentLanguage]) {
                 if (typeof this.data[this.currentLanguage][name] !== undefined){
@@ -312,7 +313,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         return;
     },
 
-    getMetaDataForField: function(name) {
+    getMetaDataForField: function(fieldConfig) {
+        var name = fieldConfig.name;
         try {
             if (this.metaData[this.currentLanguage]) {
                 if (this.metaData[this.currentLanguage][name]) {

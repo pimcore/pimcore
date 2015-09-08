@@ -332,7 +332,8 @@ $scripts = array(
     "pimcore/object/class.js",
     "pimcore/object/bulk-export.js",
     "pimcore/object/bulk-import.js",
-    "pimcore/object/classes/data/data.js",
+    "pimcore/object/classes/data/data.js",          // THIS MUST BE THE FIRST FILE, DO NOT MOVE THIS DOWN !!!
+    "pimcore/object/classes/data/classificationstore.js",
     "pimcore/object/classes/data/date.js",
     "pimcore/object/classes/data/datetime.js",
     "pimcore/object/classes/data/time.js",
@@ -509,7 +510,15 @@ $scripts = array(
     "pimcore/object/keyvalue/selectionWindow.js",
     "pimcore/object/keyvalue/specialConfigWindow.js",
     "pimcore/object/keyvalue/columnConfigDialog.js",
-    "pimcore/object/keyvalue/translatorConfigWindow.js"
+    "pimcore/object/keyvalue/translatorConfigWindow.js",
+
+    // classification store
+    "pimcore/object/classificationstore/configPanel.js",
+    "pimcore/object/classificationstore/groupsPanel.js",
+    "pimcore/object/classificationstore/propertiesPanel.js",
+    "pimcore/object/classificationstore/collectionsPanel.js",
+    "pimcore/object/classificationstore/keyDefinitionWindow.js",
+    "pimcore/object/classificationstore/keySelectionWindow.js"
 
 );
 
