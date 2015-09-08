@@ -32,7 +32,7 @@ pimcore.settings.translations = Class.create({
                     if (key.getKey() == key.ENTER) {
                         var input = field;
                         var proxy = this.store.getProxy();
-                        proxy.extraParams.filter = input.getValue();
+                        proxy.extraParams.searchString = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
