@@ -106,9 +106,10 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
      * @param null $tenants
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
+     * @param int $indexItemsPerRound - number of items to index per round
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
-    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater") {
+    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater",$indexItemsPerRound = 100) {
         if($tenants == null) {
             $tenants = OnlineShop_Framework_Factory::getInstance()->getAllTenants();
         }
