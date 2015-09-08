@@ -57,14 +57,14 @@ pimcore.settings.targeting.rules.panel= Class.create({
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,
-                border: true,
                 width: 200,
                 split: true,
                 root: {
                     id: '0'
                 },
                 rootVisible: false,
-                tbar: {
+                tbar: Ext.create('Ext.Toolbar', {
+                    cls: 'main-toolbar',
                     items: [
                         {
                             text: t("add_target"),
@@ -72,7 +72,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                             handler: this.addTarget.bind(this)
                         }
                     ]
-                },
+                }),
                 listeners: this.getTreeNodeListeners()
             });
 

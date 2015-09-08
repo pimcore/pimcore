@@ -56,6 +56,40 @@ pimcore.settings.tagmanagement.item = Class.create({
             border: false
         });
 
+        var paramsFieldSetItems = [];
+
+        for(var i = 0; i < 5; i++) {
+            paramsFieldSetItems.push({
+                xtype: "fieldset",
+                layout: "hbox",
+                style: "border-top: none !important",
+                border: false,
+                padding: 0,
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "params.name" + i,
+                    value: this.data.params[i]["name"]
+                },{
+                    xtype: "textfield",
+                    margin: '0 0 0 20',
+                    fieldLabel: t("value"),
+                    name: "params.value" + i,
+                    value: this.data.params[i]["value"]
+                }]
+            });
+        }
+
+        var paramsFieldSet = {
+            xtype: "fieldset",
+            title: t("parameters") + " (GET &amp; POST)",
+            //hideLabel: true,
+            //style: "margin-top: 10px;"
+            items: paramsFieldSetItems
+        };
+
+
+
         this.panel = new Ext.form.FormPanel({
             border: false,
             closable: true,
@@ -148,97 +182,9 @@ pimcore.settings.tagmanagement.item = Class.create({
                     value: this.data.textPattern,
                     fieldLabel: t("matching_text"),
                     width: 400
-                }, {
-                    xtype: "displayfield",
-                    value: t("parameters") + " (GET &amp; POST)",
-                    hideLabel: true,
-                    style: "margin-top: 10px;"
-                }, {
-                    xtype: "fieldset",
-                    layout: "hbox",
-                    border: false,
-                    padding: 0,
-                    items: [{
-                        xtype: "textfield",
-                        fieldLabel: t("name"),
-                        name: "params.name0",
-                        value: this.data.params[0]["name"]
-                    },{
-                        xtype: "textfield",
-                        margin: '0 0 0 20',
-                        fieldLabel: t("value"),
-                        name: "params.value0",
-                        value: this.data.params[0]["value"]
-                    }]
-                }, {
-                    xtype: "fieldset",
-                    layout: "hbox",
-                    border: false,
-                    padding: 0,
-                    items: [{
-                        xtype: "textfield",
-                        fieldLabel: t("name"),
-                        name: "params.name1",
-                        value: this.data.params[1]["name"]
-                    },{
-                        xtype: "textfield",
-                        margin: '0 0 0 20',
-                        fieldLabel: t("value"),
-                        name: "params.value1",
-                        value: this.data.params[1]["value"]
-                    }]
-                }, {
-                    xtype: "fieldset",
-                    layout: "hbox",
-                    border: false,
-                    padding: 0,
-                    items: [{
-                        xtype: "textfield",
-                        fieldLabel: t("name"),
-                        name: "params.name2",
-                        value: this.data.params[2]["name"]
-                    },{
-                        xtype: "textfield",
-                        margin: '0 0 0 20',
-                        fieldLabel: t("value"),
-                        name: "params.value2",
-                        value: this.data.params[2]["value"]
-                    }]
-                }, {
-                    xtype: "fieldset",
-                    layout: "hbox",
-                    border: false,
-                    padding: 0,
-                    items: [{
-                        xtype: "textfield",
-                        fieldLabel: t("name"),
-                        name: "params.name3",
-                        value: this.data.params[3]["name"]
-                    },{
-                        xtype: "textfield",
-                        margin: '0 0 0 20',
-                        fieldLabel: t("value"),
-                        name: "params.value3",
-                        value: this.data.params[3]["value"]
-                    }]
-                }, {
-                    xtype: "fieldset",
-                    layout: "hbox",
-                    border: false,
-                    padding: 0,
-                    items: [{
-                        xtype: "textfield",
-                        fieldLabel: t("name"),
-                        name: "params.name4",
-                        value: this.data.params[4]["name"]
-                    },{
-                        xtype: "textfield",
-                        margin: '0 0 0 20',
-                        fieldLabel: t("value"),
-                        name: "params.value4",
-                        value: this.data.params[4]["value"]
-                    }]
-                }]
+                },
+                    paramsFieldSet
+                ]
             }, this.itemContainer],
             buttons: panelButtons
         });

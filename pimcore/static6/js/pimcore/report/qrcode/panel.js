@@ -62,10 +62,6 @@ pimcore.report.qrcode.panel = Class.create({
                     url: "/admin/reports/qrcode/tree",
                     reader: {
                         type: 'json'
-                        //,
-                        //totalProperty : 'total',
-                        //rootProperty: 'nodes'
-
                     }
                 },
                 root: {
@@ -81,14 +77,14 @@ pimcore.report.qrcode.panel = Class.create({
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,
-                border: true,
                 width: 250,
                 split: true,
                 root: {
                     id: '0'
                 },
                 rootVisible: false,
-                tbar: {
+                tbar: Ext.create('Ext.Toolbar', {
+                    cls: 'main-toolbar',
                     items: [
                         {
                             text: t("add_qr_code"),
@@ -96,7 +92,7 @@ pimcore.report.qrcode.panel = Class.create({
                             handler: this.addField.bind(this)
                         }
                     ]
-                },
+                }),
                 listeners: this.getTreeNodeListeners()
             });
 
