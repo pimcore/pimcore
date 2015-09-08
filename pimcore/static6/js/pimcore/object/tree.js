@@ -65,7 +65,7 @@ pimcore.object.tree = Class.create({
 
         rootNodeConfig.text = t("home");
         rootNodeConfig.id = "" +  rootNodeConfig.id;
-        rootNodeConfig.draggable = true;
+        rootNodeConfig.allowDrag = true;
         rootNodeConfig.iconCls = "pimcore_icon_home";
         rootNodeConfig.expanded = true;
 

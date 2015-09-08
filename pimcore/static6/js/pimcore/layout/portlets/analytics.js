@@ -153,9 +153,9 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                         tooltip: {
                             trackMouse: true,
                             style: 'background: #01841c',
-                            renderer: function(storeItem, item) {
+                            renderer: function(tooltip, storeItem, item) {
                                 var title = item.series.getTitle();
-                                this.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                                tooltip.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
                             }
                         }
                     },
@@ -179,9 +179,9 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                         tooltip: {
                             trackMouse: true,
                             style: 'background: #0184ff',
-                            renderer: function(storeItem, item) {
+                            renderer: function(tooltip, storeItem, item) {
                                 var title = item.series.getTitle();
-                                this.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                                tooltip.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
                             }
                         }
                     }

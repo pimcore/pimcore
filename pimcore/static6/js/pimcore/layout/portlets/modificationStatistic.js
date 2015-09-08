@@ -97,9 +97,9 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                         tooltip: {
                             trackMouse: true,
                             style: 'background: #01841c',
-                            renderer: function(storeItem, item) {
+                            renderer: function(tooltip, storeItem, item) {
                                 var title = item.series.getTitle();
-                                this.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                                tooltip.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
                             }
                         }
                     },
@@ -127,9 +127,9 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                         tooltip: {
                             trackMouse: true,
                             style: 'background: #00bfff',
-                            renderer: function(storeItem, item) {
+                            renderer: function(tooltip, storeItem, item) {
                                 var title = item.series.getTitle();
-                                this.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                                tooltip.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
                             }
                         }
                     },
@@ -158,9 +158,9 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                         tooltip: {
                             trackMouse: true,
                             style: 'background: #ff6600',
-                            renderer: function(storeItem, item) {
+                            renderer: function(tooltip, storeItem, item) {
                                 var title = item.series.getTitle();
-                                this.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                                tooltip.setHtml(title + ' for ' + storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
                             }
                         }
 
