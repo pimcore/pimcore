@@ -252,7 +252,6 @@ $scripts = array(
     "pimcore/settings/website.js",
     "pimcore/settings/staticroutes.js",
     "pimcore/settings/update.js",
-    "pimcore/settings/languages.js",
     "pimcore/settings/redirects.js",
     "pimcore/settings/glossary.js",
     "pimcore/settings/backup.js",
