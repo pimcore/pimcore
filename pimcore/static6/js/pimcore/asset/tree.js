@@ -61,7 +61,7 @@ pimcore.asset.tree = Class.create({
         var itemsPerPage = 30;
 
         rootNodeConfig.text = t("home");
-        rootNodeConfig.draggable = true;
+        rootNodeConfig.allowDrag = true;
         rootNodeConfig.id = "" +  rootNodeConfig.id;
         rootNodeConfig.iconCls = "pimcore_icon_home";
         rootNodeConfig.expanded = true;
