@@ -235,8 +235,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id', filter: 'string'});
         gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', hidden: true, editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({header: t("description"), flex: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
             tooltip: t("classificationstore_tooltip_sorter"),
             editor: new Ext.form.NumberField()

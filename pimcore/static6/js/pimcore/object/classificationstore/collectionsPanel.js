@@ -221,9 +221,9 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         var gridColumns = [];
 
-        gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id', filter: 'string'});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({header: "ID", flex: 60, sortable: true, dataIndex: 'id', filter: 'string'});
+        gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({header: t("description"), flex: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
 
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,

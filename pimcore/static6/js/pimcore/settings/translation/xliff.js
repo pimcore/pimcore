@@ -212,16 +212,16 @@ pimcore.settings.translation.xliff = Class.create({
             region: "center",
             bodyStyle: "padding: 10px",
             items: [{
-                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("xliff_export_notice") + '</div>',
+                html: '<div>' + t("xliff_export_notice") + '</div>',
                 style: "margin-bottom: 10px"
             }, {
                 title: t("important_notice") + " (" + t("documents") + ")",
-                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("xliff_export_documents") + '</div>',
+                html: '<div>' + t("xliff_export_documents") + '</div>',
                 style: "margin-bottom: 10px",
                 iconCls: "pimcore_icon_document"
             }, {
                 title: t("important_notice") + " (" + t("objects") + ")",
-                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("xliff_export_objects") + '</div>',
+                html: '<div>' + t("xliff_export_objects") + '</div>',
                 style: "margin-bottom: 10px",
                 iconCls: "pimcore_icon_object"
             }, this.component, {

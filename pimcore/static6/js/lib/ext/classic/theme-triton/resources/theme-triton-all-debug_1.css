@@ -5069,7 +5069,7 @@ body > .x-mask {
 /* http://localhost:1843/classic/theme-neutral/sass/src/ProgressBar.scss:92 */
 .x-progress-default .x-progress-bar-default {
     background-image: none;
-    background-color: #7fb5e4;
+    background-color: #3c3f41;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/ProgressBar.scss:107 */
 .x-progress-default .x-progress-text {
@@ -13078,8 +13078,8 @@ body > .x-mask {
 /* http://localhost:1843/classic/theme-neutral/sass/src/view/BoundList.scss:33 */
 .x-boundlist-item-over {
     color: #fff;
-    background: #7fb5e4;
-    border-color: #7fb5e4;
+    background: #3c3f41;
+    border-color: #3c3f41;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/view/BoundList.scss:42 */
 .x-boundlist-floating {
@@ -13224,7 +13224,7 @@ div.x-datepicker-date:hover {
 /* http://localhost:1843/classic/theme-neutral/sass/src/picker/Date.scss:178 */
 .x-datepicker-selected {
     border-style: solid;
-    border-color: #7fb5e4;
+    border-color: #3c3f41;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/picker/Date.scss:181 */
 .x-datepicker-selected div.x-datepicker-date {
@@ -13317,7 +13317,7 @@ a.x-monthpicker-item-inner:hover {
     background-color: #3c3f41;
     color: #fff;
     border-style: solid;
-    border-color: #7fb5e4;
+    border-color: #3c3f41;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/picker/Date.scss:308 */
 .x-monthpicker-yearnav {
@@ -14009,8 +14009,8 @@ a.x-color-picker-item:hover {
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/form/field/Tag.scss:170 */
 .x-form-text-default .x-tagfield-item.x-tagfield-item-selected {
-    background-color: #7fb5e4;
-    border-color: #7fb5e4;
+    background-color: #3c3f41;
+    border-color: #3c3f41;
     color: #fff;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/form/field/Tag.scss:185 */
@@ -14319,7 +14319,7 @@ a.x-color-picker-item:hover {
     right: 0px;
     bottom: 0px;
     left: 0px;
-    border: 1px solid #7fb5e4;
+    border: 1px solid #3c3f41;
     pointer-events: none;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/grid/column/Column.scss:64 */
@@ -15096,11 +15096,11 @@ a.x-color-picker-item:hover {
 /* http://localhost:1843/classic/theme-neutral/sass/src/menu/Menu.scss:346 */
 .x-menu-item-default.x-menu-item-active {
     background-image: none;
-    background-color: #7fb5e4;
+    background-color: #3c3f41;
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/menu/Menu.scss:358 */
 .x-nlg .x-menu-item-default.x-menu-item-active {
-    background: #7fb5e4 repeat-x left top;
+    background: #3c3f41 repeat-x left top;
     background-image: url(images/menu/menu-item-default-active-bg.gif);
 }
 /* http://localhost:1843/classic/theme-neutral/sass/src/menu/Menu.scss:365 */
