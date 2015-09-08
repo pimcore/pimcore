@@ -31,6 +31,7 @@ needed components:
 \build\classic\theme-triton
 \build\classic\locale
 \packages\ux\classic\src => ux
+\packages\build\charts\classic\ => packages\charts\classic
 
 # styling
 
