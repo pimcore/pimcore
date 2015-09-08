@@ -94,7 +94,7 @@ $styles = array(
     "/admin/misc/admin-css?extjs6=1",
     "/pimcore/static6/css/icons.css",
     "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-    "/pimcore/static6/js/lib/ext/packages/sencha-charts/build/classic/resources/sencha-charts-all-debug.css",
+    "/pimcore/static6/js/lib/ext/packages/charts/classic/triton/resources/charts-all" . $debugSuffix . ".css",
     "/pimcore/static6/css/ext-admin-overwrite.css",
     "/pimcore/static6/css/fontello.css",
     "/pimcore/static6/css/admin.css"
@@ -138,13 +138,13 @@ $scriptLibs = array(
     "lib/ext/ext-all" . $debugSuffix . ".js",
     "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
 
-//    "lib/ext/packages/sencha-charts/build/sencha-charts-debug.js",              // TODO
+    "lib/ext/packages/charts/classic/charts" . $debugSuffix . ".js",              // TODO
 //    "lib/ext/examples/ux/statusbar/StatusBar.js",
 
-//    "lib/ext-plugins/ux5/PortalDropZone.js",
-//   "lib/ext-plugins/ux5/Portlet.js",
-//    "lib/ext-plugins/ux5/PortalColumn.js",
-//    "lib/ext-plugins/ux5/PortalPanel.js",
+    "lib/ext-plugins/portlet/PortalDropZone.js",
+    "lib/ext-plugins/portlet/Portlet.js",
+    "lib/ext-plugins/portlet/PortalColumn.js",
+    "lib/ext-plugins/portlet/PortalPanel.js",
 //    "lib/ext-plugins/PimcoreFormLayout/panel.js",
 //    "lib/ext-plugins/SuperBoxSelect/SuperBoxSelect.js",
 //    "lib/ext-plugins/BoxSelect/BoxSelect.js",
@@ -619,29 +619,29 @@ try {
         foreach ($pluginBroker->getSystemComponents() as $plugin) {
             if ($plugin->isInstalled()) {
                 $jsPaths = $plugin->getJsPaths();
-                if (!empty($jsPaths)) {
-                    foreach ($jsPaths as $jsPath) {
-                        $jsPath=trim($jsPath);
-                        if (!empty($jsPath)) {
-                            ?>
-                            <script type="text/javascript" src="<?= $jsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
-                        <?php
+            if (!empty($jsPaths)) {
+            foreach ($jsPaths as $jsPath) {
+                $jsPath=trim($jsPath);
+            if (!empty($jsPath)) {
+                ?>
+                <script type="text/javascript" src="<?= $jsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
+            <?php
 
-                        }
-                    }
-                }
-                $cssPaths = $plugin->getCssPaths();
-                if (!empty($cssPaths)) {
-                    foreach ($cssPaths as $cssPath) {
-                        $cssPath = trim($cssPath);
-                        if (!empty($cssPath)) {
-                            ?>
-                            <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
-                        <?php
+            }
+            }
+            }
+            $cssPaths = $plugin->getCssPaths();
+            if (!empty($cssPaths)) {
+            foreach ($cssPaths as $cssPath) {
+            $cssPath = trim($cssPath);
+            if (!empty($cssPath)) {
+            ?>
+            <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
+                <?php
 
-                        }
-                    }
-                }
+            }
+            }
+            }
             }
         }
     }
