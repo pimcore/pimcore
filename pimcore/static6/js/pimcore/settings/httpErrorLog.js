@@ -68,27 +68,6 @@ pimcore.settings.httpErrorLog = Class.create({
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
-        /*this.store = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: '/admin/misc/http-error-log',
-                extraParams: {
-                    limit: 20,
-                    filter: "",
-                    group: 1
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: "items"
-                }
-            },
-            remoteSort: true,
-            fields: ["id","path", "code", "date","amount"]
-
-        });
-        this.store.load();
-        */
-
         var typesColumns = [
             {header: "ID", width: 50, sortable: true, hidden: true, dataIndex: 'id'},
             {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
@@ -131,39 +110,6 @@ pimcore.settings.httpErrorLog = Class.create({
             }
         });
 
-        /*this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 20,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text: t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store: [
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode: "local",
-            width: 50,
-            value: 20,
-            triggerAction: "all",
-            listeners: {
-                select: function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));*/
 
         this.grid = new Ext.grid.GridPanel({
             frame: false,
