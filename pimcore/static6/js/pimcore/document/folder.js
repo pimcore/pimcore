@@ -183,7 +183,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 id: "document_toolbar_" + this.id,
                 region: "north",
                 border: false,
-                cls: "document_toolbar",
+                cls: "main-toolbar",
                 items: buttons
             });
         }

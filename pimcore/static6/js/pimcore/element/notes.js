@@ -49,48 +49,21 @@ pimcore.element.notes = Class.create({
 
             var itemsPerPage = 20;
 
-            var extraParams = {
-                limit: itemsPerPage
-            };
+            var itemsPerPage = 20;
+            this.store = pimcore.helpers.grid.buildDefaultStore(
+                '/admin/element/note-list?',
+                ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
+                itemsPerPage
+            );
 
             // only when used in element context
             if(this.inElementContext) {
-                extraParams["cid"] = this.element.id;
-                extraParams["ctype"] = this.type;
-                //this.modelName = 'pimcore.model.notes.'+ this.type + "." + this.element.id;
+                var proxy = this.store.getProxy();
+                proxy.extraParams["cid"] = this.element.id;
+                proxy.extraParams["ctype"] = this.type;
             } else {
 
             }
-
-            this.modelName = 'pimcore.model.notes';
-
-            if (!Ext.ClassManager.get(this.modelName)) {
-
-                Ext.define(this.modelName, {
-                    extend: 'Ext.data.Model',
-                    fields: ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"]
-                });
-            }
-
-
-            this.store = new Ext.data.Store({
-                model: this.modelName,
-                autoDestroy: true,
-                remoteSort: true,
-                proxy: {
-                    url: "/admin/element/note-list",
-                    type: 'ajax',
-                    extraParams: extraParams,
-                    // Reader is now on the proxy, as the message was explaining
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'data'
-                        //totalProperty:'total',            // default
-                        //successProperty:'success'         // default
-                    }
-                }
-
-            });
 
             this.filterField = new Ext.form.TextField({
                 xtype: "textfield",
@@ -110,41 +83,8 @@ pimcore.element.notes = Class.create({
                 }
             });
 
-            this.pagingtoolbar = new Ext.PagingToolbar({
-                pageSize: itemsPerPage,
-                store: this.store,
-                displayInfo: true,
-                displayMsg: '{0} - {1} / {2}',
-                emptyMsg: t("no_objects_found")
-            });
+            this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
-            // add per-page selection
-            this.pagingtoolbar.add("-");
-
-            this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-                text: t("items_per_page")
-            }));
-            this.pagingtoolbar.add(new Ext.form.ComboBox({
-                store: [
-                    [10, "10"],
-                    [20, "20"],
-                    [40, "40"],
-                    [60, "60"],
-                    [80, "80"],
-                    [100, "100"]
-                ],
-                mode: "local",
-                width: 50,
-                value: 20,
-                triggerAction: "all",
-                listeners: {
-                    select: function (box, rec, index) {
-                        var store = this.pagingtoolbar.getStore();
-                        store.setPageSize(intval(rec.data.field1));
-                        this.pagingtoolbar.moveFirst();
-                    }.bind(this)
-                }
-            }));
 
             var tbar = ["->", {
               text: t("filter") + "/" + t("search"),
