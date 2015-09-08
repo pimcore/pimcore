@@ -1570,12 +1570,11 @@ pimcore.helpers.insertTextAtCursorPosition = function (text) {
 
 
 pimcore.helpers.getMainTabMenuItems = function () {
-
+    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
     items = [{
         text: t('close_others'),
         iconCls: "",
         handler: function (menuItem) {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             var plugin = tabPanel.getPlugin("tabclosemenu");
             el = plugin.item;
             pimcore.helpers.closeAllElements(el);

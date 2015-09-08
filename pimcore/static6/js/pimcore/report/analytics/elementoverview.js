@@ -143,8 +143,8 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                             tooltip: {
                                 trackMouse: true,
                                 style: 'background: #00bfff',
-                                renderer: function(storeItem, item) {
-                                    this.setHtml(storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
+                                renderer: function(tooltip, storeItem, item) {
+                                    tooltip.setHtml(storeItem.get('datetext') + ': ' + storeItem.get(item.series.getYField()));
                                 }
                             }
                         }
@@ -182,8 +182,8 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                             highlight: true,
                             tooltip: {
                                 trackMouse: true,
-                                renderer: function(storeItem, item) {
-                                    this.setHtml(storeItem.get('source') + ' ' + storeItem.get('pageviews') + '%');
+                                renderer: function(tooltip, storeItem, item) {
+                                    tooltip.setHtml(storeItem.get('source') + ' ' + storeItem.get('pageviews') + '%');
                                 }
                             }
                         }],
