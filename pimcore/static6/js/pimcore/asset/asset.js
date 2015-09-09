@@ -248,7 +248,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     activate: function () {
         var tabId = "asset_" + this.id;
-        this.tabPanel.setActiveItem(tabId);
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.setActiveItem(tabId);
     },
 
     getSaveData : function (only) {

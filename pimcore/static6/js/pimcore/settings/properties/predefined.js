@@ -78,59 +78,6 @@ pimcore.settings.properties.predefined = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
 
-        //var itemsPerPage = 20;
-        //var url = '/admin/settings/properties?';
-        //
-        //var proxy = {
-        //    type: 'ajax',
-        //    extraParams:{
-        //        limit:itemsPerPage,
-        //        filter:""
-        //    },
-        //    reader: {
-        //        type: 'json',
-        //        rootProperty: 'data'
-        //    },
-        //    writer: {
-        //        type: 'json',
-        //        writeAllFields: true,
-        //        rootProperty: 'data',
-        //        encode: 'true'
-        //    },
-        //    api: {
-        //        create  : url + "xaction=create",
-        //        read    : url + "xaction=read",
-        //        update  : url + "xaction=update",
-        //        destroy : url + "xaction=destroy"
-        //    },
-        //    actionMethods: {
-        //        create : 'POST',
-        //        read   : 'POST',
-        //        update : 'POST',
-        //        destroy: 'POST'
-        //    }
-        //};
-
-        //this.store = new Ext.data.Store({
-        //    proxy: proxy,
-        //    autoLoad: true,
-        //    autoSync: true,
-        //    remoteSort: true,
-        //    fields: [
-        //        {name: 'id'},
-        //        {name: 'name', allowBlank: false},
-        //        {name: 'description'},
-        //        {name: 'key', allowBlank: false},
-        //        {name: 'type', allowBlank: false},
-        //        {name: 'data'},
-        //        {name: 'config', allowBlank: true},
-        //        {name: 'ctype', allowBlank: false},
-        //        {name: 'inheritable'},
-        //        {name: 'creationDate'},
-        //        {name: 'modificationDate'}
-        //    ]
-        //});
-
         this.filterField = new Ext.form.TextField({
             width: 200,
             style: "margin: 0 10px 0 0;",
@@ -146,42 +93,6 @@ pimcore.settings.properties.predefined = Class.create({
                 }.bind(this)
             }
         });
-
-        //this.pagingtoolbar = new Ext.PagingToolbar({
-        //    pageSize: itemsPerPage,
-        //    store: this.store,
-        //    displayInfo: true,
-        //    displayMsg: '{0} - {1} / {2}',
-        //    emptyMsg: t("no_objects_found")
-        //});
-        //
-        //// add per-page selection
-        //this.pagingtoolbar.add("-");
-        //
-        //this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-        //    text: t("items_per_page")
-        //}));
-        //this.pagingtoolbar.add(new Ext.form.ComboBox({
-        //    store: [
-        //        [10, "10"],
-        //        [20, "20"],
-        //        [40, "40"],
-        //        [60, "60"],
-        //        [80, "80"],
-        //        [100, "100"]
-        //    ],
-        //    mode: "local",
-        //    width: 50,
-        //    value: 20,
-        //    triggerAction: "all",
-        //    listeners: {
-        //        select: function (box, rec, index) {
-        //            this.pagingtoolbar.pageSize = intval(rec.data.field1);
-        //            this.pagingtoolbar.moveFirst();
-        //        }.bind(this)
-        //    }
-        //}));
-
 
         var inheritableCheck = new Ext.grid.column.Check({
             header: t("inheritable"),
@@ -264,7 +175,7 @@ pimcore.settings.properties.predefined = Class.create({
                         return "";
                     }
                 }
-            },
+            }
 
         ];
 

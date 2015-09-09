@@ -57,61 +57,16 @@ pimcore.settings.metadata.predefined = Class.create({
 
         var url =  '/admin/settings/metadata?';
 
-        var proxy = {
-            type: 'ajax',
-            reader: {
-                type: 'json',
-                rootProperty: 'data'
-            },
-            writer: {
-                type: 'json',
-                writeAllFields: true,
-                rootProperty: 'data',
-                encode: 'true'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
-            },
-            actionMethods: {
-                create : 'POST',
-                read   : 'POST',
-                update : 'POST',
-                destroy: 'POST'
-            },
-            extraParams: {
-                limit: itemsPerPage,
-                filter: ""
-            }
-        };
-
-        this.store = new Ext.data.Store({
-            id: 'predefined_metadata',
-            proxy: proxy,
-            remoteSort: true,
-            autoLoad: true,
-            autoSync: true,
-            listeners: {
-                exception : function(proxy, mode, action, options, response) {
-                    Ext.Msg.show({
-                        title: t("error"),
-                        msg: t(response.raw.message),
-                        buttons: Ext.Msg.OK,
-                        animEl: 'elId',
-                        icon: Ext.MessageBox.ERROR
-                    });
-                }
-            },
-            fields: [
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url,
+            [
                 {name: 'id'},
                 {name: 'name', allowBlank: false},
                 {name: 'description', allowBlank: true},
                 {name: 'type', allowBlank: true},
                 {name: 'data', allowBlank: true,
                     convert: function (v, r) {
-                        if (r.data.type == "date") {
+                        if (r.data.type == "date" && v && !(v instanceof Date)) {
                             var d = new Date(intval(v) * 1000);
                             return d;
                         }
@@ -123,8 +78,22 @@ pimcore.settings.metadata.predefined = Class.create({
                 {name: 'language', allowBlank: true},
                 {name: 'creationDate', allowBlank: true},
                 {name: 'modificationDate', allowBlank: true}
-            ]
+            ],
+            itemsPerPage
+        );
+
+        this.store.addListener('exception', function(proxy, mode, action, options, response) {
+            Ext.Msg.show({
+                title: t("error"),
+                msg: t(response.raw.message),
+                buttons: Ext.Msg.OK,
+                animEl: 'elId',
+                icon: Ext.MessageBox.ERROR
+            });
         });
+
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+
 
         this.filterField = new Ext.form.TextField({
             xtype: "textfield",
@@ -143,41 +112,6 @@ pimcore.settings.metadata.predefined = Class.create({
             }
         });
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: itemsPerPage,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_items_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text: t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store: [
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode: "local",
-            width: 50,
-            value: 20,
-            triggerAction: "all",
-            listeners: {
-                select: function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));
-
 
         var languagestore = [["",t("none")]];
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
@@ -189,7 +123,7 @@ pimcore.settings.metadata.predefined = Class.create({
                 header: t("type"),
                 dataIndex: 'type',
                 editable: false,
-                width: 30,
+                width: 40,
                 renderer: this.getTypeRenderer.bind(this),
                 sortable: true
             },
@@ -202,7 +136,7 @@ pimcore.settings.metadata.predefined = Class.create({
                                     return nl2br(value);
                                }
             },
-            {header: t("type"), width: 70, sortable: true,
+            {header: t("type"), width: 90, sortable: true,
                 dataIndex: 'type', editor: new Ext.form.ComboBox({
                 editable: false,
                 store: [
@@ -242,15 +176,15 @@ pimcore.settings.metadata.predefined = Class.create({
                     triggerAction: 'all',
                     mode: "local"
                 }),
-                width: 80
+                width: 70
             },
-            {header: t("target_subtype"), width: 50, sortable: true, dataIndex: 'targetSubtype', editor: new Ext.form.ComboBox({
+            {header: t("target_subtype"), width: 80, sortable: true, dataIndex: 'targetSubtype', editor: new Ext.form.ComboBox({
                 editable: true,
                 store: ["image", "text", "audio", "video", "document", "archive", "unknown"]
             })},
             {
                 xtype: 'actioncolumn',
-                width: 20,
+                width: 40,
                 items: [{
                     tooltip: t('delete'),
                     icon: "/pimcore/static/img/icon/cross.png",
@@ -282,7 +216,15 @@ pimcore.settings.metadata.predefined = Class.create({
         ];
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function(editor, context, eOpts) {
+                    //need to clear cached editors of cell-editing editor in order to
+                    //enable different editors per row
+                    editor.editors.each(Ext.destroy, Ext);
+                    editor.editors.clear();
+                }
+            }
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -294,7 +236,7 @@ pimcore.settings.metadata.predefined = Class.create({
             trackMouseOver: true,
             columns : metadataColumns,
             clicksToEdit: 1,
-            selModel: Ext.create('Ext.selection.RowModel', {}),
+            selModel: Ext.create('Ext.selection.CellModel', {}),
             bbar: this.pagingtoolbar,
             autoExpandColumn: "value_col",
             plugins: [
@@ -357,6 +299,9 @@ pimcore.settings.metadata.predefined = Class.create({
             }
         } else if (type == "date") {
             if (value) {
+                if(!(value instanceof Date)) {
+                    value = new Date(value * 1000);
+                }
                 return Ext.Date.format(value, "Y-m-d");
             }
         }
@@ -457,34 +402,26 @@ pimcore.settings.metadata.predefined = Class.create({
     },
 
     getCellEditor: function (record) {
-
-        var store = this.grid.getStore();
         var data = record.data;
 
         var type = data.type;
         var property;
 
         if (type == "input") {
-            property = new Ext.form.TextField();
+            property = Ext.create('Ext.form.TextField');
         } else if (type == "textarea") {
-            property = new Ext.form.TextArea();
+            property = Ext.create('Ext.form.TextArea');
         } else if (type == "document" || type == "asset" || type == "object") {
-
-            property = new Ext.form.TextField({
-                disabled: true,
-                propertyGrid: this.grid,
-                style: {
-                    visibility: "hidden"
-                }
-            });
+            //no editor needed here
         } else if (type == "date") {
-            property = new Ext.form.DateField();
+            property = Ext.create('Ext.form.field.Date', {
+                format: "Y-m-d"
+            });
         } else {
             return null;
         }
 
         return property;
     }
-
 
 });

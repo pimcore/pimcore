@@ -102,7 +102,7 @@ pimcore.asset.metadata = Class.create({
                         fields: ['name', "type", {
                             name: "data",
                             convert: function (v, r) {
-                                if (r.data.type == "date") {
+                                if (r.data.type == "date" && v && !(v instanceof Date)) {
                                     var d = new Date(intval(v) * 1000);
                                     return d;
                                 }
@@ -120,7 +120,15 @@ pimcore.asset.metadata = Class.create({
             });
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit: 1
+                clicksToEdit: 1,
+                listeners: {
+                    beforeedit: function(editor, context, eOpts) {
+                        //need to clear cached editors of cell-editing editor in order to
+                        //enable different editors per row
+                        editor.editors.each(Ext.destroy, Ext);
+                        editor.editors.clear();
+                    }
+                }
             });
 
 
@@ -155,14 +163,7 @@ pimcore.asset.metadata = Class.create({
                 ],
                 plugins: [
                     this.cellEditing
-                    //,
-                    //{
-                    //    ptype: 'datatip',
-                    //    tpl: t('click_to_edit')
-                    //}
                 ],
-                clicksToEdit: 1,
-                //autoExpandColumn: "value_col",
                 columnLines: true,
                 stripeRows: true,
                 rowupdated: this.updateRows.bind(this, "rowupdated"),
@@ -220,7 +221,7 @@ pimcore.asset.metadata = Class.create({
                         },
                         {
                             xtype: 'actioncolumn',
-                            width: 30,
+                            width: 40,
                             items: [{
                                 tooltip: t('open'),
                                 icon: "/pimcore/static/img/icon/pencil_go.png",
@@ -241,7 +242,7 @@ pimcore.asset.metadata = Class.create({
                         },
                         {
                             xtype: 'actioncolumn',
-                            width: 30,
+                            width: 40,
                             items: [{
                                 tooltip: t('delete'),
                                 icon: "/pimcore/static/img/icon/cross.png",
@@ -355,14 +356,16 @@ pimcore.asset.metadata = Class.create({
             }
         } else if (type == "date") {
             if (value) {
-                return value.format("Y-m-d");
+                if(!(value instanceof Date)) {
+                    value = new Date(value * 1000);
+                }
+                return Ext.Date.format(value, "Y-m-d");
             }
         } else if (type == "checkbox") {
             if (value) {
-                return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
-
+                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
             } else {
-                return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
             }
         }
 
@@ -440,32 +443,24 @@ pimcore.asset.metadata = Class.create({
     getCellEditor: function (record, defaultField ) {
         var data = record.data;
 
-
         var type = data.type;
         var property;
 
         if (type == "input") {
-            property = new Ext.form.TextField();
+            property = Ext.create('Ext.form.TextField');
         } else if (type == "textarea") {
-            property = new Ext.form.TextArea();
+            property = Ext.create('Ext.form.TextArea');
         } else if (type == "document" || type == "asset" || type == "object") {
-
-            property = new Ext.form.TextField({
-                disabled: true,
-                propertyGrid: this.grid,
-                myRowIndex: rowIndex,
-                style: {
-                    visibility: "hidden"
-                }
-            });
+            //no editor needed here
         } else if (type == "date") {
-            property = new Ext.form.DateField();
+            property = Ext.create('Ext.form.field.Date', {
+                format: "Y-m-d"
+            });
         } else if (type == "checkbox") {
-            property = new Ext.form.Checkbox();
-            return false;
+            //no editor needed here
         } else if (type == "select") {
             var config = data.config;
-            property = new Ext.form.ComboBox({
+            property =  Ext.create('Ext.form.ComboBox', {
                 triggerAction: 'all',
                 editable: false,
                 store: config.split(",")

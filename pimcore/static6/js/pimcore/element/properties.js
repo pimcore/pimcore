@@ -30,20 +30,15 @@ pimcore.element.properties = Class.create({
         if (this.layout == null) {
  
             var predefinedPropertiesStore = new Ext.data.Store({
-
-                fields: ["id","name","description","key","type","data","config","inheritable",
-                                            {   name:"translatedName",convert: function(v, rec){
-
-                        return ts(rec.name);
-
-                        /*
-                        var text = "<b>" + ts(rec.name) + "</b>";
-                        if(!empty(rec.description)) {
-                            text += ts(rec.description);
+                fields: [
+                    "id","name","description","key","type","data","config","inheritable",
+                    {
+                        name:"translatedName",
+                        convert: function(v, rec){
+                            return ts(rec.name);
                         }
-                        return text;
-                        */
-                    }}],
+                    }
+                ],
 
                 proxy: {
                     type: 'ajax',
@@ -67,9 +62,6 @@ pimcore.element.properties = Class.create({
                 listClass: "pimcore_predefined_property_select"
             });
 
-
-
- 
             var propertyTypes = new Ext.data.ArrayStore({
                 fields: ['id', 'name'],
                 data: [
@@ -99,8 +91,6 @@ pimcore.element.properties = Class.create({
                 emptyText: t('type')
             });
 
- 
- 
             // prepare store data
             var property = null;
             var keys = Object.keys(this.element.data.properties);
@@ -169,7 +159,15 @@ pimcore.element.properties = Class.create({
             });
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit: 1
+                clicksToEdit: 1,
+                listeners: {
+                    beforeedit: function(editor, context, eOpts) {
+                        //need to clear cached editors of cell-editing editor in order to
+                        //enable different editors per row
+                        editor.editors.each(Ext.destroy, Ext);
+                        editor.editors.clear();
+                    }
+                }
             });
 
             this.propertyGrid = Ext.create('Ext.grid.Panel', {
@@ -257,7 +255,7 @@ pimcore.element.properties = Class.create({
                     checkColumn,
                     {
                         xtype: 'actioncolumn',
-                        width: 30,
+                        width: 40,
                         items: [{
                             tooltip: t('open'),
                             icon: "/pimcore/static/img/icon/pencil_go.png",
@@ -283,7 +281,7 @@ pimcore.element.properties = Class.create({
                     },
                     {
                         xtype: 'actioncolumn',
-                        width: 30,
+                        width: 40,
                         items: [{
                             tooltip: t('delete'),
                             icon: "/pimcore/static/img/icon/cross.png",
@@ -319,10 +317,7 @@ pimcore.element.properties = Class.create({
                     e.stopEvent();
                     return;
                 }
- 
-                //$(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
-                //                                            .animate( { backgroundColor: '#fff' }, 400);
-                
+
                 var menu = new Ext.menu.Menu();
  
                 menu.add(new Ext.menu.Item({
@@ -395,10 +390,9 @@ pimcore.element.properties = Class.create({
             }
         } else if (type == "bool" && data.inherited == false) {
             if (value) {
-                return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
-
+                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
             } else {
-                return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
             }
         }
  
@@ -430,19 +424,10 @@ pimcore.element.properties = Class.create({
             property = new Ext.form.TextField();
         }
         else if (type == "document" || type == "asset" || type == "object") {
- 
-            property = new Ext.form.TextField({
-                disabled: true,
-                propertyGrid: this.propertyGrid,
-                myRowIndex: rowIndex,
-                style: {
-                    visibility: "hidden"
-                }
-            });
+            //no editor needed here
         }
         else if (type == "bool") {
-            property = new Ext.form.Checkbox();
-            return false;
+            //no editor needed here
         }
         else if (type == "select") {
             var config = data.config;
@@ -452,9 +437,7 @@ pimcore.element.properties = Class.create({
                 store: config.split(",")
             });
         }
- 
- 
-        //return new Ext.grid.GridEditor(property);
+
         return property;
     },
  

@@ -71,9 +71,11 @@ pimcore.settings.redirects = Class.create({
                 {name: 'statusCode'},
                 {name: 'priority', type:'int'},
                 {name: 'expiry', type: "date", convert: function (v, r) {
-                    if(v) {
+                    if(v && !(v instanceof Date)) {
                         var d = new Date(intval(v) * 1000);
                         return d;
+                    } else {
+                        return v;
                     }
                 }},
                 {name: 'creationDate'},
@@ -179,13 +181,20 @@ pimcore.settings.redirects = Class.create({
                 editable: false,
                 forceSelection: true,
                 triggerAction: "all"
-            })},
-            {header: t("expiry"), width: 80, sortable:true, dataIndex: "expiry", editor: new Ext.form.DateField(),
-                                                                            renderer: function(d) {
-                if(d instanceof Date) {
-                    return Ext.Date.format(d, "Y-m-d");
-                }
-            }},
+            })}, {
+                header: t("expiry"),
+                width: 150, sortable:true, dataIndex: "expiry",
+                editor: {
+                    xtype: 'datefield',
+                    format: 'Y-m-d'
+                },
+                renderer:
+                    function(d) {
+                        if(d instanceof Date) {
+                            return Ext.Date.format(d, "Y-m-d");
+                        }
+                    }
+            },
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 width: 150,
