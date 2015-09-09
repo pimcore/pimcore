@@ -163,11 +163,10 @@ pimcore.document.edit = Class.create({
                     }
                 }.bind(this));
 
-                this.loadMask = new Ext.LoadMask(
-                    {
-                        target: this.layout,
-                        msg: t("please_wait")
-                    });
+                this.loadMask = new Ext.LoadMask({
+                    target: this.layout,
+                    msg: t("please_wait")
+                });
 
                 this.loadMask.show();
             }.bind(this));
@@ -177,19 +176,13 @@ pimcore.document.edit = Class.create({
 
     },
     
-    /*
-    iFrameLoaded: function () {
-        console.log("finished");
-    },
-    */
-    
     onLayoutResize: function (el, width, height, rWidth, rHeight) {
         this.setLayoutFrameDimensions(width, height);
     },
 
     setLayoutFrameDimensions: function (width, height) {
         Ext.get(this.iframeName).setStyle({
-            height: (height-32) + "px"
+            height: (height-51) + "px"
         });
     },
 

@@ -45,10 +45,9 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
         if (\Pimcore\Tool\Admin::isExtJS6()) {
             $editmodeLibraries = array(
                 "/pimcore/static6/js/pimcore/namespace.js",
-                "/pimcore/static6/js/pimcore/document/edit/sandbox.js",
                 "/pimcore/static6/js/lib/prototype-light.js",
                 "/pimcore/static6/js/lib/jquery.min.js",
-                "/pimcore/static6/js/lib/ext/ext-all-debug.js",
+                "/pimcore/static6/js/lib/ext/ext-all.js",
                 "/pimcore/static6/js/lib/ckeditor/ckeditor.js"
             );
 
@@ -84,10 +83,8 @@ class Editmode extends \Zend_Controller_Plugin_Abstract {
 
             $editmodeStylesheets = array(
                 "/pimcore/static6/css/icons.css",
-                "/pimcore/static6/js/lib/ext/packages/ext-theme-classic-sandbox/build/resources/ext-theme-classic-sandbox-all-debug.css",
-                "/pimcore/static6/css/editmode-classic.css?asd=" . time()
+                "/pimcore/static6/css/editmode.css?_dc=" . time()
             );
-
 
         } else {
             $editmodeLibraries = array(

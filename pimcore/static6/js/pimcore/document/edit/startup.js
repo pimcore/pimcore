@@ -57,7 +57,7 @@ Ext.Loader.setConfig({
     enabled: true
 });
 
-Ext.Loader.setPath('Ext.ux', '/pimcore/static6/js/lib/ext/examples/ux');
+Ext.Loader.setPath('Ext.ux', '/pimcore/static6/js/lib/ext/ux');
 
 Ext.require([
     'Ext.dom.Element',

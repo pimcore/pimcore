@@ -31,7 +31,7 @@ pimcore.document.pages.preview = Class.create({
 
             // preview switcher only for pages not for emails
             var tbar = [];
-            if(this.page.getType() == "page" && !Ext.isIE8) {
+            if(this.page.getType() == "page") {
 
                 var previewModes = [
                     {type: "desktop", name: '10" Netbook', width: 1024, height: 600, icon: ""},
@@ -144,6 +144,7 @@ pimcore.document.pages.preview = Class.create({
             this.framePanel = new Ext.Panel({
                 border: false,
                 region: "center",
+                scrollable: false,
                 bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
                 html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="'
                     + this.iframeName + '" name="' + this.iframeName + '"' +
@@ -209,11 +210,10 @@ pimcore.document.pages.preview = Class.create({
             if(!(this.page.isAllowed("save") || this.page.isAllowed("publish"))) {
                 cssPanelEnabled = false;
             }
-            if(Ext.isIE8) {
-                cssPanelEnabled = false;
-            }
-            this.cssPanelEnabled = cssPanelEnabled;
 
+            // temp. disabled
+            cssPanelEnabled = false;
+            this.cssPanelEnabled = cssPanelEnabled;
 
             this.cssPanel = new Ext.Panel({
                 border: false,
@@ -233,7 +233,6 @@ pimcore.document.pages.preview = Class.create({
                 border: false,
                 layout: "border",
                 tbar: tbar,
-                autoScroll: true,
                 iconCls: "pimcore_icon_tab_preview",
                 items: [this.framePanel, this.cssPanel]
             });
@@ -292,7 +291,7 @@ pimcore.document.pages.preview = Class.create({
 
     setLayoutFrameDimensions: function (width, height) {
         this.getIframe().setStyle({
-            height: (height-2) + "px"
+            height: (height) + "px"
         });
     },
 
