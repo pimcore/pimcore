@@ -781,14 +781,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 closable: false,
                 x: x,
                 y: areaBlockToolbarSettings["y"],
-                items: buttons,
-                listeners: {
-                    move: function (win, x, y) {
-                        var scroll = Ext.getBody().getScroll();
-                        win.getEl().setStyle("top", y - scroll.top + "px");
-                        win.getEl().setStyle("left", x - scroll.left + "px");
-                    }
-                }
+                items: buttons
             });
 
             toolbar.show();

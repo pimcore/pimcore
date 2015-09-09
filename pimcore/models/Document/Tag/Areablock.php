@@ -346,7 +346,7 @@ class Areablock extends Model\Document\Tag {
                 "x" => 20,
                 "y" => 50,
                 "xAlign" => "left",
-                "buttonWidth" => 154,
+                "buttonWidth" => 168,
                 "buttonMaxCharacters" => 20
             )
         );

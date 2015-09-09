@@ -173,7 +173,7 @@
 }
 
 .pimcore_tag_href input{
-	background: url(/pimcore/static6/img/icon/drop-16.png) right 2px no-repeat #fff;
+	background: url(/pimcore/static6/img/icon/drop-16.png) right center no-repeat #fff;
 	cursor: default;
 }
 
@@ -245,6 +245,10 @@
     opacity: .3;
 }
 
+.pimcore_areablock_toolbar.x-layer {
+    position: fixed !important;
+}
+
 .pimcore_areablock_toolbar:hover {
     opacity: .9;
     transition: all .2s ease-in 0; /* explorer 10 */
@@ -253,17 +257,17 @@
     -o-transition: all .2s ease-in 0; /* opera */
 }
 
-.pimcore_areablock_toolbar .x5-window-body {
-    background-color: transparent;
+.pimcore_areablock_toolbar .x-window-header-default-top {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-.pimcore_areablock_toolbar .x5-btn-mc {
-    text-align: left;
+.pimcore_areablock_toolbar .x-btn-default-small {
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
-.pimcore_areablock_toolbar .x5-window-header {
-    height: 15px;
-}
+
 
 .pimcore_tag_video {
     position: relative;
@@ -343,6 +347,12 @@
 .pimcore_tag_date input {
     min-width: 80px;
     line-height: 24px;
+}
+
+/* ExtJS specific overrides */
+
+.x-btn {
+    text-decoration: none !important;
 }
 
 

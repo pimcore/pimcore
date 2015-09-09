@@ -72,7 +72,15 @@ class Multiselect extends Model\Document\Tag {
      * @return void
      */
     public function setDataFromEditmode($data) {
-        $this->values = empty($data)?array():explode(",", $data);
+
+        if(empty($data)) {
+            $this->values = [];
+        } else if (is_string($data)) {
+            $this->values = explode(",", $data);
+        } else if (is_array($data)) {
+            $this->values = $data;
+        }
+
         return $this;
     }
 
