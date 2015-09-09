@@ -1056,6 +1056,10 @@ span.warning {
     cursor: pointer !important;
 }
 
+.x-grid-cell-inner, .x-grid-cell-inner-checkcolumn, .x-grid-cell-inner-action-col {
+    padding: 2px 10px 2px;
+}
+
 /* highlight error logs */
 .log-type-CRIT .x-grid-cell,
 .log-type-ALERT .x-grid-cell,
@@ -1212,8 +1216,8 @@ span.warning {
 }
 
 .x-column-header-inner {
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding-top: 1px;
+    padding-bottom: 1px;
 }
 
 .x-mask.x-focus {
@@ -1231,6 +1235,9 @@ span.warning {
 .x-column-header {
     background-color: #d0d0d0;
     border-right-color: #5a5c5e;
+    font-size: 11px;
+    line-height: 18px;
+    font-weight: 600;
 }
 
 .x-grid-body {
