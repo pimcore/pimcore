@@ -25,25 +25,26 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
         if (!data) {
             data = false;
         }
-   
 
-        options.listeners = {};
+        this.htmlId = id + "_editable";
+        var checked = "";
+        if(data) {
+            checked = ' checked="checked"';
+        }
+
+        $("#" + id).html('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
+
         // onchange event
         if (options.onchange) {
-            options.listeners.check = eval(options.onchange);
+            $("#" + this.htmlId).change(eval(options.onchange));
         }
         if (options.reload) {
-            options.listeners.check = this.reloadDocument;
+            $("#" + this.htmlId).change(this.reloadDocument);
         }
-
-        options.checked = data;
-        options.name = id + "_editable";
-        this.element = new Ext.form.Checkbox(options);
-        this.element.render(id);
     },
 
     getValue: function () {
-        return this.element.getValue();
+        return ($("#" + this.htmlId + ":checked").val() == "true") ? true : false;
     },
 
     getType: function () {

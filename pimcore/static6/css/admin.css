@@ -12,6 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+@import 'ext-modifications.css';
+
 #pimcore_body {
     /*padding: 0 0 0 5px;*/
     padding-top: 10px !important;
@@ -1148,148 +1150,6 @@ span.warning {
 .main-toolbar.x-toolbar-default {
     background: #ececec;
     border-bottom: 1px solid #e4e4e4 !important;
-}
-
-/* ExtJS 6.0 default styles */
-
-.x-tab-default-top {
-    border-color: #3c3f41;
-    background-color: #f6f6f6;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-.x-tab-over.x-tab-default.x-tab-over {
-    background-color: #f9f9f9;
-}
-
-.x-tab-over.x-tab-default.x-tab-over.x-tab-active {
-    background-color: #fff;
-}
-
-.x-tab-inner-default {
-    color: #606060;
-}
-
-.x-tab-bar-default {
-    background: #ececec;
-    border-bottom: 1px solid #fff;
-}
-
-.x-tab-focus.x-tab-default {
-    outline: none;
-}
-
-.x-tab-default .x-tab-close-btn {
-    color: #919191;
-}
-
-.x-tab-default.x-tab-over .x-tab-close-btn {
-    color: #919191;
-}
-
-.x-tab-bar-horizontal > .x-tab-bar-body-default {
-    min-height: 30px;
-}
-
-.x-panel-default.x-tabpanel-child {
-    border-top: 3px solid #fff;
-}
-
-.x-grid-cell-inner-treecolumn, .pimcore_document_seo_tree .x-grid-cell-inner  {
-    padding: 0 6px 0 0;
-}
-
-.x-fieldset {
-    background: none;
-}
-
-.x-accordion-item .x-accordion-hd {
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-.x-view-item-focused {
-    outline: 0;
-}
-
-.x-grid-item-focused .x-grid-cell-inner:before {
-    border: 0;
-}
-
-.x-column-header-inner {
-    padding-top: 1px;
-    padding-bottom: 1px;
-}
-
-.x-mask.x-focus {
-    border:0;
-}
-
-.x-panel-header-default {
-    background-color: #ececec;
-}
-
-.x-panel-header-title-default {
-    color: #606060;
-}
-
-.x-column-header {
-    background-color: #d0d0d0;
-    border-right-color: #5a5c5e;
-    font-size: 11px;
-    line-height: 18px;
-    font-weight: 600;
-}
-
-.x-grid-body {
-    border-width:1px;
-    border-color: #5a5c5e;
-}
-
-.x-grid-header-ct {
-    background-color: #d0d0d0;
-}
-
-body > .x-mask {
-    background-color: rgba(246, 246, 246, 0.75);
-}
-
-.x-border-item {
-    border-right: 1px solid #ececec;
-}
-
-.x-toolbar-default {
-    background-color: #ececec;
-}
-
-.x-btn-default-small, .x-btn-default-medium, .x-btn-default-large {
-    border-color: #000;
-}
-
-.x-btn-over.x-btn-default-small, .x-btn-over.x-btn-default-medium, .x-btn-over.x-btn-default-large {
-    border-color: #000;
-    background-color: #000;
-}
-
-.x-form-trigger-wrap-default.x-form-trigger-wrap-focus {
-    border-color: #000;
-}
-
-.x-panel-default {
-    border-color: #d0d0d0;
-}
-
-.x-panel > .x-panel-default-outer-border-trl {
-    border-color: #d0d0d0 !important;
-}
-
-.x-panel > .x-panel-default-outer-border-rbl {
-    border-color: #d0d0d0 !important;
-}
-
-.x-portlet {
-    margin-bottom: 10px;
 }
 
 
