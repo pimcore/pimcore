@@ -224,6 +224,7 @@ Ext.onReady(function () {
         }
     });
 
+    var docTypesUrl = '/admin/document/doc-types?';
     // document types
     Ext.define('pimcore.model.doctypes', {
         extend: 'Ext.data.Model',
@@ -241,7 +242,6 @@ Ext.onReady(function () {
         ],
         proxy: {
             type: 'ajax',
-            url:'/admin/document/doc-types',
             reader: {
                 type: 'json',
                 totalProperty:'total',
@@ -249,7 +249,16 @@ Ext.onReady(function () {
                 rootProperty:'data'
             },
             writer: {
-                type: 'json'
+                type: 'json',
+                writeAllFields: true,
+                rootProperty: 'data',
+                encode: 'true'
+            },
+            api: {
+                create  : docTypesUrl + "xaction=create",
+                read    : docTypesUrl + "xaction=read",
+                update  : docTypesUrl + "xaction=update",
+                destroy : docTypesUrl + "xaction=destroy"
             }
         }
     });
@@ -257,16 +266,10 @@ Ext.onReady(function () {
     var store = new Ext.data.Store({
         id:'doctypes',
         model: 'pimcore.model.doctypes',
-        //restful:false,
         remoteSort:false,
-        listeners:{
-            write:function (store, action, result, response, rs) {
-            },
-            save:function (store, batch, data) {
-            }
-        }
+        autoSync: true,
+        autoLoad: true
     });
-    store.load();
 
     pimcore.globalmanager.add("document_types_store", store);
     pimcore.globalmanager.add("document_documenttype_store", ["page","snippet","email"]);
