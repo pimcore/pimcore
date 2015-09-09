@@ -338,7 +338,7 @@
 }
 
 .pimcore_icon_user {
-    background: url(/pimcore/static/img/icon/user.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/user.png) left center no-repeat !important;
 }
 
 .pimcore_icon_usergroup{

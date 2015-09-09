@@ -59,7 +59,7 @@ pimcore.settings.user.workspace.document = Class.create({
 
         typesColumns.push({
             xtype: 'actioncolumn',
-            width: 30,
+            width: 40,
             items: [{
                 tooltip: t('delete'),
                 icon: "/pimcore/static/img/icon/cross.png",

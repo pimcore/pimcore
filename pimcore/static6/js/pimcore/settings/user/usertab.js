@@ -69,6 +69,8 @@ pimcore.settings.user.usertab = Class.create({
 
         this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().setActiveTab(this.panel);
+        this.panel.setActiveTab(0);
+
     },
 
     activate: function () {

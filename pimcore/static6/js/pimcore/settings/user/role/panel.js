@@ -69,6 +69,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                     id: '0',
                     text: t("all_roles"),
                     allowChildren: true,
+                    iconCls: "pimcore_icon_folder",
                     expanded: true
                 },
                 viewConfig: {
