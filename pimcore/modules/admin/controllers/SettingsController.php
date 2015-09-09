@@ -597,7 +597,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
             if(is_array($data)) {
                 foreach ($data as &$value) {
-                    $value = trim($value);
+                    if(is_string($value)) {
+                        $value = trim($value);
+                    }
                 }
             }
 

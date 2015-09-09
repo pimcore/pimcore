@@ -58,44 +58,10 @@ pimcore.settings.staticroutes = Class.create({
         var itemsPerPage = 20;
 
         var url = '/admin/settings/staticroutes?';
-        var proxy = {
-            type: 'ajax',
-            extraParams:{
-                limit:itemsPerPage,
-                filter:""
-            },
-            reader: {
-                type: 'json',
-                rootProperty: 'data'
-            },
-            writer: {
-                type: 'json',
-                writeAllFields: true,
-                rootProperty: 'data',
-                encode: 'true'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
-            },
-            actionMethods: {
-                create : 'POST',
-                read   : 'POST',
-                update : 'POST',
-                destroy: 'POST'
-            }
 
-        };
-
-        this.store = new Ext.data.Store({
-            //id:'staticroutes_store',
-            //restful:false,
-            proxy:proxy,
-            autoLoad: true,
-            autoSync: true,
-            fields: [
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url,
+            [
                 {name:'id', type: 'int'},
                 {name:'name'},
                 {name:'pattern', allowBlank:false},
@@ -110,8 +76,12 @@ pimcore.settings.staticroutes = Class.create({
                 {name: 'creationDate'},
                 {name: 'modificationDate'}
             ],
-            remoteSort:true
-        });
+            itemsPerPage
+        );
+        this.store.setAutoSync(true);
+
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+
 
         this.filterField = new Ext.form.TextField({
             width:200,
@@ -128,41 +98,6 @@ pimcore.settings.staticroutes = Class.create({
                 }.bind(this)
             }
         });
-
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize:itemsPerPage,
-            store:this.store,
-            displayInfo:true,
-            displayMsg:'{0} - {1} / {2}',
-            emptyMsg:t("no_items_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text:t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store:[
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode:"local",
-            width:50,
-            value:20,
-            triggerAction:"all",
-            listeners:{
-                select:function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));
 
         var typesColumns = [
             {header:t("name"), flex:50, sortable:true, dataIndex:'name',
@@ -209,11 +144,12 @@ pimcore.settings.staticroutes = Class.create({
                     displayField:'name',
                     valueField:'name',
                     listeners:{
-                        "focus":function (el) {
-                            console.log();
-                            el.getStore().reload({
+                        "focus":function (field, x1, x2, x3, x4, x5) {
+                            var currentRecord = this.grid.getSelection();
+                            console.log(currentRecord[0]);
+                            field.getStore().reload({
                                 params:{
-                                    controllerName:this.store.data.items[el.gridEditor.row].data.controller
+                                    controllerName:currentRecord[0].data.controller
                                 }
                             });
                         }.bind(this)
@@ -265,7 +201,7 @@ pimcore.settings.staticroutes = Class.create({
             },
             {
                 xtype:'actioncolumn',
-                width:30,
+                width: 40,
                 items:[
                     {
                         tooltip:t('delete'),
