@@ -223,6 +223,7 @@ pimcore.settings.website = Class.create({
             triggerAction: 'all',
             mode: "local",
             listWidth: 200,
+            hideLabel: true,
             emptyText: t('type')
         });
 
