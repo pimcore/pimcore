@@ -13,6 +13,7 @@ use Countable;
 use Zend_Paginator_Adapter_Interface;
 use Zend_Paginator_AdapterAggregate;
 use Zend_Db_Select;
+use ArrayAccess;
 
 
 /**
@@ -21,7 +22,7 @@ use Zend_Db_Select;
  * @package OnlineShop\Framework\OrderManager
  * @method IOrderListItem current()
  */
-interface IOrderList extends SeekableIterator, Countable, Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate
+interface IOrderList extends SeekableIterator, Countable, Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, ArrayAccess
 {
     const LIST_TYPE_ORDER = 'order';
     const LIST_TYPE_ORDER_ITEM = 'item';
