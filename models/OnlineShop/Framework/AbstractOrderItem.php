@@ -181,6 +181,12 @@ class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concr
      */
     public function getOrder()
     {
-        return $this->getParent();
+        $parent = $this;
+        while(!$parent instanceof OnlineShop_Framework_AbstractOrder)
+        {
+            $parent = $parent->getParent();
+        }
+
+        return $parent;
     }
 }
