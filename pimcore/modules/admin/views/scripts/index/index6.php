@@ -94,7 +94,7 @@ $styles = array(
     "/admin/misc/admin-css?extjs6=1",
     "/pimcore/static6/css/icons.css",
     "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-    "/pimcore/static6/js/lib/ext/packages/charts/classic/triton/resources/charts-all" . $debugSuffix . ".css",
+    "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",
     "/pimcore/static6/css/ext-admin-overwrite.css",
     "/pimcore/static6/css/fontello.css",
     "/pimcore/static6/css/admin.css"
