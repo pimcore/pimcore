@@ -135,10 +135,15 @@ pimcore.settings.translations = Class.create({
             }
         }
 
+        var dateConverter = function (v, r) {
+            var d = new Date(intval(v));
+            return d;
+        };
+
         var readerFields = [
             {name: 'key', allowBlank: false},
-            {name: 'creationDate', allowBlank: true},
-            {name: 'modificationDate', allowBlank: true}
+            {name: 'creationDate', allowBlank: true, type: 'date', convert: dateConverter},
+            {name: 'modificationDate', allowBlank: true, type: 'date', convert: dateConverter}
         ];
 
         var typesColumns = [
@@ -168,11 +173,11 @@ pimcore.settings.translations = Class.create({
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         };
-        typesColumns.push({header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
-            renderer: dateRenderer, filter: "date"
+        typesColumns.push({header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
+            ,renderer: dateRenderer, filter: 'date'
         });
         typesColumns.push({header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
-            ,renderer: dateRenderer, filter: "date"
+            ,renderer: dateRenderer, filter: 'date'
         })
         ;
 
@@ -257,11 +262,8 @@ pimcore.settings.translations = Class.create({
             id: 'translation_store',
             model: this.modelName,
             remoteSort: true,
-            autoSync: true,
-            listeners: {
-                write : function(store, action, result, response, rs) {
-                }
-            }
+            remoteFilter: true,
+            autoSync: true
         });
 
         this.pagingtoolbar = Ext.create('Ext.toolbar.Paging', {
