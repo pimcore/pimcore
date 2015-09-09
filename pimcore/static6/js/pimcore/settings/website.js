@@ -231,7 +231,6 @@ pimcore.settings.website = Class.create({
             clicksToEdit: 1,
             listeners: {
                 beforeedit: function(editor, context, eOpts) {
-                    console.log("before edit");
                     //need to clear cached editors of cell-editing editor in order to
                     //enable different editors per row
                     editor.editors.each(Ext.destroy, Ext);
@@ -307,9 +306,6 @@ pimcore.settings.website = Class.create({
 
         var type = data.type;
         var property;
-        console.log("get editor");
-        console.log(data);
-        console.log(type);
 
         if (type == "text") {
             property = Ext.create('Ext.form.TextField');
@@ -397,9 +393,6 @@ pimcore.settings.website = Class.create({
         var data = record.data;
         var type = data.type;
 
-        console.log("get renderer");
-        console.log(type);
-
         if (!value) {
             value = "";
         }
@@ -407,7 +400,6 @@ pimcore.settings.website = Class.create({
         if (type == "document" || type == "asset" || type == "object") {
             return '<div class="pimcore_property_droptarget">' + value + '</div>';
         } else if (type == "bool") {
-            console.log(value);
             if (value) {
                 return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
             } else {
