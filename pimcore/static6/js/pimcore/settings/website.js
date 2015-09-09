@@ -56,79 +56,33 @@ pimcore.settings.website = Class.create({
 
     getRowEditor:function () {
 
-        this.modelName = 'pimcore.model.websitesettings';
+
         var itemsPerPage = 20;
+        var url = '/admin/settings/website-settings?';
 
-        if (!Ext.ClassManager.get(this.modelName)) {
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url,
+            [
+                "id", 'name','type',
+                {name: "data"},
+                {name: 'siteId', allowBlank: true},
+                {name: 'creationDate', allowBlank: true},
+                {name: 'modificationDate', allowBlank: true}
 
-            var url = '/admin/settings/website-settings?';
-            Ext.define(this.modelName, {
-                extend: 'Ext.data.Model',
-                idProperty: 'id',
-                fields:
-                    ["id", 'name','type',{name: "data", type: "string", convert: function (v, rec) {
-                        return v;
-                    }},
-                    {name: 'siteId', allowBlank: true},
-                    {name: 'creationDate', allowBlank: true},
-                    {name: 'modificationDate', allowBlank: true}
+            ],
+            itemsPerPage
+        );
 
-                ],
-
-                proxy: {
-                    type: 'ajax',
-                    api: {
-                        create: url + "xaction=create",
-                        read: url + "xaction=read",
-                        update: url + "xaction=update",
-                        destroy: url + "xaction=destroy"
-                    },
-                    actionMethods: {
-                        create: 'POST',
-                        read: 'POST',
-                        update: 'POST',
-                        destroy: 'POST'
-                    },
-                    extraParams: {
-                        limit: itemsPerPage
-                        //,
-                        //filter: this.preconfiguredFilter
-                    },
-
-                    // Reader is now on the proxy, as the message was explaining
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'data'
-                        //totalProperty:'total',            // default
-                        //successProperty:'success'         // default
-                    },                                     // default
-                    writer: {
-                        type: 'json',
-                        writeAllFields: true,
-                        rootProperty: 'data',
-                        encode: 'true'
-                    },
-                    listeners: {
-                        exception: function (proxy, response, operation) {
-                            Ext.MessageBox.show({
-                                title: 'REMOTE EXCEPTION',
-                                msg: operation.getError(),
-                                icon: Ext.MessageBox.ERROR,
-                                buttons: Ext.Msg.OK
-                            });
-                        }
-                    }
-                }
-            });
-
-        }
-
-        this.store = new Ext.data.Store({
-            id:'settings_website_store',
-            model: this.modelName,
-            autoSync: true,
-            remoteSort:true
-        });
+        this.store.addListener('exception', function (proxy, response, operation) {
+                Ext.MessageBox.show({
+                    title: 'REMOTE EXCEPTION',
+                    msg: operation.getError(),
+                    icon: Ext.MessageBox.ERROR,
+                    buttons: Ext.Msg.OK
+                });
+            }
+        );
+        this.store.setAutoSync(true);
 
         this.filterField = new Ext.form.TextField({
             width: 200,
@@ -146,42 +100,7 @@ pimcore.settings.website = Class.create({
             }
         });
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize:itemsPerPage,
-            store:this.store,
-            displayInfo:true,
-            displayMsg:'{0} - {1} / {2}',
-            emptyMsg:t("no_objects_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text:t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store:[
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode:"local",
-            width:50,
-            value:20,
-            triggerAction:"all",
-            listeners:{
-                select:function (box, rec, index) {
-                    var limit = intval(rec.data.field1);
-                    this.store.getProxy().extraParams.limit = limit;
-                    this.pagingtoolbar.pageSize = limit;
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
         var typesColumns = [
             {
@@ -195,6 +114,7 @@ pimcore.settings.website = Class.create({
             {
                 header: t("name"),
                 dataIndex: 'name',
+                width: 200,
                 editor: new Ext.form.TextField({
                     allowBlank: false
                 }),
@@ -203,14 +123,15 @@ pimcore.settings.website = Class.create({
             {
                 header: t("value"),
                 dataIndex: 'data',
-                getCellEditor: this.getCellEditor.bind(this),
+                flex: 10,
+                getEditor: this.getCellEditor.bind(this),
                 editable: true,
                 renderer: this.getCellRenderer.bind(this),
                 listeners: {
                     "mousedown": this.cellMousedown.bind(this)
                 }
             },
-            {header: t("site"), width: 200, sortable:true, dataIndex: "siteId",
+            {header: t("site"), width: 250, sortable:true, dataIndex: "siteId",
                 editor: new Ext.form.ComboBox({
                         store: pimcore.globalmanager.get("sites"),
                         valueField: "id",
@@ -254,7 +175,7 @@ pimcore.settings.website = Class.create({
             ,
             {
                 xtype:'actioncolumn',
-                width:30,
+                width:40,
                 tooltip:t('empty'),
                 icon: "/pimcore/static/img/icon/bin_empty.png",
                 handler:function (grid, rowIndex) {
@@ -265,7 +186,7 @@ pimcore.settings.website = Class.create({
             ,
             {
                 xtype:'actioncolumn',
-                width:30,
+                width:40,
                 tooltip:t('delete'),
                 icon:"/pimcore/static/img/icon/cross.png",
                 handler:function (grid, rowIndex) {
@@ -306,7 +227,16 @@ pimcore.settings.website = Class.create({
         });
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function(editor, context, eOpts) {
+                    console.log("before edit");
+                    //need to clear cached editors of cell-editing editor in order to
+                    //enable different editors per row
+                    editor.editors.each(Ext.destroy, Ext);
+                    editor.editors.clear();
+                }
+            }
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -317,12 +247,8 @@ pimcore.settings.website = Class.create({
             trackMouseOver:true,
             stripeRows:true,
             columns : {
-                items: typesColumns,
-                defaults: {
-                    flex: 1
-                }
+                items: typesColumns
             },
-            clicksToEdit: 1,
             sm:  Ext.create('Ext.selection.RowModel', {}),
             bbar:this.pagingtoolbar,
             plugins: [
@@ -376,43 +302,36 @@ pimcore.settings.website = Class.create({
     },
 
     getCellEditor: function (record) {
-
         var data = record.data;
-        var value = data.all;
 
         var type = data.type;
         var property;
+        console.log("get editor");
+        console.log(data);
+        console.log(type);
 
         if (type == "text") {
-            property = new Ext.form.TextField();
-        }
-        else if (type == "document" || type == "asset" || type == "object") {
-
-            property = new Ext.form.TextField({
-                disabled: true,
-                grid: this.grid,
-                myRowIndex: rowIndex,
-                style: {
-                    visibility: "hidden"
-                }
+            property = Ext.create('Ext.form.TextField');
+        } else if (type == "textarea") {
+            property = Ext.create('Ext.form.TextArea');
+        } else if (type == "document" || type == "asset" || type == "object") {
+            //no editor needed here
+        } else if (type == "date") {
+            property = Ext.create('Ext.form.field.Date', {
+                format: "Y-m-d"
             });
-        }
-
-        else if (type == "bool") {
-            property = new Ext.form.Checkbox();
-            return;
-        }
-
-        else if (type == "select") {
+        } else if (type == "checkbox") {
+            //no editor needed here
+        } else if (type == "select") {
             var config = data.config;
-            property = new Ext.form.ComboBox({
+            property =  Ext.create('Ext.form.ComboBox', {
                 triggerAction: 'all',
                 editable: false,
                 store: config.split(",")
             });
         }
 
-        return new Ext.grid.GridEditor(property);
+        return property;
     },
 
     updateRows: function (event) {
@@ -474,8 +393,11 @@ pimcore.settings.website = Class.create({
 
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
 
-        var data = store.getAt(rowIndex).data;
+        var data = record.data;
         var type = data.type;
+
+        console.log("get renderer");
+        console.log(type);
 
         if (!value) {
             value = "";
@@ -484,18 +406,18 @@ pimcore.settings.website = Class.create({
         if (type == "document" || type == "asset" || type == "object") {
             return '<div class="pimcore_property_droptarget">' + value + '</div>';
         } else if (type == "bool") {
+            console.log(value);
             if (value) {
-                return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
-
+                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
             } else {
-                return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
             }
         }
 
         return value;
     },
 
-    cellMousedown: function (view, cell, rowIndex, cellIndex, e) {
+    cellMousedown: function (grid, cell, rowIndex, cellIndex, e) {
 
         // this is used for the boolean field type
 
@@ -505,7 +427,11 @@ pimcore.settings.website = Class.create({
         var type = data.type;
 
         if (type == "bool") {
-            record.set("data", !record.data.data);
+
+            this.cellEditing.editors.each(Ext.destroy, Ext);
+            this.cellEditing.editors.clear();
+
+            record.set("data", !data.data);
         }
     },
 
@@ -521,6 +447,9 @@ pimcore.settings.website = Class.create({
     add: function (key, type, value, config, inherited, inheritable) {
 
         var store = this.grid.getStore();
+
+        this.cellEditing.editors.each(Ext.destroy, Ext);
+        this.cellEditing.editors.clear();
 
         // check for duplicate name
         var dublicateIndex = store.findBy(function (key, record, id) {
@@ -558,18 +487,11 @@ pimcore.settings.website = Class.create({
             value = "";
         }
 
-        if (typeof inheritable != "boolean") {
-            inheritable = true;
-        }
-
-        var newRecord = Ext.create(this.modelName, {
+        store.add({
             name: key,
             data: value,
             type: type
         });
-
-        store.add(newRecord);
-        //this.grid.getView().refresh();
     }
 
 });
