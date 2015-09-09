@@ -83,8 +83,6 @@ pimcore.settings.tagmanagement.item = Class.create({
         var paramsFieldSet = {
             xtype: "fieldset",
             title: t("parameters") + " (GET &amp; POST)",
-            //hideLabel: true,
-            //style: "margin-top: 10px;"
             items: paramsFieldSetItems
         };
 

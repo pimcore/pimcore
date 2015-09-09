@@ -259,6 +259,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "fieldset",
                                 layout: "hbox",
                                 border: false,
+                                style: "border-top: none !important",
                                 padding: 0,
                                 width: 600,
                                 items: [{
@@ -1219,9 +1220,6 @@ pimcore.settings.system = Class.create({
                             {
                                 xtype: 'tagfield',
                                 width: "100%",
-                                //
-                                //queryDelay: 100,
-                                //triggerAction: 'all',
                                 resizable: true,
                                 minChars: 2,
                                 store: Ext.create('Ext.data.Store', {
@@ -1233,24 +1231,12 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('exclude_patterns'),
                                 name: 'cache.excludePatterns',
                                 value: this.getValue("cache.excludePatterns"),
-                                //emptyText: t("superselectbox_empty_text"),
                                 displayField: 'value',
                                 valueField: 'value',
                                 forceSelection: false,
                                 delimiter: ',',
                                 createNewOnEnter: true,
                                 componentCls: 'superselect-no-drop-down'
-
-                                //listeners: {
-                                //    newitem: function(bs, v, f) {
-                                //        v = v + '';
-                                //        var newObj = {
-                                //            value: v
-                                //        };
-                                //        bs.addNewItem(newObj);
-                                //    }
-                                //}
-
                             },
                             {
                                 xtype: "displayfield",
