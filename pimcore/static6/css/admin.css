@@ -1062,10 +1062,6 @@ span.warning {
     padding: 2px 10px 2px;
 }
 
-.x-fieldset {
-    border-top: none !important;
-}
-
 /* highlight error logs */
 .log-type-CRIT .x-grid-cell,
 .log-type-ALERT .x-grid-cell,
@@ -1135,6 +1131,10 @@ span.warning {
 #pimcore_panel_tabs > .x-panel-body > .x-tabpanel-child {
     border-color: #ececec;
     border-top-width: 5px;
+}
+
+.x-panel-header-default-horizontal.x-header-noborder {
+    padding: 7px 12px 7px 12px;
 }
 
 #pimcore_panel_tree_left > .x-panel-header-default-horizontal.x-header-noborder {

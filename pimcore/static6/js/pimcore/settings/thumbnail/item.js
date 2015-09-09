@@ -444,6 +444,7 @@ pimcore.settings.thumbnail.items = {
             items: [{
                 xtype: 'fieldset',
                 layout: 'hbox',
+                style: "border-top: none !important;",
                 border: false,
                 padding: 0,
                 items: [{
@@ -493,6 +494,7 @@ pimcore.settings.thumbnail.items = {
             items: [{
                 xtype: 'fieldset',
                 layout: 'hbox',
+                style: "border-top: none !important;",
                 border: false,
                 padding: 0,
                 items: [{
@@ -513,6 +515,7 @@ pimcore.settings.thumbnail.items = {
             },{
                 xtype: 'fieldset',
                 layout: 'hbox',
+                style: "border-top: none !important;",
                 border: false,
                 padding: 0,
                 items: [{
@@ -561,6 +564,7 @@ pimcore.settings.thumbnail.items = {
             items: [{
                 xtype: 'fieldset',
                 border: false,
+                style: "border-top: none !important;",
                 layout: 'hbox',
                 padding: 0,
                 items: [{
@@ -624,6 +628,7 @@ pimcore.settings.thumbnail.items = {
             items: [{
                 xtype: 'fieldset',
                 layout: 'hbox',
+                style: "border-top: none !important;",
                 border: false,
                 padding: 0,
                 items: [{
@@ -777,6 +782,7 @@ pimcore.settings.thumbnail.items = {
             items: [{
                 xtype: 'fieldset',
                 layout: 'hbox',
+                style: "border-top: none !important;",
                 border: false,
                 padding: 0,
 
@@ -884,6 +890,7 @@ pimcore.settings.thumbnail.items = {
             },{
                 xtype: 'fieldset',
                 layout: 'hbox',
+                style: "border-top: none !important;",
                 border: false,
                 padding: 0,
                 items: [{

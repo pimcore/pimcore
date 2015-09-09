@@ -228,6 +228,7 @@ pimcore.settings.videothumbnail.items = {
             items: [{
                 xtype: 'fieldset',
                 layout: 'hbox',
+                style: "border-top: none !important;",
                 border: 'false',
                 padding: 0,
                 items: [{
