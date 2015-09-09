@@ -38,12 +38,6 @@ pimcore.settings.thumbnail.item = Class.create({
 
 
     addLayout: function () {
-
-        this.editpanel = new Ext.Panel({
-            bodyStyle: "padding: 20px;",
-            autoScroll: true
-        });
-
         var panelButtons = [];
         panelButtons.push({
             text: t("save"),
@@ -53,9 +47,28 @@ pimcore.settings.thumbnail.item = Class.create({
 
 
         this.mediaPanel = new Ext.TabPanel({
-            autoHeight: true,
-            closable: true
+            autoHeight: true
         });
+
+        var addViewPortButton = {
+            xtype: 'panel',
+            style: 'margin-bottom: 15px',
+            items: [{
+                xtype: 'button',
+                style: "float: right",
+                text: t("add_media_query") + " (<b>" + t("experimental") + "</b>)",
+                iconCls: "pimcore_icon_add",
+                handler: function () {
+                    Ext.MessageBox.prompt("", t("please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail"), function (button, value) {
+                        if(button == "ok" && is_numeric(value)) {
+                            value = value + "w"; // add the width indicator here, to be future-proof
+                            this.addMediaPanel(value, null ,true, true);
+                        }
+                    }.bind(this));
+                }.bind(this)
+            }]
+
+        };
 
         this.settings = new Ext.form.FormPanel({
             border: false,
@@ -102,18 +115,6 @@ pimcore.settings.thumbnail.item = Class.create({
                 fieldLabel: t("high_resolution") + "<br /><small>(2x Retina, 3.2x Print, ...)</small>",
                 width: 210,
                 decimalPrecision: 1
-            }],
-            buttons: [{
-                text: t("add_media_query") + " (<b>" + t("experimental") + "</b>)",
-                iconCls: "pimcore_icon_add",
-                handler: function () {
-                    Ext.MessageBox.prompt("", t("please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail"), function (button, value) {
-                        if(button == "ok" && is_numeric(value)) {
-                            value = value + "w"; // add the width indicator here, to be future-proof
-                            this.addMediaPanel(value, null ,true, true);
-                        }
-                    }.bind(this));
-                }.bind(this)
             }]
         });
 
@@ -124,7 +125,7 @@ pimcore.settings.thumbnail.item = Class.create({
             bodyStyle: "padding: 20px;",
             title: this.data.name,
             id: "pimcore_thumbnail_panel_" + this.data.name,
-            items: [this.settings, this.mediaPanel],
+            items: [this.settings, addViewPortButton, this.mediaPanel],
             buttons: panelButtons
         });
 
@@ -285,17 +286,9 @@ pimcore.settings.thumbnail.items = {
                     newIndex = 0;
                 }
 
-                // move this node temorary to an other so ext recognizes a change
                 container.remove(blockElement, false);
-                tmpContainer.add(blockElement);
-                container.updateLayout();
-                tmpContainer.updateLayout();
-
-                // move the element to the right position
-                tmpContainer.remove(blockElement,false);
                 container.insert(newIndex, blockElement);
                 container.updateLayout();
-                tmpContainer.updateLayout();
 
                 pimcore.layout.refresh();
             }.bind(window, index, parent)
@@ -308,17 +301,9 @@ pimcore.settings.thumbnail.items = {
                 var index = pimcore.settings.thumbnail.items.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
 
-                // move this node temorary to an other so ext recognizes a change
                 container.remove(blockElement, false);
-                tmpContainer.add(blockElement);
-                container.updateLayout();
-                tmpContainer.updateLayout();
-
-                // move the element to the right position
-                tmpContainer.remove(blockElement,false);
                 container.insert(index+1, blockElement);
                 container.updateLayout();
-                tmpContainer.updateLayout();
 
                 pimcore.layout.refresh();
             }.bind(window, index, parent)
@@ -344,28 +329,22 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
-                xtype: 'fieldset',
-                layout: 'vbox',
-                border: false,
-                padding: 0,
-                items: [{
-                    xtype: 'numberfield',
-                    name: "width",
-                    fieldLabel: t("width"),
-                    width: 210,
-                    value: data.width
-                },
-                {
-                    xtype: 'numberfield',
-                    name: "height",
-                    fieldLabel: t("height"),
-                    width: 210,
-                    value: data.height
-                }]
+                xtype: 'numberfield',
+                name: "width",
+                fieldLabel: t("width"),
+                width: 210,
+                value: data.width
+            },{
+                xtype: 'numberfield',
+                name: "height",
+                fieldLabel: t("height"),
+                width: 210,
+                value: data.height
             },{
                 xtype: "hidden",
                 name: "type",
@@ -390,7 +369,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -423,7 +403,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -456,26 +437,28 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'fieldset',
-                layout: 'vbox',
+                layout: 'hbox',
                 border: false,
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
                     name: "width",
-                    fieldLabel: t("width"),
+                    style: "padding-right: 10px",
+                    fieldLabel: t("width") + ", " + t("height"),
                     width: 210,
                     value: data.width
                 },
                 {
                     xtype: 'numberfield',
                     name: "height",
-                    fieldLabel: t("height"),
-                    width: 210,
+                    hideLabel: true,
+                    width: 95,
                     value: data.height
                 }]
             },{
@@ -503,45 +486,48 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'fieldset',
-                layout: 'vbox',
+                layout: 'hbox',
                 border: false,
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
                     name: "width",
-                    fieldLabel: t("width"),
+                    style: "padding-right: 10px",
+                    fieldLabel: t("width") + ", " + t("height"),
                     width: 210,
                     value: data.width
                 },
                 {
                     xtype: 'numberfield',
                     name: "height",
-                    fieldLabel: t("height"),
-                    width: 210,
+                    hideLabel: true,
+                    width: 95,
                     value: data.height
                 }]
             },{
                 xtype: 'fieldset',
-                layout: 'vbox',
+                layout: 'hbox',
                 border: false,
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
                     name: "x",
-                    fieldLabel: "X",
+                    style: "padding-right: 10px",
+                    fieldLabel: "X, Y",
                     width: 210,
                     value: data.x
                 },
                 {
                     xtype: 'numberfield',
                     name: "y",
-                    fieldLabel: "Y",
-                    width: 210,
+                    hideLabel: true,
+                    width: 95,
                     value: data.y
                 }]
             },{
@@ -567,25 +553,29 @@ pimcore.settings.thumbnail.items = {
         var myId = Ext.id();
 
         var item =  new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'fieldset',
                 border: false,
-                layout: 'vbox',
+                layout: 'hbox',
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
                     name: "width",
-                    fieldLabel: t("width"),
+                    style: "padding-right: 10px",
+                    fieldLabel: t("width") + ", " + t("height"),
                     width: 210,
                     value: data.width
                 },
                 {
                     xtype: 'numberfield',
                     name: "height",
-                    fieldLabel: t("height"),
-                    width: 210,
+                    hideLabel: true,
+                    width: 95,
                     value: data.height
                 }]
             },{
@@ -627,26 +617,28 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'fieldset',
-                layout: 'vbox',
+                layout: 'hbox',
                 border: false,
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
                     name: "width",
-                    fieldLabel: t("width"),
+                    style: "padding-right: 10px",
+                    fieldLabel: t("width") + ", " + t("height"),
                     width: 210,
                     value: data.width
                 },
                 {
                     xtype: 'numberfield',
                     name: "height",
-                    fieldLabel: t("height"),
-                    width: 210,
+                    hideLabel: true,
+                    width: 95,
                     value: data.height
                 }]
             },{
@@ -673,7 +665,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -708,7 +701,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -741,7 +735,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -775,27 +770,29 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'fieldset',
-                layout: 'vbox',
+                layout: 'hbox',
                 border: false,
                 padding: 0,
 
                 items: [{
                     xtype: 'numberfield',
                     name: "width",
-                    fieldLabel: t("width"),
+                    style: "padding-right: 10px",
+                    fieldLabel: t("width") + ", " + t("height"),
                     width: 210,
                     value: data.width
                 },
                 {
                     xtype: 'numberfield',
                     name: "height",
-                    fieldLabel: t("height"),
-                    width: 210,
+                    hideLabel: true,
+                    width: 95,
                     value: data.height
                 }]
             },{
@@ -822,7 +819,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -873,7 +871,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -884,21 +883,22 @@ pimcore.settings.thumbnail.items = {
                 width: 350
             },{
                 xtype: 'fieldset',
-                layout: 'vbox',
+                layout: 'hbox',
                 border: false,
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
                     name: "x",
-                    fieldLabel: "X",
+                    style: "padding-right: 10px",
+                    fieldLabel: "X, Y",
                     width: 210,
                     value: data.x
                 },
                 {
                     xtype: 'numberfield',
                     name: "y",
-                    fieldLabel: "Y",
-                    width: 210,
+                    hideLabel: true,
+                    width: 95,
                     value: data.y
                 }]
             },{
@@ -955,7 +955,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -997,7 +998,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -1030,7 +1032,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             html: t("nothing_to_configure"),
@@ -1058,7 +1061,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             html: t("nothing_to_configure"),
@@ -1086,7 +1090,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -1153,7 +1158,8 @@ pimcore.settings.thumbnail.items = {
 
         var item =  new Ext.form.FormPanel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             html: t("use_original_tiff_description"),

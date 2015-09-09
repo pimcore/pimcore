@@ -33,11 +33,12 @@ pimcore.settings.videothumbnail.item = Class.create({
 
     addLayout: function () {
 
-        this.editpanel = new Ext.Panel({
+/*        this.editpanel = new Ext.Panel({
             region: "center",
             bodyStyle: "padding: 20px;",
             autoScroll: true
         });
+*/
 
         var panelButtons = [];
         panelButtons.push({
@@ -60,18 +61,17 @@ pimcore.settings.videothumbnail.item = Class.create({
         }
 
         this.itemContainer = new Ext.Panel({
-            title: t("transformations"),
             style: "margin: 20px 0 0 0;",
             tbar: [{
                 iconCls: "pimcore_icon_add",
-                menu: addMenu
+                menu: addMenu,
+                text: t("transformations")
             }],
             border: false
         });
 
         this.panel = new Ext.form.FormPanel({
             border: false,
-//            layout: "fit",
             closable: true,
             autoScroll: true,
 
@@ -221,26 +221,28 @@ pimcore.settings.videothumbnail.items = {
 
         var item =  new Ext.Panel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'fieldset',
-                layout: 'vbox',
+                layout: 'hbox',
                 border: 'false',
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
                     name: "item." + myId  + ".width",
-                    fieldLabel: t("width"),
-                    width: 250,
+                    style: "padding-right: 10px",
+                    fieldLabel: t("width") + ", " + t("height"),
+                    width: 210,
                     value: data.width
                 },
                 {
                     xtype: 'numberfield',
                     name: "item." + myId  + ".height",
-                    fieldLabel: t("height"),
-                    width: 250,
+                    hideLabel: true,
+                    width: 95,
                     value: data.height
                 }]
             },{
@@ -271,7 +273,8 @@ pimcore.settings.videothumbnail.items = {
 
         var item =  new Ext.Panel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
@@ -304,7 +307,8 @@ pimcore.settings.videothumbnail.items = {
 
         var item =  new Ext.Panel({
             id: myId,
-            //style: "margin: 10px 0 0 0",
+            style: "margin-top: 10px",
+            border: true,
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
