@@ -282,6 +282,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         try {
             $esClient->delete(['index' => $this->indexName, 'type' => "product", 'id' => $objectId]);
             $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
+
         } catch(Exception $e) {
             $check = \Zend_Json::decode($e->getMessage());
             if(!$check['found']){ //not in es index -> we can delete it from store table
