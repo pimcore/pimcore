@@ -1110,6 +1110,8 @@ span.warning {
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-default-top {
     background-color: #3c3f41;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
 }
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-over .x-tab-default-top {
