@@ -329,6 +329,14 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
         $filterJson = $this->getParam("filter");
         if ($filterJson) {
+            $isExtJs6 = \Pimcore\Tool\Admin::isExtJS6();
+            if ($isExtJs6) {
+                $propertyField = "property";
+                $operatorField = "operator";
+            } else {
+                $propertyField = "field";
+                $operatorField = "comparison";
+            }
 
             $filters = \Zend_Json::decode($filterJson);
             foreach ($filters as $filter) {
@@ -337,16 +345,20 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
                 $field = null;
                 $value = null;
 
-                if ($filter["type"] == "date") {
-                    if($filter["comparison"] == "lt") {
+                $fieldname = $filter[$propertyField];
+
+                if ($filter["type"] == "date" ||
+                    ($isExtJs6 && in_array($fieldname, array("modificationDate", "creationdate"))))
+                {
+                    if($filter[$operatorField] == "lt") {
                         $operator = "<";
-                    } else if($filter["comparison"] == "gt") {
+                    } else if($filter[$operatorField] == "gt") {
                         $operator = ">";
-                    } else if($filter["comparison"] == "eq") {
+                    } else if($filter[$operatorField] == "eq") {
                         $operator = "=";
                     }
                     $filter["value"] = strtotime($filter["value"]);
-                    $field = "`" . $filter["field"] . "` ";
+                    $field = "`" . $fieldname . "` ";
                     $value = $filter["value"];
                 }
 

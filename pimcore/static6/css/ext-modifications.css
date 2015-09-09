@@ -13,6 +13,14 @@
  */
 
 
+/* Bugfixes */
+
+.x-datepicker-month .x-btn-over .x-btn-inner, .x-datepicker-month .x-btn-over .x-btn-split-right:after {
+    color: #f0f0f0;
+}
+
+/* Style overrides */
+
 .x-tab-default-top {
     border-color: #3c3f41;
     background-color: #f6f6f6;

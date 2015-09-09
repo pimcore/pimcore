@@ -69,8 +69,11 @@ var dndManager;
 Ext.onReady(function () {
     var body = Ext.getBody();
 
+    // causes styling issues, we don't need this anyway
+    body.removeCls("x-body");
+
     /* Drag an Drop from Tree panel */
-// IE HACK because the body is not 100% at height
+    // IE HACK because the body is not 100% at height
     try {
         //TODO EXT5
         Ext.getBody().applyStyles("min-height:" +

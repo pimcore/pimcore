@@ -91,15 +91,15 @@
 }
 
 .pimcore_icon_delete {
-    background: url(/pimcore/static/img/icon/cross.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/cross.png) left center no-repeat !important;
 }
 
 .pimcore_icon_add {
-    background: url(/pimcore/static/img/icon/add.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/add.png) left center no-repeat !important;
 }
 
 .pimcore_icon_save {
-    background: url(/pimcore/static/img/icon/save.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/save.png) left center no-repeat !important;
 }
 
 .pimcore_icon_edit_key {
@@ -111,7 +111,7 @@
 }
 
 .pimcore_icon_reload {
-    background: url(/pimcore/static/img/icon/reload.png) no-repeat !important;
+    background: url(/pimcore/static/img/icon/reload.png) left center no-repeat !important;
 }
 
 
