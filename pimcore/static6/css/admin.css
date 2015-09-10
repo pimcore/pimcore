@@ -313,7 +313,7 @@
 }
 
 .pimcore_error_input input {
-    background: url(/pimcore/static/img/icon/exclamation.png) right 2px no-repeat #fff !important;
+    background: url(/pimcore/static/img/icon/exclamation.png) right center no-repeat #fff !important;
     cursor: default;
 }
 
@@ -1089,6 +1089,10 @@ span.warning {
     cursor: default;
 }
 
+.pimcore_document_metadata_label {
+    line-height: 32px;
+    padding: 0 5px;
+}
 
 /* ExtJS 6.0 specific styles */
 

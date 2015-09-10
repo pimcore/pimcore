@@ -52,8 +52,8 @@ pimcore.layout.treepanelmanager = {
         for (var i=0; i<this.items.length; i++) {
             if(!this.items[i].processed) {
                 if(in_array(this.items[i].id,this.finished)) {
-                    this.callbacks[this.items[i].id]();
                     this.items[i].processed = true;
+                    this.callbacks[this.items[i].id]();
                 } else {
                     return;
                 }
