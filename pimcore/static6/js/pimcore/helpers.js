@@ -22,72 +22,46 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
         ExtJS = Ext;
     }
 
-    // handler for STRG+S (Save&Publish)
-    var mapCtrlS = new ExtJS.KeyMap(bindEl, {
-        key:"s",
-        fn: top.pimcore.helpers.handleCtrlS,
-        ctrl:true,
-        alt:false,
-        shift:false,
-        stopEvent:true
+    var map = new ExtJS.util.KeyMap({
+        target: bindEl,
+        binding: [{
+            key: "s",
+            ctrl: true,
+            shift: false,
+            fn: top.pimcore.helpers.handleCtrlS
+        }, {
+            key:116,
+            fn: top.pimcore.helpers.handleF5
+        }, {
+            key:"sa",
+            fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
+            ctrl:true,
+            shift:true
+        }, {
+            key:"of",
+            fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
+            ctrl:true,
+            shift:true
+        }, {
+            key:"d",
+            fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
+            ctrl:true,
+            shift:true
+        }, {
+            key:"w",
+            fn: top.pimcore.helpers.openWelcomePage.bind(this),
+            ctrl:true,
+            shift:true
+        }]
     });
-
-    // handler for F5
-    var mapF5 = new ExtJS.KeyMap(bindEl, {
-        key:[116],
-        fn: top.pimcore.helpers.handleF5,
-        stopEvent:true
-    });
-
-    var openAssetById = new ExtJS.KeyMap(bindEl, {
-        key:"a",
-        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-    var openObjectById = new ExtJS.KeyMap(bindEl, {
-        key:"o",
-        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-    var openDocumentById = new ExtJS.KeyMap(bindEl, {
-        key:"d",
-        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-    var openDocumentByPath = new ExtJS.KeyMap(bindEl, {
-        key:"f",
-        fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-    var openWelcomePage = new ExtJS.KeyMap(bindEl, {
-        key:"w",
-        fn: top.pimcore.helpers.openWelcomePage.bind(this),
-        ctrl:true,
-        alt:false,
-        shift:true,
-        stopEvent:true
-    });
-
-
 };
 
-pimcore.helpers.openWelcomePage = function() {
+pimcore.helpers.openWelcomePage = function(keyCode, e) {
+
+    if(e["stopEvent"]) {
+        e.stopEvent();
+    }
+
     try {
         pimcore.globalmanager.get("layout_portal_welcome").activate();
     }
@@ -458,7 +432,9 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
 };
 
 
-pimcore.helpers.handleCtrlS = function () {
+pimcore.helpers.handleCtrlS = function (keyCode, e) {
+
+    e.stopEvent();
 
     var tabpanel = Ext.getCmp("pimcore_panel_tabs");
     var activeTab = tabpanel.getActiveTab();
@@ -487,7 +463,9 @@ pimcore.helpers.handleCtrlS = function () {
 };
 
 
-pimcore.helpers.handleF5 = function () {
+pimcore.helpers.handleF5 = function (keyCode, e) {
+
+    e.stopEvent();
 
     var tabpanel = Ext.getCmp("pimcore_panel_tabs");
     var activeTab = tabpanel.getActiveTab();
@@ -1338,7 +1316,12 @@ pimcore.helpers.getClassForIcon = function (icon) {
 };
 
 
-pimcore.helpers.openElementByIdDialog = function (type) {
+pimcore.helpers.openElementByIdDialog = function (type, keyCode, e) {
+
+    if(e["stopEvent"]) {
+        e.stopEvent();
+    }
+
     Ext.MessageBox.prompt(t('open_' + type + '_by_id'), t('please_enter_the_id_of_the_' + type),
         function (button, value, object) {
             if(button == "ok" && !Ext.isEmpty(value)) {
@@ -1349,14 +1332,6 @@ pimcore.helpers.openElementByIdDialog = function (type) {
 
 pimcore.helpers.openDocumentByPath = function (path) {
     pimcore.helpers.openElement(path, "document");
-};
-
-pimcore.helpers.openDocumentByPathDialog = function () {
-    Ext.MessageBox.prompt(t("open_document_by_url"), t("path_or_url_incl_http"), function (button, value, object) {
-        if (button == "ok") {
-            pimcore.helpers.openDocumentByPath(value);
-        }
-    });
 };
 
 pimcore.helpers.generatePagePreview = function (id, path, callback) {
