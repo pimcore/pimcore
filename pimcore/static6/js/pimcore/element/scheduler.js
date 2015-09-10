@@ -123,7 +123,11 @@ pimcore.element.scheduler = Class.create({
                 },
                 {header: t("time"), width: 80, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
                     format: "H:i"
-                })},
+                    }),
+                    renderer: function(d) {
+                        return  Ext.Date.format(d, "H:i");
+                    }
+                },
                 {header: t("action"), width: 100, sortable: false, dataIndex: 'action', editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
                     editable: false,
@@ -131,16 +135,15 @@ pimcore.element.scheduler = Class.create({
                     displayField:'name',
                     valueField: "key",
                     mode: 'local'
-                }),renderer: function(value, cellValues, record, recordIndex) {
+                }),renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
                     try {
-                        if (record) {
-                            return record.data.name;
+                        var rec = actionTypes.findRecord("name", value);
+                        if (rec) {
+                            return rec.get("name");
                         }
-                        return value;
                     }
                     catch (e) {
-                        console.log(e);
-                        return value;
+
                     }
 
                     return "";
