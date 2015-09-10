@@ -48,17 +48,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                         value: 1,
                         mode: "local",
                         triggerAction: "all",
-                        width: 55,
-                        listeners: {
-                            /*"focus": function (el) {
-                                Ext.get(el).addClass("pimcore_tag_block_force_show_buttons");
-                            }.bind(this, this.elements[i]),
-                            "blur": function (el) {
-                                if(this.options["autoHideButtons"] !== false) {
-                                    Ext.get(el).removeClass("pimcore_tag_block_force_show_buttons");
-                                }
-                            }.bind(this, this.elements[i])*/
-                        }
+                        width: 45
                     });
                     amountBox.render(amountDiv);
 

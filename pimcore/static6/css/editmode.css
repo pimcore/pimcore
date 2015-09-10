@@ -41,6 +41,20 @@
 	padding: 10px 0 5px 0;
 }
 
+.pimcore_block_buttons .x-form-trigger-default {
+    line-height: 24px;
+    width:22px;
+}
+
+.pimcore_block_buttons .x-form-field {
+    padding: 1px 4px;
+    min-height: 24px;
+}
+
+.pimcore_block_buttons .x-btn {
+    padding: 4px;
+}
+
 .pimcore_block_plus,
 .pimcore_block_minus,
 .pimcore_block_up,
