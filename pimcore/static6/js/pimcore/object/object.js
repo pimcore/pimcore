@@ -50,6 +50,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     getDataComplete: function (response) {
+        //TODO get this right
         //try {
             this.data = Ext.decode(response.responseText);
 

@@ -34,7 +34,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
             id: "pimcore_fieldcollection_editor_panel_" + this.getId(),
             items: [{
                 xtype: "textfield",
-                width: 250,
+                width: 400,
                 name: "parentClass",
                 fieldLabel: t("parent_class"),
                 value: this.data.parentClass

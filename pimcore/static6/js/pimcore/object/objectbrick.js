@@ -71,7 +71,6 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,
-                border: true,
                 width: 200,
                 split: true,
                 root: {
@@ -116,6 +115,11 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
     },
 
     openBrick: function (id) {
+        if(Ext.getCmp("pimcore_objectbrick_editor_panel_" + id)) {
+            this.getEditPanel().setActiveTab(Ext.getCmp("pimcore_class_editor_panel_" + id));
+            return;
+        }
+
         Ext.Ajax.request({
             url: "/admin/class/objectbrick-get",
             params: {

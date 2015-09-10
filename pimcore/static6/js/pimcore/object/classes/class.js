@@ -689,17 +689,26 @@ pimcore.object.classes.klass = Class.create({
                 nodeLabel = initData.name;
             }
         }
+
         var newNode = {
             text: nodeLabel,
             type: "layout",
-            draggable: true,
             iconCls: "pimcore_icon_" + type,
-            leaf: true,
-            allowDrop: true,
-            loaded:true,
-            expanded: true
+            leaf: false,
+            expandable: false
         };
         newNode = this.appendChild(newNode);
+
+        //to hide or show the expanding icon depending if childs are available or not
+        newNode.addListener('remove', function(node, removedNode, isMove) {
+            if(!node.hasChildNodes()) {
+                node.set('expandable', false);
+            }
+        });
+        newNode.addListener('append', function(node) {
+            node.set('expandable', true);
+        });
+
 
         var editor = new pimcore.object.classes.layout[type](newNode, initData);
         newNode.set("editor", editor);
@@ -719,25 +728,19 @@ pimcore.object.classes.klass = Class.create({
             }
         }
 
-        var isLeaf = true;
-
-        // localizedfields can be a drop target
-        if(type == "localizedfields") {
-            isLeaf = false;
-        }
-
-
         var newNode = {
             text: nodeLabel,
             type: "data",
-            //reference: this.attributes.reference,
-            leaf: isLeaf,
+            leaf: true,
             iconCls: "pimcore_icon_" + type
-            //listeners: this.attributes.reference.getTreeNodeListeners(),
-
         };
 
         newNode = this.appendChild(newNode);
+
+        //to hide or show the expanding icon depending if childs are available or not
+        newNode.addListener('move', function(node, oldParent, newParent) {
+            newParent.set('expandable', true);
+        });
 
         var editor = new pimcore.object.classes.data[type](newNode, initData);
         newNode.set("editor", editor);
