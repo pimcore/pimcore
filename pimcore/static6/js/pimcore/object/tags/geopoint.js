@@ -209,7 +209,14 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             plain: true
         });
 
-        this.searchWindow.on('afterrender', function () {
+        this.alreadyIntitialized = false;
+
+        this.searchWindow.on('afterlayout', function () {
+            if (this.alreadyIntitialized) {
+                return;
+            }
+
+            this.alreadyIntitialized = true;
 
             var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
             var mapZoom = this.fieldConfig.zoom;
