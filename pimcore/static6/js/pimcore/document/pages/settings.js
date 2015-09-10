@@ -318,31 +318,6 @@ pimcore.document.pages.settings = Class.create({
                         ]
                     },{
                         xtype:'fieldset',
-                        title: t('associate_target_group') + " (" + t("personas") + ")",
-                        collapsible: true,
-                        autoHeight:true,
-                        defaults: {
-                            labelWidth: 300
-                        },
-                        //hidden: pimcore.globalmanager.get("personas").getCount() < 1, // this kills getValue() method
-                        defaultType: 'textfield',
-                        items :[
-                            Ext.create('Ext.ux.form.MultiSelect', {
-                                fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_personas'),
-
-                                store: pimcore.globalmanager.get("personas"),
-                                displayField: "text",
-                                valueField: "id",
-                                name: 'personas',
-                                width: 600,
-                                //listWidth: 200,
-                                value: this.page.data["personas"],
-                                minHeight: 100
-                            })
-                        ]
-                    },
-                    {
-                        xtype:'fieldset',
                         title: t('pretty_url') + " / " + t("redirects"),
                         collapsible: true,
                         autoHeight:true,
@@ -355,7 +330,7 @@ pimcore.document.pages.settings = Class.create({
                                 fieldLabel: t('pretty_url_label'),
                                 name: 'prettyUrl',
                                 maxLength: 255,
-                                width: 600,
+                                width: 700,
                                 value: this.page.data.prettyUrl,
                                 enableKeyEvents: true,
                                 listeners: {
@@ -379,6 +354,29 @@ pimcore.document.pages.settings = Class.create({
                                 }
                             }, this.urlAliasPanel
                         ]
+                    }, {
+                        xtype:'fieldset',
+                        title: t('associate_target_group') + " (" + t("personas") + ")",
+                        collapsible: true,
+                        autoHeight:true,
+                        defaults: {
+                            labelWidth: 300
+                        },
+                        defaultType: 'textfield',
+                        items :[
+                            Ext.create('Ext.ux.form.MultiSelect', {
+                                fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_personas'),
+
+                                store: pimcore.globalmanager.get("personas"),
+                                displayField: "text",
+                                valueField: "id",
+                                name: 'personas',
+                                width: 700,
+                                //listWidth: 200,
+                                value: this.page.data["personas"],
+                                minHeight: 100
+                            })
+                        ]
                     },
                     {
                         xtype:'fieldset',
@@ -387,7 +385,7 @@ pimcore.document.pages.settings = Class.create({
                         autoHeight:true,
                         defaults: {
                             labelWidth: 320,
-                            width: 600
+                            width: 700
                         },
                         defaultType: 'textfield',
                         items :[
@@ -508,7 +506,7 @@ pimcore.document.pages.settings = Class.create({
                         autoHeight:true,
                         defaultType: 'textfield',
                         defaults: {
-                            width: 400,
+                            width: 700,
                             labelWidth: 200
                         },
                         items :[
@@ -539,7 +537,7 @@ pimcore.document.pages.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 400},
+                        defaults: {width: 700},
                         items :[
                             {
                                 fieldLabel: t("document"),
@@ -574,29 +572,8 @@ pimcore.document.pages.settings = Class.create({
                             },
                             {
                                 xtype: "toolbar",
-                                width: 605,
-                                items: [{
-                                    text:t("apply_new_master_document"),
-                                    iconCls:"pimcore_icon_apply",
-                                    autoWidth:true,
-                                    handler:function () {
-                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
-                                            function (buttonValue) {
-                                                if (buttonValue == "yes") {
-                                                    Ext.Ajax.request({
-                                                        url:"/admin/page/change-master-document/id/" + this.page.id,
-                                                        params:{
-                                                            contentMasterDocumentPath:Ext.getCmp(
-                                                                "contentMasterDocumentPath_" + this.page.id).getValue()
-                                                        },
-                                                        success:function () {
-                                                            this.page.reload();
-                                                        }.bind(this)
-                                                    });
-                                                }
-                                            }.bind(this));
-                                    }.bind(this)
-                                },{
+                                width: 700,
+                                items: ["->", {
                                     text:t("delete_master_document"),
                                     iconCls:"pimcore_icon_delete",
                                     autoWidth:true,
@@ -626,6 +603,27 @@ pimcore.document.pages.settings = Class.create({
                                     handler: function () {
                                         var masterPath = Ext.getCmp("contentMasterDocumentPath_" + this.page.id).getValue();
                                         pimcore.helpers.openDocumentByPath(masterPath);
+                                    }.bind(this)
+                                },{
+                                    text:t("apply_new_master_document"),
+                                    iconCls:"pimcore_icon_apply",
+                                    autoWidth:true,
+                                    handler:function () {
+                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
+                                            function (buttonValue) {
+                                                if (buttonValue == "yes") {
+                                                    Ext.Ajax.request({
+                                                        url:"/admin/page/change-master-document/id/" + this.page.id,
+                                                        params:{
+                                                            contentMasterDocumentPath:Ext.getCmp(
+                                                                "contentMasterDocumentPath_" + this.page.id).getValue()
+                                                        },
+                                                        success:function () {
+                                                            this.page.reload();
+                                                        }.bind(this)
+                                                    });
+                                                }
+                                            }.bind(this));
                                     }.bind(this)
                                 }]
                             }
