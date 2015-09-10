@@ -47,7 +47,7 @@ pimcore.document.pages.settings = Class.create({
                     id = "";
                 }
 
-                var count = this.urlAliasPanelInner.query("textfield").length+1;
+                var count = this.urlAliasPanel.query("textfield").length+1;
 
                 var compositeField = new Ext.Container({
                     hideLabel: true,
@@ -55,7 +55,7 @@ pimcore.document.pages.settings = Class.create({
                     items: [{
                         xtype: "textfield",
                         value: url,
-                        width: 500,
+                        width: 630,
                         name: "redirect_url_" + count,
                         style: "float:left;margin-right:5px;",
                         enableKeyEvents: true,
@@ -91,31 +91,29 @@ pimcore.document.pages.settings = Class.create({
                 }]);
 
 
-                this.urlAliasPanelInner.add(compositeField);
+                this.urlAliasPanel.add(compositeField);
 
-                this.urlAliasPanelInner.updateLayout();
+                this.urlAliasPanel.updateLayout();
             }.bind(this);
 
             var user = pimcore.globalmanager.get("user");
 
-            this.urlAliasPanelInner = new Ext.form.FieldSet({
+            this.urlAliasPanel = new Ext.form.FieldSet({
                 title: t("path_aliases") + " (" + t("redirects") + ")",
                 collapsible: false,
                 autoHeight: true,
                 style: "margin-top: 0;",
-                items: []
-            });
-
-            this.urlAliasPanel = new Ext.panel.Panel({
-                border: false,
                 layout: 'fit',
                 width: 700,
                 disabled: !user.isAllowed("redirects"),
-                items: [this.urlAliasPanelInner],
-                buttons: [{
-                    text: t("add"),
-                    iconCls: "pimcore_icon_add",
-                    handler: addUrlAlias
+                items: [{
+                    xtype: "toolbar",
+                    style: "margin-bottom: 10px;",
+                    items: ["->", {
+                        text: t("add"),
+                        iconCls: "pimcore_icon_add",
+                        handler: addUrlAlias
+                    }]
                 }]
             });
 
@@ -157,12 +155,11 @@ pimcore.document.pages.settings = Class.create({
                     items: [{
                         xtype: "label",
                         text: "<meta ",
-                        style: "float:left;margin-right:5px;"
+                        cls: "pimcore_document_metadata_label"
                     },{
                         xtype: "combo",
                         store: ["name","property"],
-                        typeAhead: false,
-                        forceSelection: true,
+                        editable: true,
                         triggerAction: "all",
                         value: idName,
                         mode: "local",
@@ -172,7 +169,7 @@ pimcore.document.pages.settings = Class.create({
                     },{
                         xtype: "label",
                         text: ' = ',
-                        style: "float:left;margin-right:5px;"
+                        cls: "pimcore_document_metadata_label"
                     },{
                         xtype: "combo",
                         store: ["","og:title","og:type","og:url","og:image","og:description","og:locale",
@@ -187,8 +184,6 @@ pimcore.document.pages.settings = Class.create({
                     },{
                         xtype: "combo",
                         store: ["content"],
-                        typeAhead: false,
-                        forceSelection: true,
                         triggerAction: "all",
                         value: "content",
                         editable: true,
@@ -197,19 +192,14 @@ pimcore.document.pages.settings = Class.create({
                         name: "metadata_contentName_" + count,
                         listeners: combolisteners
                     },{
-                        xtype: "label",
-                        text: ' = ',
-                        style: "float:left;margin-right:5px;"
-                    },{
                         xtype: "textfield",
                         value: contentValue,
-                        width: 140,
+                        width: 190,
                         name: "metadata_contentValue_" + count,
-                        style: "float:left;margin-right:5px;"
                     },{
                         xtype: "label",
                         text: ' />',
-                        style: "float:left;margin-right:5px;"
+                        cls: "pimcore_document_metadata_label"
                     }]
                 });
 
@@ -237,8 +227,10 @@ pimcore.document.pages.settings = Class.create({
                 autoHeight:true,
                 width: 700,
                 style: "margin-top: 20px;",
-                items: [
-                    {
+                items: [{
+                    xtype: "toolbar",
+                    style: "margin-bottom: 10px;",
+                    items: ["->", {
                         xtype: 'button',
                         text: t("add"),
                         iconCls: "pimcore_icon_add",
@@ -247,14 +239,8 @@ pimcore.document.pages.settings = Class.create({
                             title:'',
                             text: t('add_metadata')
                         }
-                    }
-                ]
-                //buttons: [{
-                //    xtype: 'button',
-                //    text: t("add"),
-                //    iconCls: "pimcore_icon_add",
-                //    handler: addMetaData
-                //}]
+                    }]
+                }]
             });
 
             try {
