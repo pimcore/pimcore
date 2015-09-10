@@ -155,6 +155,10 @@
 	top: -3px;
 }
 
+.pimcore_tag_link .x-btn-default-small {
+    padding: 3px;
+}
+
 .pimcore_tag_snippet_empty {
 	border: 1px solid #d0d0d0 !important;
 	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;

@@ -1890,7 +1890,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         fieldLabel: t('path'),
         value: data.path,
         name: "path",
-        width: 420,
+        width: 520,
         fieldCls: "pimcore_droptarget_input",
         enableKeyEvents: true,
         listeners: {
@@ -1901,8 +1901,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             }
         }
     });
-
-
+    
     fieldPath.on("render", function (el) {
         // add drop zone
         new Ext.dd.DropZone(el.getEl(), {
@@ -1926,11 +1925,6 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             }.bind(this)
         });
     }.bind(this));
-
-    /*fieldPath.on("render", function (el) {
-     // register at global DnD manager
-     dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
-     }.bind(this));*/
 
     var form = new Ext.FormPanel({
         itemId: "form",
@@ -2077,8 +2071,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
     var window = new Ext.Window({
         modal: false,
-        width: 500,
-        height: 330,
+        width: 600,
+        height: 470,
         title: t("edit_link"),
         items: [form],
         layout: "fit"
@@ -2275,7 +2269,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
     var window = new Ext.Window({
         width: 500,
-        height: 250,
+        height: 370,
         title: t("video"),
         items: [form],
         layout: "fit",
