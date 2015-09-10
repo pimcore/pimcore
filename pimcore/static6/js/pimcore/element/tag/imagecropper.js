@@ -38,9 +38,49 @@ pimcore.element.tag.imagecropper = Class.create({
             this.modal = modal;
         }
 
+        this.editWindow = new Ext.Window({
+            width: 500,
+            height: 400,
+            modal: this.modal,
+            resizable: false,
+            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;position:relative;",
+            bbar: ["->", {
+                xtype: "button",
+                iconCls: "pimcore_icon_apply",
+                text: t("save"),
+                handler: function () {
+
+                    var originalWidth = this.editWindow.body.getWidth();
+                    var originalHeight = this.editWindow.body.getHeight();
+
+                    var dimensions = Ext.get("selector").getStyle(["top","left","width","height"]);
+
+                    var newWidth = intval(dimensions.width);
+                    var newHeight = intval(dimensions.height);
+                    var top = intval(dimensions.top);
+                    var left = intval(dimensions.left);
+
+                    this.data = {
+                        cropWidth: newWidth * 100 / originalWidth,
+                        cropHeight: newHeight * 100 / originalHeight,
+                        cropTop: top * 100 / originalHeight,
+                        cropLeft: left * 100 / originalWidth,
+                        cropPercent: true
+                    };
+
+                    if(typeof this.saveCallback == "function") {
+                        this.saveCallback(this.data);
+                    }
+
+                    this.editWindow.close();
+                }.bind(this)
+            }],
+            html: '<img id="selectorImage" src="' + imageUrl + '" />'
+        });
+
         var checkSize = function () {
             // this function checks if the selected area fits into the image
-            var sel = Ext.get("selectorContainer");
+            var sel = Ext.get("selector");
             var dimensions;
 
             var windowId = this.editWindow.getId();
@@ -91,71 +131,28 @@ pimcore.element.tag.imagecropper = Class.create({
             }
         };
 
-
-
-        this.editWindow = new Ext.Window({
-            width: 500,
-            height: 400,
-            modal: this.modal,
-            closeAction: "destroy",
-            autoDestroy:'true',
-            resizable: false,
-            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;position:relative;",
-            bbar: ["->", {
-                xtype: "button",
-                iconCls: "pimcore_icon_apply",
-                text: t("save"),
-                handler: function () {
-
-                    var windowId = this.editWindow.getId();
-                    var windowEl = Ext.getCmp(windowId).body;
-                    var originalWidth =  windowEl.getWidth(true);
-                    var originalHeight = windowEl.getHeight(true);
-
-                    var dimensions = Ext.get("selectorContainer").getStyle(["top","left","width","height"]);
-
-                    var newWidth = intval(dimensions.width);
-                    var newHeight = intval(dimensions.height);
-                    var top = intval(dimensions.top);
-                    var left = intval(dimensions.left);
-
-                    this.data = {
-                        cropWidth: newWidth * 100 / originalWidth,
-                        cropHeight: newHeight * 100 / originalHeight,
-                        cropTop: top * 100 / originalHeight,
-                        cropLeft: left * 100 / originalWidth,
-                        cropPercent: true
-                    };
-
-                    if(typeof this.saveCallback == "function") {
-                        this.saveCallback(this.data);
-                    }
-
-                    this.editWindow.close();
-                }.bind(this)
-            }],
-            items: [
-                {
-                    xtype: 'component',
-                    id: 'selectorContainer',
-                    resizable: {
-                        target: 'selectorContainer',
-                        pinned: true,
-                        minWidth: 50,
-                        minHeight: 50,
-                        preserveRatio: false,
-                        dynamic: true,
-                        handles: 'all',
-                        listeners: {
-                            resize: checkSize.bind(this)
-                        }
-                    },
-                    style: "cursor:move;",
-                    draggable: true,
-                    html: '<img id="selectorImage" src="' + imageUrl + '" />'
+        this.editWindow.add({
+            xtype: 'component',
+            id: "selector",
+            resizable: {
+                target: "selector",
+                pinned: true,
+                width: 100,
+                height: 100,
+                preserveRatio: false,
+                dynamic: true,
+                handles: 'all',
+                listeners: {
+                    resize: checkSize.bind(this)
                 }
-                ]
+            },
+            style: "cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;",
+            draggable: true,
+            listeners: {
+                afterrender: function (el) {
 
+                }
+            }
         });
 
         this.editWindowInitCount = 0;
@@ -180,9 +177,8 @@ pimcore.element.tag.imagecropper = Class.create({
 
                         Ext.get("selectorImage").remove();
 
-
                         if(this.data && this.data["cropPercent"]) {
-                            Ext.get("selectorContainer").applyStyles({
+                            Ext.get("selector").applyStyles({
                                 width: (imageWidth * (this.data.cropWidth / 100)) + "px",
                                 height: (imageHeight * (this.data.cropHeight / 100)) + "px",
                                 top: (imageHeight * (this.data.cropTop / 100)) + "px",
@@ -194,7 +190,6 @@ pimcore.element.tag.imagecropper = Class.create({
 
                     } else if (this.editWindowInitCount > 60) {
                         // if more than 30 secs cancel and close the window
-                        //this.resizer = null;
                         this.editWindow.close();
                     }
 
