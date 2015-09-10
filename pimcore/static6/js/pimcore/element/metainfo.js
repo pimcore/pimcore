@@ -30,7 +30,7 @@ pimcore.element.metainfo = Class.create({
     getInputWindow: function () {
 
         if(!this.detailWindow) {
-            var height = this.data.length > 8 ? 400 : 300;
+            var height = this.data.length > 8 ? 510 : 400;
             this.detailWindow = new Ext.Window({
                 width: 800,
                 height: height,

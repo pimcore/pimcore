@@ -146,7 +146,6 @@ pimcore.document.versions = Class.create({
 
             this.layout = new Ext.Panel({
                 title: t('versions'),
-                bodyStyle:'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: "border",
                 iconCls: "pimcore_icon_tab_versions",

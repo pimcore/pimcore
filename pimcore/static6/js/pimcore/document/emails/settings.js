@@ -44,7 +44,7 @@ pimcore.document.emails.settings = Class.create({
             this.layout = Ext.create('Ext.form.Panel', {
 
                 title: t('settings'),
-                bodyStyle:'padding:20px 5px 20px 5px;',
+                bodyStyle:'padding:0 10px 0 10px;',
                 border: false,
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_settings",
@@ -56,7 +56,7 @@ pimcore.document.emails.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 700},
                         items :[
                             {
                                 fieldLabel: t('email_subject'),
@@ -97,7 +97,7 @@ pimcore.document.emails.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 350},
+                        defaults: {width: 700},
                         items :[
                             {
                                 fieldLabel: t('predefined_document_type'),
@@ -109,7 +109,6 @@ pimcore.document.emails.settings = Class.create({
                                 editable: false,
                                 lazyInit: false,
                                 triggerAction: 'all',
-                                width: 400,
                                 listWidth: 400,
                                 value: docTypeValue,
                                 listeners: {
@@ -144,7 +143,6 @@ pimcore.document.emails.settings = Class.create({
                                 mode: "local",
                                 id: "pimcore_document_settings_controller_" + this.email.id,
                                 value: this.email.data.controller,
-                                width: 350,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
@@ -173,7 +171,6 @@ pimcore.document.emails.settings = Class.create({
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.email.data.action,
-                                width: 350,
                                 listeners: {
                                     "focus": function (el) {
                                         el.getStore().reload({
@@ -207,7 +204,6 @@ pimcore.document.emails.settings = Class.create({
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.email.data.template,
-                                width: 350,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
@@ -223,7 +219,7 @@ pimcore.document.emails.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 400},
+                        defaults: {width: 700},
                         items :[
                             {
                                 fieldLabel: t('path'),

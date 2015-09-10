@@ -40,7 +40,6 @@ pimcore.element.dependencies = Class.create({
                 border: false,
                 iconCls: "pimcore_icon_tab_dependencies",
                 autoScroll: true,
-                bodyStyle: "padding: 10px",
                 listeners:{
                     activate: this.getData.bind(this)
                 }
@@ -131,7 +130,8 @@ pimcore.element.dependencies = Class.create({
             title: t('requires'),
             viewConfig: {
                 forceFit: true
-            }
+            },
+            style: "margin-bottom: 30px;"
         });
         this.requiresGrid.on("rowclick", this.click.bind(this));
         

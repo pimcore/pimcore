@@ -81,7 +81,6 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
             region:'center',
             deferredRender:true,
             enableTabScroll:true,
-            defaults: {autoScroll:true},
             border: false,
             items: items,
             activeTab: 0

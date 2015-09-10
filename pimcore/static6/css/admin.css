@@ -986,7 +986,7 @@ span.warning {
 }
 
 .pimcore_document_property_language_label {
-    background-position: right 4px !important;
+    background-position: 85px 9px !important;
     position: relative;
 }
 
@@ -994,11 +994,11 @@ span.warning {
     position: absolute;
     right: -2px;
     top: 0;
-    width: 21px;
+    width: 26px;
     border: 1px solid #C1C1C1;
     border-right: 0;
     content: " ";
-    height: 20px;
+    height: 30px;
 }
 
 

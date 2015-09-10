@@ -311,7 +311,7 @@ pimcore.element.notes = Class.create({
         var addWin = new Ext.Window({
             modal: true,
             width: 500,
-            height: 210,
+            height: 280,
             closable: true,
             items: [formPanel],
             buttons: [{

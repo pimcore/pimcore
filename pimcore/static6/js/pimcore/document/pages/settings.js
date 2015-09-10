@@ -260,6 +260,7 @@ pimcore.document.pages.settings = Class.create({
                 border: false,
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_settings",
+                bodyStyle:'padding:0 10px 0 10px;',
                 items: [
                     {
                         xtype:'fieldset',

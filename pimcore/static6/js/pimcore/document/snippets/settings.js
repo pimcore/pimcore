@@ -44,9 +44,9 @@ pimcore.document.snippets.settings = Class.create({
 
             this.layout = new Ext.FormPanel({
                 title: t('settings'),
-                bodyStyle:'padding:20px 5px 20px 5px;',
                 border: false,
                 autoScroll: true,
+                bodyStyle:'padding:0 10px 0 10px;',
                 iconCls: "pimcore_icon_tab_settings",
                 items: [
                     {
@@ -56,7 +56,7 @@ pimcore.document.snippets.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 700},
                         items :[
                             {
                                 fieldLabel: t('predefined_document_type'),
@@ -68,7 +68,6 @@ pimcore.document.snippets.settings = Class.create({
                                 editable: false,
                                 lazyInit: false,
                                 triggerAction: 'all',
-                                width: 600,
                                 listWidth: 600,
                                 value: docTypeValue,
                                 listeners: {
@@ -79,7 +78,6 @@ pimcore.document.snippets.settings = Class.create({
                                 fieldLabel: t('module_optional'),
                                 name: 'module',
                                 value: this.snippet.data.module,
-                                width: 400
                             },
                             {
                                 xtype:'combo',
@@ -104,7 +102,6 @@ pimcore.document.snippets.settings = Class.create({
                                 mode: "local",
                                 id: "pimcore_document_settings_controller_" + this.snippet.id,
                                 value: this.snippet.data.controller,
-                                width: 450,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
@@ -133,7 +130,6 @@ pimcore.document.snippets.settings = Class.create({
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.snippet.data.action,
-                                width: 450,
                                 listeners: {
                                     "focus": function (el) {
                                         el.getStore().reload({
@@ -167,7 +163,6 @@ pimcore.document.snippets.settings = Class.create({
                                 triggerAction: "all",
                                 mode: "local",
                                 value: this.snippet.data.template,
-                                width: 450,
                                 listeners: {
                                     afterrender: function (el) {
                                         el.getStore().load();
@@ -183,7 +178,7 @@ pimcore.document.snippets.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 700},
                         items :[
                             {
                                 fieldLabel: t('path'),
@@ -211,7 +206,7 @@ pimcore.document.snippets.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 200,
                         defaultType: 'textfield',
-                        defaults: {width: 600},
+                        defaults: {width: 700},
                         items :[
                             {
                                 fieldLabel: t("document"),
@@ -245,34 +240,7 @@ pimcore.document.snippets.settings = Class.create({
                                 }
                             }, {
                                 xtype:"toolbar",
-                                width:605,
-                                items:[
-                                    {
-                                        text:t("apply_new_master_document"),
-                                        iconCls:"pimcore_icon_apply",
-                                        autoWidth:true,
-                                        handler:function () {
-                                            Ext.MessageBox.confirm(t("are_you_sure"),
-                                                                   t("all_content_will_be_lost"),
-                                                function (buttonValue) {
-                                                    if (buttonValue == "yes") {
-                                                        Ext.Ajax.request({
-                                                            url:"/admin/snippet/change-master-document/id/"
-                                                                                            + this.snippet.id,
-                                                            params:{
-                                                                contentMasterDocumentPath:
-                                                                    Ext.getCmp("contentMasterDocumentPath_"
-                                                                                        + this.snippet.id).getValue()
-                                                            },
-                                                            success:function () {
-                                                                this.snippet.reload();
-                                                            }.bind(this)
-                                                        });
-                                                }
-                                            }.bind(this));
-                                        }.bind(this)
-                                    },
-                                    {
+                                items:["->", {
                                         text:t("delete_master_document"),
                                         iconCls:"pimcore_icon_delete",
                                         autoWidth:true,
@@ -288,6 +256,30 @@ pimcore.document.snippets.settings = Class.create({
                                                                                         + this.snippet.id,
                                                             params:{
                                                                 contentMasterDocumentPath:""
+                                                            },
+                                                            success:function () {
+                                                                this.snippet.reload();
+                                                            }.bind(this)
+                                                        });
+                                                    }
+                                                }.bind(this));
+                                        }.bind(this)
+                                    }, {
+                                        text:t("apply_new_master_document"),
+                                        iconCls:"pimcore_icon_apply",
+                                        autoWidth:true,
+                                        handler:function () {
+                                            Ext.MessageBox.confirm(t("are_you_sure"),
+                                                t("all_content_will_be_lost"),
+                                                function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        Ext.Ajax.request({
+                                                            url:"/admin/snippet/change-master-document/id/"
+                                                            + this.snippet.id,
+                                                            params:{
+                                                                contentMasterDocumentPath:
+                                                                    Ext.getCmp("contentMasterDocumentPath_"
+                                                                        + this.snippet.id).getValue()
                                                             },
                                                             success:function () {
                                                                 this.snippet.reload();

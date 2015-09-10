@@ -79,8 +79,8 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                 editable: false,
                 triggerAction: 'all',
                 mode: "local",
-                listWidth: 200,
                 value: languageData,
+                width: 260,
                 listeners: {
                     "afterrender": setLanguageIcon,
                     "select": setLanguageIcon
@@ -88,18 +88,17 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
             });
 
             this.languagesPanel = new Ext.form.FormPanel({
-                title: t("language_settings"),
                 bodyStyle: "padding: 10px;",
                 autoWidth: true,
-                height: 80,
+                height: 65,
                 collapsible: false,
                 items: [language]
             });
 
             var navigationBasic = new Ext.form.FieldSet({
-                title: t('navigation_basic'),
+                title: t('basic'),
                 autoHeight:true,
-                collapsible: true,
+                collapsible: false,
                 collapsed: false,
                 defaults: {
                     width: 220
@@ -136,10 +135,10 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
             });
 
             var navigationEnhanced = new Ext.form.FieldSet({
-                title: t('navigation_enhanced'),
+                title: t('enhanced'),
                 autoHeight:true,
-                collapsible: true,
-                collapsed: true,
+                collapsible: false,
+                collapsed: false,
                 defaults: {
                     width: 220
                 },
