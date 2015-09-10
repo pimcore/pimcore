@@ -49,7 +49,7 @@ pimcore.element.replace_assignments = Class.create({
                         itemId: "form",
                         xtype: "form",
                         region: "north",
-                        height: 170,
+                        height: 110,
                         bodyStyle: "padding: 10px;",
                         items: [
                             {
@@ -109,6 +109,7 @@ pimcore.element.replace_assignments = Class.create({
                                     {
                                         xtype: "button",
                                         iconCls: "pimcore_icon_search",
+                                        style: "margin-left: 5px;",
                                         handler: function () {
                                             pimcore.helpers.itemselector(false, function (selection) {
                                                 var form = this.panel.getComponent("form");
@@ -122,7 +123,7 @@ pimcore.element.replace_assignments = Class.create({
                                         xtype: "button",
                                         text: t("search"),
                                         iconCls: "pimcore_icon_apply",
-                                        style: "padding-left: 20px;",
+                                        style: "margin-left: 20px;",
                                         handler: this.search.bind(this)
                                     }, {
                                         xtype: "hidden",
@@ -182,6 +183,7 @@ pimcore.element.replace_assignments = Class.create({
                                     {
                                         xtype: "button",
                                         iconCls: "pimcore_icon_search",
+                                        style: "margin-left: 5px;",
                                         handler: function () {
                                             pimcore.helpers.itemselector(false, function (selection) {
                                                 var form = this.panel.getComponent("form");
@@ -203,7 +205,6 @@ pimcore.element.replace_assignments = Class.create({
                     xtype: "grid",
                     store: this.store,
                     selModel: selectionColumn,
-                    region: "center",
                     columns: [
                         //selectionColumn,
                         {header: "ID", sortable: true, dataIndex: 'id', width: 60},
@@ -251,7 +252,7 @@ pimcore.element.replace_assignments = Class.create({
 
         // get selected elements
         var jobs = [];
-        var selectedRows = this.panel.getComponent("result").getSelectionModel().getSelections();
+        var selectedRows = this.panel.getComponent("result").getSelection();
         for (var i=0; i<selectedRows.length; i++) {
             jobs.push({
                 url: "/admin/element/replace-assignments",
@@ -268,7 +269,7 @@ pimcore.element.replace_assignments = Class.create({
             });
 
             this.progressBarWin = new Ext.Window({
-                title: t("delete"),
+                title: t("replacing"),
                 layout:'fit',
                 width:500,
                 bodyStyle: "padding: 10px;",
