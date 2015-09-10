@@ -59,13 +59,13 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
 
         var date = {
             itemCls:"object_field",
-            width:100
+            width:300
         };
 
         var time = {
             format:"H:i",
             emptyText:"",
-            width:60
+            width:120
         };
 
 
@@ -95,6 +95,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
         this.component = new Ext.form.FieldSet({
             layout: 'hbox',
             fieldLabel:t("default_value"),
+            style: "border: none !important",
             combineErrors:false,
             items:[this.datefield, this.timefield],
             itemCls:"object_field"
@@ -128,16 +129,16 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
     setDefaultValue:function () {
 
         if (this.datefield.getValue()) {
-            var dateString = this.datefield.getValue().format("Y-m-d");
+            var dateString = Ext.Date.format(this.datefield.getValue(), "Y-m-d");
 
             if (this.timefield.getValue()) {
-                dateString += " " + this.timefield.getValue();
+                dateString += " " + Ext.Date.format(this.timefield.getValue(), "H:i");
             }
             else {
                 dateString += " 00:00";
             }
 
-            this.defaultValue.setValue((Date.parseDate(dateString, "Y-m-d H:i").getTime())/1000);
+            this.defaultValue.setValue((Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime())/1000);
 
         } else {
             this.defaultValue.setValue(null);

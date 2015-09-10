@@ -176,15 +176,15 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), flex: 50, sortable: true, dataIndex: 'type',
+            typesColumns.push({header: t("type"), flex: 30, sortable: true, dataIndex: 'type',
                                         editor: typeComboBox, renderer: function(value) {
                 return types[value];
             }});
 
-            typesColumns.push({header: t("length"), flex: 10, sortable: true, dataIndex: 'length',
+            typesColumns.push({header: t("length"), width: 40, sortable: true, dataIndex: 'length',
                 editor: new Ext.form.NumberField({})});
 
-            typesColumns.push({header: t("width"), flex: 10, sortable: true, dataIndex: 'width',
+            typesColumns.push({header: t("width"), width: 40, sortable: true, dataIndex: 'width',
                                         editor: new Ext.form.NumberField({})});
 
         }

@@ -43,20 +43,23 @@ pimcore.object.classes.klass = Class.create({
 
         this.editpanel = new Ext.Panel({
             region: "center",
-            bodyStyle: "padding: 20px;",
+            bodyStyle: "padding: 10px;",
             autoScroll: true
         });
 
         this.tree = Ext.create('Ext.tree.Panel', {
-            region: "center",
+            region: "west",
+            width: 300,
+            split: true,
             enableDD: true,
+            useArrows: true,
             autoScroll: true,
             root: {
                 id: "0",
                 root: true,
                 text: t("base"),
-                //reference: this,
                 leaf: true,
+                iconCls: "pimcore_icon_class",
                 isTarget: true
             },
             listeners: this.getTreeNodeListeners(),
@@ -74,7 +77,6 @@ pimcore.object.classes.klass = Class.create({
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
-                    //appendOnly: true,
                     ddGroup: "element"
                 }
             }
@@ -126,14 +128,7 @@ pimcore.object.classes.klass = Class.create({
             title: name,
             id: "pimcore_class_editor_panel_" + this.getId(),
             items: [
-                {
-                    region: "west",
-                    title: t("layout"),
-                    layout: "border",
-                    width: 300,
-                    split: true,
-                    items: [this.tree]
-                },
+                this.tree,
                 this.editpanel
             ],
             buttons: panelButtons
@@ -282,14 +277,6 @@ pimcore.object.classes.klass = Class.create({
 
             // check for disallowed types
             var allowed = false;
-
-            //var theNode;
-            //if (editMode) {
-            //    theNode = record.parentNode;
-            //} else {
-            //    theNode = record;
-            //}
-
 
             if('object' !== typeof dataComp) {
                 var tt = typeof dataComp;
@@ -567,6 +554,7 @@ pimcore.object.classes.klass = Class.create({
 
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
+            //border: true,
             bodyStyle: "padding: 10px;",
             defaults: {
                 labelWidth: 200
@@ -702,17 +690,19 @@ pimcore.object.classes.klass = Class.create({
             }
         }
         var newNode = {
+            text: nodeLabel,
             type: "layout",
             draggable: true,
             iconCls: "pimcore_icon_" + type,
-            text: nodeLabel,
             leaf: true,
-            editor: new pimcore.object.classes.layout[type](newNode, initData)
-
-            //,
-            //listeners: this.attributes.reference.getTreeNodeListeners()
+            allowDrop: true,
+            loaded:true,
+            expanded: true
         };
         newNode = this.appendChild(newNode);
+
+        var editor = new pimcore.object.classes.layout[type](newNode, initData);
+        newNode.set("editor", editor);
 
         this.expand();
 
@@ -750,15 +740,9 @@ pimcore.object.classes.klass = Class.create({
         newNode = this.appendChild(newNode);
 
         var editor = new pimcore.object.classes.data[type](newNode, initData);
-
         newNode.set("editor", editor);
 
-        //this.renderIndent();
         this.expand();
-
-        //var ownerTree = this.getOwnerTree();
-        //var selModel = ownerTree.getSelectionModel();
-        //selModel.select(newNode);
 
         return newNode;
     },
@@ -891,18 +875,23 @@ pimcore.object.classes.klass = Class.create({
                         this.usedFieldNames.push(data.name);
                     }
 
-                    nodeEl.removeCls("tree_node_error");
+                    if(nodeEl) {
+                        nodeEl.removeCls("tree_node_error");
+                    }
                 }
                 else {
-                    nodeEl.addCls("tree_node_error");
+                    if(nodeEl) {
+                        nodeEl.addCls("tree_node_error");
+                    }
 
 
-                    var invalidFieldsText = null;
+                    var invalidFieldsText = t("class_field_name_error") + ": '" + data.name + "'";
 
                     if(node.data.editor.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
                             +(implode(',',node.data.editor.forbiddenNames));
                     }
+
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
                         invalidFieldsText);
 

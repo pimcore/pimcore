@@ -117,7 +117,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     width: 200},
                 {
                     xtype:'actioncolumn',
-                    width:30,
+                    width:40,
                     items:[
                         {
                             tooltip:t('up'),
@@ -136,7 +136,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 },
                 {
                     xtype:'actioncolumn',
-                    width:30,
+                    width:40,
                     items:[
                         {
                             tooltip:t('down'),
@@ -154,7 +154,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 },
                 {
                     xtype: 'actioncolumn',
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('remove'),

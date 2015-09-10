@@ -79,15 +79,11 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 try {
                     var regexp = new RegExp(regex);
                     if(regexp.test(testString)) {
-                        testStringEl.getEl().applyStyles({
-                            background: "green",
-                            color: "white"
-                        });
+                        testStringEl.addCls("class-editor-validation-success");
+                        testStringEl.removeCls("class-editor-validation-error");
                     } else {
-                        testStringEl.getEl().applyStyles({
-                            background: "red",
-                            color: "white"
-                        });
+                        testStringEl.removeCls("class-editor-validation-success");
+                        testStringEl.addCls("class-editor-validation-error");
                     }
                 } catch(e) {
                     console.log(e);
@@ -110,8 +106,9 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                         keyup: checkRegex
                     }
                 }, {
-                    xtype: "displayfield",
-                    hideLabel:true,
+                    xtype: "panel",
+                    bodyStyle: "padding-top: 3px",
+                    style: "margin-bottom: 10px",
                     html:'<span class="object_field_setting_warning">' + t('object_regex_info')+' (Delimiter: #)</span>'
                 }, {
                     xtype: "textfield",

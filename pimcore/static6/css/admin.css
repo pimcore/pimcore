@@ -1157,5 +1157,15 @@ span.warning {
 }
 
 
+.class-editor-validation-success input {
+    background-color: green;
+    color: white;
+}
+
+.class-editor-validation-error input {
+    background-color: red;
+    color: white;
+}
+
 
 

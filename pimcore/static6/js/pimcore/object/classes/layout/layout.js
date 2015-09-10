@@ -60,13 +60,12 @@ pimcore.object.classes.layout.layout = Class.create({
 
 
         this.layout = new Ext.Panel({
-            bodyStyle: "padding: 10px;",
             items: [
                 {
                     xtype: "form",
                     title: t("general_settings"),
                     bodyStyle: "padding: 10px;",
-                    style: "margin: 10px 0 10px 0",
+                    style: "margin: 0 0 10px 0",
                     items: [
                         {
                             xtype: "textfield",
@@ -156,7 +155,7 @@ pimcore.object.classes.layout.layout = Class.create({
 
         for (var i = 0; i < items.length; i++) {
             if (items[i].name == "name") {
-                this.treeNode.setText(items[i].getValue());
+                this.treeNode.set('text', items[i].getValue());
                 break;
             }
         }

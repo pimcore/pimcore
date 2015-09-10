@@ -61,7 +61,6 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
                 value: this.datax.height
             },{
                 xtype: "checkbox",
-                labelStyle: "width: 350px",
                 fieldLabel: t("only_configured_languages"),
                 name: "onlySystemLanguages",
                 checked: this.datax.onlySystemLanguages

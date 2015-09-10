@@ -55,7 +55,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
             fieldLabel:t("default_value"),
             name:"defaultValue",
             itemCls:"object_field",
-            width: 200,
+            width: 300,
             disabled: this.datax.useCurrentDate
         };
 
@@ -87,8 +87,9 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
                 },
                 disabled: this.isInCustomLayoutEditor()
             }, {
-                xtype: "displayfield",
-                hideLabel:true,
+                xtype: "panel",
+                bodyStyle: "padding-top: 3px",
+                style: "margin-bottom: 10px",
                 html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
             }
 

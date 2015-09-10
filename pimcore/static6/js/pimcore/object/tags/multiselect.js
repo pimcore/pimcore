@@ -60,8 +60,12 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         var validValues = [];
 
         var restrictTo = null;
+
         if (this.fieldConfig.restrictTo) {
-            restrictTo = this.fieldConfig.restrictTo.split(",");
+            console.log(this.fieldConfig.restrictTo);
+            //TODO ERROR!!!
+            //restrictTo = this.fieldConfig.restrictTo.split(",");
+            restrictTo = ["TODO"];
         }
 
         for (var i = 0; i < this.fieldConfig.options.length; i++) {

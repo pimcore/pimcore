@@ -192,7 +192,7 @@ pimcore.object.classes.data.data = Class.create({
             {
                 title: t("general_settings") + " (" + niceName + ")",
                 bodyStyle: "padding: 10px;",
-                style: "margin: 10px 0 10px 0",
+                style: "margin: 0 0 10px 0",
                 defaults: {
                     labelWidth: 140
                 },
@@ -215,7 +215,6 @@ pimcore.object.classes.data.data = Class.create({
 
 
         this.layout = new Ext.Panel({
-            bodyStyle: "padding: 10px;",
             items: [
                 this.standardSettingsForm,
                 this.layoutSettingsForm,

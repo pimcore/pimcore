@@ -102,6 +102,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         this.classCombo = new Ext.form.ComboBox({
             typeAhead: true,
             triggerAction: 'all',
+            width: 400,
             store: pimcore.globalmanager.get("object_types_store"),
             valueField: 'id',
             displayField: 'text',
@@ -154,11 +155,11 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             editable: false,
             fieldLabel: t("objectsMetadata_visible_fields"),
             store: this.fieldStore,
-//            width: 'auto',
             value: this.datax.visibleFields,
             displayField: "key",
             valueField: "key",
-            width: 300
+            width: 400,
+            height: 300
         });
         this.specificPanel.add(this.fieldSelect);
 
@@ -223,10 +224,10 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
 
 
         var typesColumns = [
-            {header: t("position"), width: 30, sortable: true, dataIndex: 'position',
+            {header: t("position"), width: 65, sortable: true, dataIndex: 'position',
                 editor: new Ext.form.NumberField({})},
             {header: t("key"), flex: 40, sortable: true, dataIndex: 'key', editor: keyTextField},
-            {header: t("label"), flex: 60, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
+            {header: t("label"), flex: 40, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
         ];
 
         if(hasType) {
@@ -255,13 +256,13 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), flex: 30, sortable: true, dataIndex: 'type', editor: typeComboBox,
+            typesColumns.push({header: t("type"), width: 70, sortable: true, dataIndex: 'type', editor: typeComboBox,
                 renderer: function(value) {
                     return types[value];
                 }});
-            typesColumns.push({header: t("value"), flex: 100, sortable: true, dataIndex: 'value',
+            typesColumns.push({header: t("value"), flex: 80, sortable: true, dataIndex: 'value',
                 editor: new Ext.form.TextField({})});
-            typesColumns.push({header: t("width"), flex: 10, sortable: true, dataIndex: 'width',
+            typesColumns.push({header: t("width"), width: 80, sortable: true, dataIndex: 'width',
                 editor: new Ext.form.NumberField({})});
 
 

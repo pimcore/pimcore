@@ -113,7 +113,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         });
         documentTypeStore.load({
             "callback": function (allowedDocuments) {
-                Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join);
+                Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments);
             }.bind(this, allowedDocuments)
         });
 
@@ -127,7 +127,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         });
         assetTypeStore.load({
             "callback": function (allowedAssets) {
-                Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join);
+                Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets);
             }.bind(this, allowedAssets)
         });
 

@@ -64,8 +64,8 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 name: "defaultValue",
                 value: this.datax.defaultValue
             }, {
-                xtype: "displayfield",
-                hideLabel:true,
+                xtype: "panel",
+                bodyStyle: "padding-top: 3px",
                 style: "margin-bottom: 10px",
                 html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
             }
@@ -80,8 +80,8 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                     maxValue: 65,
                     value: this.datax.decimalPrecision
                 }, {
-                    xtype: "displayfield",
-                    hideLabel:true,
+                    xtype: "panel",
+                    bodyStyle: "padding-top: 3px",
                     style: "margin-bottom: 10px",
                     html: t('if_specified_decimal_mysql_type_is_used_automatically')
                 }, {
