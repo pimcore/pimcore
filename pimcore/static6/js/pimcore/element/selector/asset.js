@@ -34,9 +34,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
     getForm: function () {
 
         var compositeConfig = {
-            xtype: "fieldset",
-            layout: "hbox",
-            hideLabel: true,
+            xtype: "toolbar",
             items: [{
                 xtype: "textfield",
                 name: "query",
@@ -107,8 +105,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         if(!this.formPanel) {
             this.formPanel = new Ext.form.FormPanel({
                 region: "north",
-                bodyStyle: "padding: 5px;",
-                height: 35,
+                bodyStyle: "padding: 2px;",
                 items: [compositeConfig]
             });
         }
@@ -131,7 +128,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     xtype: "tbtext",
                     text: t("double_click_to_add_item_to_selection"),
                     autoHeight: true,
-                    width: 180,
                     style: {
                         whiteSpace: "normal"
                     }
@@ -139,7 +135,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 tbarCfg: {
                     autoHeight: true
                 },
-                width: 200,
+                width: 300,
                 store: this.selectionStore,
                 columns: [
                     {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer:
@@ -171,7 +167,14 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                         menu.showAt(e.getXY());
                     }.bind(this)
                 },
-                selModel: Ext.create('Ext.selection.RowModel', {})
+                selModel: Ext.create('Ext.selection.RowModel', {}),
+                bbar: ["->", {
+                    text: t("select"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function () {
+                        this.parent.commitData(this.getData());
+                    }.bind(this)
+                }]
             });
         }
 
@@ -190,7 +193,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                 {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
                 {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
-                {header: t("preview"), width: 100, sortable: false, dataIndex: 'subtype',
+                {header: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         if(record.data.subtype == "image") {
                             return '<div name="' + t(record.data.subtype)

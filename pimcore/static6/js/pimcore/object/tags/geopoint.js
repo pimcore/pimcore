@@ -209,7 +209,14 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             plain: true
         });
 
-        this.searchWindow.on('afterrender', function () {
+        this.alreadyIntitialized = false;
+
+        this.searchWindow.on('afterlayout', function () {
+            if (this.alreadyIntitialized) {
+                return;
+            }
+
+            this.alreadyIntitialized = true;
 
             var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
             var mapZoom = this.fieldConfig.zoom;
@@ -324,7 +331,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     isInvalidMandatory: function () {
 
-        // no render check is necessary because the input compontent returns the right values even if it is not
+        // no render check is necessary because the input component returns the right values even if it is not
         // rendered
         var value = this.getValue();
         if (value.longitude && value.latitude) {

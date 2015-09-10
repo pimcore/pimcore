@@ -24,9 +24,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var i;
 
         var compositeConfig = {
-            xtype: "fieldset",
-            layout: "hbox",
-            hideLabel: true,
+            xtype: "toolbar",
             items: [{
                 xtype: "textfield",
                 name: "query",
@@ -147,8 +145,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         if(!this.formPanel) {
             this.formPanel = new Ext.form.FormPanel({
                 region: "north",
-                bodyStyle: "padding: 5px;",
-                height: 35,
+                bodyStyle: "padding: 2px;",
                 items: [compositeConfig]
             });
         }
@@ -173,7 +170,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                     xtype: "tbtext",
                     text: t("double_click_to_add_item_to_selection"),
                     autoHeight: true,
-                    width: 180,
                     style: {
                         whiteSpace: "normal"
                     }
@@ -181,7 +177,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                tbarCfg: {
                     autoHeight: true
                },
-               width: 200,
+               width: 300,
                store: this.selectionStore,
                columns: [
                     {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype'},
@@ -208,7 +204,14 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                         menu.showAt(e.getXY());
                     }.bind(this)
                 },
-                selModel: Ext.create('Ext.selection.RowModel', {})
+                selModel: Ext.create('Ext.selection.RowModel', {}),
+                bbar: ["->", {
+                    text: t("select"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function () {
+                        this.parent.commitData(this.getData());
+                    }.bind(this)
+                }]
             });
         }
         

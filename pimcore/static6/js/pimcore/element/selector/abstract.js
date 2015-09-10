@@ -20,30 +20,16 @@ pimcore.element.selector.abstract = Class.create({
         this.parent = parent;
         
         this.initStore();
-        
+
         if(this.parent.multiselect) {
             this.searchPanel = new Ext.Panel({
                 layout: "border",
                 items: [this.getForm(), this.getSelectionPanel(), this.getResultPanel()],
-                buttons: [{
-                    text: t("select"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: function () {
-                        this.parent.commitData(this.getData());
-                    }.bind(this)
-                }]
             });
         } else {
             this.searchPanel = new Ext.Panel({
                 layout: "border",
-                items: [this.getForm(), this.getResultPanel()],
-                buttons: [{
-                    text: t("select"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: function () {
-                        this.parent.commitData(this.getData());
-                    }.bind(this)
-                }]
+                items: [this.getForm(), this.getResultPanel()]
             });
         }
         
