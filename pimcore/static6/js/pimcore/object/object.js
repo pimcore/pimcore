@@ -620,11 +620,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             omitMandatoryCheck = true;
         }
 
-        if(this.tab.disabled) {
+        if(this.tab.disabled || this.tab.isMasked()) {
             return;
         }
 
-        this.tab.setDisabled(true);
+        this.tab.mask();
 
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
@@ -673,7 +673,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
 
 
-                    this.tab.setDisabled(false);
+                    this.tab.unmask();
 
                         if (typeof callback == "function") {
                             callback();
@@ -681,13 +681,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
                 }.bind(this),
                 failure: function (response) {
-                    this.tab.setDisabled(false);
+                    this.tab.unmask();
                 }.bind(this)
             });
 
             return true;
         } else {
-            this.tab.setDisabled(false);
+            this.tab.unmask();
         }
         return false;
     },
