@@ -232,10 +232,7 @@ pimcore.settings.translations = Class.create({
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
-                        //totalProperty:'total',            // default
-                        //successProperty:'success'         // default
-                    }
-                    ,                                     // default
+                    },                                     // default
                     writer: {
                         type: 'json',
                         writeAllFields: true,
@@ -301,7 +298,6 @@ pimcore.settings.translations = Class.create({
                 }.bind(this)
             }
         }));
-
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
@@ -416,12 +412,17 @@ pimcore.settings.translations = Class.create({
 
     doExport:function(){
 
-        var filtersActive = this.filterField.getValue() || this.gridFilters.getFilterData().length;
+        var store = this.grid.store;
+        var storeFilters = store.getFilters().items;
+        var proxy = store.getProxy();
+
+        var filtersActive = this.filterField.getValue() || storeFilters.length > 0;
         if(filtersActive) {
             Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
                 if (buttonValue == "yes") {
                     var queryString = "searchString=" + this.filterField.getValue();
-                    queryString += "&" + Ext.urlEncode(this.gridFilters.buildQuery(this.gridFilters.getFilterData()));
+                    var encodedFilters = proxy.encodeFilters(storeFilters);
+                    queryString += "&filter=" + encodedFilters + "&extjs6=1";
                     pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
                 } else {
                     pimcore.helpers.download(this.exportUrl);
@@ -446,10 +447,7 @@ pimcore.settings.translations = Class.create({
                     row: 0,
                     column: 1
                 });
-
-
             }
-
         }.bind(this));
     },
 

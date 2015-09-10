@@ -84,7 +84,4 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
 
         return this.panel;
     }
-
-
-
 });
