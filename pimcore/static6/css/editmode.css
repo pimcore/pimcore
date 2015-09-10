@@ -25,7 +25,7 @@
     overflow: hidden;
 }
 
-.pimcore_tag_image .x5-panel-body img {
+.pimcore_tag_image .x-panel-body img {
     max-width: 100%;
     max-height: 100%;
 }
@@ -181,6 +181,7 @@
 .pimcore_tag_image_empty {
 	border: 1px solid #d0d0d0 !important;
 	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+    height: 100px;
 }
 
 .pimcore_tag_video_empty {

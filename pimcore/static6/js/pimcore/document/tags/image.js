@@ -26,8 +26,9 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if (!this.options["height"]) {
             if (this.options["defautHeight"]){
-                this.options.style += (" min-height:" + this.options["defautHeight"] + "px");
+                this.options.bodyStyle += (" min-height:" + this.options["defautHeight"] + "px");
             }else{
+                this.options.bodyStyle += (" min-height:100px");
                 this.options.style += (" min-height:100px");
             }
         }
@@ -43,6 +44,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         this.setupWrapper();
 
+        this.options.border = false;
         this.options.name = id + "_editable";
         this.element = new Ext.Panel(this.options);
 
