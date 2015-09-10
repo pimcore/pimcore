@@ -63,13 +63,28 @@ pimcore.element.selector.selector = Class.create({
             layout: "fit"
         });
 
-        this.window = new Ext.Window({
-            width: 850,
+        var windowWidth = 850;
+        if(this.multiselect) {
+            windowWidth = 990;
+        }
+
+        var windowConfig = {
+            width: windowWidth,
             height: 550,
             modal: true,
             layout: "fit",
             items: [this.panel]
-        });
+        };
+
+        if(this.config["moveToTab"]) {
+            windowConfig["tools"] = [{
+                type: "maximize",
+                tooltip: t("move_to_tab"),
+                callback: this.moveToTab.bind(this)
+            }];
+        }
+
+        this.window = new Ext.Window(windowConfig);
         
         this.window.show();
         
@@ -125,19 +140,8 @@ pimcore.element.selector.selector = Class.create({
             });
             items.push(this.toolbarbuttons.object);
         }
-
-        if(this.config["moveToTab"]) {
-            items.push("->");
-            this.toolbarbuttons.moveToTab = new Ext.Button({
-                text: t("move_to_tab"),
-                handler: this.moveToTab.bind(this),
-                iconCls: "pimcore_icon_movetotab",
-                enableToggle: false
-            });
-            items.push(this.toolbarbuttons.moveToTab);
-        }
         
-        if(items.length > 1) {
+        if(items.length > 2) {
             toolbar = {
                 items: items
             };
@@ -147,8 +151,6 @@ pimcore.element.selector.selector = Class.create({
     },
 
     moveToTab: function () {
-
-        this.toolbarbuttons.moveToTab.hide();
 
         // create new tab-panel
         this.myTabId = "pimcore_search_" + uniqid();
