@@ -16,18 +16,14 @@ pimcore.registerNS("pimcore.report.custom.panel");
 pimcore.report.custom.panel = Class.create({
 
     initialize: function () {
-
-
     },
 
     getTabPanel: function () {
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                iconCls: "pimcore_icon_sql",
                 border: false,
                 layout: "border",
-                closable:true,
                 items: [this.getTree(), this.getEditPanel()]
             });
 
@@ -47,9 +43,6 @@ pimcore.report.custom.panel = Class.create({
                     url: '/admin/reports/custom-report/tree',
                     reader: {
                         type: 'json'
-                        //,
-                        //totalProperty : 'total',
-                        //rootProperty: 'nodes'
                     }
                 },
                 root: {
@@ -64,7 +57,6 @@ pimcore.report.custom.panel = Class.create({
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,
-                border: true,
                 width: 250,
                 split: true,
                 root: {

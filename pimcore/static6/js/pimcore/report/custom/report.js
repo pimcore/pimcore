@@ -80,7 +80,44 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         }
 
-        this.store = new Ext.data.JsonStore({
+        var itemsPerPage = 40;
+        var url = '/admin/reports/custom-report/data?';
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url, storeFields, itemsPerPage
+        );
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+
+        var proxy = this.store.getProxy();
+        proxy.extraParams.name = this.config["name"];
+
+        this.store.addListener('load', function() {
+            var filterData = this.store.getFilters();
+
+            if(this.chartStore) {
+                this.chartStore.load({
+                    params: {
+                        name: this.config["name"],
+//                                filter: this.gridFilters.buildQuery(filterData).filter
+                    }
+                });
+            }
+
+            for(var j = 0; j < this.drillDownStores.length; j++) {
+                if(this.drillDownStores[j].notReload) {
+                    //to prevent reopening of combo box
+                    this.drillDownStores[j].notReload = false;
+                } else {
+                    this.drillDownStores[j].load({
+                        params: {
+//                                    filter: this.gridFilters.buildQuery(filterData).filter
+                        }
+                    });
+                }
+            }
+
+        }.bind(this));
+
+    /*    this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
@@ -98,7 +135,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                         this.chartStore.load({
                             params: {
                                 name: this.config["name"],
-                                filter: this.gridFilters.buildQuery(filterData).filter
+//                                filter: this.gridFilters.buildQuery(filterData).filter
                             }
                         });
                     }
@@ -110,7 +147,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                         } else {
                             this.drillDownStores[j].load({
                                 params: {
-                                    filter: this.gridFilters.buildQuery(filterData).filter
+//                                    filter: this.gridFilters.buildQuery(filterData).filter
                                 }
                             });
                         }
@@ -120,9 +157,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             },
             fields: storeFields
         });
-        this.store.load();
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
+        this.store.load();
+*/
+ /*       this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: 40,
             store: this.store,
             displayInfo: true,
@@ -156,7 +194,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 }.bind(this)
             }
         }));
-
+*/
         var topBar = this.buildTopBar(drillDownFilterDefinitions);
 
         topBar.push("->");
@@ -221,7 +259,16 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 style: 'padding-right: 5px'
             });
 
-            var drillDownStore = new Ext.data.JsonStore({
+            var drillDownStore = pimcore.helpers.grid.buildDefaultStore(
+                '/admin/reports/custom-report/drill-down-options/?',
+                ['value'],
+                400
+            );
+            var proxy = drillDownStore.getProxy();
+            proxy.extraParams.name = this.config["name"];
+            proxy.extraParams.field = drillDownFilterDefinitions[i]["name"];
+
+            /*var drillDownStore = new Ext.data.JsonStore({
                 url: '/admin/reports/custom-report/drill-down-options',
                 root: 'data',
                 baseParams: {
@@ -229,7 +276,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     field: drillDownFilterDefinitions[i]["name"]
                 },
                 fields: ['value']
-            });
+            });*/
             this.drillDownStores.push(drillDownStore);
 
             drillDownFilterComboboxes.push({
@@ -287,7 +334,15 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 storeFields.push(data.yAxis[i]);
             }
 
-            this.chartStore = new Ext.data.JsonStore({
+            this.cartStore = pimcore.helpers.grid.buildDefaultStore(
+                '/admin/reports/custom-report/chart/?',
+                storeFields,
+                400000000
+            );
+            var proxy = this.cartStore.getProxy();
+            proxy.extraParams.name = this.config["name"];
+
+            /*this.chartStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 url: "/admin/reports/custom-report/chart",
                 root: 'data',
@@ -295,7 +350,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     name: this.config["name"]
                 },
                 fields: storeFields
-            });
+            });*/
 
             var series = [];
             for(var i = 0; i < data.yAxis.length; i++) {
@@ -328,7 +383,15 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 }]
             });
         } else if(data.chartType == 'pie') {
-            this.chartStore = new Ext.data.JsonStore({
+            this.chartStore = pimcore.helpers.grid.buildDefaultStore(
+                '/admin/reports/custom-report/chart/?',
+                [data.pieLabelColumn, data.pieColumn],
+                400000000
+            );
+            var proxy = this.chartStore.getProxy();
+            proxy.extraParams.name = this.config["name"];
+
+            /*this.chartStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 url: "/admin/reports/custom-report/chart",
                 root: 'data',
@@ -336,7 +399,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     name: this.config["name"]
                 },
                 fields: [data.pieLabelColumn, data.pieColumn]
-            });
+            });*/
             this.chartStore.load();
 
             chartPanel = new Ext.Panel({
@@ -344,7 +407,27 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 height: 350,
                 border: false,
                 items: [{
+                    xtype: "polar",
                     store: this.chartStore,
+                    legend: {
+                        //docked: 'right'
+                    },
+                    series: [{
+                        type: 'pie',
+                        xField: data.pieColumn,
+                        label: {
+                            field: data.pieLabelColumn,
+                            display: 'none'
+                        },
+                        donut: 25,
+                        style: {
+                            miterLimit: 10,
+                            lineCap: 'miter',
+                            lineWidth: 2
+                        }
+                    }]
+
+                   /* store: this.chartStore,
                     xtype: 'piechart',
                     dataField: data.pieColumn,
                     categoryField: data.pieLabelColumn,
@@ -353,7 +436,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                         legend: {
                             display: 'right'
                         }
-                    }
+                    }*/
                 }]
             });
         }

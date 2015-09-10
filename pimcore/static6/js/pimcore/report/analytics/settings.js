@@ -94,6 +94,7 @@ pimcore.report.analytics.settings = Class.create({
                     xtype: "textfield",
                     fieldLabel: t("analytics_trackid_code"),
                     name: "trackid_" + id,
+                    width: 670,
                     id: "report_settings_analytics_trackid_" + itemId,
                     value: this.parent.getValue("analytics.sites." + key + ".trackid")
                 },{
@@ -160,7 +161,7 @@ pimcore.report.analytics.settings = Class.create({
                     items: [{
                         xtype: "displayfield",
                         hideLabel: true,
-                        width: 500,
+                        width: 650,
                         style: "margin-top:20px;",
                         value: t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
                         cls: "pimcore_extra_label_bottom"
@@ -196,7 +197,7 @@ pimcore.report.analytics.settings = Class.create({
                             }.bind(this, itemId)
                         },
                         valueField: 'id',
-                        width: 550,
+                        width: 650,
                         forceSelection: true,
                         triggerAction: 'all',
                         hiddenName: 'profile_' + id,
@@ -206,11 +207,13 @@ pimcore.report.analytics.settings = Class.create({
                         xtype: "textfield",
                         fieldLabel: t("analytics_accountid"),
                         name: "accountid_" + id,
+                        width: 650,
                         id: "report_settings_analytics_accountid_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".accountid")
                     },{
                         xtype: "textfield",
                         fieldLabel: t("analytics_internalid"),
+                        width: 650,
                         name: "internalid_" + id,
                         id: "report_settings_analytics_internalid_" + itemId,
                         value: this.parent.getValue("analytics.sites." + key + ".internalid")

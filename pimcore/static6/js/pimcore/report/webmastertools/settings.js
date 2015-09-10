@@ -32,7 +32,7 @@ pimcore.report.webmastertools.settings = Class.create({
             items: [
                 {
                     xtype: "displayfield",
-                    width: 300,
+                    width: 670,
                     hideLabel: true,
                     value: "&nbsp;<br />" + t("webastertools_settings_description"),
                     cls: "pimcore_extra_label"
@@ -84,7 +84,7 @@ pimcore.report.webmastertools.settings = Class.create({
                     fieldLabel: t("verification_filename_text") + " (google1d765d927ceexxxx.html)",
                     name: "verification",
                     labelWidth: 250,
-                    width: 500,
+                    width: 650,
                     value: this.parent.getValue("webmastertools.sites." + key + ".verification"),
                     id: "report_settings_webmastertools_verification_" + itemId
                 }

@@ -34,7 +34,7 @@ pimcore.report.custom.item = Class.create({
             handler: this.save.bind(this)
         });
 
-        this.columnStore = new Ext.data.JsonStore({
+        this.columnStore = Ext.create('Ext.data.Store', {
             autoDestroy: false,
             proxy: {
                 type: 'memory'
@@ -83,7 +83,7 @@ pimcore.report.custom.item = Class.create({
 //                        ["date", t("date")],
                         ["boolean", t("bool")]
                     ],
-                    mode: "local",
+                    queryMode: 'local',
                     typeAhead: false,
                     editable: false,
                     forceSelection: true,
@@ -96,7 +96,7 @@ pimcore.report.custom.item = Class.create({
                         ["only_filter", t("custom_report_only_filter")],
                         ["filter_and_show", t("custom_report_filter_and_show")]
                     ],
-                    mode: "local",
+                    queryMode: 'local',
                     typeAhead: false,
                     editable: false,
                     forceSelection: true,
@@ -229,7 +229,7 @@ pimcore.report.custom.item = Class.create({
         var chartTypeSelector = new Ext.form.ComboBox({
             triggerAction: 'all',
             lazyRender:true,
-            mode: 'local',
+            queryMode: 'local',
             name: 'chartType',
             fieldLabel: t('custom_report_charttype'),
             value: this.data.chartType,
@@ -298,10 +298,10 @@ pimcore.report.custom.item = Class.create({
             collapsible: false,
             items: [new Ext.form.ComboBox({
                 triggerAction: 'all',
-                lazyRender:true,
+                lazyRender:false,
                 name: 'pieLabelColumn',
                 value: this.data.pieLabelColumn,
-                mode: 'local',
+                queryMode: 'local',
                 width: 400,
                 fieldLabel: t('custom_report_labelcolumn'),
                 store: this.columnStore,
@@ -313,7 +313,7 @@ pimcore.report.custom.item = Class.create({
                     lazyRender:true,
                     name: 'pieColumn',
                     value: this.data.pieColumn,
-                    mode: 'local',
+                    queryMode: 'local',
                     width: 400,
                     fieldLabel: t('custom_report_datacolumn'),
                     store: this.columnStore,
@@ -344,7 +344,7 @@ pimcore.report.custom.item = Class.create({
                     triggerAction: 'all',
                     lazyRender:true,
                     name: 'xAxis',
-                    mode: 'local',
+                    queryMode: 'local',
                     width: 400,
                     value: this.data.xAxis,
                     fieldLabel: t('custom_report_x_axis'),
@@ -360,7 +360,7 @@ pimcore.report.custom.item = Class.create({
                         triggerAction: 'all',
                         lazyRender:true,
                         name: 'yAxis',
-                        mode: 'local',
+                        queryMode: 'local',
                         width: 295,
                         store: this.columnStore,
                         value: this.data.yAxis ? this.data.yAxis[0] : null,
@@ -388,7 +388,7 @@ pimcore.report.custom.item = Class.create({
                 triggerAction: 'all',
                 lazyRender:true,
                 name: 'yAxis',
-                mode: 'local',
+                queryMode: 'local',
                 width: 295,
                 store: this.columnStore,
                 value: value ? value : null,
@@ -657,7 +657,7 @@ pimcore.report.custom.item = Class.create({
     },
 
     saveOnComplete: function () {
-        this.parentPanel.tree.getRootNode().reload();
+        this.parentPanel.tree.getStore().load();
         pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
         Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
