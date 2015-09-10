@@ -172,7 +172,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
                     } else if (this.hotspotWindowInitCount > 60) {
                         // if more than 30 secs cancel and close the window
-                        this.resizer = null;
                         this.hotspotWindow.close();
                     }
 
@@ -241,10 +240,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             cls: 'pimcore_image_hotspot'
         });
 
-
-
-        //this.hotspotWindow.body.getFirstChild().insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_image_hotspot"></div>');
-
         var hotspotEl = Ext.get(hotspotId);
 
         // default dimensions
@@ -272,17 +267,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         }
 
         this.addMarkerHotspotContextMenu(hotspotId, hotspotEl);
-
-        var resizer = new Ext.Resizable(hotspotId, {
-            pinned:true,
-            minWidth:20,
-            minHeight: 20,
-            preserveRatio: false,
-            dynamic:true,
-            handles: 'all',
-            draggable:true
-        });
-
 
         this.hotspotStore.push({
             id: hotspotId,
@@ -503,22 +487,20 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 return;
             }
 
-            hotspotMetaDataWin.getComponent("form").add(
-                {
-                    xtype: 'panel',
-                    itemId: id,
-                    items: [
-                    {
-                        xtype: "hidden",
-                        name: "type",
-                        value: type
-                    },{
-                        xtype: "textfield",
-                        name: "name",
-                        value: data["name"],
-                        fieldLabel: t("name")
-                    }, valueField
-                    ],
+            hotspotMetaDataWin.getComponent("form").add({
+                xtype: 'panel',
+                itemId: id,
+                bodyStyle: "padding-top:10px",
+                items: [{
+                    xtype: "hidden",
+                    name: "type",
+                    value: type
+                },{
+                    xtype: "textfield",
+                    name: "name",
+                    value: data["name"],
+                    fieldLabel: t("name")
+                }, valueField],
                 tbar: ["->", {
                     iconCls: "pimcore_icon_delete",
                     handler: function (hotspotMetaDataWin, subComponen) {
@@ -537,7 +519,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     empty: function (textfield) {
         textfield.setValue("");
-
     },
 
     openElement: function (textfield, type) {

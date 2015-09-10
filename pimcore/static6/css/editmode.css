@@ -267,6 +267,12 @@
     padding-bottom: 3px;
 }
 
+.pimcore_areablock_toolbar .x-btn-button-center {
+    text-align: left;
+    -webkit-box-pack: left;
+    -ms-flex-pack: left;
+    justify-content: left;
+}
 
 
 .pimcore_tag_video {
