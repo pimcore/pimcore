@@ -203,15 +203,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 {header: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
             ];
 
-            var sm;
-
-            if(this.parent.multiselect) {
-                this.selectionColumn = Ext.create('Ext.selection.CheckboxModel', {});
-                sm  = this.selectionColumn;
-            } else {
-                sm = Ext.create('Ext.selection.RowModel', {}); //  Ext.grid.RowSelectionModel({singleSelect:true});
-            }
-
             this.pagingtoolbar = this.getPagingToolbar(t("no_documents_found"));
 
             this.resultPanel = new Ext.grid.GridPanel({
@@ -224,7 +215,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 loadMask: true,
                 columnLines: true,
                 stripeRows: true,
-                selModel: sm,
+                selModel: Ext.create('Ext.selection.RowModel', {}),
                 bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {

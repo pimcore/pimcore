@@ -205,15 +205,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 }
             ];
 
-            var sm;
-
-            if(this.parent.multiselect) {
-                this.selectionColumn = Ext.create('Ext.selection.CheckboxModel', {});
-                sm  = this.selectionColumn;
-            } else {
-                sm = Ext.create('Ext.selection.RowModel', {}); //  Ext.grid.RowSelectionModel({singleSelect:true});
-            }
-
             this.pagingtoolbar = this.getPagingToolbar(t("no_assets_found"));
 
             this.resultPanel = new Ext.grid.GridPanel({
@@ -227,7 +218,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     forceFit: true
                 },
                 plugins: ['gridfilters'],
-                selModel: sm,
+                selModel: Ext.create('Ext.selection.RowModel', {}),
                 bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
