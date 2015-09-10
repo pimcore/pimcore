@@ -361,7 +361,7 @@
 }
 
 
-.pimcore_properties_hidden_checkcol .x-grid3-check-col-td div {
+.pimcore_properties_hidden_checkcol .x-grid-cell-checkcolumn div {
     display:none !important;
 }
 

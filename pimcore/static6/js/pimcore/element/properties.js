@@ -79,7 +79,6 @@ pimcore.element.properties = Class.create({
             });
 
             var customType = new Ext.form.ComboBox({
-                fieldLabel: t('type'),
                 name: "type",
                 valueField: "id",
                 displayField:'name',
@@ -180,23 +179,16 @@ pimcore.element.properties = Class.create({
                 plugins: [
                     this.cellEditing
                 ],
-                tbar: [{
-                    xtype: "tbtext",
-                    text: t('add_a_predefined_property_set') + " "
-                },predefinedcombo,{
+                tbar: [predefinedcombo,{
                     xtype: "button",
                     handler: this.addSetFromPredefined.bind(this, predefinedcombo, predefinedPropertiesStore),
                     iconCls: "pimcore_icon_add"
-                },{
-                    xtype: "tbspacer",
-                    width: 20
                 },"-",{
-                    xtype: "tbspacer",
-                    width: 20
-                },{
                     xtype: "tbtext",
                     text: t('add_a_custom_property') + " "
-                },customKey, customType, {
+                },
+                customKey,
+                customType, {
                     xtype: "button",
                     handler: this.addSetFromUserDefined.bind(this, customKey, customType),
                     iconCls: "pimcore_icon_add"
@@ -297,8 +289,9 @@ pimcore.element.properties = Class.create({
                     }
                 ]
             });
- 
-            store.on("update", this.updateRows.bind(this));
+
+            this.propertyGrid.getView().on("refresh", this.updateRows.bind(this, "view-refresh"));
+
             this.propertyGrid.on("viewready", this.updateRows.bind(this));
             this.propertyGrid.on("afterrender", function() {
                 this.setAutoScroll(true);
@@ -442,6 +435,7 @@ pimcore.element.properties = Class.create({
     },
  
     updateRows: function (event) {
+
         var rows = Ext.get(this.propertyGrid.getEl().dom).query(".x-grid-row");
  
         for (var i = 0; i < rows.length; i++) {
@@ -453,13 +447,13 @@ pimcore.element.properties = Class.create({
                 var data = this.propertyGrid.getStore().getAt(storeIndex).data;
 
                 // hide checkcolumn at inherited properties
-                //if (data.inherited == true) {
-                //    Ext.get(rows[i]).addCls("pimcore_properties_hidden_checkcol");
-                //}
-                //
-                //if(in_array(data.name, this.disallowedKeys)) {
-                //     Ext.get(rows[i]).addCls("pimcore_properties_hidden_row");
-                //}
+                if (data.inherited == true) {
+                    Ext.get(rows[i]).addCls("pimcore_properties_hidden_checkcol");
+                }
+
+                if(in_array(data.name, this.disallowedKeys)) {
+                    Ext.get(rows[i]).findParentNode("table", 10, true).addCls("pimcore_properties_hidden_row");
+                }
 
                 if (data.type == "document" || data.type == "asset" || data.type == "object") {
                     if (data.inherited == false) {
