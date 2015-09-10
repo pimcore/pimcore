@@ -101,14 +101,15 @@ pimcore.object.customviews.settings = Class.create({
             };
         }
 
-        this.panel.add(
-            {
+        this.panel.add({
             xtype: 'panel',
+            border: true,
+            style: "margin-bottom: 10px",
+            bodyStyle: "padding: 10px",
             id: "customviews_fieldset_" + this.entryCount,
             items: [
             {
-                xtype: "fieldset",
-                border: false,
+                xtype: "panel",
                 items: [
                     {
                         xtype: "textfield",
@@ -123,13 +124,7 @@ pimcore.object.customviews.settings = Class.create({
                         name: "icon_" + this.entryCount,
                         width: 500,
                         value: data.icon
-                    }/*,{
-                     xtype: "textarea",
-                     fieldLabel: t("condition"),
-                     name: "condition_" + this.entryCount,
-                     width: 400,
-                     value: data.condition
-                     }*/,
+                    },
                     {
                         xtype: "textfield",
                         fieldLabel: t("root_folder"),
@@ -172,7 +167,7 @@ pimcore.object.customviews.settings = Class.create({
                         xtype: "multiselect",
                         fieldLabel: t("allowed_classes"),
                         name: "classes_" + this.entryCount,
-                        width: 'auto',
+                        width: 500,
                         height: 100,
                         store: pimcore.globalmanager.get("object_types_store"),
                         editable: false,
@@ -184,7 +179,7 @@ pimcore.object.customviews.settings = Class.create({
             }
             ],
 
-            buttons: [
+            bbar: [ '->',
                 {
                     text: t("remove"),
                     iconCls: "pimcore_icon_delete",

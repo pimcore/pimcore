@@ -39,7 +39,8 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage) {
         autoSync: true,
         pageSize: itemsPerPage,
         fields: fields,
-        remoteSort: true
+        remoteSort: true,
+        remoteFilter: true
     });
 
     return store;

@@ -42,56 +42,29 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             readerFields.push({name: this.fields[i], allowBlank: true});
         }
 
+        var itemsPerPage = 20;
         var url =  "/admin/key-value/groups?";
-        var proxy = {
-            type: 'ajax',
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
-            },
-            reader: {
-                type: 'json',
-                rootProperty: 'data'
-            },
-            writer: {
-                type: 'json',
-                writeAllFields: true,
-                rootProperty: 'data',
-                encode: 'true'
-            },
-            extraParams: this.baseParams
-        };
+
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url,
+            readerFields,
+            itemsPerPage
+        );
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
 
-        var listeners = {};
-
-        listeners.exception = function (conn, mode, action, request, response, store) {
+        this.store.addListener("exception", function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
                 this.store.rejectChanges();
             }
-        }.bind(this);
-
-
-        this.store = new Ext.data.Store({
-            autoSync: true,
-            idProperty: 'id',
-            remoteSort: true,
-            proxy: proxy,
-            fields: readerFields,
-            listeners: listeners
-        });
-
-
+        }.bind(this));
 
         var gridColumns = [];
 
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name',editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
-
+        gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
 
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
@@ -124,7 +97,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
-            width: 30,
+            width: 40,
             items: [
                 {
                     tooltip: t('remove'),
@@ -146,28 +119,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             ]
         });
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            //TODO translate
-            emptyMsg: t("keyvalue_no_groups")
-        });
-
-        var selectFilterFields;
-        var configuredFilters = [{
-            type: "string",
-            dataIndex: "name"
-        },{
-            type: "string",
-            dataIndex: "description"
-        }];
-        //this.gridfilters = new Ext.ux.grid.GridFilters({
-        //    encode: true,
-        //    local: false,
-        //    filters: configuredFilters
-        //});
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
@@ -178,7 +129,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         var gridConfig = {
             frame: false,
             store: this.store,
-            border: true,
             columns: gridColumns,
             loadMask: true,
             columnLines: true,

@@ -81,12 +81,12 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $orderKey = "name";
             $order = "ASC";
 
-            if ($this->_getParam("dir")) {
-                $order = $this->_getParam("dir");
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $orderKey = $sortingSettings['orderKey'];
             }
-
-            if ($this->_getParam("sort")) {
-                $orderKey = $this->_getParam("sort");
+            if($sortingSettings['order']) {
+                $order  = $sortingSettings['order'];
             }
 
             if ($this->_getParam("limit")) {
@@ -190,12 +190,12 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $orderKey = "name";
             $order = "ASC";
 
-            if ($this->_getParam("dir")) {
-                $order = $this->_getParam("dir");
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $orderKey = $sortingSettings['orderKey'];
             }
-
-            if ($this->_getParam("sort")) {
-                $orderKey = $this->_getParam("sort");
+            if($sortingSettings['order']) {
+                $order  = $sortingSettings['order'];
             }
 
             if ($this->_getParam("overrideSort") == "true") {

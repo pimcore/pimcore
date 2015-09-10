@@ -50,52 +50,32 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             readerFields.push({name: this.fields[i]});
         }
 
+        var itemsPerPage = 20;
         var url = "/admin/key-value/properties?";
 
-        var proxy = {
-            type: 'ajax',
-            reader: {
-                type: 'json',
-                rootProperty: 'data'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
-            },
-            writer: {
-                type: 'json',
-                writeAllFields: true,
-                rootProperty: 'data',
-                encode: 'true'
-            },
-            extraParams: this.baseParams
-        };
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url,
+            readerFields,
+            itemsPerPage
+        );
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+
 
         var listeners = {};
 
-        listeners.write = function(store, action, result, response, rs) {};
-        listeners.exception = function (conn, mode, action, request, response, store) {
+        this.store.addListener("exception", function (conn, mode, action, request, response, store) {
             if(action == "update") {
                 Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
                 this.store.rejectChanges();
             }
-        }.bind(this);
+        }.bind(this));
 
-
-        this.store = new Ext.data.Store({
-            autoSync: true,
-            proxy: proxy,
-            fields: readerFields,
-            listeners: listeners
-        });
 
         var gridColumns = [];
 
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name',editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({header: t("description"), flex: 30, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type',
             editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
@@ -114,7 +94,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
-            width: 30,
+            width: 40,
             items: [
                 {
                     tooltip: t("keyvalue_detailed_configuration"),
@@ -180,7 +160,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
-            width: 30,
+            width: 40,
             items: [
                 {
                     tooltip: t('keyvalue_find_group'),
@@ -199,7 +179,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
-            width: 30,
+            width: 40,
             items: [
                 {
                     tooltip: t('remove'),
@@ -222,14 +202,6 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         });
 
         gridColumns.push({header: t("keyvalue_col_translator"), width: 40, sortable: true, dataIndex: 'translator'});
-
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("keyvalue_no_keys")
-        });
 
         //var configuredFilters = [{
         //    type: "string",
@@ -266,7 +238,6 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         var gridConfig = {
             frame: false,
             store: this.store,
-            border: true,
             columns: gridColumns,
             loadMask: true,
             columnLines: true,
