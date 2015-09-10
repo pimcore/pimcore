@@ -83,13 +83,13 @@ pimcore.document.pages.settings = Class.create({
                     iconCls: "pimcore_icon_delete",
                     style: "float:left;",
                     handler: function (compositeField, el) {
+                        this.urlAliasPanel.remove(compositeField);
                         this.urlAliasPanel.updateLayout();
                     }.bind(this, compositeField)
                 },{
                     xtype: "box",
                     style: "clear:both;"
                 }]);
-
 
                 this.urlAliasPanel.add(compositeField);
 
