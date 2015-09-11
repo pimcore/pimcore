@@ -151,32 +151,27 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             ]
         });
 
+        var dateRenderer =  function(d) {
+            if (d !== undefined) {
+                var date = new Date(d * 1000);
+                return Ext.Date.format(date, "Y-m-d H:i:s");
+            } else {
+                return "";
+            }
+        };
+
+
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
                 hidden: true,
-                renderer: function(d) {
-                    if (d !== undefined) {
-                        var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
-                    }
-                }
+                renderer: dateRenderer
             }
         );
 
         gridColumns.push(
             {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
                 hidden: true,
-                renderer: function(d) {
-                    if (d !== undefined) {
-                        var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
-                    }
-                }
-            }
+                renderer: dateRenderer            }
         );
 
         gridColumns.push({
