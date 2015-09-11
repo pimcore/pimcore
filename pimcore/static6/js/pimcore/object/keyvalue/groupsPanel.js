@@ -152,12 +152,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
 
         this.grid = Ext.create('Ext.grid.Panel', gridConfig);
 
-        this.grid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
-
-        this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
-        }.bind(this));
-
         this.grid.on("sortchange", function(grid, sortinfo) {
             this.sortinfo = sortinfo;
         }.bind(this));
@@ -167,10 +161,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         this.layout.removeAll();
         this.layout.add(this.grid);
         this.layout.updateLayout();
-    },
-
-    updateGridHeaderContextMenu: function(grid) {
-        // not needed for now.
     },
 
     onAdd: function () {
@@ -222,11 +212,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         else {
             Ext.Msg.alert(t("keyvalue_configuration"), t("keyvalue_invalidname"));
         }
-    },
-
-
-    onRowContextmenu: function (grid, rowIndex, event) {
-        // no context menu
     }
 
 });
