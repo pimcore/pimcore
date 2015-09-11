@@ -60,6 +60,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             iconCls: "pimcore_icon_droptarget",
             title: this.fieldConfig.title,
             html: html,
+            border: true,
+            style: "margin-bottom: 10px",
             cls: "object_field"
         };
 

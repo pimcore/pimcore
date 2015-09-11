@@ -235,10 +235,6 @@
     list-style: disc;
 }
 
-.pimcore_tag_wysiwyg p {
-    padding: 10px 0;
-}
-
 .pimcore_tag_wysiwyg blockquote {
     padding-left: 20px;
     border-left: 3px solid #666666;
@@ -1082,7 +1078,9 @@ span.warning {
     border: 1px solid #d0d0d0;
 }
 
-
+.object_field .x-panel-header-title-default > .x-title-icon-wrap-default > .x-title-icon-default {
+    width: 24px;
+}
 
 
     /* ------------------------------------------------------------------------------------------------------------- */
