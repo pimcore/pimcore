@@ -86,7 +86,8 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             autoSync: true,
             proxy: proxy,
             fields: readerFields,
-            listeners: listeners
+            listeners: listeners,
+            remoteFilter: true
         });
 
         var gridColumns = [];
@@ -97,6 +98,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 width: 200,
                 sortable: true,
                 dataIndex: 'name',
+                filter: 'string',
                 editor: new Ext.form.TextField({})
             }
 
@@ -212,7 +214,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             //clicksToEdit: 2
         });
 
-        var plugins = [cellEditing];
+        var plugins = ['gridfilters', cellEditing];
 
         var gridConfig = {
             frame: false,
@@ -306,7 +308,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                         this.store.reload({
                                 callback: function() {
                                     var rowIndex = this.store.find('name', value);
-                                    // alert(rowIndex);
                                     if (rowIndex != -1) {
                                         var sm = this.grid.getSelectionModel();
                                         sm.select(rowIndex);
