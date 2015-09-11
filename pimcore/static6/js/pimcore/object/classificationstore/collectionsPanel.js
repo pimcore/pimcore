@@ -215,7 +215,8 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             autoSync: true,
             proxy: proxy,
             fields: readerFields,
-            listeners: listeners
+            listeners: listeners,
+            remoteFilter: true
         });
 
 
@@ -289,7 +290,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             //clicksToEdit: 2
         });
 
-        var plugins = [cellEditing];
+        var plugins = ['gridfilters', cellEditing];
 
         var gridConfig = {
             frame: false,
