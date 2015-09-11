@@ -214,12 +214,11 @@ class Admin {
             return true;
         }
 
-        $config = \Pimcore\Config::getSystemConfig();
-
         if(isset($_REQUEST["extjs6"])) {
             return (bool) $_REQUEST["extjs6"];
         }
 
+        $config = \Pimcore\Config::getSystemConfig();
         $mainSwitch = $config->general->extjs6;
         if ($mainSwitch) {
             return true;

@@ -339,6 +339,14 @@ class Areablock extends Model\Document\Tag {
     }
 
     protected function getToolBarDefaultConfig () {
+
+        $buttonWidth = 168;
+
+        // @extjs6
+        if(!\Pimcore\Tool\Admin::isExtJS6()) {
+            $buttonWidth = 154;
+        }
+
         return array(
             "areablock_toolbar" => array(
                 "title" => "",
@@ -346,7 +354,7 @@ class Areablock extends Model\Document\Tag {
                 "x" => 20,
                 "y" => 50,
                 "xAlign" => "left",
-                "buttonWidth" => 168,
+                "buttonWidth" => $buttonWidth,
                 "buttonMaxCharacters" => 20
             )
         );
