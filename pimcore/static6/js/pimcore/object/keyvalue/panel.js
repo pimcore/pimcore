@@ -33,6 +33,11 @@ pimcore.object.keyvalue.configpanel = Class.create({
         return "/admin/key-value/import";
     },
 
+    activate: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.setActiveItem("pimcore_plugin_keyvalueconfig_panel");
+    },
+
     getTabPanel: function () {
 
         if (!this.panel) {
