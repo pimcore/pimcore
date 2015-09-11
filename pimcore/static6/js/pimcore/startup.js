@@ -116,7 +116,7 @@ Ext.onReady(function () {
 
     Ext.Ajax.method = "GET";
     Ext.Ajax.disableCaching = true;
-    Ext.Ajax.timeout = 900000;
+    Ext.Ajax.setTimeout(900000);
     Ext.Ajax.setDefaultHeaders({
         'X-pimcore-csrf-token': pimcore.settings["csrfToken"],
         'X-pimcore-extjs-version-major': Ext.getVersion().getMajor(),
