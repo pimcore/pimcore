@@ -972,7 +972,9 @@ pimcore.document.tree = Class.create({
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
-                            this.focus(true,500);
+                            window.setTimeout(function () {
+                                this.focus(true);
+                            }.bind(this), 100);
                         },
                         keyup: function (el) {
                             pageForm.getComponent("name").setValue(el.getValue());
@@ -1023,10 +1025,12 @@ pimcore.document.tree = Class.create({
 
             messageBox.show();
 
-            var keyMap = new Ext.KeyMap(messageBox.getEl(), {
-                key: Ext.EventObject.ENTER,
-                handler: submitFunction.bind(this)
+            var map = new Ext.util.KeyMap({
+                target: messageBox.getEl(),
+                key:  Ext.event.Event.ENTER,
+                fn: submitFunction.bind(this)
             });
+
         } else {
 
             if (type == "folder") {
