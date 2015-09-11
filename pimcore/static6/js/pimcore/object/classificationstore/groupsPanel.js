@@ -132,7 +132,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             clicksToEdit: 2
         });
 
-        var plugins = [cellEditing];
+        var plugins = ['gridfilters', cellEditing];
 
         var gridConfig = {
             frame: false,
@@ -226,7 +226,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             autoSync: true,
             proxy: proxy,
             fields: readerFields,
-            listeners: listeners
+            listeners: listeners,
+            remoteFilter: true
         });
 
 
@@ -242,31 +243,26 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             editor: new Ext.form.NumberField()
         });
 
+        var dateRenderer =  function(d) {
+            if (d !== undefined) {
+                var date = new Date(d * 1000);
+                return Ext.Date.format(date, "Y-m-d H:i:s");
+            } else {
+                return "";
+            }
+        };
+
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
                 hidden: true,
-                renderer: function(d) {
-                    if (d !== undefined) {
-                        var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
-                    }
-                }
+                renderer: dateRenderer
             }
         );
 
         gridColumns.push(
             {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
                 hidden: true,
-                renderer: function(d) {
-                    if (d !== undefined) {
-                        var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
-                    }
-                }
+                renderer: dateRenderer
             }
         );
 
@@ -312,7 +308,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             //clicksToEdit: 2
         });
 
-        var plugins = [cellEditing];
+        var plugins = ['gridfilters', cellEditing];
 
         var gridConfig = {
             frame: false,
