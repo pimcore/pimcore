@@ -50,6 +50,8 @@ pimcore.object.helpers.edit = {
                 layout: "accordion",
                 forceLayout: true,
                 hideMode: "offsets",
+                padding: 0,
+                bodyStyle: "padding: 0",
                 listeners: panelListenerConfig
             },
             fieldset: {
@@ -61,10 +63,10 @@ pimcore.object.helpers.edit = {
             },
             panel: {
                 xtype: "panel",
-                padding: 10,
                 autoScroll: true,
                 forceLayout: true,
                 monitorResize: true,
+                bodyStyle: "padding: 10px",
                 border: false,
                 defaults: {
                     width: "auto"
@@ -87,8 +89,8 @@ pimcore.object.helpers.edit = {
                 hideMode: "offsets",
                 enableTabScroll: true,
                 listeners: {
-                    afterrender:tabpanelCorrection,
-                    tabchange: tabpanelCorrection
+                    //afterrender:,
+                    //tabchange: tabpanelCorrection
                 }
             },
             button: {
@@ -181,7 +183,7 @@ pimcore.object.helpers.edit = {
                 tmpLayoutId = Ext.id();
 
                 newConfig.id = tmpLayoutId;
-                newConfig.cls = "objectlayout_element_"+newConfig.name;
+                newConfig.cls = "objectlayout_element_"+newConfig.name + " objectlayout_element_"+l.fieldtype;
             }
 
 

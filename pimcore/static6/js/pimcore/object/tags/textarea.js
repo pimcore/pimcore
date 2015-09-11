@@ -51,10 +51,10 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
 
 
         if (intval(this.fieldConfig.width) < 1) {
-            this.fieldConfig.width = 100;
+            this.fieldConfig.width = 250;
         }
         if (intval(this.fieldConfig.height) < 1) {
-            this.fieldConfig.height = 100;
+            this.fieldConfig.height = 250;
         }
 
         var labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;

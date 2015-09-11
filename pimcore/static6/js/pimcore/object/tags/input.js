@@ -67,7 +67,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
         } else {
-            input.width = 150;
+            input.width = 250;
         }
 
         if (this.fieldConfig.labelWidth) {
