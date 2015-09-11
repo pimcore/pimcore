@@ -15,11 +15,7 @@
 @import 'ext-modifications.css';
 
 #pimcore_body {
-    /*padding: 0 0 0 5px;*/
-    padding-top: 10px !important;
-    padding-right: 10px !important;
-    padding-left: 70px !important;
-    padding-bottom: 20px !important;
+    padding: 10px 10px 5px 70px !important;
     background: #222;
 }
 
@@ -1105,10 +1101,18 @@ span.warning {
 
 .pimcore_statusbar {
     background-color: #222;
-    padding: 0 2px;
+    padding: 5px 0 0 0;
 }
 
 .pimcore_statusbar .x-toolbar-text-default {
+    color: #fff;
+}
+
+.pimcore_statusbar .fa {
+    padding-right: 5px;
+}
+
+.pimcore_statusbar a {
     color: #fff;
 }
 
