@@ -121,7 +121,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/class/get-document-types'
+                url: '/admin/class/get-asset-types'
             },
             fields: ["text"]
         });

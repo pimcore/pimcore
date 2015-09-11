@@ -469,7 +469,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     activate: function () {
         var tabId = "object_" + this.id;
-        this.tabPanel.setActiveItem(tabId);
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.setActiveItem(tabId);
     },
 
     getSaveData : function (only, omitMandatoryCheck) {

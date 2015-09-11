@@ -62,10 +62,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         var restrictTo = null;
 
         if (this.fieldConfig.restrictTo) {
-            console.log(this.fieldConfig.restrictTo);
-            //TODO ERROR!!!
-            //restrictTo = this.fieldConfig.restrictTo.split(",");
-            restrictTo = ["TODO"];
+            restrictTo = this.fieldConfig.restrictTo.split(",");
         }
 
         for (var i = 0; i < this.fieldConfig.options.length; i++) {
@@ -101,7 +98,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
         } else {
-            options.width = 100;
+            options.width = 200;
         }
 
         options.width += options.labelWidth;

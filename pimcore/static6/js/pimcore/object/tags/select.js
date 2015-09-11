@@ -125,8 +125,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
         var restrictTo = null;
         if (this.fieldConfig.restrictTo && this.fieldConfig.restrictTo.length > 0) {
-            restrictTo = this.fieldConfig.restrictTo;
-            //restrictTo = this.fieldConfig.restrictTo.split(",");
+            restrictTo = this.fieldConfig.restrictTo.split(",");
         }
 
         for (var i = 0; i < this.fieldConfig.options.length; i++) {

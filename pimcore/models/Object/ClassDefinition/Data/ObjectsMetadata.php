@@ -573,6 +573,13 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
      * @return $this
      */
     public function setVisibleFields($visibleFields) {
+        /**
+         * @extjs6
+         */
+        if(is_array($visibleFields)) {
+            $visibleFields = implode(",", $visibleFields);
+        }
+
         $this->visibleFields = $visibleFields;
         return $this;
     }
