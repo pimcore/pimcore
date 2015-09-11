@@ -1099,6 +1099,15 @@ span.warning {
     padding: 0 5px;
 }
 
+.pimcore_statusbar {
+    background-color: #222;
+    padding: 0 2px;
+}
+
+.pimcore_statusbar .x-toolbar-text-default {
+    color: #fff;
+}
+
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {
