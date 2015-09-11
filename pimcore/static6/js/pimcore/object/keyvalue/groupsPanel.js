@@ -66,32 +66,26 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name',editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
 
+        var dateRenderer =  function(d) {
+            if (d !== undefined) {
+                var date = new Date(d * 1000);
+                return Ext.Date.format(date, "Y-m-d H:i:s");
+            } else {
+                return "";
+            }
+        };
+
         gridColumns.push(
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
+            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 150,
                 hidden: true,
-                renderer: function(d) {
-                    if (d !== undefined) {
-                        var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
-                    }
-                }
+                renderer: dateRenderer
             }
         );
 
         gridColumns.push(
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
+            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 150,
                 hidden: true,
-                renderer: function(d) {
-                    if (d !== undefined) {
-                        var date = new Date(d * 1000);
-                        return date.format("Y-m-d H:i:s");
-                    } else {
-                        return "";
-                    }
-                }
-            }
+                renderer: dateRenderer            }
         );
 
         gridColumns.push({
@@ -124,7 +118,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             clicksToEdit: 1
         });
 
-        var plugins = ['gridfilters', this.cellEditing];
+        var plugins = [this.cellEditing];
 
         var gridConfig = {
             frame: false,
@@ -151,10 +145,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
         } ;
 
         this.grid = Ext.create('Ext.grid.Panel', gridConfig);
-
-        this.grid.on("sortchange", function(grid, sortinfo) {
-            this.sortinfo = sortinfo;
-        }.bind(this));
 
         this.store.load();
 
