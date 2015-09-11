@@ -32,15 +32,24 @@ pimcore.element.scheduler = Class.create({
                 for (var i = 0; i < this.element.data.scheduledTasks.length; i++) {
                     rawTask = this.element.data.scheduledTasks[i];
                     d = new Date(intval(rawTask.date) * 1000);
-                    tasksData.push([Date.parse(Ext.Date.format(d, "n/j/Y"), "n/j/Y"),
-
-                        Ext.Date.format(d, "H:i"), rawTask.action,
-                                                            rawTask.version, rawTask.active]);
+                    tasksData.push([d, Ext.Date.format(d, "H:i"), rawTask.action, rawTask.version, rawTask.active]);
                 }
             }
 
             var store = new Ext.data.SimpleStore({
-                fields: ['date', 'time',"action","version","active"],
+                fields: [{name: "date", convert: function (v, rec) {
+                    var ret = v;
+                    if(v instanceof Date) {
+                        ret = Ext.Date.format(v, "Y-m-d");
+                    }
+                    return ret;
+                }}, {name: "time", convert: function (v, rec) {
+                    var ret = v;
+                    if(v instanceof Date) {
+                        ret = Ext.Date.format(v, "H:i");
+                    }
+                    return ret;
+                }}, "action","version","active"],
                 data: tasksData
             });
 
@@ -116,17 +125,10 @@ pimcore.element.scheduler = Class.create({
             });
 
             var propertiesColumns = [
-                {header: t("date"), width: 100, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField(),
-                    renderer: function(d) {
-                        return  Ext.Date.format(d, "Y-m-d");
-                    }
-                },
-                {header: t("time"), width: 80, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
-                    format: "H:i"
-                    }),
-                    renderer: function(d) {
-                        return  Ext.Date.format(d, "H:i");
-                    }
+                {header: t("date"), width: 120, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField()                },
+                {header: t("time"), width: 100, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
+                        format: "H:i",
+                    })
                 },
                 {header: t("action"), width: 100, sortable: false, dataIndex: 'action', editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
@@ -187,7 +189,6 @@ pimcore.element.scheduler = Class.create({
                 stripeRows: true,
                 trackMouseOver: true,
                 columnLines: true,
-                //plugins: checkColumn,
                 columns : propertiesColumns,
                 tbar: [
                     {
@@ -251,7 +252,7 @@ pimcore.element.scheduler = Class.create({
 
         for (var i = 0; i < data.length; i++) {
             values.push({
-                date:  Ext.Date.format(data[i].data.date, "Y-m-d"),
+                date:  data[i].data.date,
                 time: data[i].data.time,
                 action: data[i].data.action,
                 version: data[i].data.version,
