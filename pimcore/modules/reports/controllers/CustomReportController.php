@@ -143,8 +143,12 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $offset = $this->getParam("start", 0);
         $limit = $this->getParam("limit", 40);
-        $sort = $this->getParam("sort");
-        $dir = $this->getParam("dir");
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if($sortingSettings['orderKey']) {
+            $sort = $sortingSettings['orderKey'];
+            $dir = $sortingSettings['order'];
+        }
+
         $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
 
         $drillDownFilters = $this->getParam("drillDownFilters", null);

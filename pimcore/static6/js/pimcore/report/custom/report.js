@@ -91,13 +91,13 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         proxy.extraParams.name = this.config["name"];
 
         this.store.addListener('load', function() {
-            var filterData = this.store.getFilters();
+            var filterData = this.store.getFilters().items;
 
             if(this.chartStore) {
                 this.chartStore.load({
                     params: {
                         name: this.config["name"],
-//                                filter: this.gridFilters.buildQuery(filterData).filter
+                        filter: proxy.encodeFilters(filterData)
                     }
                 });
             }
@@ -109,7 +109,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 } else {
                     this.drillDownStores[j].load({
                         params: {
-//                                    filter: this.gridFilters.buildQuery(filterData).filter
+                            filter: proxy.encodeFilters(filterData)
                         }
                     });
                 }
@@ -117,84 +117,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         }.bind(this));
 
-    /*    this.store = new Ext.data.JsonStore({
-            autoDestroy: true,
-            proxy: {
-                type: 'ajax',
-                url: "/admin/reports/custom-report/data",
-                extraParams: {
-                    name: this.config["name"]
-                }
-            },
-            remoteSort: true,
-            listeners: {
-                load: function() {
-                    var filterData = this.store.getFilters();
-
-                    if(this.chartStore) {
-                        this.chartStore.load({
-                            params: {
-                                name: this.config["name"],
-//                                filter: this.gridFilters.buildQuery(filterData).filter
-                            }
-                        });
-                    }
-
-                    for(var j = 0; j < this.drillDownStores.length; j++) {
-                        if(this.drillDownStores[j].notReload) {
-                            //to prevent reopening of combo box
-                            this.drillDownStores[j].notReload = false;
-                        } else {
-                            this.drillDownStores[j].load({
-                                params: {
-//                                    filter: this.gridFilters.buildQuery(filterData).filter
-                                }
-                            });
-                        }
-                    }
-
-                }.bind(this)
-            },
-            fields: storeFields
-        });
-
-        this.store.load();
-*/
- /*       this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 40,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text: t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store: [
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode: "local",
-            width: 50,
-            value: 20,
-            triggerAction: "all",
-            listeners: {
-                select: function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));
-*/
         var topBar = this.buildTopBar(drillDownFilterDefinitions);
 
         topBar.push("->");
@@ -204,15 +126,15 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             iconCls: "pimcore_icon_export",
             handler: function () {
                 var query = "";
-                var filterData = this.store.getFilters();
+                var filterData = this.store.getFilters().items;
 
                 if(filterData.length > 0) {
-                    query = "filter=" + encodeURIComponent(this.gridFilters.buildQuery(filterData).filter);
+                    query = "filter=" + encodeURIComponent(proxy.encodeFilters(filterData));
                 } else {
                     query = "filter=";
                 }
 
-                query += "&name=" + this.config.name;
+                query += "&extjs6=1&name=" + this.config.name;
 
                 if(this.drillDownFilters) {
                     var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);
@@ -268,15 +190,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             proxy.extraParams.name = this.config["name"];
             proxy.extraParams.field = drillDownFilterDefinitions[i]["name"];
 
-            /*var drillDownStore = new Ext.data.JsonStore({
-                url: '/admin/reports/custom-report/drill-down-options',
-                root: 'data',
-                baseParams: {
-                    name: this.config["name"],
-                    field: drillDownFilterDefinitions[i]["name"]
-                },
-                fields: ['value']
-            });*/
             this.drillDownStores.push(drillDownStore);
 
             drillDownFilterComboboxes.push({
@@ -289,13 +202,16 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                         var value = combo.getValue();
                         this.drillDownFilters[fieldname] = value;
 
-                        this.store.setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                        var proxy = this.store.getProxy();
+                        proxy.extraParams['drillDownFilters[' + fieldname + ']'] = value;
                         if(this.chartStore) {
-                            this.chartStore.setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                            var chartProxy = this.chartStore.getProxy();
+                            chartProxy.extraParams['drillDownFilters[' + fieldname + ']'] = value;
                         }
                         for(var j = 0; j < this.drillDownStores.length; j++) {
                             if(this.drillDownStores[j] != combo.getStore()) {
-                                this.drillDownStores[j].setBaseParam('drillDownFilters[' + fieldname + ']', value);
+                                var drillDownProxy = this.drillDownStores[j].getProxy();
+                                drillDownProxy.extraParams['drillDownFilters[' + fieldname + ']'] = value;
                             } else {
                                 this.drillDownStores[j].notReload = true;
                             }
@@ -324,65 +240,84 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         0xFFD800
     ],
 
-    getChart: function(data) {
-        var chartPanel = null;
+    getChart: function(initData) {
+
+        if(initData) {
+            this.chartInitData = initData;
+        }
+        var data = this.chartInitData;
 
         if(data.chartType == 'line' || data.chartType == 'bar') {
+
             var storeFields = [];
             storeFields.push(data.xAxis);
             for(var i = 0; i < data.yAxis.length; i++) {
                 storeFields.push(data.yAxis[i]);
             }
 
-            this.cartStore = pimcore.helpers.grid.buildDefaultStore(
+            this.chartStore = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/reports/custom-report/chart/?',
                 storeFields,
                 400000000
             );
-            var proxy = this.cartStore.getProxy();
+            var proxy = this.chartStore.getProxy();
             proxy.extraParams.name = this.config["name"];
-
-            /*this.chartStore = new Ext.data.JsonStore({
-                autoDestroy: true,
-                url: "/admin/reports/custom-report/chart",
-                root: 'data',
-                baseParams: {
-                    name: this.config["name"]
-                },
-                fields: storeFields
-            });*/
 
             var series = [];
             for(var i = 0; i < data.yAxis.length; i++) {
+                var yAxis = data.yAxis[i];
                 series.push({
                     displayName: this.columnLabels[data.yAxis[i]],
-                    type: (data.chartType == 'line' ? 'line' : 'column'),
-                    yField: data.yAxis[i],
-                    style: {
-                        color: this.chartColors[i]
+                    type: (data.chartType == 'line' ? 'line' : 'bar'),
+                    xField: data.xAxis,
+                    yField: yAxis,
+                    marker: {
+                        radius: 4
+                    },
+                    highlight: true,
+                    tooltip: {
+                        trackMouse: true,
+                        renderer: function (tooltip, record, item) {
+                            tooltip.setHtml(record.get(data.xAxis) + ': ' + record.get(yAxis));
+                        }
                     }
                 });
             }
 
-            chartPanel = new Ext.Panel({
-                id:"cartID",
-                region: "north",
+
+            var chart = Ext.create('Ext.chart.CartesianChart', {
+                store: this.chartStore,
+                width: '100%',
                 height: 350,
-                border: false,
-                items: [{
-                    xtype: (data.chartType == 'line' ? 'linechart' : 'columnchart'),
-                    store: this.chartStore,
-                    xField: data.xAxis,
-                    chartStyle: {
-                        padding: 10,
-                        legend: {
-                            display: 'bottom'
-                        }
-                    },
-                    series: series
-                }]
+                insetPadding: 5,
+                innerPadding: 10,
+                legend: {
+                    docked: 'bottom'
+                },
+                interactions: [
+                    'itemhighlight',
+                    {
+                        type: 'panzoom',
+                        zoomOnPanGesture: true
+                    }
+                ],
+                axes: [
+                    {
+                        type: 'numeric',
+                        fields: data.yAxis,
+                        position: 'left',
+                        grid: true
+                    },{
+                        type: 'category',
+                        fields: data.xAxis,
+                        position: 'bottom'
+                    }
+                ],
+                series: series
             });
+
         } else if(data.chartType == 'pie') {
+
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/reports/custom-report/chart/?',
                 [data.pieLabelColumn, data.pieColumn],
@@ -391,57 +326,77 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             var proxy = this.chartStore.getProxy();
             proxy.extraParams.name = this.config["name"];
 
-            /*this.chartStore = new Ext.data.JsonStore({
-                autoDestroy: true,
-                url: "/admin/reports/custom-report/chart",
-                root: 'data',
-                baseParams: {
-                    name: this.config["name"]
-                },
-                fields: [data.pieLabelColumn, data.pieColumn]
-            });*/
-            this.chartStore.load();
-
-            chartPanel = new Ext.Panel({
-                region: "north",
+            var chart = Ext.create('Ext.chart.PolarChart', {
+                xtype: "polar",
+                store: this.chartStore,
+                theme: 'default-gradients',
+                width: '100%',
                 height: 350,
-                border: false,
-                items: [{
-                    xtype: "polar",
-                    store: this.chartStore,
-                    legend: {
-                        //docked: 'right'
-                    },
-                    series: [{
-                        type: 'pie',
-                        xField: data.pieColumn,
-                        label: {
-                            field: data.pieLabelColumn,
-                            display: 'none'
-                        },
-                        donut: 25,
-                        style: {
-                            miterLimit: 10,
-                            lineCap: 'miter',
-                            lineWidth: 2
+                innerPadding: 10,
+                legend: {
+                    docked: 'right'
+                },
+                interactions: ['rotate'],
+                series: [{
+                    type: 'pie',
+                    xField: data.pieColumn,
+                    highlight: true,
+                    tooltip: {
+                        trackMouse: true,
+                        renderer: function (tooltip, record, item) {
+                            tooltip.setHtml(record.get(data.pieLabelColumn) + ': ' + record.get(data.pieColumn) + '%');
                         }
-                    }]
-
-                   /* store: this.chartStore,
-                    xtype: 'piechart',
-                    dataField: data.pieColumn,
-                    categoryField: data.pieLabelColumn,
-                    chartStyle: {
-                        padding: 10,
-                        legend: {
-                            display: 'right'
-                        }
-                    }*/
+                    }
                 }]
             });
-        }
 
-        return chartPanel;
+            //this is needed to display correct data in legend when no label is defined
+            //label cannot be defined, because there is a bug when reloading chartstore with another amount of data entries
+            var series = chart.getSeries()[0];
+            series.provideLegendInfo = function (target) {
+                var me = this,
+                    store = me.getStore();
+
+                console.log("hello");
+
+                if (store) {
+                    var items = store.getData().items,
+                        labelField = data.pieLabelColumn,
+                        xField = me.getXField(),
+                        hidden = me.getHidden(),
+                        i, style, fill;
+
+                    for (i = 0; i < items.length; i++) {
+                        style = me.getStyleByIndex(i);
+                        fill = style.fillStyle;
+                        if (Ext.isObject(fill)) {
+                            fill = fill.stops && fill.stops[0].color;
+                        }
+                        target.push({
+                            name: labelField ? String(items[i].get(labelField)) : xField + ' ' + i,
+                            mark: fill || style.strokeStyle || 'black',
+                            disabled: hidden[i],
+                            series: me.getId(),
+                            index: i
+                        });
+                    }
+                }
+            };
+
+
+        }
+        return chart;
+    },
+
+    getChartPanel: function(data) {
+        this.chartPanel = new Ext.Panel({
+            region: "north",
+            height: 350,
+            border: false,
+            items: [this.getChart(data)]
+        });
+
+        return this.chartPanel;
     },
 
     getPanel: function () {
@@ -466,7 +421,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
                     var items = [];
                     if(data.chartType) {
-                        var chartPanel = this.getChart(data);
+                        var chartPanel = this.getChartPanel(data);
                         if(chartPanel) {
                             items.push(chartPanel);
                         }

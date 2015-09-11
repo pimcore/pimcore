@@ -161,20 +161,46 @@ class Sql extends AbstractAdapter {
         if($filters) {
             if(is_array($filters)) {
                 foreach ($filters as $filter) {
-                    if($filter["type"] == "string") {
-                        $condition[] = $db->quoteIdentifier($filter["field"]) . " LIKE " . $db->quote("%" . $filter["value"] . "%");
-                    } else if($filter["type"] == "numeric") {
-                        $compMapping = array(
-                            "lt" => "<",
-                            "gt" => ">",
-                            "eq" => "="
-                        );
-                        if($compMapping[$filter["comparison"]]) {
-                            $condition[] = $db->quoteIdentifier($filter["field"]) . " " . $compMapping[$filter["comparison"]] . " " . $db->quote($filter["value"]);
+                    if (\Pimcore\Tool\Admin::isExtJS6()) {
+                        $operator = $filter['operator'];
+                        switch ($operator) {
+                            case 'like':
+                                $condition[] = $db->quoteIdentifier($filter["property"]) . " LIKE " . $db->quote("%" . $filter["value"] . "%");
+                                break;
+                            case "lt":
+                            case "gt":
+                            case "eq":
+
+                                $compMapping = array(
+                                    "lt" => "<",
+                                    "gt" => ">",
+                                    "eq" => "="
+                                );
+
+                                $condition[] = $db->quoteIdentifier($filter["property"]) . " " . $compMapping[$operator] . " " . $db->quote($filter["value"]);
+                                break;
+                            case "=":
+                                $condition[] = $db->quoteIdentifier($filter["property"]) . " = " . $db->quote((int)$filter["value"]);
+                                break;
                         }
-                    } else if ($filter["type"] == "boolean") {
-                        $condition[] = $db->quoteIdentifier($filter["field"]) . " = " . $db->quote((int)$filter["value"]);
-                    } else if ($filter["type"] == "date") {
+
+                    } else {
+                        if($filter["type"] == "string") {
+                            $condition[] = $db->quoteIdentifier($filter["field"]) . " LIKE " . $db->quote("%" . $filter["value"] . "%");
+                        } else if($filter["type"] == "numeric") {
+                            $compMapping = array(
+                                "lt" => "<",
+                                "gt" => ">",
+                                "eq" => "="
+                            );
+                            if($compMapping[$filter["comparison"]]) {
+                                $condition[] = $db->quoteIdentifier($filter["field"]) . " " . $compMapping[$filter["comparison"]] . " " . $db->quote($filter["value"]);
+                            }
+                        } else if ($filter["type"] == "boolean") {
+                            $condition[] = $db->quoteIdentifier($filter["field"]) . " = " . $db->quote((int)$filter["value"]);
+                        } else if ($filter["type"] == "date") {
+
+                        }
 
                     }
                 }
