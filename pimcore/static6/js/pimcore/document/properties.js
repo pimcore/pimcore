@@ -24,22 +24,11 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
 
     getPropertyData: function(name){
 
-        // language
-        var propertyData;
-        var record;
-        var recordIndex = this.propertyGrid.getStore().findBy(function (name, rec, id) {
-            if(rec.get("name") == name) {
-                return true;
-            }
-        }.bind(this,name));
-        if(recordIndex >= 0) {
-            record = this.propertyGrid.getStore().getAt(recordIndex);
-            if(record.get("data")) {
-                propertyData = record.get("data");
-            }
+        if(this.element.data.properties[name]) {
+            return this.element.data.properties[name]["data"];
         }
-        return propertyData;
 
+        return null;
     },
 
 

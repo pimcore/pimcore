@@ -149,7 +149,15 @@ pimcore.element.properties = Class.create({
 
                     return v;
                 }},"inherited","all",{name: 'inheritable', type: 'bool', mapping: "inheritable"}, "config"],
-                groupField: 'inherited'
+                groupField: 'inherited',
+                filters: [
+                    function(item) {
+                        if(in_array(item.get("name"), this.disallowedKeys)) {
+                            return false;
+                        }
+                        return true;
+                    }.bind(this)
+                ]
             });
 
             var checkColumn = Ext.create('Ext.grid.column.Check', {
@@ -291,6 +299,9 @@ pimcore.element.properties = Class.create({
             });
 
             this.propertyGrid.getView().on("refresh", this.updateRows.bind(this, "view-refresh"));
+            this.propertyGrid.getView().on("afterrender", this.updateRows.bind(this, "view-afterrender"));
+            this.propertyGrid.getView().on("afterrender", this.updateRows.bind(this, "view-afterrender"));
+            this.propertyGrid.getView().on("viewready", this.updateRows.bind(this, "view-viewready"));
 
             this.propertyGrid.on("viewready", this.updateRows.bind(this));
             this.propertyGrid.on("afterrender", function() {
@@ -436,8 +447,11 @@ pimcore.element.properties = Class.create({
  
     updateRows: function (event) {
 
+        console.log(event);
+
         var rows = Ext.get(this.propertyGrid.getEl().dom).query(".x-grid-row");
- 
+        var parentTable;
+
         for (var i = 0; i < rows.length; i++) {
  
             try {
@@ -449,10 +463,6 @@ pimcore.element.properties = Class.create({
                 // hide checkcolumn at inherited properties
                 if (data.inherited == true) {
                     Ext.get(rows[i]).addCls("pimcore_properties_hidden_checkcol");
-                }
-
-                if(in_array(data.name, this.disallowedKeys)) {
-                    Ext.get(rows[i]).findParentNode("table", 10, true).addCls("pimcore_properties_hidden_row");
                 }
 
                 if (data.type == "document" || data.type == "asset" || data.type == "object") {
