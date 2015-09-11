@@ -86,8 +86,7 @@ Ext.require([
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
     'Ext.ux.TabReorderer',
-    'Ext.window.Toast',
-    'Ext.ux.statusbar.StatusBar'
+    'Ext.window.Toast'
 ]);
 
 
@@ -166,31 +165,18 @@ Ext.onReady(function () {
         if (xhrActive < 1) {
             Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static/img/logo.png"/>';
         }
-        var sb = pimcore.globalmanager.get("statusbar");
-        if (sb) {
-            sb.clearStatus();
-        }
+
         });
     Ext.Ajax.on("beforerequest", function () {
         if (xhrActive < 1) {
             Ext.get("pimcore_logo").dom.innerHTML = '<img class="activity" src="/pimcore/static/img/loading.gif"/>';
         }
         xhrActive++;
-        var sb = pimcore.globalmanager.get("statusbar");
-        if (sb) {
-            sb.setStatus({
-                text: t('loading')
-            });
-        }
     });
     Ext.Ajax.on("requestcomplete", function (conn, response, options) {
         xhrActive--;
         if (xhrActive < 1) {
             Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static/img/logo.png"/>';
-        }
-        var sb = pimcore.globalmanager.get("statusbar");
-        if (sb) {
-            sb.clearStatus();
         }
 
         // redirect to login-page if session is expired
@@ -375,49 +361,42 @@ Ext.onReady(function () {
     pimcore.globalmanager.add("personas", personaStore);
 
     // STATUSBAR
-    var statusbar = Ext.create('Ext.ux.StatusBar', {
+    var statusbar = Ext.create('Ext.toolbar.Toolbar', {
         id: 'pimcore_statusbar',
-        statusAlign: 'left',
-        cls: 'pimcore_statusbar_text'
+        cls: 'pimcore_statusbar'
     });
     pimcore.globalmanager.add("statusbar", statusbar);
 
     // check for devmode
     if (pimcore.settings.devmode) {
-        statusbar.add('<div class="pimcore_statusbar_devmode">DEV-MODE</div>');
+        statusbar.add('<em class="fa fa-exclamation-triangle"></em> DEV-MODE');
         statusbar.add("-");
     }
 
     // check for debug
     if (pimcore.settings.debug) {
-        statusbar.add('<div class="pimcore_statusbar_debug">' + t("debug_mode_on") + "</div>");
-        statusbar.add("-");
-    }
-
-    // check for debug
-    if (pimcore.settings.debug) {
-        statusbar.add('<div class="pimcore_statusbar_extjs6">ExtJS ' + Ext.getVersion().getMajor() + '.' + Ext.getVersion().getMinor() + '.' + Ext.getVersion().getPatch() + ' - Beta Feauture </div>');
+        statusbar.add('<em class="fa fa-exclamation-circle"></em> ' + t("debug_mode_on"));
         statusbar.add("-");
     }
 
     // check for maintenance
     if (!pimcore.settings.maintenance_active) {
-        statusbar.add('<div class="pimcore_statusbar_maintenance">'
+        statusbar.add('<em class="fa fa-cog"></em> '
                 + '<a href="http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124463" '
                 + 'target="_blank">'
-                + t("maintenance_not_active") + "</a></div>");
+                + t("maintenance_not_active") + "</a>");
         statusbar.add("-");
     }
 
     //check for mail settings
     if (!pimcore.settings.mail) {
-        statusbar.add('<div class="pimcore_statusbar_mail">' + t("mail_settings_incomplete") + "</div>");
+        statusbar.add('<em class="fa fa-envelope-o"></em> ' + t("mail_settings_incomplete"));
         statusbar.add("-");
     }
 
     statusbar.add("->");
-    statusbar.add('&copy by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
-                + 'pimcore GmbH</a> - pimcore Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('Made with <em class="fa fa-heart-o"></em>&amp; <em class="fa fa-copyright"></em>by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
+                + 'pimcore GmbH</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
 
 
@@ -440,13 +419,13 @@ Ext.onReady(function () {
         pimcore.viewport = Ext.create('Ext.container.Viewport', {
             id:"pimcore_viewport",
             layout:'fit',
-            bbar: statusbar,
             items:[
                 {
                     xtype:"panel",
                     id:"pimcore_body",
                     cls:"pimcore_body",
                     layout:"border",
+                    bbar: statusbar,
                     border:false,
                     items:[
                         Ext.create('Ext.panel.Panel',
