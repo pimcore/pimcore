@@ -86,7 +86,8 @@ Ext.require([
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
     'Ext.ux.TabReorderer',
-    'Ext.window.Toast'
+    'Ext.window.Toast',
+    'Ext.ux.statusbar.StatusBar'
 ]);
 
 
@@ -109,14 +110,11 @@ Ext.onReady(function () {
         }
     };
 
-    // define some globals
-    //Ext.chart.Chart.CHART_URL = '/pimcore/static/js/lib/ext/resources/charts.swf';
-
     Ext.QuickTips.init();
 
-    Ext.Ajax.method = "GET";
-    Ext.Ajax.disableCaching = true;
+    Ext.Ajax.setDisableCaching(true);
     Ext.Ajax.setTimeout(900000);
+    Ext.Ajax.setMethod("GET");
     Ext.Ajax.setDefaultHeaders({
         'X-pimcore-csrf-token': pimcore.settings["csrfToken"],
         'X-pimcore-extjs-version-major': Ext.getVersion().getMajor(),
@@ -294,16 +292,9 @@ Ext.onReady(function () {
         proxy: {
             type: 'ajax',
             url:'/admin/class/get-tree',
-            // Reader is now on the proxy, as the message was explaining
             reader: {
                 type: 'json'
-                //totalProperty:'total',            // default
-                //successProperty:'success'         // default
             }
-            //,                                     // default
-            //writer: {
-            //    type: 'json'
-            //}
         }
     });
 
@@ -328,25 +319,15 @@ Ext.onReady(function () {
         proxy: {
             type: 'ajax',
             url:'/admin/settings/get-available-admin-languages',
-            // Reader is now on the proxy, as the message was explaining
             reader: {
                 type: 'json'
-                //totalProperty:'total',            // default
-                //successProperty:'success'         // default
             }
-            //,                                     // default
-            //writer: {
-            //    type: 'json'
-            //}
         }
     });
 
 
     var languageStore = new Ext.data.Store({
         model: "pimcore.model.languages"
-        //restful:false,
-        //proxy:languageProxy,
-        //reader:languageReader
     });
     languageStore.load();
     pimcore.globalmanager.add("pimcorelanguages", languageStore);
@@ -357,16 +338,9 @@ Ext.onReady(function () {
         proxy: {
             type: 'ajax',
             url:'/admin/settings/get-available-sites',
-            // Reader is now on the proxy, as the message was explaining
             reader: {
                 type: 'json'
-                //totalProperty:'total',            // default
-                //successProperty:'success'         // default
             }
-            //,                                     // default
-            //writer: {
-            //    type: 'json'
-            //}
         }
     });
 
@@ -401,7 +375,7 @@ Ext.onReady(function () {
     pimcore.globalmanager.add("personas", personaStore);
 
     // STATUSBAR
-    /*var statusbar = Ext.create('Ext.ux.StatusBar', {
+    var statusbar = Ext.create('Ext.ux.StatusBar', {
         id: 'pimcore_statusbar',
         statusAlign: 'left',
         cls: 'pimcore_statusbar_text'
@@ -445,7 +419,7 @@ Ext.onReady(function () {
     statusbar.add('&copy by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
                 + 'pimcore GmbH</a> - pimcore Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
-    */
+
 
     // check for updates
     window.setTimeout(function () {
@@ -466,6 +440,7 @@ Ext.onReady(function () {
         pimcore.viewport = Ext.create('Ext.container.Viewport', {
             id:"pimcore_viewport",
             layout:'fit',
+            bbar: statusbar,
             items:[
                 {
                     xtype:"panel",
