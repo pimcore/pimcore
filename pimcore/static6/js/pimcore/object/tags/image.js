@@ -46,15 +46,17 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         if (intval(this.fieldConfig.width) < 1) {
-            this.fieldConfig.width = 100;
+            this.fieldConfig.width = 300;
         }
         if (intval(this.fieldConfig.height) < 1) {
-            this.fieldConfig.height = 100;
+            this.fieldConfig.height = 300;
         }
 
         var conf = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
+            border: true,
+            style: "padding-bottom: 10px",
             tbar: [{
                 xtype: "tbspacer",
                 width: 20,

@@ -78,6 +78,7 @@ pimcore.object.helpers.edit = {
                 xtype: "panel",
                 layout: "border",
                 forceLayout: true,
+                padding: 0,
                 hideMode: "offsets",
                 listeners: panelListenerConfig
             },
@@ -89,16 +90,17 @@ pimcore.object.helpers.edit = {
                 hideMode: "offsets",
                 enableTabScroll: true,
                 listeners: {
-                    //afterrender:,
-                    //tabchange: tabpanelCorrection
+                    afterrender:tabpanelCorrection,
+                    tabchange: tabpanelCorrection
                 }
             },
             button: {
-                xtype: "button"
+                xtype: "button",
+                style: "margin-bottom: 10px;"
             },
             text: {
                 xtype: "panel",
-                padding: 10,
+                style: "margin-bottom: 10px;",
                 autoScroll: true,
                 forceLayout: true,
                 monitorResize: true,
@@ -190,12 +192,6 @@ pimcore.object.helpers.edit = {
             return newConfig;
         }
         else if (l.datatype == "data") {
-
-
-            //// if invisible return false
-            //if (l.fieldtype == "image" || l.fieldtpye == "datetime") {
-            //    return false;
-            //}
 
             if (l.invisible) {
                 return false;

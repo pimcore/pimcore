@@ -379,12 +379,23 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         gridWidth += actionColWidth;
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function(editor, context, eOpts) {
+                    //need to clear cached editors of cell-editing editor in order to
+                    //enable different editors per row
+                    editor.editors.each(Ext.destroy, Ext);
+                    editor.editors.clear();
+                }
+            }
         });
 
 
         this.component = new Ext.create('Ext.grid.Panel', {
             store: this.store,
+            border: true,
+            style: "margin-bottom: 10px",
+            cls: "object_keyvalue_panel",
             columns: {
                 defaults: {
                     sortable: true
@@ -397,7 +408,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 xtype: 'patchedgridview'
             },
             componentCls: cls,
-            //width: gridWidth,
             stripeRows: true,
             plugins: [
                 this.cellEditing
@@ -430,7 +440,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
             },
             autoHeight: autoHeight,
-            //maxHeight: 10,
             bodyCls: "pimcore_object_tag_objects"
         });
 
@@ -490,10 +499,9 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 }
             } else if (type == "bool") {
                 if (value) {
-                    return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
-
+                    return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
                 } else {
-                    return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                    return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                 }
             } else if (type == "range") {
                 // render range value for list view [YouWe]
@@ -653,8 +661,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-
-        return new Ext.grid.GridEditor(property);
+        return property;
     },
 
 

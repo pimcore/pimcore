@@ -26,8 +26,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         this.component = new Ext.Panel({
             title: this.fieldConfig.title,
             height: 370,
-            width: 490,
-            componentCls: 'object_field',
+            width: 650,
+            border: true,
+            style: "margin-bottom: 10px",
+            componentCls: 'object_field object_geo_field',
             html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
                         + '<img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
             bbar: [{
@@ -176,7 +178,14 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             plain: true
         });
 
-        this.searchWindow.on('afterrender', function () {
+        this.alreadyIntitialized = false;
+
+        this.searchWindow.on('afterlayout', function () {
+            if (this.alreadyIntitialized) {
+                return;
+            }
+
+            this.alreadyIntitialized = true;
 
             var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
             var mapZoom = this.fieldConfig.zoom;

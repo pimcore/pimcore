@@ -68,6 +68,8 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
+        } else {
+            input.width = 350;
         }
 
         if (this.fieldConfig["unsigned"]) {

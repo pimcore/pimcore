@@ -1928,6 +1928,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 items: [fieldPath, {
                                     xtype: "button",
                                     iconCls: "pimcore_icon_search",
+                                    style: "margin-left: 5px",
                                     handler: function () {
                                         pimcore.helpers.itemselector(false, function (item) {
                                             if (item) {

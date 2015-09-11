@@ -31,7 +31,7 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             format: "H:i",
             emptyText: "",
-            width: 60,
+            width: 200,
             value: this.data,
             componentCls: "object_field"
         });
@@ -48,7 +48,8 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue: function () {
-        return this.component.getValue();
+        var date = this.component.getValue();
+        return Ext.Date.format(date, "H:i");
     },
 
     getName: function () {

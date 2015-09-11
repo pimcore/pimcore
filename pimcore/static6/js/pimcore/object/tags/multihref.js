@@ -115,7 +115,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.grid.GridPanel({
             store: this.store,
-            //enableDragDrop: true,
+            border: true,
+            style: "margin-bottom: 10px",
 
             selModel: Ext.create('Ext.selection.RowModel', {}),
             viewConfig: {
@@ -137,12 +138,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 },
                 items: [
                     {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("path"), dataIndex: 'path', width: 200},
+                    {header: t("path"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
                         xtype:'actioncolumn',
-                        width:30,
+                        width:40,
                         items:[
                             {
                                 tooltip:t('up'),
@@ -159,7 +160,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype:'actioncolumn',
-                        width:30,
+                        width:40,
                         items:[
                             {
                                 tooltip:t('down'),
@@ -176,7 +177,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype: 'actioncolumn',
-                        width: 30,
+                        width: 40,
                         items: [{
                             tooltip: t('open'),
                             icon: "/pimcore/static/img/icon/pencil_go.png",
@@ -192,7 +193,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype: 'actioncolumn',
-                        width: 30,
+                        width: 40,
                         items: [{
                             tooltip: t('remove'),
                             icon: "/pimcore/static/img/icon/cross.png",
@@ -204,7 +205,6 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 ]
             },
             componentCls: cls,
-            //autoExpandColumn: 'path',
             tbar: {
                 items: toolbarItems,
                 ctCls: "pimcore_force_auto_width",
@@ -541,17 +541,6 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    //sourceIsTreeNode: function (source) {
-    //    try {
-    //        if (source.node) {
-    //            return true;
-    //        }
-    //    } catch (e) {
-    //        return false;
-    //    }
-    //    return false;
-    //},
-
     dndAllowed: function(data, fromTree) {
 
         var i;
@@ -603,6 +592,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         } else if (type == "document" && this.fieldConfig.documentsAllowed) {
             subType = data.type;
             isAllowed = false;
+            console.log(this.fieldConfig.documentTypes);
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
                     if (this.fieldConfig.documentTypes[i].documentTypes == subType) {

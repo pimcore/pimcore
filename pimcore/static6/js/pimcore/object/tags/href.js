@@ -60,6 +60,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.width) {
             href.width = this.fieldConfig.width;
+        } else {
+            href.width = 300;
         }
         href.enableKeyEvents = true;
         href.fieldCls = "pimcore_droptarget_input";
@@ -105,14 +107,17 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         var items = [this.component, {
             xtype: "button",
             iconCls: "pimcore_icon_edit",
+            style: "margin-left: 5px",
             handler: this.openElement.bind(this)
         },{
             xtype: "button",
             iconCls: "pimcore_icon_delete",
+            style: "margin-left: 5px",
             handler: this.empty.bind(this)
         },{
             xtype: "button",
             iconCls: "pimcore_icon_search",
+            style: "margin-left: 5px",
             handler: this.openSearchEditor.bind(this)
         }];
 
@@ -122,6 +127,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 xtype: "button",
                 iconCls: "pimcore_icon_upload_single",
                 cls: "pimcore_inline_upload",
+                style: "margin-left: 5px",
                 handler: this.uploadDialog.bind(this)
             });
         }
@@ -158,6 +164,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.width) {
             href.width = this.fieldConfig.width;
+        } else {
+            href.width = 300;
         }
         href.disabled = true;
 

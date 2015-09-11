@@ -81,6 +81,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         
         var panelConf = {
             autoHeight: true,
+            border: true,
+            style: "margin-bottom: 10px",
             componentCls: "object_field",
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed

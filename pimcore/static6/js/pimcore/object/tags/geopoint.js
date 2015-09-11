@@ -74,9 +74,11 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
         this.component = new Ext.Panel({
             title: this.fieldConfig.title,
+            border: true,
+            style: "margin-bottom: 10px",
             height: 370,
-            width: 490,
-            componentCls: "object_field",
+            width: 650,
+            componentCls: "object_field object_geo_field",
             html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
                   + '<img align="center" width="300" height="300" src="'
                   + this.getMapUrl() + '" /></div>',

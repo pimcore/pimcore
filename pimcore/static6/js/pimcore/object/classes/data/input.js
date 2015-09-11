@@ -79,9 +79,11 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 try {
                     var regexp = new RegExp(regex);
                     if(regexp.test(testString)) {
+                        console.log("success");
                         testStringEl.addCls("class-editor-validation-success");
                         testStringEl.removeCls("class-editor-validation-error");
                     } else {
+                        console.log("error");
                         testStringEl.removeCls("class-editor-validation-success");
                         testStringEl.addCls("class-editor-validation-error");
                     }

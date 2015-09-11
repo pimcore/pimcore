@@ -78,7 +78,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
             }
 
             date.value = tmpDate;
-            time.value = tmpDate.format("H:i");
+            time.value = Ext.Date.format(tmpDate, "H:i");
         }
 
         this.datefield = new Ext.form.DateField(date);

@@ -28,7 +28,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!fieldConfig.width) {
-            fieldConfig.width = 300;
+            fieldConfig.width = 350;
         }
 
         this.fieldConfig = fieldConfig;

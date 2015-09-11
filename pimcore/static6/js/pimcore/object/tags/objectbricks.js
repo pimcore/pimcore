@@ -73,13 +73,14 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
         var panelConf = {
             autoHeight: true,
-            border: false,
             activeTab: 0
         };
         this.tabpanel = new Ext.TabPanel(panelConf);
 
         panelConf = {
             autoHeight: true,
+            border: true,
+            style: "margin-bottom: 10px",
             componentCls: "object_field",
             items: [this.tabpanel]
         };

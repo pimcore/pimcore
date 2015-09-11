@@ -86,8 +86,9 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
         var options = {};
         options.name = this.fieldConfig.name;
-        options.frame = true;
+        options.border = true;
         options.layout = "fit";
+        options.style = "margin-bottom: 10px";
         options.title = this.fieldConfig.title;
         options.componentCls = "object_field";
 

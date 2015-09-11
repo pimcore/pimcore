@@ -67,6 +67,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
         this.button = new Ext.Button({
             iconCls: "pimcore_icon_edit_link",
+            style: "margin-left: 5px",
             handler: this.openEditor.bind(this)
         });
 
@@ -82,7 +83,6 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             layout: 'hbox',
             border: false,
-            fieldLabel: this.fieldConfig.title,
             combineErrors: false,
             items: [this.displayField, this.button],
             componentCls: "object_field"

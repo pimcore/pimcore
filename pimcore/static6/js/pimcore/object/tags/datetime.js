@@ -60,13 +60,13 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit:function () {
 
         var date = {
-            width:100
+            width:130
         };
 
         var time = {
             format:"H:i",
             emptyText:"",
-            width:60
+            width:90
         };
 
         if (this.data) {

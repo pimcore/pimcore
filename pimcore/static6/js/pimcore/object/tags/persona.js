@@ -20,6 +20,6 @@ pimcore.object.tags.persona = Class.create(pimcore.object.tags.select, {
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
-        this.fieldConfig.width = 350;
+        this.fieldConfig.width = 300;
     }
 });

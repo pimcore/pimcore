@@ -88,7 +88,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         this.window = new Ext.Window({
             width: 500,
-            height: 150,
+            height: 200,
             modal: true,
             title: t('add_object'),
             layout: "fit"
@@ -154,7 +154,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         var parentId = this.parentIdField.getValue();
         var classStore = pimcore.globalmanager.get("object_types_store");
         var record = classStore.getAt(classStore.find('text', className));
-        var classId = record.data.id;
+        var classId = record.getId();
 
         var invalid = false;
         if (!parent || !parentId) {
@@ -206,7 +206,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
             for (i = 0; i < this.fieldConfig.classes.length; i++) {
-                allowedClasses.push(this.fieldConfig.classes[i].classes);
+                if(this.fieldConfig.classes[i].classes) {
+                    allowedClasses.push(this.fieldConfig.classes[i].classes);
+                }
             }
         } else if (this.fieldConfig.ownerClassName) {
             allowedClasses = [];
@@ -267,9 +269,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            //enableDragDrop: true,
-
-            //xtype: 'grid',
+            border: true,
+            style: "margin-bottom: 10px",
             viewConfig: {
                 plugins: {
                     ptype: 'gridviewdragdrop',
@@ -287,11 +288,11 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 columns: [
                     {header: 'ID', dataIndex: 'id', width: 50}
                     ,
-                    {header: t("path"), dataIndex: 'path', width: 200},
+                    {header: t("path"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {
                         xtype:'actioncolumn',
-                        width:30,
+                        width:40,
                         items:[
                             {
                                 tooltip:t('up'),
@@ -308,7 +309,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype:'actioncolumn',
-                        width:30,
+                        width:40,
                         items:[
                             {
                                 tooltip:t('down'),
@@ -325,7 +326,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype: 'actioncolumn',
-                        width: 30,
+                        width: 40,
                         items: [
                             {
                                 tooltip: t('open'),
@@ -339,7 +340,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype: 'actioncolumn',
-                        width: 30,
+                        width: 40,
                         items: [
                             {
                                 tooltip: t('remove'),

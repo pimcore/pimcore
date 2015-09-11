@@ -98,7 +98,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
         } else {
-            options.width = 200;
+            options.width = 300;
         }
 
         options.width += options.labelWidth;

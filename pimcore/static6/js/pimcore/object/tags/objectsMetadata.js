@@ -153,10 +153,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             } else if(this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
-                        return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
-
+                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
                     } else {
-                        return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                     }
                 };
                 editor = new Ext.form.Checkbox({});
@@ -189,7 +188,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 40,
                 items: [
                     {
                         tooltip: t('up'),
@@ -206,7 +205,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             });
             columns.push({
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 40,
                 items: [
                     {
                         tooltip: t('down'),
@@ -225,7 +224,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         columns.push({
             xtype: 'actioncolumn',
-            width: 30,
+            width: 40,
             items: [
                 {
                     tooltip: t('open'),
@@ -241,7 +240,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 40,
                 items: [
                     {
                         tooltip: t('remove'),
@@ -290,6 +289,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
+            border: true,
+            style: "margin-bottom: 10px",
             enableDragDrop: true,
             ddGroup: 'element',
             trackMouseOver: true,

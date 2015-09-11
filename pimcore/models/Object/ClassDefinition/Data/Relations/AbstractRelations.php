@@ -81,7 +81,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
             foreach ($classParts as $class) {
                 if(is_array($class)) {
                     $classes[] = $class;
-                } else {
+                } else if($class) {
                     $classes[] = array("classes" => $class);
                 }
             }

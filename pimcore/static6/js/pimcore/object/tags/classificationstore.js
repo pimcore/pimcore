@@ -94,7 +94,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         this.fieldConfig.fieldtype = "panel";
 
         var wrapperConfig = {
-            border: false,
+            border: true,
+            style: "margin-bottom: 10px",
             layout: "fit"
         };
 
@@ -409,8 +410,9 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             collapsible: true,
             tools: [
                 {
-                    id: 'close',
+                    type: 'close',
                     qtip: t('remove_group'),
+                    scope: this,
                     handler: function () {
                         this.deleteGroup(groupId);
                     }.bind(this)

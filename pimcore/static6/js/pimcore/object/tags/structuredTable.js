@@ -137,15 +137,14 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                 editor = new Ext.form.Checkbox();
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
-                        return '<div style="text-align: center"><img class="x-grid-checkcolumn x-grid-checkcolumn-checked" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
-
+                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
                     } else {
-                        return '<div style="text-align: center"><img class="x-grid-checkcolumn" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>';
+                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                     }
                 };
                 listeners = {
                     "mousedown": function (col, grid, rowIndex, event) {
-                        var store = grid.getStore();
+                        var store = this.component.getStore();
                         var record = store.getAt(rowIndex);
                         record.set(col.dataIndex, !record.data[col.dataIndex]);
                         this.dataChanged = true;
@@ -171,6 +170,8 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             enableColumnMove: false,
+            border: true,
+            style: "margin-bottom: 10px",
             columns: columns,
             componentCls: 'object_field',
             width: this.fieldConfig.width,
@@ -189,7 +190,10 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                 }
             ],
             autoHeight: autoHeight,
-            bodyCssClass: "pimcore_object_tag_objects"
+            bodyCssClass: "pimcore_object_tag_objects",
+            plugins: [
+                this.cellEditing
+            ]
         });
 
         this.component.on("afteredit", function() {

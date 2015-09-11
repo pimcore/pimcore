@@ -49,15 +49,17 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         if (intval(this.fieldConfig.width) < 1) {
-            this.fieldConfig.width = 100;
+            this.fieldConfig.width = 300;
         }
         if (intval(this.fieldConfig.height) < 1) {
-            this.fieldConfig.height = 100;
+            this.fieldConfig.height = 300;
         }
 
         var conf = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
+            border: true,
+            style: "padding-bottom: 10px",
             tbar: [{
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
@@ -294,13 +296,15 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
         this.window = new Ext.Window({
             width: 500,
-            height: 250,
+            height: 400,
             title: t("video"),
             items: [this.form],
             layout: "fit",
             listeners: {
                 afterrender: function () {
-                    this.updateType(this.data.type);
+                    setTimeout(function() {
+                        this.updateType(this.data.type);
+                    }.bind(this), 1000);
                 }.bind(this)
             }
         });
@@ -391,9 +395,9 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
     updateVideo: function () {
 
-        // 5px padding (-10)
         var width = this.getBody().getWidth();
-        var height = this.getBody().getHeight();
+        //need to geht height this way, because element has no hight at afterrender (whyever)
+        var height = this.fieldConfig.height - 55; //this.getBody().getHeight();
 
         var content = '';
 

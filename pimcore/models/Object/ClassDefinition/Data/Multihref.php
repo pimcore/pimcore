@@ -168,7 +168,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
             $documentTypes = array();
             foreach ($parts as $type) {
-                $documentTypes[] = array("documentTypes" => $type);
+                if($type) {
+                    $documentTypes[] = array("documentTypes" => $type);
+                }
             }
         }
 

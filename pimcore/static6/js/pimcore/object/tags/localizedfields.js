@@ -152,7 +152,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             this.countrySelect = new Ext.form.ComboBox(options);
 
-            wrapperConfig.items = []
+            wrapperConfig.items = [];
 
             //TODO choose default language, maybe user-specific ?
             for (var i = nrOfLanguages - 1; i >= 0; i--) {
@@ -287,6 +287,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             wrapperConfig.items = [this.tabPanel];
         }
+
+
+        wrapperConfig.border = true;
+        wrapperConfig.style = "margin-bottom: 10px";
+        wrapperConfig.cls = "object_localizedfields_panel";
 
         this.component = new Ext.Panel(wrapperConfig);
         this.component.updateLayout();
