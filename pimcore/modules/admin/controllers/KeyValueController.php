@@ -122,7 +122,12 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                         $condition .= " OR ";
                     }
                     $count++;
-                    $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+
+                    if (\Pimcore\Tool\Admin::isExtJS6()) {
+                        $condition .= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    } else {
+                        $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    }
                 }
                 $list->setCondition($condition);
             }
@@ -232,7 +237,11 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                         $condition .= " OR ";
                     }
                     $count++;
-                    $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    if (\Pimcore\Tool\Admin::isExtJS6()) {
+                        $condition .= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    } else {
+                        $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    }
                 }
 
 

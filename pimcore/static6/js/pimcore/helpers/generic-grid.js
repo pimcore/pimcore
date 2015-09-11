@@ -5,9 +5,7 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage) {
 
     var proxy = {
         type: 'ajax',
-        extraParams:{
-            filter:""
-        },
+
         reader: {
             type: 'json',
             rootProperty: 'data'

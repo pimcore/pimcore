@@ -118,7 +118,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             clicksToEdit: 1
         });
 
-        var plugins = [this.cellEditing];
+        var plugins = ['gridfilters', this.cellEditing];
 
         var gridConfig = {
             frame: false,
@@ -176,7 +176,6 @@ pimcore.object.keyvalue.groupspanel = Class.create({
                         this.store.reload({
                                 callback: function() {
                                 var rowIndex = this.store.find('name', value);
-                                // alert(rowIndex);
                                 if (rowIndex != -1) {
                                     var sm = this.grid.getSelectionModel();
                                     sm.select(rowIndex);

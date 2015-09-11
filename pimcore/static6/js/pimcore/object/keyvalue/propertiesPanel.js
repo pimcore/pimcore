@@ -198,32 +198,6 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
 
         gridColumns.push({header: t("keyvalue_col_translator"), width: 40, sortable: true, dataIndex: 'translator'});
 
-        //var configuredFilters = [{
-        //    type: "string",
-        //    dataIndex: "name"
-        //},
-        //    {
-        //        type: "string",
-        //        dataIndex: "description"
-        //    },
-        //    {
-        //        type: "string",
-        //        dataIndex: "type"
-        //    },
-        //    {
-        //        type: "string",
-        //        dataIndex: "unit"
-        //    },
-        //    {
-        //        type: "string",
-        //        dataIndex: "group"
-        //    }
-        //];
-        //this.gridfilters = new Ext.ux.grid.GridFilters({
-        //    encode: true,
-        //    local: false,
-        //    filters: configuredFilters
-        //});
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         });
