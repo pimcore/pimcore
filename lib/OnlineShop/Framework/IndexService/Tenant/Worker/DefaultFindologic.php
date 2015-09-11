@@ -156,20 +156,35 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
                 switch($field)
                 {
                     // richtige reihenfolge der kategorie berücksichtigen
-                    case 'parentCategoryIds':
+                    case 'categoryIds':
                         $value = trim($value, ',');
                         if($value)
                         {
-                            $value = explode(',', $value);
-                            $value = array_reverse($value);
-
                             $attribute = $attributes->addChild('attribute');
-
                             $attribute->addChild('key', 'cat');
-                            $attribute->addChild('values')->addChild('value', implode('_', $value));
+                            $values = $attribute->addChild('values');
+                            $categories = explode(',', $value);
 
-//                            $attribute->addChild('key', 'cat_url');
-//                            $attribute->addChild('values')->addChild('value', implode('_', $value));
+                            foreach($categories as $c)
+                            {
+                                $categoryIds = [];
+                                $parent = \Pimcore\Model\Object\Concrete::getById($c);
+                                if ($parent != null)
+                                {
+                                    if($parent->getOSProductsInParentCategoryVisible())
+                                    {
+                                        while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory)
+                                        {
+                                            $categoryIds[$parent->getId()] = $parent->getId();
+                                            $parent = $parent->getParent();
+                                        }
+                                    } else {
+                                        $categoryIds[$parent->getId()] = $parent->getId();
+                                    }
+                                }
+
+                                $values->addChild('value', implode('_', array_reverse($categoryIds, true)));
+                            }
                         }
                         break;
 
