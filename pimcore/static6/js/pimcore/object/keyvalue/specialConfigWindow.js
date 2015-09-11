@@ -165,22 +165,7 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
             displayMsg: '{0} - {1} / {2}',
             emptyMsg: t("plugin_keyvalue_no_properties")
         });
-
-
-        var configuredFilters = [{
-                type: "string",
-                dataIndex: "name"
-            },
-            {
-                type: "string",
-                dataIndex: "key"
-            },
-            {
-                type: "string",
-                dataIndex: "value"
-            }
-        ];
-
+        
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         });
@@ -201,7 +186,6 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
                         xtype: "tbspacer",
                         width: 20,
                         height: 16
-                        // cls: "pimcore_icon_droptarget"
                     },
                     {
                         xtype: "tbtext",
