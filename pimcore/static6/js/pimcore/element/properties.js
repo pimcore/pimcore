@@ -300,7 +300,6 @@ pimcore.element.properties = Class.create({
 
             this.propertyGrid.getView().on("refresh", this.updateRows.bind(this, "view-refresh"));
             this.propertyGrid.getView().on("afterrender", this.updateRows.bind(this, "view-afterrender"));
-            this.propertyGrid.getView().on("afterrender", this.updateRows.bind(this, "view-afterrender"));
             this.propertyGrid.getView().on("viewready", this.updateRows.bind(this, "view-viewready"));
 
             this.propertyGrid.on("viewready", this.updateRows.bind(this));
