@@ -499,6 +499,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             autoHeight:autoHeight,
+            border: true,
             cls: "object_field",
             autoExpandColumn: 'path',
             style: "margin-bottom: 10px",

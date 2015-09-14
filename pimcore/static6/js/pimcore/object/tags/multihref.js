@@ -313,12 +313,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             columns: [
                 {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {id: "path", header: t("path"), dataIndex: 'path', width: 200, sortable: false},
+                {header: t("path"), dataIndex: 'path', width: 200, sortable: false},
                 {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {header: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
-                    width: 30,
+                    width: 40,
                     items: [{
                         tooltip: t('open'),
                         icon: "/pimcore/static6/img/icon/pencil_go.png",
@@ -333,10 +333,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     }]
                 }
             ],
-            width: 450,
-            height: 150,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             cls: "multihref_field",
             autoExpandColumn: 'path',
+            border: true,
+            style: "margin-bottom: 10px",
             title: this.fieldConfig.title
         });
 

@@ -172,7 +172,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         this.component = new Ext.form.TextField(href);
 
         this.composite = Ext.create('Ext.form.FieldContainer', {
-            layout: 'vbox',
+            layout: 'hbox',
             items: [this.component, {
                 xtype: "button",
                 iconCls: "pimcore_icon_edit",

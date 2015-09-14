@@ -226,18 +226,29 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         ];
 
         for(var i = 0; i < this.fieldConfig.cols.length; i++) {
-            columns.push({header: ts(this.fieldConfig.cols[i].label), width: 120, sortable: false,
-                                                dataIndex: this.fieldConfig.cols[i].key, editor: null});
+
+            var columnConfig = {header: ts(this.fieldConfig.cols[i].label), width: 120, sortable: false,
+                dataIndex: this.fieldConfig.cols[i].key, editor: null};
+            if(this.fieldConfig.cols[i].type == "bool") {
+                columnConfig.renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    if (value) {
+                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
+                    } else {
+                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
+                    }
+                };
+            }
+
+            columns.push(columnConfig);
         }
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
-        });
 
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             columns: columns,
             componentCls: cls,
+            border: true,
+            style: "margin-bottom: 10px",
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: [
