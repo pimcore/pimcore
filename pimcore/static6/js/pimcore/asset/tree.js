@@ -108,17 +108,14 @@ pimcore.asset.tree = Class.create({
                 },
                 listeners: {
                     beforedrop: function (node, data) {
-                        console.log("beforedrop");
                     },
                     nodedragover: this.onTreeNodeOver.bind(this),
                     startdrag: function() {
-                        console.log("startdrag");
                     }
                 },
                 xtype: 'pimcoretreeview'
 
             },
-
             tools: [{
                 type: "right",
                 handler: pimcore.layout.treepanelmanager.toRight.bind(this)
@@ -398,7 +395,6 @@ pimcore.asset.tree = Class.create({
     },
 
     onTreeNodeMove: function (node, oldParent, newParent, index, eOpts ) {
-        console.log("onTreeNodeMove " + node.data.id);
         var tree = node.getOwnerTree();
 
         this.updateAsset(node.data.id, {
@@ -416,42 +412,39 @@ pimcore.asset.tree = Class.create({
                     node.data.path = node.data.basePath + "/" + node.data.text;
                 }
                 else {
-                    tree.loadMask.hide();
+                    this.tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
                         "error",t(rdata.message));
                     this.refresh(oldParent);
                     this.refresh(newParent);
                 }
             } catch(e){
-                tree.loadMask.hide();
+                this.tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
                 this.refresh(oldParent);
                 this.refresh(newParent);
             }
-            tree.loadMask.hide();
+            this.tree.loadMask.hide();
 
         }.bind(this, newParent, oldParent, tree));
     },
 
     onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
-        console.log("before move");
-
-        //TODO prevent move
         // check for locks
-        if (element.attributes.locked) {
+        if (node.data.locked) {
             Ext.MessageBox.alert(t('locked'), t('element_cannot_be_move_because_it_is_locked'));
             return false;
         }
 
         // check new parent's permission
-        if(!newParent.attributes.permissions.create){
+        if(!newParent.data.permissions.create){
             Ext.MessageBox.alert(t('missing_permission'), t('element_cannot_be_moved'));
             return false;
         }
 
         // check for permission
-        if (element.attributes.permissions.settings) {
-            tree.loadMask.show();
+        if (node.data.permissions.settings) {
+            this.tree.loadMask.show();
             return true;
         }
         return false;
