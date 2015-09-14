@@ -22,6 +22,52 @@ Ext.define('overrides.Component', {
     //}
 });
 
+Ext.define('pimcore.FieldSetTools', {
+    extend: 'Ext.form.FieldSet',
+
+    createLegendCt: function () {
+        var me = this;
+        var result = this.callSuper(arguments);
+
+        if (me.config.tools && me.config.tools.length > 0) {
+            this.createCloseCmp(result);
+        }
+        return result;
+
+    },
+
+
+    createCloseCmp: function(result) {
+        //TODO do this in a generic way
+        var me = this;
+        var tool = me.config.tools[0];
+
+        var cfg = {
+                type: 'close',
+                html: me.title,
+                ui: me.ui,
+                tooltip: tool.qtip,
+                handler: tool.handler,
+                cls: me.baseCls + '-header-tool-default',
+                id: me.id + '-legendTitle2',
+                    ariaRole: 'checkbox',
+                    ariaLabel: me.expandText,
+                    ariaRenderAttributes: {
+                        'aria-checked': !me.collapsed
+                    }
+            };
+
+        me.titleCmp2 = new Ext.panel.Tool(cfg);
+        result.add(me.titleCmp2);
+        return me.titleCmp2;
+        result.add(closeCmp);
+    return closeCmp;
+},
+
+});
+
+
+
 Ext.define('pimcore.filters', {
     extend: 'Ext.grid.filters.Filters',
     alias: 'plugin.pimcore.gridfilters',
@@ -39,7 +85,8 @@ Ext.define('Ext.overrides.grid.View', {
         extend: 'Ext.grid.View',
 
         alias: 'widget.patchedgridview'
-
+    //    ,
+    //
     //    handleUpdate: function(store, record, operation, changedFieldNames) {
     //        var me = this,
     //            rowTpl = me.rowTpl,
