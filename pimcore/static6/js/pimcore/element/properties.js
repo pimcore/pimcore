@@ -446,9 +446,6 @@ pimcore.element.properties = Class.create({
     },
  
     updateRows: function (event) {
-
-        console.log(event);
-
         var rows = Ext.get(this.propertyGrid.getEl().dom).query(".x-grid-row");
         var parentTable;
 
