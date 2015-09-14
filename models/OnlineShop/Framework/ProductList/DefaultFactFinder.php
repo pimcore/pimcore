@@ -662,6 +662,40 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         return $this->getGroupByValues($fieldname, $countValues, $fieldnameShouldBeExcluded);
     }
 
+/**
+     * Do a FactFinder request and consider the timeout header
+     * If a timeout occures it will retry 4 times to get the data (delay of 0.25 Seconds per request)
+     *
+     * @param string $url The URL to call
+     * @param int $trys internal counter - don't pass a value!
+     *
+     * @return Zend_Http_Response
+     * @throws Exception
+     * @throws Zend_Http_Client_Exception
+     */
+    protected function doRequest($url,$trys = 0){
+         // start request
+        $this->getLogger()->log('Request: ' . $url, Zend_Log::INFO);
+        $client = new \Zend_Http_Client( $url );
+        $client->setMethod(\Zend_Http_Client::GET);
+        $response = $client->request();
+
+        $factFinderTimeout = $response->getHeader('X-FF-Timeout');
+        if($factFinderTimeout === 'true'){
+            $errorMessage = "FactFinder Read timeout:" . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey');
+            \Logger::emergency($errorMessage);
+            $trys++;
+            if($trys > 3){
+                throw new \Exception($errorMessage . ' Max tries of 4 reached.');
+            }
+            usleep(250000);
+            $this->doRequest($url,$trys);
+            $response = $client->request();
+        }
+
+        return $response;
+    }
+
 
     /**
      * @param $params
@@ -687,7 +721,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
             }
         }
 
-        $this->getLogger()->log('Request: ' . $url, Zend_Log::INFO);
+        $response = $this->doRequest($url);
 
 
         // start request
