@@ -125,7 +125,7 @@ pimcore.asset.listfolder = Class.create({
                 [100, "100"]
             ],
             mode: "local",
-            width: 50,
+            width: 80,
             value: 20,
             triggerAction: "all",
             listeners: {
