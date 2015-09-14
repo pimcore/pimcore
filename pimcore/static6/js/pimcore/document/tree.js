@@ -130,6 +130,14 @@ pimcore.document.tree = Class.create({
                 },
                 xtype: 'pimcoretreeview'
             },
+            tools: [{
+                type: "right",
+                handler: pimcore.layout.treepanelmanager.toRight.bind(this)
+            },{
+                type: "left",
+                handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
+                hidden: true
+            }],
             root: rootNodeConfig,
             store: store,
             listeners: this.getTreeNodeListeners()

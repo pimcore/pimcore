@@ -92,7 +92,7 @@ pimcore.object.tree = Class.create({
         });
 
 
-        // documents
+        // objects
         this.tree = Ext.create('pimcore.tree.Panel', {
             store: store,
             border: true,
@@ -114,6 +114,14 @@ pimcore.object.tree = Class.create({
                 },
                 xtype: 'pimcoretreeview'
             },
+            tools: [{
+                type: "right",
+                handler: pimcore.layout.treepanelmanager.toRight.bind(this)
+            },{
+                type: "left",
+                handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
+                hidden: true
+            }],
             root: rootNodeConfig
         });
 

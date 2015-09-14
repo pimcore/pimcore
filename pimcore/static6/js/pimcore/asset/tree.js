@@ -119,14 +119,14 @@ pimcore.asset.tree = Class.create({
 
             },
 
-            //tools: [{
-            //    id: "right",
-            //    handler: pimcore.layout.treepanelmanager.toRight.bind(this)
-            //},{
-            //    id: "left",
-            //    handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
-            //    hidden: true
-            //}],
+            tools: [{
+                type: "right",
+                handler: pimcore.layout.treepanelmanager.toRight.bind(this)
+            },{
+                type: "left",
+                handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
+                hidden: true
+            }],
             root: rootNodeConfig,
             //TODO removed
             // plugins: new Ext.ux.tree.TreeNodeMouseoverPlugin(),
