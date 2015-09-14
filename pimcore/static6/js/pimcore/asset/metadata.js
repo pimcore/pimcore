@@ -53,7 +53,6 @@ pimcore.asset.metadata = Class.create({
             });
 
             var customType = new Ext.form.ComboBox({
-                fieldLabel: t('type'),
                 name: "type",
                 valueField: "id",
                 displayField:'name',
@@ -69,8 +68,7 @@ pimcore.asset.metadata = Class.create({
                 editable: false,
                 triggerAction: 'all',
                 mode: "local",
-                width: 220,
-                listWidth: 220,
+                width: 100,
                 value: "input",
                 emptyText: t('type')
             });
@@ -84,14 +82,12 @@ pimcore.asset.metadata = Class.create({
             }
 
             var customLanguage = new Ext.form.ComboBox({
-                fieldLabel: t('language'),
                 name: "language",
                 store: languagestore,
                 editable: false,
                 triggerAction: 'all',
                 mode: "local",
-                width: 200,
-                listWidth: 200,
+                width: 150,
                 emptyText: t('language')
             });
 
@@ -166,15 +162,6 @@ pimcore.asset.metadata = Class.create({
                 ],
                 columnLines: true,
                 stripeRows: true,
-                rowupdated: this.updateRows.bind(this, "rowupdated"),
-                refresh: this.updateRows.bind(this, "refresh"),
-                //TODO
-                viewConfig: {
-                    listeners: {
-                        rowupdated: this.updateRows.bind(this, "rowupdated"),
-                        refresh: this.updateRows.bind(this, "refresh")
-                    }
-                },
                 columns: {
                     items: [
                         {
@@ -256,8 +243,7 @@ pimcore.asset.metadata = Class.create({
 
             });
 
-            this.grid.on("viewready", this.updateRows.bind(this));
-            store.on("update", this.updateRows.bind(this));
+            this.grid.getView().on("refresh", this.updateRows.bind(this, "view-refresh"));
         }
 
         return this.grid;
