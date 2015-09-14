@@ -1180,5 +1180,9 @@ span.warning {
     color: white;
 }
 
+/* ExtJS 6.0 bugfixes */
 
+.x-accordion-hd .x-tool-right, .x-accordion-hd .x-tool-left {
+    background-image: none;
+}
 
