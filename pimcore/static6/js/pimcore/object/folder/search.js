@@ -400,7 +400,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 text: t('open_selected'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
-                    var selectedRows = grid.getSelectionModel().getSelections();
+                    var selectedRows = grid.getSelectionModel().getSelection();
                     for (var i = 0; i < selectedRows.length; i++) {
                         pimcore.helpers.openObject(selectedRows[i].data.id, "object");
                     }
@@ -412,7 +412,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var ids = [];
-                    var selectedRows = grid.getSelectionModel().getSelections();
+                    var selectedRows = grid.getSelectionModel().getSelection();
                     for (var i = 0; i < selectedRows.length; i++) {
                         ids.push(selectedRows[i].data.id);
                     }
@@ -420,7 +420,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
                     pimcore.helpers.deleteObject(ids, function() {
                             this.getStore().reload();
-                            pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
+                            var tree = pimcore.globalmanager.get("layout_object_tree");
+                            var treePanel = tree.tree;
+                            tree.refresh(treePanel.getRootNode());
                         }.bind(this)
                     );
                 }.bind(grid, data)
