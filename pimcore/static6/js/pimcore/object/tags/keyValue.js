@@ -42,7 +42,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         if (fieldConfig.metaVisible) {
             fields.push("metadata");
         }
-        // this.visibleFields = fields;
 
         this.store = new Ext.data.ArrayStore({
             data: [],
@@ -186,7 +185,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function()  {
-        //console.log(this.dataChanged);
         return this.dataChanged;
     },
 
@@ -300,7 +298,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 editor: editor,
                 editable: editable,
                 renderer: renderer,
-                getCellEditor: cellEditor,
+                getEditor: cellEditor,
                 listeners: listeners,
                 filter: {
                     type: 'string'
