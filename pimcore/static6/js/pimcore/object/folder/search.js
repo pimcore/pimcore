@@ -205,6 +205,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 name: "onlyDirectChildren",
                 style: "margin-bottom: 5px; margin-left: 5px",
                 checked: this.onlyDirectChildren,
+                boxLabel: t("only_children"),
                 listeners: {
                     "change": function (field, checked) {
                         this.grid.filters.clearFilters();
@@ -233,7 +234,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     forceFit: false,
                     xtype: 'patchedgridview'
                 },
-                tbar: [this.languageInfo, "-", this.toolbarFilterInfo, "->", this.checkboxOnlyDirectChildren, t("only_children"), "-", this.sqlEditor, this.sqlButton, "-", {
+                tbar: [this.languageInfo, "-", this.toolbarFilterInfo, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
                     text: t("search_and_move"),
                     iconCls: "pimcore_icon_search_and_move",
                     handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,

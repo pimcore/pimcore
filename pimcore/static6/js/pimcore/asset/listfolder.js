@@ -143,6 +143,7 @@ pimcore.asset.listfolder = Class.create({
             name: "onlyDirectChildren",
             style: "margin-bottom: 5px; margin-left: 5px",
             checked: this.onlyDirectChildren,
+            boxLabel: t("only_children"),
             listeners: {
                 "change" : function (field, checked) {
                     this.grid.filters.clearFilters();
@@ -184,7 +185,7 @@ pimcore.asset.listfolder = Class.create({
             },
             tbar: [
                 "->"
-                ,this.checkboxOnlyDirectChildren,t("only_children")
+                ,this.checkboxOnlyDirectChildren
                 ]
         });
 
