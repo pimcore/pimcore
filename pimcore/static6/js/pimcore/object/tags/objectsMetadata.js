@@ -162,12 +162,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
 
                 if(readOnly) {
-                    columns.push(new Ext.grid.CheckColumn({
+                    columns.push(Ext.create('Ext.grid.column.Check'), {
                         header: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
-                    }));
+                    });
                     continue;
                 }
 

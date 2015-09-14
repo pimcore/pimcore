@@ -309,35 +309,30 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
 
-        this.component = new Ext.grid.GridPanel({
+        this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                    sortable: false
-                },
-                columns: [
-                    {header: 'ID', dataIndex: 'id', width: 50},
-                    {id: "path", header: t("path"), dataIndex: 'path', width: 200},
-                    {header: t("type"), dataIndex: 'type', width: 100},
-                    {header: t("subtype"), dataIndex: 'subtype', width: 100},
-                    {
-                        xtype: 'actioncolumn',
-                        width: 30,
-                        items: [{
-                            tooltip: t('open'),
-                            icon: "/pimcore/static/img/icon/pencil_go.png",
-                            handler: function (grid, rowIndex) {
-                                var data = grid.getStore().getAt(rowIndex);
-                                var subtype = data.data.subtype;
-                                if (data.data.type == "object" && data.data.subtype != "folder") {
-                                    subtype = "object";
-                                }
-                                pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
-                            }.bind(this)
-                        }]
-                    }
-                ]
-            }),
+            columns: [
+                {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
+                {id: "path", header: t("path"), dataIndex: 'path', width: 200, sortable: false},
+                {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
+                {header: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
+                {
+                    xtype: 'actioncolumn',
+                    width: 30,
+                    items: [{
+                        tooltip: t('open'),
+                        icon: "/pimcore/static/img/icon/pencil_go.png",
+                        handler: function (grid, rowIndex) {
+                            var data = grid.getStore().getAt(rowIndex);
+                            var subtype = data.data.subtype;
+                            if (data.data.type == "object" && data.data.subtype != "folder") {
+                                subtype = "object";
+                            }
+                            pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
+                        }.bind(this)
+                    }]
+                }
+            ],
             width: 450,
             height: 150,
             cls: "multihref_field",

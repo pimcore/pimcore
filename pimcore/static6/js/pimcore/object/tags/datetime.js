@@ -72,7 +72,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
         if (this.data) {
             var tmpDate = new Date(intval(this.data) * 1000);
             date.value = tmpDate;
-            time.value = Ext.Date.format(tmpDate, "H:i");
+            time.value = tmpDate;
         }
 
         this.datefield = Ext.create('Ext.form.field.Date', date);

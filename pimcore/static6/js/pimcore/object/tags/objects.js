@@ -474,37 +474,34 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             autoHeight = true;
         }
 
-        this.component = new Ext.grid.GridPanel({
+        this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                    sortable: false
-                },
-                columns: [
-                    {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("path"), dataIndex: 'path', width: 200},
-                    {header: t("type"), dataIndex: 'type', width: 100},
-                    {
-                        xtype: 'actioncolumn',
-                        width: 30,
-                        items: [
-                            {
-                                tooltip: t('open'),
-                                icon: "/pimcore/static/img/icon/pencil_go.png",
-                                handler: function (grid, rowIndex) {
-                                    var data = grid.getStore().getAt(rowIndex);
-                                    pimcore.helpers.openObject(data.data.id, "object");
-                                }.bind(this)
-                            }
-                        ]
-                    }
-                ]
-            }),
+            columns: [
+                {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
+                {header: t("path"), dataIndex: 'path', width: 200, sortable: false},
+                {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
+                {
+                    xtype: 'actioncolumn',
+                    width: 40,
+                    sortable: false,
+                    items: [
+                        {
+                            tooltip: t('open'),
+                            icon: "/pimcore/static/img/icon/pencil_go.png",
+                            handler: function (grid, rowIndex) {
+                                var data = grid.getStore().getAt(rowIndex);
+                                pimcore.helpers.openObject(data.data.id, "object");
+                            }.bind(this)
+                        }
+                    ]
+                }
+            ],
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             autoHeight:autoHeight,
             cls: "object_field",
             autoExpandColumn: 'path',
+            style: "margin-bottom: 10px",
             title: this.fieldConfig.title
         });
 
@@ -513,9 +510,6 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     ,
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
-
-        //Ext.get(grid.getView().getRow(rowIndex)).frame();
-        //grid.getSelectionModel().selectRow(rowIndex);
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
@@ -652,18 +646,6 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     }
     ,
 
-
-    //sourceIsTreeNode: function (source) {
-    //    try {
-    //        if (source.node) {
-    //            return true;
-    //        }
-    //    } catch (e) {
-    //        return false;
-    //    }
-    //    return false;
-    //}
-    //,
 
     dndAllowed: function(data, fromTree) {
 

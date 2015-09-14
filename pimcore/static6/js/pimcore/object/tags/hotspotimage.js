@@ -174,11 +174,19 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         // 5px padding (-10)
         var body =  this.getBody();
 
-        this.originalWidth = this.panel.getWidth();
-        this.originalHeight = this.panel.getHeight();
+        var width = null;
+        var height = null;
 
-        var width = this.panel.getWidth()-10;
-        var height = this.panel.getHeight()-10;
+        if(this.panel) {
+            this.originalWidth = this.panel.getWidth();
+            this.originalHeight = this.panel.getHeight();
+
+            width = this.panel.getWidth()-10;
+            height = this.panel.getHeight()-10;
+        } else {
+            width = body.getWidth()-10;
+            height = body.getHeight()-10;
+        }
 
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + width
             + "/height/" + height + "/contain/true" + "?" + Ext.urlEncode(this.crop);
