@@ -277,20 +277,23 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     }
 
-    public function doDeleteFromIndex($objectId) {
+    protected function doDeleteFromIndex($objectId) {
         $esClient = $this->getElasticSearchClient();
         try {
             $esClient->delete(['index' => $this->indexName, 'type' => "product", 'id' => $objectId]);
-            $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
+            $this->deleteFromStoreTable($objectId);
+            $this->deleteFromMockupCache($objectId);
 
         } catch(Exception $e) {
             $check = \Zend_Json::decode($e->getMessage());
             if(!$check['found']){ //not in es index -> we can delete it from store table
-                $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
+                $this->deleteFromStoreTable($objectId);
+                $this->deleteFromMockupCache($objectId);
             }else{
                 \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
             }
         }
+
     }
 
     /**
