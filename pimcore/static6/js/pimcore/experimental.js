@@ -22,6 +22,18 @@ Ext.define('overrides.Component', {
     //}
 });
 
+Ext.define('pimcore.filters', {
+    extend: 'Ext.grid.filters.Filters',
+    alias: 'plugin.pimcore.gridfilters',
+
+    createColumnFilter: function(column) {
+        this.callSuper(arguments);
+        var type = column.filter.type;
+        var theFilter = column.filter.filter;
+        theFilter.config.type = type;
+    }
+});
+
 // See https://www.sencha.com/forum/showthread.php?288385
 Ext.define('Ext.overrides.grid.View', {
         extend: 'Ext.grid.View',

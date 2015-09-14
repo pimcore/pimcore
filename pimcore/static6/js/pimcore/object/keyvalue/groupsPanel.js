@@ -118,7 +118,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             clicksToEdit: 1
         });
 
-        var plugins = ['gridfilters', this.cellEditing];
+        var plugins = ['pimcore.gridfilters', this.cellEditing];
 
         var gridConfig = {
             frame: false,
