@@ -73,49 +73,6 @@
     padding-bottom: 2px;
 }
 
-.pimcore_navigation_flyout {
-    background: #222 !important;
-    border-left: none !important;
-}
-
-.ext-ie8 .pimcore_navigation_flyout {
-    background: #2b2b2b;
-}
-
-.pimcore_navigation_flyout .x-menu-list-item {
-    font-size: 14px;
-    /*font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;*/
-    font-family: Arial;
-}
-
-.pimcore_navigation_flyout .x-menu-item-active {
-    background: #151616;
-    border-color: #151616;
-}
-
-.pimcore_navigation_flyout.x-menu .x-menu-item-active a {
-    color: #fff;
-    border-color: #151616;
-}
-
-.pimcore_navigation_flyout.x-menu a {
-    color: #fff;
-}
-
-.pimcore_navigation_flyout.x-menu .x-menu-text {
-    font-size: 18px;
-    display: block;
-    text-align: center;
-    color: #fff;
-    border-bottom: 1px solid #e5e5e5;
-    padding: 8px 0 8px 5px;
-    margin-bottom: 5px;
-}
-
-.pimcore_navigation_flyout .x-menu-sep {
-    border-bottom-color: #000 !important;
-}
-
 #pimcore_logo {
     position:absolute;
     bottom: 20px;
@@ -1091,7 +1048,9 @@ span.warning {
     border-color: #d0d0d0 !important;
 }
 
-    /* ------------------------------------------------------------------------------------------------------------- */
+
+
+/* ------------------------------------------------------------------------------------------------------------- */
 
 /* custom styles */
 
@@ -1120,6 +1079,28 @@ span.warning {
 
 .pimcore_statusbar a {
     color: #fff;
+}
+
+
+.pimcore_navigation_flyout.x-menu-default {
+    border-color: #000;
+}
+
+.pimcore_navigation_flyout .x-menu-body-default {
+    background-color: #222;
+}
+
+.pimcore_navigation_flyout .x-menu-item-text-default {
+    color: #fff;
+}
+
+.pimcore_navigation_flyout .x-menu-item-default.x-menu-item-separator {
+    background-color: #000;
+    border-color: #000;
+}
+
+.pimcore_navigation_flyout .x-menu-item-active .x-menu-item-text {
+    font-weight: 100 !important;
 }
 
 /* ExtJS 6.0 specific styles */

@@ -29,6 +29,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: [{
                         text: t("welcome"),
                         iconCls: "pimcore_icon_welcome",
@@ -106,12 +107,6 @@ pimcore.layout.toolbar = Class.create({
         }
 
         if (user.isAllowed("documents")) {
-//            fileItems.push({
-//                text: t("open_document_by_url"),
-//                iconCls: "pimcore_icon_open_document_by_url",
-//                handler: pimcore.helpers.openDocumentByPathDialog
-//            });
-
             fileItems.push({
                 text: t("open_document_by_id"),
                 iconCls: "pimcore_icon_open_document_by_id",
@@ -170,6 +165,7 @@ pimcore.layout.toolbar = Class.create({
             hideOnClick: false,
             menu: {
                 cls: "pimcore_navigation_flyout",
+                shadow: false,
                 items: [{
                     text: t("documentation"),
                     iconCls: "pimcore_icon_menu_documentation",
@@ -203,6 +199,7 @@ pimcore.layout.toolbar = Class.create({
 
         this.fileMenu = new Ext.menu.Menu({
             items: fileItems,
+            shadow: false,
             cls: "pimcore_navigation_flyout"
         });
 
@@ -232,6 +229,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: [{
                         text: t("shared_translations"),
                         iconCls: "pimcore_icon_translations",
@@ -300,6 +298,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: [{
                         text: t("email_logs") + " (" + t("global") + ")",
                         iconCls: "pimcore_icon_email",
@@ -342,6 +341,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: [{
                         text: "PHP Info",
                         iconCls: "pimcore_icon_php",
@@ -371,6 +371,7 @@ pimcore.layout.toolbar = Class.create({
         if (extrasItems.length > 0) {
             this.extrasMenu = new Ext.menu.Menu({
                 items: extrasItems,
+                shadow: false,
                 cls: "pimcore_navigation_flyout"
             });
         }
@@ -409,6 +410,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: [{
                         text: t("global_targeting_rules"),
                         iconCls: "pimcore_icon_tab_targeting",
@@ -471,6 +473,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: seoMenu
                 }
             });
@@ -479,6 +482,7 @@ pimcore.layout.toolbar = Class.create({
         if (marketingItems.length > 0) {
             this.marketingMenu = new Ext.menu.Menu({
                 items: marketingItems,
+                shadow: false,
                 cls: "pimcore_navigation_flyout"
             });
         }
@@ -534,6 +538,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: [{
                         text: t("users"),
                         handler: this.editUsers,
@@ -560,6 +565,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: [{
                         text: t("image_thumbnails"),
                         iconCls: "pimcore_icon_thumbnails",
@@ -581,6 +587,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: []
                 }
             };
@@ -657,6 +664,7 @@ pimcore.layout.toolbar = Class.create({
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
+                    shadow: false,
                     items: []
                 }
             };
@@ -717,6 +725,7 @@ pimcore.layout.toolbar = Class.create({
         if (settingsItems.length > 0) {
             this.settingsMenu = new Ext.menu.Menu({
                 items: settingsItems,
+                shadow: false,
                 cls: "pimcore_navigation_flyout"
             });
         }
@@ -758,6 +767,7 @@ pimcore.layout.toolbar = Class.create({
         if (searchItems.length > 0) {
             this.searchMenu = new Ext.menu.Menu({
                 items: searchItems,
+                shadow: false,
                 cls: "pimcore_navigation_flyout"
             });
         }
@@ -795,203 +805,6 @@ pimcore.layout.toolbar = Class.create({
                 console.error("no pimcore_menu_item");
             }
         }.bind(this));
-
-        /*this.toolbar.add({
-         text: t('file'),
-         iconCls: "pimcore_icon_menu_file",
-         cls: "pimcore_main_menu",
-         menu: this.fileMenu
-         });
-
-
-         if (this.extrasMenu) {
-         this.toolbar.add({
-         text: t('extras'),
-         iconCls: "pimcore_icon_menu_extras",
-         cls: "pimcore_main_menu",
-         menu: this.extrasMenu
-         });
-         }
-
-
-         if (this.settingsMenu) {
-         this.toolbar.add({
-         text: t('settings'),
-         iconCls: "pimcore_icon_menu_settings",
-         cls: "pimcore_main_menu",
-         menu: this.settingsMenu
-         });
-         }
-
-         this.toolbar.add({
-         text: t('search'),
-         iconCls: "pimcore_icon_menu_search",
-         cls: "pimcore_main_menu",
-         handler: function () {
-         pimcore.helpers.itemselector(false, function (selection) {
-         pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
-         }, null, {moveToTab: true} );
-         }
-         });
-
-         this.toolbar.add("->");
-         */
-
-        /*if (('webkitSpeechRecognition' in window)) {
-         this.toolbar.add({
-         iconCls: "",
-         cls: "pimcore_main_menu",
-         handler: function (btn) {
-         var speechRecognitionButton = btn;
-         if(btn.pressed) {
-
-         var win = new Ext.Window({
-         modal: true,
-         width: 200,
-         height: 100,
-         title: t("language"),
-         bodyStyle: "padding:10px",
-         items: [{
-         xtype: "combo",
-         itemId: "language",
-         store: [['af-ZA', "Afrikaans"],  ['id-ID', "Bahasa Indonesia"],
-         ['ms-MY', "Bahasa Melayu"], ['ca-ES', "Català"], ['cs-CZ', "Čeština"],
-         ['de-DE', "Deutsch"], ['en-AU', 'English (Australia)'],
-         ['en-CA', 'English (Canada)'], ['en-IN', 'English (India)'],
-         ['en-NZ', 'English (New Zealand)'], ['en-ZA', 'English (South Africa)'],
-         ['en-GB', 'English (United Kingdom)'], ['en-US', 'English (United States)'],
-         ['es-AR', 'Español (Argentina)'], ['es-BO', 'Español (Bolivia)'],
-         ['es-CL', 'Español (Chile)'], ['es-CO', 'Español (Colombia)'],
-         ['es-CR', 'Español (Costa Rica)'], ['es-EC', 'Español (Ecuador)'],
-         ['es-SV', 'Español (El Salvador)'], ['es-ES', 'Español (España)'],
-         ['es-US', 'Español (Estados Unidos)'], ['es-GT', 'Español (Guatemala)'],
-         ['es-HN', 'Español (Honduras)'], ['es-MX', 'Español (México)'],
-         ['es-NI', 'Español (Nicaragua)'], ['es-PA', 'Español (Panamá)'],
-         ['es-PY', 'Español (Paraguay)'], ['es-PE', 'Español (Perú)'],
-         ['es-PR', 'Español (Puerto Rico)'], ['es-DO', 'Español (República Dominicana)'],
-         ['es-UY', 'Español (Uruguay)'], ['es-VE', 'Español (Venezuela)'],
-         ['eu-ES', "Euskara"], ['fr-FR', "Français"], ['gl-ES', "Galego"],
-         ['hr_HR', "Hrvatski"], ['zu-ZA', "IsiZulu"], ['is-IS', "Íslenska"],
-         ['it-IT', 'Italiano (Italia)'], ['it-CH', 'Italiano (Svizzera)'],
-         ['hu-HU', "Magyar"], ['nl-NL', "Nederlands"], ['nb-NO', "Norsk bokmål"],
-         ['pl-PL', "Polski"], ['pt-BR', 'Português (Brasil)'],
-         ['pt-PT', 'Português (Portugal)'], ['ro-RO', "Română"],
-         ['sk-SK', "Slovenčina"], ['fi-FI', "Suomi"], ['sv-SE', "Svenska"],
-         ['tr-TR', "Türkçe"], ['bg-BG', "български"], ['ru-RU', "Pусский"],
-         ['sr-RS', "Српски"], ['ko-KR', "한국어"], ['cmn-Hans-CN', '中文 普通话 (中国大陆)'],
-         ['cmn-Hans-HK', '中文 普通话 (香港)'], ['cmn-Hant-TW', '中文(台灣)'],
-         ['yue-Hant-HK', '中文 粵語 (香港)'], ['ja-JP', "日本語"], ['la', "Lingua latīna"]],
-         typeAhead: false,
-         editable: false,
-         forceSelection: true,
-         triggerAction: "all"
-         }],
-         buttons: [{
-         xtype: "button",
-         text: t("apply"),
-         iconCls: "pimcore_icon_apply",
-         handler: function () {
-         var lang = win.getComponent("language").getValue();
-
-         if(!lang) {
-         return;
-         }
-
-         win.close();
-
-
-         var offset = speechRecognitionButton.getEl().getOffsetsTo(Ext.getBody());
-         offset[0] = offset[0] - 260;
-
-         var interimToolTip = new Ext.Tip({
-         x: offset[0],
-         y: offset[1],
-         html: "",
-         width: 250,
-         autoHide: false,
-         closable: false
-         });
-
-         var recognition = new webkitSpeechRecognition();
-         recognition.continuous = true;
-         recognition.interimResults = true;
-         recognition.lang = lang;
-
-         recognition.onresult = function (event) {
-         var interim_transcript = '';
-         var final_transcript = "";
-
-         for (var i = event.resultIndex; i < event.results.length; ++i) {
-         if (event.results[i].isFinal) {
-         final_transcript += event.results[i][0].transcript;
-         } else {
-         interim_transcript += event.results[i][0].transcript;
-         }
-         }
-
-         if(final_transcript) {
-         interimToolTip.hide();
-         pimcore.helpers.insertTextAtCursorPosition(final_transcript);
-         } else {
-         interimToolTip.show();
-         interimToolTip.update(interim_transcript);
-         }
-         }
-
-         recognition.onstart = function () { }
-         recognition.onerror = function (event) {
-         console.log("SpeechRecognition ERROR");
-         console.log(event);
-
-         if(speechRecognitionButton.pressed) {
-         interimToolTip.hide();
-         speechRecognitionButton.toggle();
-         }
-         };
-         recognition.onend = function () {
-         if(speechRecognitionButton.pressed) {
-         interimToolTip.hide();
-         speechRecognitionButton.toggle();
-         }
-         };
-
-         recognition.start();
-
-         pimcore.globalmanager.add("recognition", recognition);
-         }
-         }]
-         });
-
-         win.show();
-         } else {
-         if(pimcore.globalmanager.exists("recognition")) {
-         var recognition = pimcore.globalmanager.get("recognition");
-         recognition.stop();
-         pimcore.globalmanager.remove("recognition");
-         }
-         }
-         },
-         enableToggle: true
-         });
-         }
-
-         this.toolbar.add(new Ext.Toolbar.Spacer({
-         width: "150"
-         }));
-         */
-
-
-        //TODO to be removed
-        //this.systemSettings();
-        //this.extensionAdmin();
-        //this.showElementHistory();
-        //this.recyclebin();
-        //new pimcore.element.replace_assignments();
-        //this.editTranslationsSpecific();
-        //this.editTranslations();
-        //this.showReports();
-        //this.showPhpInfo();this.showFilexplorer();
-        //this.editUsers();
 
         return;
     },
