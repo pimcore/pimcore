@@ -89,12 +89,26 @@ class OnlineShop_Framework_Factory {
         return self::$instance;
     }
 
-    public static function resetInstance() {
-        self::$instance = null;
+    /**
+     * creates new factory instance and optionally resets environment too
+     *
+     * @param bool|true $keepEnvironment
+     * @return OnlineShop_Framework_Factory
+     */
+    public static function resetInstance($keepEnvironment = true) {
+        if($keepEnvironment) {
+            $environment = self::$instance->getEnvironment();
+        } else {
+            $environment = null;
+        }
+
+        self::$instance = new OnlineShop_Framework_Factory($environment);
+        self::$instance->init();
+        return self::$instance;
     }
 
-    private function __construct() {
-        //$this->initEnvironment();
+    private function __construct($environment = null) {
+        $this->environment = $environment;
     }
 
     public function getConfig() {
