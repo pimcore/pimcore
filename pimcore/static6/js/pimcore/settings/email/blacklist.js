@@ -120,7 +120,7 @@ pimcore.settings.email.blacklist = Class.create({
                 items:[
                     {
                         tooltip:t('delete'),
-                        icon:"/pimcore/static/img/icon/cross.png",
+                        icon:"/pimcore/static6/img/icon/cross.png",
                         handler:function (grid, rowIndex) {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this)
