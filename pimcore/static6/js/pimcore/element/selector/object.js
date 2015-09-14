@@ -262,6 +262,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         
         var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find");
         this.store = gridHelper.getStore();
+        this.store.setPageSize(50);
         var gridColumns = gridHelper.getGridColumns();
         var gridfilters = gridHelper.getGridFilters();
 
@@ -279,6 +280,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.store = new Ext.data.Store({
             autoDestroy: true,
             remoteSort: true,
+            pageSize: 50,
             proxy : {
                 type: 'ajax',
                 url: "/admin/search/search/find",
@@ -306,13 +308,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             {header: t("class"), width: 200, sortable: true, dataIndex: 'classname'}
         ];
         
-        // filter dummy
-        //var gridfilters = new Ext.ux.grid.GridFilters({
-        //    encode: true,
-        //    local: false,
-        //    filters: []
-        //});
-        //
+
         this.getGridPanel(columns, null);
     },
     

@@ -19,6 +19,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         this.store = new Ext.data.Store({
             autoDestroy: true,
             remoteSort: true,
+            pageSize: 50,
             proxy : {
                 type: 'ajax',
                 url: '/admin/search/search/find',

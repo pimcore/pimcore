@@ -98,12 +98,13 @@ pimcore.element.selector.abstract = Class.create({
                 [999999, t("all")]
             ],
             mode: "local",
-            width: 50,
+            width: 80,
             value: 50,
             triggerAction: "all",
             listeners: {
                 select: function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
+                    var store = this.pagingtoolbar.getStore();
+                    store.setPageSize(intval(rec.data.field1));
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
