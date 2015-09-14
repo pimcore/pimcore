@@ -58,6 +58,6 @@ pimcore.extensionmanager.xmlEditor = Class.create(pimcore.settings.fileexplorer.
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_extension_" + this.id + "_" + type);
+        tabPanel.activate("pimcore_extension_" + this.id + "_" + this.type);
     }
 });
