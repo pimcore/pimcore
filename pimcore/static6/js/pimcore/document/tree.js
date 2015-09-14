@@ -274,7 +274,7 @@ pimcore.document.tree = Class.create({
             return false;
         }
 
-        if(this.isDisallowedKey(newParent.id, element.text)) {
+        if(this.isDisallowedKey(newParent.id, node.data.text)) {
             return false;
         }
 
