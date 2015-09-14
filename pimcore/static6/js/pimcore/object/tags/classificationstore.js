@@ -412,7 +412,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 {
                     type: 'close',
                     qtip: t('remove_group'),
-                    scope: this,
                     handler: function () {
                         this.deleteGroup(groupId);
                     }.bind(this)
@@ -423,7 +422,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             config.cls = cls;
         }
 
-        var fieldset =  new Ext.form.FieldSet(config);
+        var fieldset =  new Ext.create('pimcore.FieldSetTools', config);
 
         this.groupElements[language][groupId]  = fieldset;
         return fieldset;
@@ -442,9 +441,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             var fieldset = this.groupElements[currentLanguage][groupId];
             if (fieldset) {
 
-                if (fieldset.getResizeEl()) {
-                    itemHeight = fieldset.getHeight();
-                }
+                itemHeight = fieldset.getHeight();
+
                 fieldset.destroy();
                 var languagePanel = this.languagePanels[currentLanguage];
                 languagePanel.updateLayout();
@@ -466,7 +464,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         if (itemHeight > 0) {
             var height = this.component.getHeight();
-            this.component.setHeight(height - itemHeight);
+            //this.component.setHeight(height - itemHeight);
             this.component.updateLayout();
         }
 
