@@ -410,7 +410,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             componentCls: cls,
             stripeRows: true,
             plugins: [
-                this.cellEditing
+                'gridfilters', this.cellEditing
                 ],
             title: t('keyvalue_tag_title'),
             tbar: {
