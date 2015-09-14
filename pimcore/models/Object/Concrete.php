@@ -574,7 +574,7 @@ class Concrete extends AbstractObject {
 
             if(isset($listConfig['limit']) && $listConfig['limit'] == 1) {
                 $elements = $list->getObjects();
-                return $elements[0];
+                return isset($elements[0]) ? $elements[0] : null;
             }
 
             return $list;
