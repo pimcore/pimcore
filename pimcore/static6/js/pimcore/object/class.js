@@ -253,7 +253,10 @@ pimcore.object.klass = Class.create({
                     },
                     success: function () {
                         // refresh the object tree
-                        pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().getStore().load();
+                        var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+                        tree.getStore().load({
+                            node: tree.getRootNode()
+                        });
 
                         // update object type store
                         pimcore.globalmanager.get("object_types_store").reload();

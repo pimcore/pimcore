@@ -267,7 +267,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             this.batchProgressWin.close();
             this.pagingtoolbar.moveFirst();
             try {
-                pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
+                var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+                tree.getStore().load({
+                    node: tree.getRootNode()
+                });
             } catch (e) {
                 console.log(e);
             }

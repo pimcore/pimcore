@@ -268,7 +268,11 @@ pimcore.asset.listfolder = Class.create({
 
                     pimcore.helpers.deleteAsset(ids, function() {
                         this.getStore().reload();
-                        pimcore.globalmanager.get("layout_asset_tree").tree.getRootNode().reload();
+
+                        var tree = pimcore.globalmanager.get("layout_asset_tree").tree;
+                        tree.getStore().load({
+                            node: tree.getRootNode()
+                        });
                     }.bind(this)
                     );
                 }.bind(grid, data)

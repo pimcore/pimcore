@@ -233,13 +233,23 @@ pimcore.settings.recyclebin = Class.create({
                 // refresh all trees
                 try {
                     if(pimcore.globalmanager.get("layout_document_tree").tree.rendered) {
-                        pimcore.globalmanager.get("layout_document_tree").tree.getRootNode().reload();
+                        var tree = pimcore.globalmanager.get("layout_document_tree").tree;
+                        tree.getStore().load({
+                            node: tree.getRootNode()
+                        });
                     }
                     if(pimcore.globalmanager.get("layout_asset_tree").tree.rendered) {
-                        pimcore.globalmanager.get("layout_asset_tree").tree.getRootNode().reload();
+                        var tree = pimcore.globalmanager.get("layout_asset_tree").tree;
+                        tree.getStore().load({
+                            node: tree.getRootNode()
+                        });
+
                     }
                     if(pimcore.globalmanager.get("layout_object_tree").tree.rendered) {
-                        pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
+                        var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+                        tree.getStore().load({
+                            node: tree.getRootNode()
+                        });
                     }
                 }
                 catch (e) {

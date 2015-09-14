@@ -182,7 +182,11 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             handler: function () {
                 pimcore.helpers.deleteAsset(id, function() {
                     this.store.reload();
-                    pimcore.globalmanager.get("layout_asset_tree").tree.getRootNode().reload();
+
+                    var tree = pimcore.globalmanager.get("layout_asset_tree").tree;
+                    tree.getStore().load({
+                        node: tree.getRootNode()
+                    });
                 }.bind(this));
             }.bind(this, id)
         }));
