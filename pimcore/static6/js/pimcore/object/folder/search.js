@@ -311,7 +311,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     [999999, t("all")]
                 ],
                 mode: "local",
-                width: 50,
+                width: 80,
                 value: itemsPerPage,
                 triggerAction: "all",
                 listeners: {
