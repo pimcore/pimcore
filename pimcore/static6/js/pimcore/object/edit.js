@@ -37,6 +37,7 @@ pimcore.object.edit = Class.create({
                 //layout: 'border',
                 layout: "fit",
                 iconCls: "pimcore_icon_tab_edit",
+                cls: "pimcore_object_panel_edit",
                 items: items,
                 listeners: {
                     afterrender: function () {

@@ -1026,6 +1026,16 @@ span.warning {
 /*     OBJECT EDITOR STYLES                                            */
 /* ------------------------------------------------------------------- */
 
+.pimcore_object_panel_edit .x-toolbar-text-default {
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 20px;
+}
+
+.pimcore_object_panel_edit .x-toolbar-text-default b {
+    font-weight: normal !important;
+    color: #606060;
+}
 
 .objectlayout_element_accordion .x-accordion-item, .objectlayout_element_text  {
     border: 1px solid #d0d0d0;
