@@ -235,7 +235,9 @@ pimcore.asset.listfolder = Class.create({
                     var store = this.getStore();
                     pimcore.helpers.deleteAsset(data.data.id, function() {
                         this.getStore().reload();
-                        pimcore.globalmanager.get("layout_asset_tree").tree.getRootNode().reload();
+                        var tree = pimcore.globalmanager.get("layout_asset_tree");
+                        var treePanel = tree.tree;
+                        tree.refresh(treePanel.getRootNode());
                     }.bind(this));
                 }.bind(grid, data)
             }));
@@ -244,7 +246,7 @@ pimcore.asset.listfolder = Class.create({
                 text: t('open_selected'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
-                    var selectedRows = grid.getSelectionModel().getSelections();
+                    var selectedRows = grid.getSelectionModel().getSelection();
                     for (var i = 0; i < selectedRows.length; i++) {
                         var data = selectedRows[i].data;
                         pimcore.helpers.openAsset(data.id, data.type);
@@ -257,7 +259,7 @@ pimcore.asset.listfolder = Class.create({
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var ids = [];
-                    var selectedRows = grid.getSelectionModel().getSelections();
+                    var selectedRows = grid.getSelectionModel().getSelection();
                     for (var i = 0; i < selectedRows.length; i++) {
                         ids.push(selectedRows[i].data.id);
                     }
