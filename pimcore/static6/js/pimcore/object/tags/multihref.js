@@ -147,7 +147,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         items:[
                             {
                                 tooltip:t('up'),
-                                icon:"/pimcore/static/img/icon/arrow_up.png",
+                                icon:"/pimcore/static6/img/icon/arrow_up.png",
                                 handler:function (grid, rowIndex) {
                                     if (rowIndex > 0) {
                                         var rec = grid.getStore().getAt(rowIndex);
@@ -164,7 +164,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         items:[
                             {
                                 tooltip:t('down'),
-                                icon:"/pimcore/static/img/icon/arrow_down.png",
+                                icon:"/pimcore/static6/img/icon/arrow_down.png",
                                 handler:function (grid, rowIndex) {
                                     if (rowIndex < (grid.getStore().getCount() - 1)) {
                                         var rec = grid.getStore().getAt(rowIndex);
@@ -180,7 +180,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         width: 40,
                         items: [{
                             tooltip: t('open'),
-                            icon: "/pimcore/static/img/icon/pencil_go.png",
+                            icon: "/pimcore/static6/img/icon/pencil_go.png",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 var subtype = data.data.subtype;
@@ -196,7 +196,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         width: 40,
                         items: [{
                             tooltip: t('remove'),
-                            icon: "/pimcore/static/img/icon/cross.png",
+                            icon: "/pimcore/static6/img/icon/cross.png",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this)
@@ -321,7 +321,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     width: 30,
                     items: [{
                         tooltip: t('open'),
-                        icon: "/pimcore/static/img/icon/pencil_go.png",
+                        icon: "/pimcore/static6/img/icon/pencil_go.png",
                         handler: function (grid, rowIndex) {
                             var data = grid.getStore().getAt(rowIndex);
                             var subtype = data.data.subtype;

@@ -21,14 +21,14 @@ html,body{
 }
 
 #pimcore_installer_header{
-    background:transparent url(/pimcore/static/img/toolbar-bg.jpg) repeat-x scroll left top;
+    background:transparent url(/pimcore/static6/img/toolbar-bg.jpg) repeat-x scroll left top;
     height: 50px;
     widht: 100%;
     overflow:hidden;
 }
 
 #pimcore_installer_header_logo{
-    background:transparent url(/pimcore/static/img/logo.png) no-repeat scroll right top;
+    background:transparent url(/pimcore/static6/img/logo.png) no-repeat scroll right top;
     float:right;
     margin: 5px 0 0 0 ;
     width: 184px;
@@ -64,7 +64,7 @@ fieldset legend {
 }
 
 #pimcore_installer input{
-    background:url(/pimcore/static/js/lib/ext/resources/images/gray-extend/form/text-bg.gif) repeat-x ;
+    background:url(/pimcore/static6/js/lib/ext/resources/images/gray-extend/form/text-bg.gif) repeat-x ;
     border: 1px solid #B5B8C8;
     padding-top:2px;
     height: 18px;
@@ -72,7 +72,7 @@ fieldset legend {
 }
 
 #Submit-element{
-    background:transparent url(/pimcore/static/img/installer/submit_left.gif)  no-repeat top left;
+    background:transparent url(/pimcore/static6/img/installer/submit_left.gif)  no-repeat top left;
     overflow: hidden;
     float:left;
     display:inline;
@@ -84,7 +84,7 @@ fieldset legend {
     padding: 3px;
     height: auto;
     cursor:pointer;
-    background:transparent url(/pimcore/static/img/installer/submit_right.gif)  no-repeat top right;
+    background:transparent url(/pimcore/static6/img/installer/submit_right.gif)  no-repeat top right;
     border:none;
     width: 202px;
     overflow: hidden;
@@ -92,12 +92,12 @@ fieldset legend {
 
 }
 #Submit-element:hover{
-    background:transparent url(/pimcore/static/img/installer/submit_left_hover.gif)  no-repeat top left;
+    background:transparent url(/pimcore/static6/img/installer/submit_left_hover.gif)  no-repeat top left;
 
 }
 #pimcore_installer input#Submit:hover{
 
-    background:transparent url(/pimcore/static/img/installer/submit_right_hover.gif)  no-repeat top right;
+    background:transparent url(/pimcore/static6/img/installer/submit_right_hover.gif)  no-repeat top right;
 
 }
 dd{
@@ -124,7 +124,7 @@ dd dd{
     padding:0;
 }
 #pimcore_installer select{
-    background:url(/pimcore/static/js/lib/ext/resources/images/gray-extend/form/text-bg.gif) repeat-x ;
+    background:url(/pimcore/static6/js/lib/ext/resources/images/gray-extend/form/text-bg.gif) repeat-x ;
     border: 1px solid #B5B8C8;
     padding: 2px;
     width: 200px;

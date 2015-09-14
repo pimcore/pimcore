@@ -177,7 +177,7 @@ pimcore.settings.glossary = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('delete'),
-                    icon: "/pimcore/static/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                         this.updateRows();

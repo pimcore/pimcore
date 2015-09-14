@@ -131,7 +131,7 @@ pimcore.settings.properties.predefined = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('delete'),
-                    icon: "/pimcore/static/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
@@ -141,7 +141,7 @@ pimcore.settings.properties.predefined = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('translate'),
-                    icon: "/pimcore/static/img/icon/translation.png",
+                    icon: "/pimcore/static6/img/icon/translation.png",
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         try {

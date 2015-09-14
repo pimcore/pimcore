@@ -96,7 +96,7 @@ pimcore.extensionmanager.admin = Class.create({
                 } else if (value == "brick") {
                     icon = "bricks.png";
                 }
-                return '<img src="/pimcore/static/img/icon/' + icon + '" alt="'+ t("value") +'" title="'
+                return '<img src="/pimcore/static6/img/icon/' + icon + '" alt="'+ t("value") +'" title="'
                                                              + t("value") +'" />';
             }},
             {header: "ID", width: 100, sortable: true, dataIndex: 'id', flex: 1},

@@ -8,7 +8,7 @@
     height: 20px;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    background: url(/pimcore/static/img/background.png);
+    background: url(/pimcore/static6/img/background.png);
     overflow: hidden;
     color: #fff;
     z-index: 10000;
@@ -54,23 +54,23 @@
 }
 
 #pimcore_admin_console .edit {
-    background: url(/pimcore/static/img/icon/page_edit.png) no-repeat 2px 2px;
+    background: url(/pimcore/static6/img/icon/page_edit.png) no-repeat 2px 2px;
 }
 
 #pimcore_admin_console .feature {
-    background: url(/pimcore/static/img/icon/star.png) no-repeat 2px 2px;
+    background: url(/pimcore/static6/img/icon/star.png) no-repeat 2px 2px;
 }
 
 #pimcore_admin_console .bug {
-    background: url(/pimcore/static/img/icon/bug_add.png) no-repeat 2px 2px;
+    background: url(/pimcore/static6/img/icon/bug_add.png) no-repeat 2px 2px;
 }
 
 #pimcore_admin_console .promote {
-    background: url(/pimcore/static/img/icon/comments.png) no-repeat 2px 2px;
+    background: url(/pimcore/static6/img/icon/comments.png) no-repeat 2px 2px;
 }
 
 #pimcore_admin_console .persona {
-    background: url(/pimcore/static/img/icon/group.png) no-repeat 2px 2px;
+    background: url(/pimcore/static6/img/icon/group.png) no-repeat 2px 2px;
 }
 
 #pimcore_admin_lightbox {

@@ -60,11 +60,11 @@ pimcore.asset.metadata = Class.create({
                 store: [
                     ["input", t("input")],
                     ["textarea", t("textarea")],
-                    ["document", "Document"],
-                    ["asset", "Asset"],
-                    ["object", "Object"],
-                    ["date", "Date"],
-                    ["checkbox", "checkbox"]
+                    ["document", t("document")],
+                    ["asset", t("asset")],
+                    ["object", t("object")],
+                    ["date", t("date")],
+                    ["checkbox", t("checkbox")]
                 ],
                 editable: false,
                 triggerAction: 'all',
@@ -224,7 +224,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('open'),
-                                icon: "/pimcore/static/img/icon/pencil_go.png",
+                                icon: "/pimcore/static6/img/icon/pencil_go.png",
                                 handler: function (grid, rowIndex) {
                                     var pData = grid.getStore().getAt(rowIndex).data;
                                     if (pData.data) {
@@ -245,7 +245,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('delete'),
-                                icon: "/pimcore/static/img/icon/cross.png",
+                                icon: "/pimcore/static6/img/icon/cross.png",
                                 handler: function (grid, rowIndex) {
                                     grid.getStore().removeAt(rowIndex);
                                 }.bind(this)
@@ -336,7 +336,7 @@ pimcore.asset.metadata = Class.create({
         if (value == "input") {
             value = "text";
         }
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) '
+        return '<div style="background: url(/pimcore/static6/img/icon/' + value + '.png) '
             + 'center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
     },
 

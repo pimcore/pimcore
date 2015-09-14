@@ -145,7 +145,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     text: typebuttontext,
                     handleMouseEvents: false,
                     tooltip: t("drag_me"),
-                    icon: "/pimcore/static/img/icon/arrow_nw_ne_sw_se.png",
+                    icon: "/pimcore/static6/img/icon/arrow_nw_ne_sw_se.png",
                     style: "cursor: move;"
                 });
                 typeButton.on("afterrender", function (index, v) {
@@ -670,7 +670,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 listeners: {
                     "click": this.editmodeSave.bind(this)
                 },
-                icon: "/pimcore/static/img/icon/tick.png"
+                icon: "/pimcore/static6/img/icon/tick.png"
             }],
             contentEl: content
         });
@@ -826,7 +826,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
 
         if(!brick.icon) {
-            brick.icon = "/pimcore/static/img/icon/" + iconStore[itemCount] + ".png";
+            brick.icon = "/pimcore/static6/img/icon/" + iconStore[itemCount] + ".png";
         }
 
         var button = {

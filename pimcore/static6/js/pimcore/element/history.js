@@ -73,7 +73,7 @@ pimcore.element.history = Class.create({
                             items: [
                                 {
                                     tooltip: t('open'),
-                                    icon: "/pimcore/static/img/icon/pencil_go.png",
+                                    icon: "/pimcore/static6/img/icon/pencil_go.png",
                                     handler: function (grid, rowIndex) {
                                         var data = grid.getStore().getAt(rowIndex).data;
                                         pimcore.helpers.openElement(data.id, data.type);

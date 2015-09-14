@@ -127,7 +127,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             items: [
                 {
                     tooltip: t("classificationstore_detailed_configuration"),
-                    icon: "/pimcore/static/img/icon/building_edit.png",
+                    icon: "/pimcore/static6/img/icon/building_edit.png",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
@@ -183,7 +183,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             items: [
                 {
                     tooltip: t('remove'),
-                    icon: "/pimcore/static/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;

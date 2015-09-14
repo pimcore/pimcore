@@ -35,7 +35,7 @@ pimcore.settings.user.workspace.asset = Class.create({
         var typesColumns = [
             {header: t("path"), width: 200, sortable: false, dataIndex: 'path',
                         editor: new Ext.form.TextField({}),
-                        css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"}
+                        css: "background: url(/pimcore/static6/img/icon/drop-16.png) right 2px no-repeat;"}
         ];
 
         var check;
@@ -61,7 +61,7 @@ pimcore.settings.user.workspace.asset = Class.create({
             width: 40,
             items: [{
                 tooltip: t('delete'),
-                icon: "/pimcore/static/img/icon/cross.png",
+                icon: "/pimcore/static6/img/icon/cross.png",
                 handler: function (grid, rowIndex) {
                     grid.getStore().removeAt(rowIndex);
                     this.updateRows();

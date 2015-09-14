@@ -150,7 +150,7 @@ pimcore.settings.email.log = Class.create({
             header: t('email_log_html'),
             items : [{
                 tooltip: t('email_log_show_html_email'),
-                icon: "/pimcore/static/img/icon/email_open.png",
+                icon: "/pimcore/static6/img/icon/email_open.png",
                 handler: function(grid, rowIndex){
                     var rec = grid.getStore().getAt(rowIndex);
                     var iframe = new Ext.Window({
@@ -182,7 +182,7 @@ pimcore.settings.email.log = Class.create({
             hidden: true,
             items : [{
                 tooltip: t('email_log_show_text_email'),
-                icon: "/pimcore/static/img/icon/text_align_justify.png",
+                icon: "/pimcore/static6/img/icon/text_align_justify.png",
                 handler: function(grid, rowIndex){
                     var rec = grid.getStore().getAt(rowIndex);
                     var iframe = new Ext.Window({
@@ -214,7 +214,7 @@ pimcore.settings.email.log = Class.create({
             header: t('email_log_params'),
             items : [{
                 tooltip: t('email_log_show_text_params'),
-                icon: "/pimcore/static/img/icon/information.png",
+                icon: "/pimcore/static6/img/icon/information.png",
                 handler: function(grid, rowIndex){
                     var rec = grid.getStore().getAt(rowIndex);
 
@@ -276,7 +276,7 @@ pimcore.settings.email.log = Class.create({
             items:[
                 {
                     tooltip:t('email_log_resend'),
-                    icon:"/pimcore/static/img/icon/email_start.png",
+                    icon:"/pimcore/static6/img/icon/email_start.png",
                     handler:function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
                             Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'),
@@ -315,7 +315,7 @@ pimcore.settings.email.log = Class.create({
             width: 30,
             items: [{
                 tooltip: t('delete'),
-                icon: "/pimcore/static/img/icon/cross.png",
+                icon: "/pimcore/static6/img/icon/cross.png",
                 handler: function (grid, rowIndex) {
                     var rec = grid.getStore().getAt(rowIndex);
                     Ext.Ajax.request({

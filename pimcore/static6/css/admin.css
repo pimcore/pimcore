@@ -155,7 +155,7 @@
 }
 
 .object_field_setting_warning{
-    background:url("/pimcore/static/img/icon/error.png") no-repeat scroll 0 0 transparent;
+    background:url("/pimcore/static6/img/icon/error.png") no-repeat scroll 0 0 transparent;
     padding:2px 5px 2px 20px;
     color: #999;
 
@@ -262,12 +262,12 @@
 }
 
 .pimcore_error_input input {
-    background: url(/pimcore/static/img/icon/exclamation.png) right center no-repeat #fff !important;
+    background: url(/pimcore/static6/img/icon/exclamation.png) right center no-repeat #fff !important;
     cursor: default;
 }
 
 .pimcore_droptarget_image  {
-    background: url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #fff;
+    background: url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #fff;
 }
 
 
@@ -276,33 +276,33 @@
 }
 
 .pimcore_property_document .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static/img/icon/page_white.png) left top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/page_white.png) left top no-repeat !important;
 }
 
 .pimcore_property_asset .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static/img/icon/asset.png) left top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/asset.png) left top no-repeat !important;
 }
 
 .pimcore_property_object .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static/img/icon/database.png) left top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/database.png) left top no-repeat !important;
 }
 
 .pimcore_property_bool .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static/img/icon/tick.png) left top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/tick.png) left top no-repeat !important;
 }
 
 .pimcore_property_select .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static/img/icon/select.png) left top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/select.png) left top no-repeat !important;
 }
 
 .pimcore_property_text .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static/img/icon/textfield.png) left top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/textfield.png) left top no-repeat !important;
 }
 
 
 .pimcore_property_droptarget {
     height: 16px;
-    background: url(/pimcore/static/img/icon/drop-16.png) right top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/drop-16.png) right top no-repeat !important;
 }
 
 .pimcore_property_inherited {
@@ -350,15 +350,15 @@
 }
 
 .pimcore_plugin_installed{
-    background: url(/pimcore/static/img/icon/plugin.png) right top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/plugin.png) right top no-repeat !important;
 }
 
 .pimcore_plugin_notinstalled {
-    background: url(/pimcore/static/img/icon/plugin_disabled.png) right top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/plugin_disabled.png) right top no-repeat !important;
 }
 
 .pimcore_plugin_update {
-    background: url(/pimcore/static/img/icon/plugin_go.png) right top no-repeat !important;
+    background: url(/pimcore/static6/img/icon/plugin_go.png) right top no-repeat !important;
 }
 
 .tree_node_error {
@@ -411,7 +411,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static/img/inheritance-indicator.png)  top left no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator.png)  top left no-repeat !important;
 }
 
 .grid_value_noview {
@@ -419,7 +419,7 @@
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
     pointer-events: none;
-    background: #dad9d9 url(/pimcore/static/img/icon/lock.png)  center center no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/icon/lock.png)  center center no-repeat !important;
 }
 
 .grid_value_noedit {
@@ -427,7 +427,7 @@
     /*filter: Alpha(opacity=60) !important;*/
     /*opacity: 0.6 !important;*/
     pointer-events: none;
-    background: #dad9FF url(/pimcore/static/img/icon/lock_edit.png)  center left no-repeat !important;
+    background: #dad9FF url(/pimcore/static6/img/icon/lock_edit.png)  center left no-repeat !important;
 }
 .grid_value_noedit > *{
     padding-left: 20px !important;
@@ -441,7 +441,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static/img/locked.png)  top left no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/locked.png)  top left no-repeat !important;
 }
 
 
@@ -449,7 +449,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static/img/inheritance-indicator-locked.png)  top left no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator-locked.png)  top left no-repeat !important;
     opacity: 0.6 !important;
 }
 
@@ -468,7 +468,7 @@
     height:10px;
     z-index:1000;
     cursor:pointer;
-    background:url(/pimcore/static/img/inheritance-indicator.png) top left no-repeat;
+    background:url(/pimcore/static6/img/inheritance-indicator.png) top left no-repeat;
 }
 
 .asset_folder_preview {
@@ -648,7 +648,7 @@
 
 
 .permission_checked  {
-    background: url(/pimcore/static/img/icon/checked_no_edit.png) no-repeat center center;
+    background: url(/pimcore/static6/img/icon/checked_no_edit.png) no-repeat center center;
     width: 100%;
     height: 16px;
 
@@ -656,14 +656,14 @@
 
 .permission_edit{
     cursor:pointer;
-    background: url(/pimcore/static/img/icon/lock_edit.png) no-repeat center center;
+    background: url(/pimcore/static6/img/icon/lock_edit.png) no-repeat center center;
     width: 16px;
     height:16px;
 }
 
 .permission_add{
     cursor:pointer;
-    background: url(/pimcore/static/img/icon/bullet_add.png) no-repeat center center;
+    background: url(/pimcore/static6/img/icon/bullet_add.png) no-repeat center center;
     width: 16px;
     height:16px;
 
@@ -671,7 +671,7 @@
 
 .dependency-warning{
     font:11px/13px arial,tahoma,helvetica,sans-serif;
-    background: url(/pimcore/static/img/icon/error.png) left 5px no-repeat;
+    background: url(/pimcore/static6/img/icon/error.png) left 5px no-repeat;
     padding: 7px 5px 5px 21px;
 }
 
@@ -749,7 +749,7 @@
 }
 
 span.warning {
-    background:url("/pimcore/static/img/icon/error.png") no-repeat scroll 0 0 transparent;
+    background:url("/pimcore/static6/img/icon/error.png") no-repeat scroll 0 0 transparent;
     margin:0 0 0 20px;
     padding:2px 5px 2px 20px;
 }
@@ -818,7 +818,7 @@ span.warning {
 }
 
 .pimcore_document_seo_warning {
-    background: url(/pimcore/static/img/icon/exclamation.png) 2px 2px no-repeat #ffdbdb;
+    background: url(/pimcore/static6/img/icon/exclamation.png) 2px 2px no-repeat #ffdbdb;
 }
 
 .pimcore_targeting_bracket {
@@ -883,7 +883,7 @@ span.warning {
 
 /* object data-type hotspotimage */
 .pimcore_image_marker {
-    background: url(/pimcore/static/img/icon/marker.png);
+    background: url(/pimcore/static6/img/icon/marker.png);
     width: 20px;
     height: 35px;
     cursor: pointer;
@@ -1055,7 +1055,7 @@ span.warning {
 /* custom styles */
 
 .pimcore_droptarget_input, .input_drop_target, .input_drop_target input  {
-    background: url(/pimcore/static/img/icon/drop-16.png) right center no-repeat transparent !important;
+    background: url(/pimcore/static6/img/icon/drop-16.png) right center no-repeat transparent !important;
     cursor: default;
 }
 
@@ -1106,7 +1106,7 @@ span.warning {
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {
-    background-image: url(/pimcore/static/img/logo-gray.png);
+    background-image: url(/pimcore/static6/img/logo-gray.png);
     background-repeat: no-repeat;
     background-position: center center;
 }

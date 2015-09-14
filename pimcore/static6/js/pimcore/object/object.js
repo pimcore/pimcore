@@ -429,7 +429,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
-                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
+                text: '&nbsp;&nbsp;<img src="/pimcore/static6/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
                     + t("this_is_a_newer_not_published_version"),
                 scale: "small",
                 hidden: true

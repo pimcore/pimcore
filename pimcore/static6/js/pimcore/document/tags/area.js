@@ -81,7 +81,7 @@ pimcore.document.tags.area = Class.create(pimcore.document.tag, {
                 listeners: {
                     "click": this.editmodeSave.bind(this)
                 },
-                icon: "/pimcore/static/img/icon/tick.png"
+                icon: "/pimcore/static6/img/icon/tick.png"
             }],
             contentEl: content
         });

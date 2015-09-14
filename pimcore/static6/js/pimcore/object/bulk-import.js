@@ -140,7 +140,7 @@ pimcore.object.bulkimport = Class.create({
                     {
                         xtype: "button",
                         text: t("close"),
-                        icon: "/pimcore/static/img/icon/cancel.png",
+                        icon: "/pimcore/static6/img/icon/cancel.png",
                         handler: function () {
                             this.window.close();
                         }.bind(this)
@@ -162,7 +162,7 @@ pimcore.object.bulkimport = Class.create({
 
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
 
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) '
+        return '<div style="background: url(/pimcore/static6/img/icon/' + value + '.png) '
             + 'center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
     },
 

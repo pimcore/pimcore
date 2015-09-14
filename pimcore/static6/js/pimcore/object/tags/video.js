@@ -290,7 +290,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                             this.updateVideo();
                         }.bind(this)
                     },
-                    icon: "/pimcore/static/img/icon/tick.png"
+                    icon: "/pimcore/static6/img/icon/tick.png"
                 }
             ]
         });

@@ -2,7 +2,7 @@
 
 include("../../cli/startup.php");
 
-$iconPath = '/pimcore/static/img/flags/';
+$iconPath = '/pimcore/static6/img/flags/';
 
 $locales = \Pimcore\Tool::getSupportedLocales();
 $languageOptions = array();
@@ -17,7 +17,7 @@ foreach ($locales as $short => $translation) {
 
 function getIconPath($language) {
 
-    $iconBasePath = PIMCORE_PATH . '/static/img/flags';
+    $iconBasePath = PIMCORE_PATH . '/static6/img/flags';
 
     $code = strtolower($language);
     $code = str_replace("_","-", $code);

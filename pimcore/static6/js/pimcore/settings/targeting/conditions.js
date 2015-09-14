@@ -401,7 +401,7 @@ pimcore.settings.targeting.conditions = {
                         bbar: [searchfield,{
                             xtype: "button",
                             text: t("search"),
-                            icon: "/pimcore/static/img/icon/magnifier.png",
+                            icon: "/pimcore/static6/img/icon/magnifier.png",
                             handler: function () {
 
                                 var geocoder = new google.maps.Geocoder();
@@ -419,14 +419,14 @@ pimcore.settings.targeting.conditions = {
                         },"->",{
                             xtype: "button",
                             text: t("cancel"),
-                            icon: "/pimcore/static/img/icon/cancel.png",
+                            icon: "/pimcore/static6/img/icon/cancel.png",
                             handler: function () {
                                 searchWindow.close();
                             }
                         },{
                             xtype: "button",
                             text: "OK",
-                            icon: "/pimcore/static/img/icon/tick.png",
+                            icon: "/pimcore/static6/img/icon/tick.png",
                             handler: function () {
                                 var point = marker.getPosition();
                                 latitude.setValue(point.lat());

@@ -146,7 +146,7 @@ pimcore.element.notes = Class.create({
                         width: 30,
                         items: [{
                             tooltip: t('details'),
-                            icon: "/pimcore/static/img/icon/info.png",
+                            icon: "/pimcore/static6/img/icon/info.png",
                             handler: function (grid, rowIndex, event) {
                                 this.showDetailedData(grid, rowIndex, event);
                             }.bind(this)
@@ -241,7 +241,7 @@ pimcore.element.notes = Class.create({
                     width: 30,
                     items: [{
                         tooltip: t('open'),
-                        icon: "/pimcore/static/img/icon/pencil_go.png",
+                        icon: "/pimcore/static6/img/icon/pencil_go.png",
                         handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
                             if(rec.get("type") == "document" || rec.get("type") == "asset"

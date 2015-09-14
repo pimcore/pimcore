@@ -325,7 +325,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
                         },
                         tooltip: t('remove'),
-                        // icon: "/pimcore/static/img/icon/cross.png",
+                        // icon: "/pimcore/static6/img/icon/cross.png",
                         handler: function (grid, rowIndex) {
                             var store = grid.getStore();
                             var record = store.getAt(rowIndex);

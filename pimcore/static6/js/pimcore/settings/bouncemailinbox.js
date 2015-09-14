@@ -73,7 +73,7 @@ pimcore.settings.bouncemailinbox = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('open'),
-                    icon: "/pimcore/static/img/icon/arrow_right.png",
+                    icon: "/pimcore/static6/img/icon/arrow_right.png",
                     handler: function (grid, rowIndex) {
                         this.showMessage(grid.getStore().getAt(rowIndex).get("id"));
                     }.bind(this)

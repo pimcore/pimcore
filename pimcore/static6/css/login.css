@@ -18,7 +18,7 @@ body {
     margin: 0;
     font-family: Arial, Verdana;
     font-size: 14px;
-    background: url(/pimcore/static/img/background.png);
+    background: url(/pimcore/static6/img/background.png);
 }
 
 #vcenter {
@@ -30,7 +30,7 @@ body {
 }
 
 #vcenter.customimage {
-    background: url(/pimcore/static/img/background.png);
+    background: url(/pimcore/static6/img/background.png);
 }
 
 #content {
@@ -39,7 +39,7 @@ body {
     height: 500px;
     margin: 0 auto;
     padding: 30px;
-    background: url(/pimcore/static/img/login/logo.png) top left no-repeat;
+    background: url(/pimcore/static6/img/login/logo.png) top left no-repeat;
     position: relative;
 }
 

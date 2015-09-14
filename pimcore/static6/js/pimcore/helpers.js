@@ -304,7 +304,7 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
 
             var originalSrc = icon.getAttribute("src");
             node.originalIconSrc = originalSrc;
-            icon.setAttribute("src", "/pimcore/static/img/panel-loader.gif");
+            icon.setAttribute("src", "/pimcore/static6/img/panel-loader.gif");
 
             nodeEl.repaint();
         }
@@ -1437,7 +1437,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, node, index, eOpts ) 
                             '<style type="text/css">' +
                             'body { margin:0; padding: 0; } ' +
                             '.thumbnails { width: 410px; } ' +
-                            '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
+                            '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static6/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
                             '.big { min-height: 300px; } ' +
                             '.complete { border:none; border-radius: 0; background:none; }' +
                             '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
@@ -2040,7 +2040,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                 listeners: {
                     "click": callback["save"]
                 },
-                icon: "/pimcore/static/img/icon/tick.png"
+                icon: "/pimcore/static6/img/icon/tick.png"
             }
         ]
     });
@@ -2238,7 +2238,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
                 listeners: {
                     "click": callback["save"]
                 },
-                icon: "/pimcore/static/img/icon/tick.png"
+                icon: "/pimcore/static6/img/icon/tick.png"
             }
         ]
     });

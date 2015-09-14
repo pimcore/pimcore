@@ -325,7 +325,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     empty: function () {
         this.data = null;
         this.getBody().setStyle({
-            backgroundImage: "url(/pimcore/static/img/icon/drop-40.png)"
+            backgroundImage: "url(/pimcore/static6/img/icon/drop-40.png)"
         });
         this.dirty = true;
         this.getBody().repaint();

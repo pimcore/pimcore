@@ -3,7 +3,7 @@
 
     try {
 
-        document.write('<link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/admin/admin.css" />');
+        document.write('<link rel="stylesheet" type="text/css" href="/pimcore/static6/js/frontend/admin/admin.css" />');
 
         var openWindow = function (width, height, url) {
 
@@ -69,7 +69,7 @@
                 container.className = "";
 
                 var logo = document.createElement("img");
-                logo.src = "/pimcore/static/img/logo-white.png";
+                logo.src = "/pimcore/static6/img/logo-white.png";
                 logo.className = "logo";
                 container.appendChild(logo);
 

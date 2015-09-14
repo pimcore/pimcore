@@ -32,7 +32,7 @@ pimcore.layout.treepanelmanager = {
     },
 
     /**
-     * This method is called in /pimcore/static/js/pimcore/startup.js
+     * This method is called in /pimcore/static6/js/pimcore/startup.js
      */
     startup: function () {
         if(this.items.length < 1) {

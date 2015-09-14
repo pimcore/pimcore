@@ -258,7 +258,7 @@ pimcore.element.properties = Class.create({
                         width: 40,
                         items: [{
                             tooltip: t('open'),
-                            icon: "/pimcore/static/img/icon/pencil_go.png",
+                            icon: "/pimcore/static6/img/icon/pencil_go.png",
                             handler: function (grid, rowIndex) {
                                 var pData = grid.getStore().getAt(rowIndex).data;
                                 if(pData.all && pData.all.data) {
@@ -284,7 +284,7 @@ pimcore.element.properties = Class.create({
                         width: 40,
                         items: [{
                             tooltip: t('delete'),
-                            icon: "/pimcore/static/img/icon/cross.png",
+                            icon: "/pimcore/static6/img/icon/cross.png",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this),
@@ -372,7 +372,7 @@ pimcore.element.properties = Class.create({
  
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
  
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) '
+        return '<div style="background: url(/pimcore/static6/img/icon/' + value + '.png) '
                 + 'center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
     },
  

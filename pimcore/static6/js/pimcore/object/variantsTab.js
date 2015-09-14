@@ -88,7 +88,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static/img/icon/pencil_go.png",
+                    icon: "/pimcore/static6/img/icon/pencil_go.png",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.id, "variant");
@@ -103,7 +103,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             items: [
                 {
                     tooltip: t('remove'),
-                    icon: "/pimcore/static/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         Ext.MessageBox.confirm(t('remove_variant'), t('remove_variant_text'),

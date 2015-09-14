@@ -187,7 +187,7 @@ pimcore.settings.metadata.predefined = Class.create({
                 width: 40,
                 items: [{
                     tooltip: t('delete'),
-                    icon: "/pimcore/static/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
@@ -275,7 +275,7 @@ pimcore.settings.metadata.predefined = Class.create({
         if (value == "input") {
             value = "text";
         }
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) '
+        return '<div style="background: url(/pimcore/static6/img/icon/' + value + '.png) '
             + 'center center no-repeat; height: 16px;" recordid=' + record.id + '>&nbsp;</div>';
     },
 

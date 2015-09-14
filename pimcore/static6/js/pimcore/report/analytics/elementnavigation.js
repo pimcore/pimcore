@@ -81,8 +81,8 @@ pimcore.report.analytics.elementnavigation = Class.create(pimcore.report.abstrac
         
         var height = this.contentPanel.getHeight()-10;
         
-        swfobject.embedSWF("/pimcore/static/swf/analytics_navigation.swf", this.flashContainerId, "100%",
-                                height, "10.0.0","/pimcore/static/swf/expressInstall.swf", flashvars, params);
+        swfobject.embedSWF("/pimcore/static6/swf/analytics_navigation.swf", this.flashContainerId, "100%",
+                                height, "10.0.0","/pimcore/static6/swf/expressInstall.swf", flashvars, params);
     },
     
     getConfigFile: function () {
