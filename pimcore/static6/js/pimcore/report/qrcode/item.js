@@ -49,7 +49,7 @@ pimcore.report.qrcode.item = Class.create({
             text: t("save"),
             iconCls: "pimcore_icon_apply",
             handler: this.save.bind(this)
-        }); 
+        });
 
 
         var fieldListeners = {
@@ -90,28 +90,28 @@ pimcore.report.qrcode.item = Class.create({
             title: t("google_analytics"),
             height: 240,
             layout: 'fit',
-            items: [/*{
+            items: [{
                 xtype: 'cartesian',
                 store: store,
                 interactions: 'itemhighlight',
                 axes: [
-                        {
-                            type: 'numeric',
-                            fields: ['visits' ],
-                            position: 'left',
-                            grid: true,
-                            minimum: 0
-                        },
-                        {
-                            type: 'category',
-                            fields: 'datetext',
-                            position: 'bottom',
-                            grid: true,
-                            label: {
-                                rotate: {
-                                    degrees: -45
-                                }
+                    {
+                        type: 'numeric',
+                        fields: ['visits' ],
+                        position: 'left',
+                        grid: true,
+                        minimum: 0
+                    },
+                    {
+                        type: 'category',
+                        fields: 'datetext',
+                        position: 'bottom',
+                        grid: true,
+                        label: {
+                            rotate: {
+                                degrees: -45
                             }
+                        }
                     }
                 ],
                 series: [
@@ -131,12 +131,12 @@ pimcore.report.qrcode.item = Class.create({
                         }
                     }
                 ]
-            }*/]
+            }]
         });
 
         this.analytics = new Ext.panel.Panel({
             border: false,
-            items: [/*this.analytics*/],
+            items: [this.analytics],
             buttons: [{
                 text: t("show_in_google_anaytics"),
                 iconCls: "pimcore_icon_analytics",
@@ -151,7 +151,7 @@ pimcore.report.qrcode.item = Class.create({
 
         this.form = new Ext.form.FormPanel({
             region: "center",
-            bodyStyle: "padding:20px",
+            bodyStyle: "padding:10px",
             labelWidth: 150,
             autoScroll: true,
             border:false,
@@ -252,15 +252,15 @@ pimcore.report.qrcode.item = Class.create({
         this.codePanel = new Ext.Panel({
             html: '',
             border: true,
-            bodyStyle: "border-color: #ececec !important;",
             height: 250
         });
 
         this.preview = new Ext.Panel({
             region: "east",
-            width: 290,
+            width: 270,
+            border:false,
             autoScroll: true,
-            bodyStyle: "padding: 40px 20px;",
+            bodyStyle: "padding: 10px;",
             items: [this.codePanel, {
                 border: false,
                 buttons: [{
@@ -283,6 +283,7 @@ pimcore.report.qrcode.item = Class.create({
             border: false,
             layout: "border",
             closable: true,
+            bodyStyle: "padding: 20px;",
             title: this.data.name,
             id: "pimcore_qrcode_panel_" + this.data.name,
             items: [this.form, this.preview],
@@ -308,7 +309,7 @@ pimcore.report.qrcode.item = Class.create({
         params["name"] = this.data.name;
 
         var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
-        this.codePanel.update('<img src="' + codeUrl + '" style="padding:10px; width:248px;" />');
+        this.codePanel.update('<img src="' + codeUrl + '" style="padding:10px; width:228px;" />');
     },
 
     save: function () {
