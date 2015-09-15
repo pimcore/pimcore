@@ -1113,6 +1113,15 @@ span.warning {
     font-weight: 100 !important;
 }
 
+.x-fieldset-header-tool-right {
+    margin-left: 8px;
+}
+
+.x-fieldset-header-tool-right .x-tool-close {
+    color: #919191;
+}
+
+
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {
