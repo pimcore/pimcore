@@ -62,6 +62,10 @@ class Newsletter {
         $mail->setDocument(Document::getById($newsletter->getDocument()));
         $mail->setParams($params);
 
+        if(method_exists('Website\Tool\Newsletter' ,"addAttachments")) {
+            \Website\Tool\Newsletter::addAttachments($mail);
+        }
+        
         // render the document and rewrite the links (if analytics is enabled)
         if($newsletter->getGoogleAnalytics()) {
             if($content = $mail->getBodyHtmlRendered()){
