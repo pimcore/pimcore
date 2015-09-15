@@ -124,7 +124,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     },
 
     createGrid: function (response) {
-        try {
+        //try {
 
             var itemsPerPage = 20;
 
@@ -155,7 +155,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 clicksToEdit: 1
             });
 
-            var plugins = [this.cellEditing, 'gridfilters'];
+            var plugins = [this.cellEditing, 'pimcore.gridfilters'];
 
             // get current class
             var classStore = pimcore.globalmanager.get("object_types_store");
@@ -230,10 +230,10 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 trackMouseOver: true,
                 loadMask: true,
                 plugins: plugins,
-                viewConfig: {
+               /* viewConfig: {
                     forceFit: false,
                     xtype: 'patchedgridview'
-                },
+                },*/
                 tbar: [this.languageInfo, "-", this.toolbarFilterInfo, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
                     text: t("search_and_move"),
                     iconCls: "pimcore_icon_search_and_move",
@@ -269,7 +269,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
             this.grid.on("afterrender", function (grid) {
-                //this.updateGridHeaderContextMenu(grid);
+                this.updateGridHeaderContextMenu(grid);
             }.bind(this));
 
             this.grid.on("sortchange", function (ct, column, direction, eOpts ) {
@@ -339,9 +339,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.layout.removeAll();
             this.layout.add(this.editor);
             this.layout.updateLayout();
-        } catch (e) {
-            console.log(e);
-        }
+       // } catch (e) {
+       //     console.log(e);
+       // }
 
     },
 
@@ -355,9 +355,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
-
-        //$(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( {
-        //    backgroundColor: '#fff' }, 400);
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);

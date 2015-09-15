@@ -102,6 +102,7 @@ pimcore.object.helpers.grid = Class.create({
             },
             extraParams: this.baseParams
         };
+        console.log(this.baseParams);
 
         var writer = null;
         var listeners = {};
@@ -120,11 +121,12 @@ pimcore.object.helpers.grid = Class.create({
                         }
                     }.bind(this)
                 }
-            }
-        };
+            };
+        }
 
         this.store = new Ext.data.Store({
             remoteSort: true,
+            remoteFilter: true,
             listeners: listeners,
             autoDestroy: true,
             fields: readerFields,
@@ -139,7 +141,7 @@ pimcore.object.helpers.grid = Class.create({
     selectionColumn: null,
     getSelectionColumn: function() {
         if(this.selectionColumn == null) {
-            this.selectionColumn = new Ext.selection.CheckboxModel();
+            this.selectionColumn = Ext.create('Ext.selection.CheckboxModel', {});
         }
         return this.selectionColumn;
     },
@@ -164,11 +166,6 @@ pimcore.object.helpers.grid = Class.create({
         // init grid-columns
         var gridColumns = [];
 
-        if(this.enableEditor) {
-            var selectionColumn = this.getSelectionColumn();
-            gridColumns.push(selectionColumn);
-        }
-
         var gridFilters = this.getGridFilters();
 
         var fields = this.fields;
@@ -176,7 +173,7 @@ pimcore.object.helpers.grid = Class.create({
             var field = fields[i];
 
             if(field.key == "subtype") {
-                gridColumns.push({header: t("type"), flex: this.getColumnWidth(field, 40), sortable: true, dataIndex: 'subtype',
+                gridColumns.push({header: t("type"), width: this.getColumnWidth(field, 40), sortable: true, dataIndex: 'subtype',
                     hidden: !this.showSubtype,
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
@@ -188,38 +185,33 @@ pimcore.object.helpers.grid = Class.create({
             } else if(field.key == "published") {
                 gridColumns.push(new Ext.grid.column.Check({
                     header: t("published"),
-                    flex: 40,
+                    width: 40,
                     sortable: true,
                     dataIndex: "published"
-                    //,
-                    //renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
-                    //    metaData.css += ' x-grid-check-col-td';
-                    //    return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
-                    //}.bind(this, field.key)
                 }));
             } else if(field.key == "fullpath") {
-                gridColumns.push({header: t("path"), flex: this.getColumnWidth(field, 200), sortable: true,
+                gridColumns.push({header: t("path"), width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: 'fullpath', filter: "string"});
             } else if(field.key == "filename") {
-                gridColumns.push({header: t("filename"), flex: this.getColumnWidth(field, 200), sortable: true,
+                gridColumns.push({header: t("filename"), width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: 'filename', hidden: !showKey});
             } else if(field.key == "classname") {
-                gridColumns.push({header: t("class"), flex: this.getColumnWidth(field, 200), sortable: true,
+                gridColumns.push({header: t("class"), width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: 'classname',renderer: function(v){return ts(v);}/*, hidden: true*/});
             } else if(field.key == "creationDate") {
-                gridColumns.push({header: t("creationdate") + " (System)", flex: this.getColumnWidth(field, 200), sortable: true,
+                gridColumns.push({header: t("creationdate") + " (System)", width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: "creationDate", filter: 'date', editable: false, renderer: function(d) {
                         return Ext.Date.format(d, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.creationDate*/});
             } else if(field.key == "modificationDate") {
-                gridColumns.push({header: t("modificationdate") + " (System)", flex: this.getColumnWidth(field, 200), sortable: true,
+                gridColumns.push({header: t("modificationdate") + " (System)", width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: "modificationDate", filter: 'date', editable: false, renderer: function(d) {
 
                         return Ext.Date.format(d, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
                 var fc = pimcore.object.tags[field.type].prototype.getGridColumnConfig(field);
-                fc.flex = this.getColumnWidth(field, 100);
+                fc.width = this.getColumnWidth(field, 100);
 
                 if (typeof gridFilters[field.key] !== 'undefined') {
                     fc.filter = gridFilters[field.key];

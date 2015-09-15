@@ -26,7 +26,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         this.editableDivId = "object_wysiwyg_" + uniqid();
     },
 
-    getGridColumnEditor: function(field) {
+    /**
+     * @extjs since HTMLEditor seems not working properly in grid, this feature is deactivated for now
+     */
+    /*getGridColumnEditor: function(field) {
         var editorConfig = {};
 
         if (field.config) {
@@ -42,12 +45,12 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
         // WYSIWYG
         if (field.type == "wysiwyg") {
-            return new Ext.form.HtmlEditor({
+            return Ext.create('Ext.form.HtmlEditor', {
                 width: 500,
                 height: 300
             });
         }
-    },
+    },*/
 
     getGridColumnFilter: function(field) {
         return {type: 'string', dataIndex: field.key};

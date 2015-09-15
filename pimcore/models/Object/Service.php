@@ -559,22 +559,32 @@ class Service extends Model\Element\Service {
 
                 $operator = "=";
 
+                /**
+                 * @extjs
+                 */
+                $filterField = $filter["field"];
+                $filterOperator = $filter["comparison"];
+                if(\Pimcore\Tool\Admin::isExtJS6()) {
+                    $filterField = $filter["property"];
+                    $filterOperator = $filter["operator"];
+                }
+
                 if($filter["type"] == "string") {
                     $operator = "LIKE";
                 } else if ($filter["type"] == "numeric") {
-                    if($filter["comparison"] == "lt") {
+                    if($filterOperator == "lt") {
                         $operator = "<";
-                    } else if($filter["comparison"] == "gt") {
+                    } else if($filterOperator == "gt") {
                         $operator = ">";
-                    } else if($filter["comparison"] == "eq") {
+                    } else if($filterOperator == "eq") {
                         $operator = "=";
                     }
                 } else if ($filter["type"] == "date") {
-                    if($filter["comparison"] == "lt") {
+                    if($filterOperator == "lt") {
                         $operator = "<";
-                    } else if($filter["comparison"] == "gt") {
+                    } else if($filterOperator == "gt") {
                         $operator = ">";
-                    } else if($filter["comparison"] == "eq") {
+                    } else if($filterOperator == "eq") {
                         $operator = "=";
                     }
                     $filter["value"] = strtotime($filter["value"]);
@@ -585,7 +595,7 @@ class Service extends Model\Element\Service {
                     $filter["value"] = (int) $filter["value"];
                 }
 
-                $field = $class->getFieldDefinition($filter["field"]);
+                $field = $class->getFieldDefinition($filterField);
                 $brickField = null;
                 $brickType = null;
                 if(!$field) {
@@ -593,14 +603,14 @@ class Service extends Model\Element\Service {
                     // if the definition doesn't exist check for a localized field
                     $localized = $class->getFieldDefinition("localizedfields");
                     if($localized instanceof ClassDefinition\Data\Localizedfields) {
-                        $field = $localized->getFieldDefinition($filter["field"]);
+                        $field = $localized->getFieldDefinition($filterField);
                     }
 
 
                     //if the definition doesn't exist check for object brick
-                    $keyParts = explode("~", $filter["field"]);
+                    $keyParts = explode("~", $filterField);
 
-                    if (substr($filter["field"], 0, 1) == "~") {
+                    if (substr($filterField, 0, 1) == "~") {
                         // not needed for now
 //                            $type = $keyParts[1];
 //                            $field = $keyParts[2];
@@ -641,12 +651,12 @@ class Service extends Model\Element\Service {
                         $conditionPartsFilters[] = $field->getFilterCondition($filter["value"], $operator);
                     }
 
-                } else if (in_array("o_".$filter["field"], $systemFields)) {
+                } else if (in_array("o_".$filterField, $systemFields)) {
                     // system field
-                    if ($filter["field"] == "fullpath") {
+                    if ($filterField == "fullpath") {
                         $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " " . $db->quote("%" . $filter["value"] . "%");
                     } else {
-                        $conditionPartsFilters[] = "`o_" . $filter["field"] . "` " . $operator . " " . $db->quote($filter["value"]);
+                        $conditionPartsFilters[] = "`o_" . $filterField . "` " . $operator . " " . $db->quote($filter["value"]);
                     }
                 }
             }

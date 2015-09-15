@@ -139,7 +139,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     activate: function () {
         var tabId = "object_" + this.id;
-        this.tabPanel.setActiveItem(tabId);
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.setActiveItem(tabId);
     },
 
     getLayoutToolbar : function () {

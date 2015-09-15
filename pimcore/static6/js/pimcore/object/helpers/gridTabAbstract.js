@@ -70,18 +70,22 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         var batchAllMenu = new Ext.menu.Item({
             text: t("batch_change"),
             iconCls: "pimcore_icon_batch",
-            handler: function (view) {
-                this.batchPrepare(view.hdCtxIndex, false);
-            }.bind(this, grid.getView())
+            handler: function (grid) {
+                menu = grid.headerCt.getMenu();
+                var columnDataIndex = menu.activeHeader;
+                this.batchPrepare(columnDataIndex.fullColumnIndex, false);
+            }.bind(this, grid)
         });
         menu.add(batchAllMenu);
 
         var batchSelectedMenu = new Ext.menu.Item({
             text: t("batch_change_selected"),
             iconCls: "pimcore_icon_batch",
-            handler: function (view) {
-                this.batchPrepare(view.hdCtxIndex, true);
-            }.bind(this, grid.getView())
+            handler: function (grid) {
+                menu = grid.headerCt.getMenu();
+                var columnDataIndex = menu.activeHeader;
+                this.batchPrepare(columnDataIndex.fullColumnIndex, true);
+            }.bind(this, grid)
         });
         menu.add(batchSelectedMenu);
         //
@@ -104,13 +108,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     batchPrepare: function(columnIndex, onlySelected){
         // no batch for system properties
-        if(this.systemColumns.indexOf(this.grid.getColumnModel().config[columnIndex].dataIndex) > -1) {
+        if(this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
             return;
         }
 
         var jobs = [];
         if(onlySelected) {
-            var selectedRows = this.grid.getSelectionModel().getSelections();
+            var selectedRows = this.grid.getSelectionModel().getSelection();
             for (var i=0; i<selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
@@ -125,10 +129,11 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             if(this.sqlButton.pressed) {
                 condition = this.sqlEditor.getValue();
             } else {
-                var filterData = this.gridfilters.getFilterData();
-                if(filterData.length > 0) {
-                    filters = this.gridfilters.buildQuery(filterData).filter;
-                }
+            //TODO
+                //var filterData = this.gridfilters.getFilterData();
+                //if(filterData.length > 0) {
+                //    filters = this.gridfilters.buildQuery(filterData).filter;
+                //}
             }
 
             var params = {
@@ -160,7 +165,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         columnIndex = columnIndex-1;
 
-        var fieldInfo = this.grid.getColumnModel().config[columnIndex+1];
+        var fieldInfo = this.grid.getColumns()[columnIndex+1].config;
 
         // HACK: typemapping for published (systemfields) because they have no edit masks, so we use them from the
         // data-types
@@ -241,7 +246,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             this.batchParameters = {
                 name: fieldInfo.dataIndex,
                 value: newValue,
-                valueType: valueType
+                valueType: valueType,
+                language: this.gridLanguage
             };
 
 

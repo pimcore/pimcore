@@ -57,7 +57,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnFilter:function (field) {
-        return {type:'date', dataIndex:field.key};
+        return {type:'date', dataIndex:field.key, dateFormat: 'm/d/Y'};
     },
 
     getLayoutEdit:function () {

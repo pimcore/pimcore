@@ -76,7 +76,14 @@ Ext.define('pimcore.filters', {
         this.callSuper(arguments);
         var type = column.filter.type;
         var theFilter = column.filter.filter;
-        theFilter.config.type = type;
+
+        if (type == "date" || type == "number") {
+            theFilter.lt.config.type = type;
+            theFilter.gt.config.type = type;
+            theFilter.eq.config.type = type;
+        } else {
+            theFilter.config.type = type;
+        }
     }
 });
 
