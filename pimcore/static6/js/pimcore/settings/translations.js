@@ -50,7 +50,7 @@ pimcore.settings.translations = Class.create({
         var stateId = "tr_" + this.translationType;
         var applyInitialSettings = false;
         var showInfo = false;
-        var state = provider.get(stateId, null);
+        var state = Ext.state.Manager.getProvider().get(stateId, null);
         var languages = this.languages;
 
         var maxCols = 7;   // include creation date / modification date / action column)
