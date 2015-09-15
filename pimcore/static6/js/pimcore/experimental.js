@@ -92,104 +92,104 @@ Ext.define('Ext.overrides.grid.View', {
         extend: 'Ext.grid.View',
 
         alias: 'widget.patchedgridview'
-    //    ,
-    //
-    //    handleUpdate: function(store, record, operation, changedFieldNames) {
-    //        var me = this,
-    //            rowTpl = me.rowTpl,
-    //            oldItem, oldItemDom, oldDataRow,
-    //            newItemDom,
-    //            newAttrs, attLen, attName, attrIndex,
-    //            overItemCls,
-    //            focusedItemCls,
-    //            selectedItemCls,
-    //            columns,
-    //            column,
-    //            columnsToUpdate = [],
-    //            len, i,
-    //            hasVariableRowHeight = me.variableRowHeight,
-    //            cellUpdateFlag,
-    //            updateTypeFlags = 0,
-    //            cell,
-    //            fieldName,
-    //            value,
-    //            defaultRenderer,
-    //            scope,
-    //            ownerCt = me.ownerCt;
-    //
-    //
-    //        if (me.viewReady) {
-    //            oldItemDom = me.getNodeByRecord(record);
-    //
-    //            if (oldItemDom) {
-    //                overItemCls = me.overItemCls;
-    //                focusedItemCls = me.focusedItemCls;
-    //                selectedItemCls = me.selectedItemCls;
-    //                columns = me.ownerCt.getVisibleColumnManager().getColumns();
-    //
-    //                if (!me.getRowFromItem(oldItemDom) || (updateTypeFlags & 1) || (oldItemDom.tBodies[0].childNodes.length > 1)) {
-    //                    oldItem = Ext.fly(oldItemDom, '_internal');
-    //                    newItemDom = me.createRowElement(record, me.dataSource.indexOf(record), columnsToUpdate);
-    //                    if (oldItem.hasCls(overItemCls)) {
-    //                        Ext.fly(newItemDom).addCls(overItemCls);
-    //                    }
-    //                    if (oldItem.hasCls(focusedItemCls)) {
-    //                        Ext.fly(newItemDom).addCls(focusedItemCls);
-    //                    }
-    //                    if (oldItem.hasCls(selectedItemCls)) {
-    //                        Ext.fly(newItemDom).addCls(selectedItemCls);
-    //                    }
-    //
-    //                    if (Ext.isIE9m && oldItemDom.mergeAttributes) {
-    //                        oldItemDom.mergeAttributes(newItemDom, true);
-    //                    } else {
-    //                        newAttrs = newItemDom.attributes;
-    //                        attLen = newAttrs.length;
-    //                        for (attrIndex = 0; attrIndex < attLen; attrIndex++) {
-    //                            attName = newAttrs[attrIndex].name;
-    //                            if (attName !== 'id') {
-    //                                oldItemDom.setAttribute(attName, newAttrs[attrIndex].value);
-    //                            }
-    //                        }
-    //                    }
-    //
-    //
-    //                    if (columns.length && (oldDataRow = me.getRow(oldItemDom))) {
-    //                        me.updateColumns(oldDataRow, Ext.fly(newItemDom).down(me.rowSelector, true), columnsToUpdate);
-    //                    }
-    //
-    //                    while (rowTpl) {
-    //                        if (rowTpl.syncContent) {
-    //                            if (rowTpl.syncContent(oldItemDom, newItemDom, changedFieldNames ? columnsToUpdate : null) === false) {
-    //                                break;
-    //                            }
-    //                        }
-    //                        rowTpl = rowTpl.nextTpl;
-    //                    }
-    //                }
-    //                else {
-    //                    this.refresh();
-    //                }
-    //
-    //                if (hasVariableRowHeight) {
-    //                    Ext.suspendLayouts();
-    //                }
-    //
-    //
-    //                me.fireEvent('itemupdate', record, me.store.indexOf(record), oldItemDom);
-    //
-    //                if (hasVariableRowHeight) {
-    //                    me.refreshSize();
-    //
-    //                    Ext.resumeLayouts(true);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}, function() {
-    //    if (!Ext.getVersion().match('5.1.0.107')) {
-    //        console.warn('This patch has not been tested with this version of ExtJS');
-    //    }
+        ,
+
+        handleUpdate: function(store, record, operation, changedFieldNames) {
+            var me = this,
+                rowTpl = me.rowTpl,
+                oldItem, oldItemDom, oldDataRow,
+                newItemDom,
+                newAttrs, attLen, attName, attrIndex,
+                overItemCls,
+                focusedItemCls,
+                selectedItemCls,
+                columns,
+                column,
+                columnsToUpdate = [],
+                len, i,
+                hasVariableRowHeight = me.variableRowHeight,
+                cellUpdateFlag,
+                updateTypeFlags = 0,
+                cell,
+                fieldName,
+                value,
+                defaultRenderer,
+                scope,
+                ownerCt = me.ownerCt;
+
+
+            if (me.viewReady) {
+                oldItemDom = me.getNodeByRecord(record);
+
+                if (oldItemDom) {
+                    overItemCls = me.overItemCls;
+                    focusedItemCls = me.focusedItemCls;
+                    selectedItemCls = me.selectedItemCls;
+                    columns = me.ownerCt.getVisibleColumnManager().getColumns();
+
+                    if (!me.getRowFromItem(oldItemDom) || (updateTypeFlags & 1) || (oldItemDom.tBodies[0].childNodes.length > 1)) {
+                        oldItem = Ext.fly(oldItemDom, '_internal');
+                        newItemDom = me.createRowElement(record, me.dataSource.indexOf(record), columnsToUpdate);
+                        if (oldItem.hasCls(overItemCls)) {
+                            Ext.fly(newItemDom).addCls(overItemCls);
+                        }
+                        if (oldItem.hasCls(focusedItemCls)) {
+                            Ext.fly(newItemDom).addCls(focusedItemCls);
+                        }
+                        if (oldItem.hasCls(selectedItemCls)) {
+                            Ext.fly(newItemDom).addCls(selectedItemCls);
+                        }
+
+                        if (Ext.isIE9m && oldItemDom.mergeAttributes) {
+                            oldItemDom.mergeAttributes(newItemDom, true);
+                        } else {
+                            newAttrs = newItemDom.attributes;
+                            attLen = newAttrs.length;
+                            for (attrIndex = 0; attrIndex < attLen; attrIndex++) {
+                                attName = newAttrs[attrIndex].name;
+                                if (attName !== 'id') {
+                                    oldItemDom.setAttribute(attName, newAttrs[attrIndex].value);
+                                }
+                            }
+                        }
+
+
+                        if (columns.length && (oldDataRow = me.getRow(oldItemDom))) {
+                            me.updateColumns(oldDataRow, Ext.fly(newItemDom).down(me.rowSelector, true), columnsToUpdate);
+                        }
+
+                        while (rowTpl) {
+                            if (rowTpl.syncContent) {
+                                if (rowTpl.syncContent(oldItemDom, newItemDom, changedFieldNames ? columnsToUpdate : null) === false) {
+                                    break;
+                                }
+                            }
+                            rowTpl = rowTpl.nextTpl;
+                        }
+                    }
+                    else {
+                        this.refresh();
+                    }
+
+                    if (hasVariableRowHeight) {
+                        Ext.suspendLayouts();
+                    }
+
+
+                    me.fireEvent('itemupdate', record, me.store.indexOf(record), oldItemDom);
+
+                    if (hasVariableRowHeight) {
+                        me.refreshSize();
+
+                        Ext.resumeLayouts(true);
+                    }
+                }
+            }
+        }
+    }, function() {
+        if (!Ext.getVersion().match('5.1.0.107')) {
+            console.warn('This patch has not been tested with this version of ExtJS');
+        }
 
     }
 
