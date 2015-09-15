@@ -149,7 +149,7 @@ Ext.onReady(function () {
 
 
     var provider = new StateFullProvider({
-        namespace : "pimcore_ui_states"
+        namespace : "pimcore_ui_states_6"
     });
 
     Ext.state.Manager.setProvider(provider);
