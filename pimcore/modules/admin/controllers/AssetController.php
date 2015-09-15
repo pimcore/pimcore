@@ -336,10 +336,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $equalAsset = Asset::getByPath($parentAsset->getFullPath() . "/" . $this->getParam("name"));
 
         if ($parentAsset->isAllowed("create")) {
-
-            if (!$equalAsset) {
+            $folderName = $this->getParam("name");
+            if (!$equalAsset && $folderName != '.' && $folderName != '..') {
                 $asset = Asset::create($this->getParam("parentId"), array(
-                    "filename" => $this->getParam("name"),
+                    "filename" => $folderName,
                     "type" => "folder",
                     "userOwner" => $this->user->getId(),
                     "userModification" => $this->user->getId()
