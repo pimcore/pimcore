@@ -46,6 +46,62 @@ pimcore.settings.translations = Class.create({
 
     getRowEditor: function () {
 
+        var StateFullProvider = Ext.extend(Ext.state.Provider, {
+            namespace: "default",
+
+            constructor : function(config){
+                StateFullProvider.superclass.constructor.call(this);
+                Ext.apply(this, config);
+
+                var data = localStorage.getItem(this.namespace);
+                if (!data) {
+                    this.state = {};
+                } else {
+                    data = JSON.parse(data);
+                    if (data.state && data.user == pimcore.currentuser.id) {
+                        this.state = data.state;
+                    } else {
+                        this.state = {};
+                    }
+                }
+            },
+
+            get : function(name, defaultValue){
+                try {
+                    if (typeof this.state[name] == "undefined") {
+                        return defaultValue
+                    } else {
+                        return this.decodeValue(this.state[name])
+                    }
+                } catch (e) {
+                    this.clear(name);
+                    return defaultValue;
+                }
+            },
+            set : function(name, value){
+                try {
+                    if (typeof value == "undefined" || value === null) {
+                        this.clear(name);
+                        return;
+                    }
+                    this.state[name] = this.encodeValue(value)
+
+                    var data = {
+                        state: this.state,
+                        user: pimcore.currentuser.id
+                    };
+                    var json = JSON.stringify(data);
+
+                    localStorage.setItem(this.namespace, json);
+                } catch (e) {
+                    this.clear(name);
+                }
+
+                this.fireEvent("statechange", this, name, value);
+            }
+        });
+
+
         var stateId = "tr_" + this.translationType;
         var applyInitialSettings = false;
         var showInfo = false;
