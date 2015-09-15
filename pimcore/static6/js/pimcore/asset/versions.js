@@ -58,14 +58,7 @@ pimcore.asset.versions = Class.create({
                     reader: {
                         type: 'json',
                         rootProperty: 'versions'
-
-                        //totalProperty:'total',            // default
-                        //successProperty:'success'         // default
                     }
-                    //,                                     // default
-                    //writer: {
-                    //    type: 'json'
-                    //}
                 }
 
             });
@@ -84,10 +77,9 @@ pimcore.asset.versions = Class.create({
                             return Ext.Date.format(date, "Y-m-d H:i:s");
                     	}
                     }, editable: false}
-                    // Not used {header: t("note"), sortable: true, dataIndex: 'note'}
                 ],
                 stripeRows: true,
-                width:360,
+                width:370,
                 title: t('available_versions'),
                 region: "west",
                 viewConfig: {
