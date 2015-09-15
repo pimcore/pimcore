@@ -181,7 +181,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
             this.store = gridHelper.getStore();
             if (this.sortinfo) {
-                this.store.setDefaultSort(this.sortinfo.field, this.sortinfo.direction);
+                this.store.sort(this.sortinfo.field, this.sortinfo.direction);
             }
             this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
             this.store.load();

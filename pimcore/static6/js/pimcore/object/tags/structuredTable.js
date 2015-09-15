@@ -134,7 +134,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                     autoCreate: {tag: 'input', type: 'text', size: '20', maxlength: "255", autocomplete: 'off'}
                 });
             } else if(this.fieldConfig.cols[i].type == "bool") {
-                editor = new Ext.form.Checkbox();
+                editor = new Ext.form.Checkbox({style: 'margin-top: 2px;'});
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';

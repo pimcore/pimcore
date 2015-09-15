@@ -102,7 +102,6 @@ pimcore.object.helpers.grid = Class.create({
             },
             extraParams: this.baseParams
         };
-        console.log(this.baseParams);
 
         var writer = null;
         var listeners = {};

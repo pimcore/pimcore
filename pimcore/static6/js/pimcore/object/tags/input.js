@@ -41,10 +41,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         if(field.layout.noteditable) {
             return null;
         }
-        //INPUT
-        if (field.type == "input") {
-            return new Ext.form.TextField(editorConfig);
-        }
+        return new Ext.form.TextField(editorConfig);
     },
 
     getGridColumnFilter: function(field) {

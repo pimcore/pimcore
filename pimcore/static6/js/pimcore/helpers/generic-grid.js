@@ -3,8 +3,8 @@ pimcore.helpers.grid = {};
 
 pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage) {
 
-    var proxy = Ext.create('Ext.data.proxy.Ajax', {
-        //type: 'ajax',
+    var proxy = new Ext.data.proxy.Ajax({
+        type: 'ajax',
 
         reader: {
             type: 'json',
@@ -28,23 +28,23 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage) {
             update : 'POST',
             destroy: 'POST'
         }
-
     });
     //
-    //proxy.encodeFilters = function(filters) {
+    //Ext.override(proxy, {
     //
-    //    console.log(filters);
+    //    encodeFilters: function(filters) {
+    //        console.log("gaga");
+    //        var out = [],
+    //            length = filters.length,
+    //            i, op;
+    //        for (i = 0; i < length; i++) {
+    //            out[i] = filters[i].serialize();
+    //        }
+    //        return this.applyEncoding(out);
+    //    }.bind(proxy)
+    //});
     //
-    //    var out = [],
-    //        length = filters.length,
-    //        i, op;
-    //
-    //    for (i = 0; i < length; i++) {
-    //        out[i] = filters[i].serialize();
-    //    }
-    //
-    //    return this.applyEncoding(out);
-    //};
+
 
 
     var store = Ext.create('Ext.data.Store', {
