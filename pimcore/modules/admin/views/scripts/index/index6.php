@@ -107,17 +107,12 @@ $styles = array(
     // see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
     // @import bypasses this problem in an elegant way
     foreach ($styles as $style) { ?>
-    @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::$revision ?>);
+        @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::$revision ?>);
     <?php } ?>
 </style>
 
 
-
-
 <?php //****************************************************************************************** ?>
-
-
-
 
 
 <?php // define scripts ?>
@@ -138,58 +133,16 @@ $scriptLibs = array(
     "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
 
     "lib/ext/packages/charts/classic/charts" . $debugSuffix . ".js",              // TODO
-//    "lib/ext/examples/ux/statusbar/StatusBar.js",
 
     "lib/ext-plugins/portlet/PortalDropZone.js",
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
-//    "lib/ext-plugins/PimcoreFormLayout/panel.js",
-//    "lib/ext-plugins/SuperBoxSelect/SuperBoxSelect.js",
-//    "lib/ext-plugins/BoxSelect/BoxSelect.js",
 
-    /*
-    "lib/ext-plugins/Notification/Ext.ux.Notification.js",
-    "lib/ext-plugins/PagingTreeLoader/PagingTreeLoader.js",
-    "lib/ext-plugins/GridRowOrder/roworder.js",
-
-    "lib/ext-plugins/ux/Reorderer.js",
-    "lib/ext-plugins/ux/ColumnHeaderGroup.js",
-    "lib/ext-plugins/ux/ToolbarReorderer.js",
-    "lib/ext-plugins/ux/DataViewTransition.js",
-    "lib/ext-plugins/ux/treegrid/TreeGridSorter.js",
-    "lib/ext-plugins/ux/treegrid/TreeGridColumnResizer.js",
-    "lib/ext-plugins/ux/treegrid/TreeGridNodeUI.js",
-    "lib/ext-plugins/ux/treegrid/TreeGridLoader.js",
-    "lib/ext-plugins/ux/treegrid/TreeGridColumns.js",
-    "lib/ext-plugins/ux/treegrid/TreeGrid.js",
-
-
-    "lib/ext-plugins/ux/RowEditor.js",
-    "lib/ext-plugins/ux/Spinner.js",
-    "lib/ext-plugins/ux/SpinnerField.js",
-    "lib/ext-plugins/ux/MultiSelect.js",
-    "lib/ext-plugins/ux/CheckColumn.js",
-    "lib/ext-plugins/ux/statusbar/StatusBar.js",
-    "lib/ext-plugins/ux/Portal.js",
-    "lib/ext-plugins/ux/PortalColumn.js",
-    "lib/ext-plugins/ux/Portlet.js",
-    "lib/ext-plugins/ux/gridfilters/menu/RangeMenu.js",
-    "lib/ext-plugins/ux/gridfilters/menu/ListMenu.js",
-    "lib/ext-plugins/ux/gridfilters/GridFilters.js",
-    "lib/ext-plugins/ux/gridfilters/filter/Filter.js",
-    "lib/ext-plugins/ux/gridfilters/filter/StringFilter.js",
-    "lib/ext-plugins/ux/gridfilters/filter/DateFilter.js",
-    "lib/ext-plugins/ux/gridfilters/filter/ListFilter.js",
-    "lib/ext-plugins/ux/gridfilters/filter/NumericFilter.js",
-    "lib/ext-plugins/ux/gridfilters/filter/BooleanFilter.js",
-    "lib/ext-plugins/ux/fileuploadfield/FileUploadField.js",
-
-    */
-    "lib/ckeditor/ckeditor.js"
+    "lib/ckeditor/ckeditor.js",
 
     // locale
-//    "lib/ext/locale/ext-lang-" . $this->language . ".js",
+    "lib/ext/classic/locale/locale-" . $this->language . ".js",
 );
 
 // PIMCORE SCRIPTS
