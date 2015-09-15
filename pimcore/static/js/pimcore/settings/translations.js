@@ -101,6 +101,12 @@ pimcore.settings.translations = Class.create({
             }
         });
 
+        var provider = new StateFullProvider({
+            namespace : "pimcore_ui_states"
+        });
+
+
+        Ext.state.Manager.setProvider(provider);
 
         var stateId = "tr_" + this.translationType;
         var applyInitialSettings = false;
