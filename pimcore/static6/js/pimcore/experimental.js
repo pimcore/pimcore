@@ -48,10 +48,13 @@ Ext.define('pimcore.FieldSetTools', {
                 ui: me.ui,
                 tooltip: tool.qtip,
                 handler: tool.handler,
+                style: {
+                    background: "#FF9191"
+                },
                 cls: me.baseCls + '-header-tool-default',
                 id: me.id + '-legendTitle2',
                     ariaRole: 'checkbox',
-                    ariaLabel: me.expandText,
+                    ariaLabel: "gaga",
                     ariaRenderAttributes: {
                         'aria-checked': !me.collapsed
                     }
