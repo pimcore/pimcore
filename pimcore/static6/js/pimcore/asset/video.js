@@ -99,9 +99,12 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                     xtype: "panel",
                     title: t("select_image_preview"),
                     bodyStyle: "padding:10px",
+                    itemId: "inner",
+                    manageHeight: false,
                     items: [{
                         xtype: "panel",
                         border: false,
+                        manageHeight: false,
                         style: "margin: 10px 0 10px 0;",
                         id: "pimcore_asset_video_imagepreview_" + this.id,
                         bodyStyle: "min-height:150px;",
@@ -114,6 +117,8 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         width: 265,
                         handler: function () {
                             try {
+                                this.previewImagePanel.getComponent("inner").getComponent("assetPath").setValue("");
+
                                 var time = window[this.previewFrameId].document.getElementById("video").currentTime;
                                 var date = new Date();
                                 var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_"  + this.id);
@@ -133,6 +138,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         ,
                         {
                         xtype: "textfield",
+                        itemId: "assetPath",
                         cls: "input_drop_target",
                         width: 265,
                         listeners: {
@@ -154,11 +160,11 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                                             el.setValue(data.path);
 
                                             var date = new Date();
-                                            var cmp = Ext.get("pimcore_asset_video_imagepreview_" + this.id);
-                                            cmp.dom.innerHTML = '<img align="center" src="/admin/asset/get-video-thumbnail/id/'
+                                            var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_"  + this.id);
+                                            cmp.update('<img align="center" src="/admin/asset/get-video-thumbnail/id/'
                                                                 + this.id  + '/width/265/aspectratio/true/image/'
                                                                 + data.id  + '/setimage/true/?_dc='
-                                                                + date.getTime() + '" />';
+                                                                + date.getTime() + '" />');
                                             return true;
                                         }
                                         return false;
