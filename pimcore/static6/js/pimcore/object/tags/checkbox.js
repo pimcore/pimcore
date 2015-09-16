@@ -38,14 +38,18 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 var noteditable = field.layout.noteditable;
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                    metaData.tdCls += " grid_value_inherited";
-                }
-                if (noteditable) {
-                    metaData.tdCls += ' grid_cbx_noteditable';
+                try {
+                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                        metaData.tdCls += " grid_value_inherited";
+                    }
+                    if (noteditable) {
+                        metaData.tdCls += ' grid_cbx_noteditable';
 
+                    }
+                    metaData.tdCls += ' x-grid-check-col-td';
+                } catch (e) {
+                    console.log(e);
                 }
-                metaData.tdCls += ' x-grid-check-col-td';
                 return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
             }.bind(this, field)
         };
