@@ -36,7 +36,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             width: 650,
             componentCls: 'object_field object_geo_field',
             html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
-                        + '<img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
+                        + '<img align="center" width="300" height="300" src="' + this.getMapUrl(this.fieldConfig, this.data) + '" /></div>',
             bbar: [{
                 xtype: 'button',
                 text: t('empty'),
@@ -61,50 +61,56 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         return this.component;
     },
 
-    getMapUrl: function (width) {
+    getMapUrl: function (fieldConfig, data, width, height) {
+
+        console.log(fieldConfig);
+        console.log(data);
 
         // static maps api image url
-        var mapZoom = this.fieldConfig.zoom;
+        var mapZoom = fieldConfig.zoom;
         var mapUrl;
 
         if (!width) {
             width = 300;
         }
+        if(!height) {
+            height = 300;
+        }
 
-        var py = 300;
+        var py = height;
         var px = width;
 
-        try {
-            if (this.data) {
+        //try {
+            if (data) {
 
-                var bounds = new google.maps.LatLngBounds(this.data.sw, this.data.ne);
+                var bounds = new google.maps.LatLngBounds(data.sw, data.ne);
                 var center = bounds.getCenter();
 
                 mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
 
-                var path = 'weight:0|fillcolor:0x00000073|' + this.data.ne.lat() + ',' + this.data.ne.lng()
-                    + '|' + this.data.sw.lat() + ',' + this.data.ne.lng() + '|'
-                    + this.data.sw.lat() + ',' + this.data.sw.lng() + '|' + this.data.ne.lat()
-                    + ',' + this.data.sw.lng() + '|' + this.data.ne.lat() + ','
-                    + this.data.ne.lng();
+                var path = 'weight:0|fillcolor:0x00000073|' + data.ne.lat() + ',' + data.ne.lng()
+                    + '|' + data.sw.lat() + ',' + data.ne.lng() + '|'
+                    + data.sw.lat() + ',' + data.sw.lng() + '|' + data.ne.lat()
+                    + ',' + data.sw.lng() + '|' + data.ne.lat() + ','
+                    + data.ne.lng();
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.y + ','
                     + center.x + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                    + '&path=' + path + '&sensor=false&maptype=' + fieldConfig.mapType;
             }
             else {
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
-                    + this.fieldConfig.lat + ',' + this.fieldConfig.lng
+                    + fieldConfig.lat + ',' + fieldConfig.lng
                     + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                    + px + 'x' + py + '&sensor=false&maptype=' + fieldConfig.mapType;
             }
 
             if (pimcore.settings.google_maps_api_key) {
                 mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
             }
-        }
-        catch (e) {
-            console.log(e);
-        }
+        //}
+        //catch (e) {
+        //    console.log(e);
+        //}
         return mapUrl;
     },
 

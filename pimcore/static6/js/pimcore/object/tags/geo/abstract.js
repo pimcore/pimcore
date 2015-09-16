@@ -40,6 +40,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
+
     getGridColumnConfig: function(field) {
         return {
             header: ts(field.label),
@@ -47,7 +48,19 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
             sortable: false,
             dataIndex: field.key,
             renderer: function (key, value, metaData, record) {
-                return t('not_supported');
+                this.applyPermissionStyle(key, value, metaData, record);
+
+                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += ' grid_value_inherited';
+                }
+
+                if (value) {
+                    var width = 200;
+
+                    var mapUrl = this.getMapUrl(field, value, width, 100);
+
+                    return '<img src="' + mapUrl + '" />';
+                }
             }.bind(this, field.key)
         };
     },
@@ -71,7 +84,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
 
         Ext.get('google_maps_container_' + this.mapImageID).dom.innerHTML =
             '<img align="center" width="' + width + '" height="300" src="' +
-                this.getMapUrl(width) + '" />';
+                this.getMapUrl(this.fieldConfig, this.data, width) + '" />';
     },
 
     geocode: function () {

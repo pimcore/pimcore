@@ -31,7 +31,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             style: "margin-bottom: 10px",
             componentCls: 'object_field object_geo_field',
             html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
-                        + '<img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
+                        + '<img align="center" width="300" height="300" src="' + this.getMapUrl(this.fieldConfig, this.data) + '" /></div>',
             bbar: [{
                 xtype: 'button',
                 text: t('empty'),
@@ -56,33 +56,36 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         return this.component;
     },
 
-    getMapUrl: function (width) {
+    getMapUrl: function (fieldConfig, data, width, height) {
 
         // static maps api image url
-        var mapZoom = this.fieldConfig.zoom;
+        var mapZoom = fieldConfig.zoom;
         var mapUrl;
 
         if (!width) {
             width = 300;
         }
+        if(!height) {
+            height = 300;
+        }
 
-        var py = 300;
+        var py = height;
         var px = width;
 
         try {
-            if (this.data) {
+            if (data) {
 
                 var pointConfig = [];
 
                 var bounds = new google.maps.LatLngBounds();
 
-                for (var i = 0; i < this.data.length; i++) {
-                    bounds.extend(new google.maps.LatLng(this.data[i].latitude, this.data[i].longitude));
-                    pointConfig.push(this.data[i].latitude + "," + this.data[i].longitude);
+                for (var i = 0; i < data.length; i++) {
+                    bounds.extend(new google.maps.LatLng(data[i].latitude, data[i].longitude));
+                    pointConfig.push(data[i].latitude + "," + data[i].longitude);
                 }
 
                 // add startpoint also as endpoint
-                pointConfig.push(this.data[0].latitude + "," + this.data[0].longitude);
+                pointConfig.push(data[0].latitude + "," + data[0].longitude);
 
                 var center = bounds.getCenter();
                 mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
@@ -90,13 +93,13 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 var path = 'weight:0|fillcolor:0x00000073|' + pointConfig.join('|');
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.lat() + ','
                     + center.lng() + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                    + '&path=' + path + '&sensor=false&maptype=' + fieldConfig.mapType;
             }
             else {
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
-                    + this.fieldConfig.lat + ',' + this.fieldConfig.lng
+                    + fieldConfig.lat + ',' + fieldConfig.lng
                     + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                    + px + 'x' + py + '&sensor=false&maptype=' + fieldConfig.mapType;
             }
 
             if (pimcore.settings.google_maps_api_key) {

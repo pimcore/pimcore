@@ -18,38 +18,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     type: 'geopoint',
 
-    getGridColumnConfig: function(field) {
-        return {
-            header: ts(field.label),
-            width: 150,
-            sortable: false,
-            dataIndex: field.key,
-            renderer: function (key, value, metaData, record) {
-                this.applyPermissionStyle(key, value, metaData, record);
-
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                    metaData.tdCls += ' grid_value_inherited';
-                }
-
-                if (value && value.latitude && value.longitude) {
-                    var width = 140;
-                    var mapZoom = 10;
-
-                    var mapUrl = 'https://maps.google.com/staticmap?center=' + value.latitude + ','
-                            + value.longitude + '&zoom=' + mapZoom + '&size=' + width + 'x80&markers='
-                            + value.latitude + ',' + value.longitude
-                            + ',red&sensor=false';
-
-                    if (pimcore.settings.google_maps_api_key) {
-                        mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
-                    }
-
-                    return '<img src="' + mapUrl + '" />';
-                }
-            }.bind(this, field.key)
-        };
-    },
-
     getLayoutEdit: function () {
 
         this.mapImageID = uniqid();
@@ -81,7 +49,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             componentCls: "object_field object_geo_field",
             html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
                   + '<img align="center" width="300" height="300" src="'
-                  + this.getMapUrl() + '" /></div>',
+                  + this.getMapUrl(this.fieldConfig, this.data) + '" /></div>',
             bbar: [
                 t('latitude'),
                 this.latitude,
@@ -123,37 +91,41 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         $super();
     },
 
-    getMapUrl: function (width) {
+    getMapUrl: function (fieldConfig, data, width, height) {
 
         // static maps api image url
-        var mapZoom = this.fieldConfig.zoom;
+        var mapZoom = fieldConfig.zoom;
         var mapUrl;
 
         if (!width) {
             width = 300;
         }
 
-        var py = 300;
+        if(!height) {
+            height = 300;
+        }
+
+        var py = height;
         var px = width;
 
         // static maps api image url
-        var lat = this.fieldConfig.lat;
-        var lng = this.fieldConfig.lng;
-        if (this.data) {
-            lat = this.data.latitude;
-            lng = this.data.longitude;
+        var lat = fieldConfig.lat;
+        var lng = fieldConfig.lng;
+        if (data) {
+            lat = data.latitude;
+            lng = data.longitude;
             mapZoom = 15;
 
             mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
                 + '&markers=color:red|' + lat + ',' + lng
-                + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                + '&sensor=false&maptype=' + fieldConfig.mapType;
         } else {
             mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
-                + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                + '&sensor=false&maptype=' + fieldConfig.mapType;
         }
 
         if (pimcore.settings.google_maps_api_key) {
