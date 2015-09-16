@@ -62,9 +62,10 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
     },
 
     getMapUrl: function (fieldConfig, data, width, height) {
-
-        console.log(fieldConfig);
-        console.log(data);
+        if(data && !data.ne) {
+            data.ne = new google.maps.LatLng(data.NElatitude,data.NElongitude);
+            data.sw = new google.maps.LatLng(data.SWlatitude,data.SWlongitude);
+        }
 
         // static maps api image url
         var mapZoom = fieldConfig.zoom;
@@ -80,7 +81,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         var py = height;
         var px = width;
 
-        //try {
+        try {
             if (data) {
 
                 var bounds = new google.maps.LatLngBounds(data.sw, data.ne);
@@ -107,10 +108,10 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             if (pimcore.settings.google_maps_api_key) {
                 mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
             }
-        //}
-        //catch (e) {
-        //    console.log(e);
-        //}
+        }
+        catch (e) {
+            console.log(e);
+        }
         return mapUrl;
     },
 

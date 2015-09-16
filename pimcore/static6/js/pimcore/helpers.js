@@ -171,21 +171,17 @@ pimcore.helpers.openObject = function (id, type, options) {
 };
 
 pimcore.helpers.closeObject = function (id) {
-    //try {
+    try {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + id;
-    console.log(tabId);
         var panel = Ext.getCmp(tabId);
-    console.log(panel);
-    if(panel) {
         panel.close();
-    }
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
         pimcore.globalmanager.remove("object_" + id);
-    //} catch (e) {
-    //    console.log(e);
-    //}
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 pimcore.helpers.getHistory = function() {
@@ -196,7 +192,7 @@ pimcore.helpers.getHistory = function() {
         history = JSON.parse(history);
     }
     return history;
-}
+};
 
 pimcore.helpers.recordElement = function(id, type, name) {
 

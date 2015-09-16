@@ -15,6 +15,10 @@
 pimcore.registerNS("pimcore.object.tags.personamultiselect");
 pimcore.object.tags.personamultiselect = Class.create(pimcore.object.tags.multiselect, {
 
-    type: "personamultiselect"
+    type: "personamultiselect",
+
+    getGridColumnFilter: function(field) {
+        return null;
+    }
 
 });

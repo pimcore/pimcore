@@ -128,6 +128,10 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
         return;
     }
 
+    public function getDataForGrid($data, $object = null) {
+        return $this->getDataForEditmode($data, $object);
+    }
+
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param array $data

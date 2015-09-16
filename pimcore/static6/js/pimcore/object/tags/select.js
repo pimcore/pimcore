@@ -98,23 +98,17 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnFilter: function(field) {
-        var selectFilterFields = [];
-
-        var store = new Ext.data.JsonStore({
-            autoDestroy: true,
-            root: 'options',
+        var store = Ext.create('Ext.data.JsonStore', {
             fields: ['key',"value"],
-            data: field.layout
-        });
-
-        store.each(function (rec) {
-            selectFilterFields.push(rec.data.value);
+            data: field.layout.options
         });
 
         return {
             type: 'list',
             dataIndex: field.key,
-            options: selectFilterFields
+            labelField: "value",
+            idField: "key",
+            options: store
         };
     },
 

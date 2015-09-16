@@ -50,7 +50,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     getDataComplete: function (response) {
-        //try {
+        try {
             this.data = Ext.decode(response.responseText);
 
             if (typeof this.data.editlock == "object") {
@@ -62,11 +62,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             this.startChangeDetector();
             this.setupInheritanceDetector();
-        //}
-        //catch (e) {
-        //    console.log(e);
-        //    pimcore.helpers.closeObject(this.id);
-        //}
+        }
+        catch (e) {
+            console.log(e);
+            pimcore.helpers.closeObject(this.id);
+        }
     },
 
     inheritedFields: {},
@@ -494,7 +494,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             data.data = Ext.encode(this.edit.getValues(omitMandatoryCheck));
         }
         catch (e1) {
-            console.log(e1)
+            console.log(e1);
         }
 
         // properties

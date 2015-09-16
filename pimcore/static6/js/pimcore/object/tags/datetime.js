@@ -35,22 +35,25 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig:function (field) {
-        return {header:ts(field.label), width:150, sortable:true, dataIndex:field.key,
-                    renderer:function (key, value, metaData, record) {
-                                this.applyPermissionStyle(key, value, metaData, record);
+        return {
+            header:ts(field.label),
+            width:150,
+            sortable:true,
+            dataIndex:field.key,
+            renderer:function (key, value, metaData, record) {
+                        this.applyPermissionStyle(key, value, metaData, record);
 
-                                if (record.data.inheritedFields[key]
-                                                        && record.data.inheritedFields[key].inherited == true) {
-                                    metaData.tdCls += " grid_value_inherited";
-                                }
+                        if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.tdCls += " grid_value_inherited";
+                        }
 
-                                if (value) {
-                                    var timestamp = intval(value) * 1000;
-                                    var date = new Date(timestamp);
-                                    return Ext.Date.format(date, "Y-m-d H:i");
-                                }
-                                return "";
-                            }.bind(this, field.key)};
+                        if (value) {
+                            var timestamp = intval(value) * 1000;
+                            var date = new Date(timestamp);
+                            return Ext.Date.format(date, "Y-m-d H:i");
+                        }
+                        return "";
+                    }.bind(this, field.key)};
     },
 
     getGridColumnFilter:function (field) {
@@ -116,7 +119,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             }
 
             var date = Date.parse(dateString, "Y-m-d H:i");
-            return date / 1000;
+            return date;
         }
         return false;
     },

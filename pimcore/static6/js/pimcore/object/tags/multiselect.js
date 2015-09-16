@@ -41,20 +41,18 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnFilter: function(field) {
-        var selectFilterFields = [];
-
-        var store = new Ext.data.JsonStore({
-            autoDestroy: true,
-            root: 'options',
+        var store = Ext.create('Ext.data.JsonStore', {
             fields: ['key',"value"],
-            data: field.layout
+            data: field.layout.options
         });
 
-        store.each(function (rec) {
-            selectFilterFields.push(rec.data.value);
-        });
-
-        return {type: 'list', dataIndex: field.key, options: selectFilterFields};
+        return {
+            type: 'list',
+            dataIndex: field.key,
+            labelField: "value",
+            idField: "key",
+            options: store
+        };
     },
 
     getLayoutEdit: function () {
@@ -110,7 +108,6 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.height) {
             options.height = this.fieldConfig.height;
         }
-
 
         if (typeof this.data == "string" || typeof this.data == "number") {
             options.value = this.data;
