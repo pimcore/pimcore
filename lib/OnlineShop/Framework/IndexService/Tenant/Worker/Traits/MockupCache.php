@@ -44,6 +44,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache {
         $mockup = $this->tenantConfig->createMockupObject($objectId, $data['data'], $data['relations']);
 
         $key = $this->createMockupCacheKey($objectId);
+        //use cache instance directly to aviod cache locking -> in this case force writing to cache is needed
         $cache = \Pimcore\Model\Cache::getInstance();
         $success = $cache->save(serialize($mockup), \Pimcore\Model\Cache::$cachePrefix . $key, [$this->getMockupCachePrefix()], null);
         $result = \Pimcore\Model\Cache::load($key);
