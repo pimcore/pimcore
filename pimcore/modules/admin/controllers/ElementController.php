@@ -94,9 +94,10 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin {
         $list->setLimit($this->getParam("limit"));
         $list->setOffset($this->getParam("start"));
 
-        if($this->getParam("sort")) {
-            $list->setOrderKey(array($this->getParam("sort"), "id"));
-            $list->setOrder(array($this->getParam("dir"), $this->getParam("dir")));
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if($sortingSettings['orderKey'] && $sortingSettings['order']) {
+            $list->setOrderKey($sortingSettings['orderKey']);
+            $list->setOrder($sortingSettings['order']);
         } else {
             $list->setOrderKey(array("date", "id"));
             $list->setOrder(array("DESC", "DESC"));
