@@ -134,6 +134,9 @@ class File {
      * @return bool
      */
     public static function mkdir($path, $mode = null, $recursive = true) {
+        // Check to see if the last part of the path is either . or ..
+        $lastPart = end(explode('/', $path));
+        if ($lastPart == '.' || $lastPart == '..') return false;
 
         if(!$mode) {
             $mode = self::$defaultMode;
