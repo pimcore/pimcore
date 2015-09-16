@@ -671,8 +671,6 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
 
 // session renew
 pimcore["intervals"]["ping"] = window.setInterval(function () {
-    //TODO temporarily removed pinging
-    return;
 
     Ext.Ajax.request({
         url:"/admin/misc/ping",
