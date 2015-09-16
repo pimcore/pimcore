@@ -135,6 +135,8 @@ class File {
      */
     public static function mkdir($path, $mode = null, $recursive = true) {
 
+        if ($path == '.' || $path == '..') return false;
+
         if(!$mode) {
             $mode = self::$defaultMode;
         }
