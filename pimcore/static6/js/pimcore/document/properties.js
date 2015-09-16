@@ -87,10 +87,10 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
             var navigationBasic = new Ext.form.FieldSet({
                 title: t('basic'),
                 autoHeight:true,
-                collapsible: false,
+                collapsible: true,
                 collapsed: false,
                 defaults: {
-                    width: 220
+                    width: 230
                 },
                 items :[{
                             xtype: "textfield",
@@ -126,10 +126,10 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
             var navigationEnhanced = new Ext.form.FieldSet({
                 title: t('enhanced'),
                 autoHeight:true,
-                collapsible: false,
-                collapsed: false,
+                collapsible: true,
+                collapsed: true,
                 defaults: {
-                    width: 220
+                    width: 230
                 },
                 items :[{
                             xtype: "textfield",

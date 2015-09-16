@@ -380,7 +380,7 @@ Ext.define('Ext.overrides.grid.View', {
                 hideTrigger: true,
                 heightLabel: true,
                 height: 18,
-                width: 20,
+                width: 40,
                 disabled: true,
                 margin: '-1 2 3 2'
             });
@@ -426,7 +426,7 @@ Ext.define('Ext.overrides.grid.View', {
                     selectOnFocus: true,
                     submitValue: false,
                     height: 18,
-                    width: 20,
+                    width: 40,
                     isFormField: false,
                     margin: '-1 2 3 2',
                     listeners: inputListeners
