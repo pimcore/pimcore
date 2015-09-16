@@ -38,7 +38,7 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
         ));
     }
 
-    private function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
+    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
         foreach($availableRelations as $rel) {
             if($rel instanceof \Pimcore\Model\Object\Folder) {
                 $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
