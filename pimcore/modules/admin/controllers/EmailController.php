@@ -422,10 +422,14 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $orderKey = $sortingSettings['orderKey'];
             }
+            if($sortingSettings['order']) {
+                $order  = $sortingSettings['order'];
+            }
+
 
             if($this->getParam("filter")) {
                 $list->setCondition("`address` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
