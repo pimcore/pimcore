@@ -36,7 +36,7 @@ pimcore.object.helpers.classTree = Class.create({
                 id: "0",
                 root: true,
                 text: t("base"),
-                draggable: false,
+                allowDrag: false,
                 leaf: true,
                 isTarget: true
             },
@@ -45,16 +45,15 @@ pimcore.object.helpers.classTree = Class.create({
                         ptype: 'treeviewdragdrop',
                         enableDrag: true,
                         enableDrop: false,
-                        //appendOnly: true,
                         ddGroup: "columnconfigelement"
                     }
             }
         });
 
         Ext.Ajax.request({
-            url: url, //"/admin/class/get",
+            url: url,
             params: {
-                id: classId, // this.config.classid,
+                id: classId,
                 oid: objectId
             },
             success: this.initLayoutFields.bind(this, tree)
@@ -78,7 +77,7 @@ pimcore.object.helpers.classTree = Class.create({
                     }
                     var baseNode = {
                         type: "layout",
-                        draggable: false,
+                        allowDrag: false,
                         iconCls: "pimcore_icon_" + data[keys[i]].nodeType,
                         text: text
                     };
@@ -135,17 +134,15 @@ pimcore.object.helpers.classTree = Class.create({
         var newNode = {
             type: "layout",
             expanded: true,
-            draggable: false,
+            expandable: initData.childs.length,
+            allowDrag: false,
             iconCls: "pimcore_icon_" + type,
             text: nodeLabel
         };
 
         newNode = this.appendChild(newNode);
 
-        //if(this.rendered) {
-            //this.renderIndent();
-            this.expand();
-        //}
+        this.expand();
 
         return newNode;
     },
@@ -177,7 +174,7 @@ pimcore.object.helpers.classTree = Class.create({
                 type: "data",
                 layout: initData,
                 leaf: isLeaf,
-                draggable: draggable,
+                allowDrag: draggable,
                 dataType: type,
                 iconCls: "pimcore_icon_" + type,
                 expanded: true
@@ -186,7 +183,6 @@ pimcore.object.helpers.classTree = Class.create({
             newNode = this.appendChild(newNode);
 
             if(this.rendered) {
-                //this.renderIndent();
                 this.expand();
             }
 

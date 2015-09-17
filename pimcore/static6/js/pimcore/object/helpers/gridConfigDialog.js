@@ -29,7 +29,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         this.configPanel = new Ext.Panel({
             layout: "border",
-            items: [this.getLanguageSelection(), this.getSelectionPanel(), this.getResultPanel()]
+            items: [this.getLanguageSelection(), this.getSelectionPanel(), this.getClassDefinitionTreePanel()]
 
         });
 
@@ -111,6 +111,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             xtype: "fieldset",
             layout: 'hbox',
             border: false,
+            style: "border-top: none !important;",
             hideLabel: false,
             fieldLabel: t("language"),
             items: [this.languageField]
@@ -119,8 +120,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         if(!this.languagePanel) {
             this.languagePanel = new Ext.form.FormPanel({
                 region: "north",
-                bodyStyle: "padding: 5px;",
-                height: 35,
+                height: 43,
                 items: [compositeConfig]
             });
         }
@@ -164,14 +164,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 viewConfig: {
                     plugins: {
                         ptype: 'treeviewdragdrop',
-                        //enableDrag: true,
-                        //enableDrop: false,
-                        //appendOnly: true,
                         ddGroup: "columnconfigelement"
                     },
                     listeners: {
                         beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
-                            var target = eOpts.options.target;
+                            var target = overModel.getOwnerTree().getView();
                             var source = data.view;
 
                             if (target != source) {
@@ -203,7 +200,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 layout:'fit',
                 width: 428,
                 split:true,
-                autoScroll:true,
+                autoScroll: true,
                 listeners:{
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 },
@@ -221,8 +218,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 type: 'memory'
             });
         }
-
-
 
         return this.selectionPanel;
     },
@@ -248,17 +243,17 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     },
 
 
-    getResultPanel: function () {
-        if (!this.resultPanel) {
+    getClassDefinitionTreePanel: function () {
+        if (!this.classDefinitionTreePanel) {
 
             var items = [];
 
             this.brickKeys = [];
-            this.resultPanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
+            this.classDefinitionTreePanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
                 this.config.classid, this.config.objectId);
         }
 
-        return this.resultPanel;
+        return this.classDefinitionTreePanel;
     },
 
     getClassTree: function(url, classId, objectId) {
