@@ -248,7 +248,6 @@ Ext.define('Ext.overrides.grid.View', {
                     //el.addCls('x-grid-header-inner');
                     el = Ext.DomHelper.insertAfter(el, {
                         tag: 'span',
-                        style: 'display: inline-flex;white-space:nowrap;',
                         "class": "pimcore_pagingtoolbar_container"
                     }, true);
                     el.addListener("click", function(e) {
