@@ -230,10 +230,11 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             ],
             bodyStyle: "background: #fff;",
-            width: 700
+            width: 700,
+            maxHeight: 600
         });
         this.batchWin.show();
-
+        this.batchWin.updateLayout();
     },
 
     batchProcess: function (jobs,  editor, fieldInfo, initial) {

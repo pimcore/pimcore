@@ -113,7 +113,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             options.value = this.data;
         }
 
-        this.component = new Ext.ux.form.MultiSelect(options);
+        this.component = Ext.create('Ext.ux.form.MultiSelect', options);
 
         return this.component;
     },
