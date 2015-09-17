@@ -233,7 +233,8 @@ Ext.define('Ext.overrides.grid.View', {
             if (node.data.expanded) {
 
                 node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
-                        node: node
+                        node: node,
+                        width: 230
                     }
                 );
 
