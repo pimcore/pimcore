@@ -1138,7 +1138,6 @@ span.warning {
     text-align: center;
     padding: 0;
     width: 38px;
-    border-color: #f6f6f6;
 }
 
 .pimcore_pagingtoolbar_container .x-toolbar-text-default {
@@ -1148,10 +1147,17 @@ span.warning {
 
 .pimcore_pagingtoolbar_container .x-form-text-field-body-default {
     min-width: 1px;
+    display: block;
 }
 
 .pimcore_pagingtoolbar_container .x-form-trigger-wrap-default {
     border-color: #f6f6f6 !important;
+    display: block;
+    height: auto;
+}
+
+.pimcore_pagingtoolbar_container .x-form-text-wrap {
+    display: block;
 }
 
 .pimcore_pagingtoolbar_container .x-toolbar-spacer {
