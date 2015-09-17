@@ -302,6 +302,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
         }
 
         if(!$field->getInvisible() && ($force || $visible)) {
+            Object\Service::enrichLayoutDefinition($field);
             return array(
                 "key" => $key,
                 "type" => $field->getFieldType(),
