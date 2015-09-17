@@ -173,6 +173,13 @@ body > .x-mask {
     padding: 2px 6px 6px 6px;
 }
 
+.x-btn-focus {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+
+
 /* ExtJS 6.0 bugfixes */
 
 .x-accordion-hd .x-tool-right, .x-accordion-hd .x-tool-left {
