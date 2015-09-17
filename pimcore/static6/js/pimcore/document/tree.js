@@ -120,13 +120,13 @@ pimcore.document.tree = Class.create({
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
-                    appendOnly: true,
+                    appendOnly: false,
                     ddGroup: "element"
                 },
                 listeners: {
-                    beforedrop: function (node, data) {
-                        console.log("beforedrop");
-                    },
+                    //beforedrop: function (node, data) {
+                    //    console.log("beforedrop");
+                    //},
                     nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
@@ -228,7 +228,8 @@ pimcore.document.tree = Class.create({
         var tree = node.getOwnerTree();
 
         this.updateDocument(node.data.id, {
-            parentId: newParent.data.id
+            parentId: newParent.data.id,
+            index: index
         }, function (newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);
