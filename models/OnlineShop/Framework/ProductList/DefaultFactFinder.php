@@ -327,7 +327,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
 
         // add paging
-        $params['page'] = ceil($this->getOffset() / $this->getLimit());
+        $params['page'] = ceil($this->getOffset() / $this->getLimit())+1;
         $params['productsPerPage'] = $this->getLimit();
         $params['idsOnly'] = 'true';
 
@@ -722,14 +722,11 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         }
 
         $response = $this->doRequest($url);
-
-
-        // start request
-        $client = new \Zend_Http_Client( $url );
-        $client->setMethod(\Zend_Http_Client::GET);
-        $response = $client->request();
         $data = json_decode($response->getBody(), true);
 
+        if($data == null) {
+            throw new Exception('Request didn\'t return anything');
+        }
         return $data;
     }
 
@@ -844,4 +841,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         return $var;
     }
 
+    public function getSearchResult() {
+        return $this->searchResult;
+    }
 }
