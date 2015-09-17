@@ -224,6 +224,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $tmpObject["cls"] .= "pimcore_treenode_lockOwner ";
         }
 
+        if (\Pimcore\Tool\Admin::isExtJS6()) {
+            if ($tmpObject["leaf"]) {
+                $tmpObject["expandable"] = false;
+                $tmpObject["expanded"] = true;
+                $tmpObject["leaf"] = false;
+            }
+        }
+
+
         return $tmpObject;
     }
 
