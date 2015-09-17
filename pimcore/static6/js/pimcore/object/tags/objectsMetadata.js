@@ -158,7 +158,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                     }
                 };
-                editor = new Ext.form.Checkbox({});
+                editor = Ext.create('Ext.form.field.Checkbox', {style: 'margin-top: 2px;'});
 
 
                 if(readOnly) {
