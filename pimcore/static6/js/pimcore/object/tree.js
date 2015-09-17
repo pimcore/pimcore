@@ -110,8 +110,14 @@ pimcore.object.tree = Class.create({
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
-                    appendOnly: true,
+                    appendOnly: false,
                     ddGroup: "element"
+                },
+                listeners: {
+                    //beforedrop: function (node, data) {
+                    //    console.log("beforedrop");
+                    //},
+                    nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
             },
@@ -240,27 +246,26 @@ pimcore.object.tree = Class.create({
         }.bind(this, newParent, oldParent, tree));
     },
 
-    onTreeNodeBeforeMove: function (tree, element, oldParent, newParent, index) {
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        var tree = node.getOwnerTree();
 
-        //TODO prevent move
+        // check for locks
+        if (node.data.locked && oldParent.data.id != newParent.data.id) {
+            Ext.MessageBox.alert(t('locked'), t('element_cannot_be_move_because_it_is_locked'));
+            return false;
+        }
 
-        //// check for locks
-        //if (element.attributes.locked) {
-        //    Ext.MessageBox.alert(t('locked'), t('element_cannot_be_move_because_it_is_locked'));
-        //    return false;
-        //}
-        //
-        //// check new parent's permission
-        //if (!newParent.attributes.permissions.create) {
-        //    Ext.MessageBox.alert(t('missing_permission'), t('element_cannot_be_moved'));
-        //    return false;
-        //}
-        //
-        //// check permissions
-        //if (element.attributes.permissions.settings) {
-        //    tree.loadMask.show();
-        //    return true;
-        //}
+        // check new parent's permission
+        if(!newParent.data.permissions.create){
+            Ext.MessageBox.alert(t('missing_permission'), t('element_cannot_be_moved'));
+            return false;
+        }
+
+        // check permissions
+        if (node.data.permissions.settings) {
+            tree.loadMask.show();
+            return true;
+        }
         return false;
     },
 
