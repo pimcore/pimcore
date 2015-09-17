@@ -115,17 +115,18 @@ pimcore.document.tree = Class.create({
             animate:true,
             containerScroll: true,
             rootVisible: this.config.rootVisible,
+            bufferedRenderer: false,
             border: false,
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
-                    appendOnly: true,
+                    appendOnly: false,
                     ddGroup: "element"
                 },
                 listeners: {
-                    beforedrop: function (node, data) {
-                        console.log("beforedrop");
-                    },
+                    //beforedrop: function (node, data) {
+                    //    console.log("beforedrop");
+                    //},
                     nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
@@ -227,7 +228,8 @@ pimcore.document.tree = Class.create({
         var tree = node.getOwnerTree();
 
         this.updateDocument(node.data.id, {
-            parentId: newParent.data.id
+            parentId: newParent.data.id,
+            index: index
         }, function (newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);
@@ -738,8 +740,6 @@ pimcore.document.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type, enableInheritance) {
-        pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
-
         if(enableInheritance !== true) {
             enableInheritance = false;
         }
@@ -825,7 +825,6 @@ pimcore.document.tree = Class.create({
         node.pasteWindow = null;
 
         //this.tree.loadMask.hide();
-        pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.id);
         this.refresh(node);
     },
 

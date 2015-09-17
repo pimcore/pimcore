@@ -187,7 +187,7 @@ Ext.define('Ext.overrides.grid.View', {
             }
         }
     }, function() {
-        if (!Ext.getVersion().match('5.1.0.107')) {
+        if (!Ext.getVersion().match('6.0.0.640')) {
             console.warn('This patch has not been tested with this version of ExtJS');
         }
 
@@ -217,6 +217,55 @@ Ext.define('Ext.overrides.grid.View', {
             }
 
             me.superclass.renderRow.call(this, record, rowIdx, out);
+
+            if (record.needsPaging && typeof record.ptp == "undefined") {
+                this.doUpdatePaging(record);
+
+            }
+        },
+
+
+        doUpdatePaging: function(node) {
+
+            //console.log("create toolbar for " + node.id + " " + node.data.expanded);
+
+            //console.log(t);
+            if (node.data.expanded) {
+
+                node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
+                        node: node,
+                        width: 230
+                    }
+                );
+
+                node.ptb.node = node;
+
+                var tree = node.getOwnerTree();
+                var view = tree.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(node));
+                if (!nodeEl) {
+                    //console.log("Could not resolve node " + node.id);
+                    return;
+                }
+                nodeEl = nodeEl.getFirstChild();
+                nodeEl = nodeEl.query(".x-tree-node-text");
+                nodeEl = nodeEl[0];
+                var el = nodeEl;
+
+                //el.addCls('x-grid-header-inner');
+                el = Ext.DomHelper.insertAfter(el, {
+                    tag: 'span',
+                    "class": "pimcore_pagingtoolbar_container"
+                }, true);
+                el.addListener("click", function(e) {
+                    e.stopEvent();
+                });
+
+
+                ptb.render(el);
+                tree.updateLayout();
+            }
+
         },
 
         updatePaging: function() {
@@ -227,37 +276,7 @@ Ext.define('Ext.overrides.grid.View', {
 
             for (i = 0; i < names.length; i++) {
                 var node = queue[names[i]];
-                //console.log("create toolbar for " + node.id + " " + node.data.expanded);
-
-                if (node.data.expanded) {
-                    node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
-                            node: node
-                        }
-                    );
-
-                     node.ptb.node = node;
-
-                    var tree = node.getOwnerTree();
-                    var view = tree.getView();
-                    var nodeEl = Ext.fly(view.getNodeByRecord(node));
-                    nodeEl = nodeEl.getFirstChild();
-                    nodeEl = nodeEl.query(".x-tree-node-text");
-                    nodeEl = nodeEl[0];
-                    var el = nodeEl;
-
-                    //el.addCls('x-grid-header-inner');
-                    el = Ext.DomHelper.insertAfter(el, {
-                        tag: 'span',
-                        "class": "pimcore_pagingtoolbar_container"
-                    }, true);
-                    el.addListener("click", function(e) {
-                        e.stopEvent();
-                    });
-
-
-                    ptb.render(el);
-                    tree.updateLayout();
-                }
+                this.doUpdatePaging(node);
             }
 
             me.queue = {}
@@ -503,7 +522,7 @@ Ext.define('Ext.overrides.grid.View', {
 
 
         onPagingBlur: function(e) {
-            console.log("onPagingBlur");
+            //console.log("onPagingBlur");
             var inputItem = this.getInputItem(),
                 curPage;
             if (inputItem) {
@@ -513,7 +532,7 @@ Ext.define('Ext.overrides.grid.View', {
         },
 
         onPagingKeyDown: function(field, e) {
-            console.log("onPagingKeyDown");
+            //console.log("onPagingKeyDown");
             this.processKeyEvent(field, e);
         },
 

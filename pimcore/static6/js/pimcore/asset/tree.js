@@ -99,6 +99,7 @@ pimcore.asset.tree = Class.create({
             ddAppendOnly: true,
             rootVisible: this.config.rootVisible,
             forceLayout: true,
+            bufferedRenderer: false,
             border: false,
             viewConfig: {
                 plugins: {
@@ -694,10 +695,6 @@ pimcore.asset.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type) {
-        //this.attributes.reference.tree.loadMask.show();
-
-        pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.id);
-
         Ext.Ajax.request({
             url: "/admin/asset/copy-info/",
             params: {
@@ -779,7 +776,6 @@ pimcore.asset.tree = Class.create({
         record.pasteWindow = null;
 
         //this.tree.loadMask.hide();
-        pimcore.helpers.removeTreeNodeLoadingIndicator("asset", record.id);
         this.refresh(record);
     },
 
