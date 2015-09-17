@@ -187,7 +187,7 @@ Ext.define('Ext.overrides.grid.View', {
             }
         }
     }, function() {
-        if (!Ext.getVersion().match('5.1.0.107')) {
+        if (!Ext.getVersion().match('6.0.0.640')) {
             console.warn('This patch has not been tested with this version of ExtJS');
         }
 
@@ -227,9 +227,9 @@ Ext.define('Ext.overrides.grid.View', {
 
         doUpdatePaging: function(node) {
 
-            console.log("create toolbar for " + node.id + " " + node.data.expanded);
+            //console.log("create toolbar for " + node.id + " " + node.data.expanded);
 
-            console.log(t);
+            //console.log(t);
             if (node.data.expanded) {
 
                 node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
@@ -244,7 +244,7 @@ Ext.define('Ext.overrides.grid.View', {
                 var view = tree.getView();
                 var nodeEl = Ext.fly(view.getNodeByRecord(node));
                 if (!nodeEl) {
-                    console.log("Could not resolve node " + node.id);
+                    //console.log("Could not resolve node " + node.id);
                     return;
                 }
                 nodeEl = nodeEl.getFirstChild();
@@ -522,7 +522,7 @@ Ext.define('Ext.overrides.grid.View', {
 
 
         onPagingBlur: function(e) {
-            console.log("onPagingBlur");
+            //console.log("onPagingBlur");
             var inputItem = this.getInputItem(),
                 curPage;
             if (inputItem) {
@@ -532,7 +532,7 @@ Ext.define('Ext.overrides.grid.View', {
         },
 
         onPagingKeyDown: function(field, e) {
-            console.log("onPagingKeyDown");
+            //console.log("onPagingKeyDown");
             this.processKeyEvent(field, e);
         },
 
