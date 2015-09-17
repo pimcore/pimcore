@@ -99,6 +99,7 @@ pimcore.asset.tree = Class.create({
             ddAppendOnly: true,
             rootVisible: this.config.rootVisible,
             forceLayout: true,
+            bufferedRenderer: false,
             border: false,
             viewConfig: {
                 plugins: {

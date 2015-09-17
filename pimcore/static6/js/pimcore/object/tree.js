@@ -104,6 +104,7 @@ pimcore.object.tree = Class.create({
             autoScroll: true,
             animate: true,
             rootVisible: true,
+            bufferedRenderer: false,
             border: false,
             listeners: this.getTreeNodeListeners(),
             viewConfig: {

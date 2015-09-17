@@ -115,6 +115,7 @@ pimcore.document.tree = Class.create({
             animate:true,
             containerScroll: true,
             rootVisible: this.config.rootVisible,
+            bufferedRenderer: false,
             border: false,
             viewConfig: {
                 plugins: {
