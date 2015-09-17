@@ -104,7 +104,6 @@ pimcore.helpers.closeAsset = function (id) {
         var panel = Ext.getCmp(tabId);
         panel.close();
 
-        pimcore.helpers.removeTreeNodeLoadingIndicator("asset", id);
         pimcore.globalmanager.remove("asset_" + id);
     } catch (e) {
         console.log(e);
@@ -138,8 +137,6 @@ pimcore.helpers.closeDocument = function (id) {
         var panel = Ext.getCmp(tabId);
         panel.close();
 
-
-        pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
         pimcore.globalmanager.remove("document_" + id);
     } catch (e) {
         console.log(e);
@@ -177,7 +174,6 @@ pimcore.helpers.closeObject = function (id) {
         var panel = Ext.getCmp(tabId);
         panel.close();
 
-        pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
         pimcore.globalmanager.remove("object_" + id);
     } catch (e) {
         console.log(e);
@@ -291,52 +287,6 @@ pimcore.helpers.getElementTypeByObject = function (object) {
     return type;
 };
 
-pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
-    // display loading indicator on treenode
-    try {
-        var tree = pimcore.globalmanager.get("layout_" + type + "_tree").tree;
-        var store = tree.getStore();
-        var node = store.getNodeById(id);
-        if (node) {
-            var view = tree.getView();
-            var nodeEl = Ext.fly(view.getNodeByRecord(node));
-            var icon = nodeEl.query("img.x-tree-icon")[0];
-
-            var originalSrc = icon.getAttribute("src");
-            node.originalIconSrc = originalSrc;
-            icon.setAttribute("src", "/pimcore/static6/img/panel-loader.gif");
-
-            nodeEl.repaint();
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
-
-pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
-    // remove loading indicator on treenode
-    try {
-        var tree = pimcore.globalmanager.get("layout_" + type + "_tree").tree;
-        var store = tree.getStore();
-        var node = store.getNodeById(id);
-        if (node) {
-            var view = tree.getView();
-            var nodeEl = Ext.fly(view.getNodeByRecord(node));
-            var icon = nodeEl.query("img.x-tree-icon")[0];
-
-            if (node.originalIconSrc) {
-                icon.setAttribute("src", node.originalIconSrc);
-            }
-
-
-            nodeEl.repaint();
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
 
 pimcore.helpers.openSeemode = function () {
     if (pimcore.globalmanager.exists("pimcore_seemode")) {
@@ -704,7 +654,6 @@ pimcore.helpers.deleteAssetFromServer = function (id, r, callback, button) {
                         nodeEl.removeCls("pimcore_delete");
                     }
                     //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("asset", id);
 
                     if(node) {
                         node.remove();
@@ -845,7 +794,6 @@ pimcore.helpers.deleteDocumentFromServer = function (id, r, callback, button) {
                         nodeEl.removeCls("pimcore_delete");
                     }
                     //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
 
                     if(node) {
                         node.remove();
@@ -983,7 +931,6 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
                         nodeEl.removeCls("pimcore_delete");
                     }
                     //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
 
                     if(node) {
                         node.remove();
