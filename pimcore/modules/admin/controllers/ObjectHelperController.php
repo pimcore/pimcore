@@ -688,16 +688,54 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             }
         }
 
+
+        $fields = array();
+        $bricks = array();
+        if ($this->getParam("fields")) {
+            $fields = $this->getParam("fields");
+
+            foreach ($fields as $f) {
+                $parts = explode("~", $f);
+                if (substr($f, 0, 1) == "~") {
+                    // key value, ignore for now
+                } else if (count($parts) > 1) {
+                    $bricks[$parts[0]] = $parts[0];
+                }
+            }
+        }
+        if (!empty($bricks)) {
+            foreach ($bricks as $b) {
+                $list->addObjectbrick($b);
+            }
+        }
+
         $list->load();
 
         $objects = array();
         \Logger::debug("objects in list:" . count($list->getObjects()));
         foreach ($list->getObjects() as $object) {
 
-            if ($object instanceof Object\Concrete) {
-                $o = $this->csvObjectData($object);
-                $objects[] = $o;
+            if($fields) {
+
+                $objectData = [];
+                foreach($fields as $field) {
+                    $fieldData = $this->getCsvFieldData($field, $object);
+                    if($fieldData) {
+                        $objectData[$field] = $fieldData;
+                    }
+                }
+                $objects[] = $objectData;
+
+            } else {
+                /**
+                 * @extjs - TODO remove this, when old ext support is removed
+                 */
+                if ($object instanceof Object\Concrete) {
+                    $o = $this->csvObjectData($object);
+                    $objects[] = $o;
+                }
             }
+
         }
         //create csv
         if(!empty($objects)) {
@@ -730,6 +768,70 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
     }
 
 
+    protected function getCsvFieldData($field, $object) {
+
+        //check if field is systemfield
+        $systemFieldMap = [
+            'id' => "getId",
+            'fullpath' => "getFullPath",
+            'published' => "getPublished",
+            'creationDate' => "getCreationDate",
+            'modificationDate' => "getModificationDate",
+            'filename' => "getKey",
+            'classname' => "getClassname"
+        ];
+        if(in_array($field, array_keys($systemFieldMap) )) {
+            return $object->{$systemFieldMap[$field]}();
+        } else {
+            //check if field is standard object field
+            $fieldDefinition = $object->getClass()->getFieldDefinition($field);
+            if($fieldDefinition) {
+                return $fieldDefinition->getForCsvExport($object);
+            } else {
+
+                $fieldParts = explode("~", $field);
+
+                // check for objects bricks and localized fields
+                if (substr($field, 0, 1) == "~") {
+                    //key value store - ignore for now
+                } else if(count($fieldParts) > 1) {
+                    // brick
+                    $brickType = $fieldParts[0];
+                    $brickKey = $fieldParts[1];
+                    $key = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+
+                    $brickClass = Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickType);
+                    $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
+
+                    if($fieldDefinition) {
+                        $brickContainer = $object->{"get".ucfirst($key)}();
+                        if($brickContainer && !empty($brickKey)) {
+                            $brick = $brickContainer->{"get".ucfirst($brickType)}();
+                            if($brick) {
+                                return $fieldDefinition->getForCsvExport($brick);
+                            }
+
+                        }
+                    }
+
+                } else if($locFields = $object->getClass()->getFieldDefinition("localizedfields")) {
+
+                    // if the definition is not set try to get the definition from localized fields
+                    $fieldDefinition = $locFields->getFieldDefinition($field);
+                    if ($fieldDefinition) {
+                        $needLocalizedPermissions = true;
+                        return $fieldDefinition->getForCsvExport($object->getLocalizedFields(), ["language" => $this->getParam("language")]);
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    /**
+     * @extjs - TODO remove this, when old ext support is removed
+     */
     /**
      * Flattens object data to an array with key=>value where
      * value is simply a string representation of the value (for objects, hrefs and assets the full path is used)

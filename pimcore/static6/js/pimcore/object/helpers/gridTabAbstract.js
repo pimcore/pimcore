@@ -38,21 +38,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
 
                 var value = filterData[i].getValue();
-                //
-                //
-                //if (filterData[i].data.type == "string") {
-                //    operator = "LIKE";
-                //} else if (filterData[i].data.type == "numeric" || filterData[i].data.type == "date") {
-                //    if(filterData[i].data.operator == "lt") {
-                //        operator = "&lt;";
-                //    } else if(filterData[i].data.operator == "gt") {
-                //        operator = "&gt;";
-                //    }
-                //} else if (filterData[i].data.type == "boolean") {
-                //    filterData[i].value = filterData[i].data.value ? "true" : "false";
-                //}
+
+                if(value instanceof Date) {
+                    value = Ext.Date.format(value, "Y-m-d");
+                }
 
                 if(value && typeof value == "object") {
+                    console.log(value);
                     filterStringConfig.push(filterData[i].getProperty() + " " + operator + " ("
                     + value.join(" OR ") + ")");
                 } else {
@@ -408,6 +400,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         var filters = "";
         var condition = "";
 
+        var fields = this.getGridConfig().columns;
+        var fieldKeys = Object.keys(fields);
+        console.log(fieldKeys);
+
         if(this.sqlButton.pressed) {
             condition = this.sqlEditor.getValue();
         } else {
@@ -417,9 +413,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             var filters = [];
             for (i = 0; i < filterData.length; i++) {
                 var filterItem = filterData.getAt(i);
-                var filterConfig = filterItem.getConfig();
 
                 var fieldname = filterItem.getProperty();
+                console.log(fieldname);
                 var type = this.gridfilters[fieldname];
                 if (typeof type == 'object') {
                     type = type.type;
@@ -437,10 +433,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var path = "/admin/object-helper/export/classId/" + this.classId + "/folderId/" + this.element.id ;
         path = path + "/?" + Ext.urlEncode({
+            language: this.gridLanguage,
             filter: filters,
             condition: condition,
-            objecttype: this.objecttype
+            objecttype: this.objecttype,
+            "fields[]": fieldKeys
         });
+        console.log(path);
         pimcore.helpers.download(path);
     },
 

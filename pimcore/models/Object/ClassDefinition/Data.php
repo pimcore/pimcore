@@ -204,11 +204,12 @@ abstract class Data
      * converts object data to a simple string value or CSV Export
      * @abstract
      * @param Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object)
+    public function getForCsvExport($object, $params = array())
     {
-        return $this->getDataFromObjectParam($object);
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
