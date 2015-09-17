@@ -181,9 +181,6 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
         try {
-            if (record.data.expandable && !record.data.expanded) {
-                record.expand();
-            }
             if (record.data.permissions.view) {
                 pimcore.helpers.openObject(record.data.id, record.data.type);
             }
