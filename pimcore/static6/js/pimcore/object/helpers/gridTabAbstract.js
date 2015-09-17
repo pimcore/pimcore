@@ -204,23 +204,26 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         }
 
         var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
+        var formPanel = Ext.create('Ext.form.Panel', {
+            xtype: "form",
+            border: false,
+            items: [editor.getLayoutEdit()],
+            bodyStyle: "padding: 10px;",
+            buttons: [
+                {
+                    text: t("save"),
+                    handler: function() {
+                        if(formPanel.isValid()) {
+                            this.batchProcess(jobs, editor, fieldInfo, true);
+                        }
+                    }.bind(this)
+                }
+            ]
+        });
         this.batchWin = new Ext.Window({
             modal: false,
             title: t("batch_edit_field") + " " + fieldInfo.header,
-            items: [
-                {
-                    xtype: "form",
-                    border: false,
-                    items: [editor.getLayoutEdit()],
-                    bodyStyle: "padding: 10px;",
-                    buttons: [
-                        {
-                            text: t("save"),
-                            handler: this.batchProcess.bind(this, jobs, editor, fieldInfo, true)
-                        }
-                    ]
-                }
-            ],
+            items: [formPanel],
             bodyStyle: "background: #fff;",
             width: 700,
             maxHeight: 600

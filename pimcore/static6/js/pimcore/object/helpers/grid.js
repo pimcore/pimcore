@@ -100,6 +100,16 @@ pimcore.object.helpers.grid = Class.create({
                 update : 'GET',
                 destroy: 'GET'
             },
+            listeners: {
+                exception: function (proxy, request, operation, eOpts) {
+                    console.log("exception");
+                    if(operation.getAction() == "update") {
+                        Ext.MessageBox.alert(t('error'),
+                            t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
+                        this.store.rejectChanges();
+                    }
+                }.bind(this)
+            },
             extraParams: this.baseParams
         };
 
@@ -110,16 +120,7 @@ pimcore.object.helpers.grid = Class.create({
                 type: 'json',
                 //writeAllFields: true,
                 rootProperty: 'data',
-                encode: 'true',
-                listeners: {
-                    exception: function (conn, mode, action, request, response, store) {
-                        if(action == "update") {
-                            Ext.MessageBox.alert(t('error'),
-                                t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
-                            this.store.rejectChanges();
-                        }
-                    }.bind(this)
-                }
+                encode: 'true'
             };
         }
 
