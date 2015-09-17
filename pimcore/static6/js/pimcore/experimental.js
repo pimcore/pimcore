@@ -449,10 +449,9 @@ Ext.define('Ext.overrides.grid.View', {
                     margin: '-1 2 3 2',
                     listeners: inputListeners
                 },
-                 new Ext.Toolbar.TextItem({
-                    text: "/",
-                    style: ""
-                })
+                {
+                    xtype: "tbspacer"
+                }
                 ,
                 this.afterItem,
                 ,

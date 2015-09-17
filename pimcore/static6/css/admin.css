@@ -955,36 +955,8 @@ span.warning {
     margin-bottom: 10px;
 }
 
-.pimcore_pagingtoolbar_container {
-    vertical-align: middle;
-}
-.pimcore_pagingtoolbar_container .x-toolbar {
-    margin: 0px 0px 0px 5px !important;
-    padding: 0px 0px 0px 0px !important;
-}
-
-.pimcore_pagingtoolbar_container .x-toolbar-item {
-    padding: 0px 0px 0px 0px !important;
-    top: 0px !important;
-}
-
-
-
-.pimcore_pagingtoolbar_container  .x-btn {
-    top: 0px !important;
-}
-
 .x-accordion-item .x-tree-icon-parent {
     vertical-align: middle;
-}
-
-.pimcore_pagingtoolbar_container .x-form-text-default {
-    min-height: 18px !important;
-}
-
-.pimcore_pagingtoolbar_container .x-form-text {
-    font-size: 11px;
-    line-height: 14px;
 }
 
 .x-column-header-text-container {
@@ -1122,6 +1094,69 @@ span.warning {
     color: #919191;
 }
 
+.pimcore_pagingtoolbar_container {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: top;
+    margin-left: 5px;
+}
+
+.pimcore_pagingtoolbar_container .x-toolbar {
+    height: 20px;
+    padding: 0;
+    background-color: transparent;
+}
+
+.pimcore_pagingtoolbar_container .x-toolbar .x-box-target {
+    position: relative !important;
+    height: auto;
+    left: auto;
+    top: auto;
+}
+
+.pimcore_pagingtoolbar_container .x-toolbar .x-box-item {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    display: table-cell;
+    white-space: nowrap;
+}
+
+.pimcore_pagingtoolbar_container .x-toolbar .x-btn {
+    padding: 2px;
+    border: 0;
+}
+
+.pimcore_pagingtoolbar_container .x-toolbar .x-btn .x-btn-icon-el {
+    font-size: 21px;
+}
+
+
+.pimcore_pagingtoolbar_container .x-form-text-default {
+    min-height: 18px;
+    height: 18px;
+    text-align: center;
+    padding: 0;
+    width: 38px;
+    border-color: #f6f6f6;
+}
+
+.pimcore_pagingtoolbar_container .x-toolbar-text-default {
+    padding: 0;
+    line-height: 20px;
+}
+
+.pimcore_pagingtoolbar_container .x-form-text-field-body-default {
+    min-width: 1px;
+}
+
+.pimcore_pagingtoolbar_container .x-form-trigger-wrap-default {
+    border-color: #f6f6f6 !important;
+}
+
+.pimcore_pagingtoolbar_container .x-toolbar-spacer {
+    background-color: #f6f6f6;
+}
 
 /* ExtJS 6.0 specific styles */
 
@@ -1180,10 +1215,6 @@ span.warning {
     border:0;
 }
 
-.x-btn-icon .x-btn-icon-el {
-    background-size: contain !important;
-}
-
 .main-toolbar.x-toolbar-default {
     background: #ececec;
     border-bottom: 1px solid #e4e4e4 !important;
@@ -1198,11 +1229,5 @@ span.warning {
 .class-editor-validation-error input {
     background-color: red;
     color: white;
-}
-
-/* ExtJS 6.0 bugfixes */
-
-.x-accordion-hd .x-tool-right, .x-accordion-hd .x-tool-left {
-    background-image: none;
 }
 

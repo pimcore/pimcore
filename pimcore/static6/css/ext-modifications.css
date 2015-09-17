@@ -160,3 +160,22 @@ body > .x-mask {
 .x-portlet {
     margin-bottom: 10px;
 }
+
+.x-btn-icon .x-btn-icon-el {
+    background-size: contain !important;
+}
+
+.x-tip-header-default {
+    padding: 6px 8px 0 8px;
+}
+
+.x-tip-body-default {
+    padding: 2px 6px 6px 6px;
+}
+
+/* ExtJS 6.0 bugfixes */
+
+.x-accordion-hd .x-tool-right, .x-accordion-hd .x-tool-left {
+    background-image: none;
+}
+
