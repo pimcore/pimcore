@@ -17,37 +17,46 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     objecttype: 'object',
 
-    filterUpdateFunction: function(gridfilters, toolbarFilterInfo) {
-        var filterString = "";
+    filterUpdateFunction: function(grid, toolbarFilterInfo) {
         var filterStringConfig = [];
-        var filterData = gridfilters.getFilterData();
-        var operator;
+        var filterData = grid.getStore().getFilters().items;
 
         // reset
         toolbarFilterInfo.setText(" ");
 
         if(filterData.length > 0) {
 
-            for (var i=0; i<filterData.length; i++) {
+            for (var i=0; i < filterData.length; i++) {
 
-                operator = "=";
-                if (filterData[i].data.type == "string") {
-                    operator = "LIKE";
-                } else if (filterData[i].data.type == "numeric" || filterData[i].data.type == "date") {
-                    if(filterData[i].data.comparison == "lt") {
-                        operator = "&lt;";
-                    } else if(filterData[i].data.comparison == "gt") {
-                        operator = "&gt;";
-                    }
-                } else if (filterData[i].data.type == "boolean") {
-                    filterData[i].value = filterData[i].data.value ? "true" : "false";
+                var operator = filterData[i].getOperator();
+                if(operator == 'lt') {
+                    operator = "&lt;";
+                } else if(operator == 'gt') {
+                    operator = "&lt;";
+                } else if(operator == 'eq') {
+                    operator = "=";
                 }
 
-                if(filterData[i].data.value && typeof filterData[i].data.value == "object") {
-                    filterStringConfig.push(filterData[i].field + " " + operator + " ("
-                    + filterData[i].data.value.join(" OR ") + ")");
+                var value = filterData[i].getValue();
+                //
+                //
+                //if (filterData[i].data.type == "string") {
+                //    operator = "LIKE";
+                //} else if (filterData[i].data.type == "numeric" || filterData[i].data.type == "date") {
+                //    if(filterData[i].data.operator == "lt") {
+                //        operator = "&lt;";
+                //    } else if(filterData[i].data.operator == "gt") {
+                //        operator = "&gt;";
+                //    }
+                //} else if (filterData[i].data.type == "boolean") {
+                //    filterData[i].value = filterData[i].data.value ? "true" : "false";
+                //}
+
+                if(value && typeof value == "object") {
+                    filterStringConfig.push(filterData[i].getProperty() + " " + operator + " ("
+                    + value.join(" OR ") + ")");
                 } else {
-                    filterStringConfig.push(filterData[i].field + " " + operator + " " + filterData[i].data.value);
+                    filterStringConfig.push(filterData[i].getProperty() + " " + operator + " " + value);
                 }
             }
 
@@ -129,11 +138,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             if(this.sqlButton.pressed) {
                 condition = this.sqlEditor.getValue();
             } else {
-            //TODO
-                //var filterData = this.gridfilters.getFilterData();
-                //if(filterData.length > 0) {
-                //    filters = this.gridfilters.buildQuery(filterData).filter;
-                //}
+                var filterData = this.store.getFilters().items;
+                if(filterData.length > 0) {
+                    filters = this.store.getProxy().encodeFilters(filterData);
+                }
             }
 
             var params = {

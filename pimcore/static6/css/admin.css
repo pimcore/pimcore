@@ -1049,7 +1049,8 @@ span.warning {
     border-right: none;
 }
 
-.object_geo_field .x-panel-default-outer-border-rl, .object_keyvalue_panel .x-panel-default-outer-border-rl, .pimcore_object_panel_edit .x-grid-header-ct {
+.object_geo_field .x-panel-default-outer-border-rl, .object_keyvalue_panel .x-panel-default-outer-border-rl,
+.pimcore_object_panel_edit .x-grid-header-ct, .pimcore_object_grid_panel .x-grid-header-ct  {
     border-right-color: #d0d0d0 !important;
     border-left-color: #d0d0d0 !important;
 }

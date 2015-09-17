@@ -148,9 +148,11 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             columnLines: true,
             plugins: plugins,
             stripeRows: true,
+            cls: 'pimcore_object_grid_panel',
             trackMouseOver: true,
             viewConfig: {
-                forceFit: false
+                forceFit: false,
+                xtype: 'patchedgridview'
             },
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
@@ -205,8 +207,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         }.bind(this));
 
         // check for filter updates
-        this.grid.on("filterupdate", function () {
-            this.filterUpdateFunction(this.gridfilters, this.toolbarFilterInfo);
+        this.grid.on("filterchange", function () {
+            this.filterUpdateFunction(this.grid, this.toolbarFilterInfo);
         }.bind(this));
 
         gridHelper.applyGridEvents(this.grid);

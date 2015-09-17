@@ -326,6 +326,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             viewConfig: {
                 forceFit: false
             },
+            cls: 'pimcore_object_grid_panel',
             selModel: Ext.create('Ext.selection.RowModel', {}),
             bbar: this.pagingtoolbar,
             listeners: {

@@ -230,10 +230,11 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 trackMouseOver: true,
                 loadMask: true,
                 plugins: plugins,
-               /* viewConfig: {
+                viewConfig: {
                     forceFit: false,
                     xtype: 'patchedgridview'
-                },*/
+                },
+                cls: 'pimcore_object_grid_panel',
                 tbar: [this.languageInfo, "-", this.toolbarFilterInfo, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
                     text: t("search_and_move"),
                     iconCls: "pimcore_icon_search_and_move",
@@ -280,8 +281,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }.bind(this));
 
             // check for filter updates
-            this.grid.on("filterupdate", function () {
-                this.filterUpdateFunction(this.gridfilters, this.toolbarFilterInfo);
+            this.grid.on("filterchange", function () {
+                this.filterUpdateFunction(this.grid, this.toolbarFilterInfo);
             }.bind(this));
 
             gridHelper.applyGridEvents(this.grid);

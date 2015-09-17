@@ -72,7 +72,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             foreach ($configFiles as $configFile) {
                 if (is_file($configFile)) {
                     $gridConfig = Tool\Serialize::unserialize(file_get_contents($configFile));
-                    if(array_key_exists("classId", $gridConfig)) {
+                    if(is_array($gridConfig) && array_key_exists("classId", $gridConfig)) {
                         if($gridConfig["classId"] == $class->getId()) {
                             break;
                         } else {
