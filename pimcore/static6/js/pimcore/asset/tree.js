@@ -672,6 +672,8 @@ pimcore.asset.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type) {
+        pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.id);
+
         Ext.Ajax.request({
             url: "/admin/asset/copy-info/",
             params: {
