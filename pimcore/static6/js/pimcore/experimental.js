@@ -319,6 +319,16 @@ Ext.define('Ext.overrides.grid.View', {
                 }
             }.bind(this));
 
+            //to hide or show the expanding icon depending if childs are available or not
+            node.addListener('remove', function(node, removedNode, isMove) {
+                if(!node.hasChildNodes()) {
+                    node.set('expandable', false);
+                }
+            });
+            node.addListener('append', function(node) {
+                node.set('expandable', true);
+            });
+
             if (me.pageSize < total) {
                 node.needsPaging = true;
                 node.pagingData = {
