@@ -15,6 +15,13 @@
 @import '/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css';
 @import 'ext-modifications.css';
 
+.cke * {
+    box-sizing: content-box !important;
+    -moz-box-sizing: content-box !important;
+    -ms-box-sizing: content-box !important;
+    -webkit-box-sizing: content-box !important;
+}
+
 .cke-code-editor textarea {
     font-family: "courier new", courier !important;
 }
