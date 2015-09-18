@@ -189,6 +189,17 @@ pimcore.asset.tree = Class.create({
         this.tree.on("itemmouseenter", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
         this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
 
+
+        store.on("nodebeforeexpand", function (node) {
+            window.setTimeout(function () {
+                pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
+            }, 200);
+        });
+
+        store.on("nodeexpand", function (node, index, item, eOpts) {
+            pimcore.helpers.removeTreeNodeLoadingIndicator("asset", node.data.id);
+        });
+
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.updateLayout();
 
