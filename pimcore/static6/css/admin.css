@@ -81,6 +81,7 @@
 
 #pimcore_logo img {
     width:110px;
+    height: 26px;
     padding-left: 2px;
     transform: rotate(270deg);
     transform-origin: 14px 12px;
