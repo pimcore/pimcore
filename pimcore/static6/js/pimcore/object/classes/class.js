@@ -737,11 +737,6 @@ pimcore.object.classes.klass = Class.create({
 
         newNode = this.appendChild(newNode);
 
-        //to hide or show the expanding icon depending if childs are available or not
-        newNode.addListener('move', function(node, oldParent, newParent) {
-            newParent.set('expandable', true);
-        });
-
         var editor = new pimcore.object.classes.data[type](newNode, initData);
         newNode.set("editor", editor);
 

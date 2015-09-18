@@ -68,7 +68,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         this.configPanel = new Ext.Panel({
             layout: "border",
-            items: [this.getLayoutSelection(), this.getSelectionPanel(), this.getResultPanel(), this.getEditPanel()],
+            items: [this.getLayoutSelection(), this.getSelectionPanel(), this.getClassDefinitionPanel(), this.getEditPanel()],
             bbar: [
                 "->",
                 this.importButton,
@@ -138,6 +138,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     }
                 }
                 else {
+                    console.log("error");
                     if (nodeEl) {
                         nodeEl.removeCls("tree_node_error");
                     }
@@ -226,7 +227,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         },
                         success: function(response) {
                             this.initLayoutFields(true, response);
-                            this.resultPanel.enable();
+                            this.classDefinitionPanel.enable();
                             this.enableButtons();
                             this.currentLayoutId = layoutId;
                         }.bind(this)
@@ -240,6 +241,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             xtype: "fieldset",
             layout: 'hbox',
             border: false,
+            style: "border-top: none !important;",
             fieldLabel: t("layout"),
             items: [this.layoutChangeCombo,
                 {
@@ -261,8 +263,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         if(!this.languagePanel) {
             this.languagePanel = new Ext.form.FormPanel({
                 region: "north",
-                bodyStyle: "padding: 5px;",
-                height: 35,
+                height: 43,
                 items: [compositeConfig]
             });
         }
@@ -275,8 +276,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
             this.selectionPanel = Ext.create('Ext.tree.Panel', {
                 rootVisible: true,
-                enableDD:true,
                 region:'center',
+                useArrows: true,
                 title: t('custom_layout'),
                 layout:'fit',
                 width: 428,
@@ -300,7 +301,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         this.selectionPanel.getView().on({
             beforedrop: {
                 fn: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
-                    var target = eOpts.options.target;
+                    var target = overModel.getOwnerTree().getView();
                     var source = data.view;
 
                     if (target != source) {
@@ -309,8 +310,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                             && this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
                             dropHandlers.cancelDrop();
                         } else {
-                            var n = record;
-
                             var copy = this.recursiveCloneNode(record);
                             data.records = [copy]; // assign the copy as the new dropNode
                         }
@@ -451,12 +450,12 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
 
-    getResultPanel: function () {
-        if (!this.resultPanel) {
-            this.resultPanel = this.getClassTree("/admin/class/get", this.klass.id);
+    getClassDefinitionPanel: function () {
+        if (!this.classDefinitionPanel) {
+            this.classDefinitionPanel = this.getClassTree("/admin/class/get", this.klass.id);
         }
 
-        return this.resultPanel;
+        return this.classDefinitionPanel;
     },
 
     getEditPanel: function () {
@@ -519,18 +518,18 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             title: t('class_definitions'),
             region: "west",
             autoScroll: true,
+            useArrows: true,
             split: true,
             disabled: true,
             root: {
                 id: "0",
                 root: true,
                 text: t("base"),
-                draggable: false
+                allowDrag: false
             },
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
-                    appendOnly: true,
                     enableDrag: true,
                     enableDrop: false,
                     ddGroup: "columnconfigelement"
@@ -564,7 +563,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             leaf: false,
             isTarget: true,
             expanded: true,
-            draggable: isCustom
+            allowDrag: false
         };
 
         if (isCustom) {
@@ -574,8 +573,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             this.editPanel.updateLayout();
             rootNode = this.selectionPanel.getRootNode();
         } else {
-            this.resultPanel.setRootNode(rootNode);
-            rootNode = this.resultPanel.getRootNode();
+            this.classDefinitionPanel.setRootNode(rootNode);
+            rootNode = this.classDefinitionPanel.getRootNode();
         }
 
 
@@ -638,14 +637,26 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         var newNode = {
             type: "layout",
-            draggable: this.layoutDraggable,
+            allowDrag: this.layoutDraggable,
             iconCls: "pimcore_icon_" + type,
             text: nodeLabel,
-            leaf: true
+            expanded: true,
+            expandable: false,
+            leaf: false
         };
 
 
         newNode = record.appendChild(newNode);
+
+        //to hide or show the expanding icon depending if childs are available or not
+        newNode.addListener('remove', function(node, removedNode, isMove) {
+            if(!node.hasChildNodes()) {
+                node.set('expandable', false);
+            }
+        });
+        newNode.addListener('append', function(node) {
+            node.set('expandable', true);
+        });
 
         newNode.data.editor = new pimcore.object.classes.layout[type](newNode, initData);
 
@@ -658,10 +669,12 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         var isLeaf = true;
         var draggable = true;
+        var expanded = false;
 
         // localizedfields can be a drop target
         if(type == "localizedfields") {
             isLeaf = false;
+            expanded = true;
         }
 
         var key = initData.name;
@@ -679,7 +692,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             type: "data",
             layout: initData,
             leaf: isLeaf,
-            draggable: draggable,
+            allowDrag: draggable,
+            expanded: expanded,
             dataType: type,
             iconCls: "pimcore_icon_" + type
         };
@@ -794,7 +808,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     var data = Ext.decode(response.responseText);
                     if(data && data.success) {
                         this.editPanel.removeAll();
-                        this.resultPanel.enable();
+                        this.classDefinitionPanel.enable();
                         this.enableButtons();
                         this.layoutComboStore.reload();
                         this.currentLayoutId = data.id;
@@ -817,11 +831,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     clearSelectionPanel: function() {
         this.selectionPanel.getStore().setDisabled(false);
-        this.selectionPanel.setRootNode(new Ext.tree.TreeNode(
-            {
-                //hidden: true
-            }
-        ));
+        this.selectionPanel.setRootNode(new Ext.tree.TreeNode({}));
     },
 
 
@@ -844,7 +854,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     this.editPanel.removeAll();
                     this.clearSelectionPanel();
-                    this.resultPanel.disable();
+                    this.classDefinitionPanel.disable();
                     this.saveButton.disable();
                     this.importButton.disable();
                     this.exportButton.disable();
@@ -865,7 +875,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 success: function(response) {
                     this.editPanel.removeAll();
                     this.initLayoutFields(true, response);
-                    this.resultPanel.enable();
+                    this.classDefinitionPanel.enable();
                     this.enableButtons();
                     this.currentLayoutId = layoutId;
                 }.bind(this)
