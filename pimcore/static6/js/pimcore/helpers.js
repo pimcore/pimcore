@@ -317,31 +317,25 @@ pimcore.helpers.getTreeNodeLoadingIndicatorElement = function (type, id) {
             var iconEl = Ext.get(icon);
             return iconEl;
         }
-    }
-    catch (e) {
-        console.log(e);
+    } catch (e) {
+        //console.log(e);
     }
 };
 
 pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
     // display loading indicator on treenode
-    try {
-        var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
+    var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
+    if(iconEl) {
         iconEl.addCls("pimcore_tree_node_loading_indicator");
     }
-    catch (e) {
-        console.log(e);
-    }
+
 };
 
 pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
     // display loading indicator on treenode
-    try {
-        var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
+    var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
+    if(iconEl) {
         iconEl.removeCls("pimcore_tree_node_loading_indicator");
-    }
-    catch (e) {
-        console.log(e);
     }
 };
 
