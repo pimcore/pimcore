@@ -1176,7 +1176,8 @@ span.warning {
 }
 
 .pimcore_editable_grid .x-form-spinner-default {
-    height: 10px;
+    height: 8px;
+    line-height: 12px;
 }
 
 /* ExtJS 6.0 specific styles */
