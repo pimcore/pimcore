@@ -92,9 +92,9 @@ $config = \Pimcore\Config::getSystemConfig();
 <div id="vcenter" class="<?= ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
     <div id="hcenter">
         <div id="header">
-            <img src="/pimcore/static/img/login/logo.png">
+            <img src="/pimcore/static6/img/logo-white.svg">
             <p>
-                Your Open Source Multichannel PLatform
+                Open-Source CMS . PIM . DAM . E-Ccommerce
             </p>
         </div>
         <div id="content">

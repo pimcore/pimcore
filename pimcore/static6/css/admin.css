@@ -80,8 +80,10 @@
 }
 
 #pimcore_logo img {
-    width:50%;
+    width:110px;
     padding-left: 2px;
+    transform: rotate(270deg);
+    transform-origin: 14px 12px;
 }
 
 #pimcore_logo img.activity {
@@ -1195,9 +1197,10 @@ span.warning {
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {
-    background-image: url(/pimcore/static6/img/logo-gray.png);
+    background-image: url(/pimcore/static6/img/logo.svg);
     background-repeat: no-repeat;
     background-position: center center;
+    background-size: 300px auto;
 }
 
 #pimcore_panel_tabs > .x-tab-bar {

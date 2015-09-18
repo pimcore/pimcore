@@ -62,15 +62,16 @@ $scripts = array(
                     id: "logo",
                     border: false,
                     manageHeight: false,
-                    bodyStyle: "padding: 10px",
-                    html: '<div align="center"><img width="200" src="/pimcore/static/img/logo-gray.png" align="center" /></div>'
+                    bodyStyle: "padding: 20px 10px 5px 10px",
+                    html: '<div align="center"><img width="200" src="/pimcore/static6/img/logo.svg" align="center" /></div>'
                 },
                 {
                     xtype: "panel",
                     id: "install_errors",
                     border: false,
                     bodyStyle: "color: red; padding: 10px",
-                    html: errorMessages
+                    html: errorMessages,
+                    hidden: true
                 },
                 {
                     xtype: "form",
@@ -166,6 +167,7 @@ $scripts = array(
                         Ext.getCmp("install_form").hide();
                         Ext.getCmp("check_button").hide();
 
+                        Ext.getCmp("install_errors").show();
                         Ext.getCmp("install_errors").update("Installing ...");
 
                         Ext.Ajax.request({
@@ -201,7 +203,7 @@ $scripts = array(
                     // no idea why this is necessary to layout the window correctly
                     window.setTimeout(function () {
                         win.updateLayout();
-                    }, 100);
+                    }, 1000);
                 }
             }
         });
