@@ -126,6 +126,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             columns: gridColumns,
             loadMask: true,
             columnLines: true,
+            bodyCls: "pimcore_editable_grid",
             plugins: plugins,
             stripeRows: true,
             trackMouseOver: true,

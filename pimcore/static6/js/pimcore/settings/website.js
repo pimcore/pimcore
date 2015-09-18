@@ -245,6 +245,7 @@ pimcore.settings.website = Class.create({
             store:this.store,
             columnLines:true,
             trackMouseOver:true,
+            bodyCls: "pimcore_editable_grid",
             stripeRows:true,
             columns : {
                 items: typesColumns

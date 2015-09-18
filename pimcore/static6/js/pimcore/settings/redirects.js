@@ -148,7 +148,7 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {header: t("type"), width: 50, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
+            {header: t("type"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
                     ["301", "Moved Permanently (301)"],
                     ["307", "Temporary Redirect (307)"],
@@ -159,10 +159,11 @@ pimcore.settings.redirects = Class.create({
                 mode: "local",
                 typeAhead: false,
                 editable: false,
+                listConfig: {minWidth: 200},
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            {header: t("priority"), width: 50, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
+            {header: t("priority"), width: 60, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
                 store: [
                     [1, "1 - " + t("lowest")],
                     [2, 2],
@@ -178,6 +179,7 @@ pimcore.settings.redirects = Class.create({
                 ],
                 mode: "local",
                 typeAhead: false,
+                listConfig: {minWidth: 200},
                 editable: false,
                 forceSelection: true,
                 triggerAction: "all"
@@ -270,6 +272,7 @@ pimcore.settings.redirects = Class.create({
 			columns : typesColumns,
             trackMouseOver: true,
             columnLines: true,
+            bodyCls: "pimcore_editable_grid",
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
                 this.cellEditing

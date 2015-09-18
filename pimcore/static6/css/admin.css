@@ -1164,6 +1164,21 @@ span.warning {
     background-color: #f6f6f6;
 }
 
+.pimcore_editable_grid .x-form-text-default {
+    min-height: 21px;
+    padding: 0 10px;
+}
+
+.pimcore_editable_grid .x-form-trigger-default {
+    height: 21px;
+    line-height: 21px;
+    width: 25px;
+}
+
+.pimcore_editable_grid .x-form-spinner-default {
+    height: 10px;
+}
+
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {

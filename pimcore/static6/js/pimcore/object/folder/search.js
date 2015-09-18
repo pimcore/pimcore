@@ -225,6 +225,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 columns: gridColumns,
                 columnLines: true,
                 stripeRows: true,
+                bodyCls: "pimcore_editable_grid",
                 border: true,
                 selModel: gridHelper.getSelectionColumn(),
                 trackMouseOver: true,

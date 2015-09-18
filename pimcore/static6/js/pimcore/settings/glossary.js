@@ -218,6 +218,7 @@ pimcore.settings.glossary = Class.create({
             trackMouseOver: true,
             columnLines: true,
             bbar: this.pagingtoolbar,
+            bodyCls: "pimcore_editable_grid",
             stripeRows: true,
             tbar: toolbar,
             viewConfig: {

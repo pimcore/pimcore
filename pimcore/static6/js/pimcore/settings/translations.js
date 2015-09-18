@@ -287,6 +287,7 @@ pimcore.settings.translations = Class.create({
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
+            bodyCls: "pimcore_editable_grid",
             autoScroll: true,
             store: this.store,
             columnLines: true,

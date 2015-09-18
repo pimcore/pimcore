@@ -212,6 +212,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             columnLines: true,
             plugins: plugins,
             stripeRows: true,
+            bodyCls: "pimcore_editable_grid",
             trackMouseOver: true,
             viewConfig: {
                 forceFit: false

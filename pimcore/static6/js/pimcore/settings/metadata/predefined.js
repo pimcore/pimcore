@@ -233,6 +233,7 @@ pimcore.settings.metadata.predefined = Class.create({
             store: this.store,
             columnLines: true,
             stripeRows: true,
+            bodyCls: "pimcore_editable_grid",
             trackMouseOver: true,
             columns : metadataColumns,
             clicksToEdit: 1,

@@ -312,7 +312,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 cls: "pimcore_force_auto_width"
             },
             autoHeight: autoHeight,
-            bodyCssClass: "pimcore_object_tag_objects",
+            bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",
             plugins: [
                 this.cellEditing
             ]

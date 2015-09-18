@@ -140,6 +140,7 @@ pimcore.settings.document.doctypes = Class.create({
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
             autoScroll: true,
+            bodyCls: "pimcore_editable_grid",
             store: this.store,
             columns : typesColumns,
             columnLines: true,

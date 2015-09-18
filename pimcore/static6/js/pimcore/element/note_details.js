@@ -30,7 +30,7 @@ pimcore.element.note_details = Class.create({
         if(!this.detailWindow) {
             this.detailWindow = new Ext.Window({
                 width: 700,
-                height: 422,
+                height: 530,
                 title: t('note_details'),
                 closeAction:'close',
                 plain: true,

@@ -184,6 +184,7 @@ pimcore.element.properties = Class.create({
                 sm:  Ext.create('Ext.selection.RowModel', {}),
                 trackMouseOver: true,
                 store: store,
+                bodyCls: "pimcore_editable_grid",
                 plugins: [
                     this.cellEditing
                 ],

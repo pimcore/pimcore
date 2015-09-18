@@ -413,6 +413,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             columns: gridColumns,
             loadMask: true,
             columnLines: true,
+            bodyCls: "pimcore_editable_grid",
             stripeRows: true,
             selModel: Ext.create('Ext.selection.RowModel', {}),
             bbar: this.pagingtoolbar,

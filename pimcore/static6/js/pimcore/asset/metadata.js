@@ -133,6 +133,7 @@ pimcore.asset.metadata = Class.create({
                 autoScroll: true,
                 region: "center",
                 iconCls: "pimcore_icon_metadata",
+                bodyCls: "pimcore_editable_grid",
                 trackMouseOver: true,
                 store: store,
                 tbar: [{

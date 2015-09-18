@@ -438,7 +438,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
             },
             autoHeight: autoHeight,
-            bodyCls: "pimcore_object_tag_objects"
+            bodyCls: "pimcore_object_tag_objects pimcore_editable_grid"
         });
 
         this.component.on("afteredit", function() {

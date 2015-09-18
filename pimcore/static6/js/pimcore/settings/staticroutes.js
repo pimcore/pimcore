@@ -224,6 +224,7 @@ pimcore.settings.staticroutes = Class.create({
             autoScroll:true,
             store:this.store,
             columnLines:true,
+            bodyCls: "pimcore_editable_grid",
             trackMouseOver:true,
             stripeRows:true,
             columns:typesColumns,

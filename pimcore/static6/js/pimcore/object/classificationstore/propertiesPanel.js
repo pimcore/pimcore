@@ -224,6 +224,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             loadMask: true,
             columnLines: true,
             plugins: plugins,
+            bodyCls: "pimcore_editable_grid",
             stripeRows: true,
             trackMouseOver: true,
             viewConfig: {

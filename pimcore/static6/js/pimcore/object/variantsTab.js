@@ -149,6 +149,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             plugins: plugins,
             stripeRows: true,
             cls: 'pimcore_object_grid_panel',
+            bodyCls: "pimcore_editable_grid",
             trackMouseOver: true,
             viewConfig: {
                 forceFit: false,

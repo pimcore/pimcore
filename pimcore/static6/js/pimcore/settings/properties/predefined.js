@@ -188,6 +188,7 @@ pimcore.settings.properties.predefined = Class.create({
             autoScroll: true,
             store: this.store,
             columnLines: true,
+            bodyCls: "pimcore_editable_grid",
             stripeRows: true,
             trackMouseOver: true,
             columns : propertiesColumns,
