@@ -1,3 +1,12 @@
+Ext.override(Ext.dd.DragDropMgr, {
+        startDrag: function (x, y) {
+            //console.log("startDrag " +  x  + " "  + y);
+            this.callParent(arguments);
+        }
+    }
+);
+
+
 Ext.define('overrides.Component', {
     override: 'Ext.Component'
 
