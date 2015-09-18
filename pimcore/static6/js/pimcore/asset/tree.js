@@ -131,7 +131,6 @@ pimcore.asset.tree = Class.create({
 
         //TODO
         this.tree.getView().on("itemafterrender",this.enableHtml5Upload.bind(this));
-        this.tree.on("startdrag", this.onDragStart.bind(this));
         this.tree.on("render", function () {
             this.getRootNode().expand();
         });
@@ -353,10 +352,6 @@ pimcore.asset.tree = Class.create({
         };
 
         return treeNodeListeners;
-    },
-
-    onDragStart : function () {
-        pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {

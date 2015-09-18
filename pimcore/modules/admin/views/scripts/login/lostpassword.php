@@ -80,8 +80,6 @@
 </div>
 
 <div id="footer">
-    <a href="http://www.pimcore.org/">pimcore. Open Source Multichannel Experience and Engagement Platform</a>
-    <br />
     &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>, a proud member of the <a href="http://www.elements.at/">elements group</a>
 </div>
 

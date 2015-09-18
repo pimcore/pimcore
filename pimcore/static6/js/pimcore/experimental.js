@@ -1,6 +1,9 @@
 Ext.override(Ext.dd.DragDropMgr, {
         startDrag: function (x, y) {
-            //console.log("startDrag " +  x  + " "  + y);
+
+            // always hide tree-previews on drag start
+            pimcore.helpers.treeNodeThumbnailPreviewHide();
+
             this.callParent(arguments);
         }
     }

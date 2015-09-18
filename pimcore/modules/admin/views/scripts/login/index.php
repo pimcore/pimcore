@@ -93,9 +93,6 @@ $config = \Pimcore\Config::getSystemConfig();
     <div id="hcenter">
         <div id="header">
             <img src="/pimcore/static6/img/logo-white.svg">
-            <p>
-                Open-Source CMS . PIM . DAM . E-Ccommerce
-            </p>
         </div>
         <div id="content">
             <div id="loginform">
@@ -157,8 +154,6 @@ $config = \Pimcore\Config::getSystemConfig();
     </div>
 </div>
 <div id="footer">
-    <a href="http://www.pimcore.org/">pimcore. Open Source Multichannel Experience and Engagement Platform</a>
-    <br />
     &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>, a proud member of the <a href="http://www.elements.at/">elements group</a>
 </div>
 
