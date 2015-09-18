@@ -178,7 +178,17 @@ body > .x-mask {
     -webkit-box-shadow: none !important;
 }
 
+.x-tree-drop-ok-above .x-dd-drop-icon {
+    background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
+}
 
+.x-tree-drop-ok-below .x-dd-drop-icon {
+    background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
+}
+
+.x-tree-drop-ok-between .x-dd-drop-icon {
+    background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
+}
 
 /* ExtJS 6.0 bugfixes */
 
