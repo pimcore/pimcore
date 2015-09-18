@@ -130,7 +130,7 @@ pimcore.asset.tree = Class.create({
         });
 
         //TODO
-        this.tree.on("itemappend",this.enableHtml5Upload.bind(this));
+        this.tree.getView().on("itemafterrender",this.enableHtml5Upload.bind(this));
         this.tree.on("startdrag", this.onDragStart.bind(this));
         this.tree.on("enddrag", this.onDragEnd.bind(this));
         this.tree.on("render", function () {
@@ -157,17 +157,19 @@ pimcore.asset.tree = Class.create({
                         pimcore.helpers.treeNodeThumbnailPreviewHide();
 
                         try {
-                            if (!this.tree.getSelectionModel().getSelectedNode()) {
+                            var selection = this.tree.getSelection();
+                            if (!selection) {
+                                return true;
+                            }
+                            if (selection.length < 1) {
                                 return true;
                             }
                         } catch (e2) {
                             return true;
                         }
 
-                        var node = this.tree.getSelectionModel().getSelectedNode();
-
+                        var node = selection[0];
                         var dt = e.dataTransfer;
-
                         var files = dt.files;
 
                         // if a folder is dropped (currently only Chrome) pass the dataTransfer object instead of the FileList object
@@ -887,7 +889,7 @@ pimcore.asset.tree = Class.create({
         }.bind(this));
     },
 
-    enableHtml5Upload: function (tree, node, index, eOpts) {
+    enableHtml5Upload: function (node, rowIdx, out) {
 
         if (!window["FileList"]) {
             return;

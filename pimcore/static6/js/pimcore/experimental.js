@@ -222,6 +222,8 @@ Ext.define('Ext.overrides.grid.View', {
                 this.doUpdatePaging(record);
 
             }
+
+            this.fireEvent("itemafterrender", record, rowIdx, out);
         },
 
 
