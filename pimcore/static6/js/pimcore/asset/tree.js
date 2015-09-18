@@ -132,7 +132,6 @@ pimcore.asset.tree = Class.create({
         //TODO
         this.tree.getView().on("itemafterrender",this.enableHtml5Upload.bind(this));
         this.tree.on("startdrag", this.onDragStart.bind(this));
-        this.tree.on("enddrag", this.onDragEnd.bind(this));
         this.tree.on("render", function () {
             this.getRootNode().expand();
         });
@@ -358,10 +357,6 @@ pimcore.asset.tree = Class.create({
 
     onDragStart : function () {
         pimcore.helpers.treeNodeThumbnailPreviewHide();
-    },
-
-    onDragEnd : function () {
-        // nothing to do
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {

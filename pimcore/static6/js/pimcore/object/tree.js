@@ -114,9 +114,6 @@ pimcore.object.tree = Class.create({
                     ddGroup: "element"
                 },
                 listeners: {
-                    //beforedrop: function (node, data) {
-                    //    console.log("beforedrop");
-                    //},
                     nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
@@ -132,12 +129,16 @@ pimcore.object.tree = Class.create({
             root: rootNodeConfig
         });
 
-        //this.tree.on("render", function () {
-        //    this.getRootNode().expand();
-        //});
-        //this.tree.on("startdrag", this.onDragStart.bind(this));
-        //this.tree.on("enddrag", this.onDragEnd.bind(this));
-        //this.tree.on("nodedragover", this.onTreeNodeOver.bind(this));
+        store.on("nodebeforeexpand", function (node) {
+            window.setTimeout(function () {
+                pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
+            }, 200);
+        });
+
+        store.on("nodeexpand", function (node, index, item, eOpts) {
+            pimcore.helpers.removeTreeNodeLoadingIndicator("asset", node.data.id);
+        });
+
 
         this.tree.on("afterrender", function () {
             this.tree.loadMask = new Ext.LoadMask(
@@ -173,16 +174,6 @@ pimcore.object.tree = Class.create({
         };
 
         return treeNodeListeners;
-    },
-
-    onDragStart : function () {
-        console.log("onDragStart");
-        pimcore.helpers.treeNodeThumbnailPreviewHide();
-    },
-
-    onDragEnd : function () {
-        console.log("onDragEnd");
-        // nothing to do
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
@@ -272,7 +263,10 @@ pimcore.object.tree = Class.create({
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
 
+        tree.select();
+
         var menu = new Ext.menu.Menu();
+
 
         /**
          * case-insensitive string comparison

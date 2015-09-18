@@ -100,7 +100,6 @@ pimcore.document.tree = Class.create({
             },
             pageSize: itemsPerPage,
             root: rootNodeConfig
-            //folderSort: true,
         });
 
 
@@ -124,9 +123,6 @@ pimcore.document.tree = Class.create({
                     ddGroup: "element"
                 },
                 listeners: {
-                    //beforedrop: function (node, data) {
-                    //    console.log("beforedrop");
-                    //},
                     nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
@@ -145,22 +141,26 @@ pimcore.document.tree = Class.create({
         });
 
 
-        //
         //this.tree.on("startdrag", this.onDragStart.bind(this));
-        //this.tree.on("enddrag", this.onDragEnd.bind(this));
-        //this.tree.on("nodedragover", this.onTreeNodeOver.bind(this));
-        //this.tree.on("afterrender", function () {
 
         this.tree.loadMask = new Ext.LoadMask({
             target: this.tree,
             msg: t("please_wait")
         });
 
-        //    this.tree.loadMask.enable();
-        //}.bind(this));
-        //
         this.tree.on("itemmouseenter", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
         this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
+
+        store.on("nodebeforeexpand", function (node) {
+            window.setTimeout(function () {
+                pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
+            }, 200);
+        });
+
+        store.on("nodeexpand", function (node, index, item, eOpts) {
+            pimcore.helpers.removeTreeNodeLoadingIndicator("asset", node.data.id);
+        });
+
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.updateLayout();
@@ -193,10 +193,6 @@ pimcore.document.tree = Class.create({
 
     onDragStart : function (tree, node, id) {
         pimcore.helpers.treeNodeThumbnailPreviewHide();
-    },
-
-    onDragEnd : function () {
-        // nothing to do
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
