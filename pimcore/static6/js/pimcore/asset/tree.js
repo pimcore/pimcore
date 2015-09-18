@@ -126,29 +126,11 @@ pimcore.asset.tree = Class.create({
                 hidden: true
             }],
             root: rootNodeConfig,
-            //TODO removed
-            // plugins: new Ext.ux.tree.TreeNodeMouseoverPlugin(),
-            //loader: new Ext.ux.tree.PagingTreeLoader({
-            //    dataUrl:this.treeDataUrl,
-            //    pageSize:50,
-            //    enableTextPaging:false,
-            //    pagingModel:'remote',
-            //    requestMethod: "GET",
-            //    baseAttrs: {
-            //        listeners: this.getTreeNodeListeners(),
-            //        reference: this,
-            //        allowDrop: true,
-            //        allowChildren: true,
-            //        isTarget: true,
-            //        nodeType: "async"
-            //    },
-            //    baseParams: this.config.loaderBaseParams
-            //}),
             listeners: this.getTreeNodeListeners()
         });
 
         //TODO
-        this.tree.on("append",this.enableHtml5Upload.bind(this));
+        this.tree.on("itemappend",this.enableHtml5Upload.bind(this));
         this.tree.on("startdrag", this.onDragStart.bind(this));
         this.tree.on("enddrag", this.onDragEnd.bind(this));
         this.tree.on("render", function () {
@@ -156,14 +138,13 @@ pimcore.asset.tree = Class.create({
         });
         this.tree.on("afterrender", function () {
             try {
-                this.tree.loadMask = new Ext.LoadMask(
-                    {
-                        target: this.tree,
-                        msg: t("please_wait"),
-                        hidden: true
-                    });
+                this.tree.loadMask = new Ext.LoadMask({
+                    target: this.tree,
+                    msg: t("please_wait"),
+                    hidden: true
+                });
 
-                // hadd listener to root node -> other nodes are added om the "append" event -> see this.enableHtml5Upload()
+                // add listener to root node -> other nodes are added om the "append" event -> see this.enableHtml5Upload()
                 this.addHtml5DragListener(this.tree.getRootNode());
 
                 // html5 upload
@@ -451,8 +432,6 @@ pimcore.asset.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
-
-        tree.select();
 
         var menu = new Ext.menu.Menu();
 
@@ -906,43 +885,45 @@ pimcore.asset.tree = Class.create({
         }.bind(this));
     },
 
-    enableHtml5Upload: function (tree, parent, node, index) {
+    enableHtml5Upload: function (tree, node, index, eOpts) {
 
         if (!window["FileList"]) {
             return;
         }
 
         // only for folders
-        if(node.attributes.type != "folder") {
+        if (node.data.type != "folder") {
             return;
         }
 
         // timeout because there is no afterrender function
-        window.setTimeout(this.addHtml5DragListener.bind(this, node),2000);
+        window.setTimeout(this.addHtml5DragListener.bind(this, node), 2000);
     },
 
     addHtml5DragListener: function (node) {
-        //TODO EXTJS6
-        //
-        //
-        //try {
-        //    var el = Ext.get(node.getUI().getEl()).dom;
-        //    var fn = function (e) {
-        //        //e.stopPropagation();
-        //        e.preventDefault();
-        //        node.select();
-        //
-        //        e.dataTransfer.dropEffect = 'copy';
-        //
-        //        return false;
-        //    };
-        //
-        //    el.addEventListener("dragenter", fn, true);
-        //    el.addEventListener("dragover", fn,true);
-        //}
-        //catch (e) {
-        //    console.log(e);
-        //}
+
+        try {
+            var tree = this.tree;
+            var el = Ext.fly(tree.getView().getNodeByRecord(node));
+            if(el) {
+                el = el.dom;
+                var fn = function (e) {
+                    //e.stopPropagation();
+                    e.preventDefault();
+                    tree.setSelection(node);
+
+                    e.dataTransfer.dropEffect = 'copy';
+
+                    return false;
+                };
+
+                el.addEventListener("dragenter", fn, true);
+                el.addEventListener("dragover", fn, true);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
     },
 
     importFromServer: function (tree, record) {

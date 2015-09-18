@@ -272,10 +272,7 @@ pimcore.object.tree = Class.create({
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
 
-        tree.select();
-
         var menu = new Ext.menu.Menu();
-
 
         /**
          * case-insensitive string comparison
@@ -823,6 +820,10 @@ pimcore.object.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type) {
+        //this.attributes.reference.tree.loadMask.show();
+
+        pimcore.helpers.addTreeNodeLoadingIndicator("object", record.data.id);
+
         Ext.Ajax.request({
             url: "/admin/object/copy-info/",
             params: {
@@ -906,6 +907,7 @@ pimcore.object.tree = Class.create({
         record.pasteWindow = null;
 
         //this.tree.loadMask.hide();
+        pimcore.helpers.removeTreeNodeLoadingIndicator("object", record.id);
         this.refresh(record);
     },
 

@@ -22,10 +22,12 @@ pimcore.element.abstract = Class.create({
     // startup / opening functions
     addLoadingPanel : function () {
         var type = pimcore.helpers.getElementTypeByObject(this);
+        pimcore.helpers.addTreeNodeLoadingIndicator(type, this.id);
     },
 
     removeLoadingPanel: function () {
         var type = pimcore.helpers.getElementTypeByObject(this);
+        pimcore.helpers.removeTreeNodeLoadingIndicator(type, this.id);
     },
 
 
