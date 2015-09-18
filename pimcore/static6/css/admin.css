@@ -1164,7 +1164,7 @@ span.warning {
     background-color: #f6f6f6;
 }
 
-.pimcore_editable_grid .x-form-text-default {
+.pimcore_editable_grid input.x-form-text-default {
     min-height: 21px;
     padding: 0 10px;
 }

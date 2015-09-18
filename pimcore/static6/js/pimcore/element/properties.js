@@ -234,9 +234,11 @@ pimcore.element.properties = Class.create({
                     {
                         header: t("name"),
                         dataIndex: 'name',
-                        editor: new Ext.form.TextField({
-                            allowBlank: false
-                        }),
+                        getEditor: function() {
+                            return new Ext.form.TextField({
+                                allowBlank: false
+                            });
+                        },
                         sortable: true,
                         width: 230
                     },

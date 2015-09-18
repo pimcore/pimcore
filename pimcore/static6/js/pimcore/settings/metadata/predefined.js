@@ -127,30 +127,37 @@ pimcore.settings.metadata.predefined = Class.create({
                 renderer: this.getTypeRenderer.bind(this),
                 sortable: true
             },
-            {header: t("name"), width: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
-            {header: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}),
-                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                                    if(empty(value)) {
-                                        return "";
-                                    }
-                                    return nl2br(value);
-                               }
+            {header: t("name"), width: 200, sortable: true, dataIndex: 'name',
+                getEditor: function() { return new Ext.form.TextField({}); }
+            },
+            {header: t("description"), sortable: true, dataIndex: 'description',
+                getEditor: function() { return new Ext.form.TextArea({}); },
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                                if(empty(value)) {
+                                    return "";
+                                }
+                                return nl2br(value);
+                           }
             },
             {header: t("type"), width: 90, sortable: true,
-                dataIndex: 'type', editor: new Ext.form.ComboBox({
-                editable: false,
-                store: [
-                    ["input", t("input")],
-                    ["textarea", t("textarea")],
-                    ["document", "Document"],
-                    ["asset", "Asset"],
-                    ["object", "Object"],
-                    ["date", "Date"],
-                    ["checkbox", "checkbox"],
-                    ["select", "select"]
-                ]
+                dataIndex: 'type',
+                getEditor: function() {
+                    return new Ext.form.ComboBox({
+                        editable: false,
+                        store: [
+                            ["input", t("input")],
+                            ["textarea", t("textarea")],
+                            ["document", "Document"],
+                            ["asset", "Asset"],
+                            ["object", "Object"],
+                            ["date", "Date"],
+                            ["checkbox", "checkbox"],
+                            ["select", "select"]
+                        ]
 
-            })},
+                    })
+                }
+            },
             {header: t("value"),
                 flex: 510,
                 sortable: true,
@@ -163,25 +170,32 @@ pimcore.settings.metadata.predefined = Class.create({
                 width: 100,
                 sortable: false,
                 dataIndex: 'config',
-                editor: new Ext.form.TextField({})
+                getEditor: function() { return new Ext.form.TextField({}); }
             },
             {
                 header: t('language'),
                 sortable: true,
                 dataIndex: "language",
-                editor: new Ext.form.ComboBox({
-                    name: "language",
-                    store: languagestore,
-                    editable: false,
-                    triggerAction: 'all',
-                    mode: "local"
-                }),
+                getEditor: function() {
+                    return new Ext.form.ComboBox({
+                        name: "language",
+                        store: languagestore,
+                        editable: false,
+                        triggerAction: 'all',
+                        mode: "local"
+                    });
+                },
                 width: 70
             },
-            {header: t("target_subtype"), width: 80, sortable: true, dataIndex: 'targetSubtype', editor: new Ext.form.ComboBox({
-                editable: true,
-                store: ["image", "text", "audio", "video", "document", "archive", "unknown"]
-            })},
+            {
+                header: t("target_subtype"), width: 80, sortable: true, dataIndex: 'targetSubtype',
+                getEditor: function() {
+                    return new Ext.form.ComboBox({
+                        editable: true,
+                        store: ["image", "text", "audio", "video", "document", "archive", "unknown"]
+                    });
+                }
+            },
             {
                 xtype: 'actioncolumn',
                 width: 40,

@@ -176,9 +176,11 @@ pimcore.asset.metadata = Class.create({
                         {
                             header: t("name"),
                             dataIndex: 'name',
-                            editor: new Ext.form.TextField({
-                                allowBlank: false
-                            }),
+                            getEditor: function() {
+                                return new Ext.form.TextField({
+                                    allowBlank: false
+                                });
+                            },
                             sortable: true,
                             width: 230
                         },
@@ -186,13 +188,16 @@ pimcore.asset.metadata = Class.create({
                             header: t('language'),
                             sortable: true,
                             dataIndex: "language",
-                            editor: new Ext.form.ComboBox({
-                                name: "language",
-                                store: languagestore,
-                                editable: false,
-                                triggerAction: 'all',
-                                mode: "local"
-                            }),
+                            getEditor: function() {
+                                return new Ext.form.ComboBox({
+                                    name: "language",
+                                    store: languagestore,
+                                    editable: false,
+                                    listConfig: {minWidth: 200},
+                                    triggerAction: 'all',
+                                    mode: "local"
+                                });
+                            },
                             width: 80
                         },
                         {
