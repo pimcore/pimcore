@@ -153,12 +153,12 @@ pimcore.document.tree = Class.create({
 
         store.on("nodebeforeexpand", function (node) {
             window.setTimeout(function () {
-                pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
+                pimcore.helpers.addTreeNodeLoadingIndicator("document", node.data.id);
             }, 200);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
-            pimcore.helpers.removeTreeNodeLoadingIndicator("asset", node.data.id);
+            pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.data.id);
         });
 
 
