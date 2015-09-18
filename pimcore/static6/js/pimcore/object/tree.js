@@ -272,10 +272,7 @@ pimcore.object.tree = Class.create({
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
 
-        tree.select();
-
         var menu = new Ext.menu.Menu();
-
 
         /**
          * case-insensitive string comparison

@@ -289,9 +289,6 @@ pimcore.document.tree = Class.create({
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
 
-        tree.select();
-
-
         var pasteMenu = [];
         var pasteInheritanceMenu = [];
 
