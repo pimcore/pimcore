@@ -735,6 +735,8 @@ pimcore.document.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type, enableInheritance) {
+        pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
+
         if(enableInheritance !== true) {
             enableInheritance = false;
         }
@@ -820,6 +822,7 @@ pimcore.document.tree = Class.create({
         node.pasteWindow = null;
 
         //this.tree.loadMask.hide();
+        pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.id);
         this.refresh(node);
     },
 
