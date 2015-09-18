@@ -982,7 +982,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         // data
         if ($this->getParam("data")) {
 
-            $data = \Zend_Json::decode($this->getParam("data"));
+            if (is_array($this->getParam("data"))) {
+                $data = $this->getParam("data");
+            } else {
+                $data = \Zend_Json::decode($this->getParam("data"));
+            }
             foreach ($data as $key => $value) {
 
                 $fd = $object->getClass()->getFieldDefinition($key);
