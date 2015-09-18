@@ -65,6 +65,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             html: html,
             border: true,
             style: "margin-bottom: 10px",
+            manageHeight: false,
             cls: "object_field"
         };
 
@@ -77,6 +78,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             pConf["autoScroll"] = true;
         } else {
             pConf["autoHeight"] = true;
+            pConf["autoScroll"] = true;
         }
 
         this.component = new Ext.Panel(pConf);
@@ -191,7 +193,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         this.ckeditor.focus();
 
-        var wrappedText = data.node.attributes.text;
+        var node = data.records[0];
+        var wrappedText = node.data.text;
         var textIsSelected = false;
         
         try {
@@ -228,28 +231,28 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             return $0;
         });
 
-        var id = data.node.attributes.id;
-        var uri = data.node.attributes.path;
+        var id = node.data.id;
+        var uri = node.data.path;
         var browserPossibleExtensions = ["jpg","jpeg","gif","png"];
         
-        if (data.node.attributes.elementType == "asset") {
-            if (data.node.attributes.type == "image" && textIsSelected == false) {
+        if (node.data.elementType == "asset") {
+            if (node.data.type == "image" && textIsSelected == false) {
                 // images bigger than 600px or formats which cannot be displayed by the browser directly will be
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
                 uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
 
-                if(typeof data.node.attributes.imageWidth != "undefined") {
-                    if(data.node.attributes.imageWidth < defaultWidth
-                                && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text),
+                if(typeof node.data.imageWidth != "undefined") {
+                    if(node.data.imageWidth < defaultWidth
+                                && in_arrayi(pimcore.helpers.getFileExtension(node.data.text),
                                                                         browserPossibleExtensions)) {
-                        uri = data.node.attributes.path;
+                        uri = node.data.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
                     }
 
-                    if(data.node.attributes.imageWidth < defaultWidth) {
-                        defaultWidth = data.node.attributes.imageWidth;
+                    if(node.data.imageWidth < defaultWidth) {
+                        defaultWidth = node.data.imageWidth;
                     }
                 }
 
@@ -264,8 +267,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
-                                || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (node.data.elementType == "document" && (node.data.type=="page"
+                                || node.data.type=="hardlink" || node.data.type=="link")){
             this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
                                 + id + '">' + wrappedText + '</a>');
             return true;

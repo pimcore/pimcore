@@ -1184,6 +1184,11 @@ span.warning {
     line-height: 12px;
 }
 
+.cke_toolbox .cke_toolbar {
+    box-sizing: content-box !important;
+}
+
+
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {

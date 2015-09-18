@@ -60,7 +60,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         // register at global DnD manager
         if (typeof dndManager !== 'undefined') {
-            //TODO EXTJS6
             dndManager.addDropTarget(Ext.get(id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
         }
 
