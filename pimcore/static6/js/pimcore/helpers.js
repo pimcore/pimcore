@@ -1303,125 +1303,108 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
 pimcore.helpers.treeNodeThumbnailTimeout = null;
 pimcore.helpers.treeNodeThumbnailLastClose = 0;
 
-pimcore.helpers.treeNodeThumbnailPreview = function (tree, node, index, eOpts ) {
-    if(typeof node.data["thumbnail"] != "undefined" ||
-        typeof node.data["thumbnails"] != "undefined") {
-        window.setTimeout(function (node) {
-            try {
-                var ownerTree = node.getOwnerTree();
-                var view = ownerTree.getView();
+pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, index, e, eOpts) {
 
-                var nodeEl = Ext.fly(view.getNodeByRecord(node));
-                var el = nodeEl.query(".x-grid-cell-inner-treecolumn");
-                el = el[0];
-                el.addEventListener("mouseenter", function (node) {
+    if(typeof record.data["thumbnail"] != "undefined" ||
+        typeof record.data["thumbnails"] != "undefined") {
 
-                    // only display thumbnails when dnd is not active
-                    if(Ext.dd.DragDropMgr.dragCurrent) {
-                        return;
-                    }
+        // only display thumbnails when dnd is not active
+        if(Ext.dd.DragDropMgr.dragCurrent) {
+            return;
+        }
 
-                    var imageHtml = "";
-                    var uriPrefix = window.location.protocol + "//" + window.location.host;
+        var imageHtml = "";
+        var uriPrefix = window.location.protocol + "//" + window.location.host;
 
-                    var thumbnails = node.data.thumbnails;
-                    if(thumbnails && thumbnails.length) {
-                        imageHtml += '<div class="thumbnails">';
-                        for(var i=0; i<thumbnails.length; i++) {
-                            imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i]
-                            + '" onload="this.parentNode.className += \' complete\';" /></div>';
-                        }
-                        imageHtml += '</div>';
-                    }
-
-                    var thumbnail = node.data.thumbnail;
-                    if(thumbnail) {
-                        imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
-                        + '" onload="this.parentNode.className += \' complete\';" /></div>';
-                    }
-
-                    if(imageHtml) {
-                        var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
-                        var position = treeEl.getOffsetsTo(Ext.getBody());
-                        position = position[0];
-
-                        if(this.position == "right") {
-                            position = position - 420;
-                        } else {
-                            position = treeEl.getWidth() + position;
-                        }
-
-                        var container = Ext.get("pimcore_tree_preview");
-                        if(!container) {
-                            container  = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
-                            container = Ext.get(container);
-                            container.addCls("hidden");
-                        }
-
-                        // check for an existing iframe
-                        var existingIframe = container.query("iframe")[0];
-                        if(existingIframe) {
-                            // stop loading the existing iframe (images, etc.)
-                            var existingIframeWin = existingIframe.contentWindow;
-                            if(typeof existingIframeWin["stop"] == "function") {
-                                existingIframeWin.stop();
-                            } else if (typeof existingIframeWin.document["execCommand"] == "function") {
-                                existingIframeWin.document.execCommand('Stop');
-                            }
-                        }
-
-                        var styles = "left: " + position + "px";
-
-                        // we need to create an iframe so that we can use window.stop();
-                        var iframe = document.createElement("iframe");
-                        iframe.setAttribute("frameborder", "0");
-                        iframe.setAttribute("scrolling", "no");
-                        iframe.setAttribute("marginheight", "0");
-                        iframe.setAttribute("marginwidth", "0");
-                        iframe.setAttribute("style", "width: 100%; height: 2500px;");
-
-                        imageHtml =
-                            '<style type="text/css">' +
-                            'body { margin:0; padding: 0; } ' +
-                            '.thumbnails { width: 410px; } ' +
-                            '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static6/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
-                            '.big { min-height: 300px; } ' +
-                            '.complete { border:none; border-radius: 0; background:none; }' +
-                            '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
-                            '.small.complete img { min-width: 100%; max-height: 100%; } ' +
-                            '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
-                            '</style>' +
-                            imageHtml;
-
-                        iframe.onload = function () {
-                            this.contentWindow.document.body.innerHTML = imageHtml;
-                        };
-
-                        container.update(""); // remove all
-                        container.clean(true);
-                        container.dom.appendChild(iframe);
-                        container.applyStyles(styles);
-
-                        var date = new Date();
-                        if(pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
-                            // open deferred
-                            pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function() {
-                                container.removeCls("hidden");
-                            }, 500);
-                        } else {
-                            // open immediately
-                            container.removeCls("hidden");
-                        }
-                    }
-                }.bind(this, node));
-                el.addEventListener("mouseleave", function () {
-                    pimcore.helpers.treeNodeThumbnailPreviewHide();
-                }.bind(this));
-            } catch (e) {
-                console.log(e);
+        var thumbnails = record.data["thumbnails"];
+        if(thumbnails && thumbnails.length) {
+            imageHtml += '<div class="thumbnails">';
+            for(var i=0; i<thumbnails.length; i++) {
+                imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i]
+                    + '" onload="this.parentNode.className += \' complete\';" /></div>';
             }
-        }.bind(this, node), 200);
+            imageHtml += '</div>';
+        }
 
+        var thumbnail = record.data["thumbnail"];
+        if(thumbnail) {
+            imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
+                + '" onload="this.parentNode.className += \' complete\';" /></div>';
+        }
+
+        if(imageHtml) {
+            var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
+            var position = treeEl.getOffsetsTo(Ext.getBody());
+            position = position[0];
+
+            if(this.position == "right") {
+                position = position - 420;
+            } else {
+                position = treeEl.getWidth() + position;
+            }
+
+            var container = Ext.get("pimcore_tree_preview");
+            if(!container) {
+                container  = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
+                container = Ext.get(container);
+                container.addCls("hidden");
+            }
+
+            // check for an existing iframe
+            var existingIframe = container.query("iframe")[0];
+            if(existingIframe) {
+                // stop loading the existing iframe (images, etc.)
+                var existingIframeWin = existingIframe.contentWindow;
+                if(typeof existingIframeWin["stop"] == "function") {
+                    existingIframeWin.stop();
+                } else if (typeof existingIframeWin.document["execCommand"] == "function") {
+                    existingIframeWin.document.execCommand('Stop');
+                }
+            }
+
+            var styles = "left: " + position + "px";
+
+            // we need to create an iframe so that we can use window.stop();
+            var iframe = document.createElement("iframe");
+            iframe.setAttribute("frameborder", "0");
+            iframe.setAttribute("scrolling", "no");
+            iframe.setAttribute("marginheight", "0");
+            iframe.setAttribute("marginwidth", "0");
+            iframe.setAttribute("style", "width: 100%; height: 2500px;");
+
+            imageHtml =
+                '<style type="text/css">' +
+                'body { margin:0; padding: 0; } ' +
+                '.thumbnails { width: 410px; } ' +
+                '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static6/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
+                '.big { min-height: 300px; } ' +
+                '.complete { border:none; border-radius: 0; background:none; }' +
+                '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
+                '.small.complete img { min-width: 100%; max-height: 100%; } ' +
+                '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
+                '</style>' +
+                imageHtml;
+
+            iframe.onload = function () {
+                this.contentWindow.document.body.innerHTML = imageHtml;
+            };
+
+            container.update(""); // remove all
+            container.clean(true);
+            container.dom.appendChild(iframe);
+            container.applyStyles(styles);
+
+            var date = new Date();
+            if(pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
+                // open deferred
+                pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function() {
+                    container.removeCls("hidden");
+                }, 500);
+            } else {
+                // open immediately
+                container.removeCls("hidden");
+            }
+        }
     }
 };
 

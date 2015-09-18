@@ -159,7 +159,8 @@ pimcore.document.tree = Class.create({
         //    this.tree.loadMask.enable();
         //}.bind(this));
         //
-        this.tree.on("itemappend", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
+        this.tree.on("itemmouseenter", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
+        this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.updateLayout();
