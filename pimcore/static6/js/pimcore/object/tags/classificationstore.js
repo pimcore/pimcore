@@ -260,7 +260,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var container = {
             "data" : localizedData,
             "activeGroups": activeGroups
-        }
+        };
         return container;
 
     },
@@ -503,27 +503,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
                     var fieldset = this.createGroupFieldset(currentLanguage, group, groupedChildItems, "pimcore_new_cs_group");
                     var panel = this.languagePanels[currentLanguage];
-
-
-                    fieldset.on("afterlayout", function(groupId, panel, item) {
-                        try {
-                            var itemHeight = item.getHeight();
-
-                            if (!handledGroups[groupId]) {
-                                handledGroups[groupId] = true;
-
-                                var itemHeight = item.getHeight();
-                                var height = this.component.getHeight();
-                                this.component.setHeight(height + itemHeight);
-
-                                this.component.updateLayout();
-
-                            }
-                        } catch (e) {
-                            console.log(e);
-                        }
-
-                    }.bind(this, groupId, panel));
 
                     panel.add(fieldset);
                     fieldset.updateLayout();
