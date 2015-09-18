@@ -102,7 +102,11 @@ pimcore.helpers.closeAsset = function (id) {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + id;
         var panel = Ext.getCmp(tabId);
-        panel.close();
+        if(panel) {
+            panel.close();
+        } else {
+            console.log("to close element not found, doing nothing.");
+        }
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("asset", id);
         pimcore.globalmanager.remove("asset_" + id);
@@ -136,7 +140,11 @@ pimcore.helpers.closeDocument = function (id) {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + id;
         var panel = Ext.getCmp(tabId);
-        panel.close();
+        if(panel) {
+            panel.close();
+        } else {
+            console.log("to close element not found, doing nothing.");
+        }
 
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
@@ -175,7 +183,11 @@ pimcore.helpers.closeObject = function (id) {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + id;
         var panel = Ext.getCmp(tabId);
-        panel.close();
+        if(panel) {
+            panel.close();
+        } else {
+            console.log("to close element not found, doing nothing.");
+        }
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
         pimcore.globalmanager.remove("object_" + id);
