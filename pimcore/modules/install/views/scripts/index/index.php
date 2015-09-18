@@ -152,14 +152,14 @@ $scripts = array(
             bbar: [{
                     id: "check_button",
                     text: "Check Requirements",
-                    icon: "/pimcore/static/img/icon/laptop_magnify.png",
+                    icon: "/pimcore/static6/img/icon/laptop_magnify.png",
                     handler: function () {
                         window.open("/install/check/?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
                     }
                 },"->",
                 {
                     text: "<b>Install Now!</b>",
-                    icon: "/pimcore/static/img/icon/accept.png",
+                    icon: "/pimcore/static6/img/icon/accept.png",
                     disabled: installdisabled,
                     handler: function (btn) {
 

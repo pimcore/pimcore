@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/admin/iframe.css" />
+    <link rel="stylesheet" type="text/css" href="/pimcore/static6/js/frontend/admin/iframe.css" />
 
     <style type="text/css">
         li {

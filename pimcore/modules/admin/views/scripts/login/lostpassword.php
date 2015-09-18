@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, follow" />
 
-    <link rel="stylesheet" href="/pimcore/static/css/login.css" type="text/css" />
+    <link rel="stylesheet" href="/pimcore/static6/css/login.css" type="text/css" />
 
     <?php
     // load plugin scripts

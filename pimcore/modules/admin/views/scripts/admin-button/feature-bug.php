@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/admin/iframe.css" />
+    <link rel="stylesheet" type="text/css" href="/pimcore/static6/js/frontend/admin/iframe.css" />
 </head>
 
 
@@ -44,7 +44,7 @@
                 <input type="submit" name="submit" value="<?= $this->translate("submit"); ?>" />
             </form>
 
-            <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js"></script>
+            <script type="text/javascript" src="/pimcore/static6/js/lib/jquery.min.js"></script>
             <script type="text/javascript">
                 $(document).ready(function () {
                     $(".screenshot img").click(function(ev) {

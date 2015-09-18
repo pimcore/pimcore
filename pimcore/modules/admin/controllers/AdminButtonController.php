@@ -47,7 +47,7 @@ class Admin_AdminButtonController extends \Pimcore\Controller\Action\Admin {
 
             echo "\n\n\n";
 
-            echo file_get_contents(PIMCORE_PATH . "/static/js/frontend/admin/admin.js");
+            echo file_get_contents(PIMCORE_PATH . "/static6/js/frontend/admin/admin.js");
         }
 
         exit;
@@ -105,7 +105,7 @@ class Admin_AdminButtonController extends \Pimcore\Controller\Action\Admin {
 
                 list($width, $height) = getimagesize($screenFile);
                 $im = imagecreatefromjpeg($screenFile);
-                $font = PIMCORE_DOCUMENT_ROOT . "/pimcore/static/font/vera.ttf";
+                $font = PIMCORE_DOCUMENT_ROOT . "/pimcore/static6/font/vera.ttf";
                 $fontSize = 10;
 
                 if($markers && count($markers) > 0) {

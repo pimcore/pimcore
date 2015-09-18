@@ -25,11 +25,11 @@
         }
 
         #container h1.facebook {
-            background: url(/pimcore/static/img/icon/facebook-like.png) left center no-repeat;
+            background: url(/pimcore/static6/img/icon/facebook-like.png) left center no-repeat;
         }
 
         #container h1.gplus {
-            background: url(/pimcore/static/img/icon/google-plus-icon.png) left center no-repeat;
+            background: url(/pimcore/static6/img/icon/google-plus-icon.png) left center no-repeat;
         }
 
         .statistics-list {

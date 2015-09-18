@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/object_versions.css"/>
+    <link rel="stylesheet" type="text/css" href="/pimcore/static6/css/object_versions.css"/>
 
 </head>
 

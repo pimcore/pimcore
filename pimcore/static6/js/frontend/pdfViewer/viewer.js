@@ -161,7 +161,7 @@ pimcore.pdf.prototype.init = function () {
     });
 
     // add pages
-    var page, position;
+    var page, position, hotspot, hd, o, l, imgContainer;
     for(i=0; i<this.data.pages.length; i++) {
 
         position = "right";
@@ -174,6 +174,52 @@ pimcore.pdf.prototype.init = function () {
         //page.setAttribute("data-page", i);
 
         this.data.pages[i]["node"] = page;
+
+
+        imgContainer = document.createElement("div");
+        imgContainer.className = "pimcore-pdfPageContainer";
+        this.data.pages[i]["node"].appendChild(imgContainer);
+
+        this.data.pages[i]["imgContainer"] = imgContainer;
+
+        if(this.data.pages[i]["hotspots"] && this.data.pages[i]["hotspots"].length > 0) {
+            for(o=0; o<this.data.pages[i]["hotspots"].length; o++) {
+                hd = this.data.pages[i]["hotspots"][o];
+                hotspot = document.createElement("div");
+                hotspot.className = "pimcore-pdfHotspot";
+                hotspot.style.width = hd["width"] + "%";
+                hotspot.style.height = hd["height"] + "%";
+                hotspot.style.top = hd["top"] + "%";
+                hotspot.style.left = hd["left"] + "%";
+
+                hotspot.addEventListener("mouseover", function () {
+                    this.style.opacity = "0.5";
+                }, true);
+                hotspot.addEventListener("mouseout", function () {
+                    this.style.opacity = "0.2";
+                }, true);
+
+                if(hd["data"] && hd["data"].length > 0) {
+                    for(l=0; l<hd["data"].length; l++) {
+                        if(hd["data"][l]["type"] == "link" && hd["data"][l]["value"]) {
+                            hotspot.addEventListener("click", function (data) {
+                                window.open(data["value"]);
+                            }.bind(hotspot, hd["data"][l]), true);
+                            break;
+                        }
+                    }
+                }
+
+                if(hd["attributes"] && hd["attributes"].length > 0) {
+                    for(l=0; l<hd["attributes"].length; l++) {
+                        hotspot.setAttribute(hd["attributes"][l]["name"], hd["attributes"][l]["value"]);
+                    }
+                }
+
+                imgContainer.appendChild(hotspot);
+            }
+        }
+
         this.pdfPages.appendChild(page);
     }
 
@@ -266,50 +312,15 @@ pimcore.pdf.prototype.buttonHoverOut = function () {
     this.style.opacity = "0.6";
 };
 
+
 pimcore.pdf.prototype.addImageToPage = function (page) {
-    var imgContainer, img, hotspot, hd, o, l;
+    var img;
 
     if(this.data.pages[page] && !this.data.pages[page]["detailLoaded"]) {
         if(this.data.pages[page]["detail"]) {
-            imgContainer = document.createElement("div");
-            imgContainer.className = "pimcore-pdfPageContainer";
-            this.data.pages[page]["node"].appendChild(imgContainer);
-
             img = document.createElement("img");
             img.setAttribute("src", this.data.pages[page]["detail"]);
-            imgContainer.appendChild(img);
-
-            if(this.data.pages[page]["hotspots"] && this.data.pages[page]["hotspots"].length > 0) {
-                for(o=0; o<this.data.pages[page]["hotspots"].length; o++) {
-                    hd = this.data.pages[page]["hotspots"][o];
-                    hotspot = document.createElement("div");
-                    hotspot.className = "pimcore-pdfHotspot";
-                    hotspot.style.width = hd["width"] + "%";
-                    hotspot.style.height = hd["height"] + "%";
-                    hotspot.style.top = hd["top"] + "%";
-                    hotspot.style.left = hd["left"] + "%";
-
-                    hotspot.addEventListener("mouseover", function () {
-                        this.style.opacity = "0.5";
-                    }, true);
-                    hotspot.addEventListener("mouseout", function () {
-                        this.style.opacity = "0.2";
-                    }, true);
-
-                    if(hd["data"] && hd["data"].length > 0) {
-                        for(l=0; l<hd["data"].length; l++) {
-                            if(hd["data"][l]["type"] == "link" && hd["data"][l]["value"]) {
-                                hotspot.addEventListener("click", function (data) {
-                                    window.open(data["value"]);
-                                }.bind(hotspot, hd["data"][l]), true);
-                                break;
-                            }
-                        }
-                    }
-
-                    imgContainer.appendChild(hotspot);
-                }
-            }
+            this.data.pages[page]["imgContainer"].appendChild(img);
         } else {
             this.data.pages[page]["node"].innerHTML = "&nbsp;";
         }

@@ -22,7 +22,7 @@ limitations under the License.
     <title>PDF.js viewer</title>
 
 
-    <link rel="stylesheet" href="/pimcore/static/js/lib/pdf.js/web/viewer.css"/>
+    <link rel="stylesheet" href="/pimcore/static6/js/lib/pdf.js/web/viewer.css"/>
 
     <style type="text/css">
         /* pimcore custom styles */
@@ -33,19 +33,19 @@ limitations under the License.
         }
     </style>
 
-    <script type="text/javascript" src="/pimcore/static/js/lib/pdf.js/web/compatibility.js"></script>
+    <script type="text/javascript" src="/pimcore/static6/js/lib/pdf.js/web/compatibility.js"></script>
 
 
     <!-- This snippet is used in production, see Makefile -->
-    <link rel="resource" type="application/l10n" href="/pimcore/static/js/lib/pdf.js/web/locale/locale.properties"/>
-    <script type="text/javascript" src="/pimcore/static/js/lib/pdf.js/web/l10n.js"></script>
-    <script type="text/javascript" src="/pimcore/static/js/lib/pdf.js/build/pdf.js"></script>
+    <link rel="resource" type="application/l10n" href="/pimcore/static6/js/lib/pdf.js/web/locale/locale.properties"/>
+    <script type="text/javascript" src="/pimcore/static6/js/lib/pdf.js/web/l10n.js"></script>
+    <script type="text/javascript" src="/pimcore/static6/js/lib/pdf.js/build/pdf.js"></script>
 
 
-    <script type="text/javascript" src="/pimcore/static/js/lib/pdf.js/web/viewer.js"></script>
+    <script type="text/javascript" src="/pimcore/static6/js/lib/pdf.js/web/viewer.js"></script>
     <script type="text/javascript">
-        PDFJS.imageResourcesPath = '/pimcore/static/js/lib/pdf.js/web/images/';
-        PDFJS.workerSrc = '/pimcore/static/js/lib/pdf.js/build/pdf.worker.js';
+        PDFJS.imageResourcesPath = '/pimcore/static6/js/lib/pdf.js/web/images/';
+        PDFJS.workerSrc = '/pimcore/static6/js/lib/pdf.js/build/pdf.worker.js';
         DEFAULT_URL = '<?= $pdfPath; ?>';
         SETTINGS_MEMORY = 50;
     </script>

@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, follow" />
 
-    <link rel="stylesheet" href="/pimcore/static/css/login.css" type="text/css" />
-    <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js"></script>
+    <link rel="stylesheet" href="/pimcore/static6/css/login.css" type="text/css" />
+    <script type="text/javascript" src="/pimcore/static6/js/lib/jquery.min.js"></script>
 
     <?php
     // load plugin scripts
@@ -127,10 +127,10 @@ $config = \Pimcore\Config::getSystemConfig();
 
                     <div class="body">
                         <div class="links">
-                            <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login/chrome.png"/></a>
-                            <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
-                            <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
-                            <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
+                            <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static6/img/login/chrome.png"/></a>
+                            <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static6/img/login/firefox.png"/></a>
+                            <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static6/img/login/safari.png"/></a>
+                            <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static6/img/login/ie.png"/></a>
                         </div>
                         <br>
                         <a href="#" onclick="showLogin();"><?= $this->translate("Click here to proceed"); ?></a>

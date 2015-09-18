@@ -78,7 +78,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
                 $classItems[] = array(
                     "id" => $classItem->getId(),
                     "text" => $classItem->getName(),
-                    "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
+                    "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static6/img/icon/database_gear.png',
                     "propertyVisibility" => $classItem->getPropertyVisibility(),
                     "qtipCfg" => array(
                         "title" => "ID: " . $classItem->getId()
@@ -174,7 +174,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
                         // no group
                         $class['id'] = $classes[0]->getId();
                         $class['text'] = $classes[0]->getName();
-                        $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static/img/icon/database_gear.png';
+                        $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static6/img/icon/database_gear.png';
                         $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
                         $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
                     }
@@ -192,7 +192,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
                                 "id" => $classItem->getId(),
                                 "text" => $classItem->getName(),
                                 "leaf" => true,
-                                "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static/img/icon/database_gear.png',
+                                "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static6/img/icon/database_gear.png',
                                 "propertyVisibility" => $classItem->getPropertyVisibility(),
                                 "qtipCfg" => array(
                                     "title" => "ID: " . $classItem->getId()

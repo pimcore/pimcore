@@ -870,7 +870,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
                 </head>
                 <body>
             ');*/
-            File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static/css/word-export.css") . '</style>');
+            File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") . '</style>');
         }
 
         foreach ($data as $el) {

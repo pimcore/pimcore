@@ -42,7 +42,7 @@
                     <?php foreach ($this->checksPHP as $check) { ?>
                         <tr>
                             <td><a href="<?= $check["link"]; ?>" target="_blank"><?= $check["name"]; ?></a></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -61,7 +61,7 @@
                     <?php foreach ($this->checksMySQL as $check) { ?>
                         <tr>
                             <td><?= $check["name"]; ?></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -80,7 +80,7 @@
                     <?php foreach ($this->checksFS as $check) { ?>
                         <tr>
                             <td><?= $check["name"]; ?></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -101,7 +101,7 @@
                     <?php foreach ($this->checksApps as $check) { ?>
                         <tr>
                             <td><?= $check["name"]; ?></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -123,9 +123,9 @@
             <b>Explanation:</b>
         </p>
         <p>
-            <span class="legend"><img src="/pimcore/static/img/icon/accept.png" /> Everything ok.</span>
-            <span class="legend"><img src="/pimcore/static/img/icon/error.png" /> Recommended but not required.</span>
-            <span class="legend"><img src="/pimcore/static/img/icon/delete.png" /> Required.</span>
+            <span class="legend"><img src="/pimcore/static6/img/icon/accept.png" /> Everything ok.</span>
+            <span class="legend"><img src="/pimcore/static6/img/icon/error.png" /> Recommended but not required.</span>
+            <span class="legend"><img src="/pimcore/static6/img/icon/delete.png" /> Required.</span>
         </p>
     </div>
 
