@@ -1037,6 +1037,10 @@ span.warning {
 
 /* custom styles */
 
+.x-tree-view .x-tree-icon.pimcore_tree_node_loading_indicator {
+    background: url(/pimcore/static6/img/panel-loader.gif) center center no-repeat !important;;
+}
+
 .pimcore_droptarget_input, .input_drop_target, .input_drop_target input  {
     background: url(/pimcore/static6/img/icon/drop-16.png) right center no-repeat transparent !important;
     cursor: default;

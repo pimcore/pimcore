@@ -291,7 +291,7 @@ pimcore.helpers.getElementTypeByObject = function (object) {
     return type;
 };
 
-pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
+pimcore.helpers.getTreeNodeLoadingIndicatorElement = function (type, id) {
     // display loading indicator on treenode
     try {
         var tree = pimcore.globalmanager.get("layout_" + type + "_tree").tree;
@@ -300,14 +300,22 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
         if (node) {
             var view = tree.getView();
             var nodeEl = Ext.fly(view.getNodeByRecord(node));
-            var icon = nodeEl.query("img.x-tree-icon")[0];
+            var icon = nodeEl.query(".x-tree-icon")[0];
 
-            var originalSrc = icon.getAttribute("src");
-            node.originalIconSrc = originalSrc;
-            icon.setAttribute("src", "/pimcore/static6/img/panel-loader.gif");
-
-            nodeEl.repaint();
+            var iconEl = Ext.get(icon);
+            return iconEl;
         }
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
+    // display loading indicator on treenode
+    try {
+        var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
+        iconEl.addCls("pimcore_tree_node_loading_indicator");
     }
     catch (e) {
         console.log(e);
@@ -315,28 +323,16 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
 };
 
 pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
-    // remove loading indicator on treenode
+    // display loading indicator on treenode
     try {
-        var tree = pimcore.globalmanager.get("layout_" + type + "_tree").tree;
-        var store = tree.getStore();
-        var node = store.getNodeById(id);
-        if (node) {
-            var view = tree.getView();
-            var nodeEl = Ext.fly(view.getNodeByRecord(node));
-            var icon = nodeEl.query("img.x-tree-icon")[0];
-
-            if (node.originalIconSrc) {
-                icon.setAttribute("src", node.originalIconSrc);
-            }
-
-
-            nodeEl.repaint();
-        }
+        var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
+        iconEl.removeCls("pimcore_tree_node_loading_indicator");
     }
     catch (e) {
         console.log(e);
     }
 };
+
 
 pimcore.helpers.openSeemode = function () {
     if (pimcore.globalmanager.exists("pimcore_seemode")) {
