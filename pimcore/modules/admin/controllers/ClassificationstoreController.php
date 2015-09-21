@@ -19,6 +19,24 @@ use Pimcore\Resource;
 
 class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Admin
 {
+    /**
+     * Delete collection with the group-relations
+     */
+    public function deleteCollectionAction() {
+        $id = $this->_getParam("id");
+
+        $configRelations = new Classificationstore\CollectionGroupRelation\Listing();
+        $configRelations->setCondition("colId = ?", $id);
+        $list = $configRelations->load();
+        foreach ($list as $item) {
+            $item->delete();
+        }
+
+        $config = Classificationstore\CollectionConfig::getById($id);
+        $config->delete();
+
+        $this->_helper->json(array("success" => true));
+    }
 
     public function deleteCollectionRelationAction() {
         $colId = $this->_getParam("colId");
