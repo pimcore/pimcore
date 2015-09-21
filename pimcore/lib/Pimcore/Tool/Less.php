@@ -35,6 +35,8 @@ class Less {
                 if(array_key_exists(1, $href) && !empty($href[1])) {
                     $source = $href[1];
 
+                    $source = preg_replace("/\?_dc=[\d]+/", "", $source);
+
                     if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
                         $path = PIMCORE_ASSET_DIRECTORY . $source;
                     }
