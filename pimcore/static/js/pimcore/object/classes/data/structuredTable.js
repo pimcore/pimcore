@@ -99,6 +99,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         
         if(hasType) {
             fields.push('type');
+            fields.push('length');
             fields.push('width');
         }
         
@@ -127,7 +128,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 value = trim(value);
                 var regresult = value.match(/[a-zA-Z0-9_]+/);
 
-                if (value.length > 1 && regresult == value && in_array(value.toLowerCase(),
+                if (value.length >= 1 && regresult == value && in_array(value.toLowerCase(),
                                     ["id","key","path","type","index","classname","creationdate","userowner",
                                      "value","class","list","fullpath","childs","values","cachetag","cachetags",
                                      "parent","published","valuefromparent","userpermissions","dependencies",
@@ -180,7 +181,10 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 return types[value];
             }});
 
-            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width',
+            typesColumns.push({header: t("length"), width: 15, sortable: true, dataIndex: 'length',
+                                        editor: new Ext.form.NumberField({})});
+
+            typesColumns.push({header: t("width"), width: 15, sortable: true, dataIndex: 'width',
                                         editor: new Ext.form.NumberField({})});
 
         }

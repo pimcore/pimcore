@@ -60,20 +60,18 @@ pimcore.settings.httpErrorLog = Class.create({
             restful: false,
             root: "items",
             remoteSort: true,
-            fields: ["id","path", "code", "date","amount"],
+            fields: ["uri", "code", "date","count"],
             baseParams: {
                 limit: 20,
-                filter: "",
-                group: 1
+                filter: ""
             }
         });
         this.store.load();
 
         var typesColumns = [
-            {header: "ID", width: 50, sortable: true, hidden: true, dataIndex: 'id'},
+            {header: "URI", id: "uri", width: 400, sortable: true, dataIndex: 'uri'},
             {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
-            {header: t("path"), id: "path", width: 400, sortable: true, dataIndex: 'path'},
-            {header: t("amount"), width: 60, sortable: true, dataIndex: 'amount'},
+            {header: t("amount"), width: 60, sortable: true, dataIndex: 'count'},
             {header: t("date"), id: "extension_description", width: 200, sortable: true, dataIndex: 'date',
                                                                     renderer: function(d) {
                 var date = new Date(d * 1000);
@@ -87,7 +85,7 @@ pimcore.settings.httpErrorLog = Class.create({
                     icon: "/pimcore/static/img/icon/world_go.png",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
-                        window.open(data.get("path"));
+                        window.open(data.get("uri"));
                     }.bind(this)
                 }]
             }
@@ -150,7 +148,7 @@ pimcore.settings.httpErrorLog = Class.create({
             autoScroll: true,
             store: this.store,
             columns : typesColumns,
-            autoExpandColumn: "path",
+            autoExpandColumn: "uri",
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
             columnLines: true,
@@ -165,7 +163,7 @@ pimcore.settings.httpErrorLog = Class.create({
                         height: 430,
                         modal: true,
                         bodyStyle: "background:#fff;",
-                        html: '<iframe src="/admin/misc/http-error-log-detail?id=' + data.get("id")
+                        html: '<iframe src="/admin/misc/http-error-log-detail?uri=' + encodeURIComponent(data.get("uri"))
                                             + '" frameborder="0" width="100%" height="390"></iframe>'
                     });
                     win.show();
@@ -178,15 +176,6 @@ pimcore.settings.httpErrorLog = Class.create({
                 text: t("refresh"),
                 iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
-            }, "-",{
-                text: t("group_by_path"),
-                pressed: true,
-                iconCls: "pimcore_icon_groupby",
-                enableToggle: true,
-                handler: function (button) {
-                    this.store.baseParams.group = button.pressed ? 1 : 0;
-                    this.store.load();
-                }.bind(this)
             }, "-",{
                 text: t('flush'),
                 handler: function () {

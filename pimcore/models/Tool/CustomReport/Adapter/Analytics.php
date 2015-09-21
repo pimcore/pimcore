@@ -13,8 +13,24 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abstract {
+namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
+use Pimcore\Model;
+
+class Analytics extends AbstractAdapter {
+
+    /**
+     * @param $filters
+     * @param $sort
+     * @param $dir
+     * @param $offset
+     * @param $limit
+     * @param null $fields
+     * @param null $drillDownFilters
+     * @param null $fullConfig
+     * @return array
+     * @throws \Exception
+     */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null, $fullConfig = null) {
 
         $this->setFilters($filters, $drillDownFilters);
@@ -38,6 +54,11 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         return array("data" => $data, "total" => $results['totalResults']);
     }
 
+    /**
+     * @param $configuration
+     * @return array|mixed
+     * @throws \Exception
+     */
     public function getColumns($configuration) {
         $result = $this->getDataHelper();
         $columns = array();
@@ -49,6 +70,10 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         return $columns;
     }
 
+    /**
+     * @param $filters
+     * @param array $drillDownFilters
+     */
     protected function setFilters($filters, $drillDownFilters = array()) {
 
         $gaFilters = array($this->config->filters);
@@ -92,6 +117,13 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
 
     }
 
+    /**
+     * @param null $fields
+     * @param null $drillDownFilters
+     * @param bool $useDimensionHandling
+     * @return mixed
+     * @throws \Exception
+     */
     protected function getDataHelper($fields = null, $drillDownFilters = null, $useDimensionHandling = true) {
         $configuration = clone $this->config;
 
@@ -103,19 +135,19 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
             $configuration = $this->handleDimensions($configuration);
         }
 
-        $client = Pimcore_Google_Api::getServiceClient();
+        $client = \Pimcore\Google\Api::getServiceClient();
         if(!$client) {
-            throw new Exception("Google Analytics is not configured");
+            throw new \Exception("Google Analytics is not configured");
         }
 
-        $service = new Google_Service_Analytics($client);
+        $service = new \Google_Service_Analytics($client);
 
         if(!$configuration->profileId) {
-            throw new Exception("no profileId given");
+            throw new \Exception("no profileId given");
         }
 
         if(!$configuration->metric) {
-            throw new Exception("no metric given");
+            throw new \Exception("no metric given");
         }
 
 
@@ -145,17 +177,21 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
 
 
         if(!$configuration->startDate) {
-            throw new Exception("no start date given");
+            throw new \Exception("no start date given");
         }
 
         if(!$configuration->endDate) {
-            throw new Exception("no end date given");
+            throw new \Exception("no end date given");
         }
 
         return $service->data_ga->get('ga:'.$configuration->profileId, date('Y-m-d', $configuration->startDate), date('Y-m-d', $configuration->endDate), $configuration->metric, $options);
 
     }
 
+    /**
+     * @param $results
+     * @return array
+     */
     protected function extractData($results) {
         $data = array();
 
@@ -172,6 +208,11 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         return $data;
     }
 
+    /**
+     * @param $configuration
+     * @param $fields
+     * @return mixed
+     */
     protected function handleFields($configuration, $fields) {
 
         $metrics = explode(',', $configuration->metric);
@@ -194,6 +235,10 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         return $configuration;
     }
 
+    /**
+     * @param $configuration
+     * @return mixed
+     */
     protected function handleDimensions($configuration) {
         $dimension = explode(',',$configuration->dimension);
         if(sizeof($dimension)) {
@@ -212,7 +257,11 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         return $configuration;
     }
 
-
+    /**
+     * @param $date
+     * @param $relativeDate
+     * @return float|int|string
+     */
     protected function calcDate($date, $relativeDate) {
 
 
@@ -234,7 +283,7 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
             }
 
             if(sizeof($applyModifiers)) {
-                $date = new Zend_Date();
+                $date = new \Zend_Date();
 
                 foreach($applyModifiers as $modifier) {
 
@@ -242,7 +291,7 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
                         $modifier['number'] *= -1;
                     }
 
-                    $typeMap = array('d' => Zend_Date::DAY, 'm' => Zend_Date::MONTH, 'y' => Zend_Date::YEAR);
+                    $typeMap = array('d' => \Zend_Date::DAY, 'm' => \Zend_Date::MONTH, 'y' => \Zend_Date::YEAR);
 
                     $date->add($modifier['number'], $typeMap[$modifier['type']]);
 
@@ -255,6 +304,13 @@ class Tool_CustomReport_Adapter_Analytics extends Tool_CustomReport_Adapter_Abst
         return $date/1000;
     }
 
+    /**
+     * @param $filters
+     * @param $field
+     * @param $drillDownFilters
+     * @return array|mixed
+     * @throws \Exception
+     */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
         $this->setFilters($filters, $drillDownFilters);

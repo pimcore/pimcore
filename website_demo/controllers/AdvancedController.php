@@ -1,6 +1,13 @@
 <?php
 
-class AdvancedController extends Website_Controller_Action
+use Website\Controller\Action;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+use Pimcore\Mail;
+use Pimcore\Tool;
+
+class AdvancedController extends Action
 {
     public function init() {
         parent::init();
@@ -25,7 +32,7 @@ class AdvancedController extends Website_Controller_Action
 
     public function indexAction() {
 
-        $list = new Document_List();
+        $list = new Document\Listing();
         $list->setCondition("parentId = ? AND type IN ('link','page')", [$this->document->getId()]);
         $list->load();
 
@@ -36,7 +43,7 @@ class AdvancedController extends Website_Controller_Action
         $success = false;
 
         if($this->getParam("provider")) {
-            $adapter = Pimcore_Tool_HybridAuth::authenticate($this->getParam("provider"));
+            $adapter = Tool\HybridAuth::authenticate($this->getParam("provider"));
             if($adapter) {
                 $user_data = $adapter->getUserProfile();
                 if($user_data) {
@@ -52,7 +59,7 @@ class AdvancedController extends Website_Controller_Action
         if($this->getParam("firstname") && $this->getParam("lastname") && $this->getParam("email") && $this->getParam("message")) {
             $success = true;
 
-            $mail = new Pimcore_Mail();
+            $mail = new Mail();
             $mail->setIgnoreDebugMode(true);
 
             // To is used from the email document, but can also be set manually here (same for subject, CC, BCC, ...)
@@ -88,18 +95,18 @@ class AdvancedController extends Website_Controller_Action
                 }
                 $perPage = 10;
 
-                $result = Pimcore_Google_Cse::search($this->getParam("q"), (($page - 1) * $perPage), null, [
+                $result = \Pimcore\Google\Cse::search($this->getParam("q"), (($page - 1) * $perPage), null, [
                     "cx" => "002859715628130885299:baocppu9mii"
                 ], $this->getParam("facet"));
 
-                $paginator = Zend_Paginator::factory($result);
+                $paginator = \Zend_Paginator::factory($result);
                 $paginator->setCurrentPageNumber($page);
                 $paginator->setItemCountPerPage($perPage);
                 $this->view->paginator = $paginator;
                 $this->view->result = $result;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // something went wrong: eg. limit exceeded, wrong configuration, ...
-                Logger::err($e);
+                \Logger::err($e);
                 echo $e->getMessage();exit;
             }
         }
@@ -117,15 +124,15 @@ class AdvancedController extends Website_Controller_Action
             // first we create a person, then we create an inquiry object and link them together
 
             // check for an existing person with this name
-            $person = Object_Person::getByEmail($this->getParam("email"),1);
+            $person = Object\Person::getByEmail($this->getParam("email"),1);
 
             if(!$person) {
                 // if there isn't an existing, ... create one
-                $filename = Pimcore_File::getValidFilename($this->getParam("email"));
+                $filename = \Pimcore\File::getValidFilename($this->getParam("email"));
 
                 // first we need to create a new object, and fill some system-related information
-                $person = new Object_Person();
-                $person->setParent(Object_Abstract::getByPath("/crm/inquiries")); // we store all objects in /crm
+                $person = new Object\Person();
+                $person->setParent(Object::getByPath("/crm/inquiries")); // we store all objects in /crm
                 $person->setKey($filename); // the filename of the object
                 $person->setPublished(true); // yep, it should be published :)
 
@@ -134,21 +141,21 @@ class AdvancedController extends Website_Controller_Action
                 $person->setFirstname($this->getParam("firstname"));
                 $person->setLastname($this->getParam("lastname"));
                 $person->setEmail($this->getParam("email"));
-                $person->setDateRegister(Zend_Date::now());
+                $person->setDateRegister(\Zend_Date::now());
                 $person->save();
             }
 
             // now we create the inquiry object and link the person in it
-            $inquiryFilename = Pimcore_File::getValidFilename(Zend_Date::now()->get(Zend_Date::DATETIME_MEDIUM) . "~" . $person->getEmail());
-            $inquiry = new Object_Inquiry();
-            $inquiry->setParent(Object_Abstract::getByPath("/inquiries")); // we store all objects in /inquiries
+            $inquiryFilename = \Pimcore\File::getValidFilename(Zend_Date::now()->get(Zend_Date::DATETIME_MEDIUM) . "~" . $person->getEmail());
+            $inquiry = new Object\Inquiry();
+            $inquiry->setParent(Object::getByPath("/inquiries")); // we store all objects in /inquiries
             $inquiry->setKey($inquiryFilename); // the filename of the object
             $inquiry->setPublished(true); // yep, it should be published :)
 
             // now we fill in the data
             $inquiry->setMessage($this->getParam("message"));
             $inquiry->setPerson($person);
-            $inquiry->setDate(Zend_Date::now());
+            $inquiry->setDate(\Zend_Date::now());
             $inquiry->setTerms((bool) $this->getParam("terms"));
             $inquiry->save();
         } else if ($this->getRequest()->isPost()) {
@@ -198,7 +205,7 @@ class AdvancedController extends Website_Controller_Action
         }
 
         // get all children of the parent
-        $list = new Asset_List();
+        $list = new Asset\Listing();
         $list->setCondition("path like ?", $parentFolder->getFullpath() . "%");
 
         $this->view->list = $list;

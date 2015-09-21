@@ -36,8 +36,10 @@
  *
  */
 
-class Pimcore_Browser
-{
+namespace Pimcore;
+
+class Browser {
+
     private $_agent = '';
     private $_browser_name = '';
     private $_version = '';
@@ -111,7 +113,7 @@ class Pimcore_Browser
 
     const OPERATING_SYSTEM_UNKNOWN = 'unknown';
 
-    public function Pimcore_Browser($userAgent = "")
+    public function __construct($userAgent = "")
     {
         $this->reset();
         if ($userAgent != "") {

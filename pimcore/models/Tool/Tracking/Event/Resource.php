@@ -15,41 +15,44 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Tracking_Event_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\Tracking\Event;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
+     * @param $id
+     * @throws \Exception
      */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("tracking_events");
-    }
-
     public function getById($id) {
         $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE id = ?", $id);
         if (!$data["id"]) {
-            throw new Exception("there is no event for the requested id");
+            throw new \Exception("there is no event for the requested id");
         }
         $this->assignVariablesToModel($data);
     }
 
-
+    /**
+     * @param $category
+     * @param $action
+     * @param $label
+     * @param $day
+     * @param $month
+     * @param $year
+     * @throws \Exception
+     */
     public function getByDate($category, $action, $label, $day, $month, $year) {
         $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE category = ? AND action = ? AND label = ? AND day = ? AND month = ? AND year = ?", array((string) $category, (string) $action, (string) $label, $day, $month, $year));
         if (!$data["id"]) {
-            throw new Exception("there is no event for the requested id");
+            throw new \Exception("there is no event for the requested id");
         }
         $this->assignVariablesToModel($data);
     }
 
+    /**
+     *
+     */
     public function save() {
 
         $data = array(
@@ -71,5 +74,4 @@ class Tool_Tracking_Event_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->db->insertOrUpdate("tracking_events", $data);
     }
-
 }

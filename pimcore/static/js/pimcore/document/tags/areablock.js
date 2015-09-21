@@ -640,7 +640,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             autoScroll: true,
             listeners: {
                 afterrender: function (content) {
-                    Ext.get(content).show();
+                    Ext.get(content).removeClass("pimcore_area_editmode_hidden");
 
                     var elements = Ext.get(content).query(".pimcore_editable");
                     for (var i=0; i<elements.length; i++) {
@@ -839,9 +839,14 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             listeners: {
                 "afterrender": function (brick, v) {
 
-                    v.dragZone = new Ext.dd.DragZone(v.getEl(), {
+                    var el = v.getEl();
+                    if(el.hasClass("x-menu-item")) {
+                        el = el.parent();
+                    }
+
+                    v.dragZone = new Ext.dd.DragZone(el, {
                         getDragData: function(e) {
-                            var sourceEl = v.getEl().dom;
+                            var sourceEl = el.dom;
                             if (sourceEl) {
                                 d = sourceEl.cloneNode(true);
                                 d.id = Ext.id();

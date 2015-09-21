@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Audioscrobbler
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -34,7 +34,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Audioscrobbler
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Audioscrobbler
@@ -71,9 +71,15 @@ class Zend_Service_Audioscrobbler
     {
         $this->set('version', '1.0');
 
-        iconv_set_encoding('output_encoding', 'UTF-8');
-        iconv_set_encoding('input_encoding', 'UTF-8');
-        iconv_set_encoding('internal_encoding', 'UTF-8');
+        if (PHP_VERSION_ID < 50600) {
+            iconv_set_encoding('output_encoding', 'UTF-8');
+            iconv_set_encoding('input_encoding', 'UTF-8');
+            iconv_set_encoding('internal_encoding', 'UTF-8');
+        } else {
+            ini_set('output_encoding', 'UTF-8');
+            ini_set('input_encoding', 'UTF-8');
+            ini_set('default_charset', 'UTF-8');
+        }
     }
 
     /**

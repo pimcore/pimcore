@@ -15,40 +15,24 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Note_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Element\Note;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Contains all valid columns in the database table
-     * @var array
-     */
-    protected $validColumnsData = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("notes");
-        $this->validColumnsData = $this->getValidTableColumns("notes_data");
-    }
-
-    /**
-     * Get the data for the object from database for the given id
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id) {
         $data = $this->db->fetchRow("SELECT * FROM notes WHERE id = ?", $id);
 
         if (!$data["id"]) {
-            throw new Exception("Note item with id " . $id . " not found");
+            throw new \Exception("Note item with id " . $id . " not found");
         }
         $this->assignVariablesToModel($data);
 
@@ -72,11 +56,11 @@ class Element_Note_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             } else if ($type == "object") {
                 if($data) {
-                    $data = Object_Abstract::getById($data);
+                    $data = Object\AbstractObject::getById($data);
                 }
             } else if ($type == "date") {
                 if($data > 0) {
-                    $data = new Zend_Date($data);
+                    $data = new \Zend_Date($data);
                 }
             } else if ($type == "bool") {
                 $data = (bool) $data;
@@ -102,7 +86,7 @@ class Element_Note_Resource extends Pimcore_Model_Resource_Abstract {
 
         // save main table
         foreach ($version as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("notes"))) {
                 $data[$key] = $value;
             }
         }
@@ -130,11 +114,11 @@ class Element_Note_Resource extends Pimcore_Model_Resource_Abstract {
                     $data = $data->getId();
                 }
             } else if ($type == "object") {
-                if($data instanceof Object_Abstract) {
+                if($data instanceof Object\AbstractObject) {
                     $data = $data->getId();
                 }
             } else if ($type == "date") {
-                if($data instanceof Zend_Date) {
+                if($data instanceof \Zend_Date) {
                     $data = $data->getTimestamp();
                 }
             } else if ($type == "bool") {

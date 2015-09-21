@@ -13,7 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
+namespace Pimcore\Navigation\Page;
+
+use Pimcore\Model\Document;
+
+class Uri extends \Zend_Navigation_Page_Uri
 {
 
     /**
@@ -32,9 +36,24 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     protected $_relation;
 
     /**
-     * @var Document
+     * @var int
      */
-    protected $_document;
+    protected $_documentId;
+
+    /**
+     * @var string
+     */
+    protected $documentType;
+
+    /**
+     * @var string
+     */
+    protected $realFullPath;
+
+    /**
+     * @var array
+     */
+    protected $customSettings = [];
 
 
     /**
@@ -56,8 +75,8 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     }
 
     /**
-     * @param  $accesskey
-     * @return void
+     * @param null $character
+     * @return $this|\Zend_Navigation_Page
      */
     public function setAccesskey($character = null)
     {
@@ -92,11 +111,20 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     }
 
     /**
-     * @param Document $document
+     * @param $document
+     * @return $this
      */
     public function setDocument($document)
     {
-        $this->_document = $document;
+        if($document instanceof Document\Hardlink\Wrapper\WrapperInterface) {
+            $this->setDocumentId($document->getHardlinkSource()->getId());
+            $this->setDocumentType($document->getHardlinkSource()->getType());
+            $this->setRealFullPath($document->getHardlinkSource()->getRealFullPath());
+        } else if($document instanceof Document) {
+            $this->setDocumentId($document->getId());
+            $this->setDocumentType($document->getType());
+            $this->setRealFullPath($document->getRealFullPath());
+        }
         return $this;
     }
 
@@ -105,6 +133,85 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
      */
     public function getDocument()
     {
-        return $this->_document;
+        $docId = $this->getDocumentId();
+        if($docId) {
+            $doc = Document::getById($docId);
+            if($doc instanceof Document\Hardlink) {
+                $doc = Document\Hardlink\Service::wrap($doc);
+            }
+            return $doc;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocumentId()
+    {
+        return $this->_documentId;
+    }
+
+    /**
+     * @param int $documentId
+     */
+    public function setDocumentId($documentId)
+    {
+        $this->_documentId = $documentId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDocumentType()
+    {
+        return $this->documentType;
+    }
+
+    /**
+     * @param mixed $documentType
+     */
+    public function setDocumentType($documentType)
+    {
+        $this->documentType = $documentType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRealFullPath()
+    {
+        return $this->realFullPath;
+    }
+
+    /**
+     * @param string $realFullPath
+     */
+    public function setRealFullPath($realFullPath)
+    {
+        $this->realFullPath = $realFullPath;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     * @return $this
+     */
+    public function setCustomSetting($name, $value) {
+        $this->customSettings[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return null
+     */
+    public function getCustomSetting($name) {
+        if(array_key_exists($name, $this->customSettings)) {
+            return $this->customSettings[$name];
+        }
+
+        return null;
     }
 }

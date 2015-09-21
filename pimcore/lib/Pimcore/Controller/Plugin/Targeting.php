@@ -13,7 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
+
+use Pimcore\Tool;
+use Pimcore\Model\Document;
+use Pimcore\Model;
+
+class Targeting extends \Zend_Controller_Plugin_Abstract {
 
     /**
      * @var bool
@@ -45,30 +51,29 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param $id
      */
     public function addPersona($id) {
         $this->personas[] = $id;
     }
 
     /**
-     * @param Zend_Controller_Request_Abstract $request
+     * @param \Zend_Controller_Request_Abstract $request
      * @return bool|void
      */
-    public function routeShutdown(Zend_Controller_Request_Abstract $request) {
+    public function routeShutdown(\Zend_Controller_Request_Abstract $request) {
 
-        if(!Pimcore_Tool::useFrontendOutputFilters($request)) {
+        if(!Tool::useFrontendOutputFilters($request)) {
             return $this->disable();
         }
 
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
         $enabled = $db->fetchOne("SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1");
         if(!$enabled) {
             return $this->disable();
         }
 
-        if($request->getParam("document") instanceof Document_Page) {
+        if($request->getParam("document") instanceof Document\Page) {
             $this->document = $request->getParam("document");
         }
     }
@@ -94,7 +99,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
      */
     public function dispatchLoopShutdown() {
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
@@ -111,7 +116,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 $dataPush["events"] = $this->events;
             }
 
-            if($this->document instanceof Document_Page && !Staticroute::getCurrentRoute()) {
+            if($this->document instanceof Document\Page && !Model\Staticroute::getCurrentRoute()) {
                 $dataPush["document"] = $this->document->getId();
                 if($this->document->getPersonas()) {
                     if($_GET["_ptp"]) { // if a special version is requested only return this id as target group for this page
@@ -132,7 +137,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 foreach($this->document->getElements() as $key => $tag) {
                     if(preg_match("/^persona_-([0-9]+)-_/", $key, $matches)) {
                         $id = (int) $matches[1];
-                        if(Tool_Targeting_Persona::isIdActive($id)) {
+                        if(Model\Tool\Targeting\Persona::isIdActive($id)) {
                             $personaVariants[] = $id;
                         }
                     }
@@ -148,7 +153,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             $dataPush["personas"] = array_unique($dataPush["personas"]);
             $activePersonas = array();
             foreach ($dataPush["personas"] as $id) {
-                if(Tool_Targeting_Persona::isIdActive($id)) {
+                if(Model\Tool\Targeting\Persona::isIdActive($id)) {
                     $activePersonas[] = $id;
                 }
             }
@@ -157,15 +162,15 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
             if($this->document) {
                 // @TODO: cache this
-                $list = new Tool_Targeting_Rule_List();
+                $list = new Model\Tool\Targeting\Rule\Listing();
                 $list->setCondition("active = 1");
 
                 foreach($list->load() as $target) {
 
                     $redirectUrl = $target->getActions()->getRedirectUrl();
                     if(is_numeric($redirectUrl)) {
-                        $doc = Document::getById($redirectUrl);
-                        if($doc instanceof Document) {
+                        $doc = \Document::getById($redirectUrl);
+                        if($doc instanceof \Document) {
                             $target->getActions()->redirectUrl = $doc->getFullPath();
                         }
                     }
@@ -173,7 +178,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                     $targets[] = $target;
                 }
 
-                $list = new Tool_Targeting_Persona_List();
+                $list = new Model\Tool\Targeting\Persona\Listing();
                 $list->setCondition("active = 1");
                 foreach($list->load() as $persona) {
                     $personas[] = $persona;
@@ -186,9 +191,9 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             $code .= '<script type="text/javascript">';
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';
-                $code .= 'pimcore["targeting"]["dataPush"] = ' . Zend_Json::encode($dataPush) . ';';
-                $code .= 'pimcore["targeting"]["targetingRules"] = ' . Zend_Json::encode($targets) . ';';
-                $code .= 'pimcore["targeting"]["personas"] = ' . Zend_Json::encode($personas) . ';';
+                $code .= 'pimcore["targeting"]["dataPush"] = ' . \Zend_Json::encode($dataPush) . ';';
+                $code .= 'pimcore["targeting"]["targetingRules"] = ' . \Zend_Json::encode($targets) . ';';
+                $code .= 'pimcore["targeting"]["personas"] = ' . \Zend_Json::encode($personas) . ';';
             $code .= '</script>';
             $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/targeting.js"></script>';
             $code .= "\n";

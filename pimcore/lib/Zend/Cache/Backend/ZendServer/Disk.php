@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,7 +31,7 @@
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_Backend_ZendServer_Disk extends Zend_Cache_Backend_ZendServer implements Zend_Cache_Backend_Interface
@@ -72,7 +72,8 @@ class Zend_Cache_Backend_ZendServer_Disk extends Zend_Cache_Backend_ZendServer i
     /**
      * Fetch data
      *
-     * @param string $id          Cache id
+     * @param string $id Cache id
+     * @return mixed|null
      */
     protected function _fetch($id)
     {

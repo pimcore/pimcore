@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="ga"/>
 	</identity>
 	<localeDisplayNames>
@@ -23,7 +23,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ba">Baiscíris</language>
 			<language type="be">Bealarúisis</language>
 			<language type="bg">Bulgáiris</language>
-			<language type="bh">Bihairis</language>
 			<language type="bn">Beangáilis</language>
 			<language type="bo">Tibéadais</language>
 			<language type="br">Briotáinis</language>
@@ -107,7 +106,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mk">Macadóinis</language>
 			<language type="ml">Mailéalaimis</language>
 			<language type="mn">Mongóilis</language>
-			<language type="mo">Moldáivis</language>
 			<language type="mr">Maraitis</language>
 			<language type="ms">Malaeis</language>
 			<language type="mt">Maltais</language>
@@ -132,6 +130,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="qu">Ceatsuais</language>
 			<language type="rm" draft="unconfirmed">Rómainis</language>
 			<language type="ro">Rómáinis</language>
+			<language type="ro_MD">Moldáivis</language>
 			<language type="ru">Rúisis</language>
 			<language type="sa">Sanscrait</language>
 			<language type="sc">Sairdínis</language>
@@ -553,6 +552,26 @@ For terms of use, see http://www.unicode.org/copyright.html
 						</dateFormat>
 					</dateFormatLength>
 				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="Ed">E d</dateFormatItem>
+						<dateFormatItem id="Gy">y G</dateFormatItem>
+						<dateFormatItem id="GyMMM">MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMd">d MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMEd">E d MMM y G</dateFormatItem>
+						<dateFormatItem id="M">LL</dateFormatItem>
+						<dateFormatItem id="Md">dd/MM</dateFormatItem>
+						<dateFormatItem id="MEd">E dd/MM</dateFormatItem>
+						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
+						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
+						<dateFormatItem id="yyyyM">MM/y GGGGG</dateFormatItem>
+						<dateFormatItem id="yyyyMd">dd/MM/y GGGGG</dateFormatItem>
+						<dateFormatItem id="yyyyMEd">E dd/MM/y GGGGG</dateFormatItem>
+						<dateFormatItem id="yyyyMMM">MMM y G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMd">d MMM y G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMEd">E d MMM y G</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
 			</calendar>
 			<calendar type="gregorian">
 				<months>
@@ -714,6 +733,26 @@ For terms of use, see http://www.unicode.org/copyright.html
 						</timeFormat>
 					</timeFormatLength>
 				</timeFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="Ed">E d</dateFormatItem>
+						<dateFormatItem id="Gy">y G</dateFormatItem>
+						<dateFormatItem id="GyMMM">MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMd">d MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMEd">E d MMM y G</dateFormatItem>
+						<dateFormatItem id="M">LL</dateFormatItem>
+						<dateFormatItem id="Md">dd/MM</dateFormatItem>
+						<dateFormatItem id="MEd">E dd/MM</dateFormatItem>
+						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
+						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
+						<dateFormatItem id="yM">MM/y</dateFormatItem>
+						<dateFormatItem id="yMd">dd/MM/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E dd/MM/y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMd">d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E d MMM y</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
 			</calendar>
 		</calendars>
 		<fields>

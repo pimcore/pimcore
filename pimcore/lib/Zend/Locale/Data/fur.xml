@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9792 $"/>
+		<generation date="$Date: 2014-02-25 16:17:53 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="fur"/>
 	</identity>
 	<localeDisplayNames>
@@ -23,12 +23,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="am" draft="unconfirmed">amaric</language>
 			<language type="an" draft="unconfirmed">aragonês</language>
 			<language type="ang" draft="unconfirmed">vieri inglês</language>
-			<language type="apa" draft="unconfirmed">lenghe Apache</language>
 			<language type="ar" draft="unconfirmed">arap</language>
 			<language type="arc" draft="unconfirmed">aramaic</language>
 			<language type="as" draft="unconfirmed">assamês</language>
 			<language type="ast" draft="unconfirmed">asturian</language>
-			<language type="aus" draft="unconfirmed">lenghis australianis</language>
 			<language type="av" draft="unconfirmed">avar</language>
 			<language type="ay" draft="unconfirmed">aymarà</language>
 			<language type="az" draft="unconfirmed">azerbaijani</language>
@@ -40,7 +38,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bs" draft="unconfirmed">bosniac</language>
 			<language type="ca" draft="unconfirmed">catalan</language>
 			<language type="ce" draft="unconfirmed">cecen</language>
-			<language type="cel" draft="unconfirmed">lenghe celtiche</language>
 			<language type="ch" draft="unconfirmed">chamorro</language>
 			<language type="co" draft="unconfirmed">cors</language>
 			<language type="cop" draft="unconfirmed">coptic</language>
@@ -80,7 +77,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="fy" draft="unconfirmed">frisian</language>
 			<language type="ga" draft="unconfirmed">gaelic irlandês</language>
 			<language type="gd" draft="unconfirmed">gaelic scozês</language>
-			<language type="gem" draft="unconfirmed">lenghe gjermaniche</language>
 			<language type="gl" draft="unconfirmed">galizian</language>
 			<language type="gn" draft="unconfirmed">guaranì</language>
 			<language type="got" draft="unconfirmed">gotic</language>
@@ -96,7 +92,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="id" draft="unconfirmed">indonesian</language>
 			<language type="ig" draft="unconfirmed">igbo</language>
 			<language type="ik" draft="unconfirmed">inupiaq</language>
-			<language type="ine" draft="unconfirmed">lenghe indo-europeane</language>
 			<language type="io" draft="unconfirmed">ido</language>
 			<language type="is" draft="unconfirmed">islandês</language>
 			<language type="it" draft="unconfirmed">talian</language>
@@ -118,20 +113,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="lo" draft="unconfirmed">lao</language>
 			<language type="lt" draft="unconfirmed">lituan</language>
 			<language type="lv" draft="unconfirmed">leton</language>
-			<language type="map" draft="unconfirmed">austronesian</language>
 			<language type="mg" draft="unconfirmed">malagasy</language>
 			<language type="mi" draft="unconfirmed">maori</language>
-			<language type="mis" draft="unconfirmed">lenghis variis</language>
 			<language type="mk" draft="unconfirmed">macedon</language>
 			<language type="ml" draft="unconfirmed">malayalam</language>
 			<language type="mn" draft="unconfirmed">mongul</language>
-			<language type="mo" draft="unconfirmed">moldâf</language>
 			<language type="mr" draft="unconfirmed">marathi</language>
 			<language type="ms" draft="unconfirmed">malês</language>
 			<language type="mt" draft="unconfirmed">maltês</language>
 			<language type="mul" draft="unconfirmed">lenghis multiplis</language>
 			<language type="mwl" draft="unconfirmed">mirandês</language>
-			<language type="myn" draft="unconfirmed">lenghis Maya</language>
 			<language type="nap" draft="unconfirmed">napoletan</language>
 			<language type="nb" draft="unconfirmed">norvegjês bokmål</language>
 			<language type="nd" draft="unconfirmed">ndebele setentrionâl</language>
@@ -160,7 +151,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="qu" draft="unconfirmed">quechua</language>
 			<language type="rm" draft="unconfirmed">rumanç</language>
 			<language type="ro" draft="unconfirmed">romen</language>
-			<language type="roa" draft="unconfirmed">lenghe romanze</language>
+			<language type="ro_MD">moldâf</language>
 			<language type="ru" draft="unconfirmed">rus</language>
 			<language type="sa" draft="unconfirmed">sanscrit</language>
 			<language type="sc" draft="unconfirmed">sardegnûl</language>
@@ -173,7 +164,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="si" draft="unconfirmed">sinalês</language>
 			<language type="sk" draft="unconfirmed">slovac</language>
 			<language type="sl" draft="unconfirmed">sloven</language>
-			<language type="sla" draft="unconfirmed">lenghe sclave</language>
 			<language type="sm" draft="unconfirmed">samoan</language>
 			<language type="so" draft="unconfirmed">somal</language>
 			<language type="sq" draft="unconfirmed">albanês</language>

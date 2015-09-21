@@ -255,7 +255,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
                             // check for existing element
                             if (!this.elementAlreadyExists(initData.id, initData.type)) {
-                                this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+                                this.store.add(new this.store.recordType(initData));
                                 return true;
                             }
                         }
@@ -324,7 +324,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
-                    }, this.store.getCount() + 1));
+                    }));
                 }
             } catch (e) {
                 console.log(e);
@@ -460,7 +460,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         path: items[i].fullpath,
                         type: items[i].type,
                         subtype: subtype
-                    }, this.store.getCount() + 1));
+                    }));
                 }
             }
         }

@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Hardlink extends Document
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Redirect;
+
+class Hardlink extends Document
 {
 
     /**
@@ -42,7 +48,7 @@ class Document_Hardlink extends Document
 
 
     /**
-     * @return Document_PageSnippet
+     * @return Document\PageSnippet
      */
     public function getSourceDocument () {
         if($this->getSourceId()) {
@@ -93,7 +99,8 @@ class Document_Hardlink extends Document
     }
 
     /**
-     * @param boolean $childsFromSource
+     * @param $childsFromSource
+     * @return $this
      */
     public function setChildsFromSource($childsFromSource)
     {
@@ -110,7 +117,8 @@ class Document_Hardlink extends Document
     }
 
     /**
-     * @param int $sourceId
+     * @param $sourceId
+     * @return $this
      */
     public function setSourceId($sourceId)
     {
@@ -127,7 +135,8 @@ class Document_Hardlink extends Document
     }
 
     /**
-     * @param boolean $propertiesFromSource
+     * @param $propertiesFromSource
+     * @return $this
      */
     public function setPropertiesFromSource($propertiesFromSource)
     {
@@ -143,7 +152,9 @@ class Document_Hardlink extends Document
         return $this->propertiesFromSource;
     }
 
-
+    /**
+     * @return array|null|Model\Property[]
+     */
     public function getProperties() {
 
         if ($this->properties === null) {
@@ -171,16 +182,20 @@ class Document_Hardlink extends Document
         return $this->properties;
     }
 
-    public function getChilds() {
+    /**
+     * @param bool $unpublished
+     * @return array|null
+     */
+    public function getChilds($unpublished = false) {
 
         if ($this->childs === null) {
             $childs = parent::getChilds();
 
             $sourceChilds = array();
-            if($this->getChildsFromSource() && $this->getSourceDocument() && !Pimcore::inAdmin()) {
+            if($this->getChildsFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
                 $sourceChilds = $this->getSourceDocument()->getChilds();
                 foreach($sourceChilds as &$c) {
-                    $c = Document_Hardlink_Service::wrap($c);
+                    $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
                     $c->setPath(preg_replace("@^" . preg_quote($this->getSourceDocument()->getFullpath()) . "@", $this->getFullpath(), $c->getPath()));
                 }
@@ -212,7 +227,7 @@ class Document_Hardlink extends Document
         $this->childs = [];
 
         // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect_List();
+        $redirects = new Redirect\Listing();
         $redirects->setCondition("target = ?", $this->getId());
         $redirects->load();
 
@@ -236,7 +251,7 @@ class Document_Hardlink extends Document
 
         parent::update();
 
-        $config = Pimcore_Config::getSystemConfig();
+        $config = \Pimcore\Config::getSystemConfig();
         if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getFullPath()) {
             // create redirect for old path
             $redirect = new Redirect();

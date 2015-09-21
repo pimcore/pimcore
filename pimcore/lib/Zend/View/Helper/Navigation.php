@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,8 +31,12 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @method Zend_View_Helper_Navigation_Breadcrumbs breadcrumbs
+ * @method Zend_View_Helper_Navigation_Links links
+ * @method Zend_View_Helper_Navigation_Menu menu
+ * @method Zend_View_Helper_Navigation_Sitemap sitemap
  */
 class Zend_View_Helper_Navigation
     extends Zend_View_Helper_Navigation_HelperAbstract

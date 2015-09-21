@@ -13,12 +13,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Tool;
 
-include_once("simple_html_dom.php");
+use Pimcore\File; 
 
-class Pimcore_Tool_Less {
+class Less {
 
-
+    /**
+     * @param $body
+     * @return mixed
+     */
     public static function processHtml($body) {
 
         $processedPaths = array();
@@ -43,10 +47,10 @@ class Pimcore_Tool_Less {
                         continue;
                     }
 
-                    $newFile = PIMCORE_TEMPORARY_DIRECTORY . "/less___" . Pimcore_File::getValidFilename(str_replace(".less", "", $source)) . "-" . filemtime($path) . ".css";
+                    $newFile = PIMCORE_TEMPORARY_DIRECTORY . "/less___" . File::getValidFilename(str_replace(".less", "", $source)) . "-" . filemtime($path) . ".css";
                     if(!is_file($newFile)) {
                         $compiledContent = self::compile($path, $source);
-                        Pimcore_File::put($newFile, $compiledContent);
+                        File::put($newFile, $compiledContent);
                     }
 
                     $body = str_replace($tag,
@@ -132,7 +136,7 @@ class Pimcore_Tool_Less {
 
     public static function compile ($path, $source = null) {
 
-        $conf = Pimcore_Config::getSystemConfig();
+        $conf = \Pimcore\Config::getSystemConfig();
         $compiledContent = "";
 
         // check if the file is already compiled in the cache
@@ -156,7 +160,7 @@ class Pimcore_Tool_Less {
         // use php implementation of lessc if it doesn't work
         if(empty($compiledContent)) {
             include_once("lessc.inc.php");
-            $less = new lessc();
+            $less = new \lessc();
             $less->importDir = dirname($path);
             $compiledContent = $less->parse(file_get_contents($path));
 

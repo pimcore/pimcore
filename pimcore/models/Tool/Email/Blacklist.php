@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Tool_Email_Blacklist extends Pimcore_Model_Abstract {
+
+namespace Pimcore\Model\Tool\Email;
+
+use Pimcore\Model;
+
+class Blacklist extends Model\AbstractModel {
 
     /**
      * @var int
@@ -33,9 +37,8 @@ class Tool_Email_Blacklist extends Pimcore_Model_Abstract {
     public $modificationDate;
 
     /**
-     * @static
-     * @param $id
-     * @return Tool_Email_Blacklist
+     * @param $addr
+     * @return null|Blacklist
      */
     public static function getByAddress ($addr) {
 
@@ -44,7 +47,7 @@ class Tool_Email_Blacklist extends Pimcore_Model_Abstract {
             $address->getResource()->getByAddress($addr);
 
             return $address;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9876 $"/>
+		<generation date="$Date: 2014-03-05 23:14:25 -0600 (Wed, 05 Mar 2014) $"/>
 		<language type="si"/>
 	</identity>
 	<localeDisplayNames>
@@ -1366,9 +1366,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>පැල්මර්</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>දක්ෂිණ ධ්‍රැවය</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>සියෝවා</exemplarCity>
 			</zone>
@@ -1641,9 +1638,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ටොරන්ටෝ</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>මොන්ට්‍රියල්</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>ඉකාලුයිට්</exemplarCity>
@@ -2487,9 +2481,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ෆීනික්ස්</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>ශිප්රෝක්</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ඩෙන්වර්</exemplarCity>
@@ -4657,8 +4648,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">පැ/සැ {0}</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
-				<unitPattern count="one">සෙල්. {0}°</unitPattern>
-				<unitPattern count="other">සෙල්. {0}°</unitPattern>
+				<unitPattern count="one">{0}°</unitPattern>
+				<unitPattern count="other">{0}°</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
 				<unitPattern count="one">ෆැර. {0}°</unitPattern>

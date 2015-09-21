@@ -14,8 +14,18 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
+
+namespace Pimcore\Model\Element\Recyclebin;
+
+use Pimcore\Model;
+use Pimcore\File; 
+use Pimcore\Tool\Serialize;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+use Pimcore\Model\Element;
+
+class Item extends Model\AbstractModel {
 
     /**
      * @var int
@@ -43,7 +53,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     public $amount = 0;
 
     /**
-     * @var Element_Interface
+     * @var Element\ElementInterface
      */
     public $element;
 
@@ -59,10 +69,10 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
     /**
      * @static
-     * @param Element_Interface $element
-     * @param User $user
+     * @param Element\ElementInterface $element
+     * @param Model\User $user
      */
-    public static function create (Element_Interface $element, User $user) {
+    public static function create (Element\ElementInterface $element, Model\User $user) {
         
         $item = new self();
         $item->setElement($element);
@@ -72,7 +82,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     /**
      * @static
      * @param $id
-     * @return Element_Recyclebin_Item
+     * @return Element\Recyclebin\Item
      */
     public static function getById ($id) {
         
@@ -88,7 +98,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     public function restore () {
         
         $raw = file_get_contents($this->getStoreageFile());
-        $element = Pimcore_Tool_Serialize::unserialize($raw);
+        $element = Serialize::unserialize($raw);
 
         // check for element with the same name
         if($element instanceof Document) {
@@ -103,8 +113,8 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
                 $element->setFilename($element->getFilename()."_restore");
             }
         }
-        else if ($element instanceof Object_Abstract) {
-            $indentElement = Object_Abstract::getByPath($element->getFullpath());
+        else if ($element instanceof Object\AbstractObject) {
+            $indentElement = Object::getByPath($element->getFullpath());
             if($indentElement) {
                 $element->setKey($element->getKey()."_restore");
             }
@@ -121,8 +131,8 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function save ($user=null) {
 
-        if($this->getElement() instanceof Element_Interface) {
-            $this->setType(Element_Service::getElementType($this->getElement()));
+        if($this->getElement() instanceof Element\ElementInterface) {
+            $this->setType(Element\Service::getElementType($this->getElement()));
         }
 
         $this->setSubtype($this->getElement()->getType());
@@ -131,22 +141,22 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
         $this->loadChilds($this->getElement());
 
-        if($user instanceof User){
+        if($user instanceof Model\User){
             $this->setDeletedby($user->getName());
         }
 
         // serialize data
-        Element_Service::loadAllFields($this->element);
+        Element\Service::loadAllFields($this->element);
         $this->element->_fulldump = true;
-        $data = Pimcore_Tool_Serialize::serialize($this->getElement());
+        $data = Serialize::serialize($this->getElement());
         
         $this->getResource()->save();
         
         if(!is_dir(PIMCORE_RECYCLEBIN_DIRECTORY)) {
-            Pimcore_File::mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
+            File::mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
         }
 
-        Pimcore_File::put($this->getStoreageFile(), $data);
+        File::put($this->getStoreageFile(), $data);
 
         $saveBinaryData = function ($element, $rec, $scope) {
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
@@ -168,7 +178,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
 
-        @chmod($this->getStoreageFile(), Pimcore_File::getDefaultMode());
+        @chmod($this->getStoreageFile(), File::getDefaultMode());
     }
 
     /**
@@ -189,13 +199,13 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param Element_Interface $element
+     * @param Element\ElementInterface $element
      */
-    public function loadChilds (Element_Interface $element) {
+    public function loadChilds (Element\ElementInterface $element) {
         
         $this->amount++;
 
-        Element_Service::loadAllFields($element);
+        Element\Service::loadAllFields($element);
 
         // for all
         $element->getProperties();
@@ -206,9 +216,9 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $element->_fulldump = true;
         
         if(method_exists($element,"getChilds")) {
-            if($element instanceof Object_Abstract) {
+            if($element instanceof Object\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChilds(array(Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT, Object_Abstract::OBJECT_TYPE_OBJECT));
+                $childs = $element->getChilds(array(Object::OBJECT_TYPE_FOLDER, Object::OBJECT_TYPE_VARIANT, Object::OBJECT_TYPE_OBJECT));
             } else {
                 $childs = $element->getChilds();
             }
@@ -220,9 +230,9 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param Element_Interface $element
+     * @param Element\ElementInterface $element
      */
-    public function restoreChilds (Element_Interface $element) {
+    public function restoreChilds (Element\ElementInterface $element) {
 
 
         $restoreBinaryData = function ($element, $scope) {
@@ -241,7 +251,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $element->save();
         
         if(method_exists($element,"getChilds")) {
-            if($element instanceof Object_Abstract) {
+            if($element instanceof Object\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
                 $childs = $element->o_childs;
             } else {
@@ -260,8 +270,12 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         return PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $this->getId() . ".psf";
     }
 
+    /**
+     * @param $element
+     * @return string
+     */
     public function getStorageFileBinary($element) {
-        return PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $this->getId() . "_" . Element_Service::getElementType($element) . "-" . $element->getId() . ".bin";
+        return PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $this->getId() . "_" . Element\Service::getElementType($element) . "-" . $element->getId() . ".bin";
     }
 
     /**
@@ -272,7 +286,8 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $id
+     * @param $id
+     * @return $this
      */
     public function setId ($id) {
         $this->id = (int) $id;
@@ -287,7 +302,8 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $path
+     * @param $path
+     * @return $this
      */
     public function setPath ($path) {
         $this->path = $path;
@@ -303,6 +319,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
     /**
      * @param $type
+     * @return $this
      */
     public function setType ($type) {
         $this->type = $type;
@@ -318,6 +335,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
     /**
      * @param $subtype
+     * @return $this
      */
     public function setSubtype ($subtype) {
         $this->subtype = $subtype;
@@ -333,6 +351,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
     /**
      * @param $amount
+     * @return $this
      */
     public function setAmount ($amount) {
         $this->amount = (int) $amount;
@@ -348,6 +367,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
     /**
      * @param $date
+     * @return $this
      */
     public function setDate ($date) {
         $this->date = (int) $date;
@@ -355,7 +375,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @return Element_Interface
+     * @return Element\ElementInterface
      */
     public function getElement () {
         return $this->element;
@@ -363,6 +383,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
     /**
      * @param $element
+     * @return $this
      */
     public function setElement ($element) {
         $this->element = $element;
@@ -371,6 +392,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
     /**
      * @param $username
+     * @return $this
      */
     public function setDeletedby($username){
         $this->deletedby = $username;

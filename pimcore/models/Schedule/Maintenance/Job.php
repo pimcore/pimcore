@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Schedule_Maintenance_Job {
+namespace Pimcore\Model\Schedule\Maintenance;
+
+use Pimcore\Model;
+use Pimcore\Model\Tool;
+
+class Job {
 
     /**
      * @var string
@@ -72,7 +77,7 @@ class Schedule_Maintenance_Job {
      * @return void
      */
     public function lock() {
-        Tool_Lock::lock($this->getLockKey());
+        Tool\Lock::lock($this->getLockKey());
     }
 
     /**
@@ -80,14 +85,14 @@ class Schedule_Maintenance_Job {
      * @return void
      */
     public function unlock() {
-        Tool_Lock::release($this->getLockKey());
+        Tool\Lock::release($this->getLockKey());
     }
 
     /**
      * @return bool
      */
     public function isLocked() {
-        return Tool_Lock::isLocked($this->getLockKey(), 86400); // 24h expire
+        return Tool\Lock::isLocked($this->getLockKey(), 86400); // 24h expire
     }
 
     /**

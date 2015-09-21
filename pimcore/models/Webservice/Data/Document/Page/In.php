@@ -15,6 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Page_In extends Webservice_Data_Document_Page {
+namespace Pimcore\Model\Webservice\Data\Document\Page;
+
+use Pimcore\Model;
+
+class In extends Model\Webservice\Data\Document\Page {
 
 }

@@ -15,12 +15,22 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_WebDAV_Service {
+namespace Pimcore\Model\Asset\WebDAV;
 
+use Pimcore\Model\Asset;
+
+class Service {
+
+    /**
+     * @return string
+     */
     public static function getDeleteLogFile () {
         return PIMCORE_WEBDAV_TEMP . "/delete.dat";
     }
 
+    /**
+     * @return array|mixed
+     */
     public static function getDeleteLog () {
         $log = array();
         if(file_exists(self::getDeleteLogFile())) {
@@ -41,6 +51,9 @@ class Asset_WebDAV_Service {
         return $log;
     }
 
+    /**
+     * @param $log
+     */
     public static function saveDeleteLog($log) {
 
         // cleanup old entries
@@ -51,6 +64,6 @@ class Asset_WebDAV_Service {
             }
         }
 
-        Pimcore_File::put(Asset_WebDAV_Service::getDeleteLogFile(), serialize($tmpLog));
+        \Pimcore\File::put(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
     }
 }

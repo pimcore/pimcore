@@ -13,8 +13,22 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controller_Action_Admin {
+namespace Pimcore\Controller\Action\Admin;
 
+use Pimcore\Controller\Action\Admin;
+use Pimcore\Tool;
+use Pimcore\Tool\Session;
+use Pimcore\Config;
+use Pimcore\Model;
+use Pimcore\Model\Element;
+use Pimcore\Model\Property;
+use Pimcore\Model\Schedule;
+
+abstract class Document extends Admin {
+
+    /**
+     * @throws \Exception
+     */
     public function init() {
         parent::init();
 
@@ -25,7 +39,11 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         }
     }
 
-    protected function addPropertiesToDocument(Document $document) {
+    /**
+     * @param Model\Document $document
+     * @throws \Zend_Json_Exception
+     */
+    protected function addPropertiesToDocument(Model\Document $document) {
 
         // properties
         if ($this->getParam("properties")) {
@@ -38,7 +56,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
                 }
             }
 
-            $propertiesData = Zend_Json::decode($this->getParam("properties"));
+            $propertiesData = \Zend_Json::decode($this->getParam("properties"));
 
             if (is_array($propertiesData)) {
                 foreach ($propertiesData as $propertyName => $propertyData) {
@@ -55,8 +73,8 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
                         $properties[$propertyName] = $property;
                     }
-                    catch (Exception $e) {
-                        Logger::warning("Can't add " . $propertyName . " to document " . $document->getFullPath());
+                    catch (\Exception $e) {
+                        \Logger::warning("Can't add " . $propertyName . " to document " . $document->getFullPath());
                     }
 
                 }
@@ -69,19 +87,23 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         // force loading of properties
         $document->getProperties();
     }
-    
-    protected function addSchedulerToDocument(Document $document) {
+
+    /**
+     * @param Model\Document $document
+     * @throws \Zend_Json_Exception
+     */
+    protected function addSchedulerToDocument(Model\Document $document) {
 
         // scheduled tasks
         if ($this->getParam("scheduler")) {
             $tasks = array();
-            $tasksData = Zend_Json::decode($this->getParam("scheduler"));
+            $tasksData = \Zend_Json::decode($this->getParam("scheduler"));
 
             if (!empty($tasksData)) {
                 foreach ($tasksData as $taskData) {
                     $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
 
-                    $task = new Schedule_Task($taskData);
+                    $task = new Schedule\Task($taskData);
                     $tasks[] = $task;
                 }
             }
@@ -92,22 +114,30 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         }
     }
 
-    protected function addSettingsToDocument(Document $document) {
+    /**
+     * @param Model\Document $document
+     * @throws \Zend_Json_Exception
+     */
+    protected function addSettingsToDocument(Model\Document $document) {
 
         // settings
         if ($this->getParam("settings")) {
             if ($document->isAllowed("settings")) {
-                $settings = Zend_Json::decode($this->getParam("settings"));
+                $settings = \Zend_Json::decode($this->getParam("settings"));
                 $document->setValues($settings);
             }
         }
     }
 
-    protected function addDataToDocument(Document $document) {
+    /**
+     * @param Model\Document $document
+     * @throws \Zend_Json_Exception
+     */
+    protected function addDataToDocument(Model\Document $document) {
 
         // data
         if ($this->getParam("data")) {
-            $data = Zend_Json::decode($this->getParam("data"));
+            $data = \Zend_Json::decode($this->getParam("data"));
             foreach ($data as $name => $value) {
                 $data = $value["data"];
                 $type = $value["type"];
@@ -116,16 +146,19 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         }
     }
 
+    /**
+     *
+     */
     public function saveToSessionAction() {
 
         if ($this->getParam("id")) {
 
             $key = "document_" . $this->getParam("id");
 
-            $session = Pimcore_Tool_Session::get("pimcore_documents");
+            $session = Session::get("pimcore_documents");
 
             if (!$document = $session->$key) {
-                $document = Document::getById($this->getParam("id"));
+                $document = Model\Document::getById($this->getParam("id"));
                 $document = $this->getLatestVersion($document);
             }
 
@@ -135,36 +168,42 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
             $session->$key = $document;
 
-            Pimcore_Tool_Session::writeClose();
+            Session::writeClose();
         }
 
         $this->_helper->json(array("success" => true));
     }
 
+    /**
+     * @param $doc
+     */
     protected function saveToSession($doc) {
         // save to session
-        Pimcore_Tool_Session::useSession(function ($session) use ($doc) {
+        Session::useSession(function ($session) use ($doc) {
             $key = "document_" . $doc->getId();
             $session->$key = $doc;
         }, "pimcore_documents");
     }
 
+    /**
+     * @throws \Zend_Json_Exception
+     */
     public function translateAction () {
 
-        $conf = Pimcore_Config::getSystemConfig();
+        $conf = Config::getSystemConfig();
         $key  = $conf->services->translate->apikey;
-        $locale = new Zend_Locale($this->getParam("language"));
+        $locale = new \Zend_Locale($this->getParam("language"));
         $language = $locale->getLanguage();
 
         $supportedTypes = array("input","textarea","wysiwyg");
-        $data = Zend_Json::decode($this->getParam("data"));
+        $data = \Zend_Json::decode($this->getParam("data"));
 
         foreach ($data as &$d) {
             if(in_array($d["type"],$supportedTypes)) {
 
-                $response = Pimcore_Tool::getHttpData("https://www.googleapis.com/language/translate/v2?key=" . $key . "&q=" . urlencode($d["data"]) . "&target=" . $language);
+                $response = Tool::getHttpData("https://www.googleapis.com/language/translate/v2?key=" . $key . "&q=" . urlencode($d["data"]) . "&target=" . $language);
 
-                $tData = Zend_Json::decode($response);
+                $tData = \Zend_Json::decode($response);
                 if($tData["data"]["translations"][0]["translatedText"]) {
                     $d["data"] = $tData["data"]["translations"][0]["translatedText"];
                 }
@@ -172,32 +211,42 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
             }
         }
 
-        $this->getRequest()->setParam("data", Zend_Json::encode($data));
+        $this->getRequest()->setParam("data", \Zend_Json::encode($data));
 
         $this->saveToSessionAction();
     }
 
+    /**
+     *
+     */
     public function removeFromSessionAction() {
         $key = "document_" . $this->getParam("id");
 
-        Pimcore_Tool_Session::useSession(function ($session) use ($key) {
+        Session::useSession(function ($session) use ($key) {
             $session->$key = null;
         }, "pimcore_documents");
 
         $this->_helper->json(array("success" => true));
     }
 
+    /**
+     * @param $document
+     */
     protected function minimizeProperties($document) {
-        $properties = Element_Service::minimizePropertiesForEditmode($document->getProperties());
+        $properties = Element\Service::minimizePropertiesForEditmode($document->getProperties());
         $document->setProperties($properties);
     }
-    
-    protected function getLatestVersion (Document $document) {
+
+    /**
+     * @param Model\Document $document
+     * @return Model\Document
+     */
+    protected function getLatestVersion (Model\Document $document) {
         
         $latestVersion = $document->getLatestVersion();
         if($latestVersion) {
             $latestDoc = $latestVersion->loadData();
-            if($latestDoc instanceof Document) {
+            if($latestDoc instanceof Model\Document) {
                 $latestDoc->setModificationDate($document->getModificationDate()); // set de modification-date from published version to compare it in js-frontend
                 return $latestDoc;
             }
@@ -210,14 +259,13 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
      */
     public function changeMasterDocumentAction() {
 
-        $doc = Document::getById($this->getParam("id"));
-        if($doc instanceof Document_PageSnippet) {
+        $doc = Model\Document::getById($this->getParam("id"));
+        if($doc instanceof Model\Document\PageSnippet) {
             $doc->setElements(array());
             $doc->setContentMasterDocumentId($this->getParam("contentMasterDocumentPath"));
-            $doc->saveVersion();
+            $doc->saveVersion(true, true, true);
         }
 
         $this->_helper->json(array("success" => true));
     }
-
 }

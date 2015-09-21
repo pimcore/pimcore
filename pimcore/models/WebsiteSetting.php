@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class WebsiteSetting extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+class WebsiteSetting extends AbstractModel {
 
     /**
      * @var integer
@@ -75,8 +77,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
 
         try {
             $setting->getResource()->getByName($name, $siteId);
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             return null;
         }
         return $setting;
@@ -117,7 +119,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param mixed $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -134,7 +137,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param mixed $data
+     * @param $data
+     * @return $this
      */
     public function setData($data)
     {
@@ -151,7 +155,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param mixed $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -168,7 +173,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param mixed $siteId
+     * @param $siteId
+     * @return $this
      */
     public function setSiteId($siteId)
     {
@@ -185,7 +191,8 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param mixed $type
+     * @param $type
+     * @return $this
      */
     public function setType($type)
     {
@@ -205,8 +212,6 @@ class WebsiteSetting extends Pimcore_Model_Abstract {
      * @return void
      */
     public function clearDependentCache() {
-
+        Cache::clearTag("website_config");
     }
-
-
 }

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mail
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -60,7 +60,7 @@
  * @category   Zend
  * @package    Zend_Mail
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Mail_Storage_Imap extends Zend_Mail_Storage_Abstract
@@ -88,6 +88,7 @@ class Zend_Mail_Storage_Imap extends Zend_Mail_Storage_Abstract
     protected static $_knownFlags = array('\Passed'   => Zend_Mail_Storage::FLAG_PASSED,
                                           '\Answered' => Zend_Mail_Storage::FLAG_ANSWERED,
                                           '\Seen'     => Zend_Mail_Storage::FLAG_SEEN,
+                                          '\Unseen'   => Zend_Mail_Storage::FLAG_UNSEEN,
                                           '\Deleted'  => Zend_Mail_Storage::FLAG_DELETED,
                                           '\Draft'    => Zend_Mail_Storage::FLAG_DRAFT,
                                           '\Flagged'  => Zend_Mail_Storage::FLAG_FLAGGED);
@@ -99,6 +100,7 @@ class Zend_Mail_Storage_Imap extends Zend_Mail_Storage_Abstract
     protected static $_searchFlags = array('\Recent'   => 'RECENT',
                                            '\Answered' => 'ANSWERED',
                                            '\Seen'     => 'SEEN',
+                                           '\Unseen'   => 'UNSEEN',
                                            '\Deleted'  => 'DELETED',
                                            '\Draft'    => 'DRAFT',
                                            '\Flagged'  => 'FLAGGED');

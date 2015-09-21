@@ -13,11 +13,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_Webmastertools extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
+class Webmastertools extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     * @param \Zend_Controller_Request_Abstract $request
+     */
+    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
             
-        $conf = Pimcore_Config::getReportConfig();
+        $conf = \Pimcore\Config::getReportConfig();
         if($conf->webmastertools->sites) {
             $sites = $conf->webmastertools->sites->toArray();
             

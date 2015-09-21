@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Workspace_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\User\Workspace;
+
+use Pimcore\Model;
+use Pimcore\Model\User\Workspace;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      *
@@ -23,14 +28,13 @@ class User_Workspace_Resource extends Pimcore_Model_Resource_Abstract {
     public function save () {
 
         $tableName = "";
-        if($this->model instanceof User_Workspace_Asset) {
+        if($this->model instanceof Workspace\Asset) {
             $tableName = "users_workspaces_asset";
-        } else if($this->model instanceof User_Workspace_Document) {
+        } else if($this->model instanceof Workspace\Document) {
             $tableName = "users_workspaces_document";
-        } else if($this->model instanceof User_Workspace_Object) {
+        } else if($this->model instanceof Workspace\Object) {
             $tableName = "users_workspaces_object";
         }
-
 
         $data = array();
 
@@ -45,8 +49,6 @@ class User_Workspace_Resource extends Pimcore_Model_Resource_Abstract {
                 $data[$key] = $value;
             }
         }
-
         $this->db->insert($tableName, $data);
     }
-
 }

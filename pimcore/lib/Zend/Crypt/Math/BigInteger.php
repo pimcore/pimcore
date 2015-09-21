@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage Math
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -38,7 +38,7 @@
  *
  * @category   Zend
  * @package    Zend_Crypt
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Crypt_Math_BigInteger
@@ -71,9 +71,10 @@ class Zend_Crypt_Math_BigInteger
     /**
      * Redirect all public method calls to the wrapped extension object.
      *
-     * @param   string $methodName
-     * @param   array $args
-     * @throws  Zend_Crypt_Math_BigInteger_Exception
+     * @param  string $methodName
+     * @param  array  $args
+     * @return mixed
+     * @throws Zend_Crypt_Math_BigInteger_Exception
      */
     public function __call($methodName, $args)
     {

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9515 $"/>
+		<generation date="$Date: 2013-11-15 12:32:44 -0600 (Fri, 15 Nov 2013) $"/>
 		<language type="kea"/>
 	</identity>
 	<localeDisplayNames>
@@ -504,8 +504,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 		</codePatterns>
 	</localeDisplayNames>
 	<characters>
-		<exemplarCharacters>[a b d {dj} e f g i j k l {lh} m n {n\u0308} {nh} o p r s t {tx} u v x z]</exemplarCharacters>
-		<exemplarCharacters type="auxiliary">[á à ă â å ä ã ā æ c ç é è ĕ ê ë ẽ ē h í ì ĭ î ï ĩ ī ñ ó ò ŏ ô ö õ ø ō œ q {rr} ú ù ŭ û ü ũ ū w y ÿ]</exemplarCharacters>
+		<exemplarCharacters>[a b d {dj} e f g h i j k l {lh} m n ñ {nh} o p r s t {tx} u v x y z]</exemplarCharacters>
+		<exemplarCharacters type="auxiliary">[á à ă â å ä ã ā æ c ç é è ĕ ê ë ẽ ē í ì ĭ î ï ĩ ī {n\u0308} ó ò ŏ ô ö õ ø ō œ q {rr} ú ù ŭ û ü ũ ū w ÿ]</exemplarCharacters>
 		<exemplarCharacters type="index">[A B D E F G H I J K L M N O P R S T U V X Z]</exemplarCharacters>
 		<ellipsis type="final">{0}…</ellipsis>
 		<ellipsis type="initial">…{0}</ellipsis>

@@ -15,13 +15,10 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
-/** @see PHPUnit_Framework_Constraint */
-// require_once 'PHPUnit/Framework/Constraint.php';
 
 /** @see Zend_Dom_Query */
 // require_once 'Zend/Dom/Query.php';
@@ -33,10 +30,10 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
+class Zend_Test_PHPUnit_Constraint_DomQuery37 extends PHPUnit_Framework_Constraint
 {
     /**#@+
      * Assertion type constants
@@ -193,7 +190,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
             case self::ASSERT_CONTENT_COUNT:
             case self::ASSERT_CONTENT_COUNT_MIN:
             case self::ASSERT_CONTENT_COUNT_MAX:
-                if (!$match) {
+                if ($match === false) {
                     // require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
                     throw new Zend_Test_PHPUnit_Constraint_Exception('No count provided against which to compare');
                 }

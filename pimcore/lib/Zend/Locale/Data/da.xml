@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="da"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adyghe</language>
 			<language type="ae">avestan</language>
 			<language type="af">afrikaans</language>
-			<language type="afa">afro-asiatisk sprog</language>
 			<language type="afh">afrihili</language>
 			<language type="agq">aghem</language>
 			<language type="ain">ainu</language>
 			<language type="ak">akan</language>
 			<language type="akk">akkadisk</language>
 			<language type="ale">aleutisk</language>
-			<language type="alg">algonkisk sprog</language>
 			<language type="alt">sydaltaisk</language>
 			<language type="am">amharisk</language>
 			<language type="an">aragonesisk</language>
 			<language type="ang">oldengelsk</language>
 			<language type="anp">angika</language>
-			<language type="apa">apachesprog</language>
 			<language type="ar">arabisk</language>
 			<language type="ar_001">moderne standardarabisk</language>
 			<language type="arc">aramæisk</language>
 			<language type="arn">araukansk</language>
 			<language type="arp">arapaho</language>
-			<language type="art">kunstsprog</language>
 			<language type="arw">arawak</language>
 			<language type="as">assamesisk</language>
 			<language type="asa">asu</language>
 			<language type="ast">asturisk</language>
-			<language type="ath">athapaskisk sprog</language>
-			<language type="aus">australsk sprog</language>
 			<language type="av">avarisk</language>
 			<language type="awa">awadhi</language>
 			<language type="ay">aymara</language>
 			<language type="az">aserbajdsjansk</language>
 			<language type="az" alt="short">azeri</language>
 			<language type="ba">bashkir</language>
-			<language type="bad">banda</language>
-			<language type="bai">bamilekisk sprog</language>
 			<language type="bal">baluchi</language>
 			<language type="ban">balinesisk</language>
 			<language type="bas">basa</language>
-			<language type="bat">baltisk sprog</language>
 			<language type="bax">bamun</language>
 			<language type="bbj">ghomala</language>
 			<language type="be">hviderussisk</language>
 			<language type="bej">beja</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berberisk</language>
 			<language type="bez">bena</language>
 			<language type="bfd">bafut</language>
 			<language type="bg">bulgarsk</language>
-			<language type="bh">bihari</language>
 			<language type="bho">bhojpuri</language>
 			<language type="bi">bislama</language>
 			<language type="bik">bikol</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">siksika</language>
 			<language type="bm">bambara</language>
 			<language type="bn">bengali</language>
-			<language type="bnt">bantu</language>
 			<language type="bo">tibetansk</language>
 			<language type="br">bretonsk</language>
 			<language type="bra">braj</language>
 			<language type="brx">bodo</language>
 			<language type="bs">bosnisk</language>
 			<language type="bss">bakossi</language>
-			<language type="btk">batak</language>
 			<language type="bua">buriatisk</language>
 			<language type="bug">buginesisk</language>
 			<language type="bum">bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">medumba</language>
 			<language type="ca">catalansk</language>
 			<language type="cad">caddo</language>
-			<language type="cai">mellemamerikansk indiansk sprog</language>
 			<language type="car">caribisk</language>
-			<language type="cau">kaukasisk sprog</language>
 			<language type="cay">cayuga</language>
 			<language type="cch">atsam</language>
 			<language type="ce">tjetjensk</language>
 			<language type="ceb">cebuano</language>
-			<language type="cel">keltisk sprog</language>
 			<language type="cgg">chiga</language>
 			<language type="ch">chamorro</language>
 			<language type="chb">chibcha</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">cherokee</language>
 			<language type="chy">cheyenne</language>
 			<language type="ckb">sorani</language>
-			<language type="cmc">chamiske sprog</language>
 			<language type="co">korsikansk</language>
 			<language type="cop">koptisk</language>
-			<language type="cpe">engelsk baseret kreolsk eller pidgin</language>
-			<language type="cpf" draft="contributed">fransk baseret kreolsk eller pidginsprog</language>
-			<language type="cpp">portugisisk baseret kreolsk eller pidginsprog</language>
 			<language type="cr">cree</language>
 			<language type="crh">krim tyrkisk</language>
-			<language type="crp">kreolsk eller pidginsprog</language>
 			<language type="cs">tjekkisk</language>
 			<language type="csb">kasjubisk</language>
 			<language type="cu">kirkeslavisk</language>
-			<language type="cus">kusjitisk sprog</language>
 			<language type="cv">chuvash</language>
 			<language type="cy">walisisk</language>
 			<language type="da">dansk</language>
 			<language type="dak">dakota</language>
 			<language type="dar">dargwa</language>
 			<language type="dav">taita</language>
-			<language type="day">dayak</language>
 			<language type="de">tysk</language>
 			<language type="de_AT">østrigsk tysk</language>
 			<language type="de_CH">schweizerhøjtysk</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">dinka</language>
 			<language type="dje">zarma</language>
 			<language type="doi">dogri</language>
-			<language type="dra">dravidisk sprog</language>
 			<language type="dsb">nedersorbisk</language>
 			<language type="dua">duala</language>
 			<language type="dum">middelhollandsk</language>
@@ -182,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fulah</language>
 			<language type="fi">finsk</language>
 			<language type="fil">filippinsk</language>
-			<language type="fiu">finsk-ugrisk sprog</language>
 			<language type="fj">fijiansk</language>
 			<language type="fo">færøsk</language>
 			<language type="fon">fon</language>
@@ -200,7 +175,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gayo</language>
 			<language type="gba">gbaya</language>
 			<language type="gd">skotsk gælisk</language>
-			<language type="gem">germansk sprog</language>
 			<language type="gez">geez</language>
 			<language type="gil">gilbertesisk</language>
 			<language type="gl">galicisk</language>
@@ -223,7 +197,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">hebraisk</language>
 			<language type="hi">hindi</language>
 			<language type="hil">hiligaynon</language>
-			<language type="him">himachali</language>
 			<language type="hit">hittitisk</language>
 			<language type="hmn">hmong</language>
 			<language type="ho">hirimotu</language>
@@ -241,15 +214,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interlingue</language>
 			<language type="ig">igbo</language>
 			<language type="ii">sichuan yi</language>
-			<language type="ijo">ijo</language>
 			<language type="ik">inupiaq</language>
 			<language type="ilo">iloko</language>
-			<language type="inc">indisk sprog</language>
-			<language type="ine">indo-europæisk sprog</language>
 			<language type="inh">ingush</language>
 			<language type="io">ido</language>
-			<language type="ira">iransk sprog</language>
-			<language type="iro">irokesisk sprog</language>
 			<language type="is">islandsk</language>
 			<language type="it">italiensk</language>
 			<language type="iu">inuktitut</language>
@@ -266,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">kachin</language>
 			<language type="kaj">jju</language>
 			<language type="kam">kamba</language>
-			<language type="kar">karen</language>
 			<language type="kaw">kawi</language>
 			<language type="kbd">kabardian</language>
 			<language type="kbl">kanembu</language>
@@ -276,7 +243,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">koro</language>
 			<language type="kg">kongo</language>
 			<language type="kha">khasi</language>
-			<language type="khi">khoisansprog</language>
 			<language type="kho">khotanesisk</language>
 			<language type="khq">koyra-chiini</language>
 			<language type="ki">kikuyu</language>
@@ -295,7 +261,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">kanuri</language>
 			<language type="krc">karatjai-balkar</language>
 			<language type="krl">karelsk</language>
-			<language type="kro">kru</language>
 			<language type="kru">kurukh</language>
 			<language type="ks">kashmiri</language>
 			<language type="ksb">shambala</language>
@@ -335,7 +300,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">maithili</language>
 			<language type="mak">makasar</language>
 			<language type="man">mandingo</language>
-			<language type="map">austronesisk sprog</language>
 			<language type="mas">masai</language>
 			<language type="mde">maba</language>
 			<language type="mdf">moksha</language>
@@ -351,15 +315,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">maori</language>
 			<language type="mic">micmac</language>
 			<language type="min">minangkabau</language>
-			<language type="mis">diverse sprog</language>
 			<language type="mk">makedonsk</language>
-			<language type="mkh">mon-khmer sprog</language>
 			<language type="ml">malayalam</language>
 			<language type="mn">mongolsk</language>
 			<language type="mnc">manchu</language>
 			<language type="mni">manipuri</language>
-			<language type="mno">manobo sprog</language>
-			<language type="mo">moldovisk</language>
 			<language type="moh">mohawk</language>
 			<language type="mos">mossi</language>
 			<language type="mr">marathisk</language>
@@ -367,17 +327,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">maltesisk</language>
 			<language type="mua">mundang</language>
 			<language type="mul">flere sprog</language>
-			<language type="mun">mundasprog</language>
 			<language type="mus">creek</language>
 			<language type="mwl">mirandesisk</language>
 			<language type="mwr">marwari</language>
 			<language type="my">burmesisk</language>
 			<language type="mye">myene</language>
-			<language type="myn">mayasprog</language>
 			<language type="myv">erzya</language>
 			<language type="na">nauru</language>
-			<language type="nah">nahuatl</language>
-			<language type="nai">nordamerikansk indiansk sprog</language>
 			<language type="nap">neapolitansk</language>
 			<language type="naq">nama</language>
 			<language type="nb">norsk bokmål</language>
@@ -387,7 +343,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">newari</language>
 			<language type="ng">ndonga</language>
 			<language type="nia">nias</language>
-			<language type="nic">niger-kordofanisk sprog</language>
 			<language type="niu">niuean</language>
 			<language type="nl">hollandsk</language>
 			<language type="nl_BE">flamsk</language>
@@ -400,7 +355,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">n-ko</language>
 			<language type="nr">sydndebele</language>
 			<language type="nso">nordsotho</language>
-			<language type="nub">nubisk sprog</language>
 			<language type="nus">nuer</language>
 			<language type="nv">navajo</language>
 			<language type="nwc">klassisk newarisk</language>
@@ -416,21 +370,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ossetisk</language>
 			<language type="osa">osage</language>
 			<language type="ota">osmannisk-tyrkisk</language>
-			<language type="oto">otomi sprog</language>
 			<language type="pa">punjabi</language>
-			<language type="paa">papua-australsk sprog</language>
 			<language type="pag">pangasinan</language>
 			<language type="pal">pahlavi</language>
 			<language type="pam">pampanga</language>
 			<language type="pap">papiamento</language>
 			<language type="pau">palauansk</language>
 			<language type="peo">oldpersisk</language>
-			<language type="phi">filippinsk sprog</language>
 			<language type="phn">fønikisk</language>
 			<language type="pi">pali</language>
 			<language type="pl">polsk</language>
 			<language type="pon">ponape</language>
-			<language type="pra">prakritsprog</language>
 			<language type="pro">oldprovencalsk</language>
 			<language type="ps">pashto</language>
 			<language type="ps" alt="variant">pushto</language>
@@ -444,7 +394,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">rætoromansk</language>
 			<language type="rn">rundi</language>
 			<language type="ro">rumænsk</language>
-			<language type="roa">romansk sprog</language>
+			<language type="ro_MD">moldovisk</language>
 			<language type="rof">rombo</language>
 			<language type="rom">romani</language>
 			<language type="root">rot</language>
@@ -455,8 +405,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanskrit</language>
 			<language type="sad">sandawe</language>
 			<language type="sah">yakut</language>
-			<language type="sai">sydamerikansk indiansk sprog</language>
-			<language type="sal">salikisk sprog</language>
 			<language type="sam">samaritansk</language>
 			<language type="saq">samburu</language>
 			<language type="sas">sasak</language>
@@ -471,25 +419,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">seneca</language>
 			<language type="seh">sena</language>
 			<language type="sel">selkupisk</language>
-			<language type="sem">semitisk sprog</language>
 			<language type="ses">koyraboro senni</language>
 			<language type="sg">sango</language>
 			<language type="sga">oldirsk</language>
-			<language type="sgn">tegnsprog</language>
 			<language type="sh">serbokroatisk</language>
 			<language type="shi">tachelhit</language>
 			<language type="shn">shan</language>
 			<language type="shu">tchadisk-arabisk</language>
 			<language type="si">singalesisk</language>
 			<language type="sid">sidamo</language>
-			<language type="sio">sioux sprog</language>
-			<language type="sit">sino-tibetansk sprog</language>
 			<language type="sk">slovakisk</language>
 			<language type="sl">slovensk</language>
-			<language type="sla">slavisk sprog</language>
 			<language type="sm">samoansk</language>
 			<language type="sma">sydsamisk</language>
-			<language type="smi">samisk sprog</language>
 			<language type="smj">lule sami</language>
 			<language type="smn">inari sami</language>
 			<language type="sms">skolt sami</language>
@@ -497,13 +439,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">soninke</language>
 			<language type="so">somalisk</language>
 			<language type="sog">sogdiansk</language>
-			<language type="son">songhai</language>
 			<language type="sq">albansk</language>
 			<language type="sr">serbisk</language>
 			<language type="srn">sranan tongo</language>
 			<language type="srr">serer</language>
 			<language type="ss">swati</language>
-			<language type="ssa">nilo-saharansk sprog</language>
 			<language type="ssy">saho</language>
 			<language type="st">sydsotho</language>
 			<language type="su">sundanesisk</language>
@@ -517,7 +457,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">klassisk syrisk</language>
 			<language type="syr">syrisk</language>
 			<language type="ta">tamilsk</language>
-			<language type="tai">thaisprog</language>
 			<language type="te">telugu</language>
 			<language type="tem">temne</language>
 			<language type="teo">teso</language>
@@ -544,8 +483,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">tsimshisk</language>
 			<language type="tt">tatarisk</language>
 			<language type="tum">tumbuka</language>
-			<language type="tup">tupisprog</language>
-			<language type="tut">altaisk sprog</language>
 			<language type="tvl">tuvalu</language>
 			<language type="tw">twi</language>
 			<language type="twq">tasawaq</language>
@@ -569,11 +506,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">vunjo</language>
 			<language type="wa">vallonsk</language>
 			<language type="wae">walsertysk</language>
-			<language type="wak">wakashansk sprog</language>
 			<language type="wal">walamo</language>
 			<language type="war">waray</language>
 			<language type="was">washo</language>
-			<language type="wen">vendisk sprog</language>
 			<language type="wo">wolof</language>
 			<language type="xal">kalmyk</language>
 			<language type="xh">xhosa</language>
@@ -584,7 +519,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">yemba</language>
 			<language type="yi">jiddisch</language>
 			<language type="yo">yoruba</language>
-			<language type="ypk">yupisk sprog</language>
 			<language type="yue">kantonesisk</language>
 			<language type="za">zhuang</language>
 			<language type="zap">zapotec</language>
@@ -594,7 +528,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">kinesisk</language>
 			<language type="zh_Hans">forenklet kinesisk</language>
 			<language type="zh_Hant">traditionelt kinesisk</language>
-			<language type="znd">zande</language>
 			<language type="zu">zulu</language>
 			<language type="zun">zuni</language>
 			<language type="zxx">intet sprogligt indhold</language>
@@ -2145,9 +2078,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<fallbackFormat>{1} ({0})</fallbackFormat>
 			<zone type="Etc/Unknown">
 				<exemplarCity>Ukendt by</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Sydpolen</exemplarCity>
 			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity>Dumont d’Urville</exemplarCity>

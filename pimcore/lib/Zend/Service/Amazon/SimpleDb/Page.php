@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage SimpleDb
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -30,28 +30,45 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage SimpleDb
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_SimpleDb_Page
 {
-    /** @var string Page data */
+    /**
+     * Page data
+     *
+     * @var string
+     */
     protected $_data;
 
-    /** @var string|null Token identifying page */
+    /**
+     * Token identifying page
+     *
+     * @var string|null
+     */
     protected $_token;
 
     /**
      * Constructor
      *
-     * @param  string $data
-     * @param  string|null $token
-     * @return void
+     * @param string      $data
+     * @param string|null $token
      */
     public function __construct($data, $token = null)
     {
-        $this->_data  = $data;
-        $this->_token = $token;
+        $this->setData($data);
+        $this->setToken($token);
+    }
+
+    /**
+     * Set page data
+     *
+     * @param string $data
+     */
+    public function setData($data)
+    {
+        $this->_data = $data;
     }
 
     /**
@@ -62,6 +79,16 @@ class Zend_Service_Amazon_SimpleDb_Page
     public function getData()
     {
         return $this->_data;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string|null $token
+     */
+    public function setToken($token)
+    {
+        $this->_token = (trim($token) === '') ? null : $token;
     }
 
     /**
@@ -77,7 +104,7 @@ class Zend_Service_Amazon_SimpleDb_Page
     /**
      * Determine whether this is the last page of data
      *
-     * @return void
+     * @return bool
      */
     public function isLast()
     {

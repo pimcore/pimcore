@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Application_Resource_Session extends Zend_Application_Resource_ResourceAbstract
@@ -62,6 +62,7 @@ class Zend_Application_Resource_Session extends Zend_Application_Resource_Resour
      * Get session save handler
      *
      * @return Zend_Session_SaveHandler_Interface
+     * @throws Zend_Application_Resource_Exception
      */
     public function getSaveHandler()
     {

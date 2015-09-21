@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="sq"/>
 	</identity>
 	<localeDisplayNames>
@@ -26,7 +26,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">Azere</language>
 			<language type="be">Bjellorusisht</language>
 			<language type="bg">Bullgarisht</language>
-			<language type="bh" draft="unconfirmed">Bihari</language>
 			<language type="bn">Bengalisht</language>
 			<language type="bo">Tibetiane</language>
 			<language type="br" draft="unconfirmed">Breton</language>
@@ -661,7 +660,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd" draft="unconfirmed">dd MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E d MMMM</dateFormatItem>
 						<dateFormatItem id="ms" draft="contributed">mm.ss</dateFormatItem>
 						<dateFormatItem id="y">y G</dateFormatItem>
@@ -1092,7 +1090,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd">dd MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E d MMMM</dateFormatItem>
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
@@ -1368,9 +1365,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Yerevan">
 				<exemplarCity>Jerevan</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Poli i Jugut</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Sjoua</exemplarCity>
@@ -2099,9 +2093,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Feniks</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Shiprok</exemplarCity>
 			</zone>
 			<zone type="America/North_Dakota/Beulah">
 				<exemplarCity>Beula, Dakota e Veriut</exemplarCity>

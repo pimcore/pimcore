@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_View
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -29,10 +29,59 @@
 /**
  * Concrete class for handling view scripts.
  *
- * @category   Zend
- * @package    Zend_View
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @category  Zend
+ * @package   Zend_View
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd     New BSD License
+ *
+ * Convenience methods for build in helpers (@see __call):
+ *
+ * @method string baseUrl($file = null)
+ * @method string currency($value = null, $currency = null)
+ * @method Zend_View_Helper_Cycle cycle(array $data = array(), $name = Zend_View_Helper_Cycle::DEFAULT_NAME)
+ * @method Zend_View_Helper_Doctype doctype($doctype = null)
+ * @method string fieldset($name, $content, $attribs = null)
+ * @method string form($name, $attribs = null, $content = false)
+ * @method string formButton($name, $value = null, $attribs = null)
+ * @method string formCheckbox($name, $value = null, $attribs = null, array $checkedOptions = null)
+ * @method string formErrors($errors, array $options = null)
+ * @method string formFile($name, $attribs = null)
+ * @method string formHidden($name, $value = null, array $attribs = null)
+ * @method string formImage($name, $value = null, $attribs = null)
+ * @method string formLabel($name, $value = null, array $attribs = null)
+ * @method string formMultiCheckbox($name, $value = null, $attribs = null, $options = null, $listsep = "<br />\n")
+ * @method string formNote($name, $value = null)
+ * @method string formPassword($name, $value = null, $attribs = null)
+ * @method string formRadio($name, $value = null, $attribs = null, $options = null, $listsep = "<br />\n")
+ * @method string formReset($name = '', $value = 'Reset', $attribs = null)
+ * @method string formSelect($name, $value = null, $attribs = null, $options = null, $listsep = "<br />\n")
+ * @method string formSubmit($name, $value = null, $attribs = null)
+ * @method string formText($name, $value = null, $attribs = null)
+ * @method string formTextarea($name, $value = null, $attribs = null)
+ * @method Zend_View_Helper_Gravatar gravatar($email = "", $options = array(), $attribs = array())
+ * @method Zend_View_Helper_HeadLink headLink(array $attributes = null, $placement = Zend_View_Helper_Placeholder_Container_Abstract::APPEND)
+ * @method Zend_View_Helper_HeadMeta headMeta($content = null, $keyValue = null, $keyType = 'name', $modifiers = array(), $placement = Zend_View_Helper_Placeholder_Container_Abstract::APPEND)
+ * @method Zend_View_Helper_HeadScript headScript($mode = Zend_View_Helper_HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
+ * @method Zend_View_Helper_HeadStyle headStyle($content = null, $placement = 'APPEND', $attributes = array())
+ * @method Zend_View_Helper_HeadTitle headTitle($title = null, $setType = null)
+ * @method string htmlFlash($data, array $attribs = array(), array $params = array(), $content = null)
+ * @method string htmlList(array $items, $ordered = false, $attribs = false, $escape = true)
+ * @method string htmlObject($data, $type, array $attribs = array(), array $params = array(), $content = null)
+ * @method string htmlPage($data, array $attribs = array(), array $params = array(), $content = null)
+ * @method string htmlQuicktime($data, array $attribs = array(), array $params = array(), $content = null)
+ * @method Zend_View_Helper_InlineScript inlineScript($mode = Zend_View_Helper_HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
+ * @method string|void json($data, $keepLayouts = false, $encodeData = true)
+ * @method Zend_View_Helper_Layout layout()
+ * @method Zend_View_Helper_Navigation navigation(Zend_Navigation_Container $container = null)
+ * @method string paginationControl(Zend_Paginator $paginator = null, $scrollingStyle = null, $partial = null, $params = null)
+ * @method string partial($name = null, $module = null, $model = null)
+ * @method string partialLoop($name = null, $module = null, $model = null)
+ * @method Zend_View_Helper_Placeholder_Container_Abstract placeholder($name)
+ * @method void renderToPlaceholder($script, $placeholder)
+ * @method string serverUrl($requestUri = null)
+ * @method string translate($messageid = null)
+ * @method string url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+ * @method Zend_Http_UserAgent userAgent(Zend_Http_UserAgent $userAgent = null)
  */
 class Zend_View extends Zend_View_Abstract
 {

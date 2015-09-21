@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Dom
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -24,7 +24,7 @@
  * @package    Zend_Dom
  * @subpackage Query
  * @uses       Iterator
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -76,7 +76,6 @@ class Zend_Dom_Query_Result implements Iterator,Countable
      * @param  string|array $xpathQuery
      * @param  DOMDocument $document
      * @param  DOMNodeList $nodeList
-     * @return void
      */
     public function  __construct($cssQuery, $xpathQuery, DOMDocument $document, DOMNodeList $nodeList)
     {
@@ -119,7 +118,7 @@ class Zend_Dom_Query_Result implements Iterator,Countable
     /**
      * Iterator: rewind to first element
      *
-     * @return void
+     * @return DOMNode|null
      */
     public function rewind()
     {
@@ -163,7 +162,7 @@ class Zend_Dom_Query_Result implements Iterator,Countable
     /**
      * Iterator: move to next element
      *
-     * @return void
+     * @return DOMNode|null
      */
     public function next()
     {

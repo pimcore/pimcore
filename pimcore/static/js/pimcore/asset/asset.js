@@ -210,7 +210,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             });
 
             // only for videos and images
-            if (this.isAllowed("publish") && in_array(this.data.type,["image","video"])) {
+            if (this.isAllowed("publish") && in_array(this.data.type,["image","video","document"])) {
                 buttons.push({
                     text: t("clear_thumbnails"),
                     iconCls: "pimcore_icon_menu_clear_thumbnails",
@@ -325,7 +325,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 }
                 // reload versions
                 if (this.isAllowed("versions")) {
-                    if (typeof this.versions.reload == "function") {
+                    if (this["versions"] && typeof this.versions.reload == "function") {
                         this.versions.reload();
                     }
                 }

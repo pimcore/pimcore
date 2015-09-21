@@ -3,8 +3,8 @@
     $this->headTitle()->set($this->article->getTitle());
 
     $description = strip_tags($this->article->getText());
-    $description = Website_Tool_Text::getStringAsOneLine($description);
-    $description = Website_Tool_Text::cutStringRespectingWhitespace($description, 160);
+    $description = \Website\Tool\Text::getStringAsOneLine($description);
+    $description = \Website\Tool\Text::cutStringRespectingWhitespace($description, 160);
     $this->headMeta($description, "description");
 ?>
 <section class="area-wysiwyg">

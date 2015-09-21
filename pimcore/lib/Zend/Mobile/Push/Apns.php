@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -209,10 +209,10 @@ class Zend_Mobile_Push_Apns extends Zend_Mobile_Push_Abstract
     /**
      * Connect to the Push Server
      *
-     * @param string $env
-     * @return Zend_Mobile_Push_Abstract
+     * @param  int|string $env
      * @throws Zend_Mobile_Push_Exception
      * @throws Zend_Mobile_Push_Exception_ServerUnavailable
+     * @return Zend_Mobile_Push_Abstract
      */
     public function connect($env = self::SERVER_PRODUCTION_URI)
     {
@@ -271,13 +271,13 @@ class Zend_Mobile_Push_Apns extends Zend_Mobile_Push_Abstract
     /**
      * Send Message
      *
-     * @param Zend_Mobile_Push_Message_Apns $message
-     * @return boolean
+     * @param  Zend_Mobile_Push_Message_Abstract $message
      * @throws Zend_Mobile_Push_Exception
-     * @throws Zend_Mobile_Push_Exception_ServerUnavailable
+     * @throws Zend_Mobile_Push_Exception_InvalidPayload
      * @throws Zend_Mobile_Push_Exception_InvalidToken
      * @throws Zend_Mobile_Push_Exception_InvalidTopic
-     * @throws Zend_Mobile_Push_Exception_InvalidPayload
+     * @throws Zend_Mobile_Push_Exception_ServerUnavailable
+     * @return bool
      */
     public function send(Zend_Mobile_Push_Message_Abstract $message)
     {
@@ -305,7 +305,10 @@ class Zend_Mobile_Push_Apns extends Zend_Mobile_Push_Abstract
         if (!is_null($message->getBadge())) {
             $payload['aps']['badge'] = $message->getBadge();
         }
-        $payload['aps']['sound'] = $message->getSound();
+        $sound = $message->getSound();
+        if (!empty($sound)) {
+            $payload['aps']['sound'] = $sound;
+        }
 
         foreach($message->getCustomData() as $k => $v) {
             $payload[$k] = $v;

@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@
 /**
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub_Subscriber
@@ -145,8 +145,8 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * options for the Subscriber without calling all supported setter
      * methods in turn.
      *
-     * @param  array|Zend_Config $options Options array or Zend_Config instance
-     * @return void
+     * @param  array|Zend_Config|null $config Options array or Zend_Config instance
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      */
     public function __construct($config = null)
     {
@@ -158,7 +158,8 @@ class Zend_Feed_Pubsubhubbub_Subscriber
     /**
      * Process any injected configuration options
      *
-     * @param  array|Zend_Config $options Options array or Zend_Config instance
+     * @param  array|Zend_Config $config Options array or Zend_Config instance
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function setConfig($config)
@@ -207,6 +208,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * event will relate
      *
      * @param  string $url
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function setTopicUrl($url)
@@ -225,6 +227,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Set the topic URL (RSS or Atom feed) to which the intended (un)subscribe
      * event will relate
      *
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return string
      */
     public function getTopicUrl()
@@ -241,6 +244,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Set the number of seconds for which any subscription will remain valid
      *
      * @param  int $seconds
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function setLeaseSeconds($seconds)
@@ -270,6 +274,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * this Subscriber
      *
      * @param  string $url
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function setCallbackUrl($url)
@@ -288,6 +293,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Get the callback URL to be used by Hub Servers when communicating with
      * this Subscriber
      *
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return string
      */
     public function getCallbackUrl()
@@ -309,6 +315,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * order of occurance in the parameter list determines this preference.
      *
      * @param  string $mode Should be 'sync' or 'async'
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function setPreferredVerificationMode($mode)
@@ -339,6 +346,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Add a Hub Server URL supported by Publisher
      *
      * @param  string $url
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function addHubUrl($url)
@@ -398,7 +406,8 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Add authentication credentials for a given URL
      *
      * @param  string $url
-     * @param  array $authentication
+     * @param  array  $authentication
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function addAuthentication($url, array $authentication)
@@ -452,8 +461,9 @@ class Zend_Feed_Pubsubhubbub_Subscriber
     /**
      * Add an optional parameter to the (un)subscribe requests
      *
-     * @param  string $name
+     * @param  string      $name
      * @param  string|null $value
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function setParameter($name, $value = null)
@@ -483,8 +493,8 @@ class Zend_Feed_Pubsubhubbub_Subscriber
     /**
      * Add an optional parameter to the (un)subscribe requests
      *
-     * @param  string $name
-     * @param  string|null $value
+     * @param  array $parameters
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function setParameters(array $parameters)
@@ -499,6 +509,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Remove an optional parameter for the (un)subscribe requests
      *
      * @param  string $name
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Subscriber
      */
     public function removeParameter($name)
@@ -542,6 +553,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * to background save any verification tokens associated with a subscription
      * or other.
      *
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_Model_SubscriptionInterface
      */
     public function getStorage()
@@ -557,8 +569,6 @@ class Zend_Feed_Pubsubhubbub_Subscriber
     /**
      * Subscribe to one or more Hub Servers using the stored Hub URLs
      * for the given Topic URL (RSS or Atom feed)
-     *
-     * @return void
      */
     public function subscribeAll()
     {
@@ -568,8 +578,6 @@ class Zend_Feed_Pubsubhubbub_Subscriber
     /**
      * Unsubscribe from one or more Hub Servers using the stored Hub URLs
      * for the given Topic URL (RSS or Atom feed)
-     *
-     * @return void
      */
     public function unsubscribeAll()
     {
@@ -619,7 +627,8 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Executes an (un)subscribe request
      *
      * @param  string $mode
-     * @return void
+     * @throws Zend_Feed_Pubsubhubbub_Exception
+     * @throws Zend_Http_Client_Exception
      */
     protected function _doRequest($mode)
     {
@@ -669,7 +678,6 @@ class Zend_Feed_Pubsubhubbub_Subscriber
     /**
      * Get a basic prepared HTTP client for use
      *
-     * @param  string $mode Must be "subscribe" or "unsubscribe"
      * @return Zend_Http_Client
      */
     protected function _getHttpClient()
@@ -686,7 +694,8 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * client's POST body that are specific to the current Hub Server URL
      *
      * @param  string $hubUrl
-     * @param  mode $hubUrl
+     * @param  string $mode
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return string
      */
     protected function _getRequestParameters($hubUrl, $mode)
@@ -776,7 +785,6 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * requests to a Hub Server. Follows no particular method, which means
      * it might be improved/changed in future.
      *
-     * @param  string $hubUrl The Hub Server URL for which this token will apply
      * @return string
      */
     protected function _generateVerifyToken()
@@ -791,6 +799,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber
      * Simple helper to generate a verification token used in (un)subscribe
      * requests to a Hub Server.
      *
+     * @param  array  $params
      * @param  string $hubUrl The Hub Server URL for which this token will apply
      * @return string
      */

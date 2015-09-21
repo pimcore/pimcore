@@ -20,7 +20,7 @@
 class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions 
-	public $scope = "wl.basic wl.emails wl.signin wl.share wl.birthday";
+	public $scope = "wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.birthday";
 
 	
 	/**
@@ -46,7 +46,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 		$data = $this->api->get( "me" ); 
 
 		if ( ! isset( $data->id ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$this->user->profile->identifier    = (property_exists($data,'id'))?$data->id:"";
@@ -85,7 +85,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( 'User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
 
-		if ( ! $response->data && ( $response->error != 0 ) )
+		if ( !isset($response->data) || ( isset($response->errcode) &&  $response->errcode != 0 ) )
 		{
 			return array();
 		}
@@ -97,7 +97,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 
 			$uc->identifier   = (property_exists($item,'id'))?$item->id:"";
 			$uc->displayName  = (property_exists($item,'name'))?$item->name:"";
-
+			$uc->email        = (property_exists($item,'emails'))?$item->emails->preferred:"";
 			$contacts[] = $uc;
 		}
 		

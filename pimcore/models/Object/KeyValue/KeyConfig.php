@@ -15,10 +15,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Object\KeyValue;
 
+use Pimcore\Model;
+
+class KeyConfig extends Model\AbstractModel {
+
+    /**
+     * @var array
+     */
     static $cache = array();
 
+    /**
+     * @var bool
+     */
     static $cacheEnabled = false;
 
     /**
@@ -92,57 +102,81 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
         return $this->translator;
     }
 
-
+    /**
+     * @param $unit
+     * @return $this
+     */
     public function setUnit($unit)
     {
         $this->unit = $unit;
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getUnit()
     {
         return $this->unit;
     }
 
+    /**
+     * @param $values
+     * @return $this
+     */
     public function setPossibleValues($values)
     {
         $this->possiblevalues = $values;
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getPossibleValues()
     {
         return $this->possiblevalues;
     }
 
-
-
+    /**
+     * @param $type
+     * @return $this
+     */
     public function setType($type)
     {
         $this->type = $type;
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * @param $group
+     * @return $this
+     */
     public function setGroup($group)
     {
         $this->group = $group;
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getGroup()
     {
         return $this->group;
     }
 
-
     /**
      * @param integer $id
-     * @return Object_KeyValue_KeyConfig
+     * @return Model\Object\KeyValue\KeyConfig
      */
     public static function getById($id) {
         try {
@@ -158,7 +192,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
             }
 
             return $config;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
     }
@@ -182,7 +216,11 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
         return self::$cacheEnabled;
     }
 
-
+    /**
+     * @param $name
+     * @param null $groupId
+     * @return KeyConfig
+     */
     public static function getByName ($name, $groupId = null) {
         try {
             $config = new self();
@@ -191,14 +229,13 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
             $config->getResource()->getByName();
 
             return $config;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
     }
 
-
     /**
-     * @return Object_KeyValue_KeyConfig
+     * @return Model\Object\KeyValue\KeyConfig
      */
     public static function create() {
         $config = new self();
@@ -249,7 +286,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
 
     /** Sets the key description
      * @param $description
-     * @return Object_KeyValue_KeyConfig
+     * @return Model\Object\KeyValue\KeyConfig
      */
     public function setDescription($description) {
         $this->description = $description;
@@ -261,12 +298,12 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      * Deletes the key value key configuration
      */
     public function delete() {
-        Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preDelete", $this);
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
         }
         parent::delete();
-        Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postDelete", $this);
     }
 
     /**
@@ -279,22 +316,24 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
             $isUpdate = true;
-            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preUpdate", $this);
         } else {
-            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preAdd", $this);
         }
 
-        parent::save();
+        $model = parent::save();
 
         if ($isUpdate) {
-            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postUpdate", $this);
         } else {
-            Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postAdd", $this);
         }
+        return $model;
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -311,7 +350,8 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -342,8 +382,4 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     {
         return $this->mandatory;
     }
-
-
-
-
 }

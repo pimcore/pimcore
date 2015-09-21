@@ -59,7 +59,7 @@ pimcore.object.tags.abstract = Class.create({
     applyPermissionStyle: function (key, value, metaData, record) {
         var metadata = record.data.metadata;
 
-        if (metadata.permission !== undefined) {
+        if (metadata && metadata.permission !== undefined) {
             // evaluate permissions
             if (metadata.permission[key] !== undefined) {
                 if (metadata.permission[key].noView) {
@@ -70,7 +70,6 @@ pimcore.object.tags.abstract = Class.create({
                     metaData.css += " grid_value_noedit";
                 }
             }
-
         }
 
     },
@@ -79,7 +78,7 @@ pimcore.object.tags.abstract = Class.create({
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }
             return value;
@@ -178,7 +177,8 @@ pimcore.object.tags.abstract = Class.create({
 
     isInvalidMandatory:function () {
 
-        if (!this.isRendered() && this.getInitialData().length > 0) {
+        var initialData = this.getInitialData();
+        if (!this.isRendered() && initialData && initialData.length > 0) {
             return false;
         } else if (!this.isRendered()) {
             return true;

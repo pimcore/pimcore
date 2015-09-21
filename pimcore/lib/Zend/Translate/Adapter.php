@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage Zend_Translate_Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -36,7 +36,7 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage Zend_Translate_Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Translate_Adapter {
@@ -119,7 +119,9 @@ abstract class Zend_Translate_Adapter {
     /**
      * Generates the adapter
      *
-     * @param  array|Zend_Config $options Translation options for this adapter
+     * @param  string|array|Zend_Config $options Translation options for this adapter
+     * @param  string|array [$content]
+     * @param  string|Zend_Locale [$locale]
      * @throws Zend_Translate_Exception
      * @return void
      */

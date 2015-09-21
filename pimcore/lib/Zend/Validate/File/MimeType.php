@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -29,7 +29,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
@@ -127,7 +127,7 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
      * Mimetype to accept
      *
      * @param  string|array $mimetype MimeType
-     * @return void
+     * @throws Zend_Validate_Exception
      */
     public function __construct($mimetype)
     {
@@ -201,7 +201,7 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
      *
      * @param  string $file
      * @throws Zend_Validate_Exception When finfo can not read the magicfile
-     * @return Zend_Validate_File_MimeType Provides fluid interface
+     * @return Zend_Validate_File_MimeType Provides a fluent interface
      */
     public function setMagicFile($file)
     {
@@ -275,8 +275,8 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
      * Defines if the http header should be used
      * Note that this is unsave and therefor the default value is false
      *
-     * @param  boolean $checkHeader
-     * @return Zend_Validate_File_MimeType Provides fluid interface
+     * @param  boolean $headerCheck
+     * @return Zend_Validate_File_MimeType Provides a fluent interface
      */
     public function enableHeaderCheck($headerCheck = true)
     {
@@ -318,6 +318,7 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
      * Adds the mimetypes
      *
      * @param  string|array $mimetype The mimetypes to add for validation
+     * @throws Zend_Validate_Exception
      * @return Zend_Validate_File_Extension Provides a fluent interface
      */
     public function addMimeType($mimetype)
@@ -463,12 +464,10 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
     /**
      * Saves the provided error information by finfo_open to this instance
      *
-     * @param  integer $errno
-     * @param  string  $errstr
-     * @param  string  $errfile
-     * @param  integer $errline
-     * @param  array   $errcontext
-     * @return void
+     * @param integer $errno
+     * @param string  $errstr
+     * @param string  $errfile
+     * @param integer $errline
      */
     protected function _errorHandler($errno, $errstr, $errfile, $errline)
     {

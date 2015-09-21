@@ -28,6 +28,7 @@ if (!console) {
 
 // some globals
 var editables = [];
+var editablesReady = false;
 var editableNames = [];
 var editWindow;
 
@@ -72,7 +73,7 @@ Ext.onReady(function () {
 
     // this sets the height of the body and html element to the current absolute height of the page
     // this is because some pages set the body height, and the positioning is then done by "absolute"
-    // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the whole page
+    // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the entire page
     // dnd works only in the section covered by the specified body height
     window.setInterval(pimcore.edithelpers.setBodyHeight, 1000);
 
@@ -90,7 +91,7 @@ Ext.onReady(function () {
         }
         
         if(in_array(name,editableNames)) {
-            Ext.MessageBox.alert("ERROR","Dublicate editable name: " + name);
+            pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + name, "error");
         }
         editableNames.push(name);
 
@@ -115,6 +116,8 @@ Ext.onReady(function () {
                 window.scrollTo(editWindow.lastScrollposition.left, editWindow.lastScrollposition.top);
             }
         }
+
+        editablesReady = true;
 
         // add lazyload styles
         // this is necessary, because otherwise ext will overwrite many default styles (reset.css)

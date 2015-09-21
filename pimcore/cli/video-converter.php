@@ -13,6 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+chdir(__DIR__);
+
 include_once("startup.php");
 
-Asset_Video_Thumbnail_Processor::execute($argv[1]);
+use Pimcore\Model\Asset;
+
+Asset\Video\Thumbnail\Processor::execute($argv[1]);

@@ -15,23 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Property_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Property\Predefined;
 
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
+use Pimcore\Model;
 
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("properties_predefined");
-    }
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
@@ -88,9 +76,7 @@ class Property_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's a good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -100,7 +86,7 @@ class Property_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->validColumns)) {
+                if (in_array($key, $this->getValidTableColumns("properties_predefined"))) {
                     if(is_bool($value)) {
                         $value = (int)$value;
                     }
@@ -110,7 +96,7 @@ class Property_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("properties_predefined", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

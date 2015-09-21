@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9876 $"/>
+		<generation date="$Date: 2014-03-05 23:14:25 -0600 (Wed, 05 Mar 2014) $"/>
 		<language type="zu"/>
 	</identity>
 	<localeDisplayNames>
@@ -30,7 +30,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="be">isi-Belarusian</language>
 			<language type="bem">Isi-Bemba</language>
 			<language type="bg">isi-Bulgari</language>
-			<language type="bh">IsiBhihari</language>
 			<language type="bn">isi-Bengali</language>
 			<language type="bo">isi-Tibetan</language>
 			<language type="br">Isi-Breton</language>
@@ -3192,6 +3191,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<unit type="temperature-celsius">
 				<unitPattern count="one">{0}°</unitPattern>
 				<unitPattern count="other">{0}°</unitPattern>
+			</unit>
+			<unit type="temperature-fahrenheit">
+				<unitPattern count="one">{0}°F</unitPattern>
+				<unitPattern count="other">{0}°F</unitPattern>
 			</unit>
 			<unit type="volume-liter">
 				<unitPattern count="one">{0} l</unitPattern>

@@ -15,35 +15,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Snippet_Resource extends Document_PageSnippet_Resource {
+namespace Pimcore\Model\Document\Snippet;
 
-    /**
-     * Contains the valid database colums
-     *
-     * @var array
-     */
-    protected $validColumnsSnippet = array();
+use Pimcore\Model;
 
-
-    /**
-     * Get the valid database columns from database
-     *
-     * @return void
-     */
-    public function init() {
-
-        // document
-        parent::init();
-
-        // snippet
-        $this->validColumnsSnippet = $this->getValidTableColumns("documents_snippet");
-    }
+class Resource extends Model\Document\PageSnippet\Resource {
 
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
-     * @return void
+     * @throws \Exception
      */
     public function getById($id = null) {
         try {
@@ -60,21 +42,21 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new Exception("Snippet with the ID " . $this->model->getId() . " doesn't exists");
+                throw new \Exception("Snippet with the ID " . $this->model->getId() . " doesn't exists");
             }
 
             $this->assignVariablesToModel($data);
 
             //$this->getElements();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
         }
     }
 
     /**
      * Create a new record for the object in the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function create() {
         try {
@@ -84,70 +66,23 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
                 "id" => $this->model->getId()
             ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
 
-    }
-
-    /**
-     * Updates the object's data to the database, it's an good idea to use save() instead
-     *
-     * @return void
-     */
-    public function update() {
-        try {
-            $this->model->setModificationDate(time());
-            $document = get_object_vars($this->model);
-
-            foreach ($document as $key => $value) {
-
-                // check if the getter exists
-                $getter = "get" . ucfirst($key);
-                if(!method_exists($this->model,$getter)) {
-                    continue;
-                }
-
-                // get the value from the getter
-                if(in_array($key, $this->validColumnsDocument) || in_array($key, $this->validColumnsSnippet)) {
-                    $value = $this->model->$getter();
-                } else {
-                    continue;
-                }
-
-
-                if(is_bool($value)) {
-                    $value = (int)$value;
-                }
-                if (in_array($key, $this->validColumnsDocument)) {
-                    $dataDocument[$key] = $value;
-                }
-                if (in_array($key, $this->validColumnsSnippet)) {
-                    $dataSnippet[$key] = $value;
-                }
-            }
-            
-            $this->db->insertOrUpdate("documents", $dataDocument);
-            $this->db->insertOrUpdate("documents_snippet", $dataSnippet);
-
-            $this->updateLocks();
-        }
-        catch (Exception $e) {
-            throw $e;
-        }
     }
 
     /**
      * Deletes the object from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
         try {
             $this->db->delete("documents_snippet", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Node
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -35,7 +35,7 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Node
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Ldap_Node_Abstract implements ArrayAccess, Countable
@@ -95,7 +95,7 @@ abstract class Zend_Ldap_Node_Abstract implements ArrayAccess, Countable
      * This is an online method.
      *
      * @param  Zend_Ldap $ldap
-     * @return Zend_Ldap_Node_Abstract Provides a fluid interface
+     * @return Zend_Ldap_Node_Abstract Provides a fluent interface
      * @throws Zend_Ldap_Exception
      */
     public function reload(Zend_Ldap $ldap = null)

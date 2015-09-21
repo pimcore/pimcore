@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Asset_Image_Thumbnail_Config {
+
+namespace Pimcore\Model\Asset\Image\Thumbnail;
+
+use Pimcore\Tool\Serialize;
+
+class Config {
 
     /**
      * format of array:
@@ -71,7 +75,7 @@ class Asset_Image_Thumbnail_Config {
 
     /**
      * @param $config
-     * @return Asset_Image_Thumbnail_Config|bool
+     * @return self|bool
      */
     public static function getByAutoDetect ($config) {
 
@@ -79,22 +83,22 @@ class Asset_Image_Thumbnail_Config {
 
         if (is_string($config)) {
             try {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByName($config);
+                $thumbnail = self::getByName($config);
             }
-            catch (Exception $e) {
-                Logger::error("requested thumbnail " . $config . " is not defined");
+            catch (\Exception $e) {
+                \Logger::error("requested thumbnail " . $config . " is not defined");
                 return false;
             }
         }
         else if (is_array($config)) {
             // check if it is a legacy config or a new one
             if(array_key_exists("items", $config)) {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByArrayConfig($config);
+                $thumbnail = self::getByArrayConfig($config);
             } else {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByLegacyConfig($config);
+                $thumbnail = self::getByLegacyConfig($config);
             }
         }
-        else if ($config instanceof Asset_Image_Thumbnail_Config) {
+        else if ($config instanceof self) {
             $thumbnail = $config;
         }
 
@@ -104,23 +108,23 @@ class Asset_Image_Thumbnail_Config {
     /**
      * @static
      * @param  $name
-     * @return Asset_Image_Thumbnail_Config
+     * @return self
      */
     public static function getByName ($name) {
 
         $cacheKey = "imagethumb_" . crc32($name);
 
-        if(Zend_Registry::isRegistered($cacheKey)) {
-            $pipe = Zend_Registry::get($cacheKey);
+        if(\Zend_Registry::isRegistered($cacheKey)) {
+            $pipe = \Zend_Registry::get($cacheKey);
             $pipe->setName($name); // set the name again because in documents there's an automated prefixing logic
         } else {
             $pipe = new self();
             $pipe->setName($name);
             if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
-                throw new Exception("thumbnail definition : " . $name . " does not exist");
+                throw new \Exception("thumbnail definition : " . $name . " does not exist");
             }
 
-            Zend_Registry::set($cacheKey, $pipe);
+            \Zend_Registry::set($cacheKey, $pipe);
         }
 
         // only return clones of configs, this is necessary since we cache the configs in the registry (see above)
@@ -139,7 +143,7 @@ class Asset_Image_Thumbnail_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/imagepipelines";
         if(!is_dir($dir)) {
-            Pimcore_File::mkdir($dir);
+            \Pimcore\File::mkdir($dir);
         }
 
         return $dir;
@@ -195,8 +199,8 @@ class Asset_Image_Thumbnail_Config {
             unset($arrayConfig["medias"]);
         }
 
-        $config = new Zend_Config($arrayConfig);
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($arrayConfig);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => $this->getConfigFile()
         ));
@@ -210,7 +214,7 @@ class Asset_Image_Thumbnail_Config {
      */
     public function load () {
 
-        $configXml = new Zend_Config_Xml($this->getConfigFile());
+        $configXml = new \Zend_Config_Xml($this->getConfigFile());
         $configArray = $configXml->toArray();
 
         if(array_key_exists("items",$configArray) && is_array($configArray["items"]["item"])) {
@@ -498,27 +502,27 @@ class Asset_Image_Thumbnail_Config {
     /**
      * @static
      * @param $config
-     * @return Asset_Image_Thumbnail_Config
+     * @return self
      */
     public static function getByArrayConfig ($config) {
-        $pipe = new Asset_Image_Thumbnail_Config();
+        $pipe = new self();
 
-        if($config["format"]) {
+        if(isset($config["format"]) && $config["format"]) {
             $pipe->setFormat($config["format"]);
         }
-        if($config["quality"]) {
+        if(isset($config["quality"]) && $config["quality"]) {
             $pipe->setQuality($config["quality"]);
         }
-        if($config["items"]) {
+        if(isset($config["items"]) && $config["items"]) {
             $pipe->setItems($config["items"]);
         }
 
-        if($config["highResolution"]) {
+        if(isset($config["highResolution"]) && $config["highResolution"]) {
             $pipe->setHighResolution($config["highResolution"]);
         }
 
         // set name
-        $hash = md5(Pimcore_Tool_Serialize::serialize($config));
+        $hash = md5(Serialize::serialize($pipe));
         $pipe->setName("auto_" . $hash);
 
         return $pipe;
@@ -529,30 +533,19 @@ class Asset_Image_Thumbnail_Config {
      * @depricated
      * @static
      * @param $config
-     * @return Asset_Image_Thumbnail_Config
+     * @return self
      */
     public static function getByLegacyConfig ($config) {
 
-        $pipe = new Asset_Image_Thumbnail_Config();
-        $hash = md5(Pimcore_Tool_Serialize::serialize($config));
-        $pipe->setName("auto_" . $hash);
+        $pipe = new self();
 
         if(isset($config["format"])) {
             $pipe->setFormat($config["format"]);
         }
+
         if(isset($config["quality"])) {
             $pipe->setQuality($config["quality"]);
         }
-        /*if ($config["cropPercent"]) {
-            $pipe->addItem("cropPercent", array(
-                "width" => $config["cropWidth"],
-                "height" => $config["cropHeight"],
-                "y" => $config["cropTop"],
-                "x" => $config["cropLeft"]
-            ));
-        }*/
-
-
 
         if (isset($config["cover"])) {
             $pipe->addItem("cover", array(
@@ -601,7 +594,7 @@ class Asset_Image_Thumbnail_Config {
                 $pipe->addItem("scaleByWidth", array(
                     "width" => $config["width"]
                 ));
-            } else {
+            } else if (isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("resize", array(
                     "width" => $config["width"],
                     "height" => $config["height"]
@@ -612,6 +605,9 @@ class Asset_Image_Thumbnail_Config {
         if(isset($config["highResolution"])) {
             $pipe->setHighResolution($config["highResolution"]);
         }
+
+        $hash = md5(Serialize::serialize($pipe));
+        $pipe->setName("auto_" . $hash);
 
         return $pipe;
     }

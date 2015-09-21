@@ -19,8 +19,7 @@
  * Service definition for GroupsMigration (v1).
  *
  * <p>
- * Groups Migration Api.
- * </p>
+ * Groups Migration Api.</p>
  *
  * <p>
  * For more information about this service, see the API
@@ -31,7 +30,9 @@
  */
 class Google_Service_GroupsMigration extends Google_Service
 {
-
+  /** Manage messages in groups on your domain. */
+  const APPS_GROUPS_MIGRATION =
+      "https://www.googleapis.com/auth/apps.groups.migration";
 
   public $archive;
   
@@ -44,6 +45,7 @@ class Google_Service_GroupsMigration extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'groups/v1/groups/';
     $this->version = 'v1';
     $this->serviceName = 'groupsmigration';
@@ -86,8 +88,7 @@ class Google_Service_GroupsMigration_Archive_Resource extends Google_Service_Res
   /**
    * Inserts a new mail into the archive of the Google group. (archive.insert)
    *
-   * @param string $groupId
-   * The group ID
+   * @param string $groupId The group ID
    * @param array $optParams Optional parameters.
    * @return Google_Service_GroupsMigration_Groups
    */
@@ -104,24 +105,24 @@ class Google_Service_GroupsMigration_Archive_Resource extends Google_Service_Res
 
 class Google_Service_GroupsMigration_Groups extends Google_Model
 {
+  protected $internal_gapi_mappings = array(
+  );
   public $kind;
   public $responseCode;
+
 
   public function setKind($kind)
   {
     $this->kind = $kind;
   }
-
   public function getKind()
   {
     return $this->kind;
   }
-
   public function setResponseCode($responseCode)
   {
     $this->responseCode = $responseCode;
   }
-
   public function getResponseCode()
   {
     return $this->responseCode;

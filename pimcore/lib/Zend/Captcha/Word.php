@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -30,7 +30,7 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -187,7 +187,7 @@ abstract class Zend_Captcha_Word extends Zend_Captcha_Base
      * Set captcha identifier
      *
      * @param string $id
-     * return Zend_Captcha_Word
+     * @return Zend_Captcha_Word
      */
     protected function _setId ($id)
     {
@@ -366,7 +366,8 @@ abstract class Zend_Captcha_Word extends Zend_Captcha_Base
      * Validate the word
      *
      * @see    Zend_Validate_Interface::isValid()
-     * @param  mixed $value
+     * @param  mixed      $value
+     * @param  array|null $context
      * @return boolean
      */
     public function isValid($value, $context = null)

@@ -12,9 +12,10 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-abstract class Pimcore_Video_Adapter {
 
+namespace Pimcore\Video;
+
+abstract class Adapter {
 
     /**
      * @var int
@@ -44,7 +45,8 @@ abstract class Pimcore_Video_Adapter {
 
 
     /**
-     * @param int $audioBitrate
+     * @param $audioBitrate
+     * @return $this
      */
     public function setAudioBitrate($audioBitrate)
     {
@@ -61,7 +63,8 @@ abstract class Pimcore_Video_Adapter {
     }
 
     /**
-     * @param int $videoBitrate
+     * @param $videoBitrate
+     * @return $this
      */
     public function setVideoBitrate($videoBitrate)
     {
@@ -78,14 +81,13 @@ abstract class Pimcore_Video_Adapter {
     }
 
     /**
-     * @param string $file
-     * @return Pimcore_Video_Adapter
+     * @param $file
+     * @return mixed
      */
     public abstract function load($file);
 
     /**
-     * @abstract
-     * @return Pimcore_Video_Adapter
+     * @return mixed
      */
     public abstract function save ();
 
@@ -112,7 +114,8 @@ abstract class Pimcore_Video_Adapter {
     public abstract function isFinished();
 
     /**
-     * @param string $format
+     * @param $format
+     * @return $this
      */
     public function setFormat($format)
     {
@@ -129,7 +132,8 @@ abstract class Pimcore_Video_Adapter {
     }
 
     /**
-     * @param string $destinationFile
+     * @param $destinationFile
+     * @return $this
      */
     public function setDestinationFile($destinationFile)
     {
@@ -146,7 +150,8 @@ abstract class Pimcore_Video_Adapter {
     }
 
     /**
-     * @param int $length
+     * @param $length
+     * @return $this
      */
     public function setLength($length)
     {
@@ -161,6 +166,4 @@ abstract class Pimcore_Video_Adapter {
     {
         return $this->length;
     }
-
-
 }

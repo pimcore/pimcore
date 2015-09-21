@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="tig"/>
 	</identity>
 	<localeDisplayNames>
@@ -23,7 +23,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ba" draft="unconfirmed">ባስኪርኛ</language>
 			<language type="be" draft="unconfirmed">ቤላራሻኛ</language>
 			<language type="bg" draft="unconfirmed">ቡልጋሪኛ</language>
-			<language type="bh" draft="unconfirmed">ቢሃሪ</language>
 			<language type="bi" draft="unconfirmed">ቢስላምኛ</language>
 			<language type="bn" draft="unconfirmed">በንጋሊኛ</language>
 			<language type="bo" draft="unconfirmed">ትበትንኛ</language>
@@ -88,7 +87,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mk" draft="unconfirmed">ማከዶኒኛ</language>
 			<language type="ml" draft="unconfirmed">ማላያላምኛ</language>
 			<language type="mn" draft="unconfirmed">ሞንጎላዊኛ</language>
-			<language type="mo" draft="unconfirmed">ሞልዳቫዊና</language>
 			<language type="mr" draft="unconfirmed">ማራዚኛ</language>
 			<language type="ms" draft="unconfirmed">ማላይኛ</language>
 			<language type="mt" draft="unconfirmed">ማልቲስኛ</language>
@@ -108,6 +106,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm" draft="unconfirmed">ሮማንስ</language>
 			<language type="rn" draft="unconfirmed">ሩንዲኛ</language>
 			<language type="ro" draft="unconfirmed">ሮማኒያን</language>
+			<language type="ro_MD">ሞልዳቫዊና</language>
 			<language type="ru" draft="unconfirmed">ራሽኛ</language>
 			<language type="rw" draft="unconfirmed">ኪንያርዋንድኛ</language>
 			<language type="sa" draft="unconfirmed">ሳንስክሪትኛ</language>

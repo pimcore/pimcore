@@ -13,10 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Reports {
+use Pimcore\Google;
+use Pimcore\Model\Document;
+
+class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Reports {
 
     /**
-     * @var apiAnalyticsService
+     * @var \Google_Client
      */
     protected $service;
 
@@ -24,7 +27,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
     public function init () {
         parent::init();
 
-        $client = Pimcore_Google_Api::getServiceClient();
+        $client = Google\Api::getServiceClient();
         if(!$client) {
             die("Google Analytics is not configured");
         }
@@ -34,7 +37,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function deeplinkAction () {
 
-        $config = Pimcore_Google_Analytics::getSiteConfig();
+        $config = Google\Analytics::getSiteConfig();
 
         $url = $this->getParam("url");
         $url = str_replace(array("{accountId}", "{internalWebPropertyId}", "{id}"), array($config->accountid, $config->internalid, $config->profile), $url);
@@ -76,7 +79,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
             $this->_helper->json($data);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
 
             $this->_helper->json(false);
         }
@@ -89,7 +92,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         try {
            $site = Site::getById($siteId);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return;
         }
 
@@ -100,6 +103,11 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         if($this->getParam("type") == "document" && $this->getParam("id")) {
             $doc = Document::getById($this->getParam("id"));
             $path = $doc->getFullPath();
+
+            if($doc instanceof Document\Page && $doc->getPrettyUrl()) {
+                $path = $doc->getPrettyUrl();
+            }
+
             if($this->getParam("site")) {
                 $site = Site::getById($this->getParam("site"));
                 $path = preg_replace("@^" . preg_quote($site->getRootPath(), "@") . "/@", "/", $path);
@@ -113,7 +121,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function chartmetricdataAction () {
 
-        $config = Pimcore_Google_Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite());
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
 
@@ -191,7 +199,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function summaryAction () {
 
-        $config = Pimcore_Google_Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite());
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
 
@@ -248,7 +256,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $outputData[$order[$key]] = array(
                 "label" => str_replace("ga:","",$key),
                 "value" => round($value,2),
-                "chart" => Pimcore_Helper_ImageChart::lineSmall($dailyDataGrouped[$key]),
+                "chart" => \Pimcore\Helper\ImageChart::lineSmall($dailyDataGrouped[$key]),
                 "metric" => str_replace("ga:","",$key)
             );
         }
@@ -262,7 +270,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function sourceAction () {
 
-        $config = Pimcore_Google_Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite());
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
 
@@ -307,7 +315,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function dataExplorerAction () {
 
-        $config = Pimcore_Google_Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite());
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
         $metric = "ga:pageviews";
@@ -370,7 +378,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function navigationAction () {
 
-        $config = Pimcore_Google_Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite());
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
 
@@ -503,13 +511,13 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
     public function getDimensionsAction () {
 
-        $this->_helper->json(array("data" => Pimcore_Google_Api::getAnalyticsDimensions()));
+        $this->_helper->json(array("data" => Google\Api::getAnalyticsDimensions()));
     }
 
 
     public function getMetricsAction () {
 
-        $this->_helper->json(array("data" => Pimcore_Google_Api::getAnalyticsMetrics()));
+        $this->_helper->json(array("data" => Google\Api::getAnalyticsMetrics()));
     }
 
     public function getSegmentsAction() {
@@ -531,8 +539,8 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
     protected function formatDimension ($type, $value) {
 
         if(strpos($type,"date") !== false) {
-            $date = new Zend_Date(strtotime($value));
-            return $date->get(Zend_Date::DATE_MEDIUM);
+            $date = new \Zend_Date(strtotime($value));
+            return $date->get(\Zend_Date::DATE_MEDIUM);
         }
 
         return $value;

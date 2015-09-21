@@ -103,12 +103,14 @@ Ext.onReady(function () {
             var errorMessage = "";
 
             try {
-                errorMessage = "Status: " + response.status + " | " + response.statusText + "\n";
+                var date = new Date();
+                errorMessage += "Date: " + date.toISOString() + "\n";
+                errorMessage += "Status: " + response.status + " | " + response.statusText + "\n";
                 errorMessage += "URL: " + options.url + "\n";
                 if(options["params"]) {
                     errorMessage += "Params:\n";
                     Ext.iterate(options.params, function (key, value) {
-                        errorMessage += ( "-> " + key + ": " + value + "\n");
+                        errorMessage += ( "-> " + key + ": " + value.substr(0,500) + "\n");
                     });
                 }
                 if(options["method"]) {
@@ -116,7 +118,8 @@ Ext.onReady(function () {
                 }
                 errorMessage += "Message: \n" + response.responseText;
             } catch (e) {
-                errorMessage = response.responseText;
+                errorMessage += "\n\n";
+                errorMessage += response.responseText;
             }
             pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
         }
@@ -323,12 +326,6 @@ Ext.onReady(function () {
         statusbar.add("-");
     }
 
-    // check for flash player
-    if (!swfobject.hasFlashPlayerVersion("11")) {
-        statusbar.add('<div class="pimcore_statusbar_flash">' + t("update_flash") + "</div>");
-        statusbar.add("-");
-    }
-
     statusbar.add("->");
     statusbar.add('&copy by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
                 + 'pimcore GmbH</a> - pimcore Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
@@ -491,7 +488,7 @@ Ext.onReady(function () {
     }
 
 
-    if (pimcore.globalmanager.get("user").welcomescreen) {
+    if (user.isAllowed("dashboards") && pimcore.globalmanager.get("user").welcomescreen) {
         layoutPortal = new pimcore.layout.portal();
         pimcore.globalmanager.add("layout_portal", layoutPortal);
     }
@@ -505,8 +502,10 @@ Ext.onReady(function () {
 });
 
 
+pimcore["intervals"] = {};
+
 //add missing translation keys
-window.setInterval(function () {
+pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function () {
     var missingTranslations = pimcore.globalmanager.get("translations_admin_missing");
     var addedTranslations = pimcore.globalmanager.get("translations_admin_added");
     if (missingTranslations.length > 0) {
@@ -525,7 +524,7 @@ window.setInterval(function () {
 }, 30000);
 
 // session renew
-window.setInterval(function () {
+pimcore["intervals"]["ping"] = window.setInterval(function () {
     Ext.Ajax.request({
         url:"/admin/misc/ping",
         success:function (response) {

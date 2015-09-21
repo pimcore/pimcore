@@ -15,7 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Glossary extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+class Glossary extends AbstractModel {
 
     /**
      * @var integer
@@ -198,7 +200,8 @@ class Glossary extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param boolean $casesensitive
+     * @param $casesensitive
+     * @return $this
      */
     public function setCasesensitive($casesensitive)
     {
@@ -215,7 +218,8 @@ class Glossary extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param boolean $exactmatch
+     * @param $exactmatch
+     * @return $this
      */
     public function setExactmatch($exactmatch)
     {
@@ -232,7 +236,8 @@ class Glossary extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $site
+     * @param $site
+     * @return $this
      */
     public function setSite($site)
     {
@@ -252,7 +257,8 @@ class Glossary extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -269,7 +275,8 @@ class Glossary extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -284,6 +291,4 @@ class Glossary extends Pimcore_Model_Abstract {
     {
         return $this->creationDate;
     }
-
-
 }

@@ -1,1 +1,1 @@
-pimcore.available_languages = <?php echo Zend_Json::encode($this->languages) ?>;
+pimcore.available_languages = <?= \Zend_Json::encode($this->languages) ?>;

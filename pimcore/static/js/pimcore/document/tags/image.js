@@ -22,15 +22,20 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.options = this.parseOptions(options);
 
         this.options = options;
+        this.options.style = '';
+
+        if (!this.options["height"]) {
+            if (this.options["defautHeight"]){
+                this.options.style += (" min-height:" + this.options["defautHeight"] + "px");
+            }else{
+                this.options.style += (" min-height:100px");
+            }
+        }
 
         this.originalDimensions = {
             width: this.options.width,
             height: this.options.height
         };
-
-        if (!this.options.height) {
-            this.options.height = 100;
-        }
 
         if (data) {
             this.datax = data;
@@ -293,24 +298,28 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         }
 
 
-        if (!this.options["thumbnail"] && !this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getEl().getWidth()
-                + "/aspectratio/true?" + Ext.urlEncode(this.datax);
-        } else if (this.originalDimensions["width"]) {
-            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.originalDimensions["width"]
-                + "/aspectratio/true?" + Ext.urlEncode(this.datax);
-        } else if (this.originalDimensions["height"]) {
-            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/height/"
+        if (!this.options["thumbnail"]) {
+            if(!this.originalDimensions["width"] && !this.originalDimensions["height"]) {
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getEl().getWidth()
+                    + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+            } else if (this.originalDimensions["width"]) {
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.originalDimensions["width"]
+                    + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+            } else if (this.originalDimensions["height"]) {
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/height/"
                 + this.originalDimensions["height"] + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+            }
         } else {
             if (typeof this.options.thumbnail == "string") {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail
                     + "?" + Ext.urlEncode(this.datax);
-            }
-            else if (this.options.thumbnail.width || this.options.thumbnail.height) {
+            } else if (this.options.thumbnail.width || this.options.thumbnail.height) {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/"
                     + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?"
                     + Ext.urlEncode(this.datax);
+            } else {
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/?config="
+                    + encodeURIComponent(Ext.encode(this.options.thumbnail));
             }
         }
 
@@ -351,6 +360,10 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
             if(Ext.isIE && width==28 && height==30){
                 //IE missing image placeholder
+                return;
+            }
+            if(Ext.isGecko && width==24 && height==24){
+                // firefox missing image placeholder
                 return;
             }
 
@@ -423,7 +436,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax["hotspots"] = data["hotspots"];
             this.datax["marker"] = data["marker"];
         }.bind(this));
-        editor.open(true);
+        editor.open(false);
     },
 
     getValue: function () {

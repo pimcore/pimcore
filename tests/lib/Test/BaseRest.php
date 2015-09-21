@@ -7,9 +7,10 @@
  */
 class Test_BaseRest extends Test_Base{
 
+    protected static $testConfig;
+
     public static function getRestClient(){
-        $testConfig = new Zend_Config_Xml(TESTS_PATH . "/config/testconfig.xml");
-        $testConfig = $testConfig->toArray();
+        $testConfig = self::getTestConfig();
 
         $client = new Pimcore_Tool_RestClient();
         $client->enableTestMode();
@@ -18,4 +19,25 @@ class Test_BaseRest extends Test_Base{
         return $client;
     }
 
+    /**
+     * @return mixed
+     */
+    public static function getTestConfig()
+    {
+        if(!self::$testConfig) {
+            $testConfig = new Zend_Config_Xml(TESTS_PATH . "/config/testconfig.xml");
+            $testConfig = $testConfig->toArray();
+            self::$testConfig = $testConfig;
+        }
+
+        return self::$testConfig;
+    }
+
+    /**
+     * @param mixed $testConfig
+     */
+    public static function setTestConfig($testConfig)
+    {
+        self::$testConfig = $testConfig;
+    }
 }

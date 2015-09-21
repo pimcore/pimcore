@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Mime
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -27,7 +27,7 @@
 /**
  * @category   Zend
  * @package    Zend_Mime
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Mime_Decode
@@ -48,7 +48,7 @@ class Zend_Mime_Decode
         $body = str_replace("\r", '', $body);
 
         $start = 0;
-        $res = array();
+        $res   = array();
         // find every mime part limiter and cut out the
         // string before it.
         // the part before the first boundary string is discarded:
@@ -68,12 +68,13 @@ class Zend_Mime_Decode
 
         // no more parts, find end boundary
         $p = strpos($body, '--' . $boundary . '--', $start);
-        if ($p===false) {
+        if ($p === false) {
             throw new Zend_Exception('Not a valid Mime Message: End Missing');
         }
 
         // the remaining part also needs to be parsed:
-        $res[] = substr($body, $start, $p-$start);
+        $res[] = substr($body, $start, $p - $start);
+
         return $res;
     }
 
@@ -83,11 +84,13 @@ class Zend_Mime_Decode
      *
      * @param  string $message  raw message content
      * @param  string $boundary boundary as found in content-type
-     * @param  string $EOL EOL string; defaults to {@link Zend_Mime::LINEEND}
+     * @param  string $EOL      EOL string; defaults to {@link Zend_Mime::LINEEND}
      * @return array|null parts as array('header' => array(name => value), 'body' => content), null if no parts found
      * @throws Zend_Exception
      */
-    public static function splitMessageStruct($message, $boundary, $EOL = Zend_Mime::LINEEND)
+    public static function splitMessageStruct(
+        $message, $boundary, $EOL = Zend_Mime::LINEEND
+    )
     {
         $parts = self::splitMime($message, $boundary);
         if (count($parts) <= 0) {
@@ -96,9 +99,12 @@ class Zend_Mime_Decode
         $result = array();
         foreach ($parts as $part) {
             self::splitMessage($part, $headers, $body, $EOL);
-            $result[] = array('header' => $headers,
-                              'body'   => $body    );
+            $result[] = array(
+                'header' => $headers,
+                'body'   => $body
+            );
         }
+
         return $result;
     }
 
@@ -111,17 +117,28 @@ class Zend_Mime_Decode
      * @param  string $message raw message with header and optional content
      * @param  array  $headers output param, array with headers as array(name => value)
      * @param  string $body    output param, content of message
-     * @param  string $EOL EOL string; defaults to {@link Zend_Mime::LINEEND}
+     * @param  string $EOL     EOL string; defaults to {@link Zend_Mime::LINEEND}
      * @return null
      */
-    public static function splitMessage($message, &$headers, &$body, $EOL = Zend_Mime::LINEEND)
+    public static function splitMessage(
+        $message, &$headers, &$body, $EOL = Zend_Mime::LINEEND
+    )
     {
         // check for valid header at first line
         $firstline = strtok($message, "\n");
         if (!preg_match('%^[^\s]+[^:]*:%', $firstline)) {
             $headers = array();
             // TODO: we're ignoring \r for now - is this function fast enough and is it safe to asume noone needs \r?
-            $body = str_replace(array("\r", "\n"), array('', $EOL), $message);
+            $body = str_replace(
+                array(
+                    "\r",
+                    "\n"
+                ), array(
+                    '',
+                    $EOL
+                ), $message
+            );
+
             return;
         }
 
@@ -129,20 +146,27 @@ class Zend_Mime_Decode
         // default is set new line
         if (strpos($message, $EOL . $EOL)) {
             list($headers, $body) = explode($EOL . $EOL, $message, 2);
-        // next is the standard new line
-        } else if ($EOL != "\r\n" && strpos($message, "\r\n\r\n")) {
-            list($headers, $body) = explode("\r\n\r\n", $message, 2);
-        // next is the other "standard" new line
-        } else if ($EOL != "\n" && strpos($message, "\n\n")) {
-            list($headers, $body) = explode("\n\n", $message, 2);
-        // at last resort find anything that looks like a new line
+            // next is the standard new line
         } else {
-            @list($headers, $body) = @preg_split("%([\r\n]+)\\1%U", $message, 2);
+            if ($EOL != "\r\n" && strpos($message, "\r\n\r\n")) {
+                list($headers, $body) = explode("\r\n\r\n", $message, 2);
+                // next is the other "standard" new line
+            } else {
+                if ($EOL != "\n" && strpos($message, "\n\n")) {
+                    list($headers, $body) = explode("\n\n", $message, 2);
+                    // at last resort find anything that looks like a new line
+                } else {
+                    @list($headers, $body) =
+                        @preg_split("%([\r\n]+)\\1%U", $message, 2);
+                }
+            }
         }
 
-        $headers = iconv_mime_decode_headers($headers, ICONV_MIME_DECODE_CONTINUE_ON_ERROR);
+        $headers = iconv_mime_decode_headers(
+            $headers, ICONV_MIME_DECODE_CONTINUE_ON_ERROR
+        );
 
-        if ($headers === false ) {
+        if ($headers === false) {
             // an error occurs during the decoding
             return;
         }
@@ -162,7 +186,10 @@ class Zend_Mime_Decode
                 $headers[$lower][] = $header;
                 continue;
             }
-            $headers[$lower] = array($headers[$lower], $header);
+            $headers[$lower] = array(
+                $headers[$lower],
+                $header
+            );
         }
     }
 
@@ -181,20 +208,23 @@ class Zend_Mime_Decode
     /**
      * split a header field like content type in its different parts
      *
-     * @param  string $type       header field
-     * @param  string $wantedPart the wanted part, else an array with all parts is returned
-     * @param  string $firstName  key name for the first part
-     * @return string|array wanted part or all parts as array($firstName => firstPart, partname => value)
+     * @param  string     $field
+     * @param  string     $wantedPart the wanted part, else an array with all parts is returned
+     * @param  int|string $firstName  key name for the first part
      * @throws Zend_Exception
+     * @return string|array wanted part or all parts as array($firstName => firstPart, partname => value)
      */
-    public static function splitHeaderField($field, $wantedPart = null, $firstName = 0)
+    public static function splitHeaderField(
+        $field, $wantedPart = null, $firstName = 0
+    )
     {
         $wantedPart = strtolower($wantedPart);
-        $firstName = strtolower($firstName);
+        $firstName  = strtolower($firstName);
 
         // special case - a bit optimized
         if ($firstName === $wantedPart) {
             $field = strtok($field, ';');
+
             return $field[0] == '"' ? substr($field, 1, -1) : $field;
         }
 
@@ -211,8 +241,10 @@ class Zend_Mime_Decode
                 if ($matches[2][$key][0] != '"') {
                     return $matches[2][$key];
                 }
+
                 return substr($matches[2][$key], 1, -1);
             }
+
             return null;
         }
 
@@ -234,8 +266,8 @@ class Zend_Mime_Decode
      *
      * The charset of the returned string depends on your iconv settings.
      *
-     * @param  string encoded string
-     * @return string decoded string
+     * @param  string $string Encoded string
+     * @return string         Decoded string
      */
     public static function decodeQuotedPrintable($string)
     {

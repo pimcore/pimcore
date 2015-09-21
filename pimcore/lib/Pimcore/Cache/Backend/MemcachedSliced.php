@@ -13,7 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Cache\Backend;
 
-class Pimcore_Cache_Backend_MemcachedSliced extends Pimcore_Cache_Backend_Memcached {
+class MemcachedSliced extends Memcached {
 
 }

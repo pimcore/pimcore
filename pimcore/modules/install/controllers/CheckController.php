@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Install_CheckController extends Pimcore_Controller_Action {
+use Pimcore\Model\User;
+
+class Install_CheckController extends \Pimcore\Controller\Action {
 
 
     public function init() {
@@ -21,7 +23,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         if (is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
             // session authentication, only possible if user is logged in
-            $user = Pimcore_Tool_Authentication::authenticateSession();
+            $user = \Pimcore\Tool\Authentication::authenticateSession();
             if(!$user instanceof User) {
                die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.xml for the time of the check.");
             }
@@ -44,9 +46,9 @@ class Install_CheckController extends Pimcore_Controller_Action {
         $memoryLimit = filesize2bytes($memoryLimit . "B");
         $state = "ok";
 
-        if($memoryLimit < 134217728) {
+        if($memoryLimit < 67108000) {
             $state = "error";
-        } else if ($memoryLimit < 268435456) {
+        } else if ($memoryLimit < 134217000) {
             $state = "warning";
         }
 
@@ -56,14 +58,6 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => $state
         );
 
-
-        // check for safe_mode
-        $safemode = strtolower(ini_get("safe_mode"));
-        $checksPHP[] = array(
-            "name" => "safe_mode (in php.ini)",
-            "link" => "http://www.php.net/safe_mode",
-            "state" => $safemode == "on" ? "error" : "ok"
-        );
 
         // mcrypt
         $checksPHP[] = array(
@@ -112,6 +106,13 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "name" => "GD",
             "link" => "http://www.php.net/gd",
             "state" => function_exists("gd_info") ? "ok" : "error"
+        );
+
+        // exif
+        $checksPHP[] = array(
+            "name" => "EXIF",
+            "link" => "http://www.php.net/exif",
+            "state" => function_exists("exif_read_data") ? "ok" : "error"
         );
 
         // multibyte support
@@ -177,13 +178,6 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => class_exists("Memcache") ? "ok" : "warning"
         );
 
-        // PCNTL
-        $checksPHP[] = array(
-            "name" => "PCNTL",
-            "link" => "http://www.php.net/pcntl",
-            "state" => function_exists("pcntl_exec") ? "ok" : "warning"
-        );
-
         // curl for google api sdk
         $checksPHP[] = array(
             "name" => "curl",
@@ -191,36 +185,36 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => function_exists("curl_init") ? "ok" : "warning"
         );
 
-        // Phar to create phar archives
-        $checksPHP[] = array(
-            "name" => "Phar (is writeable)",
-            "link" => "http://www.php.net/phar",
-            "state" => ini_get("phar.readonly") == 0 ? "ok" : "warning"
-        );
-
-
-
 
         $db = null;
 
         if($this->getParam("mysql_adapter")) {
             // this is before installing
             try {
-                $db = Zend_Db::factory($this->getParam("mysql_adapter"),array(
-                    'host' => $this->getParam("mysql_host"),
+
+                $dbConfig = [
                     'username' => $this->getParam("mysql_username"),
                     'password' => $this->getParam("mysql_password"),
-                    'dbname' => $this->getParam("mysql_database"),
-                    "port" => $this->getParam("mysql_port")
-                ));
+                    'dbname' => $this->getParam("mysql_database")
+                ];
+
+                $hostSocketValue = $this->getParam("mysql_host_socket");
+                if(file_exists($hostSocketValue)) {
+                    $dbConfig["unix_socket"] = $hostSocketValue;
+                } else {
+                    $dbConfig["host"] = $hostSocketValue;
+                    $dbConfig["port"] = $this->getParam("mysql_port");
+                }
+
+                $db = \Zend_Db::factory($this->getParam("mysql_adapter"), $dbConfig);
 
                 $db->getConnection();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $db = null;
             }
         } else {
             // this is after installing, eg. after a migration, ...
-            $db = Pimcore_Resource::get();
+            $db = \Pimcore\Resource::get();
         }
 
         if($db) {
@@ -265,7 +259,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
                   field varchar(255) CHARACTER SET latin1 NULL DEFAULT NULL,
                   PRIMARY KEY (id)
                 ) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -278,7 +272,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->query("ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(255) NULL DEFAULT NULL");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -304,7 +298,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
                   CHANGE COLUMN alter_field alter_field varchar(255) NULL DEFAULT NULL,
                   ADD PRIMARY KEY (id) ,
                  DEFAULT CHARSET=utf8");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -320,7 +314,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
                     "field" => uniqid(),
                     "alter_field" => uniqid()
                 ));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -336,7 +330,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
                     "field" => uniqid(),
                     "alter_field" => uniqid()
                 ));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -349,7 +343,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->fetchAll("SELECT * FROM __pimcore_req_check");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -363,7 +357,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->query("CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -376,7 +370,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->fetchAll("SELECT * FROM __pimcore_req_check_view");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -390,7 +384,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->delete("__pimcore_req_check");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -403,7 +397,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->query("SHOW CREATE VIEW __pimcore_req_check_view");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -416,7 +410,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->query("SHOW CREATE TABLE __pimcore_req_check");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -429,7 +423,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->query("DROP VIEW __pimcore_req_check_view");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -442,7 +436,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             $queryCheck = true;
             try {
                 $db->query("DROP TABLE __pimcore_req_check");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
@@ -476,7 +470,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
         // pimcore writeable
         $checksFS[] = array(
             "name" => "/pimcore/ writeable",
-            "state" => Pimcore_Update::isWriteable() ? "ok" : "warning"
+            "state" => \Pimcore\Update::isWriteable() ? "ok" : "warning"
         );
 
 
@@ -484,8 +478,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // PHP CLI BIN
         try {
-            $phpCliBin = (bool) Pimcore_Tool_Console::getPhpCli();
-        } catch (Exception $e) {
+            $phpCliBin = (bool) \Pimcore\Tool\Console::getPhpCli();
+        } catch (\Exception $e) {
             $phpCliBin = false;
         }
 
@@ -497,8 +491,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // FFMPEG BIN
         try {
-            $ffmpegBin = (bool) Pimcore_Video_Adapter_Ffmpeg::getFfmpegCli();
-        } catch (Exception $e) {
+            $ffmpegBin = (bool) \Pimcore\Video\Adapter\Ffmpeg::getFfmpegCli();
+        } catch (\Exception $e) {
             $ffmpegBin = false;
         }
 
@@ -509,8 +503,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // WKHTMLTOIMAGE BIN
         try {
-            $wkhtmltopdfBin = (bool) Pimcore_Image_HtmlToImage::getWkhtmltoimageBinary();
-        } catch (Exception $e) {
+            $wkhtmltopdfBin = (bool) \Pimcore\Image\HtmlToImage::getWkhtmltoimageBinary();
+        } catch (\Exception $e) {
             $wkhtmltopdfBin = false;
         }
 
@@ -521,8 +515,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // HTML2TEXT BIN
         try {
-            $html2textBin = (bool) Pimcore_Mail::determineHtml2TextIsInstalled();
-        } catch (Exception $e) {
+            $html2textBin = (bool) \Pimcore\Mail::determineHtml2TextIsInstalled();
+        } catch (\Exception $e) {
             $html2textBin = false;
         }
 
@@ -533,8 +527,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // ghostscript BIN
         try {
-            $ghostscriptBin = (bool) Pimcore_Document_Adapter_Ghostscript::getGhostscriptCli();
-        } catch (Exception $e) {
+            $ghostscriptBin = (bool) \Pimcore\Document\Adapter\Ghostscript::getGhostscriptCli();
+        } catch (\Exception $e) {
             $ghostscriptBin = false;
         }
 
@@ -545,8 +539,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // LibreOffice BIN
         try {
-            $libreofficeBin = (bool) Pimcore_Document_Adapter_LibreOffice::getLibreOfficeCli();
-        } catch (Exception $e) {
+            $libreofficeBin = (bool) \Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli();
+        } catch (\Exception $e) {
             $libreofficeBin = false;
         }
 
@@ -557,8 +551,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // PNG optimizer
         try {
-            $pngOptimizer = (bool) Pimcore_Image_Optimizer::getPngOptimizerCli();
-        } catch (Exception $e) {
+            $pngOptimizer = (bool) \Pimcore\Image\Optimizer::getPngOptimizerCli();
+        } catch (\Exception $e) {
             $pngOptimizer = false;
         }
 
@@ -569,8 +563,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // JPEG optimizer
         try {
-            $jpgOptimizer = (bool) Pimcore_Image_Optimizer::getJpegOptimizerCli();
-        } catch (Exception $e) {
+            $jpgOptimizer = (bool) \Pimcore\Image\Optimizer::getJpegOptimizerCli();
+        } catch (\Exception $e) {
             $jpgOptimizer = false;
         }
 
@@ -581,8 +575,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // timeout binary
         try {
-            $timeoutBin = (bool) Pimcore_Tool_Console::getTimeoutBinary();
-        } catch (Exception $e) {
+            $timeoutBin = (bool) \Pimcore\Tool\Console::getTimeoutBinary();
+        } catch (\Exception $e) {
             $timeoutBin = false;
         }
 
@@ -593,8 +587,8 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         // pdftotext binary
         try {
-            $pdftotextBin = (bool) Pimcore_Document_Adapter_Ghostscript::getPdftotextCli();
-        } catch (Exception $e) {
+            $pdftotextBin = (bool) \Pimcore\Document\Adapter\Ghostscript::getPdftotextCli();
+        } catch (\Exception $e) {
             $pdftotextBin = false;
         }
 

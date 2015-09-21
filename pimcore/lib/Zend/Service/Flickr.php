@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -28,7 +28,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Flickr
@@ -36,7 +36,7 @@ class Zend_Service_Flickr
     /**
      * Base URI for the REST client
      */
-    const URI_BASE = 'http://www.flickr.com';
+    const URI_BASE = 'https://www.flickr.com';
 
     /**
      * Your Flickr API key

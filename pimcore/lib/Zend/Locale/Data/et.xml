@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="et"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adõgee</language>
 			<language type="ae">avesta</language>
 			<language type="af">afrikaani</language>
-			<language type="afa">afroaasia keel</language>
 			<language type="afh">afrihili</language>
 			<language type="agq">aghemi</language>
 			<language type="ain">ainu</language>
 			<language type="ak">akani</language>
 			<language type="akk">akadi</language>
 			<language type="ale">aleuudi</language>
-			<language type="alg">algonkini keel</language>
 			<language type="alt">altai</language>
 			<language type="am">amhari</language>
 			<language type="an">aragoni</language>
 			<language type="ang">vanainglise</language>
 			<language type="anp">angika</language>
-			<language type="apa">apatši keel</language>
 			<language type="ar">araabia</language>
 			<language type="ar_001">araabia (tänapäevane)</language>
 			<language type="arc">aramea</language>
 			<language type="arn">araukaani</language>
 			<language type="arp">arapaho</language>
-			<language type="art">muu tehiskeel</language>
 			<language type="arw">aravaki</language>
 			<language type="as">assami</language>
 			<language type="asa">asa</language>
 			<language type="ast">astuuria</language>
-			<language type="ath">atapaski keeled</language>
-			<language type="aus">austraali keel</language>
 			<language type="av">avaari</language>
 			<language type="awa">avadhi</language>
 			<language type="ay">aimara</language>
 			<language type="az">aserbaidžaani</language>
 			<language type="az" alt="short">aseri</language>
 			<language type="ba">baškiiri</language>
-			<language type="bad">banda</language>
-			<language type="bai">bamileke keel</language>
 			<language type="bal">belutši</language>
 			<language type="ban">bali</language>
 			<language type="bas">basa</language>
-			<language type="bat">balti keel</language>
 			<language type="bax">bamuni</language>
 			<language type="bbj">ghomala</language>
 			<language type="be">valgevene</language>
 			<language type="bej">bedža</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berberi</language>
 			<language type="bez">bena</language>
 			<language type="bfd">bafuti</language>
 			<language type="bg">bulgaaria</language>
-			<language type="bh">bihari</language>
 			<language type="bho">bhodžpuri</language>
 			<language type="bi">bislama</language>
 			<language type="bik">bikoli</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">siksika</language>
 			<language type="bm">bambara</language>
 			<language type="bn">bengali</language>
-			<language type="bnt">bantu</language>
 			<language type="bo">tiibeti</language>
 			<language type="br">bretooni</language>
 			<language type="bra">bradži</language>
 			<language type="brx">bodo</language>
 			<language type="bs">bosnia</language>
 			<language type="bss">akoose</language>
-			<language type="btk">bataki</language>
 			<language type="bua">burjaadi</language>
 			<language type="bug">bugi</language>
 			<language type="bum">bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">medumba</language>
 			<language type="ca">katalaani</language>
 			<language type="cad">kado</language>
-			<language type="cai">Kesk-Ameerika indiaani keel</language>
 			<language type="car">kariibi</language>
-			<language type="cau">kaukaasia keel</language>
 			<language type="cay">cayuga</language>
 			<language type="cch">atsami</language>
 			<language type="ce">tšetšeeni</language>
 			<language type="ceb">sebu</language>
-			<language type="cel">keldi keel</language>
 			<language type="cgg">chiga</language>
 			<language type="ch">tšamorro</language>
 			<language type="chb">tšibtša</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">tšerokii</language>
 			<language type="chy">šaieeni</language>
 			<language type="ckb">sorani kurdi</language>
-			<language type="cmc">tšami keeled</language>
 			<language type="co">korsika</language>
 			<language type="cop">kopti</language>
-			<language type="cpe">inglispõhjalised kreool- ja pidžinkeeled</language>
-			<language type="cpf">prantsuspõhjalised kreool- ja pidžinkeeled</language>
-			<language type="cpp">portugalipõhjalised kreooli-/pidžinkeeled</language>
 			<language type="cr">krii</language>
 			<language type="crh">krimmitatari</language>
-			<language type="crp">kreool- või pidžinkeel</language>
 			<language type="cs">tšehhi</language>
 			<language type="csb">kašuubi</language>
 			<language type="cu">kirikuslaavi</language>
-			<language type="cus">muu kuši keel</language>
 			<language type="cv">tšuvaši</language>
 			<language type="cy">kõmri</language>
 			<language type="da">taani</language>
 			<language type="dak">siuu</language>
 			<language type="dar">dargi</language>
 			<language type="dav">taita</language>
-			<language type="day">dajaki</language>
 			<language type="de">saksa</language>
 			<language type="de_CH">saksa (kõrgsaksa)</language>
 			<language type="del">delavari</language>
@@ -144,7 +121,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">dinka</language>
 			<language type="dje">zarma</language>
 			<language type="doi">dogri</language>
-			<language type="dra">draviidi keel</language>
 			<language type="dsb">alamsorbi</language>
 			<language type="dua">duala</language>
 			<language type="dum">keskhollandi</language>
@@ -177,7 +153,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fulbe</language>
 			<language type="fi">soome</language>
 			<language type="fil">filipino</language>
-			<language type="fiu">soomeugri keel</language>
 			<language type="fj">fidži</language>
 			<language type="fo">fääri</language>
 			<language type="fon">foni</language>
@@ -193,7 +168,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gajo</language>
 			<language type="gba">gbaja</language>
 			<language type="gd">gaeli</language>
-			<language type="gem">germaani keel</language>
 			<language type="gez">etioopia</language>
 			<language type="gil">kiribati</language>
 			<language type="gl">galeegi</language>
@@ -216,7 +190,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">heebrea</language>
 			<language type="hi">hindi</language>
 			<language type="hil">hiligainoni</language>
-			<language type="him">himtšali</language>
 			<language type="hit">heti</language>
 			<language type="hmn">hmongi</language>
 			<language type="ho">motu</language>
@@ -234,20 +207,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interlingue</language>
 			<language type="ig">ibo</language>
 			<language type="ii">sichuani jii</language>
-			<language type="ijo">idžo</language>
 			<language type="ik">injupiaki</language>
 			<language type="ilo">iloko</language>
-			<language type="inc">india keel</language>
-			<language type="ine">indoeuroopa keel</language>
 			<language type="inh">inguši</language>
 			<language type="io">ido</language>
-			<language type="ira">iraani keeled</language>
-			<language type="iro">irokeesi keel</language>
 			<language type="is">islandi</language>
 			<language type="it">itaalia</language>
 			<language type="iu">inuktituti</language>
 			<language type="ja">jaapani</language>
 			<language type="jbo">lojbani</language>
+			<language type="jgo" draft="contributed">ngomba</language>
 			<language type="jmc">machame</language>
 			<language type="jpr">juudipärsia</language>
 			<language type="jrb">juudiaraabia</language>
@@ -258,7 +227,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">katšini</language>
 			<language type="kaj">jju</language>
 			<language type="kam">kamba</language>
-			<language type="kar">kareni keel</language>
 			<language type="kaw">kaavi</language>
 			<language type="kbd">kabardi-tšerkessi</language>
 			<language type="kbl">kanembu</language>
@@ -268,7 +236,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">koro</language>
 			<language type="kg">kongo</language>
 			<language type="kha">khasi</language>
-			<language type="khi">khoisani keel</language>
 			<language type="kho">saki</language>
 			<language type="khq">koyra chiini</language>
 			<language type="ki">kikuju</language>
@@ -287,7 +254,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">kanuri</language>
 			<language type="krc">karatšai-balkaari</language>
 			<language type="krl">karjala</language>
-			<language type="kro">kruu</language>
 			<language type="kru">oraoni</language>
 			<language type="ks">kašmiiri</language>
 			<language type="ksb">shambala</language>
@@ -327,7 +293,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">maithili</language>
 			<language type="mak">makassari</language>
 			<language type="man">malinke</language>
-			<language type="map">austroneesia keel</language>
 			<language type="mas">masai</language>
 			<language type="mde">maba</language>
 			<language type="mdf">mokša</language>
@@ -338,19 +303,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mg">malagassi</language>
 			<language type="mga">keskiiri</language>
 			<language type="mgh">makhuwa-meetto</language>
+			<language type="mgo" draft="contributed">meta'</language>
 			<language type="mh">maršalli</language>
 			<language type="mi">maoori</language>
 			<language type="mic">mikmaki</language>
 			<language type="min">minangkabau</language>
-			<language type="mis">üksikkeeled</language>
 			<language type="mk">makedoonia</language>
-			<language type="mkh">moni-khmeeri keel</language>
 			<language type="ml">malajalami</language>
 			<language type="mn">mongoli</language>
 			<language type="mnc">mandžu</language>
 			<language type="mni">manipuri</language>
-			<language type="mno">manobo keel</language>
-			<language type="mo">moldova</language>
 			<language type="moh">mohoogi</language>
 			<language type="mos">more</language>
 			<language type="mr">marathi</language>
@@ -358,17 +320,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">malta</language>
 			<language type="mua">mundangi</language>
 			<language type="mul">mitu keelt</language>
-			<language type="mun">munda keel</language>
 			<language type="mus">maskogi</language>
 			<language type="mwl">miranda</language>
 			<language type="mwr">marvari</language>
 			<language type="my">birma</language>
 			<language type="mye">myene</language>
-			<language type="myn">maia keeled</language>
 			<language type="myv">ersa</language>
 			<language type="na">nauru</language>
-			<language type="nah">nahua</language>
-			<language type="nai">Põhja-Ameerika indiaani keel</language>
 			<language type="nap">napoli</language>
 			<language type="naq">nama</language>
 			<language type="nb">norra bokmål</language>
@@ -378,7 +336,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">nevari</language>
 			<language type="ng">ndonga</language>
 			<language type="nia">niasi</language>
-			<language type="nic">Nigeri-Kordofani keel</language>
 			<language type="niu">niue</language>
 			<language type="nl">hollandi</language>
 			<language type="nl_BE">flaami</language>
@@ -391,7 +348,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">nkoo</language>
 			<language type="nr">lõunandebele</language>
 			<language type="nso">pedi</language>
-			<language type="nub">nuubia keel</language>
 			<language type="nus">nueri</language>
 			<language type="nv">navaho</language>
 			<language type="nwc">vananevari</language>
@@ -407,21 +363,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">osseedi</language>
 			<language type="osa">oseidži</language>
 			<language type="ota">osmanitürgi</language>
-			<language type="oto">otomi keel</language>
 			<language type="pa">pandžabi</language>
-			<language type="paa">paapua keel</language>
 			<language type="pag">pangasinani</language>
 			<language type="pal">pahlavi</language>
 			<language type="pam">pampanga</language>
 			<language type="pap">papiamento</language>
 			<language type="pau">belau</language>
 			<language type="peo">vanapärsia</language>
-			<language type="phi">filipiini keel</language>
 			<language type="phn">foiniikia</language>
 			<language type="pi">paali</language>
 			<language type="pl">poola</language>
 			<language type="pon">poonpei</language>
-			<language type="pra">praakriti keel</language>
 			<language type="pro">vanaprovansi</language>
 			<language type="ps">puštu</language>
 			<language type="pt">portugali</language>
@@ -433,7 +385,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">retoromaani</language>
 			<language type="rn">rundi</language>
 			<language type="ro">rumeenia</language>
-			<language type="roa">romaani keel</language>
+			<language type="ro_MD">moldova</language>
 			<language type="rof">rombo</language>
 			<language type="rom">mustlaskeel</language>
 			<language type="root">root</language>
@@ -444,8 +396,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanskriti</language>
 			<language type="sad">sandave</language>
 			<language type="sah">jakuudi</language>
-			<language type="sai">Lõuna-Ameerika indiaani keel</language>
-			<language type="sal">sališi keel</language>
 			<language type="sam">samaaria aramea</language>
 			<language type="saq">samburu</language>
 			<language type="sas">sasaki</language>
@@ -460,25 +410,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">seneca</language>
 			<language type="seh">sena</language>
 			<language type="sel">sölkupi</language>
-			<language type="sem">semi keel</language>
 			<language type="ses">koyraboro senni</language>
 			<language type="sg">sango</language>
 			<language type="sga">vanaiiri</language>
-			<language type="sgn">viipekeel</language>
 			<language type="sh">serbia-horvaadi</language>
 			<language type="shi">tachelhiti</language>
 			<language type="shn">šani</language>
 			<language type="shu">Tšaadi araabia</language>
 			<language type="si">singali</language>
 			<language type="sid">sidamo</language>
-			<language type="sio">siuu keel</language>
-			<language type="sit">hiina-tiibeti keel</language>
 			<language type="sk">slovaki</language>
 			<language type="sl">sloveeni</language>
-			<language type="sla">slaavi keel</language>
 			<language type="sm">samoa</language>
 			<language type="sma">lõunasaami</language>
-			<language type="smi">muu saami</language>
 			<language type="smj">lule saami</language>
 			<language type="smn">inari saami</language>
 			<language type="sms">koltasaami</language>
@@ -486,13 +430,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">soninke</language>
 			<language type="so">somaali</language>
 			<language type="sog">sogdi</language>
-			<language type="son">songai</language>
 			<language type="sq">albaania</language>
 			<language type="sr">serbia</language>
 			<language type="srn">sranani</language>
 			<language type="srr">sereri</language>
 			<language type="ss">svaasi</language>
-			<language type="ssa">Niiluse-Sahara keel</language>
 			<language type="ssy">saho</language>
 			<language type="st">lõunasotho</language>
 			<language type="su">sunda</language>
@@ -506,7 +448,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">klassikaline süüria</language>
 			<language type="syr">süüria</language>
 			<language type="ta">tamili</language>
-			<language type="tai">tai keel</language>
 			<language type="te">telugu</language>
 			<language type="tem">temne</language>
 			<language type="teo">teso</language>
@@ -533,8 +474,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">tšimši</language>
 			<language type="tt">tatari</language>
 			<language type="tum">tumbuka</language>
-			<language type="tup">tupii keeled</language>
-			<language type="tut">altai keel</language>
 			<language type="tvl">tuvalu</language>
 			<language type="tw">tvii</language>
 			<language type="twq">taswaqi</language>
@@ -557,11 +496,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">vunjo</language>
 			<language type="wa">vallooni</language>
 			<language type="wae">walseri</language>
-			<language type="wak">vakaši keel</language>
 			<language type="wal">volamo</language>
 			<language type="war">varai</language>
 			<language type="was">vašo</language>
-			<language type="wen">sorbi keel</language>
 			<language type="wo">volofi</language>
 			<language type="xal">kalmõki</language>
 			<language type="xh">koosa</language>
@@ -572,7 +509,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">yemba</language>
 			<language type="yi">jidiši</language>
 			<language type="yo">joruba</language>
-			<language type="ypk">jupiki keel</language>
 			<language type="yue">kantoni</language>
 			<language type="za">tšuangi</language>
 			<language type="zap">sapoteegi</language>
@@ -582,7 +518,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">hiina</language>
 			<language type="zh_Hans">hiina keel - lihtsustatud</language>
 			<language type="zh_Hant">hiina keel - traditsiooniline</language>
-			<language type="znd">zande</language>
 			<language type="zu">suulu</language>
 			<language type="zun">sunji</language>
 			<language type="zxx">mittekeeleline</language>
@@ -1287,7 +1222,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">HH.mm–HH.mm</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
-							<greatestDifference id="a">HH.mma–HH.mma v</greatestDifference>
+							<greatestDifference id="a">h:mm a – h:mm a v</greatestDifference>
 							<greatestDifference id="h">h:mm–h:mm a v</greatestDifference>
 							<greatestDifference id="m">h:mm–h:mm a v</greatestDifference>
 						</intervalFormatItem>
@@ -1729,7 +1664,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">HH.mm–HH.mm</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
-							<greatestDifference id="a">HH.mma–HH.mma v</greatestDifference>
+							<greatestDifference id="a">h:mm a – h:mm a v</greatestDifference>
 							<greatestDifference id="h">h:mm–h:mm a v</greatestDifference>
 							<greatestDifference id="m">h:mm–h:mm a v</greatestDifference>
 						</intervalFormatItem>
@@ -1959,9 +1894,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Yerevan">
 				<exemplarCity>Jerevan</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Lõunapoolus</exemplarCity>
 			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity>Dumont d’Urville</exemplarCity>

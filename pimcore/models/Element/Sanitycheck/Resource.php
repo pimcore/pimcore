@@ -15,25 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Sanitycheck_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Element\Sanitycheck;
 
+use Pimcore\Model;
 
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("sanitycheck");
-    }
-
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Save to database
@@ -45,7 +31,7 @@ class Element_Sanitycheck_Resource extends Pimcore_Model_Resource_Abstract {
         $sanityCheck = get_object_vars($this->model);
 
         foreach ($sanityCheck as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("sanitycheck"))) {
                 $data[$key] = $value;
             }
         }
@@ -53,7 +39,7 @@ class Element_Sanitycheck_Resource extends Pimcore_Model_Resource_Abstract {
         try {
             $this->db->insert("sanitycheck", $data);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
            //probably duplicate
         }
 

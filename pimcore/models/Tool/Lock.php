@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Lock extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Tool;
+
+use Pimcore\Model;
+
+class Lock extends Model\AbstractModel {
 
     /**
      * @var string
@@ -33,12 +37,12 @@ class Tool_Lock extends Pimcore_Model_Abstract {
     protected static $acquiredLocks = array();
 
     /**
-     * @var Tool_Lock
+     * @var Lock
      */
     protected static $instance;
 
     /**
-     * @return Tool_Lock
+     * @return Lock
      */
     protected static function getInstance () {
         if(!self::$instance) {
@@ -92,7 +96,7 @@ class Tool_Lock extends Pimcore_Model_Abstract {
 
     /**
      * @param $key
-     * @return Tool_Lock
+     * @return Lock
      */
     public static function get($key) {
         $lock = new self;

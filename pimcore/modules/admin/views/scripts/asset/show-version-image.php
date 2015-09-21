@@ -29,7 +29,7 @@
 
 <?php
     $thumbnail = $this->asset->getImageThumbnailSavePath() . "/asset-version-preview-" . $this->asset->getId() . "-" . time() . ".png";
-    $convert = Pimcore_Image::getInstance();
+    $convert = \Pimcore\Image::getInstance();
     $convert->load($this->asset->getTemporaryFile(true));
     $convert->contain(500,500);
     $convert->save($thumbnail, "png");
@@ -39,7 +39,7 @@
 <table id="wrapper" cellpadding="0" cellspacing="0" border="0">
     <tr>
         <td align="center">
-            <img src="<?php echo $thumbnail ?>"/>
+            <img src="<?= $thumbnail ?>"/>
         </td>
     </tr>
 </table>

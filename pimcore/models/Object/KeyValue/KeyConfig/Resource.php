@@ -15,25 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Object\KeyValue\KeyConfig;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     const TABLE_NAME_KEYS = "keyvalue_keys";
-
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME_KEYS);
-    }
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
@@ -52,6 +40,10 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
         $this->assignVariablesToModel($data);
     }
 
+    /**
+     * @param null $name
+     * @throws \Exception
+     */
     public function getByName($name = null) {
 
         if ($name != null) {
@@ -71,10 +63,9 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
         if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("KeyConfig with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception("KeyConfig with name: " . $this->model->getName() . " does not exist");
         }
     }
-
 
     /**
      * Save object to database
@@ -98,9 +89,7 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -110,12 +99,16 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->validColumns)) {
+                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_KEYS))) {
                     if(is_bool($value)) {
                         $value = (int) $value;
                     }
                     if(is_array($value) || is_object($value)) {
-                        $value = Pimcore_Tool_Serialize::serialize($value);
+                        if($this->model->getType() == 'select'){
+                            $value = \Zend_Json::encode($value);
+                        }else{
+                            $value = \Pimcore\Tool\Serialize::serialize($value);
+                        }
                     }
 
                     $data[$key] = $value;
@@ -123,8 +116,9 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
             }
 
             $this->db->update(self::TABLE_NAME_KEYS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            return $this->model;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

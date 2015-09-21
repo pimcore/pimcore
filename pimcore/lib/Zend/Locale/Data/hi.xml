@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9296 $"/>
-		<generation date="$Date: 2013-08-30 22:08:05 -0500 (Fri, 30 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="hi"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,48 +25,37 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">अदिघे</language>
 			<language type="ae">अवस्ताई</language>
 			<language type="af">अफ़्रीकी</language>
-			<language type="afa">अफ़्रीकी-एशियाई भाषा</language>
 			<language type="afh">अफ्रिहिली</language>
 			<language type="ain">ऐनू</language>
 			<language type="ak">अकन</language>
 			<language type="akk">अक्कादी</language>
 			<language type="ale">अलेउत</language>
-			<language type="alg">एल्गोनक्युइअन भाषा</language>
 			<language type="alt">दक्षिणी अल्ताई</language>
 			<language type="am">अम्हेरी</language>
 			<language type="an">अर्गोनी</language>
 			<language type="ang">पुरानी अंग्रेज़ी</language>
 			<language type="anp">अंगिका</language>
-			<language type="apa">अपाचे भाषा</language>
 			<language type="ar">अरबी</language>
 			<language type="ar_001">आधुनिक मानक अरबी</language>
 			<language type="arc">ऐरेमेक</language>
 			<language type="arn">मापूचे</language>
 			<language type="arp">अराफाओ</language>
-			<language type="art">कृत्रिम भाषा</language>
 			<language type="arw">अरावक</language>
 			<language type="as">असमिया</language>
 			<language type="ast">अस्तुरियन</language>
-			<language type="ath">अथापास्कान भाषा</language>
-			<language type="aus">आस्ट्रेलियाई भाषा</language>
 			<language type="av">अवेरिक</language>
 			<language type="awa">अवधी</language>
 			<language type="ay">आयमारा</language>
 			<language type="az">अज़रबैजानी</language>
 			<language type="az" alt="short">अज़ेरी</language>
 			<language type="ba">बशख़िर</language>
-			<language type="bad">बांदा</language>
-			<language type="bai">बमिलेके भाषा</language>
 			<language type="bal">बलूची</language>
 			<language type="ban">बालिनीस</language>
 			<language type="bas">बसा</language>
-			<language type="bat">बाल्टिक भाषा</language>
 			<language type="be">बेलारूसी</language>
 			<language type="bej">बेजा</language>
 			<language type="bem">बेम्बा</language>
-			<language type="ber">बरबर</language>
 			<language type="bg">बुल्गारियाई</language>
-			<language type="bh">बिहारी</language>
 			<language type="bho">भोजपुरी</language>
 			<language type="bi">बिस्लामा</language>
 			<language type="bik">बिकोल</language>
@@ -74,24 +63,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">सिक्सिका</language>
 			<language type="bm">बाम्बारा</language>
 			<language type="bn">बंगाली</language>
-			<language type="bnt">बन्तु</language>
 			<language type="bo">तिब्बती</language>
 			<language type="br">ब्रेटन</language>
 			<language type="bra">ब्रज</language>
 			<language type="bs">बोस्नियाई</language>
-			<language type="btk">बताक</language>
 			<language type="bua">बुरियात</language>
 			<language type="bug">बगिनीस</language>
 			<language type="byn">ब्लिन</language>
 			<language type="ca">कातालान</language>
 			<language type="cad">कैड्डो</language>
-			<language type="cai">मध्य अमेरिकी इंडियन भाषा</language>
 			<language type="car">कैरिब</language>
-			<language type="cau">कॉकेशियन भाषा</language>
 			<language type="cch">अत्सम</language>
 			<language type="ce">चेचन</language>
 			<language type="ceb">सिबुआनो</language>
-			<language type="cel">केल्टिक भाषा</language>
 			<language type="ch">कमोरो</language>
 			<language type="chb">चिब्चा</language>
 			<language type="chg">छगाताई</language>
@@ -103,25 +87,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">चेरोकी</language>
 			<language type="chy">शेयेन्न</language>
 			<language type="ckb" draft="contributed">सोरानी कुर्द</language>
-			<language type="cmc">शैमिक भाषा</language>
 			<language type="co">कोर्सीकन</language>
 			<language type="cop">कॉप्टिक</language>
-			<language type="cpe">अंग्रेज़ी आधारित क्रेओल या पिजिन</language>
-			<language type="cpf">फ़्रांसीसी आधारित क्रेओल या पिजिन</language>
-			<language type="cpp">पुर्तगाली आधारित क्रेओल या पिजिन</language>
 			<language type="cr">क्री</language>
 			<language type="crh">क्रीमीन तुर्की</language>
-			<language type="crp">क्रेओल या पिजिन</language>
 			<language type="cs">चेक</language>
 			<language type="csb">काशुबियन</language>
 			<language type="cu">चर्च साल्विक</language>
-			<language type="cus">कुशितिक भाषा</language>
 			<language type="cv">चूवाश</language>
 			<language type="cy">वेल्श</language>
 			<language type="da">डेनिश</language>
 			<language type="dak">दाकोता</language>
 			<language type="dar">दार्गवा</language>
-			<language type="day">दायक</language>
 			<language type="de">जर्मन</language>
 			<language type="de_AT">ऑस्ट्रियाई जर्मन</language>
 			<language type="de_CH">स्विस उच्च जर्मन</language>
@@ -130,7 +107,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="dgr">डोग्रिब</language>
 			<language type="din">दिन्का</language>
 			<language type="doi">डोग्री</language>
-			<language type="dra">द्रविड़ भाषा</language>
 			<language type="dsb">निचला सॉर्बियन</language>
 			<language type="dua">दुआला</language>
 			<language type="dum">मध्य पुर्तगाली</language>
@@ -164,7 +140,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">फुलाह</language>
 			<language type="fi">फ़िनिश</language>
 			<language type="fil">फ़िलिपीनो</language>
-			<language type="fiu">फिन्नो-उग्रीयन भाषा</language>
 			<language type="fj">फ़ीजी</language>
 			<language type="fo">फ़ैरोइज़</language>
 			<language type="fon">फॉन</language>
@@ -182,7 +157,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">गायो</language>
 			<language type="gba">ग्बाया</language>
 			<language type="gd">स्काट्स् गायेलिक्</language>
-			<language type="gem">जर्मनिक भाषा</language>
 			<language type="gez">गीज़</language>
 			<language type="gil">गिल्बरतीस</language>
 			<language type="gl">गैलिशियन</language>
@@ -204,7 +178,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">हिब्रू</language>
 			<language type="hi">हिंदी</language>
 			<language type="hil">हिलिगेनन</language>
-			<language type="him">हिमाचली</language>
 			<language type="hit">हिताइत</language>
 			<language type="hmn">ह्मॉंग</language>
 			<language type="ho">हिरी मोटू</language>
@@ -221,15 +194,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">ईन्टरलिंगुइ</language>
 			<language type="ig">ईग्बो</language>
 			<language type="ii">सिचुआन यी</language>
-			<language type="ijo">इजो</language>
 			<language type="ik">इनुपियाक्</language>
 			<language type="ilo">इलोको</language>
-			<language type="inc">भारतीय भाषा</language>
-			<language type="ine">इंडो-युरोपीय भाषा</language>
 			<language type="inh">इंगुश</language>
 			<language type="io">इडौ</language>
-			<language type="ira">ईरानी भाषा</language>
-			<language type="iro">इरोक्युओइयन भाषा</language>
 			<language type="is">आइसलैंडी</language>
 			<language type="it">इतालवी</language>
 			<language type="iu">इनूकीटूत्</language>
@@ -245,14 +213,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">काचिन</language>
 			<language type="kaj">ज्जु</language>
 			<language type="kam">कम्बा</language>
-			<language type="kar">कारेन</language>
 			<language type="kaw">कावी</language>
 			<language type="kbd">कबार्डियन</language>
 			<language type="kcg">त्याप</language>
 			<language type="kfo">कोरो</language>
 			<language type="kg">कोंगो</language>
 			<language type="kha">खासी</language>
-			<language type="khi">खोइसन भाषा</language>
 			<language type="kho">खोतानीस</language>
 			<language type="ki">किकुयू</language>
 			<language type="kj">क्वान्यामा</language>
@@ -268,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">कनुरी</language>
 			<language type="krc">कराचय-बल्कार</language>
 			<language type="krl">करेलियन</language>
-			<language type="kro">क्रु</language>
 			<language type="kru">कुरूख</language>
 			<language type="ks">कश्मीरी</language>
 			<language type="ku">कुर्दी</language>
@@ -302,7 +267,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">मैथिली</language>
 			<language type="mak">मकासर</language>
 			<language type="man">मन्डिन्गो</language>
-			<language type="map">ऑस्ट्रोनेशियन</language>
 			<language type="mas">मसाई</language>
 			<language type="mdf">मोक्ष</language>
 			<language type="mdr">मंधार</language>
@@ -315,31 +279,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">माओरी</language>
 			<language type="mic">मिकमैक</language>
 			<language type="min">मिनांग्काबाउ</language>
-			<language type="mis">विविध भाषा</language>
 			<language type="mk">मैसिडोनियाई</language>
-			<language type="mkh">मॉन-ख्मेर भाषा</language>
 			<language type="ml">मलयालम</language>
 			<language type="mn">मंगोलीयाई</language>
 			<language type="mnc">मन्चु</language>
 			<language type="mni">मणिपूरी</language>
-			<language type="mno">मनोबो भाषा</language>
-			<language type="mo">मोलडावियन्</language>
 			<language type="moh">मोहौक</language>
 			<language type="mos">मोस्सी</language>
 			<language type="mr">मराठी</language>
 			<language type="ms">मलय</language>
 			<language type="mt">माल्टीज़</language>
 			<language type="mul">विविध भाषाएँ</language>
-			<language type="mun">मुन्डा भाषा</language>
 			<language type="mus">क्रीक</language>
 			<language type="mwl">मिरांडी</language>
 			<language type="mwr">मारवाड़ी</language>
 			<language type="my">बर्मीज़</language>
-			<language type="myn">माया भाषा</language>
 			<language type="myv">एर्ज़या</language>
 			<language type="na">नाउरू</language>
-			<language type="nah">नहुआत्ल</language>
-			<language type="nai">उत्तरी अमेरीकी इंडियन भाषा</language>
 			<language type="nap">नीपोलिटन</language>
 			<language type="nb">नॉर्वेजियाई बोकमाल</language>
 			<language type="nd">उत्तरी देबेल</language>
@@ -348,7 +304,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">नेवाड़ी</language>
 			<language type="ng">डोन्गा</language>
 			<language type="nia">नियास</language>
-			<language type="nic">नाइगर-कोर्डोफैनियन भाषा</language>
 			<language type="niu">नियुआन</language>
 			<language type="nl">डच</language>
 			<language type="nl_BE">फ़्लेमिश</language>
@@ -359,7 +314,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">एन्को</language>
 			<language type="nr">दक्षिण देबेल</language>
 			<language type="nso">उत्तरी सोथो</language>
-			<language type="nub">न्युबियान भाषा</language>
 			<language type="nv">नावाजो</language>
 			<language type="nwc">पारम्परिक नेवारी</language>
 			<language type="ny">न्यानजा</language>
@@ -374,21 +328,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ओस्सेटिक</language>
 			<language type="osa">ओसेज</language>
 			<language type="ota">ओटोमान तुर्किश</language>
-			<language type="oto">ओटोमियन भाषा</language>
 			<language type="pa">पंजाबी</language>
-			<language type="paa">पापुआन भाषा</language>
 			<language type="pag">पंगासीनान</language>
 			<language type="pal">पाह्लावी</language>
 			<language type="pam">पाम्पान्गा</language>
 			<language type="pap">पापियामेन्टो</language>
 			<language type="pau">पलोउआन</language>
 			<language type="peo">पुरानी फारसी</language>
-			<language type="phi">फिलिपीन भाषा</language>
 			<language type="phn">फोएनिशियन</language>
 			<language type="pi">पाली</language>
 			<language type="pl">पोलिश</language>
 			<language type="pon">पोह्नपिएन</language>
-			<language type="pra">प्राकृत</language>
 			<language type="pro">पुरानी प्रोवेन्सल</language>
 			<language type="ps">पश्तो</language>
 			<language type="ps" alt="variant">पुश्तो</language>
@@ -402,7 +352,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">रोमान्श</language>
 			<language type="rn">रुन्दी</language>
 			<language type="ro">रोमानियाई</language>
-			<language type="roa">रोमांस भाषा</language>
+			<language type="ro_MD">मोलडावियन्</language>
 			<language type="rom">रोमानी</language>
 			<language type="root">रूट</language>
 			<language type="ru">रूसी</language>
@@ -411,8 +361,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">संस्कृत</language>
 			<language type="sad">सन्डावे</language>
 			<language type="sah">याकूत</language>
-			<language type="sai">दक्षिण अमेरीकी इंडियन भाषा</language>
-			<language type="sal">सलीशन भाषा</language>
 			<language type="sam">सामैरिटन अरैमिक</language>
 			<language type="sas">सासाक</language>
 			<language type="sat">संताली</language>
@@ -422,22 +370,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">सिंधी</language>
 			<language type="se">नॉर्दन सामी</language>
 			<language type="sel">सेल्कप</language>
-			<language type="sem">सेमिटिक भाषा</language>
 			<language type="sg">सांगो</language>
 			<language type="sga">पुरानी आइरिश</language>
-			<language type="sgn">सांकेतिक भाषा</language>
 			<language type="sh">सेर्बो-क्रोएशन्</language>
 			<language type="shn">शैन</language>
 			<language type="si">सिंहली</language>
 			<language type="sid">सिदामो</language>
-			<language type="sio">सिउआन भाषा</language>
-			<language type="sit">चीनी-तिब्ब्ती भाषा</language>
 			<language type="sk">स्लोवाक</language>
 			<language type="sl">स्लोवेनियाई</language>
-			<language type="sla">स्लोवियाई भाषा</language>
 			<language type="sm">सामोन</language>
 			<language type="sma">दक्षिण सामी</language>
-			<language type="smi">सामी भाषा</language>
 			<language type="smj">ल्युल सामी</language>
 			<language type="smn">इनारी सामी</language>
 			<language type="sms">स्कोल्ट सामी</language>
@@ -445,13 +387,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">सोनिन्के</language>
 			<language type="so">सोमाली</language>
 			<language type="sog">सोग्डिएन</language>
-			<language type="son">सोन्घाई</language>
 			<language type="sq">अल्बानियाई</language>
 			<language type="sr">सर्बियाई</language>
 			<language type="srn">स्रानान टॉन्गो</language>
 			<language type="srr">सेरेर</language>
 			<language type="ss">स्वाती</language>
-			<language type="ssa">नील सहारी भाषा</language>
 			<language type="st">सेसोथो</language>
 			<language type="su">सुंडानी</language>
 			<language type="suk">सुकुमा</language>
@@ -463,7 +403,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">क्लासिकल सिरिएक</language>
 			<language type="syr">सिरिएक</language>
 			<language type="ta">तमिल</language>
-			<language type="tai">ताई भाषा</language>
 			<language type="te">तेलुगू</language>
 			<language type="tem">टिम्ने</language>
 			<language type="ter">तेरेनो</language>
@@ -488,8 +427,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">त्सिमीशियन</language>
 			<language type="tt">तातार</language>
 			<language type="tum">तम्बूका</language>
-			<language type="tup">ट्यूपी भाषा</language>
-			<language type="tut">अल्तैक भाषा</language>
 			<language type="tvl">तुवालु</language>
 			<language type="tw">ट्वी</language>
 			<language type="ty">ताहितियन</language>
@@ -508,11 +445,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo">वोलापुक</language>
 			<language type="vot">वॉटिक</language>
 			<language type="wa">वाल्लून</language>
-			<language type="wak">वाकाशन भाषा</language>
 			<language type="wal">वलामो</language>
 			<language type="war">वारै</language>
 			<language type="was">वाशो</language>
-			<language type="wen">सॉर्बियन भाषा</language>
 			<language type="wo">वोलोफ़</language>
 			<language type="xal">काल्मिक</language>
 			<language type="xh">ख़ोसा</language>
@@ -520,7 +455,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap">यापीस</language>
 			<language type="yi">येहुदी</language>
 			<language type="yo">योरूबा</language>
-			<language type="ypk">यूपिक भाषा</language>
 			<language type="yue" draft="provisional">कैंटोनीस</language>
 			<language type="za">ज़ुआंग</language>
 			<language type="zap">ज़ेपोटेक</language>
@@ -530,7 +464,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">चीनी</language>
 			<language type="zh_Hans">सरलीकृत चीनी</language>
 			<language type="zh_Hant">पारंपरिक चीनी</language>
-			<language type="znd">ज़न्डे</language>
 			<language type="zu">ज़ुलू</language>
 			<language type="zun">ज़ूनी</language>
 			<language type="zxx">कोई भाषा सामग्री नहीं</language>
@@ -1162,12 +1095,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<dateFormats>
 					<dateFormatLength type="full">
 						<dateFormat>
-							<pattern>EEEE, d MMMM Gy</pattern>
+							<pattern>EEEE, d MMMM G y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="long">
 						<dateFormat>
-							<pattern>d MMMM Gy</pattern>
+							<pattern>d MMMM G y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="medium">
@@ -1205,10 +1138,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<availableFormats>
 						<dateFormatItem id="d">d</dateFormatItem>
 						<dateFormatItem id="Ed">d E</dateFormatItem>
-						<dateFormatItem id="Gy">Gy</dateFormatItem>
-						<dateFormatItem id="GyMMM">MMM Gy</dateFormatItem>
-						<dateFormatItem id="GyMMMd">d MMM Gy</dateFormatItem>
-						<dateFormatItem id="GyMMMEd">E, d MMM Gy</dateFormatItem>
+						<dateFormatItem id="Gy">G y</dateFormatItem>
+						<dateFormatItem id="GyMMM">MMM G y</dateFormatItem>
+						<dateFormatItem id="GyMMMd">d MMM G y</dateFormatItem>
+						<dateFormatItem id="GyMMMEd">E, d MMM G y</dateFormatItem>
 						<dateFormatItem id="h" draft="contributed">h a</dateFormatItem>
 						<dateFormatItem id="H" draft="contributed">HH</dateFormatItem>
 						<dateFormatItem id="hm" draft="contributed">h:mm a</dateFormatItem>
@@ -1223,17 +1156,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E, d MMM</dateFormatItem>
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
-						<dateFormatItem id="y">Gy</dateFormatItem>
+						<dateFormatItem id="y">G y</dateFormatItem>
 						<dateFormatItem id="yyyy">G y</dateFormatItem>
 						<dateFormatItem id="yyyyM">M/y GGGGG</dateFormatItem>
 						<dateFormatItem id="yyyyMd" draft="contributed">d/M/y G</dateFormatItem>
 						<dateFormatItem id="yyyyMEd" draft="contributed">E, d/M/y G</dateFormatItem>
 						<dateFormatItem id="yyyyMMdd">dd-MM-y G</dateFormatItem>
-						<dateFormatItem id="yyyyMMM">MMM Gy</dateFormatItem>
-						<dateFormatItem id="yyyyMMMd">d MMM Gy</dateFormatItem>
-						<dateFormatItem id="yyyyMMMEd">E, d MMM Gy</dateFormatItem>
-						<dateFormatItem id="yyyyQQQ">QQQ Gy</dateFormatItem>
-						<dateFormatItem id="yyyyQQQQ">QQQQ Gy</dateFormatItem>
+						<dateFormatItem id="yyyyMMM">MMM G y</dateFormatItem>
+						<dateFormatItem id="yyyyMMMd">d MMM G y</dateFormatItem>
+						<dateFormatItem id="yyyyMMMEd">E, d MMM G y</dateFormatItem>
+						<dateFormatItem id="yyyyQQQ">QQQ G y</dateFormatItem>
+						<dateFormatItem id="yyyyQQQQ">QQQQ G y</dateFormatItem>
 					</availableFormats>
 					<intervalFormats>
 						<intervalFormatFallback>{0} – {1}</intervalFormatFallback>
@@ -1653,7 +1586,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMdd">dd-MM</dateFormatItem>
 						<dateFormatItem id="MMM">LLL</dateFormatItem>
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
-						<dateFormatItem id="MMMdd">dd MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E, d MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E, d MMMM</dateFormatItem>
@@ -2333,9 +2265,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>पॉमर</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>दक्षिणी ध्रुव</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>स्योवा</exemplarCity>
 			</zone>
@@ -2608,9 +2537,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>टोरंटो</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>मोंट्रियल</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>इकालुईट</exemplarCity>
@@ -3454,9 +3380,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>फ़ीनिक्स</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>शिपरॉक</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>डेनवर</exemplarCity>

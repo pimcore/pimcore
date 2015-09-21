@@ -13,6 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Resource extends Pimcore_Resource_Mysql {
+namespace Pimcore;
+
+class Resource extends Resource\Mysql {
     
 }

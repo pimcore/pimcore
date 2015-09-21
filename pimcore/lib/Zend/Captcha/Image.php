@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,7 +31,7 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Captcha_Image extends Zend_Captcha_Word
@@ -240,24 +240,36 @@ class Zend_Captcha_Image extends Zend_Captcha_Word
     {
         return $this->_width;
     }
+
     /**
+     * Set start image
+     *
      * @param string $startImage
+     * @return Zend_Captcha_Image
      */
     public function setStartImage ($startImage)
     {
         $this->_startImage = $startImage;
         return $this;
     }
+
     /**
+     * Set dot noise level
+     *
      * @param int $dotNoiseLevel
+     * @return Zend_Captcha_Image
      */
     public function setDotNoiseLevel ($dotNoiseLevel)
     {
         $this->_dotNoiseLevel = $dotNoiseLevel;
         return $this;
     }
-   /**
+
+    /**
+     * Set line noise level
+     *
      * @param int $lineNoiseLevel
+     * @return Zend_Captcha_Image
      */
     public function setLineNoiseLevel ($lineNoiseLevel)
     {
@@ -348,8 +360,12 @@ class Zend_Captcha_Image extends Zend_Captcha_Word
         $this->_imgUrl = rtrim($imgUrl, "/\\") . '/';
         return $this;
     }
+
     /**
+     * Set image alternative text
+     *
      * @param string $imgAlt
+     * @return Zend_Captcha_Image
      */
     public function setImgAlt ($imgAlt)
     {
@@ -440,8 +456,9 @@ class Zend_Captcha_Image extends Zend_Captcha_Word
      * Override this function if you want different image generator
      * Wave transform from http://www.captcha.ru/captchas/multiwave/
      *
-     * @param string $id Captcha ID
+     * @param string $id   Captcha ID
      * @param string $word Captcha word
+     * @throws Zend_Captcha_Exception
      */
     protected function _generateImage($id, $word)
     {
@@ -567,7 +584,6 @@ class Zend_Captcha_Image extends Zend_Captcha_Word
 
     /**
      * Remove old files from image directory
-     *
      */
     protected function _gc()
     {

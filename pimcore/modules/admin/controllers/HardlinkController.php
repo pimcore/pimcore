@@ -13,20 +13,23 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document {
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+
+class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document {
 
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
+        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
+                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($this->getParam("id"), "document");
 
-        $link = Document_Hardlink::getById($this->getParam("id"));
-        $link->idPath = Element_Service::getIdPath($link);
+        $link = Document\Hardlink::getById($this->getParam("id"));
+        $link->idPath = Element\Service::getIdPath($link);
         $link->userPermissions = $link->getUserPermissions();
         $link->setLocked($link->isLocked());
         $link->setParent(null);
@@ -46,7 +49,7 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
 
     public function saveAction() {
         if ($this->getParam("id")) {
-            $link = Document_Hardlink::getById($this->getParam("id"));
+            $link = Document\Hardlink::getById($this->getParam("id"));
             $this->setValuesToDocument($link);
 
             $link->setModificationDate(time());
@@ -70,10 +73,10 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
         $this->_helper->json(false);
     }
 
-    protected function setValuesToDocument(Document_Hardlink $link) {
+    protected function setValuesToDocument(Document\Hardlink $link) {
 
         // data
-        $data = Zend_Json::decode($this->getParam("data"));
+        $data = \Zend_Json::decode($this->getParam("data"));
 
         $sourceId = null;
         if($sourceDocument = Document::getByPath($data["sourcePath"])) {

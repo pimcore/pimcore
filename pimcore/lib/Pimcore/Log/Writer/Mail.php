@@ -13,38 +13,30 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Log\Writer;
 
-class Pimcore_Log_Writer_Mail extends Zend_Log_Writer_Mail{
+class Mail extends \Zend_Log_Writer_Mail{
 
     /**
      * @var string
      */
     protected $_tempfile;
     /**
-     * @var Zend_Log
+     * @var \Zend_Log
      */
     protected  $_tempLogger;
 
     /**
-     * Class constructor.
-     *
-     * Constructs the pimcore mail writer; requires a Zend_Mail instance, and takes an
-     * optional Zend_Layout instance.  If Zend_Layout is being used,
-     * $this->_layout->events will be set for use in the layout template.
-     *
-     * @param string
-     * @param  Zend_Mail $mail Mail instance
-     * @param  Zend_Layout $layout Layout instance; optional
-     * @return void
+     * @param \Zend_Mail $tempfile
+     * @param \Zend_Mail $mail
+     * @param \Zend_Layout $layout
      */
-    public function __construct($tempfile, Zend_Mail $mail, Zend_Layout $layout = null)
+    public function __construct($tempfile, \Zend_Mail $mail, \Zend_Layout $layout = null)
     {
          $this->_tempfile = $tempfile;
-         $writerFile = new Zend_Log_Writer_Stream($tempfile);
-         $this->_tempLogger = new Zend_Log($writerFile);
+         $writerFile = new \Zend_Log_Writer_Stream($tempfile);
+         $this->_tempLogger = new \Zend_Log($writerFile);
          parent::__construct($mail,$layout);
-
-
     }
 
     /**
@@ -57,9 +49,9 @@ class Pimcore_Log_Writer_Mail extends Zend_Log_Writer_Mail{
     {
 
         if(!is_file($this->_tempfile)){
-            @Pimcore_File::put($this->_tempfile, "... continued ...\r\n");
-            $writerFile = new Zend_Log_Writer_Stream($this->_tempfile);
-            $this->_tempLogger = new Zend_Log($writerFile);
+            @\Pimcore\File::put($this->_tempfile, "... continued ...\r\n");
+            $writerFile = new \Zend_Log_Writer_Stream($this->_tempfile);
+            $this->_tempLogger = new \Zend_Log($writerFile);
         }
         $this->_tempLogger->log($event['message'],$event['priority']);
         parent::_write($event);

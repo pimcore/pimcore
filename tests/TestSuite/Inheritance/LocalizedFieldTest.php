@@ -175,7 +175,7 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
         $list->setLocale("xx");
         try {
             $listItems = $list->load();
-            $this->fail("Excpected exception");
+            $this->fail("Expected exception");
         } catch (Exception $e) {
 
         }

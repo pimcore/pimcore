@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Textarea extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+
+class Textarea extends Model\Document\Tag {
 
     /**
      * Contains the text
@@ -26,7 +30,7 @@ class Document_Tag_Textarea extends Document_Tag {
 
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -34,7 +38,7 @@ class Document_Tag_Textarea extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -42,7 +46,7 @@ class Document_Tag_Textarea extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend() {
@@ -62,7 +66,14 @@ class Document_Tag_Textarea extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     *
+     */
+    public function getDataEditmode() {
+        return htmlentities($this->text);
+    }
+
+    /**
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
@@ -72,11 +83,12 @@ class Document_Tag_Textarea extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
     public function setDataFromEditmode($data) {
+        $data = html_entity_decode($data, ENT_HTML5); // this is because the input is now an div contenteditable -> therefore in entities
         $this->text = $data;
         return $this;
     }
@@ -90,18 +102,16 @@ class Document_Tag_Textarea extends Document_Tag {
     }
 
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Model\Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            throw new \Exception("cannot get values from web service import - invalid data");
         }
 
     }

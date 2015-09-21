@@ -10,14 +10,22 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Object_Fieldcollection
+ * @package    Object\Fieldcollection
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Fieldcollection_Data_Resource extends Pimcore_Model_Resource_Abstract {
-        
-    public function save (Object_Concrete $object) {
+namespace Pimcore\Model\Object\Fieldcollection\Data;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     * @param Model\Object\Concrete $object
+     * @throws \Exception
+     */
+    public function save (Model\Object\Concrete $object) {
         
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = array(
@@ -46,7 +54,7 @@ class Object_Fieldcollection_Data_Resource extends Pimcore_Model_Resource_Abstra
             }
             
             $this->db->insert($tableName, $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }

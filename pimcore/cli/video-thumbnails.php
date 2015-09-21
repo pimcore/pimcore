@@ -13,10 +13,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+chdir(__DIR__);
+
 include_once("startup.php");
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\Version;
+
 try {
-    $opts = new Zend_Console_Getopt(array(
+    $opts = new \Zend_Console_Getopt(array(
         'verbose|v' => 'show detailed information (for debug, ...)',
         'help|h' => 'display this help',
         "parent|p=i" => "only create thumbnails of videos in this folder (ID)",
@@ -29,7 +34,7 @@ try {
 
 try {
     $opts->parse();
-} catch (Zend_Console_Getopt_Exception $e) {
+} catch (\Zend_Console_Getopt_Exception $e) {
     echo $e->getMessage();
 }
 
@@ -41,19 +46,19 @@ if($opts->getOption("help")) {
 }
 
 if($opts->getOption("verbose")) {
-    $writer = new Zend_Log_Writer_Stream('php://output');
-    $logger = new Zend_Log($writer);
-    Logger::addLogger($logger);
+    $writer = new \Zend_Log_Writer_Stream('php://output');
+    $logger = new \Zend_Log($writer);
+    \Logger::addLogger($logger);
 
     // set all priorities
-    Logger::setVerbosePriorities();
+    \Logger::setVerbosePriorities();
 }
 
 // disable versioning
 Version::disable();
 
 // get all thumbnails
-$dir = Asset_Video_Thumbnail_Config::getWorkingDir();
+$dir = Asset\Video\Thumbnail\Config::getWorkingDir();
 $thumbnails = array();
 $files = scandir($dir);
 foreach ($files as $file) {
@@ -73,7 +78,7 @@ $conditions = array("type = 'video'");
 
 if($opts->getOption("parent")) {
     $parent = Asset::getById($opts->getOption("parent"));
-    if($parent instanceof Asset_Folder) {
+    if($parent instanceof Asset\Folder) {
         $conditions[] = "path LIKE '" . $parent->getFullPath() . "/%'";
     } else {
         echo $opts->getOption("parent") . " is not a valid asset folder ID!\n";
@@ -81,7 +86,7 @@ if($opts->getOption("parent")) {
     }
 }
 
-$list = new Asset_List();
+$list = new Asset\Listing();
 $list->setCondition(implode(" AND ", $conditions));
 $total = $list->getTotalCount();
 $perLoop = 10;
@@ -102,7 +107,7 @@ for($i=0; $i<(ceil($total/$perLoop)); $i++) {
 
         if($opts->getOption("system")) {
             echo "generating thumbnail for video: " . $video->getFullpath() . " | " . $video->getId() . " | Thumbnail: System Preview : " . formatBytes(memory_get_usage()) . " \n";
-            $thumbnail = Asset_Video_Thumbnail_Config::getPreviewConfig();
+            $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
             $video->getThumbnail($thumbnail);
             waitTillFinished($video->getId(), $thumbnail);
         }
@@ -123,21 +128,21 @@ function waitTillFinished($videoId, $thumbnail) {
     }
 
     while (!$finished) {
-        Pimcore::collectGarbage();
+        \Pimcore::collectGarbage();
 
         $video = Asset::getById($videoId);
         $thumb = $video->getThumbnail($thumbnail);
         if ($thumb["status"] == "finished") {
             $finished = true;
-            Logger::debug("video [" . $video->getId() . "] FINISHED");
+            \Logger::debug("video [" . $video->getId() . "] FINISHED");
         } else if ($thumb["status"] == "inprogress") {
-            $progress = Asset_Video_Thumbnail_Processor::getProgress($thumb["processId"]);
-            Logger::debug("video [" . $video->getId() . "] in progress: " . number_format($progress,0) . "%");
+            $progress = Asset\Video\Thumbnail\Processor::getProgress($thumb["processId"]);
+            \Logger::debug("video [" . $video->getId() . "] in progress: " . number_format($progress,0) . "%");
 
             sleep(5);
         } else {
             // error
-            Logger::debug("video [" . $video->getId() . "] has status: '" . $thumb["status"] . "' -> skipping");
+            \Logger::debug("video [" . $video->getId() . "] has status: '" . $thumb["status"] . "' -> skipping");
             break;
         }
     }

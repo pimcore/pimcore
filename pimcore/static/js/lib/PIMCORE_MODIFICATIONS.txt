@@ -40,7 +40,3 @@ from "m/d/y" to "m/d/Y"
 
 - removed "cursor: default" from ".x-unselectable, .x-unselectable *" selector in ext-all.css
 
-# EXT PLUGINS
-- SwfUploadPanel added translation function to labels
-
-

@@ -16,7 +16,12 @@
  *
  */
 
-class Document extends Element_Abstract {
+namespace Pimcore\Model;
+
+use Pimcore\Tool;
+use Pimcore\Tool\Frontend as FrontendTool;
+
+class Document extends Element\AbstractElement {
 
     /**
      * possible types of a document
@@ -24,24 +29,33 @@ class Document extends Element_Abstract {
      */
     public static $types = array("folder", "page", "snippet", "link", "hardlink", "email");  //ck added "email"
 
+    /**
+     * @param $type
+     */
     public static function addDocumentType($type) {
         if(!in_array($type, self::$types)) {
             self::$types[] = $type;
         }
     }
 
-
-    
+    /**
+     * @var bool
+     */
     private static $hidePublished = false;
 
+    /**
+     * @param $hidePublished
+     */
     public static function setHideUnpublished($hidePublished) {
         self::$hidePublished = $hidePublished;
     }
 
+    /**
+     * @return bool
+     */
     public static function doHideUnpublished() {
         return self::$hidePublished;
     }
-
 
     /**
      * ID of the document
@@ -127,9 +141,7 @@ class Document extends Element_Abstract {
     public $userModification;
 
     /**
-     * Permissions for the user which requested this document in editmode
-     *
-     * @var Document_Permissions
+     * Permissions for the user which requested this document in editmode*
      */
     public $userPermissions;
 
@@ -161,6 +173,20 @@ class Document extends Element_Abstract {
      */
     public $hasChilds;
 
+	/**
+	 * Contains a list of sibling documents
+	 *
+	 * @var array
+	 */
+	public $siblings;
+
+	/**
+	 * Indicator if document has siblings or not
+	 *
+	 * @var boolean
+	 */
+	public $hasSiblings;
+
     /**
      * @var string
      */
@@ -175,33 +201,33 @@ class Document extends Element_Abstract {
     }
 
     /**
-     * Static helper to get a Document by it's path, only type Document is returned, not Document_Page, ... (see getConcreteByPath() )
+     * Static helper to get a Document by it's path, only type Document is returned, not Document\Page, ... (see getConcreteByPath() )
      *
      * @param string $path
      * @return Document
      */
     public static function getByPath($path) {
 
-        $path = Element_Service::correctPath($path);
+        $path = Element\Service::correctPath($path);
 
         try {
             $document = new Document();
             // validate path
-            if (Pimcore_Tool::isValidPath($path)) {
+            if (Tool::isValidPath($path)) {
                 $document->getResource()->getByPath($path);
             }
 
             return self::getById($document->getId());
         }
-        catch (Exception $e) {
-            Logger::debug($e->getMessage());
+        catch (\Exception $e) {
+            \Logger::debug($e->getMessage());
         }
 
         return null;
     }
 
     /**
-     * Static helper to get a Document by it's id, only type Document is returned, not Document_Page, ... (see getConcreteById() )
+     * Static helper to get a Document by it's id, only type Document is returned, not Document\Page, ... (see getConcreteById() )
      *
      * @param integer $id
      * @return Document
@@ -217,42 +243,51 @@ class Document extends Element_Abstract {
         $cacheKey = "document_" . $id;
 
         try {
-            $document = Zend_Registry::get($cacheKey);
+            $document = \Zend_Registry::get($cacheKey);
             if(!$document){
-                throw new Exception("Document in registry is null");   
+                throw new \Exception("Document in registry is null");
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             try {
-                if (!$document = Pimcore_Model_Cache::load($cacheKey)) {
+                if (!$document = Cache::load($cacheKey)) {
                     $document = new Document();
                     $document->getResource()->getById($id);
 
-                    $typeClass = "Document_" . ucfirst($document->getType());
-                    $typeClass = Pimcore_Tool::getModelClassMapping($typeClass);
+                    $mappingClass = "\\Pimcore\\Model\\Document\\" . ucfirst($document->getType());
 
-                    if (Pimcore_Tool::classExists($typeClass)) {
+                    // this is the fallback for custom document types using prefixes
+                    // so we need to check if the class exists first
+                    if(!\Pimcore\Tool::classExists($mappingClass)) {
+                        $oldStyleClass = "Document_" . ucfirst($document->getType());
+                        if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                            $mappingClass = $oldStyleClass;
+                        }
+                    }
+                    $typeClass = Tool::getModelClassMapping($mappingClass);
+
+                    if (Tool::classExists($typeClass)) {
                         $document = new $typeClass();
-                        Zend_Registry::set($cacheKey, $document);
+                        \Zend_Registry::set($cacheKey, $document);
                         $document->getResource()->getById($id);
 
-                        Pimcore_Model_Cache::save($document, $cacheKey);
+                        Cache::save($document, $cacheKey);
                     }
                 }
                 else {
-                    Zend_Registry::set($cacheKey, $document);
+                    \Zend_Registry::set($cacheKey, $document);
                 }
             }
-            catch (Exception $e) {
-                Logger::warning($e->getMessage());
+            catch (\Exception $e) {
+                \Logger::warning($e->getMessage());
                 return null;
             }
         }
-        
+
         if(!$document) {
             return null;
         }
-        
+
         return $document;
     }
 
@@ -260,7 +295,7 @@ class Document extends Element_Abstract {
      * Static helper to get a concrete implementation of a document by it's id, this method returns the concrete object to retrieve only the basic object use getById()
      *
      * @param Document|integer $id
-     * @return Document_Page|Document_Snippet|Document_Folder|Document_Link
+     * @return Document\Page|Document\Snippet|Document\Folder|Document\Link
      */
     public static function getConcreteById($id) {
         return self::getById($id);
@@ -270,7 +305,7 @@ class Document extends Element_Abstract {
      * Static helper to get a concrete implementation of a document by it's path, this method returns the concrete object to retrieve only the basic object use getById()
      *
      * @param string|Document $path
-     * @return Document_Page|Document_Snippet|Document_Folder|Document_Link
+     * @return Document\Page|Document\Snippet|Document\Folder|Document\Link
      */
     public static function getConcreteByPath($path) {
         return self::getByPath($path);
@@ -302,21 +337,27 @@ class Document extends Element_Abstract {
 
     /**
      * @param array $config
-     * @return Document_List
+     * @return mixed
+     * @throws \Exception
      */
     public static function getList($config = array()) {
 
         if (is_array($config)) {
 
-            $listClass = "Document_List";
-            $listClass = Pimcore_Tool::getModelClassMapping($listClass);
-            $list = new $listClass();
+            $listClass = "\\Pimcore\\Model\\Document\\Listing";
+            $listClass = Tool::getModelClassMapping($listClass);
 
-            $list->setValues($config);
-            $list->load();
+            if (Tool::classExists($listClass)) {
+                $list = new $listClass();
 
-            return $list;
+                $list->setValues($config);
+                $list->load();
+
+                return $list;
+            }
         }
+
+        throw new \Exception("Unable to initiate list class - class not found or invalid configuration");
     }
 
     /**
@@ -326,8 +367,8 @@ class Document extends Element_Abstract {
     public static function getTotalCount($config = array()) {
 
         if (is_array($config)) {
-            $listClass = "Document_List";
-            $listClass = Pimcore_Tool::getModelClassMapping($listClass);
+            $listClass = "\\Pimcore\\Model\\Document\\Listing";
+            $listClass = Tool::getModelClassMapping($listClass);
             $list = new $listClass();
 
             $list->setValues($config);
@@ -339,18 +380,17 @@ class Document extends Element_Abstract {
 
 
     /**
-     * Saves the document
-     *
-     * @return void
+     * @return $this
+     * @throws \Exception
      */
     public function save() {
 
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            Pimcore::getEventManager()->trigger("document.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("document.preUpdate", $this);
         } else {
-            Pimcore::getEventManager()->trigger("document.preAdd", $this);
+            \Pimcore::getEventManager()->trigger("document.preAdd", $this);
         }
 
         // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
@@ -363,8 +403,8 @@ class Document extends Element_Abstract {
 
             try {
                 // check for a valid key, home has no key, so omit the check
-                if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-                    throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+                if (!Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
+                    throw new \Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
                 }
 
                 $this->correctPath();
@@ -397,19 +437,19 @@ class Document extends Element_Abstract {
                 $this->commit();
 
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 try {
                     $this->rollBack();
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
-                    Logger::error($er);
+                    \Logger::error($er);
                 }
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if($retries < ($maxRetries-1)) {
                     $run = $retries+1;
                     $waitTime = 100000; // microseconds
-                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
+                    \Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
@@ -426,26 +466,29 @@ class Document extends Element_Abstract {
                 $additionalTags[] = $tag;
 
                 // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                Zend_Registry::set($tag, null);
+                \Zend_Registry::set($tag, null);
             }
         }
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            Pimcore::getEventManager()->trigger("document.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("document.postUpdate", $this);
         } else {
-            Pimcore::getEventManager()->trigger("document.postAdd", $this);
+            \Pimcore::getEventManager()->trigger("document.postAdd", $this);
         }
 
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function correctPath() {
         // set path
         if ($this->getId() != 1) { // not for the root node
 
             if($this->getParentId() == $this->getId()) {
-                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
             $parent = Document::getById($this->getParentId());
@@ -454,40 +497,43 @@ class Document extends Element_Abstract {
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace("//", "/", $parent->getCurrentFullPath() . "/"));
             } else {
-                // parent document doesn't exist anymore, so delete this document
-                //$this->delete();
-
                 // parent document doesn't exist anymore, set the parent to to root
                 $this->setParentId(1);
                 $this->setPath("/");
             }
+
+            if (strlen($this->getKey()) < 1) {
+                $this->setKey("---no-valid-key---" . $this->getId());
+                throw new \Exception("Document requires key, generated key automatically");
+            }
+        } else if($this->getId() == 1) {
+            // some data in root node should always be the same
+            $this->setParentId(0);
+            $this->setPath("/");
+            $this->setKey("");
+            $this->setType("page");
         }
 
-        if(Document_Service::pathExists($this->getRealFullPath())) {
+        if(Document\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Document::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Document  and $duplicate->getId() != $this->getId()) {
-                throw new Exception("Duplicate full path [ " . $this->getRealFullPath() . " ] - cannot save document");
+                throw new \Exception("Duplicate full path [ " . $this->getRealFullPath() . " ] - cannot save document");
             }
         }
 
+        if(strlen($this->getRealFullPath()) > 765) {
+            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
+        }
     }
 
     /**
-     * Updates the document, is mostly called by save().
-     * Only saves the changes to the document, but doesn't create it, so it's a good idea to use just save()
-     *
-     * @return void
+     * @throws \Exception
      */
     protected function update() {
 
-        if (!$this->getKey() && $this->getId() != 1) {
-            $this->delete();
-            throw new Exception("Document requires key, document with id " . $this->getId() . " deleted");
-        }
-
         $disallowedKeysInFirstLevel = array("install","admin","webservice","plugin");
         if($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
-            throw new Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
+            throw new \Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
         }
 
         // set index if null
@@ -528,23 +574,29 @@ class Document extends Element_Abstract {
         $this->getResource()->update();
 
         //set object to registry
-        Zend_Registry::set("document_" . $this->getId(), $this);
+        \Zend_Registry::set("document_" . $this->getId(), $this);
     }
 
+    /**
+     * @param $index
+     */
     public function saveIndex($index) {
         $this->getResource()->saveIndex($index);
         $this->clearDependentCache();
     }
 
+    /**
+     * @param array $additionalTags
+     */
     public function clearDependentCache($additionalTags = array()) {
         try {
-            $tags = array("document_" . $this->getId(), "properties", "output");
+            $tags = array("document_" . $this->getId(), "document_properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
-            Pimcore_Model_Cache::clearTags($tags);
+            Cache::clearTags($tags);
         }
-        catch (Exception $e) {
-            Logger::crit($e);
+        catch (\Exception $e) {
+            \Logger::crit($e);
         }
     }
 
@@ -580,13 +632,14 @@ class Document extends Element_Abstract {
 
     /**
      * Get a list of the Childs (not recursivly)
-     *
+     * @param bool
      * @return array
      */
-    public function getChilds() {
+    public function getChilds($unpublished = false) {
 
         if ($this->childs === null) {
-            $list = new Document_List();
+            $list = new Document\Listing();
+            $list->setUnpublished($unpublished);
             $list->setCondition("parentId = ?", $this->getId());
             $list->setOrderKey("index");
             $list->setOrder("asc");
@@ -611,6 +664,42 @@ class Document extends Element_Abstract {
         }
         return $this->getResource()->hasChilds();
     }
+
+	/**
+	 * Get a list of the sibling documents
+	 *
+	 * @param bool $unpublished
+	 * @return array
+	 */
+	public function getSiblings($unpublished = false) {
+		if ($this->siblings === null) {
+			$list = new Document\Listing();
+			$list->setUnpublished($unpublished);
+			// string conversion because parentId could be 0
+			$list->addConditionParam("parentId = ?", (string)$this->getParentId());
+			$list->addConditionParam("id != ?", $this->getId());
+			$list->setOrderKey("index");
+			$list->setOrder("asc");
+			$this->siblings = $list->load();
+		}
+		return $this->siblings;
+	}
+
+	/**
+	 * Returns true if the document has at least one sibling
+	 *
+	 * @return bool
+	 */
+	public function hasSiblings() {
+		if(is_bool($this->hasSiblings)){
+			if(($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))){
+				return $this->getResource()->hasSiblings();
+			} else {
+				return $this->hasSiblings;
+			}
+		}
+		return $this->getResource()->hasSiblings();
+	}
 
     /**
      * Returns true if the element is locked
@@ -639,14 +728,14 @@ class Document extends Element_Abstract {
      */
     public function delete() {
 
-        Pimcore::getEventManager()->trigger("document.preDelete", $this);
+        \Pimcore::getEventManager()->trigger("document.preDelete", $this);
 
         // remove childs
         if ($this->hasChilds()) {
             // delete also unpublished children
             $unpublishedStatus = self::doHideUnpublished();
             self::setHideUnpublished(false);
-            foreach ($this->getChilds() as $child) {
+            foreach ($this->getChilds(true) as $child) {
                 $child->delete();
             }
             self::setHideUnpublished($unpublishedStatus);
@@ -668,9 +757,9 @@ class Document extends Element_Abstract {
         $this->clearDependentCache();
 
         //set object to registry
-        Zend_Registry::set("document_" . $this->getId(), null);
+        \Zend_Registry::set("document_" . $this->getId(), null);
 
-        Pimcore::getEventManager()->trigger("document.postDelete", $this);
+        \Pimcore::getEventManager()->trigger("document.postDelete", $this);
     }
 
     /**
@@ -690,8 +779,8 @@ class Document extends Element_Abstract {
                     }
                 }
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
         }
 
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
@@ -703,14 +792,14 @@ class Document extends Element_Abstract {
         // the hardlink there are snippets embedded and this snippets have links pointing to a document which is also
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
-        if(!Pimcore::inAdmin() && Site::isSiteRequest() && !Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
+        if(!\Pimcore::inAdmin() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
 
-            $documentService = new Document_Service();
+            $documentService = new Document\Service();
             $parent = $this;
             while($parent) {
                 if($hardlinkId = $documentService->getDocumentIdFromHardlinkInSameSite(Site::getCurrentSite(), $parent)) {
                     $hardlink = Document::getById($hardlinkId);
-                    if(Pimcore_Tool_Frontend::isDocumentInCurrentSite($hardlink)) {
+                    if(FrontendTool::isDocumentInCurrentSite($hardlink)) {
 
                         $siteRootPath = Site::getCurrentSite()->getRootPath();
                         $siteRootPath = preg_quote($siteRootPath);
@@ -723,10 +812,10 @@ class Document extends Element_Abstract {
                 $parent = $parent->getParent();
             }
 
-            $config = Pimcore_Config::getSystemConfig();
-            $front = Zend_Controller_Front::getInstance();
+            $config = \Pimcore\Config::getSystemConfig();
+            $front = \Zend_Controller_Front::getInstance();
             $scheme = ($front->getRequest()->isSecure() ? "https" : "http") . "://";
-            if($site = Pimcore_Tool_Frontend::getSiteForDocument($this)) {
+            if($site = FrontendTool::getSiteForDocument($this)) {
                 if($site->getMainDomain()) {
                     // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
                     if ($site->getRootDocument()->getId() == $this->getId()) {
@@ -787,18 +876,18 @@ class Document extends Element_Abstract {
 
         // check for site, if so rewrite the path for output
         try {
-            if(!Pimcore::inAdmin() && Site::isSiteRequest()) {
+            if(!\Pimcore::inAdmin() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
-                    if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
+                    if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
                         $rootPath = $site->getRootPath();
                         $rootPath = preg_quote($rootPath);
                         return preg_replace("@^" . $rootPath . "@", "", $this->path);
                     }
                 }
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
         }
 
         return $this->path;
@@ -863,7 +952,7 @@ class Document extends Element_Abstract {
      */
     public function setParentId($parentId) {
         $this->parentId = (int) $parentId;
-        $this->parent = Document::getById($parentId);
+        $this->parent = null;
         return $this;
     }
 
@@ -972,12 +1061,12 @@ class Document extends Element_Abstract {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
-            $properties = Pimcore_Model_Cache::load($cacheKey);
+            $properties = Cache::load($cacheKey);
             if (!is_array($properties)) {
                 $properties = $this->getResource()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
-                $cacheTags = array("properties" => "properties", $elementCacheTag => $elementCacheTag);
-                Pimcore_Model_Cache::save($properties, $cacheKey, $cacheTags);
+                $cacheTags = array("document_properties" => "document_properties", $elementCacheTag => $elementCacheTag);
+                Cache::save($properties, $cacheKey, $cacheTags);
             }
 
             $this->setProperties($properties);
@@ -1050,7 +1139,7 @@ class Document extends Element_Abstract {
 
         $finalVars = array();
         $parentVars = parent::__sleep();
-        
+
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
             $blockedVars = array("dependencies", "userPermissions", "hasChilds", "versions", "scheduledTasks", "parent");
@@ -1060,17 +1149,20 @@ class Document extends Element_Abstract {
             // this is if we want to cache the object
             $blockedVars = array("dependencies", "userPermissions", "childs", "hasChilds", "versions", "scheduledTasks", "properties", "parent");
         }
-        
+
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
         }
-        
+
         return $finalVars;
     }
-    
+
+    /**
+     *
+     */
     public function __wakeup() {
         if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
@@ -1090,6 +1182,9 @@ class Document extends Element_Abstract {
         }
     }
 
+    /**
+     *
+     */
     public function removeInheritedProperties () {
         $myProperties = array();
         if($this->properties !== null) {
@@ -1102,14 +1197,17 @@ class Document extends Element_Abstract {
 
         $this->setProperties($myProperties);
     }
-    
+
+    /**
+     *
+     */
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
 
         // add to registry to avoid infinite regresses in the following $this->getResource()->getProperties()
         $cacheKey = "document_" . $this->getId();
-        if(!Zend_Registry::isRegistered($cacheKey)) {
-            Zend_Registry::set($cacheKey, $this);
+        if(!\Zend_Registry::isRegistered($cacheKey)) {
+            \Zend_Registry::set($cacheKey, $this);
         }
 
         $myProperties = $this->getProperties();

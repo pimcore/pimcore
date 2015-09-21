@@ -13,26 +13,29 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
+use Pimcore\Model\Element;
+use Pimcore\Model\Document;
+
+class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document {
 
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
+        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
+                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($this->getParam("id"), "document");
 
-        $snippet = Document_Snippet::getById($this->getParam("id"));
+        $snippet = Document\Snippet::getById($this->getParam("id"));
         $modificationDate = $snippet->getModificationDate();
         
         $snippet = $this->getLatestVersion($snippet);
 
         $snippet->setVersions(array_splice($snippet->getVersions(), 0, 1));
         $snippet->getScheduledTasks();
-        $snippet->idPath = Element_Service::getIdPath($snippet);
+        $snippet->idPath = Element\Service::getIdPath($snippet);
         $snippet->userPermissions = $snippet->getUserPermissions();
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
@@ -55,7 +58,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
 
     public function saveAction() {
         if ($this->getParam("id")) {
-            $snippet = Document_Snippet::getById($this->getParam("id"));
+            $snippet = Document\Snippet::getById($this->getParam("id"));
             $snippet = $this->getLatestVersion($snippet);
 
             $snippet->setUserModification($this->getUser()->getId());
@@ -75,7 +78,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
                     $snippet->save();
                     $this->saveToSession($snippet);
                     $this->_helper->json(array("success" => true));
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
 
@@ -89,7 +92,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
                         $snippet->saveVersion();
                         $this->saveToSession($snippet);
                         $this->_helper->json(array("success" => true));
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                     }
 

@@ -52,9 +52,25 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
             var languageData = this.getPropertyData("language");
 
             var languagestore = [["",t("none")]];
-            for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-                languagestore.push([pimcore.settings.websiteLanguages[i],pimcore.settings.websiteLanguages[i]]);
+            var websiteLanguages = pimcore.settings.websiteLanguages;
+            var selectContent = "";
+            for (var i=0; i<websiteLanguages.length; i++) {
+                selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
+                languagestore.push([websiteLanguages[i], selectContent]);
             }
+
+            var setLanguageIcon = function (select) {
+                if(!select.label["originalClass"]) {
+                    select.label.originalClass = select.label.getAttribute("class");
+                }
+                select.label.dom.setAttribute("class", "");
+                select.label.addClass(select.label.originalClass);
+
+                if(select.getValue()) {
+                    select.label.addClass("pimcore_icon_language_" + select.getValue().toLowerCase());
+                    select.label.addClass("pimcore_document_property_language_label");
+                }
+            };
 
             var language = new Ext.form.ComboBox({
                 fieldLabel: t('language'),
@@ -63,8 +79,13 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                 editable: false,
                 triggerAction: 'all',
                 mode: "local",
+                width: 160,
                 listWidth: 200,
-                value: languageData
+                value: languageData,
+                listeners: {
+                    "afterrender": setLanguageIcon,
+                    "select": setLanguageIcon
+                }
             });
 
             this.languagesPanel = new Ext.form.FormPanel({

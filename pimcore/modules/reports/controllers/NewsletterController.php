@@ -13,7 +13,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Reports {
+use Pimcore\Tool;
+use Pimcore\Model\Tool\Newsletter;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
+
+class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Reports {
 
     public function init() {
         parent::init();
@@ -23,7 +28,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     public function treeAction () {
 
-        $dir = Tool_Newsletter_Config::getWorkingDir();
+        $dir = Newsletter\Config::getWorkingDir();
 
         $letters = array();
         $files = scandir($dir);
@@ -43,14 +48,14 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
     public function addAction () {
 
         try {
-            Tool_Newsletter_Config::getByName($this->getParam("name"));
+            Newsletter\Config::getByName($this->getParam("name"));
             $alreadyExist = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $letter = new Tool_Newsletter_Config();
+            $letter = new Newsletter\Config();
             $letter->setName($this->getParam("name"));
             $letter->save();
         }
@@ -60,7 +65,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     public function deleteAction () {
 
-        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
         $letter->delete();
 
         $this->_helper->json(array("success" => true));
@@ -69,23 +74,23 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     public function getAction () {
 
-        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
 
         if($emailDoc = Document::getById($letter->getDocument())) {
             $letter->setDocument($emailDoc->getRealFullPath());
         }
 
         // get available classes
-        $classList = new Object_Class_List();
+        $classList = new Object\ClassDefinition\Listing();
 
         $availableClasses = array();
         foreach($classList->load() as $class) {
 
             $fieldCount = 0;
             foreach ($class->getFieldDefinitions() as $fd) {
-                if($fd instanceof Object_Class_Data_NewsletterActive ||
-                $fd instanceof Object_Class_Data_NewsletterConfirmed ||
-                $fd instanceof Object_Class_Data_Email) {
+                if($fd instanceof Object\ClassDefinition\Data\NewsletterActive ||
+                $fd instanceof Object\ClassDefinition\Data\NewsletterConfirmed ||
+                $fd instanceof Object\ClassDefinition\Data\Email) {
                     $fieldCount++;
                 }
             }
@@ -104,8 +109,8 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     public function updateAction () {
 
-        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
-        $data = Zend_Json::decode($this->getParam("configuration"));
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
+        $data = \Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
 
         if($emailDoc = Document::getByPath($data["document"])) {
@@ -129,7 +134,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
         $count = 0;
         $success = false;
         try {
-            $className = "Object_" . ucfirst($this->getParam("class")) . "_List";
+            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("class")) . "\\Listing";
             $list = new $className();
 
             $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
@@ -153,10 +158,10 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     public function getSendStatusAction() {
 
-        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
         $data = null;
         if(file_exists($letter->getPidFile())) {
-            $data = Pimcore_Tool_Serialize::unserialize(file_get_contents($letter->getPidFile()));
+            $data = Tool\Serialize::unserialize(file_get_contents($letter->getPidFile()));
         }
 
         $this->_helper->json(array(
@@ -166,7 +171,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
     }
 
     public function stopSendAction() {
-        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
         if(file_exists($letter->getPidFile())) {
             @unlink($letter->getPidFile());
         }
@@ -178,10 +183,10 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     public function sendAction() {
 
-        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
         if($letter) {
-            $cmd = Pimcore_Tool_Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "send-newsletter.php"). " " . $letter->getName() . " " . Pimcore_Tool::getHostUrl();
-            Pimcore_Tool_Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . "/newsletter--" . $letter->getName() . ".log");
+            $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "send-newsletter.php"). " " . escapeshellarg($letter->getName()) . " " . escapeshellarg(Tool::getHostUrl());
+            Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . "/newsletter--" . $letter->getName() . ".log");
         }
 
         $this->_helper->json(array("success" => true));
@@ -189,13 +194,13 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     public function sendTestAction() {
 
-        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
 
-        $className = "Object_" . ucfirst($letter->getClass());
+        $className = "\\Pimcore\\Model\\Object\\" . ucfirst($letter->getClass());
 
         $object = $className::getByEmail($letter->getTestEmailAddress(), 1);
         if(!$object) {
-            $objectList = $className . "_List";
+            $objectList = $className . "\\Listing";
             $list = new $objectList();
 
             if($letter->getObjectFilterSQL()) {
@@ -212,7 +217,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
             }
         }
 
-        Pimcore_Tool_Newsletter::sendMail($letter, $object, $letter->getTestEmailAddress());
+        Tool\Newsletter::sendMail($letter, $object, $letter->getTestEmailAddress());
 
         $this->_helper->json(array("success" => true));
     }

@@ -13,7 +13,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Mail extends Zend_Mail
+namespace Pimcore;
+
+use Pimcore\Helper\Mail as MailHelper;
+use Pimcore\Model;
+
+class Mail extends \Zend_Mail
 {
 
     /**
@@ -46,7 +51,7 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * Contains the email document
      *
-     * @var object Document_Email
+     * @var Model\Document\Email
      */
     protected $document;
 
@@ -109,34 +114,43 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * if $hostUrl is set - this url well be used to create absolute urls
      * otherwise it is determined automatically
-     * @see Pimcore_Helper_Mail::setAbsolutePaths()
+     * @see MailHelper::setAbsolutePaths()
      *
      * @var null
      */
     protected $hostUrl = null;
 
-
+    /**
+     * @param $url
+     * @return $this
+     */
     public function setHostUrl($url){
         $this->hostUrl = $url;
         return $this;
     }
 
+    /**
+     * @return null
+     */
     public function getHostUrl(){
         return $this->hostUrl;
     }
 
     // true - prevent setting the recipients from the Document - set in $this->clearRecipients()
+    /**
+     * @var bool
+     */
     protected $recipientsCleared = false;
 
 
     /**
-     * Creates a new Pimcore_Mail object (extends Zend_Mail)
-     *
-     * @param array $options
+     * @param null $charset
+     * @throws \Exception
+     * @throws \Zend_Mail_Exception
      */
     public function __construct($charset = null)
     {
-        // using $charset as param to be compatible with Zend_Mail
+        // using $charset as param to be compatible with \Zend_Mail
         if(is_array($charset) || self::$forcePimcoreMode) {
             $options = $charset;
             parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
@@ -171,15 +185,15 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function init($type = "email")
     {
-        $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
+        $systemConfig = \Pimcore\Config::getSystemConfig()->toArray();
         $emailSettings =& $systemConfig[$type];
 
         if ($emailSettings['sender']['email']) {
-            $this->setDefaultFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+            \Zend_Mail::setDefaultFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
         }
 
         if ($emailSettings['return']['email']) {
-            $this->setDefaultReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
+            \Zend_Mail::setDefaultReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
         }
 
         if ($emailSettings['method'] == "smtp") {
@@ -200,8 +214,8 @@ class Pimcore_Mail extends Zend_Mail
                 $config['password'] = $emailSettings['smtp']['auth']['password'];
             }
 
-            $transport = new Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
-            $this->setDefaultTransport($transport);
+            $transport = new \Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
+            \Zend_Mail::setDefaultTransport($transport);
         }
 
         //setting debug email addresses
@@ -213,13 +227,12 @@ class Pimcore_Mail extends Zend_Mail
             }
         }
 
-        $this->placeholderObject = new Pimcore_Placeholder();
+        $this->placeholderObject = new \Pimcore\Placeholder();
     }
 
     /**
-     * To ignore the Pimcore debug mode
-     *
-     * @param bool $value
+     * @param $value
+     * @return $this
      */
     public function setIgnoreDebugMode($value){
         $this->ignoreDebugMode = (bool)$value;
@@ -237,10 +250,8 @@ class Pimcore_Mail extends Zend_Mail
 
 
     /**
-     * activate / deactivate the layout when the document is rendered
-     * to a string when the placeholders are replaced
-     *
-     * @param $value bool
+     * @param $value
+     * @return $this
      */
     public function setEnableLayoutOnPlaceholderRendering($value){
         $this->enableLayoutOnPlaceholderRendering = (bool)$value;
@@ -279,13 +290,13 @@ class Pimcore_Mail extends Zend_Mail
      * Sets options that are passed to html2text
      *
      * @param string $options
-     * @return Pimcore_Mail
+     * @return \Pimcore\Mail
      */
     public function setHtml2TextOptions($options = ''){
         if(is_string($options)){
             $this->html2textOptions = $options;
         }else{
-            Logger::warn('Html2Text options ignored. You have to pass a string');
+            \Logger::warn('Html2Text options ignored. You have to pass a string');
         }
         return $this;
     }
@@ -300,7 +311,7 @@ class Pimcore_Mail extends Zend_Mail
     }
 
 
-    // overwriting Zend_Mail methods - necessary for logging... - start
+    // overwriting \Zend_Mail methods - necessary for logging... - start
 
     /**
      * Adds To-header and recipient, $email can be an array, or a single string address
@@ -308,7 +319,7 @@ class Pimcore_Mail extends Zend_Mail
      *
      * @param  string|array $email
      * @param  string $name
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function addTo($email, $name = '')
     {
@@ -335,7 +346,7 @@ class Pimcore_Mail extends Zend_Mail
      * Additionally adds recipients to temporary storage
      *
      * @param  string|array    $email
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function addBcc($email)
     {
@@ -347,7 +358,7 @@ class Pimcore_Mail extends Zend_Mail
      * Clears list of recipient email addresses
      * and resets the temporary storage
      *
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function clearRecipients()
     {
@@ -358,7 +369,7 @@ class Pimcore_Mail extends Zend_Mail
         return parent::clearRecipients();
     }
 
-    // overwriting Zend_Mail methods - end
+    // overwriting \Zend_Mail methods - end
 
     /**
      * Helper to add receivers to the temporary storage
@@ -390,7 +401,7 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * Disables email logging
      *
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function disableLogging()
     {
@@ -401,7 +412,7 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * Enables email logging (by default it's enabled)
      *
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function enableLogging()
     {
@@ -423,7 +434,7 @@ class Pimcore_Mail extends Zend_Mail
      * Sets the parameters for the email view and the Placeholders
      *
      * @param array $params
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function setParams(Array $params)
     {
@@ -439,14 +450,14 @@ class Pimcore_Mail extends Zend_Mail
      *
      * @param string | int $key
      * @param mixed $value
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function setParam($key, $value)
     {
         if (is_string($key) || is_integer($key)) {
             $this->params[$key] = $value;
         } else {
-            Logger::warn('$key has to be a string - Param ignored!');
+            \Logger::warn('$key has to be a string - Param ignored!');
         }
 
         return $this;
@@ -477,7 +488,7 @@ class Pimcore_Mail extends Zend_Mail
      * Deletes parameters which were set with "setParams" or "setParam"
      *
      * @param array $params
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function unsetParams(Array $params)
     {
@@ -492,14 +503,14 @@ class Pimcore_Mail extends Zend_Mail
      * Deletes a single parameter which was set with "setParams" or "setParam"
      *
      * @param string | integer $key
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function unsetParam($key)
     {
         if (is_string($key) || is_integer($key)) {
             unset($this->params[$key]);
         } else {
-            Logger::warn('$key has to be a string - unsetParam ignored!');
+            \Logger::warn('$key has to be a string - unsetParam ignored!');
         }
 
         return $this;
@@ -508,13 +519,13 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * Sets the settings which are defined in the Document Settings (from,to,cc,bcc)
      *
-     * @return Pimcore_Mail Provides fluent interface
+     * @return \Pimcore\Mail Provides fluent interface
      */
     protected function setDocumentSettings()
     {
         $document = $this->getDocument();
 
-        if ($document instanceof Document_Email) {
+        if ($document instanceof Model\Document\Email) {
 
             if(!$this->recipientsCleared){
                 $to = $document->getToAsArray();
@@ -534,10 +545,13 @@ class Pimcore_Mail extends Zend_Mail
             }
 
             //if more than one "from" email address is defined -> we set the first one
-            list($from) = $document->getFromAsArray();
-            if ($from) {
-                $this->clearFrom();
-                $this->setFrom($from);
+            $fromArray = $document->getFromAsArray();
+            if(!empty($fromArray)) {
+                list($from) = $fromArray;
+                if ($from) {
+                    $this->clearFrom();
+                    $this->setFrom($from);
+                }
             }
         }
 
@@ -553,15 +567,15 @@ class Pimcore_Mail extends Zend_Mail
      * set DefaultTransport or the internal mail function if no
      * default transport had been set.
      *
-     * @param  Zend_Mail_Transport_Abstract $transport
-     * @return Pimcore_Mail Provides fluent interface
+     * @param  \Zend_Mail_Transport_Abstract $transport
+     * @return \Pimcore\Mail Provides fluent interface
      */
     public function send($transport = null)
     {
         // filter email addresses
         $blockedAddresses = array();
         foreach ($this->getRecipients() as $recipient) {
-            if(Tool_Email_Blacklist::getByAddress($recipient)) {
+            if(Model\Tool\Email\Blacklist::getByAddress($recipient)) {
                 $blockedAddresses[] = $recipient;
             }
         }
@@ -597,11 +611,11 @@ class Pimcore_Mail extends Zend_Mail
 
         $result = parent::send($transport);
 
-        if ($this->loggingIsEnabled() && $this->getDocument()) {
+        if ($this->loggingIsEnabled()) {
             try {
-                Pimcore_Helper_Mail::logEmail($this);
-            } catch (Exception $e) {
-                Logger::emerg("Couldn't log Email");
+                MailHelper::logEmail($this);
+            } catch (\Exception $e) {
+                \Logger::emerg("Couldn't log Email");
             }
         }
 
@@ -610,27 +624,24 @@ class Pimcore_Mail extends Zend_Mail
 
 
     /**
-     * Checks if the debug mode is enabled in "Settings" -> "System" -> "Debug"
-     * If the debug mode is enabled, all emails will be sent to the debug email addresses given the system settings
-     * and the debug information is appended
-     *
-     * @return void
+     * @throws \Exception
+     * @throws \Zend_Mail_Exception
      */
     protected function checkDebugMode()
     {
-        if (Pimcore::inDebugMode()) {
+        if (\Pimcore::inDebugMode()) {
             if (empty(self::$debugEmailAddresses)) {
-                throw new Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
+                throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
             }
 
             if($this->preventDebugInformationAppending != true){
                 //adding the debug information to the html email
                 $html = $this->getBodyHtml();
-                if ($html instanceof Zend_Mime_Part) {
+                if ($html instanceof \Zend_Mime_Part) {
                         $rawHtml = $html->getRawContent();
 
-                        $debugInformation = Pimcore_Helper_Mail::getDebugInformation('html', $this);
-                        $debugInformationStyling = Pimcore_Helper_Mail::getDebugInformationCssStyle();
+                        $debugInformation = MailHelper::getDebugInformation('html', $this);
+                        $debugInformationStyling = MailHelper::getDebugInformationCssStyle();
 
                         $rawHtml = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $rawHtml);
                         $rawHtml = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $rawHtml);
@@ -641,9 +652,9 @@ class Pimcore_Mail extends Zend_Mail
 
                 $text = $this->getBodyText();
 
-                if($text instanceof Zend_Mime_Part){
+                if($text instanceof \Zend_Mime_Part){
                         $rawText = $text->getRawContent();
-                        $debugInformation = Pimcore_Helper_Mail::getDebugInformation('text',$this);
+                        $debugInformation = MailHelper::getDebugInformation('text',$this);
                         $rawText .= $debugInformation;
                         $this->setBodyText($rawText);
                 }
@@ -655,16 +666,6 @@ class Pimcore_Mail extends Zend_Mail
             }
             $this->clearRecipients();
             $this->addTo(self::$debugEmailAddresses);
-
-            /*
-            $this->clearFrom();
-            list($primaryDebugEmailAddress) = self::$debugEmailAddresses;
-            $this->setFrom($primaryDebugEmailAddress);
-            if($this->getReplyTo());{
-                $this->clearReplyTo();
-                $this->setReplyTo($primaryDebugEmailAddress);
-            }
-            */
         }
     }
 
@@ -677,7 +678,7 @@ class Pimcore_Mail extends Zend_Mail
      */
     public static function isValidEmailAddress($emailAddress)
     {
-        $validator = new Zend_Validate_EmailAddress();
+        $validator = new \Zend_Validate_EmailAddress();
         return $validator->isValid($emailAddress);
     }
 
@@ -710,10 +711,10 @@ class Pimcore_Mail extends Zend_Mail
 
         //if the content was manually set with $obj->setBodyHtml(); this content will be used
         //and not the content of the Document!
-        if ($html instanceof Zend_Mime_Part) {
+        if ($html instanceof \Zend_Mime_Part) {
             $rawHtml = $html->getRawContent();
             $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
-        } elseif ($this->getDocument() instanceof Document) {
+        } elseif ($this->getDocument() instanceof Model\Document) {
             $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } else {
             $content = null;
@@ -721,8 +722,8 @@ class Pimcore_Mail extends Zend_Mail
 
         //modifying the content e.g set absolute urls...
         if ($content) {
-            $content = Pimcore_Helper_Mail::embedAndModifyCss($content, $this->getDocument());
-            $content = Pimcore_Helper_Mail::setAbsolutePaths($content, $this->getDocument(), $this->getHostUrl());
+            $content = MailHelper::embedAndModifyCss($content, $this->getDocument());
+            $content = MailHelper::setAbsolutePaths($content, $this->getDocument(), $this->getHostUrl());
         }
 
         return $content;
@@ -738,7 +739,7 @@ class Pimcore_Mail extends Zend_Mail
         $text = $this->getBodyText();
 
         //if the content was manually set with $obj->setBodyText(); this content will be used
-        if ($text instanceof Zend_Mime_Part) {
+        if ($text instanceof \Zend_Mime_Part) {
             $rawText = $text->getRawContent();
             $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } else {
@@ -765,8 +766,8 @@ class Pimcore_Mail extends Zend_Mail
                $content = $this->html2Text($htmlContent);
 
 
-            } catch (Exception $e) {
-                Logger::err($e);
+            } catch (\Exception $e) {
+                \Logger::err($e);
                 $content = "";
             }
         }
@@ -776,22 +777,21 @@ class Pimcore_Mail extends Zend_Mail
 
 
     /**
-     * Sets the email document
-     *
-     * @param Document_Email $document
-     * @throws Exception
+     * @param $document
+     * @return $this
+     * @throws \Exception
      */
     public function setDocument($document)
     {
-        if ($document instanceof Document) { //document passed
+        if ($document instanceof Model\Document) { //document passed
             $this->document = $document;
             $this->setDocumentSettings();
         } elseif ((int)$document > 0) { //id of document passed
-            $this->setDocument(Document::getById($document));
+            $this->setDocument(Model\Document::getById($document));
         } elseif (is_string($document) && $document != "") { //path of document passed
-            $this->setDocument(Document::getByPath($document));
+            $this->setDocument(Model\Document::getByPath($document));
         } else {
-            throw new Exception('$document is not an instance of Document_Email or at least Document');
+            throw new \Exception("$document is not an instance of \\Document\\Email or at least \\Document");
         }
         return $this;
     }
@@ -799,7 +799,7 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * Returns the Document
      *
-     * @return Document_Email | null
+     * @return Model\Document\Email | null
      */
     public function getDocument()
     {
@@ -809,7 +809,7 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * Prevents appending of debug information (used for resending emails)
      *
-     * @return Pimcore_Mail
+     * @return \Pimcore\Mail
      */
     public function preventDebugInformationAppending(){
         $this->preventDebugInformationAppending = true;
@@ -827,16 +827,15 @@ class Pimcore_Mail extends Zend_Mail
     }
 
     /**
-     * enable html2text generation via html2text-binary instead of html2text
-     *
-     * @throws Exception if html2text binary is not installed
+     * @return $this
+     * @throws \Exception
      */
     public function enableHtml2textBinary()
     {
         if (self::getHtml2textInstalled()){
             $this->html2textBinaryEnabled = true;
         } else {
-            throw new Exception("trying to enable html2text binary,
+            throw new \Exception("trying to enable html2text binary,
             but html2text is not installed!");
         }
         return $this;
@@ -871,7 +870,7 @@ class Pimcore_Mail extends Zend_Mail
             }
             //using temporary file so we don't have problems with special characters
             $tmpFileName = PIMCORE_TEMPORARY_DIRECTORY . "/" . uniqid('email_', true) . ".tmp";
-            if (Pimcore_File::put($tmpFileName, $htmlContent)) {
+            if (\Pimcore\File::put($tmpFileName, $htmlContent)) {
                 $content = @shell_exec("html2text $tmpFileName " . $this->getHtml2TextOptions());
                 @unlink($tmpFileName);
             }
@@ -882,5 +881,17 @@ class Pimcore_Mail extends Zend_Mail
         }
     }
 
+    /**
+     * Sets From-header and sender of the message
+     *
+     * @param  string $email
+     * @return \Zend_Mail Provides fluent interface
+     */
+    public function setSender($email) {
+        $email = $this->_filterEmail($email);
+        $this->sender = $email;
+        $this->_storeHeader('Sender', $this->_formatAddress($email,null), true);
+        return $this;
+    }
 
 }

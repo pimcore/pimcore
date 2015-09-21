@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9862 $"/>
+		<generation date="$Date: 2014-03-03 17:35:05 -0600 (Mon, 03 Mar 2014) $"/>
 		<language type="ru"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">адыгейский</language>
 			<language type="ae">авестийский</language>
 			<language type="af">африкаанс</language>
-			<language type="afa">афразийский язык</language>
 			<language type="afh">африхили</language>
 			<language type="agq" draft="contributed">агхем</language>
 			<language type="ain">айну</language>
 			<language type="ak">акан</language>
 			<language type="akk">аккадский</language>
 			<language type="ale">алеутский</language>
-			<language type="alg">алгонкинские языки</language>
 			<language type="alt">южноалтайский</language>
 			<language type="am">амхарский</language>
 			<language type="an">арагонский</language>
 			<language type="ang">староанглийский</language>
 			<language type="anp">ангика</language>
-			<language type="apa">апачские языки</language>
 			<language type="ar">арабский</language>
 			<language type="ar_001">арабский литературный</language>
 			<language type="arc">арамейский</language>
 			<language type="arn">арауканский</language>
 			<language type="arp">арапахо</language>
-			<language type="art">искусственный язык</language>
 			<language type="arw">аравакский</language>
 			<language type="as">ассамский</language>
 			<language type="asa" draft="contributed">аса</language>
 			<language type="ast">астурийский</language>
-			<language type="ath">атапачские языки</language>
-			<language type="aus">австралийский язык</language>
 			<language type="av">аварский</language>
 			<language type="awa">авадхи</language>
 			<language type="ay">аймара</language>
 			<language type="az">азербайджанский</language>
 			<language type="az" alt="short">азербайджанский</language>
 			<language type="ba">башкирский</language>
-			<language type="bad">банда</language>
-			<language type="bai">бамилеке языки</language>
 			<language type="bal">белуджский</language>
 			<language type="ban">балийский</language>
 			<language type="bas">баса</language>
-			<language type="bat">балтийский язык</language>
 			<language type="bax" draft="contributed">бамум</language>
 			<language type="bbj" draft="contributed">гхомала</language>
 			<language type="be">белорусский</language>
 			<language type="bej">беджа</language>
 			<language type="bem">бемба</language>
-			<language type="ber">берберский</language>
 			<language type="bez" draft="contributed">бена</language>
 			<language type="bfd" draft="contributed">бафут</language>
 			<language type="bg">болгарский</language>
-			<language type="bh">бихари</language>
 			<language type="bho">бходжпури</language>
 			<language type="bi">бислама</language>
 			<language type="bik">бикольский</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">сиксика</language>
 			<language type="bm">бамбарийский</language>
 			<language type="bn">бенгальский</language>
-			<language type="bnt">банту</language>
 			<language type="bo">тибетский</language>
 			<language type="br">бретонский</language>
 			<language type="bra">брауи</language>
 			<language type="brx" draft="contributed">бодо</language>
 			<language type="bs">боснийский</language>
 			<language type="bss" draft="contributed">акоосе</language>
-			<language type="btk">батакский</language>
 			<language type="bua">бурятский</language>
 			<language type="bug">бугийский</language>
 			<language type="bum" draft="contributed">булу</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">медумба</language>
 			<language type="ca">каталанский</language>
 			<language type="cad">каддо</language>
-			<language type="cai">язык индейцев Центральной Америки</language>
 			<language type="car">кариб</language>
-			<language type="cau">кавказский язык</language>
 			<language type="cay" draft="contributed">кайюга</language>
 			<language type="cch">атсам</language>
 			<language type="ce">чеченский</language>
 			<language type="ceb">кебуано</language>
-			<language type="cel">кельтские другие</language>
 			<language type="cgg" draft="contributed">чига</language>
 			<language type="ch">чаморро</language>
 			<language type="chb">чибча</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">чероки</language>
 			<language type="chy">чейенн</language>
 			<language type="ckb">сорани курдский</language>
-			<language type="cmc">чамский язык</language>
 			<language type="co">корсиканский</language>
 			<language type="cop">коптский</language>
-			<language type="cpe">англо-креольские и пиджин</language>
-			<language type="cpf">франко-креольские и пиджины</language>
-			<language type="cpp">португало-креольские и пиджины</language>
 			<language type="cr">криийский</language>
 			<language type="crh">крымско-татарский</language>
-			<language type="crp">креольские и пиджины</language>
 			<language type="cs">чешский</language>
 			<language type="csb">кашубианский</language>
 			<language type="cu">церковнославянский</language>
-			<language type="cus">кушитский язык</language>
 			<language type="cv">чувашский</language>
 			<language type="cy">валлийский</language>
 			<language type="da">датский</language>
 			<language type="dak">дакота</language>
 			<language type="dar">даргва</language>
 			<language type="dav" draft="contributed">таита</language>
-			<language type="day">даяк</language>
 			<language type="de">немецкий</language>
 			<language type="de_AT">австрийский немецкий</language>
 			<language type="de_CH">швейцарский верхненемецкий</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">динка</language>
 			<language type="dje" draft="contributed">зарма</language>
 			<language type="doi">догри</language>
-			<language type="dra">дравидийский язык</language>
 			<language type="dsb">нижнелужицкий</language>
 			<language type="dua">дуала</language>
 			<language type="dum">средненидерландский</language>
@@ -181,7 +157,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">фулах</language>
 			<language type="fi">финский</language>
 			<language type="fil">филиппинский</language>
-			<language type="fiu">финно-угорский язык</language>
 			<language type="fj">фиджи</language>
 			<language type="fo">фарерский</language>
 			<language type="fon">фон</language>
@@ -199,7 +174,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">гайо</language>
 			<language type="gba">гбая</language>
 			<language type="gd">гэльский</language>
-			<language type="gem">германский язык</language>
 			<language type="gez">геэз</language>
 			<language type="gil">гильбертский</language>
 			<language type="gl">галисийский</language>
@@ -222,7 +196,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">иврит</language>
 			<language type="hi">хинди</language>
 			<language type="hil">хилигайнон</language>
-			<language type="him">химачали</language>
 			<language type="hit">хеттский</language>
 			<language type="hmn">хмонг</language>
 			<language type="ho">хиримоту</language>
@@ -240,15 +213,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">интерлингве</language>
 			<language type="ig">игбо</language>
 			<language type="ii">сычуань</language>
-			<language type="ijo">иджо</language>
 			<language type="ik">инупиак</language>
 			<language type="ilo">илоко</language>
-			<language type="inc">индийский язык</language>
-			<language type="ine">индоевропейский язык</language>
 			<language type="inh">ингушский</language>
 			<language type="io">идо</language>
-			<language type="ira">иранский язык</language>
-			<language type="iro">ирокезские языки</language>
 			<language type="is">исландский</language>
 			<language type="it">итальянский</language>
 			<language type="iu">инуктитут</language>
@@ -265,7 +233,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">качинский</language>
 			<language type="kaj">каджи</language>
 			<language type="kam">камба</language>
-			<language type="kar">каренский</language>
 			<language type="kaw">кави</language>
 			<language type="kbd">кабардинский</language>
 			<language type="kbl" draft="contributed">канембу</language>
@@ -275,7 +242,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">коро</language>
 			<language type="kg">конго</language>
 			<language type="kha">кхаси</language>
-			<language type="khi">койсанский язык</language>
 			<language type="kho">хотанский</language>
 			<language type="khq" draft="contributed">койра чиини</language>
 			<language type="ki">кикуйю</language>
@@ -294,7 +260,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">канури</language>
 			<language type="krc">карачаево-балкарский</language>
 			<language type="krl">карельский</language>
-			<language type="kro">кру</language>
 			<language type="kru">курух</language>
 			<language type="ks">кашмири</language>
 			<language type="ksb" draft="contributed">шамбала</language>
@@ -334,7 +299,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">майтхили</language>
 			<language type="mak">макассарский</language>
 			<language type="man">мандинго</language>
-			<language type="map">австронезийский</language>
 			<language type="mas">масаи</language>
 			<language type="mde" draft="contributed">мабанский</language>
 			<language type="mdf">мокшанский</language>
@@ -350,15 +314,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">маори</language>
 			<language type="mic">микмак</language>
 			<language type="min">минангкабау</language>
-			<language type="mis">смешанные языки</language>
 			<language type="mk">македонский</language>
-			<language type="mkh">монкхмерский язык</language>
 			<language type="ml">малаялам</language>
 			<language type="mn">монгольский</language>
 			<language type="mnc">маньчжурский</language>
 			<language type="mni">манипурский</language>
-			<language type="mno">манобо языки</language>
-			<language type="mo">молдавский</language>
 			<language type="moh">мохаук</language>
 			<language type="mos">моси</language>
 			<language type="mr">маратхи</language>
@@ -366,17 +326,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">мальтийский</language>
 			<language type="mua" draft="contributed">мунданг</language>
 			<language type="mul">несколько языков</language>
-			<language type="mun">мунда языки</language>
 			<language type="mus">крик</language>
 			<language type="mwl">мирандийский</language>
 			<language type="mwr">марвари</language>
 			<language type="my">бирманский</language>
 			<language type="mye" draft="contributed">миене</language>
-			<language type="myn">майя языки</language>
 			<language type="myv">эрзя</language>
 			<language type="na">науру</language>
-			<language type="nah">ацтекский</language>
-			<language type="nai">язык индейцев Северной Америки</language>
 			<language type="nap">неаполитанский</language>
 			<language type="naq" draft="contributed">нама</language>
 			<language type="nb">норвежский букмол</language>
@@ -386,7 +342,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">неварский</language>
 			<language type="ng">ндонга</language>
 			<language type="nia">ниас</language>
-			<language type="nic">нигер-кордофанский язык</language>
 			<language type="niu">ниуэ</language>
 			<language type="nl">голландский</language>
 			<language type="nl_BE">фламандский</language>
@@ -399,7 +354,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">нко</language>
 			<language type="nr">ндебели южный</language>
 			<language type="nso">сото северный</language>
-			<language type="nub">нубийские языки</language>
 			<language type="nus" draft="contributed">нуэр</language>
 			<language type="nv">навахо</language>
 			<language type="nwc">невари (классический)</language>
@@ -415,21 +369,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">осетинский</language>
 			<language type="osa">оседжи</language>
 			<language type="ota">старотурецкий</language>
-			<language type="oto">отомангские языки</language>
 			<language type="pa">панджаби</language>
-			<language type="paa">папуасский язык</language>
 			<language type="pag">пангасинан</language>
 			<language type="pal">пехлевийский</language>
 			<language type="pam">пампанга</language>
 			<language type="pap">папьяменто</language>
 			<language type="pau">палау</language>
 			<language type="peo">староперсидский</language>
-			<language type="phi">филиппинский язык</language>
 			<language type="phn">финикийский</language>
 			<language type="pi">пали</language>
 			<language type="pl">польский</language>
 			<language type="pon">понапе</language>
-			<language type="pra">пракриты языки</language>
 			<language type="pro">старопровансальский</language>
 			<language type="ps">пушту</language>
 			<language type="pt">португальский</language>
@@ -442,7 +392,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">романшский</language>
 			<language type="rn">рунди</language>
 			<language type="ro">румынский</language>
-			<language type="roa">романский язык</language>
+			<language type="ro_MD">молдавский</language>
 			<language type="rof" draft="contributed">ромбо</language>
 			<language type="rom">цыганский</language>
 			<language type="root">корневой язык</language>
@@ -453,8 +403,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">санскрит</language>
 			<language type="sad">сандаве</language>
 			<language type="sah">якутский</language>
-			<language type="sai">язык индейцев Южной Америки</language>
-			<language type="sal">салишские языки</language>
 			<language type="sam">самаритянский арамейский</language>
 			<language type="saq" draft="contributed">самбуру</language>
 			<language type="sas">сасаки</language>
@@ -469,25 +417,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">сенека</language>
 			<language type="seh" draft="contributed">сена</language>
 			<language type="sel">селькупский</language>
-			<language type="sem">семитский язык</language>
 			<language type="ses" draft="contributed">койраборо сенни</language>
 			<language type="sg">санго</language>
 			<language type="sga">староирландский</language>
-			<language type="sgn">язык глухонемых</language>
 			<language type="sh">сербскохорватский</language>
 			<language type="shi" draft="contributed">тахелхит</language>
 			<language type="shn">шанский</language>
 			<language type="shu" draft="contributed">чадский арабс</language>
 			<language type="si">сингальский</language>
 			<language type="sid">сидама</language>
-			<language type="sio">сиу языки</language>
-			<language type="sit">синотибетский язык</language>
 			<language type="sk">словацкий</language>
 			<language type="sl">словенский</language>
-			<language type="sla">славянский язык</language>
 			<language type="sm">самоанский</language>
 			<language type="sma">саамский (южный)</language>
-			<language type="smi">саамские языки</language>
 			<language type="smj">луле-саамский</language>
 			<language type="smn">инари-саамский</language>
 			<language type="sms" draft="contributed">скольт-саамский</language>
@@ -495,13 +437,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">сонинке</language>
 			<language type="so">сомали</language>
 			<language type="sog">согдийский</language>
-			<language type="son">сонгаи</language>
 			<language type="sq">албанский</language>
 			<language type="sr">сербский</language>
 			<language type="srn">сранан тонго</language>
 			<language type="srr">серер</language>
 			<language type="ss">свази</language>
-			<language type="ssa">нило-сахарский язык</language>
 			<language type="ssy" draft="contributed">сахо</language>
 			<language type="st">сото южный</language>
 			<language type="su">сунданский</language>
@@ -515,7 +455,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">классический сирийский</language>
 			<language type="syr">сирийский</language>
 			<language type="ta">тамильский</language>
-			<language type="tai">тайский язык</language>
 			<language type="te">телугу</language>
 			<language type="tem">темне</language>
 			<language type="teo" draft="contributed">тесо</language>
@@ -542,8 +481,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">цимшиан</language>
 			<language type="tt">татарский</language>
 			<language type="tum">тумбука</language>
-			<language type="tup">тупи</language>
-			<language type="tut">алтайский язык</language>
 			<language type="tvl">тувалу</language>
 			<language type="tw">тви</language>
 			<language type="twq" draft="contributed">тасавак</language>
@@ -566,11 +503,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">вунджо</language>
 			<language type="wa">валлонский</language>
 			<language type="wae" draft="contributed">валисский</language>
-			<language type="wak">вакашские языки</language>
 			<language type="wal">воламо</language>
 			<language type="war">варай</language>
 			<language type="was">вашо</language>
-			<language type="wen">лужицкие языки</language>
 			<language type="wo">волоф</language>
 			<language type="xal">калмыцкий</language>
 			<language type="xh">ксоза</language>
@@ -581,7 +516,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">йемба</language>
 			<language type="yi">идиш</language>
 			<language type="yo">йоруба</language>
-			<language type="ypk">юпикский язык</language>
 			<language type="yue">кантонский</language>
 			<language type="za">чжуань</language>
 			<language type="zap">сапотекский</language>
@@ -591,7 +525,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">китайский</language>
 			<language type="zh_Hans">упрощенный китайский</language>
 			<language type="zh_Hant">традиционный китайский</language>
-			<language type="znd">занде</language>
 			<language type="zu">зулу</language>
 			<language type="zun">зуньи</language>
 			<language type="zxx">без языкового содержания</language>
@@ -1256,6 +1189,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 		</codePatterns>
 	</localeDisplayNames>
 	<contextTransforms>
+		<contextTransformUsage type="currencyName">
+			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
+			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
+		</contextTransformUsage>
 		<contextTransformUsage type="day-format-except-narrow">
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
@@ -1264,15 +1201,15 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
-		<contextTransformUsage type="displayName">
-			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
-			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
-		</contextTransformUsage>
 		<contextTransformUsage type="era-abbr">
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
 		<contextTransformUsage type="era-name">
+			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
+			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
+		</contextTransformUsage>
+		<contextTransformUsage type="keyValue">
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
@@ -1288,11 +1225,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
-		<contextTransformUsage type="script">
+		<contextTransformUsage type="relative">
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
-		<contextTransformUsage type="type">
+		<contextTransformUsage type="script">
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
@@ -2003,16 +1940,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<dayPeriods>
 					<dayPeriodContext type="format">
 						<dayPeriodWidth type="abbreviated">
-							<dayPeriod type="am" draft="contributed">до полудня</dayPeriod>
-							<dayPeriod type="pm" draft="contributed">после полудня</dayPeriod>
+							<dayPeriod type="am" draft="contributed">AM</dayPeriod>
+							<dayPeriod type="pm" draft="contributed">PM</dayPeriod>
 						</dayPeriodWidth>
 						<dayPeriodWidth type="narrow">
-							<dayPeriod type="am" draft="contributed">дп</dayPeriod>
-							<dayPeriod type="pm" draft="contributed">пп</dayPeriod>
+							<dayPeriod type="am" draft="contributed">AM</dayPeriod>
+							<dayPeriod type="pm" draft="contributed">PM</dayPeriod>
 						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
-							<dayPeriod type="am">до полудня</dayPeriod>
-							<dayPeriod type="pm">после полудня</dayPeriod>
+							<dayPeriod type="am">AM</dayPeriod>
+							<dayPeriod type="pm">PM</dayPeriod>
 						</dayPeriodWidth>
 					</dayPeriodContext>
 				</dayPeriods>
@@ -2044,7 +1981,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 					</dateFormatLength>
 					<dateFormatLength type="medium">
 						<dateFormat>
-							<pattern>dd MMM y 'г'.</pattern>
+							<pattern>d MMM y 'г'.</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="short">
@@ -2807,11 +2744,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<relative type="1">в следующем году</relative>
 				<relativeTime type="future">
 					<relativeTimePattern count="one">Через {0} год</relativeTimePattern>
+					<relativeTimePattern count="few">Через {0} года</relativeTimePattern>
 					<relativeTimePattern count="many">Через {0} лет</relativeTimePattern>
 					<relativeTimePattern count="other">Через {0} года</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
 					<relativeTimePattern count="one">{0} год назад</relativeTimePattern>
+					<relativeTimePattern count="few">{0} года назад</relativeTimePattern>
 					<relativeTimePattern count="many">{0} лет назад</relativeTimePattern>
 					<relativeTimePattern count="other">{0} года назад</relativeTimePattern>
 				</relativeTime>
@@ -2823,11 +2762,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<relative type="1">в следующем месяце</relative>
 				<relativeTime type="future">
 					<relativeTimePattern count="one">Через {0} месяц</relativeTimePattern>
+					<relativeTimePattern count="few">Через {0} месяца</relativeTimePattern>
 					<relativeTimePattern count="many">Через {0} месяцев</relativeTimePattern>
 					<relativeTimePattern count="other">Через {0} месяца</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
 					<relativeTimePattern count="one">{0} месяц назад</relativeTimePattern>
+					<relativeTimePattern count="few">{0} месяца назад</relativeTimePattern>
 					<relativeTimePattern count="many">{0} месяцев назад</relativeTimePattern>
 					<relativeTimePattern count="other">{0} месяца назад</relativeTimePattern>
 				</relativeTime>
@@ -2839,11 +2780,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<relative type="1">на следующей неделе</relative>
 				<relativeTime type="future">
 					<relativeTimePattern count="one">Через {0} неделю</relativeTimePattern>
+					<relativeTimePattern count="few">Через {0} недели</relativeTimePattern>
 					<relativeTimePattern count="many">Через {0} недель</relativeTimePattern>
 					<relativeTimePattern count="other">Через {0} недели</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
 					<relativeTimePattern count="one">{0} неделю назад</relativeTimePattern>
+					<relativeTimePattern count="few">{0} недели назад</relativeTimePattern>
 					<relativeTimePattern count="many">{0} недель назад</relativeTimePattern>
 					<relativeTimePattern count="other">{0} недели назад</relativeTimePattern>
 				</relativeTime>
@@ -2857,11 +2800,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<relative type="2">послезавтра</relative>
 				<relativeTime type="future">
 					<relativeTimePattern count="one">Через {0} день</relativeTimePattern>
+					<relativeTimePattern count="few">Через {0} дня</relativeTimePattern>
 					<relativeTimePattern count="many">Через {0} дней</relativeTimePattern>
 					<relativeTimePattern count="other">Через {0} дня</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
 					<relativeTimePattern count="one">{0} день назад</relativeTimePattern>
+					<relativeTimePattern count="few">{0} дня назад</relativeTimePattern>
 					<relativeTimePattern count="many">{0} дней назад</relativeTimePattern>
 					<relativeTimePattern count="other">{0} дня назад</relativeTimePattern>
 				</relativeTime>
@@ -2911,11 +2856,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<displayName>Час</displayName>
 				<relativeTime type="future">
 					<relativeTimePattern count="one">Через {0} час</relativeTimePattern>
+					<relativeTimePattern count="few">Через {0} часа</relativeTimePattern>
 					<relativeTimePattern count="many">Через {0} часов</relativeTimePattern>
 					<relativeTimePattern count="other">Через {0} часа</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
 					<relativeTimePattern count="one">{0} час назад</relativeTimePattern>
+					<relativeTimePattern count="few">{0} часа назад</relativeTimePattern>
 					<relativeTimePattern count="many">{0} часов назад</relativeTimePattern>
 					<relativeTimePattern count="other">{0} часа назад</relativeTimePattern>
 				</relativeTime>
@@ -2924,11 +2871,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<displayName>Минута</displayName>
 				<relativeTime type="future">
 					<relativeTimePattern count="one">Через {0} минуту</relativeTimePattern>
+					<relativeTimePattern count="few">Через {0} минуты</relativeTimePattern>
 					<relativeTimePattern count="many">Через {0} минут</relativeTimePattern>
 					<relativeTimePattern count="other">Через {0} минуты</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
 					<relativeTimePattern count="one">{0} минуту назад</relativeTimePattern>
+					<relativeTimePattern count="few">{0} минуты назад</relativeTimePattern>
 					<relativeTimePattern count="many">{0} минут назад</relativeTimePattern>
 					<relativeTimePattern count="other">{0} минуты назад</relativeTimePattern>
 				</relativeTime>
@@ -2938,11 +2887,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<relative type="0">сейчас</relative>
 				<relativeTime type="future">
 					<relativeTimePattern count="one">Через {0} секунду</relativeTimePattern>
+					<relativeTimePattern count="few">Через {0} секунды</relativeTimePattern>
 					<relativeTimePattern count="many">Через {0} секунд</relativeTimePattern>
 					<relativeTimePattern count="other">Через {0} секунды</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
 					<relativeTimePattern count="one">{0} секунду назад</relativeTimePattern>
+					<relativeTimePattern count="few">{0} секунды назад</relativeTimePattern>
 					<relativeTimePattern count="many">{0} секунд назад</relativeTimePattern>
 					<relativeTimePattern count="other">{0} секунды назад</relativeTimePattern>
 				</relativeTime>
@@ -2991,9 +2942,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Палмер</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Южный полюс</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Сёва</exemplarCity>
@@ -3267,9 +3215,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Торонто</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Монреаль</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Икалуит</exemplarCity>
@@ -4113,9 +4058,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Финикс</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Шипрок</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Денвер</exemplarCity>
@@ -5178,39 +5120,51 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<decimalFormatLength type="long">
 				<decimalFormat>
 					<pattern type="1000" count="one">0 тысяча</pattern>
+					<pattern type="1000" count="few">0 тысячи</pattern>
 					<pattern type="1000" count="many">0 тысяч</pattern>
 					<pattern type="1000" count="other">0 тысячи</pattern>
 					<pattern type="10000" count="one">00 тысяча</pattern>
+					<pattern type="10000" count="few">00 тысячи</pattern>
 					<pattern type="10000" count="many">00 тысяч</pattern>
 					<pattern type="10000" count="other">00 тысячи</pattern>
 					<pattern type="100000" count="one">000 тысяча</pattern>
+					<pattern type="100000" count="few">000 тысячи</pattern>
 					<pattern type="100000" count="many">000 тысяч</pattern>
 					<pattern type="100000" count="other">000 тысячи</pattern>
 					<pattern type="1000000" count="one">0 миллион</pattern>
+					<pattern type="1000000" count="few">0 миллиона</pattern>
 					<pattern type="1000000" count="many">0 миллионов</pattern>
 					<pattern type="1000000" count="other">0 миллиона</pattern>
 					<pattern type="10000000" count="one">00 миллион</pattern>
+					<pattern type="10000000" count="few">00 миллиона</pattern>
 					<pattern type="10000000" count="many">00 миллионов</pattern>
 					<pattern type="10000000" count="other">00 миллиона</pattern>
 					<pattern type="100000000" count="one">000 миллион</pattern>
+					<pattern type="100000000" count="few">000 миллиона</pattern>
 					<pattern type="100000000" count="many">000 миллионов</pattern>
 					<pattern type="100000000" count="other">000 миллиона</pattern>
 					<pattern type="1000000000" count="one">0 миллиард</pattern>
+					<pattern type="1000000000" count="few">0 миллиарда</pattern>
 					<pattern type="1000000000" count="many">0 миллиардов</pattern>
 					<pattern type="1000000000" count="other">0 миллиарда</pattern>
 					<pattern type="10000000000" count="one">00 миллиард</pattern>
+					<pattern type="10000000000" count="few">00 миллиарда</pattern>
 					<pattern type="10000000000" count="many">00 миллиардов</pattern>
 					<pattern type="10000000000" count="other">00 миллиарда</pattern>
 					<pattern type="100000000000" count="one">000 миллиард</pattern>
+					<pattern type="100000000000" count="few">000 миллиарда</pattern>
 					<pattern type="100000000000" count="many">000 миллиардов</pattern>
 					<pattern type="100000000000" count="other">000 миллиарда</pattern>
 					<pattern type="1000000000000" count="one">0 триллион</pattern>
+					<pattern type="1000000000000" count="few">0 триллиона</pattern>
 					<pattern type="1000000000000" count="many">0 триллионов</pattern>
 					<pattern type="1000000000000" count="other">0 триллиона</pattern>
 					<pattern type="10000000000000" count="one">00 триллион</pattern>
+					<pattern type="10000000000000" count="few">00 триллиона</pattern>
 					<pattern type="10000000000000" count="many">00 триллионов</pattern>
 					<pattern type="10000000000000" count="other">00 триллиона</pattern>
 					<pattern type="100000000000000" count="one">000 триллион</pattern>
+					<pattern type="100000000000000" count="few">000 триллиона</pattern>
 					<pattern type="100000000000000" count="many">000 триллионов</pattern>
 					<pattern type="100000000000000" count="other">000 триллиона</pattern>
 				</decimalFormat>
@@ -5218,39 +5172,51 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<decimalFormatLength type="short">
 				<decimalFormat>
 					<pattern type="1000" count="one">0 тыс'.'</pattern>
+					<pattern type="1000" count="few">0 тыс'.'</pattern>
 					<pattern type="1000" count="many">0 тыс'.'</pattern>
 					<pattern type="1000" count="other">0 тыс'.'</pattern>
 					<pattern type="10000" count="one">00 тыс'.'</pattern>
+					<pattern type="10000" count="few">00 тыс'.'</pattern>
 					<pattern type="10000" count="many">00 тыс'.'</pattern>
 					<pattern type="10000" count="other">00 тыс'.'</pattern>
 					<pattern type="100000" count="one">000 тыс'.'</pattern>
+					<pattern type="100000" count="few">000 тыс'.'</pattern>
 					<pattern type="100000" count="many">000 тыс'.'</pattern>
 					<pattern type="100000" count="other">000 тыс'.'</pattern>
 					<pattern type="1000000" count="one">0 млн</pattern>
+					<pattern type="1000000" count="few">0 млн</pattern>
 					<pattern type="1000000" count="many">0 млн</pattern>
 					<pattern type="1000000" count="other">0 млн</pattern>
 					<pattern type="10000000" count="one">00 млн</pattern>
+					<pattern type="10000000" count="few">00 млн</pattern>
 					<pattern type="10000000" count="many">00 млн</pattern>
 					<pattern type="10000000" count="other">00 млн</pattern>
 					<pattern type="100000000" count="one">000 млн</pattern>
+					<pattern type="100000000" count="few">000 млн</pattern>
 					<pattern type="100000000" count="many">000 млн</pattern>
 					<pattern type="100000000" count="other">000 млн</pattern>
 					<pattern type="1000000000" count="one">0 млрд</pattern>
+					<pattern type="1000000000" count="few">0 млрд</pattern>
 					<pattern type="1000000000" count="many">0 млрд</pattern>
 					<pattern type="1000000000" count="other">0 млрд</pattern>
 					<pattern type="10000000000" count="one">00 млрд</pattern>
+					<pattern type="10000000000" count="few">00 млрд</pattern>
 					<pattern type="10000000000" count="many">00 млрд</pattern>
 					<pattern type="10000000000" count="other">00 млрд</pattern>
 					<pattern type="100000000000" count="one">000 млрд</pattern>
+					<pattern type="100000000000" count="few">000 млрд</pattern>
 					<pattern type="100000000000" count="many">000 млрд</pattern>
 					<pattern type="100000000000" count="other">000 млрд</pattern>
 					<pattern type="1000000000000" count="one">0 трлн</pattern>
+					<pattern type="1000000000000" count="few">0 трлн</pattern>
 					<pattern type="1000000000000" count="many">0 трлн</pattern>
 					<pattern type="1000000000000" count="other">0 трлн</pattern>
 					<pattern type="10000000000000" count="one">00 трлн</pattern>
+					<pattern type="10000000000000" count="few">00 трлн</pattern>
 					<pattern type="10000000000000" count="many">00 трлн</pattern>
 					<pattern type="10000000000000" count="other">00 трлн</pattern>
 					<pattern type="100000000000000" count="one">000 трлн</pattern>
+					<pattern type="100000000000000" count="few">000 трлн</pattern>
 					<pattern type="100000000000000" count="many">000 трлн</pattern>
 					<pattern type="100000000000000" count="other">000 трлн</pattern>
 				</decimalFormat>
@@ -5277,6 +5243,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 				</currencyFormat>
 			</currencyFormatLength>
 			<unitPattern count="one" draft="contributed">{0} {1}</unitPattern>
+			<unitPattern count="few" draft="contributed">{0} {1}</unitPattern>
 			<unitPattern count="many" draft="contributed">{0} {1}</unitPattern>
 			<unitPattern count="other" draft="contributed">{0} {1}</unitPattern>
 		</currencyFormats>
@@ -5284,12 +5251,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="ADP">
 				<displayName>Андоррская песета</displayName>
 				<displayName count="one">андоррская песета</displayName>
+				<displayName count="few">андоррские песеты</displayName>
 				<displayName count="many">андоррская песета</displayName>
 				<displayName count="other">андоррских песет</displayName>
 			</currency>
 			<currency type="AED">
 				<displayName>Дирхам (ОАЭ)</displayName>
 				<displayName count="one" draft="contributed">дирхам (ОАЭ)</displayName>
+				<displayName count="few" draft="contributed">дирхама (ОАЭ)</displayName>
 				<displayName count="many" draft="contributed">дирхамов (ОАЭ)</displayName>
 				<displayName count="other" draft="contributed">дирхама (ОАЭ)</displayName>
 			</currency>
@@ -5299,36 +5268,42 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="AFN">
 				<displayName>Афганский афгани</displayName>
 				<displayName count="one">афганский афгани</displayName>
+				<displayName count="few">афганских афгани</displayName>
 				<displayName count="many">афганских афгани</displayName>
 				<displayName count="other">афганского афгани</displayName>
 			</currency>
 			<currency type="ALL">
 				<displayName>Албанский лек</displayName>
 				<displayName count="one">албанский лек</displayName>
+				<displayName count="few">албанских лека</displayName>
 				<displayName count="many">албанских леков</displayName>
 				<displayName count="other">албанских леков</displayName>
 			</currency>
 			<currency type="AMD">
 				<displayName>Армянский драм</displayName>
 				<displayName count="one">армянский драм</displayName>
+				<displayName count="few">армянских драма</displayName>
 				<displayName count="many">армянских драмов</displayName>
 				<displayName count="other">армянских драмов</displayName>
 			</currency>
 			<currency type="ANG">
 				<displayName>Нидерландский антильский гульден</displayName>
 				<displayName count="one" draft="contributed">нидерландский антильский гульден</displayName>
+				<displayName count="few" draft="contributed">нидерландских антильских гульдена</displayName>
 				<displayName count="many" draft="contributed">нидерландских антильских гульденов</displayName>
 				<displayName count="other" draft="contributed">идерландского антильского гульдена</displayName>
 			</currency>
 			<currency type="AOA">
 				<displayName>Ангольская кванза</displayName>
 				<displayName count="one" draft="contributed">ангольская кванза</displayName>
+				<displayName count="few" draft="contributed">ангольские кванзы</displayName>
 				<displayName count="many" draft="contributed">ангольских кванз</displayName>
 				<displayName count="other" draft="contributed">ангольской кванзы</displayName>
 			</currency>
 			<currency type="AOK">
 				<displayName>Ангольская кванза (1977–1990)</displayName>
 				<displayName count="one">ангольских кванз (1977–1991)</displayName>
+				<displayName count="few">ангольские кванзы (1977–1991)</displayName>
 				<displayName count="many">ангольских кванз (1977–1991)</displayName>
 				<displayName count="other">ангольских кванз (1977–1991)</displayName>
 			</currency>
@@ -5338,6 +5313,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="AOR">
 				<displayName>Ангольская кванза реюстадо (1995–1999)</displayName>
 				<displayName count="one">ангольских кванз реюстадо (1995–1999)</displayName>
+				<displayName count="few">ангольские кванзы реюстадо (1995–1999)</displayName>
 				<displayName count="many">ангольских кванз реюстадо (1995–1999)</displayName>
 				<displayName count="other">ангольских кванз реюстадо (1995–1999)</displayName>
 			</currency>
@@ -5350,6 +5326,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="ARS">
 				<displayName>Аргентинское песо</displayName>
 				<displayName count="one" draft="contributed">аргентинское песо</displayName>
+				<displayName count="few" draft="contributed">аргентинских песо</displayName>
 				<displayName count="many" draft="contributed">аргентинских песо</displayName>
 				<displayName count="other" draft="contributed">аргентинского песо</displayName>
 			</currency>
@@ -5359,6 +5336,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="AUD">
 				<displayName>Австралийский доллар</displayName>
 				<displayName count="one" draft="contributed">австралийский доллар</displayName>
+				<displayName count="few" draft="contributed">австралийских доллара</displayName>
 				<displayName count="many" draft="contributed">австралийских долларов</displayName>
 				<displayName count="other" draft="contributed">австралийского доллара</displayName>
 				<symbol>A$</symbol>
@@ -5366,6 +5344,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="AWG">
 				<displayName>Арубанский флорин</displayName>
 				<displayName count="one" draft="contributed">арубанский флорин</displayName>
+				<displayName count="few" draft="contributed">арубанских флорина</displayName>
 				<displayName count="many" draft="contributed">арубанских флоринов</displayName>
 				<displayName count="other" draft="contributed">арубанского флорина</displayName>
 			</currency>
@@ -5375,6 +5354,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="AZN">
 				<displayName>Азербайджанский манат</displayName>
 				<displayName count="one" draft="contributed">азербайджанский манат</displayName>
+				<displayName count="few" draft="contributed">азербайджанских маната</displayName>
 				<displayName count="many" draft="contributed">азербайджанских манатов</displayName>
 				<displayName count="other" draft="contributed">азербайджанского маната</displayName>
 			</currency>
@@ -5384,18 +5364,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="BAM">
 				<displayName>Конвертируемая марка Боснии и Герцеговины</displayName>
 				<displayName count="one" draft="contributed">боснийская конвертируемая марка</displayName>
+				<displayName count="few" draft="contributed">боснийские конвертируемые марки</displayName>
 				<displayName count="many" draft="contributed">боснийских конвертируемых марок</displayName>
 				<displayName count="other" draft="contributed">боснийской конвертируемой марки</displayName>
 			</currency>
 			<currency type="BBD">
 				<displayName>Барбадосский доллар</displayName>
 				<displayName count="one" draft="contributed">барбадосский доллар</displayName>
+				<displayName count="few" draft="contributed">барбадосских доллара</displayName>
 				<displayName count="many" draft="contributed">барбадосских долларов</displayName>
 				<displayName count="other" draft="contributed">барбадосского доллара</displayName>
 			</currency>
 			<currency type="BDT">
 				<displayName>Бангладешская така</displayName>
 				<displayName count="one" draft="contributed">бангладешская така</displayName>
+				<displayName count="few" draft="contributed">бангладешских таки</displayName>
 				<displayName count="many" draft="contributed">бангладешских так</displayName>
 				<displayName count="other" draft="contributed">бангладешской таки</displayName>
 			</currency>
@@ -5414,36 +5397,42 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="BGN">
 				<displayName>Болгарский лев</displayName>
 				<displayName count="one" draft="contributed">болгарский лев</displayName>
+				<displayName count="few" draft="contributed">болгарских лева</displayName>
 				<displayName count="many" draft="contributed">болгарских левов</displayName>
 				<displayName count="other" draft="contributed">болгарского лева</displayName>
 			</currency>
 			<currency type="BHD">
 				<displayName>Бахрейнский динар</displayName>
 				<displayName count="one" draft="contributed">бахрейнский динар</displayName>
+				<displayName count="few" draft="contributed">бахрейнских динара</displayName>
 				<displayName count="many" draft="contributed">бахрейнских динаров</displayName>
 				<displayName count="other" draft="contributed">бахрейнского динара</displayName>
 			</currency>
 			<currency type="BIF">
 				<displayName>Бурундийский франк</displayName>
 				<displayName count="one" draft="contributed">бурундийский франк</displayName>
+				<displayName count="few" draft="contributed">бурундийских франка</displayName>
 				<displayName count="many" draft="contributed">бурундийских франков</displayName>
 				<displayName count="other" draft="contributed">бурундийского франка</displayName>
 			</currency>
 			<currency type="BMD">
 				<displayName>Бермудский доллар</displayName>
 				<displayName count="one" draft="contributed">бермудский доллар</displayName>
+				<displayName count="few" draft="contributed">бермудских доллара</displayName>
 				<displayName count="many" draft="contributed">бермудских долларов</displayName>
 				<displayName count="other" draft="contributed">бермудского доллара</displayName>
 			</currency>
 			<currency type="BND">
 				<displayName>Брунейский доллар</displayName>
 				<displayName count="one" draft="contributed">брунейский доллар</displayName>
+				<displayName count="few" draft="contributed">брунейских доллара</displayName>
 				<displayName count="many" draft="contributed">брунейских долларов</displayName>
 				<displayName count="other" draft="contributed">брунейского доллара</displayName>
 			</currency>
 			<currency type="BOB">
 				<displayName>Боливийский боливиано</displayName>
 				<displayName count="one" draft="contributed">боливиано</displayName>
+				<displayName count="few" draft="contributed">боливиано</displayName>
 				<displayName count="many" draft="contributed">боливиано</displayName>
 				<displayName count="other" draft="contributed">боливиано</displayName>
 			</currency>
@@ -5465,6 +5454,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="BRL">
 				<displayName>Бразильский реал</displayName>
 				<displayName count="one" draft="contributed">бразильский реал</displayName>
+				<displayName count="few" draft="contributed">бразильских реала</displayName>
 				<displayName count="many" draft="contributed">бразильских реалов</displayName>
 				<displayName count="other" draft="contributed">бразильского реала</displayName>
 				<symbol draft="contributed">R$</symbol>
@@ -5478,12 +5468,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="BSD">
 				<displayName>Багамский доллар</displayName>
 				<displayName count="one" draft="contributed">багамский доллар</displayName>
+				<displayName count="few" draft="contributed">багамских доллара</displayName>
 				<displayName count="many" draft="contributed">багамских долларов</displayName>
 				<displayName count="other" draft="contributed">багамского доллара</displayName>
 			</currency>
 			<currency type="BTN">
 				<displayName>Бутанский нгултрум</displayName>
 				<displayName count="one" draft="contributed">нгултрум</displayName>
+				<displayName count="few" draft="contributed">нгултрума</displayName>
 				<displayName count="many" draft="contributed">нгултрумов</displayName>
 				<displayName count="other" draft="contributed">нгултрума</displayName>
 			</currency>
@@ -5493,6 +5485,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="BWP">
 				<displayName>Ботсванская пула</displayName>
 				<displayName count="one" draft="contributed">ботсванская пула</displayName>
+				<displayName count="few" draft="contributed">ботсванских пулы</displayName>
 				<displayName count="many" draft="contributed">ботсванских пул</displayName>
 				<displayName count="other" draft="contributed">ботсванской пулы</displayName>
 			</currency>
@@ -5502,18 +5495,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="BYR">
 				<displayName>Белорусский рубль</displayName>
 				<displayName count="one" draft="contributed">белорусский рубль</displayName>
+				<displayName count="few" draft="contributed">белорусских рубля</displayName>
 				<displayName count="many" draft="contributed">белорусских рублей</displayName>
 				<displayName count="other" draft="contributed">белорусского рубля</displayName>
 			</currency>
 			<currency type="BZD">
 				<displayName>Белизский доллар</displayName>
 				<displayName count="one" draft="contributed">белизский доллар</displayName>
+				<displayName count="few" draft="contributed">белизских доллара</displayName>
 				<displayName count="many" draft="contributed">белизских долларов</displayName>
 				<displayName count="other" draft="contributed">белизского доллара</displayName>
 			</currency>
 			<currency type="CAD">
 				<displayName>Канадский доллар</displayName>
 				<displayName count="one" draft="contributed">канадский доллар</displayName>
+				<displayName count="few" draft="contributed">канадских доллара</displayName>
 				<displayName count="many" draft="contributed">канадских долларов</displayName>
 				<displayName count="other" draft="contributed">канадского доллара</displayName>
 				<symbol draft="contributed">CA$</symbol>
@@ -5521,6 +5517,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="CDF">
 				<displayName>Конголезский франк</displayName>
 				<displayName count="one" draft="contributed">конголезский франк</displayName>
+				<displayName count="few" draft="contributed">конголезских франка</displayName>
 				<displayName count="many" draft="contributed">конголезских франков</displayName>
 				<displayName count="other" draft="contributed">конголезского франка</displayName>
 			</currency>
@@ -5530,6 +5527,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="CHF">
 				<displayName>Швейцарский франк</displayName>
 				<displayName count="one" draft="contributed">швейцарский франк</displayName>
+				<displayName count="few" draft="contributed">швейцарских франка</displayName>
 				<displayName count="many" draft="contributed">швейцарских франков</displayName>
 				<displayName count="other" draft="contributed">швейцарского франка</displayName>
 			</currency>
@@ -5542,12 +5540,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="CLP">
 				<displayName>Чилийское песо</displayName>
 				<displayName count="one" draft="contributed">чилийское песо</displayName>
+				<displayName count="few" draft="contributed">чилийских песо</displayName>
 				<displayName count="many" draft="contributed">чилийских песо</displayName>
 				<displayName count="other" draft="contributed">чилийского песо</displayName>
 			</currency>
 			<currency type="CNY">
 				<displayName>Юань Ренминби</displayName>
 				<displayName count="one" draft="contributed">китайский юань</displayName>
+				<displayName count="few" draft="contributed">китайских юаня</displayName>
 				<displayName count="many" draft="contributed">китайских юаней</displayName>
 				<displayName count="other" draft="contributed">китайского юаня</displayName>
 				<symbol draft="contributed">CN¥</symbol>
@@ -5555,6 +5555,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="COP">
 				<displayName>Колумбийское песо</displayName>
 				<displayName count="one" draft="contributed">колумбийское песо</displayName>
+				<displayName count="few" draft="contributed">колумбийских песо</displayName>
 				<displayName count="many" draft="contributed">колумбийских песо</displayName>
 				<displayName count="other" draft="contributed">колумбийского песо</displayName>
 			</currency>
@@ -5564,6 +5565,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="CRC">
 				<displayName>Костариканский колон</displayName>
 				<displayName count="one" draft="contributed">костариканский колон</displayName>
+				<displayName count="few" draft="contributed">костариканских колона</displayName>
 				<displayName count="many" draft="contributed">костариканских колонов</displayName>
 				<displayName count="other" draft="contributed">костариканского колона</displayName>
 			</currency>
@@ -5576,18 +5578,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="CUC">
 				<displayName>Кубинское конвертируемое песо</displayName>
 				<displayName count="one" draft="contributed">кубинское конвертируемое песо</displayName>
+				<displayName count="few" draft="contributed">кубинских конвертируемых песо</displayName>
 				<displayName count="many" draft="contributed">кубинских конвертируемых песо</displayName>
 				<displayName count="other" draft="contributed">кубинского конвертируемого песо</displayName>
 			</currency>
 			<currency type="CUP">
 				<displayName>Кубинское песо</displayName>
 				<displayName count="one" draft="contributed">кубинское песо</displayName>
+				<displayName count="few" draft="contributed">кубинских песо</displayName>
 				<displayName count="many" draft="contributed">кубинских песо</displayName>
 				<displayName count="other" draft="contributed">кубинского песо</displayName>
 			</currency>
 			<currency type="CVE">
 				<displayName>Эскудо Кабо-Верде</displayName>
 				<displayName count="one" draft="contributed">эскудо Кабо-Верде</displayName>
+				<displayName count="few" draft="contributed">эскудо Кабо-Верде</displayName>
 				<displayName count="many" draft="contributed">эскудо Кабо-Верде</displayName>
 				<displayName count="other" draft="contributed">эскудо Кабо-Верде</displayName>
 			</currency>
@@ -5597,6 +5602,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="CZK">
 				<displayName>Чешская крона</displayName>
 				<displayName count="one" draft="contributed">чешская крона</displayName>
+				<displayName count="few" draft="contributed">чешские кроны</displayName>
 				<displayName count="many" draft="contributed">чешских крон</displayName>
 				<displayName count="other" draft="contributed">чешской кроны</displayName>
 			</currency>
@@ -5609,24 +5615,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="DJF">
 				<displayName>Франк Джибути</displayName>
 				<displayName count="one" draft="contributed">франк Джибути</displayName>
+				<displayName count="few" draft="contributed">франка Джибути</displayName>
 				<displayName count="many" draft="contributed">франков Джибути</displayName>
 				<displayName count="other" draft="contributed">франка Джибути</displayName>
 			</currency>
 			<currency type="DKK">
 				<displayName>Датская крона</displayName>
 				<displayName count="one" draft="contributed">датская крона</displayName>
+				<displayName count="few" draft="contributed">датские кроны</displayName>
 				<displayName count="many" draft="contributed">датских крон</displayName>
 				<displayName count="other" draft="contributed">датской кроны</displayName>
 			</currency>
 			<currency type="DOP">
 				<displayName>Доминиканское песо</displayName>
 				<displayName count="one" draft="contributed">доминиканское песо</displayName>
+				<displayName count="few" draft="contributed">доминиканских песо</displayName>
 				<displayName count="many" draft="contributed">доминиканских песо</displayName>
 				<displayName count="other" draft="contributed">доминиканского песо</displayName>
 			</currency>
 			<currency type="DZD">
 				<displayName>Алжирский динар</displayName>
 				<displayName count="one" draft="contributed">алжирский динар</displayName>
+				<displayName count="few" draft="contributed">алжирских динара</displayName>
 				<displayName count="many" draft="contributed">алжирских динаров</displayName>
 				<displayName count="other" draft="contributed">алжирского динара</displayName>
 			</currency>
@@ -5642,12 +5652,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="EGP">
 				<displayName>Египетский фунт</displayName>
 				<displayName count="one" draft="contributed">египетский фунт</displayName>
+				<displayName count="few" draft="contributed">египетских фунта</displayName>
 				<displayName count="many" draft="contributed">египетских фунтов</displayName>
 				<displayName count="other" draft="contributed">египетского фунта</displayName>
 			</currency>
 			<currency type="ERN">
 				<displayName>Накфа</displayName>
 				<displayName count="one" draft="contributed">эритрейская накфа</displayName>
+				<displayName count="few" draft="contributed">эритрейские накфы</displayName>
 				<displayName count="many" draft="contributed">эритрейских накф</displayName>
 				<displayName count="other" draft="contributed">эритрейской накфы</displayName>
 			</currency>
@@ -5663,12 +5675,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="ETB">
 				<displayName>Эфиопский быр</displayName>
 				<displayName count="one" draft="contributed">эфиопский быр</displayName>
+				<displayName count="few" draft="contributed">эфиопских быра</displayName>
 				<displayName count="many" draft="contributed">эфиопских быров</displayName>
 				<displayName count="other" draft="contributed">эфиопского быра</displayName>
 			</currency>
 			<currency type="EUR">
 				<displayName>Евро</displayName>
 				<displayName count="one" draft="contributed">евро</displayName>
+				<displayName count="few" draft="contributed">евро</displayName>
 				<displayName count="many" draft="contributed">евро</displayName>
 				<displayName count="other" draft="contributed">евро</displayName>
 				<symbol draft="contributed">€</symbol>
@@ -5679,12 +5693,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="FJD">
 				<displayName>Доллар Фиджи</displayName>
 				<displayName count="one" draft="contributed">доллар Фиджи</displayName>
+				<displayName count="few" draft="contributed">доллара Фиджи</displayName>
 				<displayName count="many" draft="contributed">долларов Фиджи</displayName>
 				<displayName count="other" draft="contributed">доллара Фиджи</displayName>
 			</currency>
 			<currency type="FKP">
 				<displayName>Фунт Фолклендских островов</displayName>
 				<displayName count="one" draft="contributed">фунт Фолклендских островов</displayName>
+				<displayName count="few" draft="contributed">фунта Фолклендских островов</displayName>
 				<displayName count="many" draft="contributed">фунтов Фолклендских островов</displayName>
 				<displayName count="other" draft="contributed">фунта Фолклендских островов</displayName>
 			</currency>
@@ -5694,6 +5710,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="GBP">
 				<displayName>Английский фунт стерлингов</displayName>
 				<displayName count="one" draft="contributed">английский фунт стерлингов</displayName>
+				<displayName count="few" draft="contributed">английских фунта стерлингов</displayName>
 				<displayName count="many" draft="contributed">английских фунтов стерлингов</displayName>
 				<displayName count="other" draft="contributed">английского фунта стерлингов</displayName>
 				<symbol draft="contributed">£</symbol>
@@ -5704,6 +5721,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="GEL">
 				<displayName>Грузинский лари</displayName>
 				<displayName count="one" draft="contributed">грузинский лари</displayName>
+				<displayName count="few" draft="contributed">грузинских лари</displayName>
 				<displayName count="many" draft="contributed">грузинских лари</displayName>
 				<displayName count="other" draft="contributed">грузинского лари</displayName>
 			</currency>
@@ -5713,24 +5731,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="GHS">
 				<displayName>Ганский седи</displayName>
 				<displayName count="one" draft="contributed">ганский седи</displayName>
+				<displayName count="few" draft="contributed">ганских седи</displayName>
 				<displayName count="many" draft="contributed">ганских седи</displayName>
 				<displayName count="other" draft="contributed">ганского седи</displayName>
 			</currency>
 			<currency type="GIP">
 				<displayName>Гибралтарский фунт</displayName>
 				<displayName count="one" draft="contributed">гибралтарский фунт</displayName>
+				<displayName count="few" draft="contributed">гибралтарских фунта</displayName>
 				<displayName count="many" draft="contributed">гибралтарских фунтов</displayName>
 				<displayName count="other" draft="contributed">гибралтарского фунта</displayName>
 			</currency>
 			<currency type="GMD">
 				<displayName>Гамбийский даласи</displayName>
 				<displayName count="one" draft="contributed">гамбийский даласи</displayName>
+				<displayName count="few" draft="contributed">гамбийских даласи</displayName>
 				<displayName count="many" draft="contributed">гамбийских даласи</displayName>
 				<displayName count="other" draft="contributed">гамбийского даласи</displayName>
 			</currency>
 			<currency type="GNF">
 				<displayName>Гвинейский франк</displayName>
 				<displayName count="one" draft="contributed">гвинейский франк</displayName>
+				<displayName count="few" draft="contributed">гвинейских франка</displayName>
 				<displayName count="many" draft="contributed">гвинейских франков</displayName>
 				<displayName count="other" draft="contributed">гвинейского франка</displayName>
 			</currency>
@@ -5746,6 +5768,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="GTQ">
 				<displayName>Гватемальский кетсаль</displayName>
 				<displayName count="one" draft="contributed">гватемальский кетсаль</displayName>
+				<displayName count="few" draft="contributed">гватемальских кетсаля</displayName>
 				<displayName count="many" draft="contributed">гватемальских кетсалей</displayName>
 				<displayName count="other" draft="contributed">гватемальского кетсаля</displayName>
 			</currency>
@@ -5758,12 +5781,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="GYD">
 				<displayName>Гайанский доллар</displayName>
 				<displayName count="one" draft="contributed">гайанский доллар</displayName>
+				<displayName count="few" draft="contributed">гайанских доллара</displayName>
 				<displayName count="many" draft="contributed">гайанских долларов</displayName>
 				<displayName count="other" draft="contributed">гайанского доллара</displayName>
 			</currency>
 			<currency type="HKD">
 				<displayName>Гонконгский доллар</displayName>
 				<displayName count="one" draft="contributed">гонконгский доллар</displayName>
+				<displayName count="few" draft="contributed">гонконгских доллара</displayName>
 				<displayName count="many" draft="contributed">гонконгских долларов</displayName>
 				<displayName count="other" draft="contributed">гонконгского доллара</displayName>
 				<symbol draft="contributed">HK$</symbol>
@@ -5771,6 +5796,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="HNL">
 				<displayName>Гондурасская лемпира</displayName>
 				<displayName count="one" draft="contributed">гондурасская лемпира</displayName>
+				<displayName count="few" draft="contributed">гондурасские лемпиры</displayName>
 				<displayName count="many" draft="contributed">гондурасских лемпир</displayName>
 				<displayName count="other" draft="contributed">гондурасской лемпиры</displayName>
 			</currency>
@@ -5780,24 +5806,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="HRK">
 				<displayName>Хорватская куна</displayName>
 				<displayName count="one" draft="contributed">хорватская куна</displayName>
+				<displayName count="few" draft="contributed">хорватских куны</displayName>
 				<displayName count="many" draft="contributed">хорватских кун</displayName>
 				<displayName count="other" draft="contributed">хорватской куны</displayName>
 			</currency>
 			<currency type="HTG">
 				<displayName>Гаитянский гурд</displayName>
 				<displayName count="one" draft="contributed">гаитянский гурд</displayName>
+				<displayName count="few" draft="contributed">гаитянских гурда</displayName>
 				<displayName count="many" draft="contributed">гаитянских гурдов</displayName>
 				<displayName count="other" draft="contributed">гаитянского гурда</displayName>
 			</currency>
 			<currency type="HUF">
 				<displayName>Венгерский форинт</displayName>
 				<displayName count="one" draft="contributed">венгерский форинт</displayName>
+				<displayName count="few" draft="contributed">венгерских форинта</displayName>
 				<displayName count="many" draft="contributed">венгерских форинтов</displayName>
 				<displayName count="other" draft="contributed">венгерского форинта</displayName>
 			</currency>
 			<currency type="IDR">
 				<displayName>Индонезийская рупия</displayName>
 				<displayName count="one" draft="contributed">индонезийская рупия</displayName>
+				<displayName count="few" draft="contributed">индонезийские рупии</displayName>
 				<displayName count="many" draft="contributed">индонезийских рупий</displayName>
 				<displayName count="other" draft="contributed">индонезийской рупии</displayName>
 			</currency>
@@ -5810,6 +5840,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="ILS">
 				<displayName>Новый израильский шекель</displayName>
 				<displayName count="one" draft="contributed">новый израильский шекель</displayName>
+				<displayName count="few" draft="contributed">новых израильских шекеля</displayName>
 				<displayName count="many" draft="contributed">новых израильских шекелей</displayName>
 				<displayName count="other" draft="contributed">нового израильского шекеля</displayName>
 				<symbol draft="contributed">₪</symbol>
@@ -5817,6 +5848,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="INR">
 				<displayName>Индийская рупия</displayName>
 				<displayName count="one" draft="contributed">индийская рупия</displayName>
+				<displayName count="few" draft="contributed">индийские рупии</displayName>
 				<displayName count="many" draft="contributed">индийских рупий</displayName>
 				<displayName count="other" draft="contributed">индийской рупии</displayName>
 				<symbol draft="contributed">₹</symbol>
@@ -5824,18 +5856,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="IQD">
 				<displayName>Иракский динар</displayName>
 				<displayName count="one" draft="contributed">иракский динар</displayName>
+				<displayName count="few" draft="contributed">иракских динара</displayName>
 				<displayName count="many" draft="contributed">иракских динаров</displayName>
 				<displayName count="other" draft="contributed">иракского динара</displayName>
 			</currency>
 			<currency type="IRR">
 				<displayName>Иранский риал</displayName>
 				<displayName count="one" draft="contributed">иранский риал</displayName>
+				<displayName count="few" draft="contributed">иранских риала</displayName>
 				<displayName count="many" draft="contributed">иранских риалов</displayName>
 				<displayName count="other" draft="contributed">иранского риала</displayName>
 			</currency>
 			<currency type="ISK">
 				<displayName>Исландская крона</displayName>
 				<displayName count="one" draft="contributed">исландская крона</displayName>
+				<displayName count="few" draft="contributed">исландские кроны</displayName>
 				<displayName count="many" draft="contributed">исландских крон</displayName>
 				<displayName count="other" draft="contributed">исландской кроны</displayName>
 			</currency>
@@ -5845,18 +5880,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="JMD">
 				<displayName>Ямайский доллар</displayName>
 				<displayName count="one" draft="contributed">ямайский доллар</displayName>
+				<displayName count="few" draft="contributed">ямайских доллара</displayName>
 				<displayName count="many" draft="contributed">ямайских долларов</displayName>
 				<displayName count="other" draft="contributed">ямайского доллара</displayName>
 			</currency>
 			<currency type="JOD">
 				<displayName>Иорданский динар</displayName>
 				<displayName count="one" draft="contributed">иорданский динар</displayName>
+				<displayName count="few" draft="contributed">иорданских динара</displayName>
 				<displayName count="many" draft="contributed">иорданских динаров</displayName>
 				<displayName count="other" draft="contributed">иорданского динара</displayName>
 			</currency>
 			<currency type="JPY">
 				<displayName>Японская иена</displayName>
 				<displayName count="one" draft="contributed">японская иена</displayName>
+				<displayName count="few" draft="contributed">японские иены</displayName>
 				<displayName count="many" draft="contributed">японских иен</displayName>
 				<displayName count="other" draft="contributed">японской иены</displayName>
 				<symbol draft="contributed">¥</symbol>
@@ -5864,36 +5902,42 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="KES">
 				<displayName>Кенийский шиллинг</displayName>
 				<displayName count="one" draft="contributed">кенийский шиллинг</displayName>
+				<displayName count="few" draft="contributed">кенийских шиллинга</displayName>
 				<displayName count="many" draft="contributed">кенийских шиллингов</displayName>
 				<displayName count="other" draft="contributed">кенийского шиллинга</displayName>
 			</currency>
 			<currency type="KGS">
 				<displayName>Киргизский сом</displayName>
 				<displayName count="one" draft="contributed">киргизский сом</displayName>
+				<displayName count="few" draft="contributed">киргизских сома</displayName>
 				<displayName count="many" draft="contributed">киргизских сома</displayName>
 				<displayName count="other" draft="contributed">киргизского сома</displayName>
 			</currency>
 			<currency type="KHR">
 				<displayName>Камбоджийский риель</displayName>
 				<displayName count="one" draft="contributed">камбоджийский риель</displayName>
+				<displayName count="few" draft="contributed">камбоджийских риеля</displayName>
 				<displayName count="many" draft="contributed">камбоджийских риелей</displayName>
 				<displayName count="other" draft="contributed">камбоджийского риеля</displayName>
 			</currency>
 			<currency type="KMF">
 				<displayName>Франк Коморских островов</displayName>
 				<displayName count="one" draft="contributed">франк Коморских островов</displayName>
+				<displayName count="few" draft="contributed">франка Коморских островов</displayName>
 				<displayName count="many" draft="contributed">франков Коморских островов</displayName>
 				<displayName count="other" draft="contributed">франка Коморских островов</displayName>
 			</currency>
 			<currency type="KPW">
 				<displayName>Северо-корейская вона</displayName>
 				<displayName count="one" draft="contributed">северокорейская вона</displayName>
+				<displayName count="few" draft="contributed">северокорейские воны</displayName>
 				<displayName count="many" draft="contributed">северокорейских вон</displayName>
 				<displayName count="other" draft="contributed">северокорейской воны</displayName>
 			</currency>
 			<currency type="KRW">
 				<displayName>Вона Республики Кореи</displayName>
 				<displayName count="one" draft="contributed">южнокорейская вона</displayName>
+				<displayName count="few" draft="contributed">южнокорейские воны</displayName>
 				<displayName count="many" draft="contributed">южнокорейских вон</displayName>
 				<displayName count="other" draft="contributed">южнокорейской воны</displayName>
 				<symbol draft="contributed">₩</symbol>
@@ -5901,42 +5945,49 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="KWD">
 				<displayName>Кувейтский динар</displayName>
 				<displayName count="one" draft="contributed">кувейтский динар</displayName>
+				<displayName count="few" draft="contributed">кувейтских динара</displayName>
 				<displayName count="many" draft="contributed">кувейтских динаров</displayName>
 				<displayName count="other" draft="contributed">кувейтского динара</displayName>
 			</currency>
 			<currency type="KYD">
 				<displayName>Доллар Каймановых островов</displayName>
 				<displayName count="one" draft="contributed">доллар Каймановых островов</displayName>
+				<displayName count="few" draft="contributed">доллара Каймановых островов</displayName>
 				<displayName count="many" draft="contributed">долларов Каймановых островов</displayName>
 				<displayName count="other" draft="contributed">доллара Каймановых островов</displayName>
 			</currency>
 			<currency type="KZT">
 				<displayName>Казахский тенге</displayName>
 				<displayName count="one" draft="contributed">казахский тенге</displayName>
+				<displayName count="few" draft="contributed">казахских тенге</displayName>
 				<displayName count="many" draft="contributed">казахских тенге</displayName>
 				<displayName count="other" draft="contributed">казахского тенге</displayName>
 			</currency>
 			<currency type="LAK">
 				<displayName>Кип ЛНДР</displayName>
 				<displayName count="one" draft="contributed">лаосский кип</displayName>
+				<displayName count="few" draft="contributed">лаосских кипа</displayName>
 				<displayName count="many" draft="contributed">лаосских кипов</displayName>
 				<displayName count="other" draft="contributed">лаосского кипа</displayName>
 			</currency>
 			<currency type="LBP">
 				<displayName>Ливанский фунт</displayName>
 				<displayName count="one" draft="contributed">ливанский фунт</displayName>
+				<displayName count="few" draft="contributed">ливанских фунта</displayName>
 				<displayName count="many" draft="contributed">ливанских фунтов</displayName>
 				<displayName count="other" draft="contributed">ливанского фунта</displayName>
 			</currency>
 			<currency type="LKR">
 				<displayName>Шри-Ланкийская рупия</displayName>
 				<displayName count="one" draft="contributed">шри-ланкийская рупия</displayName>
+				<displayName count="few" draft="contributed">шри-ланкийские рупии</displayName>
 				<displayName count="many" draft="contributed">шри-ланкийских рупий</displayName>
 				<displayName count="other" draft="contributed">шри-ланкийской рупии</displayName>
 			</currency>
 			<currency type="LRD">
 				<displayName>Либерийский доллар</displayName>
 				<displayName count="one" draft="contributed">либерийский доллар</displayName>
+				<displayName count="few" draft="contributed">либерийских доллара</displayName>
 				<displayName count="many" draft="contributed">либерийских долларов</displayName>
 				<displayName count="other" draft="contributed">либерийского доллара</displayName>
 			</currency>
@@ -5946,6 +5997,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="LTL">
 				<displayName>Литовский лит</displayName>
 				<displayName count="one" draft="contributed">литовский лит</displayName>
+				<displayName count="few" draft="contributed">литовских лита</displayName>
 				<displayName count="many" draft="contributed">литовских литов</displayName>
 				<displayName count="other" draft="contributed">литовского лита</displayName>
 			</currency>
@@ -5964,6 +6016,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="LVL">
 				<displayName>Латвийский лат</displayName>
 				<displayName count="one" draft="contributed">латвийский лат</displayName>
+				<displayName count="few" draft="contributed">латвийских лата</displayName>
 				<displayName count="many" draft="contributed">латвийских латов</displayName>
 				<displayName count="other" draft="contributed">латвийского лата</displayName>
 			</currency>
@@ -5973,12 +6026,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="LYD">
 				<displayName>Ливийский динар</displayName>
 				<displayName count="one" draft="contributed">ливийский динар</displayName>
+				<displayName count="few" draft="contributed">ливийских динара</displayName>
 				<displayName count="many" draft="contributed">ливийских динаров</displayName>
 				<displayName count="other" draft="contributed">ливийского динара</displayName>
 			</currency>
 			<currency type="MAD">
 				<displayName>Марокканский дирхам</displayName>
 				<displayName count="one" draft="contributed">марокканский дирхам</displayName>
+				<displayName count="few" draft="contributed">марокканских дирхама</displayName>
 				<displayName count="many" draft="contributed">марокканских дирхамов</displayName>
 				<displayName count="other" draft="contributed">марокканского дирхама</displayName>
 			</currency>
@@ -5988,12 +6043,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="MDL">
 				<displayName>Молдавский лей</displayName>
 				<displayName count="one" draft="contributed">молдавский лей</displayName>
+				<displayName count="few" draft="contributed">молдавских лея</displayName>
 				<displayName count="many" draft="contributed">молдавских леев</displayName>
 				<displayName count="other" draft="contributed">молдавского лея</displayName>
 			</currency>
 			<currency type="MGA">
 				<displayName>Малагасийский ариари</displayName>
 				<displayName count="one" draft="contributed">малагасийский ариари</displayName>
+				<displayName count="few" draft="contributed">малагасийских ариари</displayName>
 				<displayName count="many" draft="contributed">малагасийских ариари</displayName>
 				<displayName count="other" draft="contributed">малагасийского ариари</displayName>
 			</currency>
@@ -6003,6 +6060,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="MKD">
 				<displayName>Македонский динар</displayName>
 				<displayName count="one" draft="contributed">македонский динар</displayName>
+				<displayName count="few" draft="contributed">македонских динара</displayName>
 				<displayName count="many" draft="contributed">македонских динаров</displayName>
 				<displayName count="other" draft="contributed">македонского динара</displayName>
 			</currency>
@@ -6012,24 +6070,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="MMK">
 				<displayName>Кьят</displayName>
 				<displayName count="one" draft="contributed">мьянманский чат</displayName>
+				<displayName count="few" draft="contributed">мьянманских чата</displayName>
 				<displayName count="many" draft="contributed">мьянманских чатов</displayName>
 				<displayName count="other" draft="contributed">мьянманского чата</displayName>
 			</currency>
 			<currency type="MNT">
 				<displayName>Монгольский тугрик</displayName>
 				<displayName count="one" draft="contributed">монгольский тугрик</displayName>
+				<displayName count="few" draft="contributed">монгольских тугрика</displayName>
 				<displayName count="many" draft="contributed">монгольских тугриков</displayName>
 				<displayName count="other" draft="contributed">монгольского тугрика</displayName>
 			</currency>
 			<currency type="MOP">
 				<displayName>Патака Макао</displayName>
 				<displayName count="one" draft="contributed">патака Макао</displayName>
+				<displayName count="few" draft="contributed">патаки Макао</displayName>
 				<displayName count="many" draft="contributed">патак Макао</displayName>
 				<displayName count="other" draft="contributed">патаки Макао</displayName>
 			</currency>
 			<currency type="MRO">
 				<displayName>Мавританская угия</displayName>
 				<displayName count="one" draft="contributed">мавританская угия</displayName>
+				<displayName count="few" draft="contributed">мавританские угии</displayName>
 				<displayName count="many" draft="contributed">мавританских угий</displayName>
 				<displayName count="other" draft="contributed">мавританской угии</displayName>
 			</currency>
@@ -6042,24 +6104,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="MUR">
 				<displayName>Маврикийская рупия</displayName>
 				<displayName count="one" draft="contributed">маврикийская рупия</displayName>
+				<displayName count="few" draft="contributed">маврикийские рупии</displayName>
 				<displayName count="many" draft="contributed">маврикийских рупий</displayName>
 				<displayName count="other" draft="contributed">маврикийской рупии</displayName>
 			</currency>
 			<currency type="MVR">
 				<displayName>Мальдивская руфия</displayName>
 				<displayName count="one" draft="contributed">мальдивская руфия</displayName>
+				<displayName count="few" draft="contributed">мальдивские руфии</displayName>
 				<displayName count="many" draft="contributed">мальдивских руфий</displayName>
 				<displayName count="other" draft="contributed">мальдивской руфии</displayName>
 			</currency>
 			<currency type="MWK">
 				<displayName>Малавийская квача</displayName>
 				<displayName count="one" draft="contributed">малавийская квача</displayName>
+				<displayName count="few" draft="contributed">малавийские квачи</displayName>
 				<displayName count="many" draft="contributed">малавийских квач</displayName>
 				<displayName count="other" draft="contributed">малавийской квачи</displayName>
 			</currency>
 			<currency type="MXN">
 				<displayName>Мексиканское новое песо</displayName>
 				<displayName count="one" draft="contributed">мексиканское песо</displayName>
+				<displayName count="few" draft="contributed">мексиканских песо</displayName>
 				<displayName count="many" draft="contributed">мексиканских песо</displayName>
 				<displayName count="other" draft="contributed">мексиканского песо</displayName>
 				<symbol>MX$</symbol>
@@ -6073,6 +6139,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="MYR">
 				<displayName>Малайзийский ринггит</displayName>
 				<displayName count="one" draft="contributed">малайзийский ринггит</displayName>
+				<displayName count="few" draft="contributed">малайзийских ринггита</displayName>
 				<displayName count="many" draft="contributed">малайзийских ринггитов</displayName>
 				<displayName count="other" draft="contributed">малайзийского ринггита</displayName>
 			</currency>
@@ -6085,18 +6152,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="MZN">
 				<displayName>Мозамбикский метикал</displayName>
 				<displayName count="one" draft="contributed">мозамбикский метикал</displayName>
+				<displayName count="few" draft="contributed">мозамбикских метикала</displayName>
 				<displayName count="many" draft="contributed">мозамбикских метикалов</displayName>
 				<displayName count="other" draft="contributed">мозамбикского метикала</displayName>
 			</currency>
 			<currency type="NAD">
 				<displayName>Доллар Намибии</displayName>
 				<displayName count="one" draft="contributed">доллар Намибии</displayName>
+				<displayName count="few" draft="contributed">доллара Намибии</displayName>
 				<displayName count="many" draft="contributed">долларов Намибии</displayName>
 				<displayName count="other" draft="contributed">доллара Намибии</displayName>
 			</currency>
 			<currency type="NGN">
 				<displayName>Нигерийская найра</displayName>
 				<displayName count="one" draft="contributed">нигерийская найра</displayName>
+				<displayName count="few" draft="contributed">нигерийские найры</displayName>
 				<displayName count="many" draft="contributed">нигерийских найр</displayName>
 				<displayName count="other" draft="contributed">нигерийской найры</displayName>
 			</currency>
@@ -6106,6 +6176,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="NIO">
 				<displayName>Никарагуанская кордоба</displayName>
 				<displayName count="one" draft="contributed">никарагуанская кордоба</displayName>
+				<displayName count="few" draft="contributed">никарагуанские кордобы</displayName>
 				<displayName count="many" draft="contributed">никарагуанских кордоб</displayName>
 				<displayName count="other" draft="contributed">никарагуанской кордобы</displayName>
 			</currency>
@@ -6115,18 +6186,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="NOK">
 				<displayName>Норвежская крона</displayName>
 				<displayName count="one" draft="contributed">норвежская крона</displayName>
+				<displayName count="few" draft="contributed">норвежские кроны</displayName>
 				<displayName count="many" draft="contributed">норвежских крон</displayName>
 				<displayName count="other" draft="contributed">норвежской кроны</displayName>
 			</currency>
 			<currency type="NPR">
 				<displayName>Непальская рупия</displayName>
 				<displayName count="one" draft="contributed">непальская рупия</displayName>
+				<displayName count="few" draft="contributed">непальские рупии</displayName>
 				<displayName count="many" draft="contributed">непальских рупий</displayName>
 				<displayName count="other" draft="contributed">непальской рупии</displayName>
 			</currency>
 			<currency type="NZD">
 				<displayName>Новозеландский доллар</displayName>
 				<displayName count="one" draft="contributed">новозеландский доллар</displayName>
+				<displayName count="few" draft="contributed">новозеландских доллара</displayName>
 				<displayName count="many" draft="contributed">новозеландских долларов</displayName>
 				<displayName count="other" draft="contributed">новозеландского доллара</displayName>
 				<symbol>NZ$</symbol>
@@ -6134,12 +6208,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="OMR">
 				<displayName>Оманский риал</displayName>
 				<displayName count="one" draft="contributed">оманский риал</displayName>
+				<displayName count="few" draft="contributed">оманских риала</displayName>
 				<displayName count="many" draft="contributed">оманских риалов</displayName>
 				<displayName count="other" draft="contributed">оманского риала</displayName>
 			</currency>
 			<currency type="PAB">
 				<displayName>Панамское бальбоа</displayName>
 				<displayName count="one" draft="contributed">панамский бальбоа</displayName>
+				<displayName count="few" draft="contributed">панамских бальбоа</displayName>
 				<displayName count="many" draft="contributed">панамских бальбоа</displayName>
 				<displayName count="other" draft="contributed">панамского бальбоа</displayName>
 			</currency>
@@ -6149,6 +6225,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="PEN">
 				<displayName>Перуанский новый соль</displayName>
 				<displayName count="one" draft="contributed">перуанский новый соль</displayName>
+				<displayName count="few" draft="contributed">перуанских новых соля</displayName>
 				<displayName count="many" draft="contributed">перуанских новый солей</displayName>
 				<displayName count="other" draft="contributed">перуанского нового соля</displayName>
 			</currency>
@@ -6158,24 +6235,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="PGK">
 				<displayName>Кина</displayName>
 				<displayName count="one" draft="contributed">кина</displayName>
+				<displayName count="few" draft="contributed">кины</displayName>
 				<displayName count="many" draft="contributed">кин</displayName>
 				<displayName count="other" draft="contributed">кины</displayName>
 			</currency>
 			<currency type="PHP">
 				<displayName>Филиппинское песо</displayName>
 				<displayName count="one" draft="contributed">филиппинское песо</displayName>
+				<displayName count="few" draft="contributed">филиппинских песо</displayName>
 				<displayName count="many" draft="contributed">филиппинских песо</displayName>
 				<displayName count="other" draft="contributed">филиппинского песо</displayName>
 			</currency>
 			<currency type="PKR">
 				<displayName>Пакистанская рупия</displayName>
 				<displayName count="one" draft="contributed">пакистанская рупия</displayName>
+				<displayName count="few" draft="contributed">пакистанские рупии</displayName>
 				<displayName count="many" draft="contributed">пакистанских рупий</displayName>
 				<displayName count="other" draft="contributed">пакистанской рупии</displayName>
 			</currency>
 			<currency type="PLN">
 				<displayName>Польский злотый</displayName>
 				<displayName count="one" draft="contributed">польский злотый</displayName>
+				<displayName count="few" draft="contributed">польских злотых</displayName>
 				<displayName count="many" draft="contributed">польских злотых</displayName>
 				<displayName count="other" draft="contributed">польского злотого</displayName>
 			</currency>
@@ -6188,12 +6269,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="PYG">
 				<displayName>Парагвайский гуарани</displayName>
 				<displayName count="one" draft="contributed">парагвайский гуарани</displayName>
+				<displayName count="few" draft="contributed">парагвайских гуарани</displayName>
 				<displayName count="many" draft="contributed">парагвайских гуарани</displayName>
 				<displayName count="other" draft="contributed">парагвайского гуарани</displayName>
 			</currency>
 			<currency type="QAR">
 				<displayName>Катарский риал</displayName>
 				<displayName count="one" draft="contributed">катарский риал</displayName>
+				<displayName count="few" draft="contributed">катарских риала</displayName>
 				<displayName count="many" draft="contributed">катарских риалов</displayName>
 				<displayName count="other" draft="contributed">катарского риала</displayName>
 			</currency>
@@ -6206,18 +6289,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="RON">
 				<displayName>Румынский лей</displayName>
 				<displayName count="one" draft="contributed">румынский лей</displayName>
+				<displayName count="few" draft="contributed">румынских лея</displayName>
 				<displayName count="many" draft="contributed">румынских леев</displayName>
 				<displayName count="other" draft="contributed">румынского лея</displayName>
 			</currency>
 			<currency type="RSD">
 				<displayName>Сербский динар</displayName>
 				<displayName count="one" draft="contributed">сербский динар</displayName>
+				<displayName count="few" draft="contributed">сербских динара</displayName>
 				<displayName count="many" draft="contributed">сербских динаров</displayName>
 				<displayName count="other" draft="contributed">сербского динара</displayName>
 			</currency>
 			<currency type="RUB">
 				<displayName>Российский рубль</displayName>
 				<displayName count="one">российский рубль</displayName>
+				<displayName count="few">российских рубля</displayName>
 				<displayName count="many">российских рублей</displayName>
 				<displayName count="other">российского рубля</displayName>
 				<symbol>руб.</symbol>
@@ -6229,24 +6315,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="RWF">
 				<displayName>Франк Руанды</displayName>
 				<displayName count="one" draft="contributed">франк Руанды</displayName>
+				<displayName count="few" draft="contributed">франка Руанды</displayName>
 				<displayName count="many" draft="contributed">франков Руанды</displayName>
 				<displayName count="other" draft="contributed">франка Руанды</displayName>
 			</currency>
 			<currency type="SAR">
 				<displayName>Саудовский риал</displayName>
 				<displayName count="one" draft="contributed">саудовский риал</displayName>
+				<displayName count="few" draft="contributed">саудовских риала</displayName>
 				<displayName count="many" draft="contributed">саудовских риалов</displayName>
 				<displayName count="other" draft="contributed">саудовского риала</displayName>
 			</currency>
 			<currency type="SBD">
 				<displayName>Доллар Соломоновых островов</displayName>
 				<displayName count="one" draft="contributed">доллар Соломоновых островов</displayName>
+				<displayName count="few" draft="contributed">доллара Соломоновых островов</displayName>
 				<displayName count="many" draft="contributed">долларов Соломоновых островов</displayName>
 				<displayName count="other" draft="contributed">доллара Соломоновых островов</displayName>
 			</currency>
 			<currency type="SCR">
 				<displayName>Сейшельская рупия</displayName>
 				<displayName count="one" draft="contributed">сейшельская рупия</displayName>
+				<displayName count="few" draft="contributed">сейшельские рупии</displayName>
 				<displayName count="many" draft="contributed">сейшельских рупий</displayName>
 				<displayName count="other" draft="contributed">сейшельской рупии</displayName>
 			</currency>
@@ -6256,6 +6346,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="SDG">
 				<displayName>Суданский фунт</displayName>
 				<displayName count="one" draft="contributed">суданский фунт</displayName>
+				<displayName count="few" draft="contributed">суданских фунта</displayName>
 				<displayName count="many" draft="contributed">суданских фунтов</displayName>
 				<displayName count="other" draft="contributed">суданского фунта</displayName>
 			</currency>
@@ -6265,18 +6356,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="SEK">
 				<displayName>Шведская крона</displayName>
 				<displayName count="one" draft="contributed">шведская крона</displayName>
+				<displayName count="few" draft="contributed">шведские кроны</displayName>
 				<displayName count="many" draft="contributed">шведских крон</displayName>
 				<displayName count="other" draft="contributed">шведской кроны</displayName>
 			</currency>
 			<currency type="SGD">
 				<displayName>Сингапурский доллар</displayName>
 				<displayName count="one" draft="contributed">сингапурский доллар</displayName>
+				<displayName count="few" draft="contributed">сингапурских доллара</displayName>
 				<displayName count="many" draft="contributed">сингапурских долларов</displayName>
 				<displayName count="other" draft="contributed">сингапурского доллара</displayName>
 			</currency>
 			<currency type="SHP">
 				<displayName>Фунт острова Святой Елены</displayName>
 				<displayName count="one" draft="contributed">фунт острова Святой Елены</displayName>
+				<displayName count="few" draft="contributed">фунта острова Святой Елены</displayName>
 				<displayName count="many" draft="contributed">фунтов острова Святой Елены</displayName>
 				<displayName count="other" draft="contributed">фунта острова Святой Елены</displayName>
 			</currency>
@@ -6289,18 +6383,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="SLL">
 				<displayName>Леоне</displayName>
 				<displayName count="one" draft="contributed">леоне</displayName>
+				<displayName count="few" draft="contributed">леоне</displayName>
 				<displayName count="many" draft="contributed">леоне</displayName>
 				<displayName count="other" draft="contributed">леоне</displayName>
 			</currency>
 			<currency type="SOS">
 				<displayName>Сомалийский шиллинг</displayName>
 				<displayName count="one" draft="contributed">сомалийский шиллинг</displayName>
+				<displayName count="few" draft="contributed">сомалийских шиллинга</displayName>
 				<displayName count="many" draft="contributed">сомалийских шиллингов</displayName>
 				<displayName count="other" draft="contributed">сомалийского шиллинга</displayName>
 			</currency>
 			<currency type="SRD">
 				<displayName>Суринамский доллар</displayName>
 				<displayName count="one" draft="contributed">суринамский доллар</displayName>
+				<displayName count="few" draft="contributed">суринамских доллара</displayName>
 				<displayName count="many" draft="contributed">суринамских долларов</displayName>
 				<displayName count="other" draft="contributed">суринамского доллара</displayName>
 			</currency>
@@ -6310,12 +6407,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="SSP">
 				<displayName draft="contributed">Южносуданский фунт</displayName>
 				<displayName count="one">Южносуданский фунт</displayName>
+				<displayName count="few">южносуданских фунта</displayName>
 				<displayName count="many">южносуданских фунтов</displayName>
 				<displayName count="other">Южносуданский фунт</displayName>
 			</currency>
 			<currency type="STD">
 				<displayName>Добра Сант-Томе и Принсипи</displayName>
 				<displayName count="one">добра Сан-Томе и Принсипи</displayName>
+				<displayName count="few">добры Сан-Томе и Принсипи</displayName>
 				<displayName count="many">добр Сан-Томе и Принсипи</displayName>
 				<displayName count="other">добры Сан-Томе и Принсипи</displayName>
 			</currency>
@@ -6328,18 +6427,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="SYP">
 				<displayName>Сирийский фунт</displayName>
 				<displayName count="one" draft="contributed">сирийский фунт</displayName>
+				<displayName count="few" draft="contributed">сирийских фунта</displayName>
 				<displayName count="many" draft="contributed">сирийских фунтов</displayName>
 				<displayName count="other" draft="contributed">сирийского фунта</displayName>
 			</currency>
 			<currency type="SZL">
 				<displayName>Свазилендский лилангени</displayName>
 				<displayName count="one" draft="contributed">свазилендский лилангени</displayName>
+				<displayName count="few" draft="contributed">свазилендских эмалангени</displayName>
 				<displayName count="many" draft="contributed">свазилендских лилангени</displayName>
 				<displayName count="other" draft="contributed">свазилендского лилангени</displayName>
 			</currency>
 			<currency type="THB">
 				<displayName>Таиландский бат</displayName>
 				<displayName count="one" draft="contributed">таиландский бат</displayName>
+				<displayName count="few" draft="contributed">таиландских бата</displayName>
 				<displayName count="many" draft="contributed">таиландских батов</displayName>
 				<displayName count="other" draft="contributed">таиландского бата</displayName>
 				<symbol>฿</symbol>
@@ -6350,6 +6452,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="TJS">
 				<displayName>Таджикский сомони</displayName>
 				<displayName count="one">таджикский сомони</displayName>
+				<displayName count="few">таджикских сомони</displayName>
 				<displayName count="many">таджикских сомони</displayName>
 				<displayName count="other">таджикского сомони</displayName>
 			</currency>
@@ -6359,6 +6462,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="TMT">
 				<displayName>Туркменский новый манат</displayName>
 				<displayName count="one" draft="contributed">туркменский новый манат</displayName>
+				<displayName count="few" draft="contributed">туркменских новых маната</displayName>
 				<displayName count="many" draft="contributed">туркменских новых манатов</displayName>
 				<displayName count="other" draft="contributed">туркменского нового маната</displayName>
 				<symbol draft="contributed">ТМТ</symbol>
@@ -6366,12 +6470,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="TND">
 				<displayName>Тунисский динар</displayName>
 				<displayName count="one" draft="contributed">тунисский динар</displayName>
+				<displayName count="few" draft="contributed">тунисских динара</displayName>
 				<displayName count="many" draft="contributed">тунисских динаров</displayName>
 				<displayName count="other" draft="contributed">тунисского динара</displayName>
 			</currency>
 			<currency type="TOP">
 				<displayName>Паанга</displayName>
 				<displayName count="one" draft="contributed">паанга</displayName>
+				<displayName count="few" draft="contributed">паанги</displayName>
 				<displayName count="many" draft="contributed">паанг</displayName>
 				<displayName count="other" draft="contributed">паанга</displayName>
 			</currency>
@@ -6381,24 +6487,28 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="TRL">
 				<displayName>Турецкая лира (1922–2005)</displayName>
 				<displayName count="one">туркцкая лира</displayName>
+				<displayName count="few">турецкие лиры</displayName>
 				<displayName count="many">турецких лир</displayName>
 				<displayName count="other">турецких лир</displayName>
 			</currency>
 			<currency type="TRY">
 				<displayName>Турецкая лира</displayName>
 				<displayName count="one">новая турецкая лира</displayName>
+				<displayName count="few">новые турецкие лиры</displayName>
 				<displayName count="many">новых турецких лир</displayName>
 				<displayName count="other">новой турецкой лиры</displayName>
 			</currency>
 			<currency type="TTD">
 				<displayName>Доллар Тринидада и Тобаго</displayName>
 				<displayName count="one" draft="contributed">доллар Тринидада и Тобаго</displayName>
+				<displayName count="few" draft="contributed">доллара Тринидада и Тобаго</displayName>
 				<displayName count="many" draft="contributed">долларов Тринидада и Тобаго</displayName>
 				<displayName count="other" draft="contributed">доллара Тринидада и Тобаго</displayName>
 			</currency>
 			<currency type="TWD">
 				<displayName>Новый тайваньский доллар</displayName>
 				<displayName count="one" draft="contributed">новый тайваньский доллар</displayName>
+				<displayName count="few" draft="contributed">новых тайваньских доллара</displayName>
 				<displayName count="many" draft="contributed">новых тайваньских долларов</displayName>
 				<displayName count="other" draft="contributed">нового тайваньского доллара</displayName>
 				<symbol draft="contributed">NT$</symbol>
@@ -6406,12 +6516,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="TZS">
 				<displayName>Танзанийский шиллинг</displayName>
 				<displayName count="one" draft="contributed">танзанийский шиллинг</displayName>
+				<displayName count="few" draft="contributed">танзанийских шиллинга</displayName>
 				<displayName count="many" draft="contributed">танзанийских шиллингов</displayName>
 				<displayName count="other" draft="contributed">танзанийского шиллинга</displayName>
 			</currency>
 			<currency type="UAH">
 				<displayName>Украинская гривна</displayName>
 				<displayName count="one" draft="contributed">украинская гривна</displayName>
+				<displayName count="few" draft="contributed">украинские гривны</displayName>
 				<displayName count="many" draft="contributed">украинских гривен</displayName>
 				<displayName count="other" draft="contributed">украинской гривны</displayName>
 				<symbol>₴</symbol>
@@ -6425,12 +6537,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="UGX">
 				<displayName>Угандийский шиллинг</displayName>
 				<displayName count="one" draft="contributed">угандийский шиллинг</displayName>
+				<displayName count="few" draft="contributed">угандийских шиллинга</displayName>
 				<displayName count="many" draft="contributed">угандийских шиллингов</displayName>
 				<displayName count="other" draft="contributed">угандийского шиллинга</displayName>
 			</currency>
 			<currency type="USD">
 				<displayName>Доллар США</displayName>
 				<displayName count="one" draft="contributed">доллар США</displayName>
+				<displayName count="few" draft="contributed">доллара США</displayName>
 				<displayName count="many" draft="contributed">долларов США</displayName>
 				<displayName count="other" draft="contributed">доллара США</displayName>
 				<symbol>$</symbol>
@@ -6450,12 +6564,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="UYU">
 				<displayName>Уругвайское песо</displayName>
 				<displayName count="one" draft="contributed">уругвайское песо</displayName>
+				<displayName count="few" draft="contributed">уругвайских песо</displayName>
 				<displayName count="many" draft="contributed">уругвайских песо</displayName>
 				<displayName count="other" draft="contributed">уругвайского песо</displayName>
 			</currency>
 			<currency type="UZS">
 				<displayName>Узбекский сум</displayName>
 				<displayName count="one" draft="contributed">узбекский сум</displayName>
+				<displayName count="few" draft="contributed">узбекских сума</displayName>
 				<displayName count="many" draft="contributed">узбекских сумов</displayName>
 				<displayName count="other" draft="contributed">узбекского сума</displayName>
 			</currency>
@@ -6465,12 +6581,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="VEF">
 				<displayName>Венесуэльский боливар</displayName>
 				<displayName count="one" draft="contributed">венесуэльский боливар</displayName>
+				<displayName count="few" draft="contributed">венесуэльских боливара</displayName>
 				<displayName count="many" draft="contributed">венесуэльских боливара</displayName>
 				<displayName count="other" draft="contributed">венесуэльского боливара</displayName>
 			</currency>
 			<currency type="VND">
 				<displayName>Вьетнамский донг</displayName>
 				<displayName count="one" draft="contributed">вьетнамский донг</displayName>
+				<displayName count="few" draft="contributed">вьетнамских донга</displayName>
 				<displayName count="many" draft="contributed">вьетнамских донгов</displayName>
 				<displayName count="other" draft="contributed">вьетнамского донга</displayName>
 				<symbol>₫</symbol>
@@ -6478,18 +6596,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="VUV">
 				<displayName>Вату</displayName>
 				<displayName count="one" draft="contributed">вату</displayName>
+				<displayName count="few" draft="contributed">вату</displayName>
 				<displayName count="many" draft="contributed">вату</displayName>
 				<displayName count="other" draft="contributed">вату</displayName>
 			</currency>
 			<currency type="WST">
 				<displayName>Тала Самоа</displayName>
 				<displayName count="one" draft="contributed">тала</displayName>
+				<displayName count="few" draft="contributed">талы</displayName>
 				<displayName count="many" draft="contributed">тал</displayName>
 				<displayName count="other" draft="contributed">талы</displayName>
 			</currency>
 			<currency type="XAF">
 				<displayName>Франк КФА ВЕАС</displayName>
 				<displayName count="one" draft="contributed">франк КФА ВЕАС</displayName>
+				<displayName count="few" draft="contributed">франка КФА ВЕАС</displayName>
 				<displayName count="many" draft="contributed">франков КФА ВЕАС</displayName>
 				<displayName count="other" draft="contributed">франка КФА ВЕАС</displayName>
 				<symbol draft="contributed">FCFA</symbol>
@@ -6515,6 +6636,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="XCD">
 				<displayName>Восточно-карибский доллар</displayName>
 				<displayName count="one" draft="contributed">восточно-карибский доллар</displayName>
+				<displayName count="few" draft="contributed">восточно-карибских доллара</displayName>
 				<displayName count="many" draft="contributed">восточно-карибских доллара</displayName>
 				<displayName count="other" draft="contributed">восточно-карибского доллара</displayName>
 				<symbol draft="contributed">EC$</symbol>
@@ -6534,6 +6656,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="XOF">
 				<displayName>Франк КФА ВСЕАО</displayName>
 				<displayName count="one" draft="contributed">франк КФА ВСЕА</displayName>
+				<displayName count="few" draft="contributed">франка КФА ВСЕА</displayName>
 				<displayName count="many" draft="contributed">франков КФА ВСЕА</displayName>
 				<displayName count="other" draft="contributed">франка КФА ВСЕА</displayName>
 				<symbol draft="contributed">CFA</symbol>
@@ -6544,6 +6667,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="XPF">
 				<displayName>Франк КФП</displayName>
 				<displayName count="one" draft="contributed">французский тихоокеанский франк</displayName>
+				<displayName count="few" draft="contributed">французских тихоокеанских франка</displayName>
 				<displayName count="many" draft="contributed">франков КФП</displayName>
 				<displayName count="other" draft="contributed">французского тихоокеанского франка</displayName>
 				<symbol>CFPF</symbol>
@@ -6560,6 +6684,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="XXX">
 				<displayName>Неизвестная или недействительная валюта</displayName>
 				<displayName count="one">Неизвестная или недействительная валюта</displayName>
+				<displayName count="few">Неизвестная или недействительная валюта</displayName>
 				<displayName count="many">Неизвестная или недействительная валюта</displayName>
 				<displayName count="other">Неизвестная или недействительная валюта</displayName>
 				<symbol draft="contributed">XXXX</symbol>
@@ -6570,6 +6695,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="YER">
 				<displayName>Йеменский риал</displayName>
 				<displayName count="one" draft="contributed">йеменский риал</displayName>
+				<displayName count="few" draft="contributed">йеменских риала</displayName>
 				<displayName count="many" draft="contributed">йеменских риалов</displayName>
 				<displayName count="other" draft="contributed">йеменского риала</displayName>
 			</currency>
@@ -6588,18 +6714,21 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<currency type="ZAR">
 				<displayName>Южноафриканский рэнд</displayName>
 				<displayName count="one" draft="contributed">южноафриканский рэнд</displayName>
+				<displayName count="few" draft="contributed">южноафриканских рэнда</displayName>
 				<displayName count="many" draft="contributed">южноафриканских рэндов</displayName>
 				<displayName count="other" draft="contributed">южноафриканского рэнда</displayName>
 			</currency>
 			<currency type="ZMK">
 				<displayName>Квача (замбийская) (1968–2012)</displayName>
 				<displayName count="one" draft="contributed">замбийская квача (1968–2012)</displayName>
+				<displayName count="few" draft="contributed">замбийские квачи (1968–2012)</displayName>
 				<displayName count="many" draft="contributed">замбийских квач (1968–2012)</displayName>
 				<displayName count="other" draft="contributed">замбийской квачи (1968–2012)</displayName>
 			</currency>
 			<currency type="ZMW">
 				<displayName>Квача (замбийская)</displayName>
 				<displayName count="one" draft="contributed">замбийская квача</displayName>
+				<displayName count="few" draft="contributed">замбийские квачи</displayName>
 				<displayName count="many" draft="contributed">замбийских квач</displayName>
 				<displayName count="other" draft="contributed">замбийской квачи</displayName>
 			</currency>
@@ -6628,231 +6757,277 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</compoundUnit>
 			<unit type="acceleration-g-force">
 				<unitPattern count="one" draft="contributed">{0} G</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} G</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} G</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} G</unitPattern>
 			</unit>
 			<unit type="angle-arc-minute">
 				<unitPattern count="one">{0}минута</unitPattern>
+				<unitPattern count="few">{0} минуты</unitPattern>
 				<unitPattern count="many">{0}минут</unitPattern>
 				<unitPattern count="other">{0}минуты</unitPattern>
 			</unit>
 			<unit type="angle-arc-second">
 				<unitPattern count="one" draft="contributed">{0}секунда</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} секунды</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}секунд</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}секунды</unitPattern>
 			</unit>
 			<unit type="angle-degree">
 				<unitPattern count="one" draft="contributed">{0}градус</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} градуса</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} градусов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} градуса</unitPattern>
 			</unit>
 			<unit type="area-acre">
 				<unitPattern count="one" draft="contributed">{0} акр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} акра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} акров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} акра</unitPattern>
 			</unit>
 			<unit type="area-hectare">
 				<unitPattern count="one" draft="contributed">{0} гектар</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} гектара</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} гектар</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} гектара</unitPattern>
 			</unit>
 			<unit type="area-square-foot">
 				<unitPattern count="one" draft="contributed">{0} квадратный фут</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} квадратных фута</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} квадратных футов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} квадратных фута</unitPattern>
 			</unit>
 			<unit type="area-square-kilometer">
 				<unitPattern count="one" draft="contributed">{0} квадратный километр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} квадратных километра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} квадратных километров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} квадратных километра</unitPattern>
 			</unit>
 			<unit type="area-square-meter">
 				<unitPattern count="one" draft="contributed">{0} квадратный метр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} квадратных метра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} квадратных метров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} квадратных метра</unitPattern>
 			</unit>
 			<unit type="area-square-mile">
 				<unitPattern count="one" draft="contributed">{0} квадратная миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} квадратных мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} квадратных миль</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} квадратных мили</unitPattern>
 			</unit>
 			<unit type="duration-day">
 				<unitPattern count="one">{0} день</unitPattern>
+				<unitPattern count="few">{0} дня</unitPattern>
 				<unitPattern count="many">{0} дней</unitPattern>
 				<unitPattern count="other">{0} дня</unitPattern>
 			</unit>
 			<unit type="duration-hour">
 				<unitPattern count="one">{0} час</unitPattern>
+				<unitPattern count="few">{0} часа</unitPattern>
 				<unitPattern count="many">{0} часов</unitPattern>
 				<unitPattern count="other">{0} часа</unitPattern>
 			</unit>
 			<unit type="duration-millisecond">
 				<unitPattern count="one">{0} миллисекунда</unitPattern>
+				<unitPattern count="few">{0} миллисекунды</unitPattern>
 				<unitPattern count="many">{0} миллисекунды</unitPattern>
 				<unitPattern count="other">{0} миллисекунды</unitPattern>
 			</unit>
 			<unit type="duration-minute">
 				<unitPattern count="one">{0} минута</unitPattern>
+				<unitPattern count="few">{0} минуты</unitPattern>
 				<unitPattern count="many">{0} минут</unitPattern>
 				<unitPattern count="other">{0} минуты</unitPattern>
 			</unit>
 			<unit type="duration-month">
 				<unitPattern count="one">{0} месяц</unitPattern>
+				<unitPattern count="few">{0} месяца</unitPattern>
 				<unitPattern count="many">{0} месяцев</unitPattern>
 				<unitPattern count="other">{0} месяца</unitPattern>
 			</unit>
 			<unit type="duration-second">
 				<unitPattern count="one">{0} секунда</unitPattern>
+				<unitPattern count="few">{0} секунды</unitPattern>
 				<unitPattern count="many">{0} секунд</unitPattern>
 				<unitPattern count="other">{0} секунды</unitPattern>
 			</unit>
 			<unit type="duration-week">
 				<unitPattern count="one">{0} неделя</unitPattern>
+				<unitPattern count="few">{0} недели</unitPattern>
 				<unitPattern count="many">{0} недель</unitPattern>
 				<unitPattern count="other">{0} недели</unitPattern>
 			</unit>
 			<unit type="duration-year">
 				<unitPattern count="one" draft="contributed">{0} год</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} года</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} лет</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} года</unitPattern>
 			</unit>
 			<unit type="length-centimeter">
 				<unitPattern count="one" draft="contributed">{0} сантиметр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} сантиметра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} сантиметров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} сантиметра</unitPattern>
 			</unit>
 			<unit type="length-foot">
 				<unitPattern count="one" draft="contributed">{0} фут</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} фута</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} футов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} фута</unitPattern>
 			</unit>
 			<unit type="length-inch">
 				<unitPattern count="one" draft="contributed">{0} дюйм</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} дюйма</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} дюймов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} дюйма</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="one" draft="contributed">{0} километр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} километра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} километров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} километра</unitPattern>
 			</unit>
 			<unit type="length-light-year">
 				<unitPattern count="one" draft="contributed">{0} световой год</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} световых года</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} световых лет</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} световых года</unitPattern>
 			</unit>
 			<unit type="length-meter">
 				<unitPattern count="one" draft="contributed">{0} метр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} метра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} метров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} метра</unitPattern>
 			</unit>
 			<unit type="length-mile">
 				<unitPattern count="one" draft="contributed">{0} миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миль</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} мили</unitPattern>
 			</unit>
 			<unit type="length-millimeter">
 				<unitPattern count="one" draft="contributed">{0} миллиметр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} миллиметра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миллиметров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} миллиметра</unitPattern>
 			</unit>
 			<unit type="length-picometer">
 				<unitPattern count="one" draft="contributed">{0} пикометр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} пикометра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} пикометров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} пикометра</unitPattern>
 			</unit>
 			<unit type="length-yard">
 				<unitPattern count="one" draft="contributed">{0} ярд</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} ярда</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} ярдов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} ярда</unitPattern>
 			</unit>
 			<unit type="mass-gram">
 				<unitPattern count="one" draft="contributed">{0} грамм</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} грамма</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} грамм</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} грамма</unitPattern>
 			</unit>
 			<unit type="mass-kilogram">
 				<unitPattern count="one" draft="contributed">{0} килограмм</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} килограмма</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} килограмм</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} килограмма</unitPattern>
 			</unit>
 			<unit type="mass-ounce">
 				<unitPattern count="one" draft="contributed">{0} унция</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} унции</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} унций</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} унции</unitPattern>
 			</unit>
 			<unit type="mass-pound">
 				<unitPattern count="one" draft="contributed">{0} фунт</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} фунта</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} фунтов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} фунта</unitPattern>
 			</unit>
 			<unit type="power-horsepower">
 				<unitPattern count="one" draft="contributed">{0} лошадиная сила</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} лошадиных силы</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} лошадиных сил</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} лошадиных сил</unitPattern>
 			</unit>
 			<unit type="power-kilowatt">
 				<unitPattern count="one" draft="contributed">{0} киловатт</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} киловатта</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} киловатт</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} киловатта</unitPattern>
 			</unit>
 			<unit type="power-watt">
 				<unitPattern count="one" draft="contributed">{0} ватт</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} ватта</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} ватт</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} ватта</unitPattern>
 			</unit>
 			<unit type="pressure-hectopascal">
 				<unitPattern count="one" draft="contributed">{0} гектопаскаль</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} гектопаскаля</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} гектопаскалей</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} гектопаскаля</unitPattern>
 			</unit>
 			<unit type="pressure-inch-hg">
 				<unitPattern count="one" draft="contributed">{0} дюйм ртутного столба</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} дюйма ртутного столба</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} дюймов ртутного столба</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}дюйма ртутного столба</unitPattern>
 			</unit>
 			<unit type="pressure-millibar">
 				<unitPattern count="one" draft="contributed">{0} миллибар</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} миллибара</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миллибар</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} миллибара</unitPattern>
 			</unit>
 			<unit type="speed-kilometer-per-hour">
 				<unitPattern count="one" draft="contributed">{0} километр в час</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} километра в час</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} километров в час</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} километра в час</unitPattern>
 			</unit>
 			<unit type="speed-meter-per-second">
 				<unitPattern count="one" draft="contributed">{0} метр в секунду</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} метра в секундыу</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} метров в секунду</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} метра в секунду</unitPattern>
 			</unit>
 			<unit type="speed-mile-per-hour">
 				<unitPattern count="one" draft="contributed">{0} миля в час</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мили в час</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миль в час</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} миль в час</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
 				<unitPattern count="one" draft="contributed">{0}градус Цельсия</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} градуса Цельсия</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}градусов Цельсия</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}градуса Цельсия</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
 				<unitPattern count="one" draft="contributed">{0}градус по Фаренгейту</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} градуса по Фаренгейту</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}градусов по Фаренгейту</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}градуса по Фаренгейту</unitPattern>
 			</unit>
 			<unit type="volume-cubic-kilometer">
 				<unitPattern count="one" draft="contributed">{0} кубический километр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кубических километра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кубических километров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кубических километра</unitPattern>
 			</unit>
 			<unit type="volume-cubic-mile">
 				<unitPattern count="one" draft="contributed">{0} кубическая миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кубических мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кубических мили</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кубических мили</unitPattern>
 			</unit>
 			<unit type="volume-liter">
 				<unitPattern count="one" draft="contributed">{0} литр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} литра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} литра</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} литра</unitPattern>
 			</unit>
@@ -6863,231 +7038,277 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</compoundUnit>
 			<unit type="acceleration-g-force">
 				<unitPattern count="one" draft="contributed">{0} G</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} G</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} G</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} G</unitPattern>
 			</unit>
 			<unit type="angle-arc-minute">
 				<unitPattern count="one" draft="contributed">{0}′</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}′</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}′</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}′</unitPattern>
 			</unit>
 			<unit type="angle-arc-second">
 				<unitPattern count="one" draft="contributed">{0}″</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}″</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}″</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}″</unitPattern>
 			</unit>
 			<unit type="angle-degree">
 				<unitPattern count="one" draft="contributed">{0}°</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}°</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}°</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}°</unitPattern>
 			</unit>
 			<unit type="area-acre">
 				<unitPattern count="one" draft="contributed">{0} акр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} акра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} акров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} акра</unitPattern>
 			</unit>
 			<unit type="area-hectare">
 				<unitPattern count="one" draft="contributed">{0} га</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} га</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} га</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} га</unitPattern>
 			</unit>
 			<unit type="area-square-foot">
 				<unitPattern count="one" draft="contributed">{0} кв. фут</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кв. фута</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кв. футов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кв. фута</unitPattern>
 			</unit>
 			<unit type="area-square-kilometer">
 				<unitPattern count="one" draft="contributed">{0} км²</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км²</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км²</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км²</unitPattern>
 			</unit>
 			<unit type="area-square-meter">
 				<unitPattern count="one" draft="contributed">{0} м²</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} м²</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} м²</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} м²</unitPattern>
 			</unit>
 			<unit type="area-square-mile">
 				<unitPattern count="one" draft="contributed">{0} кв. миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кв. мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кв. миль</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кв. мили</unitPattern>
 			</unit>
 			<unit type="duration-day">
 				<unitPattern count="one">{0} дн</unitPattern>
+				<unitPattern count="few">{0} дн</unitPattern>
 				<unitPattern count="many">{0} дн</unitPattern>
 				<unitPattern count="other">{0} дн</unitPattern>
 			</unit>
 			<unit type="duration-hour">
 				<unitPattern count="one">{0} ч</unitPattern>
+				<unitPattern count="few">{0} ч</unitPattern>
 				<unitPattern count="many">{0} ч</unitPattern>
 				<unitPattern count="other">{0} ч</unitPattern>
 			</unit>
 			<unit type="duration-millisecond">
 				<unitPattern count="one">{0} мс</unitPattern>
+				<unitPattern count="few">{0} мс</unitPattern>
 				<unitPattern count="many">{0} мс</unitPattern>
 				<unitPattern count="other">{0} мс</unitPattern>
 			</unit>
 			<unit type="duration-minute">
 				<unitPattern count="one">{0} мин</unitPattern>
+				<unitPattern count="few">{0} мин</unitPattern>
 				<unitPattern count="many">{0} мин</unitPattern>
 				<unitPattern count="other">{0} мин</unitPattern>
 			</unit>
 			<unit type="duration-month">
 				<unitPattern count="one">{0} мес</unitPattern>
+				<unitPattern count="few">{0} мес</unitPattern>
 				<unitPattern count="many">{0} мес</unitPattern>
 				<unitPattern count="other">{0} мес</unitPattern>
 			</unit>
 			<unit type="duration-second">
 				<unitPattern count="one">{0} с</unitPattern>
+				<unitPattern count="few">{0} с</unitPattern>
 				<unitPattern count="many">{0} с</unitPattern>
 				<unitPattern count="other">{0} с</unitPattern>
 			</unit>
 			<unit type="duration-week">
 				<unitPattern count="one">{0} нед</unitPattern>
+				<unitPattern count="few">{0} нед</unitPattern>
 				<unitPattern count="many">{0} нед</unitPattern>
 				<unitPattern count="other">{0} нед</unitPattern>
 			</unit>
 			<unit type="duration-year">
 				<unitPattern count="one" draft="contributed">{0} г.</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} года</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} лет</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} г.</unitPattern>
 			</unit>
 			<unit type="length-centimeter">
 				<unitPattern count="one" draft="contributed">{0} см</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} см</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} см</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} см</unitPattern>
 			</unit>
 			<unit type="length-foot">
 				<unitPattern count="one" draft="contributed">{0} фут</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} фута</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} футов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} фута</unitPattern>
 			</unit>
 			<unit type="length-inch">
 				<unitPattern count="one" draft="contributed">{0} дюйм</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} дюйма</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} дюймов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} дюйма</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="one" draft="contributed">{0} км</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км</unitPattern>
 			</unit>
 			<unit type="length-light-year">
 				<unitPattern count="one" draft="contributed">{0} св. г.</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} св. л.</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} св. л.</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} св. г.</unitPattern>
 			</unit>
 			<unit type="length-meter">
 				<unitPattern count="one" draft="contributed">{0} м</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} м</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} м</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} м</unitPattern>
 			</unit>
 			<unit type="length-mile">
 				<unitPattern count="one" draft="contributed">{0} миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миль</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} мили</unitPattern>
 			</unit>
 			<unit type="length-millimeter">
 				<unitPattern count="one" draft="contributed">{0} мм</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мм</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} мм</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} мм</unitPattern>
 			</unit>
 			<unit type="length-picometer">
 				<unitPattern count="one" draft="contributed">{0} pm</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} pm</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} pm</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} pm</unitPattern>
 			</unit>
 			<unit type="length-yard">
 				<unitPattern count="one" draft="contributed">{0} ярд</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} ярда</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} ярдов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} ярда</unitPattern>
 			</unit>
 			<unit type="mass-gram">
 				<unitPattern count="one" draft="contributed">{0} гр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} гр</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} гр</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} гр</unitPattern>
 			</unit>
 			<unit type="mass-kilogram">
 				<unitPattern count="one" draft="contributed">{0} кг</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кг</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кг</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кг</unitPattern>
 			</unit>
 			<unit type="mass-ounce">
 				<unitPattern count="one" draft="contributed">{0} oz</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} oz</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} oz</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} oz</unitPattern>
 			</unit>
 			<unit type="mass-pound">
 				<unitPattern count="one" draft="contributed">{0} lb</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} lb</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} lb</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} lb</unitPattern>
 			</unit>
 			<unit type="power-horsepower">
 				<unitPattern count="one" draft="contributed">{0} л.с.</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} л.с.</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} л.с.</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} л.с.</unitPattern>
 			</unit>
 			<unit type="power-kilowatt">
 				<unitPattern count="one" draft="contributed">{0} кВт</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кВт</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кВт</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кВт</unitPattern>
 			</unit>
 			<unit type="power-watt">
 				<unitPattern count="one" draft="contributed">{0} Вт</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} Вт</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} Вт</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} Вт</unitPattern>
 			</unit>
 			<unit type="pressure-hectopascal">
 				<unitPattern count="one" draft="contributed">{0} гПа</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} гПа</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} гПа</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} гПа</unitPattern>
 			</unit>
 			<unit type="pressure-inch-hg">
 				<unitPattern count="one" draft="contributed">{0} дюйм рт. ст</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} дюйма рт. ст</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} дюймов рт. ст</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} дюйма рт. ст</unitPattern>
 			</unit>
 			<unit type="pressure-millibar">
 				<unitPattern count="one" draft="contributed">{0} мбар</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мбар</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} мбар</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} мбар</unitPattern>
 			</unit>
 			<unit type="speed-kilometer-per-hour">
 				<unitPattern count="one" draft="contributed">{0} км/ч</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км/ч</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км/ч</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км/ч</unitPattern>
 			</unit>
 			<unit type="speed-meter-per-second">
 				<unitPattern count="one" draft="contributed">{0} м/с</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} м/с</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} м/с</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} м/с</unitPattern>
 			</unit>
 			<unit type="speed-mile-per-hour">
 				<unitPattern count="one" draft="contributed">{0} миль/час</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мили/час</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миль/час</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} миль/час</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
 				<unitPattern count="one">{0} °C</unitPattern>
+				<unitPattern count="few">{0} °C</unitPattern>
 				<unitPattern count="many">{0} °C</unitPattern>
 				<unitPattern count="other">{0} °C</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
 				<unitPattern count="one" draft="contributed">{0}°F</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}°F</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}°F</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}°F</unitPattern>
 			</unit>
 			<unit type="volume-cubic-kilometer">
 				<unitPattern count="one" draft="contributed">{0} км³</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км³</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км³</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км³</unitPattern>
 			</unit>
 			<unit type="volume-cubic-mile">
 				<unitPattern count="one" draft="contributed">{0} куб. миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} куб. мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} куб. мили</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} куб. мили</unitPattern>
 			</unit>
 			<unit type="volume-liter">
 				<unitPattern count="one" draft="contributed">{0} л</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} л</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} л</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} л</unitPattern>
 			</unit>
@@ -7098,231 +7319,277 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</compoundUnit>
 			<unit type="acceleration-g-force">
 				<unitPattern count="one" draft="contributed">{0} G</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} G</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} G</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} G</unitPattern>
 			</unit>
 			<unit type="angle-arc-minute">
 				<unitPattern count="one" draft="contributed">{0}′</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}′</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}′</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}′</unitPattern>
 			</unit>
 			<unit type="angle-arc-second">
 				<unitPattern count="one" draft="contributed">{0}″</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}″</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}″</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}″</unitPattern>
 			</unit>
 			<unit type="angle-degree">
 				<unitPattern count="one" draft="contributed">{0}°</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}°</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}°</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}°</unitPattern>
 			</unit>
 			<unit type="area-acre">
 				<unitPattern count="one" draft="contributed">{0} акр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} акра</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} акров</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} акра</unitPattern>
 			</unit>
 			<unit type="area-hectare">
 				<unitPattern count="one" draft="contributed">{0} га</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} га</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} га</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} га</unitPattern>
 			</unit>
 			<unit type="area-square-foot">
 				<unitPattern count="one" draft="contributed">{0} кв. фут</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кв. фута</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кв. футов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кв. фута</unitPattern>
 			</unit>
 			<unit type="area-square-kilometer">
 				<unitPattern count="one" draft="contributed">{0} км²</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км²</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км²</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км²</unitPattern>
 			</unit>
 			<unit type="area-square-meter">
 				<unitPattern count="one" draft="contributed">{0} м²</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} м²</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} м²</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} м²</unitPattern>
 			</unit>
 			<unit type="area-square-mile">
 				<unitPattern count="one" draft="contributed">{0} кв. миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кв. мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кв. миль</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кв. мили</unitPattern>
 			</unit>
 			<unit type="duration-day">
 				<unitPattern count="one">{0} д.</unitPattern>
+				<unitPattern count="few">{0} д.</unitPattern>
 				<unitPattern count="many">{0} д.</unitPattern>
 				<unitPattern count="other">{0} д.</unitPattern>
 			</unit>
 			<unit type="duration-hour">
 				<unitPattern count="one">{0} ч</unitPattern>
+				<unitPattern count="few">{0} ч</unitPattern>
 				<unitPattern count="many">{0} ч</unitPattern>
 				<unitPattern count="other">{0} ч</unitPattern>
 			</unit>
 			<unit type="duration-millisecond">
 				<unitPattern count="one">{0} мс</unitPattern>
+				<unitPattern count="few">{0} мс</unitPattern>
 				<unitPattern count="many">{0} мс</unitPattern>
 				<unitPattern count="other">{0} мс</unitPattern>
 			</unit>
 			<unit type="duration-minute">
 				<unitPattern count="one">{0} м.</unitPattern>
+				<unitPattern count="few">{0} мин</unitPattern>
 				<unitPattern count="many">{0} мин</unitPattern>
 				<unitPattern count="other">{0} мин</unitPattern>
 			</unit>
 			<unit type="duration-month">
 				<unitPattern count="one">{0} м.</unitPattern>
+				<unitPattern count="few">{0} м.</unitPattern>
 				<unitPattern count="many">{0} м.</unitPattern>
 				<unitPattern count="other">{0} м.</unitPattern>
 			</unit>
 			<unit type="duration-second">
 				<unitPattern count="one">{0} с</unitPattern>
+				<unitPattern count="few">{0} с</unitPattern>
 				<unitPattern count="many">{0} с</unitPattern>
 				<unitPattern count="other">{0} с</unitPattern>
 			</unit>
 			<unit type="duration-week">
 				<unitPattern count="one">{0} н.</unitPattern>
+				<unitPattern count="few">{0} н.</unitPattern>
 				<unitPattern count="many">{0} н.</unitPattern>
 				<unitPattern count="other">{0} н.</unitPattern>
 			</unit>
 			<unit type="duration-year">
 				<unitPattern count="one">{0} г.</unitPattern>
+				<unitPattern count="few">{0} л.</unitPattern>
 				<unitPattern count="many">{0} л.</unitPattern>
 				<unitPattern count="other">{0} г.</unitPattern>
 			</unit>
 			<unit type="length-centimeter">
 				<unitPattern count="one" draft="contributed">{0} см</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} см</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} см</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} см</unitPattern>
 			</unit>
 			<unit type="length-foot">
 				<unitPattern count="one" draft="contributed">{0} фут</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} фута</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} футов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} фута</unitPattern>
 			</unit>
 			<unit type="length-inch">
 				<unitPattern count="one" draft="contributed">{0} дюйм</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} дюйма</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} дюймов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} дюйма</unitPattern>
 			</unit>
 			<unit type="length-kilometer">
 				<unitPattern count="one" draft="contributed">{0} км</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км</unitPattern>
 			</unit>
 			<unit type="length-light-year">
 				<unitPattern count="one" draft="contributed">{0} св. г.</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} св. л.</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} св. л.</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} св. г.</unitPattern>
 			</unit>
 			<unit type="length-meter">
 				<unitPattern count="one" draft="contributed">{0} м</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} м</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} м</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} м</unitPattern>
 			</unit>
 			<unit type="length-mile">
 				<unitPattern count="one" draft="contributed">{0} миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} миль</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миль</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} мили</unitPattern>
 			</unit>
 			<unit type="length-millimeter">
 				<unitPattern count="one" draft="contributed">{0} мм</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мм</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} мм</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} мм</unitPattern>
 			</unit>
 			<unit type="length-picometer">
 				<unitPattern count="one" draft="contributed">{0} pm</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} pm</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} pm</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} pm</unitPattern>
 			</unit>
 			<unit type="length-yard">
 				<unitPattern count="one" draft="contributed">{0} ярд</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} ярда</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} ярдов</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} ярда</unitPattern>
 			</unit>
 			<unit type="mass-gram">
 				<unitPattern count="one" draft="contributed">{0} гр</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} гр</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} гр</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} гр</unitPattern>
 			</unit>
 			<unit type="mass-kilogram">
 				<unitPattern count="one" draft="contributed">{0} кг</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кг</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кг</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кг</unitPattern>
 			</unit>
 			<unit type="mass-ounce">
 				<unitPattern count="one" draft="contributed">{0} oz</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} oz</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} oz</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} oz</unitPattern>
 			</unit>
 			<unit type="mass-pound">
 				<unitPattern count="one" draft="contributed">{0} lb</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} lb</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} lb</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} lb</unitPattern>
 			</unit>
 			<unit type="power-horsepower">
 				<unitPattern count="one" draft="contributed">{0} л.с.</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} л.с.</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} л.с.</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} л.с.</unitPattern>
 			</unit>
 			<unit type="power-kilowatt">
 				<unitPattern count="one" draft="contributed">{0} кВт</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} кВт</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} кВт</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} кВт</unitPattern>
 			</unit>
 			<unit type="power-watt">
 				<unitPattern count="one" draft="contributed">{0} Вт</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} Вт</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} Вт</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} Вт</unitPattern>
 			</unit>
 			<unit type="pressure-hectopascal">
 				<unitPattern count="one" draft="contributed">{0} гПа</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} гПа</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} гПа</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} гПа</unitPattern>
 			</unit>
 			<unit type="pressure-inch-hg">
 				<unitPattern count="one">{0} inHg</unitPattern>
+				<unitPattern count="few">{0} inHg</unitPattern>
 				<unitPattern count="many">{0} inHg</unitPattern>
 				<unitPattern count="other">{0} inHg</unitPattern>
 			</unit>
 			<unit type="pressure-millibar">
 				<unitPattern count="one" draft="contributed">{0} мбар</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} мбар</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} мбар</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} мбар</unitPattern>
 			</unit>
 			<unit type="speed-kilometer-per-hour">
 				<unitPattern count="one" draft="contributed">{0} км/ч</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км/ч</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км/ч</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км/ч</unitPattern>
 			</unit>
 			<unit type="speed-meter-per-second">
 				<unitPattern count="one" draft="contributed">{0} м/с</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} м/с</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} м/с</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} м/с</unitPattern>
 			</unit>
 			<unit type="speed-mile-per-hour">
 				<unitPattern count="one" draft="contributed">{0} миль/ч</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} миль/ч</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} миль/ч</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} миль/ч</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
 				<unitPattern count="one">{0} °</unitPattern>
+				<unitPattern count="few">{0} °</unitPattern>
 				<unitPattern count="many">{0} °</unitPattern>
 				<unitPattern count="other">{0} °</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
 				<unitPattern count="one" draft="contributed">{0}°F</unitPattern>
+				<unitPattern count="few" draft="contributed">{0}°F</unitPattern>
 				<unitPattern count="many" draft="contributed">{0}°F</unitPattern>
 				<unitPattern count="other" draft="contributed">{0}°F</unitPattern>
 			</unit>
 			<unit type="volume-cubic-kilometer">
 				<unitPattern count="one" draft="contributed">{0} км³</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} км³</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} км³</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} км³</unitPattern>
 			</unit>
 			<unit type="volume-cubic-mile">
 				<unitPattern count="one" draft="contributed">{0} куб. миля</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} куб. мили</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} куб. мили</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} куб. мили</unitPattern>
 			</unit>
 			<unit type="volume-liter">
 				<unitPattern count="one" draft="contributed">{0} л</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} л</unitPattern>
 				<unitPattern count="many" draft="contributed">{0} л</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} л</unitPattern>
 			</unit>
@@ -7351,16 +7618,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<listPatternPart type="2">{0} {1}</listPatternPart>
 		</listPattern>
 		<listPattern type="unit-narrow">
-			<listPatternPart type="start">{0}, {1}</listPatternPart>
-			<listPatternPart type="middle">{0}, {1}</listPatternPart>
-			<listPatternPart type="end">{0}, {1}</listPatternPart>
-			<listPatternPart type="2">{0} {1}</listPatternPart>
-		</listPattern>
-		<listPattern type="unit-short">
 			<listPatternPart type="start">{0} {1}</listPatternPart>
 			<listPatternPart type="middle">{0} {1}</listPatternPart>
 			<listPatternPart type="end">{0} {1}</listPatternPart>
 			<listPatternPart type="2">{0} {1}</listPatternPart>
+		</listPattern>
+		<listPattern type="unit-short">
+			<listPatternPart type="start">{0}, {1}</listPatternPart>
+			<listPatternPart type="middle">{0}, {1}</listPatternPart>
+			<listPatternPart type="end">{0}, {1}</listPatternPart>
+			<listPatternPart type="2">{0}, {1}</listPatternPart>
 		</listPattern>
 	</listPatterns>
 	<posix>

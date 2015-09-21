@@ -3,7 +3,7 @@
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js?_dc=<?php echo Pimcore_Version::getVersion(); ?>"></script>
+    <script type="text/javascript" src="/pimcore/static6/js/lib/jquery.min.js?_dc=<?= \Pimcore\Version::getVersion(); ?>"></script>
 
     <style type="text/css">
 
@@ -45,7 +45,7 @@
         .iphone #background {
             width:245px;
             height: 480px;
-            background: url(/pimcore/static/img/assets/page-preview-iphone-vertical.png);
+            background: url(/pimcore/static6/img/assets/page-preview-iphone-vertical.png);
         }
 
         .iphone #frame {
@@ -63,7 +63,7 @@
         }
 
         .horizontal.iphone #background {
-            background: url(/pimcore/static/img/assets/page-preview-iphone-horizontal.png);
+            background: url(/pimcore/static6/img/assets/page-preview-iphone-horizontal.png);
             height: 245px;
             width: 480px;
         }
@@ -76,7 +76,7 @@
 <body>
 
 <div id="frameContainer" class="iphone">
-    <iframe id="frame" name="frame" style="" onload="adjustZoom()" src="<?php echo $this->previewUrl; ?>"></iframe>
+    <iframe id="frame" name="frame" style="" onload="adjustZoom()" src="<?= $this->previewUrl; ?>"></iframe>
     <div id="background" onclick="flipToggle()"></div>
 </div>
 

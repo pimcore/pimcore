@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -36,7 +36,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_View_Helper_Navigation_HelperAbstract
@@ -952,7 +952,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
      * Sets default ACL role(s) to use when iterating pages if not explicitly
      * set later with {@link setRole()}
      *
-     * @param  midex $role               [optional] role to set. Expects null,
+     * @param  mixed $role               [optional] role to set. Expects null,
      *                                   string, or an instance of
      *                                   {@link Zend_Acl_Role_Interface}.
      *                                   Default is null, which sets no default

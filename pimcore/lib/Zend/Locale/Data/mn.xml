@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="mn"/>
 	</identity>
 	<localeDisplayNames>
@@ -26,7 +26,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">азербайжан</language>
 			<language type="be">беларусь</language>
 			<language type="bg">болгар</language>
-			<language type="bh" draft="unconfirmed">бихари хэл</language>
 			<language type="bn">бенгал</language>
 			<language type="bo">төвд</language>
 			<language type="br">бретон</language>
@@ -1380,9 +1379,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Палмер</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Өмнөд туйл</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Сьёва</exemplarCity>
 			</zone>
@@ -1655,9 +1651,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Торонто</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Монтреаль</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Икалуит</exemplarCity>
@@ -2501,9 +2494,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Феникс</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Шипрок</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Денвер</exemplarCity>
@@ -4540,24 +4530,24 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} милбар</unitPattern>
 			</unit>
 			<unit type="speed-kilometer-per-hour">
-				<unitPattern count="one">{0} километр цаг</unitPattern>
-				<unitPattern count="other">{0} километр цаг</unitPattern>
+				<unitPattern count="one">{0} километр/цаг</unitPattern>
+				<unitPattern count="other">{0} километр/цаг</unitPattern>
 			</unit>
 			<unit type="speed-meter-per-second">
-				<unitPattern count="one">{0} метр секунд</unitPattern>
-				<unitPattern count="other">{0} метр секунд</unitPattern>
+				<unitPattern count="one">{0} метр/секунд</unitPattern>
+				<unitPattern count="other">{0} метр/секунд</unitPattern>
 			</unit>
 			<unit type="speed-mile-per-hour">
-				<unitPattern count="one">{0} миль цаг</unitPattern>
-				<unitPattern count="other">{0} миль цаг</unitPattern>
+				<unitPattern count="one">{0} миль/цаг</unitPattern>
+				<unitPattern count="other">{0} миль/цаг</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
-				<unitPattern count="one">{0} Цельс</unitPattern>
-				<unitPattern count="other">{0} Цельс</unitPattern>
+				<unitPattern count="one">{0} Цельсийн градус</unitPattern>
+				<unitPattern count="other">{0} Цельсийн градус</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
-				<unitPattern count="one">{0} Фаренгейт</unitPattern>
-				<unitPattern count="other">{0} Фаренгейт</unitPattern>
+				<unitPattern count="one">{0} Фаренгейт градус</unitPattern>
+				<unitPattern count="other">{0} Фаренгейт градус</unitPattern>
 			</unit>
 			<unit type="volume-cubic-kilometer">
 				<unitPattern count="one">{0} километр куб</unitPattern>

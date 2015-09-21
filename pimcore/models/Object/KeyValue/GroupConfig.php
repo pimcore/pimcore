@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Object\KeyValue;
+
+use Pimcore\Model;
+
+class GroupConfig extends Model\AbstractModel {
 
     /** Group id.
      * @var integer
@@ -42,10 +46,9 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
      */
     public $modificationDate;
 
-
     /**
      * @param integer $id
-     * @return Object_KeyValue_GroupConfig
+     * @return Model\Object\KeyValue\GroupConfig
      */
     public static function getById($id) {
         try {
@@ -55,12 +58,15 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
             $config->getResource()->getById();
 
             return $config;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
     }
 
-
+    /**
+     * @param $name
+     * @return GroupConfig
+     */
     public static function getByName ($name) {
         try {
             $config = new self();
@@ -68,14 +74,13 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
             $config->getResource()->getByName();
 
             return $config;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
     }
 
-
     /**
-     * @return Object_KeyValue_GroupConfig
+     * @return Model\Object\KeyValue\GroupConfig
      */
     public static function create() {
         $config = new self();
@@ -83,7 +88,6 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
         return $config;
     }
-
 
     /**
      * @param integer $id
@@ -126,7 +130,7 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
     /** Sets the description.
      * @param $description
-     * @return Object_KeyValue_GroupConfig
+     * @return Model\Object\KeyValue\GroupConfig
      */
     public function setDescription($description) {
         $this->description = $description;
@@ -137,9 +141,9 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
      * Deletes the key value group configuration
      */
     public function delete() {
-        Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preDelete", $this);
         parent::delete();
-        Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postDelete", $this);
     }
 
     /**
@@ -150,22 +154,24 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
         if ($this->getId()) {
             $isUpdate = true;
-            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preUpdate", $this);
         } else {
-            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.preAdd", $this);
         }
 
-        parent::save();
+        $model = parent::save();
 
         if ($isUpdate) {
-            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postUpdate", $this);
         } else {
-            Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.keyValue.groupConfig.postAdd", $this);
         }
+        return $model;
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -182,7 +188,8 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -197,6 +204,4 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
     {
         return $this->creationDate;
     }
-
-
 }

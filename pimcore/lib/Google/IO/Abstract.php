@@ -19,17 +19,30 @@
  * Abstract IO base class
  */
 
-require_once 'Google/Client.php';
-require_once 'Google/IO/Exception.php';
-require_once 'Google/Http/CacheParser.php';
-require_once 'Google/Http/Request.php';
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 abstract class Google_IO_Abstract
 {
   const UNKNOWN_CODE = 0;
   const FORM_URLENCODED = 'application/x-www-form-urlencoded';
-  const CONNECTION_ESTABLISHED = "HTTP/1.0 200 Connection established\r\n\r\n";
+  private static $CONNECTION_ESTABLISHED_HEADERS = array(
+    "HTTP/1.0 200 Connection established\r\n\r\n",
+    "HTTP/1.1 200 Connection established\r\n\r\n",
+  );
   private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);
+  private static $HOP_BY_HOP = array(
+    'connection' => true,
+    'keep-alive' => true,
+    'proxy-authenticate' => true,
+    'proxy-authorization' => true,
+    'te' => true,
+    'trailers' => true,
+    'transfer-encoding' => true,
+    'upgrade' => true
+  );
+
 
   /** @var Google_Client */
   protected $client;
@@ -44,9 +57,10 @@ abstract class Google_IO_Abstract
   }
 
   /**
-   * Executes a Google_Http_Request and returns the resulting populated Google_Http_Request
-   * @param Google_Http_Request $request
-   * @return Google_Http_Request $request
+   * Executes a Google_Http_Request
+   * @param Google_Http_Request $request the http request to be executed
+   * @return array containing response headers, body, and http code
+   * @throws Google_IO_Exception on curl or IO error
    */
   abstract public function executeRequest(Google_Http_Request $request);
 
@@ -55,13 +69,13 @@ abstract class Google_IO_Abstract
    * @param $options
    */
   abstract public function setOptions($options);
-  
+
   /**
    * Set the maximum request time in seconds.
    * @param $timeout in seconds
    */
   abstract public function setTimeout($timeout);
-  
+
   /**
    * Get the maximum request time in seconds.
    * @return timeout in seconds
@@ -96,12 +110,12 @@ abstract class Google_IO_Abstract
 
     return false;
   }
-  
+
   /**
    * Execute an HTTP Request
    *
-   * @param Google_HttpRequest $request the http request to be executed
-   * @return Google_HttpRequest http request with the response http code,
+   * @param Google_Http_Request $request the http request to be executed
+   * @return Google_Http_Request http request with the response http code,
    * response headers and response body filled in
    * @throws Google_IO_Exception on curl or IO error
    */
@@ -128,7 +142,7 @@ abstract class Google_IO_Abstract
     }
 
     if (!isset($responseHeaders['Date']) && !isset($responseHeaders['date'])) {
-      $responseHeaders['Date'] = date("r");
+      $responseHeaders['date'] = date("r");
     }
 
     $request->setResponseHttpCode($respHttpCode);
@@ -216,28 +230,24 @@ abstract class Google_IO_Abstract
 
   /**
    * Update a cached request, using the headers from the last response.
-   * @param Google_HttpRequest $cached A previously cached response.
+   * @param Google_Http_Request $cached A previously cached response.
    * @param mixed Associative array of response headers from the last request.
    */
   protected function updateCachedRequest($cached, $responseHeaders)
   {
-    if (isset($responseHeaders['connection'])) {
-      $hopByHop = array_merge(
-          self::$HOP_BY_HOP,
-          explode(
-              ',',
-              $responseHeaders['connection']
+    $hopByHop = self::$HOP_BY_HOP;
+    if (!empty($responseHeaders['connection'])) {
+      $connectionHeaders = array_map(
+          'strtolower',
+          array_filter(
+              array_map('trim', explode(',', $responseHeaders['connection']))
           )
       );
-
-      $endToEnd = array();
-      foreach ($hopByHop as $key) {
-        if (isset($responseHeaders[$key])) {
-          $endToEnd[$key] = $responseHeaders[$key];
-        }
-      }
-      $cached->setResponseHeaders($endToEnd);
+      $hopByHop += array_fill_keys($connectionHeaders, true);
     }
+
+    $endToEnd = array_diff_key($responseHeaders, $hopByHop);
+    $cached->setResponseHeaders($endToEnd);
   }
 
   /**
@@ -249,14 +259,18 @@ abstract class Google_IO_Abstract
    */
   public function parseHttpResponse($respData, $headerSize)
   {
-    if (stripos($respData, self::CONNECTION_ESTABLISHED) !== false) {
-      $respData = str_ireplace(self::CONNECTION_ESTABLISHED, '', $respData);
-
-      // Subtract the proxy header size unless the cURL bug prior to 7.30.0
-      // is present which prevented the proxy header size from being taken into
-      // account.
-      if (!$this->needsQuirk()) {
-        $headerSize -= strlen(self::CONNECTION_ESTABLISHED);
+    // check proxy header
+    foreach (self::$CONNECTION_ESTABLISHED_HEADERS as $established_header) {
+      if (stripos($respData, $established_header) !== false) {
+        // existed, remove it
+        $respData = str_ireplace($established_header, '', $respData);
+        // Subtract the proxy header size unless the cURL bug prior to 7.30.0
+        // is present which prevented the proxy header size from being taken into
+        // account.
+        if (!$this->needsQuirk()) {
+          $headerSize -= strlen($established_header);
+        }
+        break;
       }
     }
 
@@ -264,7 +278,10 @@ abstract class Google_IO_Abstract
       $responseBody = substr($respData, $headerSize);
       $responseHeaders = substr($respData, 0, $headerSize);
     } else {
-      list($responseHeaders, $responseBody) = explode("\r\n\r\n", $respData, 2);
+      $responseSegments = explode("\r\n\r\n", $respData, 2);
+      $responseHeaders = $responseSegments[0];
+      $responseBody = isset($responseSegments[1]) ? $responseSegments[1] :
+                                                    null;
     }
 
     $responseHeaders = $this->getHttpResponseHeaders($responseHeaders);
@@ -293,7 +310,7 @@ abstract class Google_IO_Abstract
       if ($headerLine && strpos($headerLine, ':') !== false) {
         list($header, $value) = explode(': ', $headerLine, 2);
         $header = strtolower($header);
-        if (isset($responseHeaders[$header])) {
+        if (isset($headers[$header])) {
           $headers[$header] .= "\n" . $value;
         } else {
           $headers[$header] = $value;
@@ -313,7 +330,7 @@ abstract class Google_IO_Abstract
       // Times will have colons in - so we just want the first match.
       $header_parts = explode(': ', $header, 2);
       if (count($header_parts) == 2) {
-        $headers[$header_parts[0]] = $header_parts[1];
+        $headers[strtolower($header_parts[0])] = $header_parts[1];
       }
     }
 

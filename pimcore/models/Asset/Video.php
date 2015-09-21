@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Video extends Asset {
+namespace Pimcore\Model\Asset;
+
+use Pimcore\File;
+use Pimcore\Model;
+
+class Video extends Model\Asset {
 
     /**
      * @var string
@@ -32,7 +37,7 @@ class Asset_Video extends Asset {
             try {
                 $this->setCustomSetting("duration", $this->getDurationFromBackend());
             } catch (\Exception $e) {
-                Logger::err("Unable to get duration of video: " . $this->getId());
+                \Logger::err("Unable to get duration of video: " . $this->getId());
             }
         }
 
@@ -72,7 +77,7 @@ class Asset_Video extends Asset {
 
     /**
      * @param string $config
-     * @return Asset_Video_Thumbnail|null
+     * @return Video\Thumbnail\Config|null
      */
     public function getThumbnailConfig ($config) {
 
@@ -80,13 +85,13 @@ class Asset_Video extends Asset {
 
         if (is_string($config)) {
             try {
-                $thumbnail = Asset_Video_Thumbnail_Config::getByName($config);
+                $thumbnail = Video\Thumbnail\Config::getByName($config);
             }
-            catch (Exception $e) {
-                Logger::error("requested video-thumbnail " . $config . " is not defined");
+            catch (\Exception $e) {
+                \Logger::error("requested video-thumbnail " . $config . " is not defined");
                 return null;
             }
-        } else if ($config instanceof Asset_Video_Thumbnail_Config) {
+        } else if ($config instanceof Video\Thumbnail\Config) {
             $thumbnail = $config;
         }
 
@@ -105,7 +110,7 @@ class Asset_Video extends Asset {
 
         if($thumbnail) {
             try {
-                Asset_Video_Thumbnail_Processor::process($this, $thumbnail, $onlyFormats);
+                Video\Thumbnail\Processor::process($this, $thumbnail, $onlyFormats);
 
                 // check for existing videos
                 $customSetting = $this->getCustomSetting("thumbnails");
@@ -113,9 +118,9 @@ class Asset_Video extends Asset {
                     return $customSetting[$thumbnail->getName()];
                 }
 
-            } catch (Exception $e) {
-                Logger::error("Couldn't create thumbnail of video " . $this->getFullPath());
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error("Couldn't create thumbnail of video " . $this->getFullPath());
+                \Logger::error($e);
             }
         }
 
@@ -125,19 +130,23 @@ class Asset_Video extends Asset {
 
     /**
      * @param  $config
-     * @return Asset_Image_Thumbnail|bool|Thumbnail
+     * @return Image\Thumbnail\Config|bool|Thumbnail
      */
     public function getImageThumbnailConfig ($config) {
-        return Asset_Image_Thumbnail_Config::getByAutoDetect($config);
+        return Image\Thumbnail\Config::getByAutoDetect($config);
     }
 
     /**
      * @param $thumbnailName
+     * @param null $timeOffset
+     * @param null $imageAsset
+     * @return mixed|string
+     * @throws \Exception
      */
     public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null) {
 
-        if(!Pimcore_Video::isAvailable()) {
-            Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath() . " no video adapter is available");
+        if(!\Pimcore\Video::isAvailable()) {
+            \Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath() . " no video adapter is available");
             return "/pimcore/static/img/filetype-not-supported.png";
         }
 
@@ -146,10 +155,10 @@ class Asset_Video extends Asset {
 
         if($im || $imageAsset) {
             if($im) {
-                $imageAsset = Asset::getById($im);
+                $imageAsset = Model\Asset::getById($im);
             }
 
-            if($imageAsset instanceof Asset_Image) {
+            if($imageAsset instanceof Image) {
                 return $imageAsset->getThumbnail($thumbnailName);
             }
         }
@@ -163,23 +172,23 @@ class Asset_Video extends Asset {
             $timeOffset = ceil($this->getDuration() / 3);
         }
 
-        $converter = Pimcore_Video::getInstance();
+        $converter = \Pimcore\Video::getInstance();
         $converter->load($this->getFileSystemPath());
         $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "__thumbnail_" .  $timeOffset . ".png";
         if(!is_dir(dirname($path))) {
-            Pimcore_File::mkdir(dirname($path));
+            File::mkdir(dirname($path));
         }
 
         if(!is_file($path)) {
             $lockKey = "video_image_thumbnail_" . $this->getId() . "_" . $timeOffset;
-            Tool_Lock::acquire($lockKey);
+            Model\Tool\Lock::acquire($lockKey);
 
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if(!is_file($path)) {
                 $converter->saveImage($path, $timeOffset);
             }
 
-            Tool_Lock::release($lockKey);
+            Model\Tool\Lock::release($lockKey);
         }
 
         $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
@@ -188,10 +197,10 @@ class Asset_Video extends Asset {
             $thumbnail->setFilenameSuffix("time-" . $timeOffset);
 
             try {
-                $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail, $path);
-            } catch (Exception $e) {
-                Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath());
-                Logger::error($e);
+                $path = Image\Thumbnail\Processor::process($this, $thumbnail, $path);
+            } catch (\Exception $e) {
+                \Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath());
+                \Logger::error($e);
                 return "/pimcore/static/img/filetype-not-supported.png";
             }
         }
@@ -230,7 +239,7 @@ class Asset_Video extends Asset {
 
             $thumbnailConfig = $this->getImageThumbnailConfig($thumbnail);
             if(!$thumbnailConfig) {
-                $thumbnailConfig = new Asset_Image_Thumbnail_Config();
+                $thumbnailConfig = new Image\Thumbnail\Config();
             }
             $thumbnailConfig->setFormat("GIF");
 
@@ -246,14 +255,14 @@ class Asset_Video extends Asset {
             }
 
             try {
-                $animator = new Pimcore_Image_GifAnimator($thumbnails, $delays, 0, 2, 255, 255, 255, "url");
+                $animator = new \Pimcore\Image\GifAnimator($thumbnails, $delays, 0, 2, 255, 255, 255, "url");
                 $animGifContent = $animator->GetAnimation();
             } catch (\Exception $e) {
-                Logger::error($e);
+                \Logger::error($e);
                 $animGifContent = file_get_contents($thumbnails[0]);
             }
 
-            Pimcore_File::put($animGifPath, $animGifContent);
+            File::put($animGifPath, $animGifContent);
         }
 
         $animGifPath = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $animGifPath);
@@ -261,9 +270,13 @@ class Asset_Video extends Asset {
         return $animGifPath;
     }
 
+    /**
+     * @return null
+     * @throws \Exception
+     */
     protected function getDurationFromBackend() {
-        if(Pimcore_Video::isAvailable()) {
-            $converter = Pimcore_Video::getInstance();
+        if(\Pimcore\Video::isAvailable()) {
+            $converter = \Pimcore\Video::getInstance();
             $converter->load($this->getFileSystemPath());
             return $converter->getDuration();
         }
@@ -277,11 +290,13 @@ class Asset_Video extends Asset {
         $duration = $this->getCustomSetting("duration");
         if(!$duration) {
             $duration = $this->getDurationFromBackend();
-            $this->setCustomSetting("duration", $duration);
+            if($duration) {
+                $this->setCustomSetting("duration", $duration);
 
-            Version::disable();
-            $this->save(); // auto save
-            Version::enable();
+                Model\Version::disable();
+                $this->save(); // auto save
+                Model\Version::enable();
+            }
         }
 
         return $duration;

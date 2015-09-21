@@ -13,15 +13,22 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator {
+namespace Pimcore\Google;
+
+use Pimcore\Google\Api;
+use Pimcore\Model\Cache;
+use Pimcore\Google\Cse\Item;
+use Pimcore\Model;
+
+class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator {
 
     /**
-     * @param string $query
+     * @param $query
      * @param int $offset
      * @param int $perPage
      * @param array $config
-     * @param string $facet
-     * @return Pimcore_Google_Cse
+     * @param null $facet
+     * @return Cse
      */
     public static function search ($query, $offset = 0, $perPage = 10, array $config = array(), $facet = null) {
         $list = new self();
@@ -41,7 +48,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
      *
      */
     public function load() {
-        $client = Pimcore_Google_Api::getSimpleClient();
+        $client = Api::getSimpleClient();
         $config = $this->getConfig();
         $perPage = $this->getPerPage();
         $offset = $this->getOffset();
@@ -49,12 +56,12 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
 
         if($client) {
-            $search = new Google_Service_Customsearch($client);
+            $search = new \Google_Service_Customsearch($client);
 
             // determine language
             $language = "";
-            if(Zend_Registry::isRegistered("Zend_Locale")) {
-                $locale = Zend_Registry::get("Zend_Locale");
+            if(\Zend_Registry::isRegistered("Zend_Locale")) {
+                $locale = \Zend_Registry::get("Zend_Locale");
                 $language = $locale->getLanguage();
             }
 
@@ -79,13 +86,13 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
                 $cacheKey = "google_cse_" . md5($query . serialize($config));
 
                 // this is just a protection so that no query get's sent twice in a request (loops, ...)
-                if(Zend_Registry::isRegistered($cacheKey)) {
-                    $result = Zend_Registry::get($cacheKey);
+                if(\Zend_Registry::isRegistered($cacheKey)) {
+                    $result = \Zend_Registry::get($cacheKey);
                 } else {
-                    if(!$result = Pimcore_Model_Cache::load($cacheKey)) {
+                    if(!$result = Cache::load($cacheKey)) {
                         $result = $search->cse->listCse($query, $config);
-                        Pimcore_Model_Cache::save($result, $cacheKey, array("google_cse"), 3600, 999);
-                        Zend_Registry::set($cacheKey, $result);
+                        Cache::save($result, $cacheKey, array("google_cse"), 3600, 999);
+                        \Zend_Registry::set($cacheKey, $result);
                     }
                 }
 
@@ -96,7 +103,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
             return array();
         } else {
-            throw new Exception("Google Simple API Key is not configured in System-Settings.");
+            throw new \Exception("Google Simple API Key is not configured in System-Settings.");
         }
     }
 
@@ -179,7 +186,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
                 $promo["formattedUrl"] = preg_replace("@^https?://@", "", $promo["link"]);
                 $promo["htmlFormattedUrl"] = $promo["formattedUrl"];
 
-                $items[] = new Pimcore_Google_Cse_Item($promo);
+                $items[] = new Item($promo);
             }
         }
 
@@ -204,8 +211,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
                             if(preg_match("/thumb_([0-9]+)__/", $item["pagemap"]["cse_image"][0]["src"], $matches)) {
                                 $test = $matches;
                                 if($matches[1]) {
-                                    if($image = Asset::getById($matches[1])) {
-                                        if($image instanceof Asset_Image) {
+                                    if($image = Model\Asset::getById($matches[1])) {
+                                        if($image instanceof Model\Asset\Image) {
                                             $item["image"] = $image;
                                         }
                                     }
@@ -221,13 +228,13 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
                 // now a document
                 $urlParts = parse_url($item["link"]);
-                if($document = Document::getByPath($urlParts["path"])) {
+                if($document = Model\Document::getByPath($urlParts["path"])) {
                     $item["document"] = $document;
                 }
 
                 $item["type"] = "searchresult";
 
-                $items[] = new Pimcore_Google_Cse_Item($item);
+                $items[] = new Item($item);
             }
         }
 
@@ -235,7 +242,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param int $offset
+     * @param $offset
+     * @return $this
      */
     public function setOffset($offset)
     {
@@ -252,7 +260,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param array $raw
+     * @param $raw
+     * @return $this
      */
     public function setRaw($raw)
     {
@@ -269,7 +278,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param int $total
+     * @param $total
+     * @return $this
      */
     public function setTotal($total)
     {
@@ -286,7 +296,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param int $perPage
+     * @param $perPage
+     * @return $this
      */
     public function setPerPage($perPage)
     {
@@ -303,7 +314,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param array $config
+     * @param $config
+     * @return $this
      */
     public function setConfig($config)
     {
@@ -320,7 +332,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param string $query
+     * @param $query
+     * @return $this
      */
     public function setQuery($query)
     {
@@ -337,7 +350,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param array $results
+     * @param $results
+     * @return $this
      */
     public function setResults($results)
     {
@@ -357,7 +371,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @param array $facets
+     * @param $facets
+     * @return $this
      */
     public function setFacets($facets)
     {
@@ -375,7 +390,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
     /**
      *
-     * Methods for Zend_Paginator_Adapter_Interface
+     * Methods for \Zend_Paginator_Adapter_Interface
      */
 
     /**
@@ -401,7 +416,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     }
 
     /**
-     * @return Pimcore_Google_Cse|Zend_Paginator_Adapter_Interface
+     * @return $this|\Zend_Paginator_Adapter_Interface
      */
     public function getPaginatorAdapter() {
         return $this;

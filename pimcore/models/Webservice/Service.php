@@ -15,159 +15,170 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Service
+namespace Pimcore\Model\Webservice;
+
+use Pimcore\Tool; 
+use Pimcore\Model\Document;
+use Pimcore\Model\Webservice;
+use Pimcore\Model\User;
+use Pimcore\Model\Object;
+use Pimcore\Model\Asset;
+
+class Service
 {
 
-
+    /**
+     * @return Tool\User
+     * @throws \Exception
+     */
     public function getUser()
     {
-        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if($user = Tool\Admin::getCurrentUser()) {
             return $user;
         }
 
         throw new \Exception("Webservice instantiated, but no user present");
     }
 
-
     /**
-     * @param int $id
-     * @return Webservice_Data_Document_Folder_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getDocumentFolderById($id)
     {
         try {
             $folder = Document::getById($id);
-            if ($folder instanceof Document_Folder) {
-                $className = Webservice_Data_Mapper::findWebserviceClass($folder, "out");
-                $apiFolder = Webservice_Data_Mapper::map($folder, $className, "out");
+            if ($folder instanceof Document\Folder) {
+                $className = Webservice\Data\Mapper::findWebserviceClass($folder, "out");
+                $apiFolder = Webservice\Data\Mapper::map($folder, $className, "out");
                 return $apiFolder;
             }
 
-            throw new Exception("Document Folder with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Document Folder with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Document_Link_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getDocumentLinkById($id)
     {
         try {
             $link = Document::getById($id);
-            if ($link instanceof Document_Link) {
-                $className = Webservice_Data_Mapper::findWebserviceClass($link, "out");
-                $apiLink = Webservice_Data_Mapper::map($link, $className, "out");
+            if ($link instanceof Document\Link) {
+                $className = Webservice\Data\Mapper::findWebserviceClass($link, "out");
+                $apiLink = Webservice\Data\Mapper::map($link, $className, "out");
                 return $apiLink;
             }
 
-            throw new Exception("Document Link with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Document Link with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Document_HardLink_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getDocumentHardLinkById($id)
     {
         try {
             $link = Document::getById($id);
-            if ($link instanceof Document_Hardlink) {
-                $className = Webservice_Data_Mapper::findWebserviceClass($link, "out");
-                $apiLink = Webservice_Data_Mapper::map($link, $className, "out");
+            if ($link instanceof Document\Hardlink) {
+                $className = Webservice\Data\Mapper::findWebserviceClass($link, "out");
+                $apiLink = Webservice\Data\Mapper::map($link, $className, "out");
                 return $apiLink;
             }
 
-            throw new Exception("Document Hardlink with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Document Hardlink with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Document_HardLink_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getDocumentEmailById($id)
     {
         try {
             $link = Document::getById($id);
-            if ($link instanceof Document_Email) {
-                $className = Webservice_Data_Mapper::findWebserviceClass($link, "out");
-                $apiLink = Webservice_Data_Mapper::map($link, $className, "out");
+            if ($link instanceof Document\Email) {
+                $className = Webservice\Data\Mapper::findWebserviceClass($link, "out");
+                $apiLink = Webservice\Data\Mapper::map($link, $className, "out");
                 return $apiLink;
             }
 
-            throw new Exception("Document Email with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Document Email with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Document_Page_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getDocumentPageById($id)
     {
         try {
             $page = Document::getById($id);
-            if ($page instanceof Document_Page) {
+            if ($page instanceof Document\Page) {
                 // load all data (eg. href, snippet, ... which are lazy loaded)
-                Document_Service::loadAllDocumentFields($page);
-                $className = Webservice_Data_Mapper::findWebserviceClass($page, "out");
-                $apiPage = Webservice_Data_Mapper::map($page, $className, "out");
+                Document\Service::loadAllDocumentFields($page);
+                $className = Webservice\Data\Mapper::findWebserviceClass($page, "out");
+                $apiPage = Webservice\Data\Mapper::map($page, $className, "out");
                 return $apiPage;
             }
 
-            throw new Exception("Document Page with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Document Page with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Document_Snippet_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getDocumentSnippetById($id)
     {
         try {
             $snippet = Document::getById($id);
-            if ($snippet instanceof Document_Snippet) {
+            if ($snippet instanceof Document\Snippet) {
                 // load all data (eg. href, snippet, ... which are lazy loaded)
-                Document_Service::loadAllDocumentFields($snippet);
-                $className = Webservice_Data_Mapper::findWebserviceClass($snippet, "out");
-                $apiSnippet = Webservice_Data_Mapper::map($snippet, $className, "out");
+                Document\Service::loadAllDocumentFields($snippet);
+                $className = Webservice\Data\Mapper::findWebserviceClass($snippet, "out");
+                $apiSnippet = Webservice\Data\Mapper::map($snippet, $className, "out");
 
                 return $apiSnippet;
             }
 
-            throw new Exception("Document Snippet with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Document Snippet with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param string $condition
-     * @param string $order
-     * @param string $orderKey
-     * @param string $offset
-     * @param string $limit
-     * @param string $groupBy
-     * @return Webservice_Data_Document_List_Item[]
+     * @param null $condition
+     * @param null $order
+     * @param null $orderKey
+     * @param null $offset
+     * @param null $limit
+     * @param null $groupBy
+     * @throws \Exception
      */
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
     {
@@ -180,26 +191,32 @@ class Webservice_Service
                 "limit" => $limit,
                 "groupBy" => $groupBy
             ));
+            $list->setUnpublished(1);
 
             $items = array();
+            /** @var  $doc Document */
             foreach ($list as $doc) {
-                $item = new Webservice_Data_Document_List_Item();
+                $item = new Webservice\Data\Document\Listing\Item();
                 $item->id = $doc->getId();
                 $item->type = $doc->getType();
+                if (method_exists($doc, "getPublished")) {
+                    $item->published = $doc->getPublished();
+                }
+
 
                 $items[] = $item;
             }
 
             return $items;
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * @param $id
+     * @throws \Exception
      */
     public function unpublishDocument($id)
     {
@@ -211,16 +228,16 @@ class Webservice_Service
     			return true;
     		}
 
-    		throw new Exception("Document with given ID (" . $id . ") does not exist.");
-    	} catch (Exception $e) {
-    		Logger::error($e);
+    		throw new \Exception("Document with given ID (" . $id . ") does not exist.");
+    	} catch (\Exception $e) {
+    		\Logger::error($e);
     		throw $e;
     	}
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * @param $id
+     * @throws \Exception
      */
     public function deleteDocument($id)
     {
@@ -231,465 +248,464 @@ class Webservice_Service
                 return true;
             }
 
-            throw new Exception("Document with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Document with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Page_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateDocumentPage($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Page_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Page\In) {
                 return $this->updateDocument($wsDocument);
             } else {
-                throw new Exception("Unable to update Document Page. Inappropriate Data given");
+                throw new \Exception("Unable to update Document Page. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Folder_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateDocumentFolder($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Folder_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Folder\In) {
                 return $this->updateDocument($wsDocument);
             } else {
-                throw new Exception("Unable to update Document Folder. Inappropriate Data given");
+                throw new \Exception("Unable to update Document Folder. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Snippet_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateDocumentSnippet($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Snippet_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Snippet\In) {
                 return $this->updateDocument($wsDocument);
             } else {
-                throw new Exception("Unable to update Document Snippet. Inappropriate Data given");
+                throw new \Exception("Unable to update Document Snippet. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Link_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateDocumentLink($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Link_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Link\In) {
                 return $this->updateDocument($wsDocument);
             } else {
-                throw new Exception("Unable to update Document Link. Inappropriate Data given");
+                throw new \Exception("Unable to update Document Link. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Hardlink_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateDocumentHardlink($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Hardlink_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Hardlink\In) {
                 return $this->updateDocument($wsDocument);
             } else {
-                throw new Exception("Unable to update Document Hardlink. Inappropriate Data given");
+                throw new \Exception("Unable to update Document Hardlink. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Email_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateDocumentEmail($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Email_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Email\In) {
                 return $this->updateDocument($wsDocument);
             } else {
-                throw new Exception("Unable to update Document Email. Inappropriate Data given");
+                throw new \Exception("Unable to update Document Email. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
 
-
     /**
-     * @param Webservice_Data_Object_Folder_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateObjectFolder($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Object_Folder_In) {
+            if ($wsDocument instanceof Webservice\Data\Object\Folder\In) {
                 return $this->updateObject($wsDocument);
             } else {
-                throw new Exception("Unable to update Object Folder. Inappropriate Data given");
+                throw new \Exception("Unable to update Object Folder. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Object_Concrete_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateObjectConcrete($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Object_Concrete_In) {
+            if ($wsDocument instanceof Webservice\Data\Object\Concrete\In) {
                 return $this->updateObject($wsDocument);
             } else {
-                throw new Exception("Unable to update Object Concrete. Inappropriate Data given");
+                throw new \Exception("Unable to update Object Concrete. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Asset_Folder_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateAssetFolder($wsDocument)
     {
 
         try {
-            if ($wsDocument instanceof Webservice_Data_Asset_Folder_In) {
+            if ($wsDocument instanceof Webservice\Data\Asset\Folder\In) {
                 return $this->updateAsset($wsDocument);
             } else {
-                throw new Exception("Unable to update Asset Folder. Inappropriate Data given");
+                throw new \Exception("Unable to update Asset Folder. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Asset_File_In $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function updateAssetFile($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Asset_File_In) {
+            if ($wsDocument instanceof Webservice\Data\Asset\File\In) {
                 return $this->updateAsset($wsDocument);
             } else {
-                throw new Exception("Unable to update Asset Folder. Inappropriate Data given");
+                throw new \Exception("Unable to update Asset Folder. Inappropriate Data given");
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Page_In $document
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createDocumentPage($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Page_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Page\In) {
                 $wsDocument->type = "page";
-                $document = new Document_Page();
+                $document = new Document\Page();
                 return $this->create($wsDocument, $document);
             }
-            throw new Exception("Unable to create new Document Page.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Document Page.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Snippet_In $document
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createDocumentSnippet($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Snippet_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Snippet\In) {
                 $wsDocument->type = "snippet";
-                $document = new Document_Snippet();
+                $document = new Document\Snippet();
                 return $this->create($wsDocument, $document);
             }
 
-            throw new Exception("Unable to create new Document Snippet.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Document Snippet.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
+
     /**
-     * @param Webservice_Data_Document_Email_In $document
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createDocumentEmail($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Email_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Email\In) {
                 $wsDocument->type = "email";
-                $document = new Document_Email();
+                $document = new Document\Email();
                 return $this->create($wsDocument, $document);
             }
 
-            throw new Exception("Unable to create new Document Snippet.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Document Snippet.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
 
     /**
-     * @param Webservice_Data_Document_Folder_In $document
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createDocumentFolder($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Folder_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Folder\In) {
                 $wsDocument->type = "folder";
-                $document = new Document_Folder();
+                $document = new Document\Folder();
                 return $this->create($wsDocument, $document);
             }
-            throw new Exception("Unable to create new Document Folder.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Document Folder.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Link_In $document
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createDocumentLink($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Link_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Link\In) {
                 $wsDocument->type = "link";
-                $document = new Document_Link();
+                $document = new Document\Link();
                 return $this->create($wsDocument, $document);
             }
-            throw new Exception("Unable to create new Document Link.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Document Link.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Document_Hardlink_In $document
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createDocumentHardlink($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Document_Hardlink_In) {
+            if ($wsDocument instanceof Webservice\Data\Document\Hardlink\In) {
                 $wsDocument->type = "hardlink";
-                $document = new Document_Hardlink();
+                $document = new Document\Hardlink();
                 return $this->create($wsDocument, $document);
             }
-            throw new Exception("Unable to create new Document Hardlink.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Document Hardlink.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
 
     /**
-     * @param Webservice_Data_Asset_Folder_In $object
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createAssetFolder($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Asset_Folder_In) {
+            if ($wsDocument instanceof Webservice\Data\Asset\Folder\In) {
                 $wsDocument->type = "folder";
-                $asset = new Asset_Folder();
+                $asset = new Asset\Folder();
                 return $this->create($wsDocument, $asset);
             }
-            throw new Exception("Unable to create new Asset Folder.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Asset Folder.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Asset_File_In $object
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createAssetFile($wsDocument)
     {
 
         try {
-            if ($wsDocument instanceof Webservice_Data_Asset_File_In) {
+            if ($wsDocument instanceof Webservice\Data\Asset\File\In) {
 
                 $type = $wsDocument->type;
                 if (!empty($type)) {
-                    $type = "Asset_" . ucfirst($type);
+                    $type = "\\Pimcore\\Model\\Asset\\" . ucfirst($type);
                     $asset = new $type();
-                    //TODO: maybe introduce an Asset_Abstract from which all Asset_Files should be derived
-                    if ($asset instanceof Asset and !$asset instanceof Asset_Folder) {
+                    //TODO: maybe introduce an Asset\AbstractAsset from which all Asset\Files should be derived
+                    if ($asset instanceof Asset and !$asset instanceof Asset\Folder) {
                         return $this->create($wsDocument, $asset);
                     } else {
-                        throw new Exception("Unable to create new Asset File, could not instantiate Asset with given type[ $type ]");
+                        throw new \Exception("Unable to create new Asset File, could not instantiate Asset with given type[ $type ]");
                     }
                 } else {
-                    throw new Exception("Unable to create new Asset File, no type  provided");
+                    throw new \Exception("Unable to create new Asset File, no type  provided");
                 }
             }
 
-            throw new Exception("Unable to create new Asset File.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Asset File.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Object_Folder_In $object
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createObjectFolder($wsDocument)
     {
         try {
-            if ($wsDocument instanceof Webservice_Data_Object_Folder_In) {
+            if ($wsDocument instanceof Webservice\Data\Object\Folder\In) {
                 $wsDocument->type = "folder";
-                $object = new Object_Folder();
+                $object = new Object\Folder();
                 return $this->create($wsDocument, $object);
             }
 
-            throw new Exception("Unable to create new Object Folder.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Object Folder.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param Webservice_Data_Object_Concrete_In $object
-     * @return int
+     * @param $wsDocument
+     * @throws \Exception
      */
     public function createObjectConcrete($wsDocument)
     {
-//        p_r($wsDocument); die();
         try {
-            if ($wsDocument instanceof Webservice_Data_Object_Concrete_In) {
-                $wsDocument->type = "object";
-                $classname = "Object_" . ucfirst($wsDocument->className);
-                if (Pimcore_Tool::classExists($classname)) {
+            if ($wsDocument instanceof Webservice\Data\Object\Concrete\In) {
+                $classname = Tool::getModelClassMapping("\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className));
+                if (Tool::classExists($classname)) {
                     $object = new $classname();
 
-                    if ($object instanceof Object_Concrete) {
+                    if ($object instanceof Object\Concrete) {
                         return $this->create($wsDocument, $object);
                     } else {
-                        throw new Exception("Unable to create new Object Concrete, could not instantiate Object with given class name [ $classname ]");
+                        throw new \Exception("Unable to create new Object Concrete, could not instantiate Object with given class name [ $classname ]");
                     }
                 } else {
-                    throw new Exception("Unable to create new Object Concrete, no class name provided");
+                    throw new \Exception("Unable to create new Object Concrete, no class name provided");
                 }
             }
 
-            throw new Exception("Unable to create new Object Concrete.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Unable to create new Object Concrete.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Asset_Folder_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getAssetFolderById($id)
     {
         try {
             $asset = Asset::getById($id);
-            if ($asset instanceof Asset_Folder) {
-                $className = Webservice_Data_Mapper::findWebserviceClass($asset, "out");
-                $apiAsset = Webservice_Data_Mapper::map($asset, $className, "out");
+            if ($asset instanceof Asset\Folder) {
+                $className = Webservice\Data\Mapper::findWebserviceClass($asset, "out");
+                $apiAsset = Webservice\Data\Mapper::map($asset, $className, "out");
                 return $apiAsset;
             }
 
-            throw new Exception("Asset Folder with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Asset Folder with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Asset_File_Out
+     * @param $id
+     * @param null $options
+     * @throws \Exception
      */
     public function getAssetFileById($id, $options = null)
     {
         try {
             $asset = Asset::getById($id);
             if ($asset instanceof Asset) {
-                $apiAsset = Webservice_Data_Mapper::map($asset, "Webservice_Data_Asset_File_Out", "out", $options);
+                $apiAsset = Webservice\Data\Mapper::map($asset, "\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\Out", "out", $options);
                 return $apiAsset;
             }
 
-            throw new Exception("Asset File with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Asset File with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param string $condition
-     * @param string $order
-     * @param string $orderKey
-     * @param string $offset
-     * @param string $limit
-     * @param string $groupBy
-     * @return Webservice_Data_Asset_List_Item[]
+     * @param null $condition
+     * @param null $order
+     * @param null $orderKey
+     * @param null $offset
+     * @param null $limit
+     * @param null $groupBy
+     * @throws \Exception
      */
     public function getAssetList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
     {
@@ -708,7 +724,7 @@ class Webservice_Service
 
             $items = array();
             foreach ($list as $asset) {
-                $item = new Webservice_Data_Asset_List_Item();
+                $item = new Webservice\Data\Asset\Listing\Item();
                 $item->id = $asset->getId();
                 $item->type = $asset->getType();
 
@@ -716,15 +732,15 @@ class Webservice_Service
             }
 
             return $items;
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * @param $id
+     * @throws \Exception
      */
     public function deleteAsset($id)
     {
@@ -736,70 +752,70 @@ class Webservice_Service
                 return true;
             }
 
-            throw new Exception("Asset with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Asset with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Object_Folder_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getObjectFolderById($id)
     {
         try {
-            $folder = Object_Abstract::getById($id);
-            if ($folder instanceof Object_Folder) {
-                $apiFolder = Webservice_Data_Mapper::map($folder, "Webservice_Data_Object_Folder_Out", "out");
+            $folder = Object::getById($id);
+            if ($folder instanceof Object\Folder) {
+                $apiFolder = Webservice\Data\Mapper::map($folder, "\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\Out", "out");
                 return $apiFolder;
             }
 
-            throw new Exception("Object Folder with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Object Folder with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Object_Concrete_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getObjectConcreteById($id)
     {
         try {
-            $object = Object_Concrete::getById($id);
+            $object = Object::getById($id);
 
-            if ($object instanceof Object_Concrete) {
+            if ($object instanceof Object\Concrete) {
                 // load all data (eg. lazy loaded fields like multihref, object, ...)
-                Object_Service::loadAllObjectFields($object);
-                $apiObject = Webservice_Data_Mapper::map($object, "Webservice_Data_Object_Concrete_Out", "out");
+                Object\Service::loadAllObjectFields($object);
+                $apiObject = Webservice\Data\Mapper::map($object, "\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\Out", "out");
                 return $apiObject;
             }
 
-            throw new Exception("Object with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Object with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param string $condition
-     * @param string $order
-     * @param string $orderKey
-     * @param string $offset
-     * @param string $limit
-     * @param string $groupBy
-     * @param string $objectClass
-     * @return Webservice_Data_Object_List_Item[]
+     * @param null $condition
+     * @param null $order
+     * @param null $orderKey
+     * @param null $offset
+     * @param null $limit
+     * @param null $groupBy
+     * @param null $objectClass
+     * @throws \Exception
      */
     public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         try {
-            $params = array("objectTypes" => array(Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_VARIANT));
+            $params = array("objectTypes" => array(Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT));
 
             if (!empty($condition)) $params["condition"] = $condition;
             if (!empty($order)) $params["order"] = $order;
@@ -808,77 +824,83 @@ class Webservice_Service
             if (!empty($limit)) $params["limit"] = $limit;
             if (!empty($groupBy)) $params["groupBy"] = $groupBy;
 
-            $listClassName = "Object_Abstract";
+            $listClassName = "\\Pimcore\\Model\\Object";
             if(!empty($objectClass)) {
-                $listClassName = "Object_" . ucfirst($objectClass);
-                if(!Pimcore_Tool::classExists($listClassName)) {
-                    $listClassName = "Object_Abstract";
+
+                $listClassName = "\\Pimcore\\Model\\Object\\" . ucfirst($objectClass);
+                if(!Tool::classExists($listClassName)) {
+                    $listClassName = "\\Pimcore\\Model\\Object";
                 }
             }
 
             $list = $listClassName::getList($params);
+            $list->setUnpublished(1);
 
             $items = array();
             foreach ($list as $object) {
-                $item = new Webservice_Data_Object_List_Item();
+                $item = new Webservice\Data\Object\Listing\Item();
                 $item->id = $object->getId();
                 $item->type = $object->getType();
+                if (method_exists($object, "getPublished")) {
+                    $item->published = $object->getPublished();
+                }
 
                 $items[] = $item;
             }
 
             return $items;
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * @param $id
+     * @throws \Exception
      */
     public function unpublishObject($id)
     {
     	try {
-    		$object = Object_Abstract::getById($id);
-    		if ($object instanceof Object_Abstract) {
+    		$object = Object\AbstractObject::getById($id);
+    		if ($object instanceof Object\AbstractObject) {
     			$object->setPublished(false);
     			$object->save();
     			return true;
     		}
 
-    		throw new Exception("Object with given ID (" . $id . ") does not exist.");
-    	} catch (Exception $e) {
-    		Logger::error($e);
+    		throw new \Exception("Object with given ID (" . $id . ") does not exist.");
+    	} catch (\Exception $e) {
+    		\Logger::error($e);
     		throw $e;
     	}
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * @param $id
+     * @throws \Exception
      */
     public function deleteObject($id)
     {
         try {
-            $object = Object_Abstract::getById($id);
-            if ($object instanceof Object_Abstract) {
+            $object = Object\AbstractObject::getById($id);
+            if ($object instanceof Object\AbstractObject) {
                 $object->delete();
                 return true;
             }
 
-            throw new Exception("Object with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Object with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     /**
-     * @param  Webservice_Data $wsDocument
-     * @param  Element_Interface $element
-     * @return int
+     * @param $wsDocument
+     * @param $element
+     * @return mixed
+     * @throws \Exception
      */
     protected function create($wsDocument, $element)
     {
@@ -889,7 +911,7 @@ class Webservice_Service
         $this->setModificationParams($element, true);
         $key = $element->getKey();
         if (empty($key)) {
-            throw new Exception ("Cannot create element without key");
+            throw new \Exception ("Cannot create element without key");
         }
 
         $element->save();
@@ -898,15 +920,17 @@ class Webservice_Service
     }
 
     /**
-     * Returns a uniqe key for the document in the $target-Path (recursive)
-     * @param Element_Interface $element
+     * @param $element
+     * @param $key
+     * @param $path
+     * @return string
      */
     protected function getSaveCopyName($element, $key, $path)
     {
 
 
-        if ($element instanceof Object_Abstract) {
-            $equal = Object_Abstract::getByPath($path . "/" . $key);
+        if ($element instanceof Object\AbstractObject) {
+            $equal = Object\AbstractObject::getByPath($path . "/" . $key);
         } else  if ($element instanceof Document) {
             $equal = Document::getByPath($path . "/" . $key);
         } else if ($element instanceof Asset) {
@@ -923,84 +947,89 @@ class Webservice_Service
 
 
     /**
-     * @param Webservice_Data_Document $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     protected function updateDocument($wsDocument)
     {
         $document = Document::getById($wsDocument->id);
-        $this->setModificationParams($document, false);
 
+        if ($document === NULL)
+            throw new \Exception("Document with given ID (" . $wsDocument->id . ") does not exist.");
+
+        $this->setModificationParams($document, false);
 
         if ($document instanceof Document and strtolower($wsDocument->type) == $document->getType()) {
             $wsDocument->reverseMap($document);
             $document->save();
             return true;
-        } else if ($document instanceof Document) {
-            throw new Exception("Type mismatch for given document with ID [" . $wsDocument->id . "] and existing document with id [" . $document->getId() . "]");
         } else {
-            throw new Exception("Document with given ID (" . $wsDocument->id . ") does not exist.");
+            throw new \Exception("Type mismatch for given document with ID [" . $wsDocument->id . "] and existing document with id [" . $document->getId() . "]");
         }
     }
 
 
     /**
-     * @param Webservice_Data_Object $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     protected function updateObject($wsDocument)
     {
-        $object = Object_Abstract::getById($wsDocument->id);
+        $object = Object\AbstractObject::getById($wsDocument->id);
+
+        if ($object === NULL)
+            throw new \Exception("Object with given ID (" . $wsDocument->id . ") does not exist.");
 
         $this->setModificationParams($object, false);
-        if ($object instanceof Object_Concrete and $object->getClassName() == $wsDocument->className) {
+        if ($object instanceof Object\Concrete and $object->getClassName() == $wsDocument->className) {
 
             $wsDocument->reverseMap($object);
             $object->save();
             return true;
-        } else if ($object instanceof Object_Folder and $object->getType() == strtolower($wsDocument->type)) {
+        } else if ($object instanceof Object\Folder and $object->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($object);
             $object->save();
             return true;
-        } else if ($object instanceof Object_Abstract) {
-            throw new Exception("Type/Class mismatch for given object with ID [" . $wsDocument->id . "] and existing object with id [" . $object->getId() . "]");
         } else {
-            throw new Exception("Object with given ID (" . $wsDocument->id . ") does not exist.");
+            throw new \Exception("Type/Class mismatch for given object with ID [" . $wsDocument->id . "] and existing object with id [" . $object->getId() . "]");
         }
     }
 
 
     /**
-     * @param Webservice_Data_Asset $wsDocument
-     * @return bool
+     * @param $wsDocument
+     * @throws \Exception
      */
     protected function updateAsset($wsDocument)
     {
 
         $asset = Asset::getById($wsDocument->id);
+
+        if ($asset === NULL)
+            throw new \Exception("Asset with given ID (" . $wsDocument->id . ") does not exist.");
+
         $this->setModificationParams($asset, false);
         if ($asset instanceof Asset and $asset->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($asset);
             $asset->save();
             return true;
-        } else if ($asset instanceof Asset) {
-            throw new Exception("Type mismatch for given asset with ID [" . $wsDocument->id . "] and existing asset with id [" . $asset->getId() . "]");
         } else {
-            throw new Exception("Asset with given ID (" . $wsDocument->id . ") does not exist.");
+            throw new \Exception("Type mismatch for given asset with ID [" . $wsDocument->id . "] and existing asset with id [" . $asset->getId() . "]");
         }
 
     }
 
-
     /**
-     * @param  Element_Interface $element
-     * @return void
+     * @param $element
+     * @param bool $creation
+     * @return $this
+     * @throws \Exception
      */
     protected function setModificationParams($element, $creation = false)
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            throw new Exception("No user present");
+            throw new \Exception("No user present");
         }
         if ($creation) {
             $element->setUserOwner($user->getId());
@@ -1011,58 +1040,58 @@ class Webservice_Service
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Class_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getClassById($id)
     {
         try {
-            $class = Object_Class::getById($id);
-            if ($class instanceof Object_Class) {
-                $apiClass = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
+            $class = Object\ClassDefinition::getById($id);
+            if ($class instanceof Object\ClassDefinition) {
+                $apiClass = Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out", "out");
                 unset($apiClass->fieldDefinitions);
                 return $apiClass;
             }
 
-            throw new Exception("Class with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Class with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Class_Out
+     * @param $id
+     * @throws \Exception
      */
     public function getObjectMetadataById($id)
     {
         try {
-            $object = Object_Concrete::getById($id);
+            $object = Object\Concrete::getById($id);
 
-            if ($object instanceof Object_Concrete) {
+            if ($object instanceof Object\Concrete) {
                 // load all data (eg. lazy loaded fields like multihref, object, ...)
                 $classId = $object->getClassId();
                 return $this->getClassById($classId);
             }
 
-            throw new Exception("Object with given ID (" . $id . ") does not exist.");
-        } catch (Exception $e) {
-            Logger::error($e);
+            throw new \Exception("Object with given ID (" . $id . ") does not exist.");
+        } catch (\Exception $e) {
+            \Logger::error($e);
             throw $e;
         }
     }
 
     public function getTranslations($type,$params){
         if(in_array($type,array('website','admin'))){
-            $listClass = 'Translation_' . ucfirst($type) .'_List';
+            $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($type) .'\\Listing';
             /**
-             * @var $list Translation_Website
+             * @var $list \Pimcore\Model\Translation\Website\Listing
              */
             $list = new $listClass();
             if($key = $params['key']){
-                $list->addConditionParam(" `key` LIKE " . Pimcore_Resource::get()->quote("%" . $key . "%"),'');
+                $list->addConditionParam(" `key` LIKE " . \Pimcore\Resource::get()->quote("%" . $key . "%"),'');
             }
 
             $list->addConditionParam(" `creationDate` >= ? ", $params['creationDateFrom']);
@@ -1078,9 +1107,7 @@ class Webservice_Service
             }
             return $result;
         }else{
-            throw new Exception("Parameter 'type' has to be 'website' or 'admin'");
+            throw new \Exception("Parameter 'type' has to be 'website' or 'admin'");
         }
     }
-
-
 }

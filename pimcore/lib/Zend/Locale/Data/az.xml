@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="az"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,47 +25,36 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">aduge dili</language>
 			<language type="ae">avestanca</language>
 			<language type="af">afrikaans</language>
-			<language type="afa">afro-aziat dili</language>
 			<language type="afh">afrihili dili</language>
 			<language type="ain">aynuca</language>
 			<language type="ak">akanca</language>
 			<language type="akk">akadianca</language>
 			<language type="ale">aleutca</language>
-			<language type="alg">algonguyan dili</language>
 			<language type="alt" draft="contributed">cənub altay dili</language>
 			<language type="am">amhar</language>
 			<language type="an">aragonca</language>
 			<language type="ang" draft="contributed">qədimi ingiliscə</language>
 			<language type="anp">angikə dili</language>
-			<language type="apa">apaçi dili</language>
 			<language type="ar">ərəb</language>
 			<language type="ar_001">Modern Standart Ərəbcə</language>
 			<language type="arc">aramik dili</language>
 			<language type="arn">araukanca</language>
 			<language type="arp">arapaho dili</language>
-			<language type="art">suni dil</language>
 			<language type="arw">aravakça</language>
 			<language type="as">assam</language>
 			<language type="ast">asturicə</language>
-			<language type="ath">atapaskanca</language>
-			<language type="aus">avstraliyca</language>
 			<language type="av">avarikcə</language>
 			<language type="awa">avadicə</language>
 			<language type="ay">aymarca</language>
 			<language type="az">azərbaycan</language>
 			<language type="ba">başkir dili</language>
-			<language type="bad">banda dili</language>
-			<language type="bai">bamilek dili</language>
 			<language type="bal">baluc dili</language>
 			<language type="ban">balincə</language>
 			<language type="bas">basa dili</language>
-			<language type="bat">baltik dili</language>
 			<language type="be">belarus</language>
 			<language type="bej">beja dili</language>
 			<language type="bem">bemba dili</language>
-			<language type="ber">berber dili</language>
 			<language type="bg">bolqar</language>
-			<language type="bh">biharicə</language>
 			<language type="bho">bxoçpuri dili</language>
 			<language type="bi">bislama dili</language>
 			<language type="bik">bikolca</language>
@@ -73,24 +62,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla" draft="contributed">siksikə dili</language>
 			<language type="bm">bambara dili</language>
 			<language type="bn">benqal</language>
-			<language type="bnt">bantu dili</language>
 			<language type="bo">tibet</language>
 			<language type="br">Bretonca</language>
 			<language type="bra">braj dili</language>
 			<language type="bs">bosniak</language>
-			<language type="btk">batak dili</language>
 			<language type="bua">buryat dili</language>
 			<language type="bug">bugin dili</language>
 			<language type="byn">bilincə</language>
 			<language type="ca">katalan</language>
 			<language type="cad">kado dili</language>
-			<language type="cai">mərkəzi amerika indus dili</language>
 			<language type="car">karib dili</language>
-			<language type="cau">qavqaz dili</language>
 			<language type="cch">atsamca</language>
 			<language type="ce">çeçen dili</language>
 			<language type="ceb">kebuano dili</language>
-			<language type="cel">kelt dili</language>
 			<language type="ch">çamoro dili</language>
 			<language type="chb">çibçə dili</language>
 			<language type="chg">çağatay dili</language>
@@ -101,25 +85,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chp">çipevyan dili</language>
 			<language type="chr">çiroki dili</language>
 			<language type="chy">çeyen dili</language>
-			<language type="cmc">çamik dili</language>
 			<language type="co">korsikan dili</language>
 			<language type="cop">kopt dili</language>
-			<language type="cpe">inglis kreol dili</language>
-			<language type="cpf">fransız kreol dili</language>
-			<language type="cpp" draft="contributed">portugal kreol dili</language>
 			<language type="cr">kri dili</language>
 			<language type="crh">krım türkçə</language>
-			<language type="crp">kreol dili</language>
 			<language type="cs">çex</language>
 			<language type="csb" draft="contributed">kaşubyan dili</language>
 			<language type="cu">kilsə slav dili</language>
-			<language type="cus">kuşitik dili</language>
 			<language type="cv">çuvaş dili</language>
 			<language type="cy">uels</language>
 			<language type="da">danimarka</language>
 			<language type="dak">dakota dili</language>
 			<language type="dar">darqva dili</language>
-			<language type="day">dayak dili</language>
 			<language type="de">alman</language>
 			<language type="de_AT">Avstriya almancası</language>
 			<language type="de_CH">İsveçrə yüksək almancası</language>
@@ -128,7 +105,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="dgr">doqrib dili</language>
 			<language type="din">dinka dili</language>
 			<language type="doi">doqri dili</language>
-			<language type="dra">dravid dili</language>
 			<language type="dsb" draft="contributed">aşağı sorbca</language>
 			<language type="dua">duala dili</language>
 			<language type="dum" draft="contributed">ortacaq hollandca</language>
@@ -163,7 +139,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fula dili</language>
 			<language type="fi">fin</language>
 			<language type="fil">filippin</language>
-			<language type="fiu">fin-uğri dili</language>
 			<language type="fj">fici</language>
 			<language type="fo">farer</language>
 			<language type="fon">fon dili</language>
@@ -180,7 +155,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">qayo dili</language>
 			<language type="gba">qabaya dili</language>
 			<language type="gd" draft="contributed">skot gaelik dili</language>
-			<language type="gem">Alman dili</language>
 			<language type="gez">qez dili</language>
 			<language type="gil">qilbert gili</language>
 			<language type="gl">qalisian</language>
@@ -202,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">ivrit</language>
 			<language type="hi">hindi</language>
 			<language type="hil" draft="contributed">hiliqaynon dili</language>
-			<language type="him" draft="contributed">himaçali dili</language>
 			<language type="hit" draft="contributed">hittit dili</language>
 			<language type="hmn" draft="contributed">monq dili</language>
 			<language type="ho" draft="contributed">hiri motu dili</language>
@@ -219,15 +192,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie" draft="contributed">interlingue dili</language>
 			<language type="ig">iqbo</language>
 			<language type="ii" draft="contributed">siçuan yi dili</language>
-			<language type="ijo" draft="contributed">ico dili</language>
 			<language type="ik" draft="contributed">inupiaq dili</language>
 			<language type="ilo" draft="contributed">iloko dili</language>
-			<language type="inc" draft="contributed">diqər hint dili</language>
-			<language type="ine" draft="contributed">hint-yevropa dili</language>
 			<language type="inh" draft="contributed">inquş dili</language>
 			<language type="io" draft="contributed">ido dili</language>
-			<language type="ira" draft="contributed">iranca</language>
-			<language type="iro" draft="contributed">irokuay dili</language>
 			<language type="is">island</language>
 			<language type="it">italyan</language>
 			<language type="iu" draft="contributed">inuktikut dili</language>
@@ -242,14 +210,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac" draft="contributed">kaçinca</language>
 			<language type="kaj" draft="contributed">ju dili</language>
 			<language type="kam" draft="contributed">kamba dili</language>
-			<language type="kar" draft="contributed">karen dili</language>
 			<language type="kaw" draft="contributed">kavi dili</language>
 			<language type="kbd" draft="contributed">kabardca</language>
 			<language type="kcg" draft="contributed">tiyap dili</language>
 			<language type="kfo" draft="contributed">koro dili</language>
 			<language type="kg" draft="contributed">konqo dili</language>
 			<language type="kha" draft="contributed">xazi dili</language>
-			<language type="khi" draft="contributed">xoyzan dili</language>
 			<language type="kho" draft="contributed">xotan dili</language>
 			<language type="ki" draft="contributed">kikuyu dili</language>
 			<language type="kj" draft="contributed">kuanyama dili</language>
@@ -265,7 +231,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr" draft="contributed">kanur dili</language>
 			<language type="krc" draft="contributed">qaraçay-balkar dili</language>
 			<language type="krl" draft="contributed">karelyan dili</language>
-			<language type="kro" draft="contributed">kru dili</language>
 			<language type="kru" draft="contributed">kurux dili</language>
 			<language type="ks">kaşmir</language>
 			<language type="ku">kürd</language>
@@ -299,7 +264,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai" draft="contributed">maitili dili</language>
 			<language type="mak" draft="contributed">makasar dili</language>
 			<language type="man" draft="contributed">məndinqo dili</language>
-			<language type="map">avstronezicə</language>
 			<language type="mas" draft="contributed">masay dili</language>
 			<language type="mdf" draft="contributed">mokşa dili</language>
 			<language type="mdr" draft="contributed">mandar dili</language>
@@ -310,31 +274,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">maori</language>
 			<language type="mic" draft="contributed">mikmak dili</language>
 			<language type="min" draft="contributed">minanqkaban dili</language>
-			<language type="mis" draft="contributed">çeşitli diller</language>
 			<language type="mk">makedon</language>
-			<language type="mkh" draft="contributed">mon-xmer dili</language>
 			<language type="ml">malayalam</language>
 			<language type="mn" draft="contributed">monqolca</language>
 			<language type="mnc" draft="contributed">mançu dili</language>
 			<language type="mni" draft="contributed">manipüri dili</language>
-			<language type="mno" draft="contributed">manobo dili</language>
-			<language type="mo" draft="contributed">moldavca</language>
 			<language type="moh" draft="contributed">moxak dili</language>
 			<language type="mos" draft="contributed">mosi dili</language>
 			<language type="mr">marati</language>
 			<language type="ms">malay</language>
 			<language type="mt">malta</language>
 			<language type="mul" draft="contributed">digər dillər</language>
-			<language type="mun" draft="contributed">munda dili</language>
 			<language type="mus">krik dili</language>
 			<language type="mwl" draft="contributed">mirand dili</language>
 			<language type="mwr" draft="contributed">maruari dili</language>
 			<language type="my">birma</language>
-			<language type="myn" draft="contributed">maya dili</language>
 			<language type="myv">erzya dili</language>
 			<language type="na" draft="contributed">nauru dili</language>
-			<language type="nah" draft="contributed">nahuatl dili</language>
-			<language type="nai" draft="contributed">şimal amerika yerli dili</language>
 			<language type="nap" draft="contributed">neapolital dili</language>
 			<language type="nb">bokmal norveç</language>
 			<language type="nd" draft="contributed">şimal ndebele dili</language>
@@ -343,7 +299,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new" draft="contributed">nevari dili</language>
 			<language type="ng" draft="contributed">nqonka dili</language>
 			<language type="nia" draft="contributed">nyas dili</language>
-			<language type="nic" draft="contributed">niger-kordofyan dili</language>
 			<language type="niu" draft="contributed">niyuan dili</language>
 			<language type="nl">holland</language>
 			<language type="nl_BE">flamand</language>
@@ -354,7 +309,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo" draft="contributed">nqo dili</language>
 			<language type="nr" draft="contributed">cənub ndebele dili</language>
 			<language type="nso" draft="contributed">şimal soto dili</language>
-			<language type="nub" draft="contributed">nubiy dili</language>
 			<language type="nv" draft="contributed">navayo dili</language>
 			<language type="ny" draft="contributed">nyanca dili</language>
 			<language type="nym" draft="contributed">nyamvezi dili</language>
@@ -368,21 +322,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os" draft="contributed">osetik dili</language>
 			<language type="osa" draft="contributed">osage dili</language>
 			<language type="ota" draft="contributed">osman dili</language>
-			<language type="oto" draft="contributed">otomian dili</language>
 			<language type="pa">pəncab</language>
-			<language type="paa" draft="contributed">papua dili</language>
 			<language type="pag" draft="contributed">panqasinan dili</language>
 			<language type="pal" draft="contributed">paxlavi dili</language>
 			<language type="pam" draft="contributed">pampanqa dili</language>
 			<language type="pap" draft="contributed">papyamento dili</language>
 			<language type="pau" draft="contributed">palayanca</language>
 			<language type="peo" draft="contributed">qədimi farsca</language>
-			<language type="phi" draft="contributed">filipin dili</language>
 			<language type="phn" draft="contributed">foyenik dili</language>
 			<language type="pi" draft="contributed">pali dili</language>
 			<language type="pl">polyak</language>
 			<language type="pon" draft="contributed">ponpeyan dili</language>
-			<language type="pra" draft="contributed">prakrit dili</language>
 			<language type="pro" draft="contributed">qədimi provensialca</language>
 			<language type="ps">puştu</language>
 			<language type="pt">portuqal</language>
@@ -395,6 +345,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">retoroman</language>
 			<language type="rn" draft="contributed">rundi dili</language>
 			<language type="ro">rumın</language>
+			<language type="ro_MD">moldavca</language>
 			<language type="rom" draft="contributed">roman dili</language>
 			<language type="root" draft="contributed">rut dili</language>
 			<language type="ru">rus</language>
@@ -403,8 +354,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanskrit</language>
 			<language type="sad" draft="contributed">sandave dili</language>
 			<language type="sah" draft="contributed">yakut dili</language>
-			<language type="sai" draft="contributed">cənub amerika yerli dili</language>
-			<language type="sal" draft="contributed">salişan dili</language>
 			<language type="sam" draft="contributed">samaritan dili</language>
 			<language type="sas" draft="contributed">sasak dili</language>
 			<language type="sat" draft="contributed">santal dili</language>
@@ -414,22 +363,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">sindhi</language>
 			<language type="se" draft="contributed">şimal sami dili</language>
 			<language type="sel" draft="contributed">selkup dili</language>
-			<language type="sem" draft="contributed">ivrit dili</language>
 			<language type="sg" draft="contributed">sanqo dili</language>
 			<language type="sga" draft="contributed">qədimi irlandca</language>
-			<language type="sgn" draft="contributed">işarət dili</language>
 			<language type="sh" draft="contributed">serb-xorvatca</language>
 			<language type="shn" draft="contributed">şan dili</language>
 			<language type="si">sinhal</language>
 			<language type="sid" draft="contributed">sidamo dili</language>
-			<language type="sio" draft="contributed">sioyan dili</language>
-			<language type="sit" draft="contributed">sino-tibet dili</language>
 			<language type="sk">slovak</language>
 			<language type="sl">sloven</language>
-			<language type="sla" draft="contributed">slav dili</language>
 			<language type="sm" draft="contributed">samoa dili</language>
 			<language type="sma" draft="contributed">cənub sami dili</language>
-			<language type="smi" draft="contributed">səmi dili</language>
 			<language type="smj" draft="contributed">lule sami dili</language>
 			<language type="smn" draft="contributed">inari sami</language>
 			<language type="sms" draft="contributed">skolt dili</language>
@@ -437,13 +380,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk" draft="contributed">soninke dili</language>
 			<language type="so">somali</language>
 			<language type="sog" draft="contributed">soqdiyen dili</language>
-			<language type="son" draft="contributed">sonqay dili</language>
 			<language type="sq">alban</language>
 			<language type="sr">serb</language>
 			<language type="srn" draft="contributed">sranan tonqo dili</language>
 			<language type="srr" draft="contributed">serer dilii</language>
 			<language type="ss" draft="contributed">svati dili</language>
-			<language type="ssa" draft="contributed">nilo-sahara dili</language>
 			<language type="st" draft="contributed">Sesoto dili</language>
 			<language type="su">sudan</language>
 			<language type="suk" draft="contributed">sukuma dili</language>
@@ -453,7 +394,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sw">suahili</language>
 			<language type="syr" draft="contributed">siryak dili</language>
 			<language type="ta">tamil</language>
-			<language type="tai" draft="contributed">tay dili</language>
 			<language type="te">teluqu</language>
 			<language type="tem" draft="contributed">timne dili</language>
 			<language type="ter" draft="contributed">tereno dili</language>
@@ -478,8 +418,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi" draft="contributed">simşyan dili</language>
 			<language type="tt">tatar</language>
 			<language type="tum" draft="contributed">tumbuka dili</language>
-			<language type="tup" draft="contributed">tupi dili</language>
-			<language type="tut">altaik dili</language>
 			<language type="tvl" draft="contributed">tuvalu dili</language>
 			<language type="tw" draft="contributed">Tvi dili</language>
 			<language type="ty" draft="contributed">taxiti dili</language>
@@ -498,11 +436,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo" draft="contributed">volapük dili</language>
 			<language type="vot" draft="contributed">votik dili</language>
 			<language type="wa" draft="contributed">valun dili</language>
-			<language type="wak" draft="contributed">vakaşan dili</language>
 			<language type="wal" draft="contributed">valamo dili</language>
 			<language type="war" draft="contributed">varay dili</language>
 			<language type="was" draft="contributed">vaşo dili</language>
-			<language type="wen" draft="contributed">sorb dili</language>
 			<language type="wo">volof</language>
 			<language type="xal" draft="contributed">kalmıqca</language>
 			<language type="xh">xosa</language>
@@ -510,7 +446,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap" draft="contributed">yapiz dili</language>
 			<language type="yi" draft="contributed">Yahudi dili</language>
 			<language type="yo">yoruba</language>
-			<language type="ypk" draft="contributed">yupik dili</language>
 			<language type="za" draft="contributed">juənq dili</language>
 			<language type="zap" draft="contributed">zapotek dili</language>
 			<language type="zbl">blisimbols dili</language>
@@ -519,7 +454,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">çin</language>
 			<language type="zh_Hans">sadələşmiş çin</language>
 			<language type="zh_Hant">ənənəvi çin</language>
-			<language type="znd" draft="contributed">zande dili</language>
 			<language type="zu">zulu</language>
 			<language type="zun" draft="contributed">zuni dili</language>
 			<language type="zxx">dil məzmunu yoxdur</language>
@@ -1736,9 +1670,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Tirane">
 				<exemplarCity>Tirana</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Cənub Qütbü</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Syova</exemplarCity>
 			</zone>
@@ -1933,9 +1864,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Nipigon">
 				<exemplarCity>Nipiqon</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Monreal</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>İqaluit</exemplarCity>
@@ -2546,9 +2474,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Feniks</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Şiprok</exemplarCity>
 			</zone>
 			<zone type="America/North_Dakota/Beulah">
 				<exemplarCity>Beulah, Şimali Dakota</exemplarCity>

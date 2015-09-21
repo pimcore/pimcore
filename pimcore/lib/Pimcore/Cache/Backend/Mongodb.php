@@ -10,7 +10,10 @@
  * @copyright  Copyright (c) 2011 Anton Stöckl (http://www.stoeckl.de)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
+
+namespace Pimcore\Cache\Backend;
+
+class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
 
     const DEFAULT_HOST = '127.0.0.1';
@@ -59,14 +62,14 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     public function __construct($options)
     {
         if (!extension_loaded('mongo')) {
-            Zend_Cache::throwException('The MongoDB extension must be loaded for using this backend !');
+            \Zend_Cache::throwException('The MongoDB extension must be loaded for using this backend !');
         }
         parent::__construct($options);
 
         // Merge the options passed in; overridding any default options
         $this->_options = array_merge($this->_options, $options);
 
-        $this->_conn       = new MongoClient('mongodb://' . $this->_options['host'] . ':' . $this->_options['port'], $this->_options['optional']);
+        $this->_conn       = new \MongoClient('mongodb://' . $this->_options['host'] . ':' . $this->_options['port'], $this->_options['optional']);
         $this->_db         = $this->_conn->selectDB($this->_options['dbname']);
         $this->_collection = $this->_db->selectCollection($this->_options['collection']);
 
@@ -105,7 +108,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
                 }
                 return false;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -125,7 +128,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
             if ($tmp = $cursor->getNext()) {
                 return $tmp['created_at'];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -149,7 +152,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
         try {
             $lifetime = $this->getLifetime($specificLifetime);
             $result = $this->set($id, $data, $lifetime, $tags);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -166,7 +169,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     {
         try {
             $result = $this->_collection->remove(array('_id' => $id));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -177,41 +180,41 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
      * Clean some cache records (protected method used for recursive stuff)
      *
      * Available modes are :
-     * Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
+     * \Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
+     * \Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
+     * \Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
      *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
+     * \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
      *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
+     * \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
      *                                               ($tags can be an array of strings or a single string)
      *
      * @param  string $dir  Directory to clean
      * @param  string $mode Clean mode
      * @param  array  $tags Array of tags
-     * @throws Zend_Cache_Exception
+     * @throws \Zend_Cache_Exception
      * @return boolean True if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         switch ($mode) {
-            case Zend_Cache::CLEANING_MODE_ALL:
+            case \Zend_Cache::CLEANING_MODE_ALL:
                 return $this->_conn->dropDB($this->_options['dbname']);
                 break;
-            case Zend_Cache::CLEANING_MODE_OLD:
+            case \Zend_Cache::CLEANING_MODE_OLD:
                 return $this->_collection->remove(array('expire' => array('$lt' => time())));
                 break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
+            case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
                 return $this->_collection->remove(array('t' => array('$all' => $tags)));
                 break;
-            case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+            case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
                 return $this->_collection->remove(array('t' => array('$nin' => $tags)));
                 break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+            case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
                 return $this->_collection->remove(array('t' => array('$in' => $tags)));
                 break;
             default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
+                \Zend_Cache::throwException('Invalid mode for clean() method');
                 break;
         }
     }
@@ -230,7 +233,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
      * Set the frontend directives
      *
      * @param  array $directives Assoc of directives
-     * @throws Zend_Cache_Exception
+     * @throws \Zend_Cache_Exception
      * @return void
      */
     public function setDirectives($directives)
@@ -374,7 +377,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     /**
      * No way to find the remaining space right now. So return 1.
      *
-     * @throws Zend_Cache_Exception
+     * @throws \Zend_Cache_Exception
      * @return int integer between 0 and 100
      */
     public function getFillingPercentage()

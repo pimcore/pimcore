@@ -15,35 +15,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Version_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Version;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("versions");
-    }
-
-    /**
-     * Get the data for the object from database for the given id
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id) {
         $data = $this->db->fetchRow("SELECT * FROM versions WHERE id = ?", $id);
 
         if (!$data["id"]) {
-            throw new Exception("version with id " . $id . " not found");
+            throw new \Exception("version with id " . $id . " not found");
         }
 
         $this->assignVariablesToModel($data);
@@ -59,7 +45,7 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
         $version = get_object_vars($this->model);
 
         foreach ($version as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("versions"))) {
                 if(is_bool($value)) {
                     $value = (int) $value;
                 }
@@ -120,7 +106,7 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
         }
         $versionIds = array();
 
-        Logger::debug("ignore ID's: " . $ignoreIdsList);
+        \Logger::debug("ignore ID's: " . $ignoreIdsList);
 
         if(!empty($elementTypes)) {
             $count = 0;
@@ -137,14 +123,14 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                     $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (" . $ignoreIdsList . ") GROUP BY cid HAVING amount > ?", array($elementType["elementType"], $elementType["steps"]));
                     foreach ($elementIds as $elementId) {
                         $count++;
-                        Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));
+                        \Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));
                         $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", array($elementId, $elementType["elementType"]));
 
                         $versionIds = array_merge($versionIds, $elementVersions);
 
                         // call the garbage collector if memory consumption is > 100MB
                         if(memory_get_usage() > 100000000 && ($count % 100 == 0)) {
-                            Pimcore::collectGarbage();
+                            \Pimcore::collectGarbage();
                             sleep(1);
 
                             $versionIds = array_unique($versionIds);
@@ -164,7 +150,7 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
         }
-        Logger::info("return " .  count($versionIds) . " ids\n");
+        \Logger::info("return " .  count($versionIds) . " ids\n");
         return $versionIds;
     }
 }

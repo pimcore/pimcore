@@ -15,7 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Service extends Element_Service {
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+use Pimcore\Tool\Serialize;
+use Pimcore\View;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+
+class Service extends Model\Element\Service {
 
     /**
      * @var User
@@ -27,13 +35,11 @@ class Document_Service extends Element_Service {
     protected $_copyRecursiveIds;
 
     /**
-     * @param  User $user
-     * @return void
+     * @param null $user
      */
     public function __construct($user = null) {
         $this->_user = $user;
     }
-
 
     /**
      * static function to render a document outside of a view
@@ -46,21 +52,27 @@ class Document_Service extends Element_Service {
      */
     public static function render(Document $document, $params = array(), $useLayout = false)
     {
-        $layoutInCurrentAction = (Zend_Layout::getMvcInstance() instanceof Zend_Layout) ? Zend_Layout::getMvcInstance()->getLayout() : false;
+        $layout = null;
+        $existingActionHelper = null;
+
+        if(\Zend_Controller_Action_HelperBroker::hasHelper("layout")) {
+            $existingActionHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("layout");
+        }
+        $layoutInCurrentAction = (\Zend_Layout::getMvcInstance() instanceof \Zend_Layout) ? \Zend_Layout::getMvcInstance()->getLayout() : false;
         
-        $viewHelper = Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
+        $viewHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
         if($viewHelper) {
             if($viewHelper->view === null) {
                 $viewHelper->initView(PIMCORE_WEBSITE_PATH . "/views");
             }
             $view = $viewHelper->view;
         } else {
-            $view = new Pimcore_View();
+            $view = new \Pimcore\View();
         }
 
         // add the view script path from the website module to the view, because otherwise it's not possible to call
         // this method out of other modules to render documents, eg. sending e-mails out of an plugin with Pimcore_Mail
-        $moduleDirectory = Zend_Controller_Front::getInstance()->getModuleDirectory($document->getModule());
+        $moduleDirectory = \Zend_Controller_Front::getInstance()->getModuleDirectory($document->getModule());
         if (!empty($moduleDirectory)) {
             $view->addScriptPath($moduleDirectory . "/views/layouts");
             $view->addScriptPath($moduleDirectory . "/views/scripts");
@@ -76,9 +88,9 @@ class Document_Service extends Element_Service {
         $view->document = $document;
 
         if ($useLayout) {
-            if(!$layout = Zend_Layout::getMvcInstance()) {
-                $layout = Zend_Layout::startMvc();
-                $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix());
+            if(!$layout = \Zend_Layout::getMvcInstance()) {
+                $layout = \Zend_Layout::startMvc();
+                $layout->setViewSuffix(View::getViewScriptSuffix());
                 if($layoutHelper = $view->getHelper("layout")) {
                     $layoutHelper->setLayout($layout);
                 }
@@ -98,7 +110,7 @@ class Document_Service extends Element_Service {
 
         //has to be called after $view->action so we can determine if a layout is enabled in $view->action()
         if ($useLayout) {
-            if ($layout instanceof Zend_Layout) {
+            if ($layout instanceof \Zend_Layout) {
                 $layout->{$layout->getContentKey()} = $content;
                 if (is_array($params)) {
                     foreach ($params as $key => $value) {
@@ -106,21 +118,33 @@ class Document_Service extends Element_Service {
                     }
                 }
 
-                // when using Document_Service::render() you have to set a layout in the view ($this->layout()->setLayout("mylayout"))
+                // when using Document\Service::render() you have to set a layout in the view ($this->layout()->setLayout("mylayout"))
                 if($layout->getLayout() != "--modification-indicator--") {
                     $content = $layout->render();
                 }
 
                 //deactivate the layout if it was not activated in the called action
                 //otherwise we would activate the layout in the called action
-                Zend_Layout::resetMvcInstance();
+                \Zend_Layout::resetMvcInstance();
                 if (!$layoutInCurrentAction) {
                     $layout->disableLayout();
                 } else {
-                    $layout = Zend_Layout::startMvc();
-                    $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix()); // set pimcore specifiy view suffix
+                    $layout = \Zend_Layout::startMvc();
+                    $layout->setViewSuffix(View::getViewScriptSuffix()); // set pimcore specifiy view suffix
                     $layout->setLayout($layoutInCurrentAction);
                     $view->getHelper("Layout")->setLayout($layout);
+
+                    if($existingActionHelper) {
+                        \Zend_Controller_Action_HelperBroker::removeHelper("layout");
+                        \Zend_Controller_Action_HelperBroker::addHelper($existingActionHelper);
+
+                        $pluginClass = $layout->getPluginClass();
+                        $front = $existingActionHelper->getFrontController();
+                        if ($front->hasPlugin($pluginClass)) {
+                            $plugin = $front->getPlugin($pluginClass);
+                            $plugin->setLayoutActionHelper($existingActionHelper);
+                        }
+                    }
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
 
@@ -131,8 +155,8 @@ class Document_Service extends Element_Service {
             $view->document = $documentBackup;
         }
 
-        if(Pimcore_Config::getSystemConfig()->outputfilters->less){
-            $content = Pimcore_Tool_Less::processHtml($content);
+        if(\Pimcore\Config::getSystemConfig()->outputfilters->less){
+            $content = \Pimcore\Tool\Less::processHtml($content);
         }
 
         return $content;
@@ -150,7 +174,7 @@ class Document_Service extends Element_Service {
             $document->save();
             $saved++;
             if($saved%$collectGarbageAfterIteration === 0){
-                Pimcore::collectGarbage();
+                \Pimcore::collectGarbage();
             }
         }
 
@@ -159,7 +183,7 @@ class Document_Service extends Element_Service {
                 $child->save();
                 $saved++;
                 if($saved%$collectGarbageAfterIteration === 0){
-                    Pimcore::collectGarbage();
+                    \Pimcore::collectGarbage();
                 }
             }
             if($child->hasChilds()){
@@ -193,7 +217,7 @@ class Document_Service extends Element_Service {
         $new = clone $source;
         $new->id = null;
         $new->setChilds(null);
-        $new->setKey(Element_Service::getSaveCopyName("document",$new->getKey(), $target));
+        $new->setKey(Element\Service::getSaveCopyName("document",$new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -234,7 +258,7 @@ class Document_Service extends Element_Service {
         $new = clone $source;
         $new->id = null;
         $new->setChilds(null);
-        $new->setKey(Element_Service::getSaveCopyName("document",$new->getKey(), $target));
+        $new->setKey(Element\Service::getSaveCopyName("document",$new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -245,7 +269,7 @@ class Document_Service extends Element_Service {
             $new->setPrettyUrl(null);
         }
 
-        if($enableInheritance && ($new instanceof Document_PageSnippet)) {
+        if($enableInheritance && ($new instanceof Document\PageSnippet)) {
             $new->setElements(array());
             $new->setContentMasterDocumentId($source->getId());
         }
@@ -258,31 +282,32 @@ class Document_Service extends Element_Service {
     }
 
     /**
-     * @param  Document $target
-     * @param  Document $source
-     * @return
+     * @param $target
+     * @param $source
+     * @return mixed
+     * @throws \Exception
      */
     public function copyContents($target, $source) {
 
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
-            throw new Exception("Source and target have to be the same type");
+            throw new \Exception("Source and target have to be the same type");
         }
 
-        if ($source instanceof Document_PageSnippet) {
+        if ($source instanceof Document\PageSnippet) {
             $target->setElements($source->getElements());
 
             $target->setTemplate($source->getTemplate());
             $target->setAction($source->getAction());
             $target->setController($source->getController());
 
-            if ($source instanceof Document_Page) {
+            if ($source instanceof Document\Page) {
                 $target->setTitle($source->getTitle());
                 $target->setDescription($source->getDescription());
                 $target->setKeywords($source->getKeywords());
             }
         }
-        else if ($source instanceof Document_Link) {
+        else if ($source instanceof Document\Link) {
             $target->setInternalType($source->getInternalType());
             $target->setInternal($source->getInternal());
             $target->setDirect($source->getDirect());
@@ -308,9 +333,9 @@ class Document_Service extends Element_Service {
      * @return void
      */
     public static function gridDocumentData($document) {
-        $data = Element_Service::gridElementData($document);
+        $data = Element\Service::gridElementData($document);
 
-        if ($document instanceof Document_Page) {
+        if ($document instanceof Document\Page) {
             $data["title"] = $document->getTitle();
             $data["description"] = $document->getDescription();
             $data["keywords"] = $document->getKeywords();
@@ -333,7 +358,7 @@ class Document_Service extends Element_Service {
 
         $doc->getProperties();
 
-        if($doc instanceof Document_PageSnippet) {
+        if($doc instanceof Document\PageSnippet) {
             foreach($doc->getElements() as $name => $data) {
                 if(method_exists($data, "load")) {
                     $data->load();
@@ -351,17 +376,17 @@ class Document_Service extends Element_Service {
      */
     public static function pathExists($path, $type = null) {
 
-        $path = Element_Service::correctPath($path);
+        $path = Element\Service::correctPath($path);
 
         try {
             $document = new Document();
             // validate path
-            if (Pimcore_Tool::isValidPath($path)) {
+            if (\Pimcore\Tool::isValidPath($path)) {
                 $document->getResource()->getByPath($path);
                 return true;
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
 
         }
 
@@ -393,19 +418,19 @@ class Document_Service extends Element_Service {
     public static function rewriteIds($document, $rewriteConfig, $params = array()) {
 
         // rewriting elements only for snippets and pages
-        if($document instanceof Document_PageSnippet) {
+        if($document instanceof Document\PageSnippet) {
             if(array_key_exists("enableInheritance", $params) && $params["enableInheritance"]) {
                 $elements = $document->getElements();
                 $changedElements = array();
                 $contentMaster = $document->getContentMasterDocument();
-                if($contentMaster instanceof Document_PageSnippet) {
+                if($contentMaster instanceof Document\PageSnippet) {
                     $contentMasterElements = $contentMaster->getElements();
                     foreach ($contentMasterElements as $contentMasterElement) {
                         if(method_exists($contentMasterElement, "rewriteIds")) {
                             $element = clone $contentMasterElement;
                             $element->rewriteIds($rewriteConfig);
 
-                            if(Pimcore_Tool_Serialize::serialize($element) != Pimcore_Tool_Serialize::serialize($contentMasterElement)) {
+                            if(Serialize::serialize($element) != Serialize::serialize($contentMasterElement)) {
                                 $changedElements[] = $element;
                             }
                         }
@@ -425,11 +450,11 @@ class Document_Service extends Element_Service {
             }
 
             $document->setElements($elements);
-        } else if ($document instanceof Document_Hardlink) {
+        } else if ($document instanceof Document\Hardlink) {
             if(array_key_exists("document", $rewriteConfig) && $document->getSourceId() && array_key_exists((int) $document->getSourceId(), $rewriteConfig["document"])) {
                 $document->setSourceId($rewriteConfig["document"][(int) $document->getSourceId()]);
             }
-        } else if ($document instanceof Document_Link) {
+        } else if ($document instanceof Document\Link) {
             if(array_key_exists("document", $rewriteConfig) && $document->getLinktype() == "internal" && $document->getInternalType() == "document" && array_key_exists((int) $document->getInternal(), $rewriteConfig["document"])) {
                 $document->setInternal($rewriteConfig["document"][(int) $document->getInternal()]);
             }
@@ -456,7 +481,7 @@ class Document_Service extends Element_Service {
 
             // search for a page in a site
             if(!$document) {
-                $sitesList = new Site_List();
+                $sitesList = new Model\Site\Listing();
                 $sitesObjects = $sitesList->load();
 
                 foreach ($sitesObjects as $site) {
@@ -471,5 +496,4 @@ class Document_Service extends Element_Service {
 
         return $document;
     }
-
 }

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -27,7 +27,7 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Http_UserAgent_AbstractDevice
@@ -509,7 +509,9 @@ abstract class Zend_Http_UserAgent_AbstractDevice
                 }
                 $result['browser_version'] = '??';
             }
-        } elseif ($product == 'mozilla' && $result['browser_version'] < 5.0) {
+        } elseif ($product == 'mozilla' && isset($result['browser_version'])
+                  && $result['browser_version'] < 5.0
+        ) {
             // handles the real Mozilla (or old Netscape if version < 5.0)
             $result['browser_name'] = 'Netscape';
         }

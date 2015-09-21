@@ -13,11 +13,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Cache\Backend;
 
-class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
+use Pimcore\Resource;
+
+class Memcached extends \Zend_Cache_Backend_Memcached {
 
     /**
-     * @var Zend_Db_Adapter_Abstract
+     * @var \Zend_Db_Adapter_Abstract
      */
     protected $db;
 
@@ -25,6 +28,16 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @var bool
      */
     protected $checkedCacheConsistency = false;
+
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options = array()) {
+
+        $this->_options["tags_do_not_switch_to_innodb"] = null;
+
+        parent::__construct($options);
+    }
 
     /**
      * @return void
@@ -39,7 +52,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
             $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
             if(!$res) {
-                $this->clean(Zend_Cache::CLEANING_MODE_ALL);
+                $this->clean(\Zend_Cache::CLEANING_MODE_ALL);
             }
         }
     }
@@ -59,13 +72,13 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     }
 
     /**
-     * @return Zend_Db_Adapter_Abstract
+     * @return \Zend_Db_Adapter_Abstract
      */
     protected function getDb () {
         if(!$this->db) {
             // we're using a new mysql connection here to avoid problems with active (nested) transactions
-            Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
-            $this->db = Pimcore_Resource::getConnection();
+            \Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
+            $this->db = Resource::getConnection();
         }
         return $this->db;
     }
@@ -87,14 +100,18 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                         "tag" => $tag
                     ));
                 }
-                catch (Exception $e) {
+                catch (\Exception $e) {
                     if(strpos(strtolower($e->getMessage()), "is full") !== false) {
 
-                        Logger::warning($e);
+                        \Logger::warning($e);
 
-                        // it seems that the MEMORY table is on the limit an full
-                        // change the storage engine of the cache tags table to InnoDB
-                        $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+                        if($this->_options["tags_do_not_switch_to_innodb"]) {
+                            $this->clean();
+                        } else {
+                            // it seems that the MEMORY table is on the limit an full
+                            // change the storage engine of the cache tags table to InnoDB
+                            $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+                        }
 
                         // try it again
                         $tags[] = $tag;
@@ -106,8 +123,8 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
             }
             //$this->getDb()->commit();
 
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
         }
     }
 
@@ -198,18 +215,18 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @param  array  $tags Array of tags
      * @return boolean True if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
+    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
 
         $this->checkCacheConsistency();
 
-        if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
+        if ($mode == \Zend_Cache::CLEANING_MODE_ALL) {
             $this->clearTags();
             return $this->_memcache->flush();
         }
-        if ($mode == Zend_Cache::CLEANING_MODE_OLD) {
-            Logger::debug("Zend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
+        if ($mode == \Zend_Cache::CLEANING_MODE_OLD) {
+            \Logger::debug("Zend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
         }
-        if ($mode == Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
+        if ($mode == \Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
                 $items = $this->getItemsByTag($tag);
                 $quotedIds = array();
@@ -226,7 +243,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                 }
             }
         }
-        if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
+        if ($mode == \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
             
             $condParts = array("1=1");
             foreach ($tags as $tag) {
@@ -246,7 +263,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                 "id" => "___consistency_check___",
                 "tag" => "___consistency_check___"
             ));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // doesn't matter as long as the item exists
         }
 

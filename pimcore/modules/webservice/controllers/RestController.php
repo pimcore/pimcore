@@ -15,7 +15,14 @@
  * @author      JA
  */
 
-class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
+use Pimcore\Tool;
+use Pimcore\Model\Webservice;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
+use Pimcore\Model\Element;
+
+class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
 
     const ELEMENT_DOES_NOT_EXIST = -1;
     /**
@@ -34,8 +41,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function init() {
 
         if ($this->getParam("condense")) {
-            Object_Class_Data::setDropNullValues(true);
-            Webservice_Data_Object::setDropNullValues(true);
+            Object\ClassDefinition\Data::setDropNullValues(true);
+            Webservice\Data\Object::setDropNullValues(true);
         }
 
         $profile = $this->getParam("profiling");
@@ -45,9 +52,9 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         }
         parent::init();
         $this->disableViewAutoRender();
-        $this->service = new Webservice_Service();
+        $this->service = new Webservice\Service();
         // initialize json encoder by default, maybe support xml in the near future
-        $this->encoder = new Webservice_JsonEncoder();
+        $this->encoder = new Webservice\JsonEncoder();
 
         if ($profile) {
 
@@ -82,7 +89,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     }
 
     private function checkUserPermission($permission) {
-        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if($user = Tool\Admin::getCurrentUser()) {
             if ($user->isAllowed($permission)) {
                 return;
             }
@@ -108,7 +115,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/object?apikey=[API-KEY]
      *      body: same as for create object but with object id
      *      returns json encoded success value
-     * @throws Exception
+     * @throws \Exception
      */
     public function objectAction() {
 
@@ -123,7 +130,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                         $startTs = microtime(true);
                     }
 
-                    $object = Object_Abstract::getById($id);
+                    $object = Object::getById($id);
                     if (!$object) {
                         $this->encoder->encode(array(  "success" => false,
                             "msg" => "Object does not exist",
@@ -143,7 +150,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                         $startTs = microtime(true);
                     }
 
-                    if ($object instanceof Object_Folder) {
+                    if ($object instanceof Object\Folder) {
                         $object = $this->service->getObjectFolderById($id);
                     } else {
                         $object = $this->service->getObjectConcreteById($id);
@@ -169,7 +176,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     return;
                 }
             } else if ($this->isDelete()) {
-                $object = Object_Abstract::getById($id);
+                $object = Object::getById($id);
                 if ($object) {
                     $this->checkPermission($object, "delete");
                 }
@@ -179,36 +186,36 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 return;
             } else if ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
-                $data = Zend_Json::decode($data);
+                $data = \Zend_Json::decode($data);
 
                 $type = $data["type"];
                 $id = null;
 
                 if ($data["id"]) {
-                    $obj = Object_Abstract::getById($data["id"]);
+                    $obj = Object::getById($data["id"]);
                     if ($obj) {
                         $this->checkPermission($obj, "update");
                     }
 
                     $isUpdate = true;
                     if ($type == "folder") {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Object_Folder_In", $data);
+                        $wsData = self::fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\In", $data);
                         $success = $this->service->updateObjectFolder($wsData);
                     } else {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $data);
+                        $wsData = self::fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\In", $data);
                         $success = $this->service->updateObjectConcrete($wsData);
                     }
                 } else {
                     if ($type == "folder") {
-                        $class = Webservice_Data_Object_Folder_In;
+                        $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\In";
                         $method = "createObjectFolder";
                     } else {
-                        $class = Webservice_Data_Object_Concrete_In;
+                        $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\In";
                         $method = "createObjectConcrete";
                     }
                     $wsData = self::fillWebserviceData($class, $data);
 
-                    $obj = new Object_Abstract();
+                    $obj = new Object();
                     $obj->setId($wsData->parentId);
                     $this->checkPermission($obj, "create");
 
@@ -229,12 +236,12 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 return;
 
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
 
-        throw new Exception("not implemented");
+        throw new \Exception("not implemented");
     }
 
     /** end point for object metadata
@@ -254,9 +261,9 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $this->encoder->encode(array("success" => true, "data" => $class));
                 return;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->encoder->encode(array("success" => false, "message" => (string) $e));
-            Logger::error($e);
+            \Logger::error($e);
         }
 
         $this->encoder->encode(array("success" => false));
@@ -279,8 +286,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $this->encoder->encode(array("success" => true, "data" => $class));
                 return;
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
@@ -294,12 +301,12 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             $id = $this->getParam("id");
             if ($id) {
-                $config = Asset_Image_Thumbnail_Config::getByName($id);
+                $config = Asset\Image\Thumbnail\Config::getByName($id);
                 $this->encoder->encode(array("success" => true, "data" => $config->getForWebserviceExport()));
                 return;
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
@@ -310,7 +317,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      */
     public function imageThumbnailsAction () {
         $this->checkUserPermission("thumbnails");
-        $dir = Asset_Image_Thumbnail_Config::getWorkingDir();
+        $dir = Asset\Image\Thumbnail\Config::getWorkingDir();
 
         $pipelines = array();
         $files = scandir($dir);
@@ -336,10 +343,10 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function objectBrickAction() {
         $this->checkUserPermission("classes");
         try {
-            $fc = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
+            $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(array("success" => true, "data" => $fc));
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
@@ -353,10 +360,10 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function fieldCollectionAction() {
         $this->checkUserPermission("classes");
         try {
-            $fc = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
+            $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(array("success" => true, "data" => $fc));
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
@@ -374,8 +381,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $object = $this->service->getuser();
             $this->encoder->encode(array("success" => true, "data" => $object));
 
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
         }
         $this->encoder->encode(array("success" => false));
     }
@@ -396,7 +403,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/asset?apikey=[API-KEY]
      *      body: same as for create asset but with asset id
      *      returns json encoded success value
-     * @throws Exception
+     * @throws \Exception
      */
     public function assetAction() {
         $id = $this->getParam("id");
@@ -414,7 +421,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
                 $this->checkPermission($asset, "get");
 
-                if ($asset instanceof Asset_Folder) {
+                if ($asset instanceof Asset\Folder) {
                     $object = $this->service->getAssetFolderById($id);
                 } else {
                     $light = $this->getParam("light");
@@ -452,7 +459,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 return;
             } else if ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
-                $data = Zend_Json::decode($data);
+                $data = \Zend_Json::decode($data);
 
                 $type = $data["type"];
                 $id = null;
@@ -466,19 +473,19 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
                     $isUpdate = true;
                     if ($type == "folder") {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Asset_Folder_In", $data);
+                        $wsData = self::fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\Folder\\In", $data);
                         $success = $this->service->updateAssetFolder($wsData);
                     } else {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Asset_File_In", $data);
+                        $wsData = self::fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\In", $data);
                         $success = $this->service->updateAssetFile($wsData);
                     }
                 } else {
 
                     if ($type == "folder") {
-                        $class = "Webservice_Data_Asset_Folder_In";
+                        $class = "\\Pimcore\\Model\\Webservice\\Data\\Asset\\Folder\\In";
                         $method = "createAssetFolder";
                     } else {
-                        $class = "Webservice_Data_Asset_File_In";
+                        $class = "\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\In";
                         $method = "createAssetFile";
                     }
 
@@ -503,8 +510,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 return;
 
             }
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
@@ -518,61 +525,41 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
         try {
             if ($this->isGet()) {
+                $condition = urldecode($this->getParam("condition"));
 
                 $definition = array();
 
-                $list = new Object_KeyValue_GroupConfig_List();
+                $list = new Object\KeyValue\GroupConfig\Listing();
+                if($condition){
+                    $list->setCondition($condition);
+                }
                 $list->load();
                 $items = $list->getList();
 
                 $groups = array();
 
                 foreach ($items as $item) {
-                    $group = array();
-                    $group["id"] = $item->getId();
-                    $group["name"] =  $item->getName();
-                    if ($item->getDescription()) {
-                        $group["description"] =  $item->getDescription();
-                    }
-                    $groups[] = $group;
+                    $groups[] = $item->getObjectVars();
                 }
                 $definition["groups"] = $groups;
 
-                $list = new Object_KeyValue_KeyConfig_List();
+                $list = new Object\KeyValue\KeyConfig\Listing();
+                if($condition){
+                    $list->setCondition($condition);
+                }
                 $list->load();
                 $items = $list->getList();
 
                 $keys = array();
 
                 foreach ($items as $item) {
-                    /** @var  $item Object_KeyValue_KeyConfig */
-                    $key= array();
-                    $key['id'] = $item->getId();
-                    $key['name'] = $item->getName();
-                    if ($item->getDescription()) {
-                        $key['description'] = $item->getDescription();
-                    }
-                    $key['type'] = $item->getType();
-                    if ($item->getUnit()) {
-                        $key['unit'] = $item->getUnit();
-                    }
-                    if ($item->getGroup()) {
-                        $key['group'] = $item->getGroup();
-                    }
-                    if ($item->getPossibleValues()) {
-                        $key['possiblevalues'] = $item->getPossibleValues();
-                    }
-
-                    if ($item->getMandatory()) {
-                        $key["mandatory"] = 1;
-                    }
-
-                    $keys[] = $key;
+                    /** @var  $item Object\KeyValue\KeyConfig */
+                    $keys[] = $item->getObjectVars();
                 }
                 $definition["keys"] = $keys;
                 $this->encoder->encode(array("success" => true, "data" => $definition));
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
@@ -594,7 +581,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/document?apikey=[API-KEY]
      *      body: same as for create document but with object id
      *      returns json encoded success value
-     * @throws Exception
+     * @throws \Exception
      */
     public function documentAction() {
         $id = $this->getParam("id");
@@ -620,12 +607,12 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                         $object = $this->service->$getter($id);
                     } else {
                         // check if the getter is implemented by a plugin
-                        $class = "Webservice_Data_Document_" . ucfirst($type) . "_Out";
-                        if (class_exists($class)) {
-                            Document_Service::loadAllDocumentFields($doc);
-                            $object = Webservice_Data_Mapper::map($doc, $class, "out");
+                        $class = "\\Pimcore\\Model\\Webservice\\Data\\Document\\" . ucfirst($type) . "\\Out";
+                        if (Tool::classExists($class)) {
+                            Document\Service::loadAllDocumentFields($doc);
+                            $object = Webservice\Data\Mapper::map($doc, $class, "out");
                         } else {
-                            throw new Exception("unknown type");
+                            throw new \Exception("unknown type");
                         }
 
                     }
@@ -633,7 +620,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 }
 
                 if (!$object) {
-                    throw new Exception("could not find document");
+                    throw new \Exception("could not find document");
                 }
                 @$this->encoder->encode(array("success" => true, "data" => $object));
                 return;
@@ -647,12 +634,12 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 return;
             } else if ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
-                $data = Zend_Json::decode($data);
+                $data = \Zend_Json::decode($data);
 
                 $type = $data["type"];
                 $id = null;
                 $typeUpper = ucfirst($type);
-                $className = "Webservice_Data_Document_" . $typeUpper . "_In";
+                $className = "\\Pimcore\\Model\\Webservice\\Data\\Document\\" . $typeUpper . "\\In";
 
                 if ($data["id"]) {
                     $doc = Document::getById($data["id"]);
@@ -663,7 +650,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $isUpdate = true;
                     $setter = "updateDocument" . $typeUpper;
                     if (!method_exists($this->service, $setter)) {
-                        throw new Exception("method does not exist " . $setter);
+                        throw new \Exception("method does not exist " . $setter);
                     }
                     $wsData = self::fillWebserviceData($className, $data);
                     $success = $this->service->$setter($wsData);
@@ -671,7 +658,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 } else {
                     $setter = "createDocument" . $typeUpper;
                     if (!method_exists($this->service, $setter)) {
-                        throw new Exception("method does not exist " . $setter);
+                        throw new \Exception("method does not exist " . $setter);
                     }
                     $wsData = self::fillWebserviceData($className, $data);
                     $doc = new Document();
@@ -695,7 +682,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
         $this->encoder->encode(array("success" => false));
@@ -795,16 +782,16 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $objectClass = $this->getParam("objectClass");
-        $params = array("objectTypes" => array(Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_VARIANT));
+        $params = array("objectTypes" => array(Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT));
 
         if (!empty($condition)) $params["condition"] = $condition;
         if (!empty($groupBy)) $params["groupBy"] = $groupBy;
 
-        $listClassName = "Object_Abstract";
+        $listClassName = "\\Pimcore\\Model\\Object\\AbstractObject";
         if(!empty($objectClass)) {
-            $listClassName = "Object_" . ucfirst($objectClass);
-            if(!Pimcore_Tool::classExists($listClassName)) {
-                $listClassName = "Object_Abstract";
+            $listClassName = "\\Pimcore\\Model\\Object\\" . ucfirst($objectClass);
+            if(!Tool::classExists($listClassName)) {
+                $listClassName = "Pimcore\\Model\\Object\\AbstractObject";
             }
         }
 
@@ -866,7 +853,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function classesAction() {
         $this->checkUserPermission("classes");
 
-        $list = new Object_Class_List();
+        $list = new Object\ClassDefinition\Listing();
         $classes = $list->load();
         $result = array();
 
@@ -911,7 +898,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
             $sql = "select " . $col . " from " .$type . "s where " . $col . " IN (" . implode(',', $idList) . ")";
 
-            $result = Pimcore_Resource::get()->fetchAll($sql);
+            $result = \Pimcore\Resource::get()->fetchAll($sql);
             foreach ($result as $item) {
                 $id = $item[$col];
                 if ($condense) {
@@ -921,7 +908,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 }
             }
             $this->encoder->encode(array("success" => true, "data" => $resultData));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->encoder->encode(array("success" => false, "msg" => $e->getMessage()));
         }
     }
@@ -970,7 +957,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function objectBricksAction() {
         $this->checkUserPermission("classes");
 
-        $list = new Object_Objectbrick_Definition_List();
+        $list = new Object\Objectbrick\Definition\Listing();
         $bricks = $list->load();
 
         $result = array();
@@ -991,7 +978,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function fieldCollectionsAction() {
         $this->checkUserPermission("classes");
 
-        $list = new Object_Fieldcollection_Definition_List();
+        $list = new Object\Fieldcollection\Definition\Listing();
         $fieldCollections = $list->load();
 
         $result = array();
@@ -1106,8 +1093,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $params = $this->getRequest()->getQuery();
             $result = $this->service->getTranslations($params['type'],$params);
             $this->encoder->encode(array("success" => true, "data" => $result));
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
     }
@@ -1118,20 +1105,20 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      */
     public function serverInfoAction() {
         $this->checkUserPermission("system_settings");
-        $systemSettings = Pimcore_Config::getSystemConfig()->toArray();
+        $systemSettings = \Pimcore\Config::getSystemConfig()->toArray();
         $system = array("currentTime" => time(),
-            "phpCli" => Pimcore_Tool_Console::getPhpCli(),
+            "phpCli" => Tool\Console::getPhpCli(),
         );
 
-        $pimcoreConstants = array(); //only Pimcore_ constants -> others might break the Zend_Encode functionality
+        $pimcoreConstants = array(); //only Pimcore_ constants -> others might break the \Zend_Encode functionality
         foreach((array)get_defined_constants() as $constant => $value){
             if(strpos($constant,'PIMCORE_') === 0){
                 $pimcoreConstants[$constant] = $value;
             }
         }
 
-        $pimcore = array("version" => Pimcore_Version::getVersion(),
-            "revision" => Pimcore_Version::getRevision(),
+        $pimcore = array("version" => \Pimcore\Version::getVersion(),
+            "revision" => \Pimcore\Version::getRevision(),
             "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
             "modules" => array(),
             "constants" => $pimcoreConstants,
@@ -1139,11 +1126,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
 
 
-        foreach((array)Pimcore_API_Plugin_Broker::getInstance()->getModules() as $module){
+        foreach((array) \Pimcore\API\Plugin\Broker::getInstance()->getModules() as $module){
             $pimcore["modules"][] = get_class($module);
         }
 
-        $plugins = Pimcore_ExtensionManager::getPluginConfigs();
+        $plugins = \Pimcore\ExtensionManager::getPluginConfigs();
 
 
         $this->encoder->encode(array("success" => true, "system" => $system,

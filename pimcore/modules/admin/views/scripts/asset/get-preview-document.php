@@ -1,8 +1,8 @@
 <?php
 
 // add the PDF check here, otherwise the preview layer in admin is shown without content
-if(Pimcore_Document::isAvailable() && Pimcore_Document::isFileTypeSupported($this->asset->getFilename())) {
-    $document = Pimcore_Document::getInstance();
+if(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->asset->getFilename())) {
+    $document = \Pimcore\Document::getInstance();
     try {
         $pdfPath = $document->getPdf($this->asset->getFileSystemPath());
         $pdfPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $pdfPath);

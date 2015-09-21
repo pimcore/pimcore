@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_RestClient_Exception extends Exception{
+namespace Pimcore\Tool\RestClient;
+
+class Exception extends \Exception {
 
 
 }

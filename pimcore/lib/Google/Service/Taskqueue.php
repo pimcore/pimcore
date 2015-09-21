@@ -19,8 +19,7 @@
  * Service definition for Taskqueue (v1beta2).
  *
  * <p>
- * Lets you access a Google App Engine Pull Task Queue over REST.
- * </p>
+ * Lets you access a Google App Engine Pull Task Queue over REST.</p>
  *
  * <p>
  * For more information about this service, see the API
@@ -32,9 +31,11 @@
 class Google_Service_Taskqueue extends Google_Service
 {
   /** Manage your Tasks and Taskqueues. */
-  const TASKQUEUE = "https://www.googleapis.com/auth/taskqueue";
+  const TASKQUEUE =
+      "https://www.googleapis.com/auth/taskqueue";
   /** Consume Tasks from your Taskqueues. */
-  const TASKQUEUE_CONSUMER = "https://www.googleapis.com/auth/taskqueue.consumer";
+  const TASKQUEUE_CONSUMER =
+      "https://www.googleapis.com/auth/taskqueue.consumer";
 
   public $taskqueues;
   public $tasks;
@@ -48,6 +49,7 @@ class Google_Service_Taskqueue extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'taskqueue/v1beta2/projects/';
     $this->version = 'v1beta2';
     $this->serviceName = 'taskqueue';
@@ -262,14 +264,11 @@ class Google_Service_Taskqueue_Taskqueues_Resource extends Google_Service_Resour
   /**
    * Get detailed information about a TaskQueue. (taskqueues.get)
    *
-   * @param string $project
-   * The project under which the queue lies.
-   * @param string $taskqueue
-   * The id of the taskqueue to get the properties of.
+   * @param string $project The project under which the queue lies.
+   * @param string $taskqueue The id of the taskqueue to get the properties of.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param bool getStats
-   * Whether to get stats. Optional.
+   * @opt_param bool getStats Whether to get stats. Optional.
    * @return Google_Service_Taskqueue_TaskQueue
    */
   public function get($project, $taskqueue, $optParams = array())
@@ -294,12 +293,9 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
   /**
    * Delete a task from a TaskQueue. (tasks.delete)
    *
-   * @param string $project
-   * The project under which the queue lies.
-   * @param string $taskqueue
-   * The taskqueue to delete a task from.
-   * @param string $task
-   * The id of the task to delete.
+   * @param string $project The project under which the queue lies.
+   * @param string $taskqueue The taskqueue to delete a task from.
+   * @param string $task The id of the task to delete.
    * @param array $optParams Optional parameters.
    */
   public function delete($project, $taskqueue, $task, $optParams = array())
@@ -308,15 +304,13 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
     $params = array_merge($params, $optParams);
     return $this->call('delete', array($params));
   }
+
   /**
    * Get a particular task from a TaskQueue. (tasks.get)
    *
-   * @param string $project
-   * The project under which the queue lies.
-   * @param string $taskqueue
-   * The taskqueue in which the task belongs.
-   * @param string $task
-   * The task to get properties of.
+   * @param string $project The project under which the queue lies.
+   * @param string $taskqueue The taskqueue in which the task belongs.
+   * @param string $task The task to get properties of.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Taskqueue_Task
    */
@@ -326,13 +320,12 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
     $params = array_merge($params, $optParams);
     return $this->call('get', array($params), "Google_Service_Taskqueue_Task");
   }
+
   /**
    * Insert a new task in a TaskQueue (tasks.insert)
    *
-   * @param string $project
-   * The project under which the queue lies
-   * @param string $taskqueue
-   * The taskqueue to insert the task into
+   * @param string $project The project under which the queue lies
+   * @param string $taskqueue The taskqueue to insert the task into
    * @param Google_Task $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Taskqueue_Task
@@ -343,25 +336,22 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
     $params = array_merge($params, $optParams);
     return $this->call('insert', array($params), "Google_Service_Taskqueue_Task");
   }
+
   /**
    * Lease 1 or more tasks from a TaskQueue. (tasks.lease)
    *
-   * @param string $project
-   * The project under which the queue lies.
-   * @param string $taskqueue
-   * The taskqueue to lease a task from.
-   * @param int $numTasks
-   * The number of tasks to lease.
-   * @param int $leaseSecs
-   * The lease in seconds.
+   * @param string $project The project under which the queue lies.
+   * @param string $taskqueue The taskqueue to lease a task from.
+   * @param int $numTasks The number of tasks to lease.
+   * @param int $leaseSecs The lease in seconds.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param bool groupByTag
-   * When true, all returned tasks will have the same tag
-   * @opt_param string tag
-   * The tag allowed for tasks in the response. Must only be specified if group_by_tag is true. If
-    * group_by_tag is true and tag is not specified the tag will be that of the oldest task by eta,
-    * i.e. the first available tag
+   * @opt_param bool groupByTag When true, all returned tasks will have the same
+   * tag
+   * @opt_param string tag The tag allowed for tasks in the response. Must only be
+   * specified if group_by_tag is true. If group_by_tag is true and tag is not
+   * specified the tag will be that of the oldest task by eta, i.e. the first
+   * available tag
    * @return Google_Service_Taskqueue_Tasks
    */
   public function lease($project, $taskqueue, $numTasks, $leaseSecs, $optParams = array())
@@ -370,13 +360,12 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
     $params = array_merge($params, $optParams);
     return $this->call('lease', array($params), "Google_Service_Taskqueue_Tasks");
   }
+
   /**
    * List Tasks in a TaskQueue (tasks.listTasks)
    *
-   * @param string $project
-   * The project under which the queue lies.
-   * @param string $taskqueue
-   * The id of the taskqueue to list tasks from.
+   * @param string $project The project under which the queue lies.
+   * @param string $taskqueue The id of the taskqueue to list tasks from.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Taskqueue_Tasks2
    */
@@ -386,18 +375,15 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
     $params = array_merge($params, $optParams);
     return $this->call('list', array($params), "Google_Service_Taskqueue_Tasks2");
   }
+
   /**
    * Update tasks that are leased out of a TaskQueue. This method supports patch
    * semantics. (tasks.patch)
    *
-   * @param string $project
-   * The project under which the queue lies.
+   * @param string $project The project under which the queue lies.
    * @param string $taskqueue
-   *
    * @param string $task
-   *
-   * @param int $newLeaseSeconds
-   * The new lease in seconds.
+   * @param int $newLeaseSeconds The new lease in seconds.
    * @param Google_Task $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Taskqueue_Task
@@ -408,17 +394,14 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
     $params = array_merge($params, $optParams);
     return $this->call('patch', array($params), "Google_Service_Taskqueue_Task");
   }
+
   /**
    * Update tasks that are leased out of a TaskQueue. (tasks.update)
    *
-   * @param string $project
-   * The project under which the queue lies.
+   * @param string $project The project under which the queue lies.
    * @param string $taskqueue
-   *
    * @param string $task
-   *
-   * @param int $newLeaseSeconds
-   * The new lease in seconds.
+   * @param int $newLeaseSeconds The new lease in seconds.
    * @param Google_Task $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Taskqueue_Task
@@ -436,6 +419,9 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
 
 class Google_Service_Taskqueue_Task extends Google_Model
 {
+  protected $internal_gapi_mappings = array(
+        "retryCount" => "retry_count",
+  );
   public $enqueueTimestamp;
   public $id;
   public $kind;
@@ -445,81 +431,67 @@ class Google_Service_Taskqueue_Task extends Google_Model
   public $retryCount;
   public $tag;
 
+
   public function setEnqueueTimestamp($enqueueTimestamp)
   {
     $this->enqueueTimestamp = $enqueueTimestamp;
   }
-
   public function getEnqueueTimestamp()
   {
     return $this->enqueueTimestamp;
   }
-
   public function setId($id)
   {
     $this->id = $id;
   }
-
   public function getId()
   {
     return $this->id;
   }
-
   public function setKind($kind)
   {
     $this->kind = $kind;
   }
-
   public function getKind()
   {
     return $this->kind;
   }
-
   public function setLeaseTimestamp($leaseTimestamp)
   {
     $this->leaseTimestamp = $leaseTimestamp;
   }
-
   public function getLeaseTimestamp()
   {
     return $this->leaseTimestamp;
   }
-
   public function setPayloadBase64($payloadBase64)
   {
     $this->payloadBase64 = $payloadBase64;
   }
-
   public function getPayloadBase64()
   {
     return $this->payloadBase64;
   }
-
   public function setQueueName($queueName)
   {
     $this->queueName = $queueName;
   }
-
   public function getQueueName()
   {
     return $this->queueName;
   }
-
   public function setRetryCount($retryCount)
   {
     $this->retryCount = $retryCount;
   }
-
   public function getRetryCount()
   {
     return $this->retryCount;
   }
-
   public function setTag($tag)
   {
     $this->tag = $tag;
   }
-
   public function getTag()
   {
     return $this->tag;
@@ -528,6 +500,8 @@ class Google_Service_Taskqueue_Task extends Google_Model
 
 class Google_Service_Taskqueue_TaskQueue extends Google_Model
 {
+  protected $internal_gapi_mappings = array(
+  );
   protected $aclType = 'Google_Service_Taskqueue_TaskQueueAcl';
   protected $aclDataType = '';
   public $id;
@@ -536,51 +510,43 @@ class Google_Service_Taskqueue_TaskQueue extends Google_Model
   protected $statsType = 'Google_Service_Taskqueue_TaskQueueStats';
   protected $statsDataType = '';
 
+
   public function setAcl(Google_Service_Taskqueue_TaskQueueAcl $acl)
   {
     $this->acl = $acl;
   }
-
   public function getAcl()
   {
     return $this->acl;
   }
-
   public function setId($id)
   {
     $this->id = $id;
   }
-
   public function getId()
   {
     return $this->id;
   }
-
   public function setKind($kind)
   {
     $this->kind = $kind;
   }
-
   public function getKind()
   {
     return $this->kind;
   }
-
   public function setMaxLeases($maxLeases)
   {
     $this->maxLeases = $maxLeases;
   }
-
   public function getMaxLeases()
   {
     return $this->maxLeases;
   }
-
   public function setStats(Google_Service_Taskqueue_TaskQueueStats $stats)
   {
     $this->stats = $stats;
   }
-
   public function getStats()
   {
     return $this->stats;
@@ -589,35 +555,34 @@ class Google_Service_Taskqueue_TaskQueue extends Google_Model
 
 class Google_Service_Taskqueue_TaskQueueAcl extends Google_Collection
 {
+  protected $collection_key = 'producerEmails';
+  protected $internal_gapi_mappings = array(
+  );
   public $adminEmails;
   public $consumerEmails;
   public $producerEmails;
+
 
   public function setAdminEmails($adminEmails)
   {
     $this->adminEmails = $adminEmails;
   }
-
   public function getAdminEmails()
   {
     return $this->adminEmails;
   }
-
   public function setConsumerEmails($consumerEmails)
   {
     $this->consumerEmails = $consumerEmails;
   }
-
   public function getConsumerEmails()
   {
     return $this->consumerEmails;
   }
-
   public function setProducerEmails($producerEmails)
   {
     $this->producerEmails = $producerEmails;
   }
-
   public function getProducerEmails()
   {
     return $this->producerEmails;
@@ -626,46 +591,42 @@ class Google_Service_Taskqueue_TaskQueueAcl extends Google_Collection
 
 class Google_Service_Taskqueue_TaskQueueStats extends Google_Model
 {
+  protected $internal_gapi_mappings = array(
+  );
   public $leasedLastHour;
   public $leasedLastMinute;
   public $oldestTask;
   public $totalTasks;
 
+
   public function setLeasedLastHour($leasedLastHour)
   {
     $this->leasedLastHour = $leasedLastHour;
   }
-
   public function getLeasedLastHour()
   {
     return $this->leasedLastHour;
   }
-
   public function setLeasedLastMinute($leasedLastMinute)
   {
     $this->leasedLastMinute = $leasedLastMinute;
   }
-
   public function getLeasedLastMinute()
   {
     return $this->leasedLastMinute;
   }
-
   public function setOldestTask($oldestTask)
   {
     $this->oldestTask = $oldestTask;
   }
-
   public function getOldestTask()
   {
     return $this->oldestTask;
   }
-
   public function setTotalTasks($totalTasks)
   {
     $this->totalTasks = $totalTasks;
   }
-
   public function getTotalTasks()
   {
     return $this->totalTasks;
@@ -674,25 +635,26 @@ class Google_Service_Taskqueue_TaskQueueStats extends Google_Model
 
 class Google_Service_Taskqueue_Tasks extends Google_Collection
 {
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
   protected $itemsType = 'Google_Service_Taskqueue_Task';
   protected $itemsDataType = 'array';
   public $kind;
+
 
   public function setItems($items)
   {
     $this->items = $items;
   }
-
   public function getItems()
   {
     return $this->items;
   }
-
   public function setKind($kind)
   {
     $this->kind = $kind;
   }
-
   public function getKind()
   {
     return $this->kind;
@@ -701,25 +663,26 @@ class Google_Service_Taskqueue_Tasks extends Google_Collection
 
 class Google_Service_Taskqueue_Tasks2 extends Google_Collection
 {
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
   protected $itemsType = 'Google_Service_Taskqueue_Task';
   protected $itemsDataType = 'array';
   public $kind;
+
 
   public function setItems($items)
   {
     $this->items = $items;
   }
-
   public function getItems()
   {
     return $this->items;
   }
-
   public function setKind($kind)
   {
     $this->kind = $kind;
   }
-
   public function getKind()
   {
     return $this->kind;

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9280 $"/>
-		<generation date="$Date: 2013-08-27 13:07:13 -0500 (Tue, 27 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="ar"/>
 		<territory type="EG"/>
 	</identity>
@@ -84,7 +84,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nmg" draft="contributed">لغة الكواسيو</language>
 			<language type="nnh" draft="contributed">لغة النجيمبون</language>
 			<language type="nus" draft="contributed">النوير</language>
-			<language type="pra" draft="contributed">لغة البراكريت</language>
 			<language type="rof" draft="contributed">الرومبو</language>
 			<language type="rom" draft="contributed">الغجرية</language>
 			<language type="rwk" draft="contributed">الروا</language>
@@ -103,7 +102,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ti" draft="contributed">التيغرينية</language>
 			<language type="tig" draft="contributed">التيغرية</language>
 			<language type="trv" draft="contributed">لغة التاروكو</language>
-			<language type="tut" draft="contributed">اللغة الألطية</language>
 			<language type="twq" draft="contributed">لغة التاساواك</language>
 			<language type="tyv" draft="contributed">التوفية</language>
 			<language type="tzm" draft="contributed">التمازيغية الأوسط أطلسية</language>

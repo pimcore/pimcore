@@ -15,11 +15,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\Setup;
 
+use Pimcore\Model;
 
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     *
+     */
     public function database () {
-
+        
         $mysqlInstallScript = file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql");
 
         // remove comments in SQL script
@@ -37,17 +43,24 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             }
         }
 
+        // set table search_backend_data to InnoDB if MySQL Version is > 5.6
+        $this->db->query("ALTER TABLE search_backend_data /*!50600 ENGINE=InnoDB */;");
+
         // reset the database connection
-        Pimcore_Resource::reset();
+        \Pimcore\Resource::reset();
     }
-	
+
+    /**
+     * @param $file
+     * @throws \Zend_Db_Adapter_Exception
+     */
 	public function insertDump($file) {
 
 		$sql = file_get_contents($file);
 		
-		// we have to use the raw connection here otherwise Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
+		// we have to use the raw connection here otherwise \Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
 		// and mysqli causes troubles because it doesn't support multiple queries
-		if($this->db->getResource() instanceof Zend_Db_Adapter_Mysqli) {
+		if($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {
 			$mysqli = $this->db->getConnection();
 			$mysqli->multi_query($sql);
 			
@@ -58,16 +71,19 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
 				}
 			} while($mysqli->next_result());
 			
-		} else if ($this->db->getResource() instanceof Zend_Db_Adapter_Pdo_Mysql) {
+		} else if ($this->db->getResource() instanceof \Zend_Db_Adapter_Pdo_Mysql) {
 			$this->db->getConnection()->exec($sql);
 		}
 				
-		Pimcore_Resource::reset();
+		\Pimcore\Resource::reset();
 
         // set the id of the system user to 0
         $this->db->update("users",array("id" => 0), $this->db->quoteInto("name = ?", "system"));
 	}
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function contents () {
 
         $this->db->insert("assets", array(
@@ -128,6 +144,7 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
 
 
         $userPermissions = array(
+            array("key" => "application_logging"),
             array("key" => "assets"),
             array("key" => "classes"),
             array("key" => "clear_cache"),
@@ -158,6 +175,8 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "emails"),
             array("key" => "website_settings"),
             array("key" => "newsletter"),
+            array("key" => "dashboards"),
+            array("key" => "users"),
         );
         foreach ($userPermissions as $up) {
             $this->db->insert("users_permission_definitions", $up);

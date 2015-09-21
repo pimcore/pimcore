@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9308 $"/>
-		<generation date="$Date: 2013-09-04 14:41:52 -0500 (Wed, 04 Sep 2013) $"/>
+		<version number="$Revision: 9737 $"/>
+		<generation date="$Date: 2014-02-14 16:49:13 -0600 (Fri, 14 Feb 2014) $"/>
 		<language type="root"/>
 	</identity>
 	<localeDisplayNames>
@@ -1087,10 +1087,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 						</dayPeriodWidth>
 						<dayPeriodWidth type="narrow">
-							<alias source="locale" path="../dayPeriodWidth[@type='abbreviated']"/>
+							<dayPeriod type="am">a</dayPeriod>
+                                                        <dayPeriod type="noon">n</dayPeriod>
+							<dayPeriod type="pm">p</dayPeriod>
 						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
 							<dayPeriod type="am">AM</dayPeriod>
+                                                        <dayPeriod type="noon">noon</dayPeriod>
 							<dayPeriod type="pm">PM</dayPeriod>
 						</dayPeriodWidth>
 					</dayPeriodContext>
@@ -1464,7 +1467,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<alias source="locale" path="../eraAbbr"/>
 					</eraNames>
 					<eraAbbr>
-						<era type="0">SAKA</era>
+						<era type="0">Saka</era>
 					</eraAbbr>
 					<eraNarrow>
 						<alias source="locale" path="../eraAbbr"/>

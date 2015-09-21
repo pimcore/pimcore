@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Stdlib
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -381,7 +381,7 @@ if (!is_array($this->preparedQueue)) {
  *
  * @category   Zend
  * @package    Zend_Stdlib
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Stdlib_SplPriorityQueue extends SplPriorityQueue implements Serializable
@@ -404,9 +404,6 @@ class Zend_Stdlib_SplPriorityQueue extends SplPriorityQueue implements Serializa
     public function __construct()
     {
         $this->isPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
-        if(defined("HHVM_VERSION")) {
-            parent::__construct();
-        }
     }
 
     /**

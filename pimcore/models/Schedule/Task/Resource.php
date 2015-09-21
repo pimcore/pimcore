@@ -15,35 +15,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Schedule_Task_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Schedule\Task;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("schedule_tasks");
-    }
-
-    /**
-     * Get the data for the object from database for the given id
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id) {
         $data = $this->db->fetchRow("SELECT * FROM schedule_tasks WHERE id = ?", $id);
         if (!$data["id"]) {
-            throw new Exception("there is no task for the requested id");
+            throw new \Exception("there is no task for the requested id");
         }
         $this->assignVariablesToModel($data);
     }
@@ -83,10 +68,10 @@ class Schedule_Task_Resource extends Pimcore_Model_Resource_Abstract {
         $site = get_object_vars($this->model);
 
         foreach ($site as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("schedule_tasks"))) {
 
                 if (is_array($value) || is_object($value)) {
-                    $value = Pimcore_Tool_Serialize::serialize($value);
+                    $value = \Pimcore\Tool\Serialize::serialize($value);
                 } else if(is_bool($value)) {
                     $value = (int)$value;
                 }

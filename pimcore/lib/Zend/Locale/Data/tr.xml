@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="tr"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">Adigece</language>
 			<language type="ae">Avestçe</language>
 			<language type="af">Afrikaanca</language>
-			<language type="afa">Afro-Asyatik Diller</language>
 			<language type="afh">Afrihili</language>
 			<language type="agq">Aghem</language>
 			<language type="ain">Ayni Dili</language>
 			<language type="ak">Akan</language>
 			<language type="akk">Akad Dili</language>
 			<language type="ale">Aleut</language>
-			<language type="alg">Algonkin Dili</language>
 			<language type="alt">Güney Altayca</language>
 			<language type="am">Amharca</language>
 			<language type="an">Aragonca</language>
 			<language type="ang">Eski İngilizce</language>
 			<language type="anp">Angika</language>
-			<language type="apa">Apaçi Dilleri</language>
 			<language type="ar">Arapça</language>
 			<language type="ar_001">Modern Standart Arapça</language>
 			<language type="arc">Aramice</language>
 			<language type="arn">Araukanya Dili</language>
 			<language type="arp">Arapaho Dili</language>
-			<language type="art">Yapay Diller</language>
 			<language type="arw">Arawak Dili</language>
 			<language type="as">Assamca</language>
 			<language type="asa">Asu</language>
 			<language type="ast">Asturyasca</language>
-			<language type="ath">Atabaşkan Dilleri</language>
-			<language type="aus">Avustralya Dilleri</language>
 			<language type="av">Avar Dili</language>
 			<language type="awa">Awadhi</language>
 			<language type="ay">Aymara</language>
 			<language type="az">Azerice</language>
 			<language type="az" alt="short">Azerice</language>
 			<language type="ba">Başkırtça</language>
-			<language type="bad">Banda Dili</language>
-			<language type="bai">Bamileke Dilleri</language>
 			<language type="bal">Baluchi</language>
 			<language type="ban">Bali Dili</language>
 			<language type="bas">Basa Dili</language>
-			<language type="bat">Baltık Dilleri</language>
 			<language type="bax">Bamun</language>
 			<language type="bbj">Ghomala</language>
 			<language type="be">Beyaz Rusça</language>
 			<language type="bej">Beja Dili</language>
 			<language type="bem">Bemba</language>
-			<language type="ber">Berberi</language>
 			<language type="bez">Bena</language>
 			<language type="bfd">Bafut</language>
 			<language type="bg">Bulgarca</language>
-			<language type="bh">Bihari</language>
 			<language type="bho">Arayanice</language>
 			<language type="bi">Bislama</language>
 			<language type="bik">Bikol</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">Siksika</language>
 			<language type="bm">Bambara</language>
 			<language type="bn">Bengalce</language>
-			<language type="bnt">Bantu Dili</language>
 			<language type="bo">Tibetçe</language>
 			<language type="br">Breton</language>
 			<language type="bra">Braj</language>
 			<language type="brx">Bodo</language>
 			<language type="bs">Boşnakça</language>
 			<language type="bss">Akoose</language>
-			<language type="btk">Batak</language>
 			<language type="bua">Buryat</language>
 			<language type="bug">Bugis</language>
 			<language type="bum">Bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">Medumba</language>
 			<language type="ca">Katalanca</language>
 			<language type="cad">Caddo</language>
-			<language type="cai">Orta Amerika Yerli Dilleri</language>
 			<language type="car">Carib</language>
-			<language type="cau">Kafkas Dilleri</language>
 			<language type="cay">Cayuga</language>
 			<language type="cch">Atsam</language>
 			<language type="ce">Çeçence</language>
 			<language type="ceb">Cebuano</language>
-			<language type="cel">Kelt Dilleri</language>
 			<language type="cgg">Chiga</language>
 			<language type="ch">Chamorro</language>
 			<language type="chb">Chibcha</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">Cherokee</language>
 			<language type="chy">Şayen Dili</language>
 			<language type="ckb">Orta Kürtçe</language>
-			<language type="cmc">Chamic Dilleri</language>
 			<language type="co">Korsikaca</language>
 			<language type="cop">Kıptice</language>
-			<language type="cpe">İngilizce tabanlı Creole ve Pidgin Dilleri</language>
-			<language type="cpf">Fransızca tabanlı Creole ve Pidgin Dilleri</language>
-			<language type="cpp">Portekizce tabanlı Creole ve Pidgin Dilleri</language>
 			<language type="cr">Cree</language>
 			<language type="crh">Kırım Türkçesi</language>
-			<language type="crp">Creole ve Pidgin Dilleri</language>
 			<language type="cs">Çekçe</language>
 			<language type="csb">Kashubian</language>
 			<language type="cu">Kilise Slavcası</language>
-			<language type="cus">Kuşitik Diller</language>
 			<language type="cv">Çuvaşça</language>
 			<language type="cy">Galce</language>
 			<language type="da">Danca</language>
 			<language type="dak">Dakota</language>
 			<language type="dar">Dargince</language>
 			<language type="dav">Taita</language>
-			<language type="day">Dayak</language>
 			<language type="de">Almanca</language>
 			<language type="de_AT">Avusturya Almancası</language>
 			<language type="de_CH">İsviçre Yüksek Almancası</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">Dinka</language>
 			<language type="dje">Zarma</language>
 			<language type="doi">Dogri</language>
-			<language type="dra">Dravid Dilleri</language>
 			<language type="dsb">Aşağı Sorbça</language>
 			<language type="dua">Duala</language>
 			<language type="dum">Ortaçağ Felemenkçesi</language>
@@ -182,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">Fulah</language>
 			<language type="fi">Fince</language>
 			<language type="fil">Filipince</language>
-			<language type="fiu">Finno - Ugrik Diller</language>
 			<language type="fj">Fiji Dili</language>
 			<language type="fo">Faroe Dili</language>
 			<language type="fon">Fon</language>
@@ -200,7 +175,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">Gayo</language>
 			<language type="gba">Gbaya</language>
 			<language type="gd">İskoç Gal Dili</language>
-			<language type="gem">Cermen Dilleri</language>
 			<language type="gez">Geez</language>
 			<language type="gil">Kiribati Dili</language>
 			<language type="gl">Galiçyaca</language>
@@ -223,7 +197,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">İbranice</language>
 			<language type="hi">Hintçe</language>
 			<language type="hil">Hiligaynon</language>
-			<language type="him">Himachali</language>
 			<language type="hit">Hititçe</language>
 			<language type="hmn">Hmong</language>
 			<language type="ho">Hiri Motu</language>
@@ -241,15 +214,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">Interlingue</language>
 			<language type="ig">İbo Dili</language>
 			<language type="ii">Sichuan Yi</language>
-			<language type="ijo">Ijo</language>
 			<language type="ik">Inupiak</language>
 			<language type="ilo">Iloko</language>
-			<language type="inc">Hint Dilleri</language>
-			<language type="ine">Hint-Avrupa Dilleri</language>
 			<language type="inh">İnguşça</language>
 			<language type="io">Ido</language>
-			<language type="ira">İran Dilleri</language>
-			<language type="iro">İroqua Dili</language>
 			<language type="is">İzlandaca</language>
 			<language type="it">İtalyanca</language>
 			<language type="iu">Inuktitut</language>
@@ -266,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">Kaçin</language>
 			<language type="kaj">Jju</language>
 			<language type="kam">Kamba</language>
-			<language type="kar">Karen</language>
 			<language type="kaw">Kawi</language>
 			<language type="kbd">Kabardeyce</language>
 			<language type="kbl">Kanembu</language>
@@ -276,7 +243,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">Koro</language>
 			<language type="kg">Kongo</language>
 			<language type="kha">Khasi</language>
-			<language type="khi">Hoisan Dilleri</language>
 			<language type="kho">Hotanca</language>
 			<language type="khq">Koyra Chiini</language>
 			<language type="ki">Kikuyu</language>
@@ -295,7 +261,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">Kanuri</language>
 			<language type="krc">Karaçay-Balkarca</language>
 			<language type="krl">Karelyaca</language>
-			<language type="kro">Kru</language>
 			<language type="kru">Kurukh</language>
 			<language type="ks">Keşmirce</language>
 			<language type="ksb">Shambala</language>
@@ -335,7 +300,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">Maithili</language>
 			<language type="mak">Makasar</language>
 			<language type="man">Mandingo</language>
-			<language type="map">Avustronezya Dili</language>
 			<language type="mas">Masai</language>
 			<language type="mde">Maba</language>
 			<language type="mdf">Mokşa Dili</language>
@@ -351,15 +315,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">Maori Dili</language>
 			<language type="mic">Micmac</language>
 			<language type="min">Minangkabau</language>
-			<language type="mis">Çeşitli Diller</language>
 			<language type="mk">Makedonca</language>
-			<language type="mkh">Mon-Khmer Dilleri</language>
 			<language type="ml">Malayalam</language>
 			<language type="mn">Moğolca</language>
 			<language type="mnc">Mançurya Dili</language>
 			<language type="mni">Manipuri</language>
-			<language type="mno">Manobo Dilleri</language>
-			<language type="mo">Moldovaca</language>
 			<language type="moh">Mohavk Dili</language>
 			<language type="mos">Mossi</language>
 			<language type="mr">Marathi</language>
@@ -367,17 +327,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">Maltaca</language>
 			<language type="mua">Mundang</language>
 			<language type="mul">Birden Fazla Dil</language>
-			<language type="mun">Munda Dilleri</language>
 			<language type="mus">Creek</language>
 			<language type="mwl">Miranda Dili</language>
 			<language type="mwr">Marvari</language>
 			<language type="my">Burmaca</language>
 			<language type="mye">Myene</language>
-			<language type="myn">Maya Dilleri</language>
 			<language type="myv">Erzya</language>
 			<language type="na">Nauru Dili</language>
-			<language type="nah">Nahuatl</language>
-			<language type="nai">Kuzey Amerika Yerli Dilleri</language>
 			<language type="nap">Napolice</language>
 			<language type="naq">Nama</language>
 			<language type="nb">Norveççe Bokmål</language>
@@ -387,7 +343,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">Nevari</language>
 			<language type="ng">Ndonga</language>
 			<language type="nia">Nias</language>
-			<language type="nic">Nijer-Kordofan Dilleri</language>
 			<language type="niu">Niuean</language>
 			<language type="nl">Hollandaca</language>
 			<language type="nl_BE">Flamanca</language>
@@ -400,7 +355,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">N’Ko</language>
 			<language type="nr">Güney Ndebele</language>
 			<language type="nso">Kuzey Sotho</language>
-			<language type="nub">Nubian Dilleri</language>
 			<language type="nus">Nuer</language>
 			<language type="nv">Navaho Dili</language>
 			<language type="nwc">Klasik Nevari</language>
@@ -416,21 +370,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">Osetçe</language>
 			<language type="osa">Osage</language>
 			<language type="ota">Osmanlı Türkçesi</language>
-			<language type="oto">Otomi Dilleri</language>
 			<language type="pa">Pencapça</language>
-			<language type="paa">Papua Dilleri</language>
 			<language type="pag">Pangasinan</language>
 			<language type="pal">Pehlevi Dili</language>
 			<language type="pam">Pampanga</language>
 			<language type="pap">Papiamento</language>
 			<language type="pau">Palau Dili</language>
 			<language type="peo">Eski Farsça</language>
-			<language type="phi">Filipinler Dilleri</language>
 			<language type="phn">Fenike Dili</language>
 			<language type="pi">Pali</language>
 			<language type="pl">Lehçe</language>
 			<language type="pon">Pohnpeian</language>
-			<language type="pra">Prakrit Dilleri</language>
 			<language type="pro">Eski Provensal</language>
 			<language type="ps">Peştuca</language>
 			<language type="pt">Portekizce</language>
@@ -443,7 +393,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">Romanşça</language>
 			<language type="rn">Kirundi</language>
 			<language type="ro">Romence</language>
-			<language type="roa">Roman Dilleri</language>
+			<language type="ro_MD">Moldovaca</language>
 			<language type="rof">Rombo</language>
 			<language type="rom">Romanca</language>
 			<language type="root">Köken</language>
@@ -454,8 +404,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">Sanskritçe</language>
 			<language type="sad">Sandave</language>
 			<language type="sah">Yakutça</language>
-			<language type="sai">Güney Amerika Yerli Dilleri</language>
-			<language type="sal">Salishan Dilleri</language>
 			<language type="sam">Samarit Aramcası</language>
 			<language type="saq">Samburu</language>
 			<language type="sas">Sasak</language>
@@ -470,25 +418,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">Seneca</language>
 			<language type="seh">Sena</language>
 			<language type="sel">Selkup</language>
-			<language type="sem">Semitik Diller</language>
 			<language type="ses">Koyraboro Senni</language>
 			<language type="sg">Sangho</language>
 			<language type="sga">Eski İrlandaca</language>
-			<language type="sgn">İşaret Dilleri</language>
 			<language type="sh">Sırp-Hırvat Dili</language>
 			<language type="shi">Taşelhit</language>
 			<language type="shn">Shan Dili</language>
 			<language type="shu">Çad Arapçası</language>
 			<language type="si">Seylanca</language>
 			<language type="sid">Sidamo</language>
-			<language type="sio">Siu Dilleri</language>
-			<language type="sit">Sino-Tibet Dilleri</language>
 			<language type="sk">Slovakça</language>
 			<language type="sl">Slovence</language>
-			<language type="sla">Slav Dilleri</language>
 			<language type="sm">Samoa Dili</language>
 			<language type="sma">Güney Sami</language>
-			<language type="smi">Sami Dilleri</language>
 			<language type="smj">Lule Sami</language>
 			<language type="smn">Inari Sami</language>
 			<language type="sms">Skolt Sami</language>
@@ -496,13 +438,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">Soninke</language>
 			<language type="so">Somalice</language>
 			<language type="sog">Sogdiana Dili</language>
-			<language type="son">Songhai</language>
 			<language type="sq">Arnavutça</language>
 			<language type="sr">Sırpça</language>
 			<language type="srn">Sranan Tongo</language>
 			<language type="srr">Serer</language>
 			<language type="ss">Sisvati</language>
-			<language type="ssa">Nil-Sahara Dilleri</language>
 			<language type="ssy">Saho</language>
 			<language type="st">Güney Sotho</language>
 			<language type="su">Sunda Dili</language>
@@ -516,7 +456,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">Klasik Süryanice</language>
 			<language type="syr">Süryanice</language>
 			<language type="ta">Tamilce</language>
-			<language type="tai">Tai Dili</language>
 			<language type="te">Telugu Dili</language>
 			<language type="tem">Timne</language>
 			<language type="teo">Teso</language>
@@ -543,8 +482,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">Tsimshian</language>
 			<language type="tt">Tatarca</language>
 			<language type="tum">Tumbuka</language>
-			<language type="tup">Tupi Dilleri</language>
-			<language type="tut">Altay Dilleri</language>
 			<language type="tvl">Tuvalu</language>
 			<language type="tw">Tvi</language>
 			<language type="twq">Tasawaq</language>
@@ -567,11 +504,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">Vunjo</language>
 			<language type="wa">Valonca</language>
 			<language type="wae">Walser</language>
-			<language type="wak">Vakaşan Dilleri</language>
 			<language type="wal">Valamo</language>
 			<language type="war">Varay</language>
 			<language type="was">Vaşo</language>
-			<language type="wen">Sorb Dilleri</language>
 			<language type="wo">Volofça</language>
 			<language type="xal">Kalmıkça</language>
 			<language type="xh">Zosa</language>
@@ -582,7 +517,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">Yemba</language>
 			<language type="yi">Yidiş</language>
 			<language type="yo">Yoruba</language>
-			<language type="ypk">Yupik Dili</language>
 			<language type="yue">Kantonca</language>
 			<language type="za">Zhuang</language>
 			<language type="zap">Zapotek Dili</language>
@@ -592,7 +526,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">Çince</language>
 			<language type="zh_Hans">Basitleştirilmiş Çince</language>
 			<language type="zh_Hant">Geleneksel Çince</language>
-			<language type="znd">Zande</language>
 			<language type="zu">Zuluca</language>
 			<language type="zun">Zuni</language>
 			<language type="zxx">Dilbilim içeriği yok</language>
@@ -1249,6 +1182,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<codePattern type="territory">Bölge: {0}</codePattern>
 		</codePatterns>
 	</localeDisplayNames>
+	<contextTransforms>
+		<contextTransformUsage type="relative">
+			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
+			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
+		</contextTransformUsage>
+	</contextTransforms>
 	<characters>
 		<exemplarCharacters>[a b c ç d e f g ğ h ı i İ j k l m n o ö p r s ş t u ü v y z]</exemplarCharacters>
 		<exemplarCharacters type="auxiliary">[á à ă â å ä ã ā æ ç é è ĕ ê ë ē í ì ĭ î ï ī ñ ó ò ŏ ô ø ō œ ö q ß ú ù ŭ û ū ü w x ÿ]</exemplarCharacters>
@@ -2238,9 +2177,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Yerevan">
 				<exemplarCity>Erivan</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Güney Kutbu</exemplarCity>
 			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity>Dumont d’Urville</exemplarCity>

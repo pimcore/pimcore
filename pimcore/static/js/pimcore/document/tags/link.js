@@ -58,6 +58,10 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
     },
 
     openEditor: function () {
+
+        // disable the global dnd handler in this editmode/frame
+        window.dndManager.disable();
+
         this.window = pimcore.helpers.editmode.openLinkEditPanel(this.data, {
             empty: this.empty.bind(this),
             cancel: this.cancel.bind(this),
@@ -112,6 +116,9 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
     save: function () {
 
+        // enable the global dnd dropzone again
+        window.dndManager.enable();
+
         var values = this.window.getComponent("form").getForm().getFieldValues();
         this.data = values;
 
@@ -132,6 +139,9 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
     empty: function () {
 
+        // enable the global dnd dropzone again
+        window.dndManager.enable();
+
         // close window
         this.window.close();
 
@@ -142,6 +152,10 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
     },
 
     cancel: function () {
+
+        // enable the global dnd dropzone again
+        window.dndManager.enable();
+
         this.window.close();
     },
 

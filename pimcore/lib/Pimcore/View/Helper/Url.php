@@ -13,16 +13,33 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
+namespace Pimcore\View\Helper;
 
+use Pimcore\Config; 
+use Pimcore\Model\Site;
+use Pimcore\Model\Staticroute;
+use Pimcore\Tool;
 
+class Url extends \Zend_View_Helper_Url {
+
+    /**
+     * @param array $urlOptions
+     * @param null $name
+     * @param bool $reset
+     * @param bool $encode
+     * @return string|void
+     * @throws \Exception
+     */
     public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         if(!$urlOptions) {
             $urlOptions = array();
         }
 
-        if(!$name) {
+        // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
+        // but just the query string generation using the given parameters
+        // eg. $this->url(["foo" => "bar"], false) => /?foo=bar
+        if($name === null) {
             if(Staticroute::getCurrentRoute() instanceof Staticroute) {
                 $name = Staticroute::getCurrentRoute()->getName();
             }
@@ -36,7 +53,7 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         // check for a site in the options, if valid remove it from the options
         $hostname = null;
         if(isset($urlOptions["site"])) {
-            $config = Pimcore_Config::getSystemConfig();
+            $config = Config::getSystemConfig();
             $site = $urlOptions["site"];
             if(!empty($site)) {
                 try {
@@ -45,8 +62,8 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
                     $hostname = $site->getMainDomain();
                     $siteId = $site->getId();
                 } catch (\Exception $e) {
-                    Logger::warn("passed site doesn't exists");
-                    Logger::warn($e);
+                    \Logger::warn("passed site doesn't exists");
+                    \Logger::warn($e);
                 }
             } else if ($config->general->domain) {
                 $hostname = $config->general->domain;
@@ -63,7 +80,7 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
                 $url = "//" . $hostname . $url;
             }
 
-            if(Pimcore_Config::getSystemConfig()->documents->allowcapitals == 'no'){
+            if(Config::getSystemConfig()->documents->allowcapitals == 'no'){
                 $urlParts = parse_url($url);
                 $url = str_replace($urlParts["path"], strtolower($urlParts["path"]), $url);
             }
@@ -71,7 +88,7 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         }
 
 
-        // this is to add support for arrays as values for the default Zend_View_Helper_Url
+        // this is to add support for arrays as values for the default \Zend_View_Helper_Url
         $unset = array(); 
         foreach ($urlOptions as $optionName => $optionValues) {
             if (is_array($optionValues)) {
@@ -88,8 +105,14 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         
         try {
             return parent::url($urlOptions, $name, $reset, $encode);
-        } catch (Exception $e) {
-            throw new Exception("Route '".$name."' for building the URL not found");
+        } catch (\Exception $e) {
+            if(Tool::isFrontentRequestByAdmin()) {
+                // routes can be site specific, so in editmode it's possible that we don't get
+                // the right route (sites are not registered in editmode), so we cannot throw exceptions there
+                return "ERROR_IN_YOUR_URL_CONFIGURATION:~ROUTE--" . $name . "--DOES_NOT_EXIST";
+            }
+
+            throw new \Exception("Route '".$name."' for building the URL not found");
         }
     }    
 }

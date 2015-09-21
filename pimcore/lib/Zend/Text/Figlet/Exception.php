@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Figlet
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -30,7 +30,7 @@
  * @category  Zend
  * @package   Zend_Text_Figlet
  * @uses      Zend_Text_Exception
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Text_Figlet_Exception extends Zend_Text_Exception

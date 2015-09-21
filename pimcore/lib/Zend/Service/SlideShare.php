@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage SlideShare
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -47,7 +47,7 @@
  * @package    Zend_Service
  * @subpackage SlideShare
  * @throws     Zend_Service_SlideShare_Exception
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_SlideShare
@@ -128,8 +128,8 @@ class Zend_Service_SlideShare
     protected $_cacheobject;
 
     /**
-     * Sets the Zend_Http_Client object to use in requests. If not provided a default will
-     * be used.
+     * Sets the Zend_Http_Client object to use in requests. If not provided a
+     * default will be used.
      *
      * @param Zend_Http_Client $client The HTTP client instance to use
      * @return Zend_Service_SlideShare
@@ -141,8 +141,8 @@ class Zend_Service_SlideShare
     }
 
     /**
-     * Returns the instance of the Zend_Http_Client which will be used. Creates an instance
-     * of Zend_Http_Client if no previous client was set.
+     * Returns the instance of the Zend_Http_Client which will be used. Creates
+     * an instance of Zend_Http_Client if no previous client was set.
      *
      * @return Zend_Http_Client The HTTP client which will be used
      */
@@ -179,9 +179,9 @@ class Zend_Service_SlideShare
     }
 
     /**
-     * Gets the Zend_Cache object which will be used to cache API queries. If no cache object
-     * was previously set the the default will be used (Filesystem caching in /tmp with a life
-     * time of 43200 seconds)
+     * Gets the Zend_Cache object which will be used to cache API queries. If no
+     * cache object was previously set the the default will be used (Filesystem
+     * caching in /tmp with a life time of 43200 seconds)
      *
      * @return Zend_Cache_Core The object used in caching
      */
@@ -193,8 +193,8 @@ class Zend_Service_SlideShare
                 'Core',
                 'File',
                 array(
-                     'lifetime'                => 43200,
-                     'automatic_serialization' => true
+                    'lifetime'                => 43200,
+                    'automatic_serialization' => true
                 ),
                 array('cache_dir' => '/tmp')
             );
@@ -316,9 +316,15 @@ class Zend_Service_SlideShare
     /**
      * Uploads the specified Slide show the the server
      *
-     * @param Zend_Service_SlideShare_SlideShow $ss            The slide show object representing the slide show to upload
-     * @param boolean                           $makeSrcPublic Determines if the the slide show's source file is public or not upon upload
-     * @return Zend_Service_SlideShare_SlideShow The passed Slide show object, with the new assigned ID provided
+     * @param Zend_Service_SlideShare_SlideShow $ss The slide show
+     *                                              object representing the
+     *                                              slide show to upload
+     * @param boolean $makeSrcPublic                Determines if the slide
+     *                                              show's source file is public
+     *                                              or not upon upload
+     * @return Zend_Service_SlideShare_SlideShow The passed Slide show object,
+     *                                           with the new assigned ID
+     *                                           provided
      * @throws Zend_Service_SlideShare_Exception
      */
     public function uploadSlideShow(
@@ -383,11 +389,12 @@ class Zend_Service_SlideShare
 
         if ($sxe->getName() == "SlideShareServiceError") {
             $message = (string)$sxe->Message[0];
-            list($code, $error_str) = explode(':', $message);
+            list($code, $errorStr) = explode(':', $message);
             // require_once 'Zend/Service/SlideShare/Exception.php';
-            throw new Zend_Service_SlideShare_Exception(trim(
-                $error_str
-            ), $code);
+            throw new Zend_Service_SlideShare_Exception(
+                trim($errorStr),
+                $code
+            );
         }
 
         if (!$sxe->getName() == "SlideShowUploaded") {
@@ -405,11 +412,11 @@ class Zend_Service_SlideShare
     /**
      * Retrieves a slide show's information based on slide show ID
      *
-     * @param int $ss_id The slide show ID
+     * @param int $ssId The slide show ID
      * @return Zend_Service_SlideShare_SlideShow the Slideshow object
      * @throws Zend_Service_SlideShare_Exception
      */
-    public function getSlideShow($ss_id)
+    public function getSlideShow($ssId)
     {
         $timestamp = time();
 
@@ -417,14 +424,13 @@ class Zend_Service_SlideShare
             'api_key'      => $this->getApiKey(),
             'ts'           => $timestamp,
             'hash'         => sha1($this->getSharedSecret() . $timestamp),
-            'slideshow_id' => $ss_id
+            'slideshow_id' => $ssId
         );
 
-        $cache = $this->getCacheObject();
+        $cache    = $this->getCacheObject();
+        $cacheKey = md5("__zendslideshare_cache_$ssId");
 
-        $cache_key = md5("__zendslideshare_cache_$ss_id");
-
-        if (!$retval = $cache->load($cache_key)) {
+        if (!$retval = $cache->load($cacheKey)) {
             $client = $this->getHttpClient();
 
             $client->setUri(self::SERVICE_GET_SHOW_URI);
@@ -444,11 +450,12 @@ class Zend_Service_SlideShare
 
             if ($sxe->getName() == "SlideShareServiceError") {
                 $message = (string)$sxe->Message[0];
-                list($code, $error_str) = explode(':', $message);
+                list($code, $errorStr) = explode(':', $message);
                 // require_once 'Zend/Service/SlideShare/Exception.php';
-                throw new Zend_Service_SlideShare_Exception(trim(
-                    $error_str
-                ), $code);
+                throw new Zend_Service_SlideShare_Exception(
+                    trim($errorStr),
+                    $code
+                );
             }
 
             if (!($sxe->getName() == 'Slideshow')) {
@@ -459,7 +466,7 @@ class Zend_Service_SlideShare
             }
             $retval = $this->_slideShowNodeToObject(clone $sxe);
 
-            $cache->save($retval, $cache_key);
+            $cache->save($retval, $cacheKey);
         }
 
         return $retval;
@@ -529,7 +536,9 @@ class Zend_Service_SlideShare
      * @return array An array of Zend_Service_SlideShare_SlideShow objects
      * @throws Zend_Service_SlideShare_Exception
      */
-    protected function _getSlideShowsByType($key, $value, $offset = null, $limit = null)
+    protected function _getSlideShowsByType(
+        $key, $value, $offset = null, $limit = null
+    )
     {
         $key = strtolower($key);
 
@@ -555,10 +564,12 @@ class Zend_Service_SlideShare
 
         $timestamp = time();
 
-        $params = array('api_key' => $this->getApiKey(),
-                        'ts' => $timestamp,
-                        'hash' => sha1($this->getSharedSecret().$timestamp),
-                        $key => $value);
+        $params = array(
+            'api_key' => $this->getApiKey(),
+            'ts'      => $timestamp,
+            'hash'    => sha1($this->getSharedSecret() . $timestamp),
+            $key      => $value
+        );
 
         if ($offset !== null) {
             $params['offset'] = (int)$offset;
@@ -568,11 +579,10 @@ class Zend_Service_SlideShare
             $params['limit'] = (int)$limit;
         }
 
-        $cache = $this->getCacheObject();
+        $cache    = $this->getCacheObject();
+        $cacheKey = md5($key . $value . $offset . $limit);
 
-        $cache_key = md5($key.$value.$offset.$limit);
-
-        if (!$retval = $cache->load($cache_key)) {
+        if (!$retval = $cache->load($cacheKey)) {
             $client = $this->getHttpClient();
 
             $client->setUri($queryUri);
@@ -592,10 +602,10 @@ class Zend_Service_SlideShare
 
             if ($sxe->getName() == "SlideShareServiceError") {
                 $message = (string)$sxe->Message[0];
-                list($code, $error_str) = explode(':', $message);
+                list($code, $errorStr) = explode(':', $message);
                 // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception(
-                    trim($error_str), $code
+                    trim($errorStr), $code
                 );
             }
 
@@ -614,7 +624,7 @@ class Zend_Service_SlideShare
                 }
             }
 
-            $cache->save($retval, $cache_key);
+            $cache->save($retval, $cacheKey);
         }
 
         return $retval;
@@ -624,6 +634,8 @@ class Zend_Service_SlideShare
      * Converts a SimpleXMLElement object representing a response from the service
      * into a Zend_Service_SlideShare_SlideShow object
      *
+     * @see http://www.slideshare.net/developers/documentation#get_slideshow
+     *
      * @param SimpleXMLElement $node The input XML from the slideshare.net service
      * @return Zend_Service_SlideShare_SlideShow The resulting object
      * @throws Zend_Service_SlideShare_Exception
@@ -631,14 +643,14 @@ class Zend_Service_SlideShare
     protected function _slideShowNodeToObject(SimpleXMLElement $node)
     {
 
-        if($node->getName() == 'Slideshow') {
+        if ($node->getName() == 'Slideshow') {
             $ss = new Zend_Service_SlideShare_SlideShow();
 
             $ss->setId((string)$node->ID);
             $ss->setDescription((string)$node->Description);
-            $ss->setEmbedCode((string)$node->EmbedCode);
+            $ss->setEmbedCode((string)$node->Embed);
             $ss->setNumViews((string)$node->Views);
-            $ss->setPermaLink((string)$node->Permalink);
+            $ss->setUrl((string)$node->URL);
             $ss->setStatus((string)$node->Status);
             $ss->setStatusDescription((string)$node->StatusDescription);
 
@@ -648,7 +660,7 @@ class Zend_Service_SlideShare
                 }
             }
 
-            $ss->setThumbnailUrl((string)$node->Thumbnail);
+            $ss->setThumbnailUrl((string)$node->ThumbnailURL);
             $ss->setTitle((string)$node->Title);
             $ss->setLocation((string)$node->Location);
             $ss->setTranscript((string)$node->Transcript);

@@ -225,8 +225,8 @@ class Test_Data
         $hotspots = self::createHotspots();
         $expected = new Object_Data_Hotspotimage($asset, $hotspots);
 
-        $value = Test_Tool::createAssetComparisonString($value->getImage);
-        $expected = Test_Tool::createAssetComparisonString($expected->getImage);
+        $value = Test_Tool::createAssetComparisonString($value->getImage());
+        $expected = Test_Tool::createAssetComparisonString($expected->getImage());
 
         if ($expected != $value) {
             print("   expected " . $expected . " but was " . $value);
@@ -509,7 +509,8 @@ class Test_Data
         $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
 
         if ($value != $expected) {
-            print("   expected " . $expected . " but was " . $value . "\n");
+            $getter = "get" . ucfirst($field);
+            print("   expected:\n" . print_r($object->$getter(), true) . " \n\nbut was:\n" . print_r($comparisonObject->$getter(), true) . "\n\n\n");
             return false;
         }
         return true;
@@ -631,7 +632,7 @@ class Test_Data
 
     public static function fillObjectsWithMetadata($object, $field, $seed = 1) {
         $setter = "set" . ucfirst($field);
-        $objects = self::getObjectList("o_type = 'object'");
+        $objects = self::getObjectList("o_type = 'object' AND o_className = 'unittest'");
         $objects = array_slice($objects,0,4);
 
         $metaobjects = array();

@@ -282,19 +282,42 @@ pimcore.extensionmanager.admin = Class.create({
                 text: t("create_new_plugin_skeleton"),
                 iconCls: "pimcore_icon_plugin_add",
                 handler: function () {
-                    Ext.MessageBox.prompt(t('create_new_plugin_skeleton'), t('enter_the_name_of_the_new_plugin'),  function (button, value) {
-                        if(button == "ok") {
+                    Ext.MessageBox.prompt(t('create_new_plugin_skeleton'), t('enter_the_name_of_the_new_extension') + "(a-zA-Z0-9_)",  function (button, value) {
+                        var regresult = value.match(/[a-zA-Z0-9_]+/);
+
+                        if (button == "ok" && value.length > 2) {
                             Ext.Ajax.request({
                                 url: "/admin/extensionmanager/admin/create",
                                 params: {
                                     name: value
                                 },
-                                success: function () {
-                                    this.reload();
+                                success: function (response) {
+                                    var data = Ext.decode(response.responseText);
+                                    if(data && data.success) {
+                                        this.reload();
+                                    } else {
+                                        Ext.Msg.alert(t('create_new_plugin_skeleton'), t('invalid_plugin_name'));
+                                    }
                                 }.bind(this)
                             });
                         }
+                        else if (button == "cancel") {
+                            return;
+                        }
+                        else {
+                            Ext.Msg.alert(t('create_new_plugin_skeleton'), t('invalid_plugin_name'));
+                        }
                     }.bind(this));
+                }.bind(this)
+            }, {
+                text: t("upload_plugin") + " (ZIP)",
+                iconCls: "pimcore_icon_upload",
+                handler: function () {
+                    pimcore.helpers.uploadDialog('/admin/extensionmanager/admin/upload', "zip", function(res) {
+                        this.reload();
+                    }.bind(this), function () {
+                        Ext.MessageBox.alert(t("error"), t("error"));
+                    });
                 }.bind(this)
             }, "->" , "<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"],
             viewConfig: {

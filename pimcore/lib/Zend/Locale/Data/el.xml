@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="el"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">Αντιγκέα</language>
 			<language type="ae">Αβεστάν</language>
 			<language type="af">Αφρικάανς</language>
-			<language type="afa">Αφροασιατική γλώσσα</language>
 			<language type="afh">Αφριχίλι</language>
 			<language type="agq" draft="contributed">Αγκέμ</language>
 			<language type="ain">Αϊνού</language>
 			<language type="ak">Ακάν</language>
 			<language type="akk">Ακάντιαν</language>
 			<language type="ale">Αλούτ</language>
-			<language type="alg">Γλώσσα Αλγκονκιάν</language>
 			<language type="alt">Νότια Αλαταϊκά</language>
 			<language type="am">Αμαρικά</language>
 			<language type="an">Αραγκονικά</language>
 			<language type="ang">Παλαιά Αγγλικά</language>
 			<language type="anp">Ανγκικά</language>
-			<language type="apa">Γλώσσα Απάτσι</language>
 			<language type="ar">Αραβικά</language>
 			<language type="ar_001">Σύγχρονα Τυπικά Αραβικά</language>
 			<language type="arc">Αραμαϊκά</language>
 			<language type="arn">Αρουκάνιαν</language>
 			<language type="arp">Αράπαχο</language>
-			<language type="art">Τεχνητή γλώσσα</language>
 			<language type="arw">Αραγουάκ</language>
 			<language type="as">Ασαμεζικά</language>
 			<language type="asa" draft="contributed">Άσου</language>
 			<language type="ast">Αστουριανά</language>
-			<language type="ath">Γλώσσα Αθαπάσκαν</language>
-			<language type="aus">Αυστραλιανή γλώσσα</language>
 			<language type="av">Άβαρικ</language>
 			<language type="awa">Αγουαντί</language>
 			<language type="ay">Αϊμάρα</language>
 			<language type="az">Αζερικά</language>
 			<language type="az" alt="short">Αζερικά</language>
 			<language type="ba">Μπασκίρ</language>
-			<language type="bad">Μπάντα</language>
-			<language type="bai">Γλώσσα Μπαμιλέκ</language>
 			<language type="bal">Μπαλούτσι</language>
 			<language type="ban">Μπαλινίζ</language>
 			<language type="bas">Μπάσα</language>
-			<language type="bat">Βαλτική γλώσσα</language>
 			<language type="bax" draft="contributed">Μπαμούν</language>
 			<language type="bbj" draft="contributed">Γκομάλα</language>
 			<language type="be">Λευκορωσικά</language>
 			<language type="bej">Μπέζα</language>
 			<language type="bem">Μπέμπα</language>
-			<language type="ber">Μπέρμπερ</language>
 			<language type="bez" draft="contributed">Μπένα</language>
 			<language type="bfd" draft="contributed">Μπαφούτ</language>
 			<language type="bg">Βουλγαρικά</language>
-			<language type="bh">Μπιχάρι</language>
 			<language type="bho">Μποζπούρι</language>
 			<language type="bi">Μπισλάμα</language>
 			<language type="bik">Μπικόλ</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">Σικσίκα</language>
 			<language type="bm">Μπαμπάρα</language>
 			<language type="bn">Μπενγκάλι</language>
-			<language type="bnt">Μπαντού</language>
 			<language type="bo">Θιβετιανά</language>
 			<language type="br">Βρετονικά</language>
 			<language type="bra">Μπρατζ</language>
 			<language type="brx" draft="contributed">Μπόντο</language>
 			<language type="bs">Βοσνιακά</language>
 			<language type="bss" draft="contributed">Ακόσι</language>
-			<language type="btk">Μπατάκ</language>
 			<language type="bua">Μπουριάτ</language>
 			<language type="bug">Μπουγκίζ</language>
 			<language type="bum" draft="contributed">Μπουλού</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">Μεντούμπα</language>
 			<language type="ca">Καταλανικά</language>
 			<language type="cad">Κάντο</language>
-			<language type="cai">Ινδιανική γλώσσα Κεντρικής Αμερικής</language>
 			<language type="car">Καρίμπ</language>
-			<language type="cau">Καυκάσια γλώσσα</language>
 			<language type="cay" draft="contributed">Καγιούγκα</language>
 			<language type="cch">Ατσάμ</language>
 			<language type="ce">Τσέτσνιαν</language>
 			<language type="ceb">Κεμπουάνο</language>
-			<language type="cel">Κελτική γλώσσα</language>
 			<language type="cgg" draft="contributed">Τσίγκα</language>
 			<language type="ch">Καμόρρο</language>
 			<language type="chb">Τσίμπτσα</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">Τσερόκι</language>
 			<language type="chy">Σεγιέν</language>
 			<language type="ckb">Κουρδικά Σοράνι</language>
-			<language type="cmc">Χαμική γλώσσα</language>
 			<language type="co">Κορσικανικά</language>
 			<language type="cop">Κοπτικά</language>
-			<language type="cpe">Κρεόλ ή Πίντγκιν βάσει Αγγλικών</language>
-			<language type="cpf">Κρεόλ ή Πίντγκιν βάσει Γαλλικών</language>
-			<language type="cpp">Κρεόλ και Πίντγκιν βάσει Πορτογαλικών</language>
 			<language type="cr">Κρι</language>
 			<language type="crh">Τουρκικά Κριμαίας</language>
-			<language type="crp">Κρεόλ ή Πίντγκιν</language>
 			<language type="cs">Τσεχικά</language>
 			<language type="csb">Κασούμπιαν</language>
 			<language type="cu">Εκκλησιαστικά Σλαβικά</language>
-			<language type="cus">Γλώσσα Κουσιτίκ</language>
 			<language type="cv">Χουβάς</language>
 			<language type="cy">Ουαλικά</language>
 			<language type="da">Δανικά</language>
 			<language type="dak">Ντακότα</language>
 			<language type="dar">Ντάργκουα</language>
 			<language type="dav" draft="contributed">Τάιτα</language>
-			<language type="day">Νταγιάκ</language>
 			<language type="de">Γερμανικά</language>
 			<language type="de_AT">Γερμανικά Αυστρίας</language>
 			<language type="de_CH">Γερμανικά Ελβετίας</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">Ντίνκα</language>
 			<language type="dje" draft="contributed">Ζάρμα</language>
 			<language type="doi">Ντόγκρι</language>
-			<language type="dra">Γλώσσα Ντραβίδιαν</language>
 			<language type="dsb">Γλώσσα Κάτω Λουσατίας</language>
 			<language type="dua">Ντουάλα</language>
 			<language type="dum">Μέσα Ολλανδικά</language>
@@ -182,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">Φουλάχ</language>
 			<language type="fi">Φινλανδικά</language>
 			<language type="fil">Φιλιππινεζικά</language>
-			<language type="fiu">Φιννο-Ούγκριαν</language>
 			<language type="fj">Φίτζι</language>
 			<language type="fo">Φαρόε</language>
 			<language type="fon">Φον</language>
@@ -200,7 +175,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">Γκάγιο</language>
 			<language type="gba">Γκμπάγια</language>
 			<language type="gd">Σκωτικά Κελτικά</language>
-			<language type="gem">Γερμανική γλώσσα</language>
 			<language type="gez">Γκιζ</language>
 			<language type="gil">Γκιλμπερτίζ</language>
 			<language type="gl">Γαλικιανά</language>
@@ -223,7 +197,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">Εβραϊκά</language>
 			<language type="hi">Χίντι</language>
 			<language type="hil">Χιλιγκαγιόν</language>
-			<language type="him">Χιματσάλι</language>
 			<language type="hit">Χιτίτε</language>
 			<language type="hmn">Χμονγκ</language>
 			<language type="ho">Χίρι Μότου</language>
@@ -241,15 +214,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">Ιντερλίνγκουε</language>
 			<language type="ig">Ίγκμπο</language>
 			<language type="ii">Σικουάν Γι</language>
-			<language type="ijo">Ιζό</language>
 			<language type="ik">Ινουπιάκ</language>
 			<language type="ilo">Ιλόκο</language>
-			<language type="inc">Ινδική γλώσσα</language>
-			<language type="ine">Ινδοευρωπαϊκή γλώσσα</language>
 			<language type="inh">Ινγκούς</language>
 			<language type="io">Ίντο</language>
-			<language type="ira">Ιρανική γλώσσα</language>
-			<language type="iro">Γλώσσα Ιροκόιαν</language>
 			<language type="is">Ισλανδικά</language>
 			<language type="it">Ιταλικά</language>
 			<language type="iu">Ινουκτιτούτ</language>
@@ -266,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">Κατσίν</language>
 			<language type="kaj">Τζου</language>
 			<language type="kam">Κάμπα</language>
-			<language type="kar">Καρέν</language>
 			<language type="kaw">Κάουι</language>
 			<language type="kbd">Καμπαρντιανά</language>
 			<language type="kbl" draft="contributed">Κανέμπου</language>
@@ -276,7 +243,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">Κόρο</language>
 			<language type="kg">Κονγκό</language>
 			<language type="kha">Κάσι</language>
-			<language type="khi">Γλώσσα Κοϊσάν</language>
 			<language type="kho">Κοτανικά</language>
 			<language type="khq" draft="contributed">Κόιρα Τσίνι</language>
 			<language type="ki">Κικούγιου</language>
@@ -295,7 +261,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">Κανούρι</language>
 			<language type="krc">Καρατσάι-Μπαλκάρ</language>
 			<language type="krl">Καρελιακά</language>
-			<language type="kro">Κρου</language>
 			<language type="kru">Κουρούχ</language>
 			<language type="ks">Κασμίρι</language>
 			<language type="ksb" draft="contributed">Σάμπαλα</language>
@@ -335,7 +300,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">Μαϊτχίλι</language>
 			<language type="mak">Μακαζάρ</language>
 			<language type="man">Μαντίνγκο</language>
-			<language type="map">Οστρονέζιαν</language>
 			<language type="mas">Μασάι</language>
 			<language type="mde" draft="contributed">Μάμπα</language>
 			<language type="mdf">Μόκσα</language>
@@ -351,15 +315,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">Μάορι</language>
 			<language type="mic">Μικμάκ</language>
 			<language type="min">Μινανγκαμπάου</language>
-			<language type="mis">Διάφορες γλώσσες</language>
 			<language type="mk">Σλαβομακεδονικά</language>
-			<language type="mkh">Γλώσσα Μον-Χμερ</language>
 			<language type="ml">Μαλαγιαλάμ</language>
 			<language type="mn">Μογγολικά</language>
 			<language type="mnc">Μαντσού</language>
 			<language type="mni">Μανιπούρι</language>
-			<language type="mno">Γλώσσα Μανόμπο</language>
-			<language type="mo">Μολδαβικά</language>
 			<language type="moh">Μοχόκ</language>
 			<language type="mos">Μόσι</language>
 			<language type="mr">Μαράθι</language>
@@ -367,17 +327,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">Μαλτεζικά</language>
 			<language type="mua" draft="contributed">Μουντάνγκ</language>
 			<language type="mul">Πολλαπλές γλώσσες</language>
-			<language type="mun">Γλώσσα Μούντα</language>
 			<language type="mus">Κρικ</language>
 			<language type="mwl">Μιραντεζικά</language>
 			<language type="mwr">Μαργουάρι</language>
 			<language type="my">Βιρμανικά</language>
 			<language type="mye" draft="contributed">Μιένε</language>
-			<language type="myn">Γλώσσα Μάγιαν</language>
 			<language type="myv">Έρζυα</language>
 			<language type="na">Ναούρου</language>
-			<language type="nah">Ναχουάτλ</language>
-			<language type="nai">Ινδιανική γλώσσα Βόρειας Αμερικής</language>
 			<language type="nap">Ναπολιτανικά</language>
 			<language type="naq" draft="contributed">Νάμα</language>
 			<language type="nb">Νορβηγικά Μποκμάλ</language>
@@ -387,7 +343,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">Νεγουάρι</language>
 			<language type="ng">Ντόνγκα</language>
 			<language type="nia">Νίας</language>
-			<language type="nic">Γλώσσα Νίγηρα-Κορδοφάνιαν</language>
 			<language type="niu">Νιούεαν</language>
 			<language type="nl">Ολλανδικά</language>
 			<language type="nl_BE">Φλαμανδικά</language>
@@ -400,7 +355,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">Ν'Κο</language>
 			<language type="nr">Ντεμπέλε Νότου</language>
 			<language type="nso">Βόρεια Σόθο</language>
-			<language type="nub">Γλώσσα Νούμπιαν</language>
 			<language type="nus" draft="contributed">Νουέρ</language>
 			<language type="nv">Νάβαχο</language>
 			<language type="nwc">Κλασικά Νεουάρι</language>
@@ -416,21 +370,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">Οσετικά</language>
 			<language type="osa">Οσάζ</language>
 			<language type="ota">Οθωμανικά Τουρκικά</language>
-			<language type="oto">Οθωμανική γλώσσα</language>
 			<language type="pa">Παντζαπικά</language>
-			<language type="paa">Παπούα</language>
 			<language type="pag">Πανγκασινάν</language>
 			<language type="pal">Παχλάβι</language>
 			<language type="pam">Παμπάνγκα</language>
 			<language type="pap">Παπιαμέντο</language>
 			<language type="pau">Παλάουαν</language>
 			<language type="peo">Αρχαία Περσικά</language>
-			<language type="phi">Φιλιππινεζική γλώσσα</language>
 			<language type="phn">Φοινικικά</language>
 			<language type="pi">Πάλι</language>
 			<language type="pl">Πολωνικά</language>
 			<language type="pon">Ποχπέιαν</language>
-			<language type="pra">Γλώσσα Πράκριτ</language>
 			<language type="pro">Παλαιά Προβενσιάλ</language>
 			<language type="ps">Πάστο</language>
 			<language type="pt">Πορτογαλικά</language>
@@ -443,7 +393,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">Ρομανικά</language>
 			<language type="rn">Ρούντι</language>
 			<language type="ro">Ρουμανικά</language>
-			<language type="roa">Ρομανική γλώσσα</language>
+			<language type="ro_MD">Μολδαβικά</language>
 			<language type="rof" draft="contributed">Ρόμπο</language>
 			<language type="rom">Ρομανί</language>
 			<language type="root">Ρουτ</language>
@@ -454,8 +404,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">Σανσκριτικά</language>
 			<language type="sad">Σαντάγουε</language>
 			<language type="sah">Γιακούτ</language>
-			<language type="sai">Ινδιανική γλώσσα Νότιας Αμερικής</language>
-			<language type="sal">Γλώσσα Σαλισάν</language>
 			<language type="sam">Σαμαρίτικα Αραμαϊκά</language>
 			<language type="saq" draft="contributed">Σαμπούρου</language>
 			<language type="sas">Σασάκ</language>
@@ -470,25 +418,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">Σένεκα</language>
 			<language type="seh" draft="contributed">Σένα</language>
 			<language type="sel">Σελκούπ</language>
-			<language type="sem">Σημητική γλώσσα</language>
 			<language type="ses" draft="contributed">Κοϊραμπόρο Σένι</language>
 			<language type="sg">Σάνγκο</language>
 			<language type="sga">Παλαιά Ιρλανδικά</language>
-			<language type="sgn">Νοηματική γλώσσα</language>
 			<language type="sh">Σερβοκροατικά</language>
 			<language type="shi" draft="contributed">Τασελχίτ</language>
 			<language type="shn">Σαν</language>
 			<language type="shu" draft="contributed">Αραβικά του Τσαντ</language>
 			<language type="si">Σινχαλεζικά</language>
 			<language type="sid">Σιντάμο</language>
-			<language type="sio">Γλώσσα Σιουάν</language>
-			<language type="sit">Σινοθιβετιανή γλώσσα</language>
 			<language type="sk">Σλοβακικά</language>
 			<language type="sl">Σλοβενικά</language>
-			<language type="sla">Σλαβική γλώσσα</language>
 			<language type="sm">Σαμόαν</language>
 			<language type="sma">Νότια Σάμι</language>
-			<language type="smi">Γλώσσα Σάμι</language>
 			<language type="smj">Λούλε Σάμι</language>
 			<language type="smn">Ινάρι Σάμι</language>
 			<language type="sms">Σκολτ Σάμι</language>
@@ -496,13 +438,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">Σονίνκε</language>
 			<language type="so">Σομάλι</language>
 			<language type="sog">Σογκντιέν</language>
-			<language type="son">Σονγκχάι</language>
 			<language type="sq">Αλβανικά</language>
 			<language type="sr">Σερβικά</language>
 			<language type="srn">Σρανάρ Τόνγκο</language>
 			<language type="srr">Σερέρ</language>
 			<language type="ss">Σουάτι</language>
-			<language type="ssa">Νιλο-Σαχαριανή γλώσσα</language>
 			<language type="ssy" draft="contributed">Σάχο</language>
 			<language type="st">Νότια Σόθο</language>
 			<language type="su">Σουδανικά</language>
@@ -516,7 +456,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">Κλασικά Συριακά</language>
 			<language type="syr">Συριακά</language>
 			<language type="ta">Ταμίλ</language>
-			<language type="tai">Ταϊλανδική γλώσσα</language>
 			<language type="te">Τελούγκου</language>
 			<language type="tem">Τίμνε</language>
 			<language type="teo" draft="contributed">Τέσο</language>
@@ -543,8 +482,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">Τσίμσιαν</language>
 			<language type="tt">Τατάρ</language>
 			<language type="tum">Τουμπούκα</language>
-			<language type="tup">Γλώσσα Τούπι</language>
-			<language type="tut">Αλταϊκή γλώσσα</language>
 			<language type="tvl">Τουβαλού</language>
 			<language type="tw">Τούι</language>
 			<language type="twq" draft="contributed">Τασαβάκ</language>
@@ -568,11 +505,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">Βούντζο</language>
 			<language type="wa">Γουαλούν</language>
 			<language type="wae" draft="contributed">Βάλσερ</language>
-			<language type="wak">Γλώσσα Γουακασάν</language>
 			<language type="wal">Γουάλαμο</language>
 			<language type="war">Γουάρει</language>
 			<language type="was">Γουασό</language>
-			<language type="wen">Διάλεκτος Άνω Λουσατίας</language>
 			<language type="wo">Γουόλοφ</language>
 			<language type="xal">Καλμίκ</language>
 			<language type="xh">Ζόσα</language>
@@ -583,7 +518,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">Γιέμπα</language>
 			<language type="yi">Γίντις</language>
 			<language type="yo">Γιορούμπα</language>
-			<language type="ypk">Γλώσσα Γιούπικ</language>
 			<language type="yue">Καντονέζικα</language>
 			<language type="za">Ζουάνγκ</language>
 			<language type="zap">Ζάποτεκ</language>
@@ -593,7 +527,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">Κινεζικά</language>
 			<language type="zh_Hans">Απλοποιημένα Κινεζικά</language>
 			<language type="zh_Hant">Παραδοσιακά Κινεζικά</language>
-			<language type="znd">Ζάντε</language>
 			<language type="zu">Ζουλού</language>
 			<language type="zun">Ζούνι</language>
 			<language type="zxx">Χωρίς γλωσσολογικό περιεχόμενο</language>
@@ -1202,6 +1135,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<codePattern type="territory">Περιοχή: {0}</codePattern>
 		</codePatterns>
 	</localeDisplayNames>
+	<contextTransforms>
+		<contextTransformUsage type="relative">
+			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
+			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
+		</contextTransformUsage>
+	</contextTransforms>
 	<characters>
 		<exemplarCharacters>[α ά β γ δ ε έ ζ η ή θ ι ί ϊ ΐ κ λ μ ν ξ ο ό π ρ σ ς τ υ ύ ϋ ΰ φ χ ψ ω ώ]</exemplarCharacters>
 		<exemplarCharacters type="auxiliary">[ἀ ἄ ἂ ἆ ἁ ἅ ἃ ἇ ὰ ᾶ ἐ ἔ ἒ ἑ ἕ ἓ ὲ ἠ ἤ ἢ ἦ ἡ ἥ ἣ ἧ ὴ ῆ ἰ ἴ ἲ ἶ ἱ ἵ ἳ ἷ ὶ ῖ ῒ ῗ ὄ ὂ ὃ ὸ ὐ ὔ ὒ ὖ ὑ ὕ ὓ ὗ ὺ ῦ ῢ ῧ ὤ ὢ ὦ ὥ ὣ ὧ ὼ ῶ]</exemplarCharacters>
@@ -2079,9 +2018,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Πάλμερ</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Νότιος Πόλος</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Σίοβα</exemplarCity>
 			</zone>
@@ -2354,9 +2290,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Τορόντο</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Μόντρεαλ</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Ικαλούτ</exemplarCity>
@@ -3200,9 +3133,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Φοίνιξ</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Σίπροκ</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Ντένβερ</exemplarCity>

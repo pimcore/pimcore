@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="os"/>
 	</identity>
 	<localeDisplayNames>
@@ -23,7 +23,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="af" draft="unconfirmed">африкаанс</language>
 			<language type="ang" draft="unconfirmed">рагон англисаг</language>
 			<language type="ar" draft="unconfirmed">араббаг</language>
-			<language type="art" draft="unconfirmed">аразгӕ ӕвзаг</language>
 			<language type="av" draft="unconfirmed">авайраг</language>
 			<language type="az" draft="unconfirmed">тӕтӕйраг</language>
 			<language type="ba" draft="unconfirmed">башкираг</language>
@@ -31,7 +30,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bs" draft="unconfirmed">босниаг</language>
 			<language type="bua" draft="unconfirmed">бурятаг</language>
 			<language type="ca" draft="unconfirmed">каталайнаг</language>
-			<language type="cau" draft="unconfirmed">кавказаг ӕвзаг</language>
 			<language type="ce" draft="unconfirmed">цӕцӕйнаг</language>
 			<language type="cop" draft="unconfirmed">коптаг</language>
 			<language type="cs" draft="unconfirmed">чехаг</language>
@@ -63,15 +61,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="fr_CH" draft="unconfirmed">швейцариаг францаг</language>
 			<language type="fro" draft="unconfirmed">рагон францаг</language>
 			<language type="ga" draft="unconfirmed">ирландиаг</language>
-			<language type="gem" draft="unconfirmed">гермайнаг ӕвзаг</language>
 			<language type="grc" draft="unconfirmed">рагон бердзейнаг</language>
 			<language type="he" draft="unconfirmed">уираг</language>
 			<language type="hr" draft="unconfirmed">хорватаг</language>
 			<language type="hu" draft="unconfirmed">венгериаг</language>
 			<language type="hy" draft="unconfirmed">сомихаг</language>
-			<language type="ine" draft="unconfirmed">индоевропӕйаг ӕвзаг</language>
 			<language type="inh" draft="unconfirmed">мӕхъӕлон</language>
-			<language type="ira" draft="unconfirmed">ирайнаг ӕвзаг</language>
 			<language type="it" draft="unconfirmed">италиаг</language>
 			<language type="ja" draft="unconfirmed">япойнаг</language>
 			<language type="ka" draft="unconfirmed">гуырдзиаг</language>

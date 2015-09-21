@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="eu"/>
 	</identity>
 	<localeDisplayNames>
@@ -31,7 +31,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="be">bielorrusiera</language>
 			<language type="bem">Bembera</language>
 			<language type="bg">bulgariera</language>
-			<language type="bh">Bihariera</language>
 			<language type="bn">bengalera</language>
 			<language type="bo">tibetera</language>
 			<language type="br">Bretoiera</language>
@@ -781,9 +780,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="yyyyM">G y/MM</dateFormatItem>
 						<dateFormatItem id="yyyyMd">G y/MM/dd</dateFormatItem>
 						<dateFormatItem id="yyyyMEd">G y/MM/dd, EEEE</dateFormatItem>
-						<dateFormatItem id="yyyyMMM">G y('e')'ko' MMMM</dateFormatItem>
-						<dateFormatItem id="yyyyMMMd">G y('e')'ko' MMMM d</dateFormatItem>
-						<dateFormatItem id="yyyyMMMEd">G y('e')'ko' MMMM d, EEEE</dateFormatItem>
+						<dateFormatItem id="yyyyMMM">G y MMM</dateFormatItem>
+						<dateFormatItem id="yyyyMMMd">G y MMM d</dateFormatItem>
+						<dateFormatItem id="yyyyMMMEd">G y MMM d, EEEE</dateFormatItem>
+						<dateFormatItem id="yyyyMMMM">G y('e')'ko' MMMM</dateFormatItem>
+						<dateFormatItem id="yyyyMMMMd">G y('e')'ko' MMMM d</dateFormatItem>
+						<dateFormatItem id="yyyyMMMMEd">G y('e')'ko' MMMM d, EEEE</dateFormatItem>
 						<dateFormatItem id="yyyyQQQ">G y QQQ</dateFormatItem>
 						<dateFormatItem id="yyyyQQQQ">G y('e')'ko' QQQQ</dateFormatItem>
 					</availableFormats>
@@ -1210,9 +1212,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="yM">y/M</dateFormatItem>
 						<dateFormatItem id="yMd">y/M/d</dateFormatItem>
 						<dateFormatItem id="yMEd">y/M/d, E</dateFormatItem>
-						<dateFormatItem id="yMMM">y('e')'ko' MMM</dateFormatItem>
-						<dateFormatItem id="yMMMd">y('e')'ko' MMM d</dateFormatItem>
-						<dateFormatItem id="yMMMEd">y('e')'ko' MMM d, E</dateFormatItem>
+						<dateFormatItem id="yMMM">y MMM</dateFormatItem>
+						<dateFormatItem id="yMMMd">y MMM d</dateFormatItem>
+						<dateFormatItem id="yMMMEd">y MMM d, E</dateFormatItem>
+						<dateFormatItem id="yMMMM">y('e')'ko' MMMM</dateFormatItem>
+						<dateFormatItem id="yMMMMd">y('e')'ko' MMMM d</dateFormatItem>
+						<dateFormatItem id="yMMMMEd">y('e')'ko' MMMM d, E</dateFormatItem>
 						<dateFormatItem id="yQQQ">y('e')'ko' QQQ</dateFormatItem>
 						<dateFormatItem id="yQQQQ">y('e')'ko' QQQQ</dateFormatItem>
 					</availableFormats>
@@ -1993,6 +1998,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Europa erdialdeko ordu estandarra</standard>
 					<daylight>Europa erdialdeko udako ordua</daylight>
 				</long>
+				<short>
+					<generic>CET</generic>
+					<standard>CET</standard>
+					<daylight>CEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Eastern">
 				<long>
@@ -2000,6 +2010,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Europa ekialdeko ordu estandarra</standard>
 					<daylight>Europa ekialdeko udako ordua</daylight>
 				</long>
+				<short>
+					<generic>EET</generic>
+					<standard>EET</standard>
+					<daylight>EEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Western">
 				<long>
@@ -2007,6 +2022,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Europa mendebaldeko ordu estandarra</standard>
 					<daylight>Europa mendebaldeko udako ordua</daylight>
 				</long>
+				<short>
+					<generic>WET</generic>
+					<standard>WET</standard>
+					<daylight>WEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Falkland">
 				<long>

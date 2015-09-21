@@ -15,33 +15,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Email_Blacklist_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\Email\Blacklist;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("email_blacklist");
-    }
-
-    /**
-     * Get the data for the object from database for the given id
-     * @param integer $id
-     * @return void
+     * @param $address
+     * @throws \Exception
      */
     public function getByAddress($address) {
         $data = $this->db->fetchRow("SELECT * FROM email_blacklist WHERE address = ?", $address);
 
         if (!$data["address"]) {
-            throw new Exception("blacklist item with address " . $address . " not found");
+            throw new \Exception("blacklist item with address " . $address . " not found");
         }
         $this->assignVariablesToModel($data);
     }
@@ -62,7 +50,7 @@ class Tool_Email_Blacklist_Resource extends Pimcore_Model_Resource_Abstract {
 
         // save main table
         foreach ($version as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("email_blacklist"))) {
 
                 if(is_bool($value)) {
                     $value = (int) $value;

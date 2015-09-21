@@ -106,6 +106,14 @@ pimcore.document.edit.dnd = Class.create({
         } catch (e) {
             
         }
+    },
+
+    disable: function () {
+        this.globalDropZone.lock();
+    },
+
+    enable: function () {
+        this.globalDropZone.unlock();
     }
 
 });

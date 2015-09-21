@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -24,7 +24,7 @@
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_File_Transfer_Adapter_Abstract
@@ -555,6 +555,7 @@ abstract class Zend_File_Transfer_Adapter_Abstract
      *
      * @param array $options Options to set
      * @param array $files   (Optional) Files to set the options for
+     * @return Zend_File_Transfer_Adapter_Abstract
      */
     public function setOptions($options = array(), $files = null) {
         $file = $this->_getFiles($files, false, true);

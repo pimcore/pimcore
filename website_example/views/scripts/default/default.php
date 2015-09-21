@@ -112,8 +112,8 @@
     </div>
 
     <div class="buttons">
-        <a href="http://www.pimcore.org/wiki/pages/viewpage.action?pageId=13536991">Install Sample Data / Boilerplate</a>
-        <a href="http://www.pimcore.org/wiki/display/PIMCORE/Develop+with+pimcore">Getting Started</a>
+        <a target="_blank" href="http://www.pimcore.org/wiki/pages/viewpage.action?pageId=14551535">Install Sample Data / Boilerplate</a>
+        <a target="_blank" href="http://www.pimcore.org/wiki/display/PIMCORE3/Develop+with+pimcore">Getting Started</a>
     </div>
 
     <div class="info">

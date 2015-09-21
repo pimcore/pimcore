@@ -13,7 +13,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_MiscController extends Pimcore_Controller_Action_Admin
+use Pimcore\Tool;
+use Pimcore\File;
+use Pimcore\Resource;
+use Pimcore\Model\Translation;
+
+class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 {
     public function jsonTranslationsAdminAction()
     {
@@ -21,7 +26,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $language = $this->getParam("language");
 
-        $list = new Translation_Admin_List();
+        $list = new Translation\Admin\Listing();
         $list->setOrder("asc");
         $list->setOrderKey("key");
         $list->load();
@@ -39,21 +44,25 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $language = $this->getParam("language");
 
-        $languageFile = Pimcore_Tool_Admin::getLanguageFile($language);
-        if (!is_file($languageFile)) {
-            $languageFile = Pimcore_Tool_Admin::getLanguageFile("en");
+        $languageFiles = [
+            $language => Tool\Admin::getLanguageFile($language),
+            "en" => Tool\Admin::getLanguageFile("en")
+        ];
+
+        $translations = [];
+        foreach($languageFiles as $langKey => $languageFile) {
+            if(file_exists($languageFile)) {
+                $rawTranslations = json_decode(file_get_contents($languageFile), true);
+                foreach ($rawTranslations as $entry) {
+                    if(!isset($translations[$entry["term"]])) {
+                        $translations[$entry["term"]] = $entry["definition"];
+                    }
+                }
+            }
         }
 
-        $row = 1;
-        $handle = fopen($languageFile, "r");
-        while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
-            $translations[$data[0]] = $data[1];
-        }
-        fclose($handle);
-
-        $broker = Pimcore_API_Plugin_Broker::getInstance();
+        $broker = \Pimcore\API\Plugin\Broker::getInstance();
         $pluginTranslations = $broker->getTranslations($language);
-        //$pluginTranslations = $this->getApiPluginBroker()->getTranslations($language);
         $translations = array_merge($pluginTranslations, $translations);
 
         $this->view->translations = $translations;
@@ -85,7 +94,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function adminCssAction()
     {
         // customviews config
-        $cvData = Pimcore_Tool::getCustomViewConfig();
+        $cvData = Tool::getCustomViewConfig();
         $this->view->customviews = $cvData;
 
 
@@ -97,19 +106,19 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
             header("Content-Type: application/javascript");
 
-            $client = Pimcore_Tool::getHttpClient();
+            $client = Tool::getHttpClient();
             $client->setUri($this->getParam("url"));
 
             try {
-                $response = $client->request(Zend_Http_Client::GET);
+                $response = $client->request(\Zend_Http_Client::GET);
 
                 if ($response->isSuccessful()) {
-                    echo $this->getParam("callback") . "(" . Zend_Json::encode("data:" .$response->getHeader("Content-Type") . ";base64," . base64_encode($response->getBody())) . ");";
+                    echo $this->getParam("callback") . "(" . \Zend_Json::encode("data:" .$response->getHeader("Content-Type") . ";base64," . base64_encode($response->getBody())) . ");";
                 } else {
-                    throw new Exception("Invalid response");
+                    throw new \Exception("Invalid response");
                 }
-            } catch (Exception $e) {
-                echo $this->getParam("callback") . "(" . Zend_Json::encode("error:Application error") . ")";
+            } catch (\Exception $e) {
+                echo $this->getParam("callback") . "(" . \Zend_Json::encode("error:Application error") . ")";
             }
         }
 
@@ -131,13 +140,13 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     {
         $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
 
-        $locales = Pimcore_Tool::getSupportedLocales();
+        $locales = Tool::getSupportedLocales();
         $this->view->languages = $locales;
     }
 
     public function getValidFilenameAction () {
         $this->_helper->json(array(
-            "filename" => Pimcore_File::getValidFilename($this->getParam("value"))
+            "filename" => File::getValidFilename($this->getParam("value"))
         ));
     }
 
@@ -146,9 +155,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function fileexplorerTreeAction()
     {
         $this->checkPermission("fileexplorer");
-
-        $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("node"));
-        $referencePath = PIMCORE_DOCUMENT_ROOT . $path;
+        $referencePath = $this->getFileexplorerPath("node");
 
         $items = scandir($referencePath);
         $contents = array();
@@ -190,8 +197,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $success = false;
         $writeable = false;
-        $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-        $file = PIMCORE_DOCUMENT_ROOT . $path;
+        $file = $this->getFileexplorerPath("path");
         if (is_file($file)) {
             if (is_readable($file)) {
                 $content = file_get_contents($file);
@@ -201,11 +207,11 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => $success,
-                                  "content" => $content,
-                                  "writeable" => $writeable,
-                                  "path" => $path
-                             ));
+            "success" => $success,
+            "content" => $content,
+            "writeable" => $writeable,
+            "path" => preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT) . "@", "", $file)
+        ));
     }
 
     public function fileexplorerContentSaveAction()
@@ -215,9 +221,9 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $success = false;
 
         if ($this->getParam("content") && $this->getParam("path")) {
-            $file = PIMCORE_DOCUMENT_ROOT . $this->getParam("path");
+            $file = $this->getFileexplorerPath("path");
             if (is_file($file) && is_writeable($file)) {
-                Pimcore_File::put($file, $this->getParam("content"));
+                File::put($file, $this->getParam("content"));
 
                 $success = true;
             }
@@ -235,11 +241,11 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-            $file = PIMCORE_DOCUMENT_ROOT . $path . "/" . $this->getParam("filename");
+            $path = $this->getFileexplorerPath("path");
+            $file = $path . "/" . $this->getParam("filename");
 
             if (is_writeable(dirname($file))) {
-                Pimcore_File::put($file, "");
+                File::put($file, "");
 
                 $success = true;
             }
@@ -257,19 +263,19 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-            $file = PIMCORE_DOCUMENT_ROOT . $path . "/" . $this->getParam("filename");
+            $path = $this->getFileexplorerPath("path");
+            $file = $path . "/" . $this->getParam("filename");
 
             if (is_writeable(dirname($file))) {
-                Pimcore_File::mkdir($file);
+                File::mkdir($file);
 
                 $success = true;
             }
         }
 
         $this->_helper->json(array(
-                                  "success" => $success
-                             ));
+            "success" => $success
+        ));
     }
 
     public function fileexplorerDeleteAction()
@@ -277,8 +283,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->checkPermission("fileexplorer");
 
         if ($this->getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
-            $file = PIMCORE_DOCUMENT_ROOT . $path;
+            $file = $this->getFileexplorerPath("path");
             if (is_writeable($file)) {
                 unlink($file);
                 $success = true;
@@ -290,16 +295,27 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         ));
     }
 
+    private function getFileexplorerPath($paramName = 'node')
+    {
+        $path = preg_replace("/^\/fileexplorer/", "", $this->getParam($paramName));
+        $path = resolvePath(PIMCORE_DOCUMENT_ROOT . $path);
+
+        if (strpos($path, PIMCORE_DOCUMENT_ROOT) !== 0) {
+            throw new \Exception('operation permitted, permission denied');
+        }
+        return $path;
+    }
+
     public function maintenanceAction()
     {
         $this->checkPermission("maintenance_mode");
 
         if ($this->getParam("activate")) {
-            Pimcore_Tool_Admin::activateMaintenanceMode();
+            Tool\Admin::activateMaintenanceMode();
         }
 
         if ($this->getParam("deactivate")) {
-            Pimcore_Tool_Admin::deactivateMaintenanceMode();
+            Tool\Admin::deactivateMaintenanceMode();
         }
 
         $this->_helper->json(array(
@@ -311,22 +327,21 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
 
-        $limit = $this->getParam("limit");
-        $offset = $this->getParam("start");
+        $limit = intval($this->getParam("limit"));
+        $offset = intval($this->getParam("start"));
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
         $filter = $this->getParam("filter");
-        $group = $this->getParam("group");
         if(!$limit) {
             $limit = 20;
         }
         if(!$offset) {
             $offset = 0;
         }
-        if(!$sort || !in_array($sort, array("id","code","path","date","amount"))) {
-            $sort = "date";
+        if(!$sort || !in_array($sort, array("code","uri","date","count"))) {
+            $sort = "count";
         }
         if(!$dir || !in_array($dir, array("DESC","ASC"))) {
             $dir = "DESC";
@@ -337,20 +352,14 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $filter = $db->quote("%" . $filter . "%");
 
             $conditionParts = array();
-            foreach (array("path", "code", "parametersGet", "parametersPost", "serverVars", "cookies") as $field) {
+            foreach (array("uri", "code", "parametersGet", "parametersPost", "serverVars", "cookies") as $field) {
                 $conditionParts[] = $field . " LIKE " . $filter;
             }
             $condition = " WHERE " . implode(" OR ", $conditionParts);
         }
 
-        if($group) {
-            $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
-            $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group`) as counting");
-        } else {
-            $sort = ($sort == "amount") ? "date" : $sort;
-            $logs = $db->fetchAll("SELECT id,code,path,date FROM http_error_log " . $condition . " ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
-            $total = $db->fetchOne("SELECT count(*) FROM http_error_log " . $condition);
-        }
+        $logs = $db->fetchAll("SELECT code,uri,`count`,date FROM http_error_log " . $condition . " ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
+        $total = $db->fetchOne("SELECT count(*) FROM http_error_log " . $condition);
 
         $this->_helper->json(array(
             "items" => $logs,
@@ -363,8 +372,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Pimcore_Resource::get();
-        $db->delete("http_error_log");
+        $db = Resource::get();
+        $db->query("TRUNCATE TABLE http_error_log"); // much faster then $db->delete()
 
         $this->_helper->json(array(
             "success" => true
@@ -375,8 +384,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Pimcore_Resource::get();
-        $data = $db->fetchRow("SELECT * FROM http_error_log WHERE id = ?", array($this->getParam("id")));
+        $db = Resource::get();
+        $data = $db->fetchRow("SELECT * FROM http_error_log WHERE uri = ?", array($this->getParam("uri")));
 
         foreach ($data as $key => &$value) {
             if(in_array($key, array("parametersGet", "parametersPost", "serverVars", "cookies"))) {
@@ -388,7 +397,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function countryListAction() {
-        $countries = Zend_Locale::getTranslationList('territory');
+        $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
         $options = array();
 
@@ -405,7 +414,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function languageListAction() {
-        $locales = Pimcore_Tool::getSupportedLocales();
+        $locales = Tool::getSupportedLocales();
 
         foreach ($locales as $short => $translation) {
             $options[] = array(
@@ -427,107 +436,20 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         exit;
     }
 
-
-    protected function getBounceMailbox () {
-
-        $mail = null;
-        $config = Pimcore_Config::getSystemConfig();
-
-        if($config->email->bounce->type == "Mbox") {
-            $mail = new Zend_Mail_Storage_Mbox(array(
-                'filename' => $config->email->bounce->mbox
-            ));
-        } else if ($config->email->bounce->type == "Maildir") {
-            $mail = new Zend_Mail_Storage_Maildir(array(
-                'dirname' => $config->email->bounce->maildir
-            ));
-        } else if ($config->email->bounce->type == "IMAP") {
-            $mail = new Zend_Mail_Storage_Imap(array(
-                'host' => $config->email->bounce->imap->host,
-                "port" => $config->email->bounce->imap->port,
-                'user' => $config->email->bounce->imap->username,
-                'password' => $config->email->bounce->imap->password,
-                "ssl" => (bool) $config->email->bounce->imap->ssl
-            ));
-        } else {
-            // default
-            $pathes = array(
-                "/var/mail/" . get_current_user(),
-                "/var/spool/mail/" . get_current_user()
-            );
-
-            foreach ($pathes as $path) {
-                if(is_dir($path)) {
-                    $mail = new Zend_Mail_Storage_Maildir(array(
-                        'dirname' => $path . "/"
-                    ));
-                } else if(is_file($path)) {
-                    $mail = new Zend_Mail_Storage_Mbox(array(
-                        'filename' => $path
-                    ));
-                }
-            }
+    public function getAvailableModulesAction() {
+        $system_modules = array(
+            "searchadmin", "reports", "webservice", "admin", "update", "install", "extensionmanager"
+        );
+        $modules = array();
+        $front = $this->getFrontController();
+        foreach ($front->getControllerDirectory() as $module => $path) {
+            if (in_array($module, $system_modules)) continue;
+            $modules[] = array("name" => $module);
         }
-
-        return $mail;
-    }
-
-    public function bounceMailInboxListAction() {
-
-        $this->checkPermission("emails");
-
-        $offset = ($this->getParam("start")) ? $this->getParam("start")+1 : 1;
-        $limit = ($this->getParam("limit")) ? $this->getParam("limit") : 40;
-
-        $mail = $this->getBounceMailbox();
-        $mail->seek($offset);
-
-        $mails = array();
-        $count = 0;
-        while ($mail->valid()) {
-            $count++;
-
-            $message = $mail->current();
-
-            $mailData = array(
-                "subject" => iconv(mb_detect_encoding($message->subject), "UTF-8", $message->subject),
-                "to" => $message->to,
-                "from" => $message->from,
-                "id" => (int) $mail->key()
-            );
-
-            $date = new Zend_Date($message->date);
-            $mailData["date"] = $date->get(Zend_Date::DATETIME_MEDIUM);
-
-            $mails[] = $mailData;
-
-            if($count >= $limit) {
-                break;
-            }
-
-            $mail->next();
-        }
-
         $this->_helper->json(array(
-            "data" => $mails,
-            "success" => true,
-            "total" => $mail->countMessages()
+            "data" => $modules
         ));
     }
-
-    public function bounceMailInboxDetailAction() {
-
-        $this->checkPermission("emails");
-
-        $mail = $this->getBounceMailbox();
-
-        $message = $mail->getMessage((int) $this->getParam("id"));
-        $message->getContent();
-
-        $this->view->mail = $mail; // we have to pass $mail too, otherwise the stream is closed
-        $this->view->message = $message;
-    }
-
 
     /**
      * page & snippet controller/action/template selector store providers
@@ -536,7 +458,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function getAvailableControllersAction() {
 
         $controllers = array();
-        $controllerDir = PIMCORE_WEBSITE_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR;
+        $controllerDir = $this->getControllerDir();
         $controllerFiles = rscandir($controllerDir);
         foreach ($controllerFiles as $file) {
             $file = str_replace($controllerDir, "", $file);
@@ -564,7 +486,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             return "/" . strtoupper($matches[2]);
         }, $controllerClass);
 
-        $controllerFile = PIMCORE_WEBSITE_PATH . "/controllers/" . $controllerClass . "Controller.php";
+        $controllerDir = $this->getControllerDir();
+        $controllerFile = $controllerDir . $controllerClass . "Controller.php";
         if(is_file($controllerFile)) {
             preg_match_all("/function[ ]+([a-zA-Z0-9]+)Action/i", file_get_contents($controllerFile), $matches);
             foreach ($matches[1] as $match) {
@@ -586,7 +509,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $files = rscandir($viewPath . DIRECTORY_SEPARATOR);
         foreach ($files as $file) {
             $dat = array();
-            if(strpos($file, Pimcore_View::getViewScriptSuffix()) !== false) {
+            if(strpos($file, \Pimcore\View::getViewScriptSuffix()) !== false) {
                 $dat["path"] = str_replace($viewPath, "", $file);
                 $dat["path"] = str_replace("\\", "/", $dat["path"]); // unix directory separator are compatible with windows, not the reverse
                 $templates[] = $dat;
@@ -598,16 +521,12 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         ));
     }
 
-    public function robohashAction() {
+    public function getLanguageFlagAction() {
 
-        $hash = Pimcore_Tool_Misc::roboHash([
-            "seed" => $this->getParam("seed", rand(0,20000)),
-            "width" => $this->getParam("width"),
-            "height" => $this->getParam("height")
-        ]);
-
+        $iconPath = Tool::getLanguageFlagFile($this->getParam("language"));
         header("Content-Type: image/png");
-        echo readfile($hash);
+        echo file_get_contents($iconPath);
+
         exit;
     }
 
@@ -615,6 +534,28 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     {
 
         die("done");
+    }
+
+    /**
+     * Determines by the moduleName GET-parameter which controller directory
+     * to use; the default (param empty or "website") or of the corresponding
+     * module or plugin
+     *
+     * @return string
+     * @throws Zend_Controller_Exception
+     */
+    private function getControllerDir() {
+        $controllerDir = PIMCORE_WEBSITE_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR;
+        if ($module = $this->getParam("moduleName")) {
+            if ($module != "" && $module != "website") { // => not the default
+                $front   = $this->getFrontController();
+                $modules = $front->getControllerDirectory();
+                if (array_key_exists($module, $modules)) {
+                    $controllerDir = $modules[$module] . DIRECTORY_SEPARATOR;
+                }
+            }
+        }
+        return $controllerDir;
     }
 }
 

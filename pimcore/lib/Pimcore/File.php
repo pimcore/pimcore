@@ -13,8 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_File {
+namespace Pimcore;
 
+class File {
+
+    /**
+     * @var int
+     */
     public static $defaultMode = 0775;
 
     /**
@@ -41,11 +46,12 @@ class Pimcore_File {
     /**
      * @static
      * @param  $tmpFilename
+     * @param null $language
      * @return string
      */
-    public static function getValidFilename($tmpFilename) {
+    public static function getValidFilename($tmpFilename,$language = null) {
         
-        $tmpFilename = Pimcore_Tool_Transliteration::toASCII($tmpFilename);
+        $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename,$language);
         $tmpFilename = strtolower($tmpFilename);
         $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', '-', $tmpFilename);
 

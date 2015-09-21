@@ -4,7 +4,10 @@ AddType video/mp4 .mp4
 AddType video/webm .webm
 AddType image/jpeg .pjpeg
 
-Options +FollowSymLinks
+Options +SymLinksIfOwnerMatch 
+
+# Use UTF-8 encoding for anything served text/plain or text/html
+AddDefaultCharset utf-8
 
 # rewrites
 RewriteEngine On
@@ -13,28 +16,7 @@ RewriteBase /
 
 <IfModule mod_status.c>
     RewriteCond %{REQUEST_URI} ^/server-(info|status)
-    RewriteRule . - [last]
-</IfModule>
-
-<IfModule pagespeed_module>
-    # pimcore mod_pagespeed integration
-    # pimcore automatically disables mod_pagespeed in the following situations: debug-mode on, /admin, preview, editmode, ...
-    # if you want to disable pagespeed for specific actions in pimcore you can use $this->disableBrowserCache() in your action
-    RewriteCond %{REQUEST_URI} ^/(mod_)?pagespeed_(statistics|message|console|beacon)
-    RewriteRule . - [last]
-
-    #ModPagespeed On
-    AddOutputFilterByType MOD_PAGESPEED_OUTPUT_FILTER text/html
-    ModPagespeedModifyCachingHeaders off
-    ModPagespeedRewriteLevel PassThrough
-    # low risk filters
-    ModPagespeedEnableFilters remove_comments,recompress_images
-    # low and moderate filters, recommended filters, but can cause problems
-    ModPagespeedEnableFilters lazyload_images,extend_cache_images,inline_preview_images,sprite_images
-    ModPagespeedEnableFilters combine_css,rewrite_css,move_css_to_head,flatten_css_imports,extend_cache_css,prioritize_critical_css
-    ModPagespeedEnableFilters extend_cache_scripts,combine_javascript,canonicalize_javascript_libraries,rewrite_javascript
-    # high risk
-    #ModPagespeedEnableFilters defer_javascript,local_storage_cache
+    RewriteRule . - [L]
 </IfModule>
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly 
@@ -51,6 +33,7 @@ RewriteRule ^pimcore/static.* - [PT,L]
 RewriteRule ^website/var/(?!tmp|assets|plugins|areas) / [F,L]
 RewriteRule ^plugins/.*$ / [F,L]
 RewriteRule ^pimcore/.*$ / [F,L]
+RewriteRule ^composer.(json|lock)$ / [F,L]
 
 # basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html
 RewriteCond %{REQUEST_FILENAME} -d [OR]
@@ -59,3 +42,61 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^.*$ - [NC,L]
 RewriteRule ^.*$ index.php [NC,L]
+
+
+
+##########################################
+### OPTIONAL PERFORMANCE OPTIMIZATIONS ###
+##########################################
+
+<IfModule mod_deflate.c>
+    # Force compression for mangled headers.
+    # http://developer.yahoo.com/blogs/ydn/posts/2010/12/pushing-beyond-gzipping
+    <IfModule mod_setenvif.c>
+        <IfModule mod_headers.c>
+            SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)\s*,?\s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
+            RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
+        </IfModule>
+    </IfModule>
+
+    # Compress all output labeled with one of the following MIME-types
+    # (for Apache versions below 2.3.7, you don't need to enable `mod_filter`
+    #  and can remove the `<IfModule mod_filter.c>` and `</IfModule>` lines
+    #  as `AddOutputFilterByType` is still in the core directives).
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE application/atom+xml application/javascript application/json \
+            application/vnd.ms-fontobject application/x-font-ttf application/rss+xml \
+            application/x-web-app-manifest+json application/xhtml+xml \
+            application/xml font/opentype image/svg+xml image/x-icon \
+            text/css text/html text/plain text/x-component text/xml text/javascript
+    </IfModule>
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresDefault "access plus 1 week"
+
+    # specific overrides
+    #ExpiresByType text/css "access plus 1 year"
+</IfModule>
+
+<IfModule pagespeed_module>
+    # pimcore mod_pagespeed integration
+    # pimcore automatically disables mod_pagespeed in the following situations: debug-mode on, /admin, preview, editmode, ...
+    # if you want to disable pagespeed for specific actions in pimcore you can use $this->disableBrowserCache() in your action
+    RewriteCond %{REQUEST_URI} ^/(mod_)?pagespeed_(statistics|message|console|beacon|admin|global_admin)
+    RewriteRule . - [L]
+
+    #ModPagespeed On
+    AddOutputFilterByType MOD_PAGESPEED_OUTPUT_FILTER text/html
+    ModPagespeedModifyCachingHeaders off
+    ModPagespeedRewriteLevel PassThrough
+    # low risk filters
+    ModPagespeedEnableFilters remove_comments,recompress_images
+    # low and moderate filters, recommended filters, but can cause problems
+    ModPagespeedEnableFilters lazyload_images,extend_cache_images,inline_preview_images,sprite_images
+    ModPagespeedEnableFilters combine_css,rewrite_css,move_css_to_head,flatten_css_imports,extend_cache_css,prioritize_critical_css
+    ModPagespeedEnableFilters extend_cache_scripts,combine_javascript,canonicalize_javascript_libraries,rewrite_javascript
+    # high risk
+    #ModPagespeedEnableFilters defer_javascript,local_storage_cache
+</IfModule>

@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Install_IndexController extends Pimcore_Controller_Action {
+use Pimcore\Model\Tool;
+
+class Install_IndexController extends \Pimcore\Controller\Action {
 
 
     public function init() {
@@ -25,10 +27,10 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
 		error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 		@ini_set("display_errors", "On");
-		$front = Zend_Controller_Front::getInstance(); 
+		$front = \Zend_Controller_Front::getInstance();
 		$front->throwExceptions(true);
 		
-        Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
+        \Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
         if (is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
             $this->redirect("/admin");
@@ -54,16 +56,25 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
     public function installAction() {
 
+        // database configuration host/unix socket
+        $dbConfig = [
+            'username' => $this->getParam("mysql_username"),
+            'password' => $this->getParam("mysql_password"),
+            'dbname' => $this->getParam("mysql_database")
+        ];
+
+        $hostSocketValue = $this->getParam("mysql_host_socket");
+        if(file_exists($hostSocketValue)) {
+            $dbConfig["unix_socket"] = $hostSocketValue;
+        } else {
+            $dbConfig["host"] = $hostSocketValue;
+            $dbConfig["port"] = $this->getParam("mysql_port");
+        }
+
         // try to establish a mysql connection
         try {
 
-            $db = Zend_Db::factory($this->getParam("mysql_adapter"),array(
-                'host' => $this->getParam("mysql_host"),
-                'username' => $this->getParam("mysql_username"),
-                'password' => $this->getParam("mysql_password"),
-                'dbname' => $this->getParam("mysql_database"),
-                "port" => $this->getParam("mysql_port")
-            ));
+            $db = \Zend_Db::factory($this->getParam("mysql_adapter"), $dbConfig);
 
             $db->getConnection();
 
@@ -73,7 +84,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 $errors[] = "Database charset is not utf-8";
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             $errors[] = "Couldn't establish connection to mysql: " . $e->getMessage();
         }
 
@@ -84,7 +95,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
         if (empty($errors)) {
 
-            $setup = new Tool_Setup();
+            $setup = new Tool\Setup();
 
             // check if /website folder already exists, if not, look for /website_demo & /website_example
             // /website_install is just for testing in dev environment
@@ -101,13 +112,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
             $setup->config(array(
                 "database" => array(
                     "adapter" => $this->getParam("mysql_adapter"),
-                    "params" => array(
-                        "host" => $this->getParam("mysql_host"),
-                        "username" => $this->getParam("mysql_username"),
-                        "password" => $this->getParam("mysql_password"),
-                        "dbname" => $this->getParam("mysql_database"),
-                        "port" => $this->getParam("mysql_port"),
-                    )
+                    "params" => $dbConfig
                 ),
             ));
 
@@ -121,11 +126,12 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
 			if(!file_exists($dbDataFile)) {
                 $setup->database();
-                Pimcore::initConfiguration();
+                \Pimcore::initConfiguration();
 				$setup->contents($contentConfig);
 			} else {
+                $setup->database();
 				$setup->insertDump($dbDataFile);
-                Pimcore::initConfiguration();
+                \Pimcore::initConfiguration();
 				$setup->createOrUpdateUser($contentConfig);
 			}
 

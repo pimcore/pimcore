@@ -13,24 +13,51 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Tool;
+use Pimcore\File;
+use Pimcore\Model\Translation;
+use Pimcore\Model\Object;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+use Pimcore\Model;
+
+class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
     public function importAction() {
 
         $this->checkPermission("translations");
 
         $admin = $this->getParam("admin");
+        $merge = $this->getParam("merge");
 
         $tmpFile = $_FILES["Filedata"]["tmp_name"];
+
+        $overwrite = $merge ? false : true;
+
         if($admin){
-            Translation_Admin::importTranslationsFromFile($tmpFile,true);
-        }else{
-            Translation_Website::importTranslationsFromFile($tmpFile,true);
+            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages());
+        } else {
+            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite);
         }
 
-        $this->_helper->json(array(
+        $result =array(
             "success" => true
-        ), false);
+        );
+        if ($merge) {
+            $enrichedDelta = array();
+
+            foreach ($delta as $item) {
+                $lg = $item["lg"];
+                $item["lgname"] =  \Zend_Locale::getTranslation($lg, "language");
+                $item["icon"] = "/admin/misc/get-language-flag?language=" . $lg;
+                $item["current"] = $item["text"];
+                $enrichedDelta[]= $item;
+            }
+
+            $result["delta"] = base64_encode(json_encode($enrichedDelta));
+        }
+
+        $this->_helper->json($result, false);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -43,26 +70,46 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         $admin = $this->getParam("admin");
 
         // clear translation cache
-        Translation_Abstract::clearDependentCache();
+        Translation\AbstractTranslation::clearDependentCache();
 
         if ($admin) {
-            $list = new Translation_Admin_List();
+            $list = new Translation\Admin\Listing();
         } else {
-            $list = new Translation_Website_List();
+            $list = new Translation\Website\Listing();
         }
 
         $list->setOrder("asc");
         $list->setOrderKey("key");
 
-        if ($this->getParam("filter")) {
-            $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
-            $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
+        $condition = $this->getGridFilterCondition();
+        if($condition) {
+            $list->setCondition($condition);
         }
 
         $list->load();
 
         $translations = array();
-        foreach ($list->getTranslations() as $t) {
+        $translationObjects = $list->getTranslations();
+
+        // fill with one dummy translation if the store is empty
+        if(empty($translationObjects)) {
+            if($admin) {
+                $t = new Translation\Admin();
+                $languages = Tool\Admin::getLanguages();
+            } else {
+                $t = new Translation\Website();
+                $languages = Tool::getValidLanguages();
+            }
+
+            foreach($languages as $language) {
+                $t->addTranslation($language, "");
+            }
+
+            $translationObjects[] = $t;
+        }
+
+
+        foreach ($translationObjects as $t) {
             $translations[] = array_merge(array("key" => $t->getKey(),
                 "creationDate" => $t->getCreationDate(),
                 "modificationDate" => $t->getModificationDate(),
@@ -73,9 +120,9 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         $columns = array_keys($translations[0]);
 
         if($admin) {
-            $languages = Pimcore_Tool_Admin::getLanguages();
+            $languages = Tool\Admin::getLanguages();
         } else {
-            $languages = Pimcore_Tool::getValidLanguages();
+            $languages = Tool::getValidLanguages();
         }
 
         //add language columns which have no translations yet
@@ -97,7 +144,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                 $value = $t[$key];
                 //clean value of evil stuff such as " and linebreaks
                 if (is_string($value)) {
-                    $value = Pimcore_Tool_Text::removeLineBreaks($value);
+                    $value = Tool\Text::removeLineBreaks($value);
                     $value = str_replace('"', '&quot;', $value);
 
                     $tempRow[$key] = '"' . $value . '"';
@@ -107,8 +154,10 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
             }
             $csv .= implode(";", $tempRow) . "\r\n";
         }
-        header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename=\"export.csv\"");
+
+        $suffix = $admin ? "admin" : "website";
+        header('Content-type: text/csv; charset=UTF-8');
+        header("Content-Disposition: attachment; filename=\"export_ " . $suffix . "_translations.csv\"");
         ini_set('display_errors',false); //to prevent warning messages in csv
         echo $csv;
         die();
@@ -120,19 +169,19 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
         $keys = $this->getParam("keys");
         if ($keys) {
-            $availableLanguages = Pimcore_Tool_Admin::getLanguages();
-            $data = Zend_Json_Decoder::decode($keys);
+            $availableLanguages = Tool\Admin::getLanguages();
+            $data = \Zend_Json_Decoder::decode($keys);
             foreach ($data as $translationData) {
 
                 $t = null; // reset
 
                 try{
-                    $t = Translation_Admin::getByKey($translationData);
-                } catch (Exception $e) {
-                    Logger::log($e);
+                    $t = Translation\Admin::getByKey($translationData);
+                } catch (\Exception $e) {
+                    \Logger::log($e);
                 }
-                if (!$t instanceof Translation_Admin) {
-                    $t = new Translation_Admin();
+                if (!$t instanceof Translation\Admin) {
+                    $t = new Translation\Admin();
 
                     $t->setKey($translationData);
                     $t->setCreationDate(time());
@@ -144,8 +193,8 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
                     try {
                         $t->save();
-                    } catch (Exception $e) {
-                        Logger::log($e);
+                    } catch (\Exception $e) {
+                        \Logger::log($e);
                     }
                 }
             }
@@ -157,23 +206,27 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         $admin = $this->getParam("admin");
 
         if ($admin) {
-            $class = "Translation_Admin";
+            $class = "\\Pimcore\\Model\\Translation\\Admin";
             $this->checkPermission("translations_admin");
         } else {
-            $class = "Translation_Website";
+            $class = "\\Pimcore\\Model\\Translation\\Website";
             $this->checkPermission("translations");
         }
 
         // clear translation cache
-        Translation_Website::clearDependentCache();
+        Translation\Website::clearDependentCache();
 
         if ($this->getParam("data")) {
 
-            $data = Zend_Json::decode($this->getParam("data"));
+            $data = \Zend_Json::decode($this->getParam("data"));
 
             if ($this->getParam("xaction") == "destroy") {
-                $data = Zend_Json::decode($this->getParam("data"));
-                $t = $class::getByKey($data);
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
+                    $t = $class::getByKey($data["key"]);
+                } else {
+                    $t = $class::getByKey($data);
+                }
                 $t->delete();
 
                 $this->_helper->json(array("success" => true, "data" => array()));
@@ -205,7 +258,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                 try {
                     $t = $class::getByKey($data["key"]);
                 }
-                catch (Exception $e) {
+                catch (\Exception $e) {
 
                     $t = new $class();
 
@@ -213,7 +266,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     $t->setCreationDate(time());
                     $t->setModificationDate(time());
 
-                    foreach (Pimcore_Tool::getValidLanguages() as $lang) {
+                    foreach (Tool::getValidLanguages() as $lang) {
                         $t->addTranslation($lang, "");
                     }
                     $t->save();
@@ -231,28 +284,31 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of types
             if ($admin) {
-                $list = new Translation_Admin_List();
+                $list = new Translation\Admin\Listing();
 
             } else {
-                $list = new Translation_Website_List();
+                $list = new Translation\Website\Listing();
             }
 
             $list->setOrder("asc");
             $list->setOrderKey("key");
 
-            if($this->getParam("dir")) {
-                $list->setOrder($this->getParam("dir"));
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
             }
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
+            if($sortingSettings['order']) {
+                $list->setOrder($sortingSettings['order']);
             }
 
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
-            if ($this->getParam("filter")) {
-                $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
-                $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
+
+            $condition = $this->getGridFilterCondition();
+            if($condition) {
+                $list->setCondition($condition);
             }
+
             $list->load();
 
             $translations = array();
@@ -266,15 +322,73 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         }
     }
 
+    protected function getGridFilterCondition() {
+
+        $db = \Pimcore\Resource::get();
+        $conditionFilters = [];
+
+        $filterJson = $this->getParam("filter");
+        if ($filterJson) {
+            $isExtJs6 = \Pimcore\Tool\Admin::isExtJS6();
+            if ($isExtJs6) {
+                $propertyField = "property";
+                $operatorField = "operator";
+            } else {
+                $propertyField = "field";
+                $operatorField = "comparison";
+            }
+
+            $filters = \Zend_Json::decode($filterJson);
+            foreach ($filters as $filter) {
+
+                $operator = "=";
+                $field = null;
+                $value = null;
+
+                $fieldname = $filter[$propertyField];
+
+                if ($filter["type"] == "date" ||
+                    ($isExtJs6 && in_array($fieldname, array("modificationDate", "creationdate"))))
+                {
+                    if($filter[$operatorField] == "lt") {
+                        $operator = "<";
+                    } else if($filter[$operatorField] == "gt") {
+                        $operator = ">";
+                    } else if($filter[$operatorField] == "eq") {
+                        $operator = "=";
+                    }
+                    $filter["value"] = strtotime($filter["value"]);
+                    $field = "`" . $fieldname . "` ";
+                    $value = $filter["value"];
+                }
+
+                if($field && $value) {
+                    $conditionFilters[] =  $field . $operator . " " . $db->quote($value);
+                }
+            }
+        }
+
+        if ($this->getParam("searchString")) {
+            $filterTerm = $db->quote("%".mb_strtolower($this->getParam("searchString"))."%");
+            $conditionFilters[] = "(lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm.")";
+        }
+
+        if(!empty($conditionFilters)) {
+            return implode(" AND ", $conditionFilters);
+        }
+
+        return null;
+    }
+
     public function cleanupAction() {
 
-        $listClass = "Translation_" . ucfirst($this->getParam("type")) . "_List";
-        if(class_exists($listClass)) {
+        $listClass = "\\Pimcore\\Model\\Translation\\" . ucfirst($this->getParam("type")) . "\\Listing";
+        if(Tool::classExists($listClass)) {
 
             $list = new $listClass();
             $list->cleanup();
 
-            Pimcore_Model_Cache::clearTags(array("translator","translate"));
+            \Pimcore\Model\Cache::clearTags(array("translator","translate"));
 
             $this->_helper->json(array("success" => true));
         }
@@ -289,7 +403,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
      */
     public function contentExportJobsAction() {
 
-        $data = Zend_Json::decode($this->getParam("data"));
+        $data = \Zend_Json::decode($this->getParam("data"));
         $elements = array();
         $jobs = array();
         $exportId = uniqid();
@@ -298,7 +412,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         $type = $this->getParam("type");
 
         // XLIFF requires region in language code
-        /*$languages = Zend_Locale::getLocaleList();
+        /*$languages = \Zend_Locale::getLocaleList();
         if(strlen($source) < 5) {
             foreach ($languages as $key => $value) {
                 if(strlen($key) > 4 && strpos($key, $source . "_") === 0) {
@@ -328,15 +442,15 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                 );
 
                 if($element["children"]) {
-                    $el = Element_Service::getElementById($element["type"], $element["id"]);
-                    $listClass = ucfirst($element["type"]) . "_List";
+                    $el = Element\Service::getElementById($element["type"], $element["id"]);
+                    $listClass = "\\Pimcore\\Model\\" . ucfirst($element["type"]) . "\\Listing";
                     $list = new $listClass();
                     $list->setUnpublished(true);
-                    if($el instanceof Object_Abstract) {
+                    if($el instanceof Object\AbstractObject) {
                         // inlcude variants
-                        $list->setObjectTypes(array(Object_Abstract::OBJECT_TYPE_VARIANT, Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER));
+                        $list->setObjectTypes(array(Object\AbstractObject::OBJECT_TYPE_VARIANT, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER));
                     }
-                    $list->setCondition(($el instanceof Object_Abstract ? "o_" : "") . "path LIKE ?", array($el->getFullPath() . ($el->getFullPath() != "/" ? "/" : "") . "%"));
+                    $list->setCondition(($el instanceof Object\AbstractObject ? "o_" : "") . "path LIKE ?", array($el->getFullPath() . ($el->getFullPath() != "/" ? "/" : "") . "%"));
                     $idList = $list->loadIdList();
 
                     foreach($idList as $id) {
@@ -360,7 +474,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     "id" => $exportId,
                     "source" => $source,
                     "target" => $target,
-                    "data" => Zend_Json::encode($chunk)
+                    "data" => \Zend_Json::encode($chunk)
                 )
             ));
         }
@@ -375,29 +489,27 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
     public function xliffExportAction() {
 
         $id = $this->getParam("id");
-        $data = Zend_Json::decode($this->getParam("data"));
+        $data = \Zend_Json::decode($this->getParam("data"));
         $source = $this->getParam("source");
         $target = $this->getParam("target");
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".xliff";
         if(!is_file($exportFile)) {
             // create initial xml file structure
-            $xliff = new SimpleXMLElement('<xliff></xliff>');
-            $xliff->addAttribute('version', '1.2');
-            $xliff->asXML($exportFile);
+            File::put($exportFile, '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<xliff version="1.2"></xliff>');
         }
 
         $xliff = simplexml_load_file($exportFile, null, LIBXML_NOCDATA);
 
         foreach ($data as $el) {
-            $element = Element_Service::getElementById($el["type"], $el["id"]);
+            $element = Element\Service::getElementById($el["type"], $el["id"]);
             $file = $xliff->addChild('file');
-            $file->addAttribute('original', Element_Service::getElementType($element) . '-' . $element->getId());
+            $file->addAttribute('original', Element\Service::getElementType($element) . '-' . $element->getId());
             $file->addAttribute('source-language', $source);
             $file->addAttribute('target-language', $target);
             $file->addAttribute('datatype', "html");
             $file->addAttribute('tool', "pimcore");
-            $file->addAttribute('category', Element_Service::getElementType($element));
+            $file->addAttribute('category', Element\Service::getElementType($element));
 
             $header = $file->addChild('header');
 
@@ -406,29 +518,45 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
             // elements
             if($element instanceof Document) {
-                if(method_exists($element, "getElements")) {
-                    foreach ($element->getElements() as $tag) {
+                $elements = [];
 
-                        if(in_array($tag->getType(), array("wysiwyg", "input", "textarea", "image"))) {
+                $doc = $element;
 
-                            if($tag->getType() == "image") {
-                                $content = $tag->getText();
-                            } else {
-                                $content = $tag->getData();
-                            }
+                // get also content of inherited document elements
+                while($doc) {
+                    if(method_exists($doc, "getElements")) {
+                        $elements = array_merge($elements, $doc->getElements());
+                    }
 
-                            if(is_string($content)) {
-                                $contentCheck = trim(strip_tags($content));
-                                if(!empty($contentCheck)) {
-                                    $this->addTransUnitNode($body, "tag~-~" . $tag->getName(), $content, $source);
-                                    $addedElements = true;
-                                }
+                    if(method_exists($doc, "getContentMasterDocument")) {
+                        $doc = $doc->getContentMasterDocument();
+                    } else {
+                        $doc = null;
+                    }
+                }
+
+                foreach ($elements as $tag) {
+
+                    if(in_array($tag->getType(), array("wysiwyg", "input", "textarea", "image"))) {
+
+                        if($tag->getType() == "image") {
+                            $content = $tag->getText();
+                        } else {
+                            $content = $tag->getData();
+                        }
+
+                        if(is_string($content)) {
+                            $contentCheck = trim(strip_tags($content));
+                            if(!empty($contentCheck)) {
+                                $this->addTransUnitNode($body, "tag~-~" . $tag->getName(), $content, $source);
+                                $addedElements = true;
                             }
                         }
                     }
                 }
 
-                if($element instanceof Document_Page) {
+
+                if($element instanceof Document\Page) {
                     $data = array(
                         "title" => $element->getTitle(),
                         "description" => $element->getDescription(),
@@ -442,12 +570,12 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                         }
                     }
                 }
-            } else if ($element instanceof Object_Concrete) {
+            } else if ($element instanceof Object\Concrete) {
                 if($fd = $element->getClass()->getFieldDefinition("localizedfields")) {
                     $definitions = $fd->getFielddefinitions();
 
-                    $locale = new Zend_Locale(str_replace("-","_", $source));
-                    if(Pimcore_Tool::isValidLanguage((string) $locale)) {
+                    $locale = new \Zend_Locale(str_replace("-","_", $source));
+                    if(Tool::isValidLanguage((string) $locale)) {
                         $locale = (string) $locale;
                     } else {
                         $locale = $locale->getLanguage();
@@ -573,10 +701,10 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         $file = $xliff->file[(int)$step];
         $target = $file["target-language"];
 
-        if(!Pimcore_Tool::isValidLanguage($target)) {
-            $locale = new Zend_Locale($target);
+        if(!Tool::isValidLanguage($target)) {
+            $locale = new \Zend_Locale($target);
             $target = $locale->getLanguage();
-            if(!Pimcore_Tool::isValidLanguage($target)) {
+            if(!Tool::isValidLanguage($target)) {
                 $this->_helper->json(array(
                     "success" => false
                 ));
@@ -584,9 +712,9 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         }
 
         list($type, $id) = explode("-", $file["original"]);
-        $element = Element_Service::getElementById($type, $id);
+        $element = Element\Service::getElementById($type, $id);
 
-        if($element) {
+        if(true || $element) {
             foreach($file->body->{"trans-unit"} as $transUnit) {
                 list($fieldType, $name) = explode("~-~", $transUnit["id"]);
                 $content = $transUnit->target->asXml();
@@ -595,16 +723,20 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                 if($element instanceof Document) {
                     if($fieldType == "tag" && method_exists($element, "getElement")) {
                         $tag = $element->getElement($name);
-                        $tag->setDataFromEditmode($content);
+                        if($tag) {
+                            $tag->setDataFromEditmode($content);
+                            $tag->setInherited(false);
+                            $element->setElement($tag->getName(), $tag);
+                        }
                     }
 
-                    if($fieldType == "settings" && $element instanceof Document_Page) {
+                    if($fieldType == "settings" && $element instanceof Document\Page) {
                         $setter = "set" . ucfirst($name);
                         if(method_exists($element, $setter)) {
                             $element->$setter($content);
                         }
                     }
-                } else if($element instanceof Object_Concrete) {
+                } else if($element instanceof Object\Concrete) {
                     if($fieldType == "localizedfield") {
                         $setter = "set" . ucfirst($name);
                         if(method_exists($element, $setter)) {
@@ -615,11 +747,24 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
                 if($fieldType == "property") {
                     $property = $element->getProperty($name, true);
-                    $property->setData($content);
+                    if($property) {
+                        $property->setData($content);
+                    } else {
+                        $element->setProperty($name, "text", $content);
+                    }
                 }
             }
 
-            $element->save();
+            try {
+                // allow to save objects although there are mandatory fields
+                if($element instanceof Object\AbstractObject) {
+                    $element->setOmitMandatoryCheck(true);
+                }
+
+                $element->save();
+            } catch (\Exception $e) {
+                throw new \Exception("Unable to save " . Element\Service::getElementType($element) . " with id " . $element->getId() . " because of the following reason: " . $e->getMessage());
+            }
         }
 
         $this->_helper->json(array(
@@ -643,7 +788,9 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
     protected function unescapeXliff($content) {
 
-        $content = preg_replace("/<\/?target([^>.]+)?>/i", "", $content);
+        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", "", $content);
+        // we have to do this again but with html entities because of CDATA content
+        $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", "", $content);
 
         if(preg_match("/<\/?(bpt|ept)/", $content)) {
             $xml = str_get_html($content);
@@ -668,7 +815,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         $content = html_entity_decode($content, null, "UTF-8");
 
         if(!preg_match_all("/<([^>]+)>([^<]+)?/", $content, $matches)) {
-                // return original content if it doesn't contain HTML tags
+            // return original content if it doesn't contain HTML tags
             return '<![CDATA[' . $content . ']]>';
         }
 
@@ -708,11 +855,11 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
 
     public function wordExportAction() {
 
-        error_reporting(E_ERROR);
-        ini_set("display_errors", "off");
+        //error_reporting(E_ERROR);
+        //ini_set("display_errors", "off");
 
         $id = $this->getParam("id");
-        $data = Zend_Json::decode($this->getParam("data"));
+        $data = \Zend_Json::decode($this->getParam("data"));
         $source = $this->getParam("source");
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
@@ -723,12 +870,12 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                 </head>
                 <body>
             ');*/
-            Pimcore_File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static/css/word-export.css") . '</style>');
+            File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") . '</style>');
         }
 
         foreach ($data as $el) {
             try {
-                $element = Element_Service::getElementById($el["type"], $el["id"]);
+                $element = Element\Service::getElementById($el["type"], $el["id"]);
                 $output = "";
 
                 // check supported types (subtypes)
@@ -736,12 +883,12 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     continue;
                 }
 
-                if($element instanceof Element_Interface) {
+                if($element instanceof Element\ElementInterface) {
                     $output .= '<h1 class="element-headline">' . ucfirst($element->getType()) . " - " . $element->getFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
                 }
 
-                if($element instanceof Document_PageSnippet) {
-                    if($element instanceof Document_Page) {
+                if($element instanceof Document\PageSnippet) {
+                    if($element instanceof Document\Page) {
                         $structuredDataEmpty = true;
                         $structuredData = '
                             <table border="1" cellspacing="0" cellpadding="5">
@@ -794,7 +941,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     $reqBak = $_REQUEST;
                     $_REQUEST["pimcore_admin"] = true;
 
-                    $html = Document_Service::render($element, array(), false);
+                    $html = Document\Service::render($element, array(), false);
 
                     $_REQUEST = $reqBak; // set the request back to original
 
@@ -855,7 +1002,7 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                         unset($dom);
 
                         // force closing tags (simple_html_dom doesn't seem to support this anymore)
-                        $doc = new DOMDocument();
+                        $doc = new \DOMDocument();
                         libxml_use_internal_errors(true);
                         $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . "</article>");
                         libxml_clear_errors();
@@ -871,15 +1018,15 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     }
 
 
-                } else if ($element instanceof Object_Concrete) {
+                } else if ($element instanceof Object\Concrete) {
 
                     $hasContent = false;
 
                     if($fd = $element->getClass()->getFieldDefinition("localizedfields")) {
                         $definitions = $fd->getFielddefinitions();
 
-                        $locale = new Zend_Locale(str_replace("-","_", $source));
-                        if(Pimcore_Tool::isValidLanguage((string) $locale)) {
+                        $locale = new \Zend_Locale(str_replace("-","_", $source));
+                        if(Tool::isValidLanguage((string) $locale)) {
                             $locale = (string) $locale;
                         } else {
                             $locale = $locale->getLanguage();
@@ -929,8 +1076,8 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
                     fclose($f);
                 }
             } catch (\Exception $e) {
-                Logger::error("Word Export: " . $e->getMessage());
-                Logger::error($e);
+                \Logger::error("Word Export: " . $e->getMessage());
+                \Logger::error($e);
             }
         }
 
@@ -950,17 +1097,17 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         //fclose($f);
 
         // should be done via Pimcore_Document(_Adapter_LibreOffice) in the future
-        if(Pimcore_Document::isFileTypeSupported("docx")) {
+        if(\Pimcore\Document::isFileTypeSupported("docx")) {
             $lockKey = "soffice";
-            Tool_Lock::acquire($lockKey); // avoid parallel conversions of the same document
+            Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions of the same document
 
-            $out = Pimcore_Tool_Console::exec(Pimcore_Document_Adapter_LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_TEMPORARY_DIRECTORY . " " . $exportFile);
+            $out = Tool\Console::exec(\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_TEMPORARY_DIRECTORY . " " . $exportFile);
 
-            Logger::debug("LibreOffice Output was: " . $out);
+            \Logger::debug("LibreOffice Output was: " . $out);
 
-            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . Pimcore_File::getFileExtension($exportFile) . "$/", ".docx",basename($exportFile));
+            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($exportFile) . "$/", ".docx",basename($exportFile));
 
-            Tool_Lock::release($lockKey);
+            Model\Tool\Lock::release($lockKey);
             // end what should be done in Pimcore_Document
 
             header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
@@ -980,5 +1127,23 @@ class Admin_TranslationController extends Pimcore_Controller_Action_Admin {
         @unlink($exportFile);
         @unlink($tmpName);
         exit;
+    }
+
+    public function mergeItemAction() {
+
+        $translationType = $this->getParam("translationType");
+        $success = true;
+
+        $data = json_decode($this->getParam("data"), true);
+
+        $classname = "\\Pimcore\\Model\\Translation\\" . ucfirst($translationType);
+        $t = $classname::getByKey($data["key"],true);
+        $t->addTranslation($data["lg"], $data["current"]);
+        $t->setModificationDate(time());$t->save();
+
+
+        $this->_helper->json(array(
+            "success" => $success
+        ));
     }
 }

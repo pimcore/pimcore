@@ -64,7 +64,7 @@ pimcore.settings.website = Class.create({
             successProperty:'success',
             root:'data'
         },
-            ['name','type',{name: "data", type: "string", convert: function (v, rec) {
+            ["id", 'name','type',{name: "data", type: "string", convert: function (v, rec) {
                 return v;
             }},
             {name: 'siteId', allowBlank: true},
@@ -329,7 +329,7 @@ pimcore.settings.website = Class.create({
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
 
         return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; '
-            + 'height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
+            + 'height: 16px;" data-id="' + record.get("id") + '">&nbsp;</div>';
     },
 
     getCellEditor: function (rowIndex) {
@@ -378,8 +378,8 @@ pimcore.settings.website = Class.create({
 
         for (var i = 0; i < rows.length; i++) {
             try {
-                var propertyName = Ext.get(rows[i]).query(".x-grid3-cell-first div div")[0].getAttribute("name");
-                var storeIndex = this.grid.getStore().find("name", propertyName);
+                var propertyName = Ext.get(rows[i]).query(".x-grid3-cell-first div div")[0].getAttribute("data-id");
+                var storeIndex = this.grid.getStore().find("id", propertyName);
 
                 var data = this.grid.getStore().getAt(storeIndex).data;
 
@@ -464,7 +464,7 @@ pimcore.settings.website = Class.create({
 
         // check for duplicate name
         var dublicateIndex = store.findBy(function (key, record, id) {
-            if (record.data.name.toLowerCase() == key.toLowerCase()) {
+            if (record.get("name").toLowerCase() == key.toLowerCase()) {
                 return true;
             }
             return false;

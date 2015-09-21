@@ -15,10 +15,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Service extends Element_Service {
+namespace Pimcore\Model\Asset;
+
+use Pimcore\Model;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Element;
+
+class Service extends Model\Element\Service {
 
     /**
-     * @var User
+     * @var Model\User
      */
     protected $_user;
     /**
@@ -27,17 +33,16 @@ class Asset_Service extends Element_Service {
     protected $_copyRecursiveIds;
 
     /**
-     * @param  User $user
-     * @return void
+     * @param  Model\User $user
      */
     public function __construct($user = null) {
         $this->_user = $user;
     }
 
     /**
-     * @param  Asset $target
-     * @param  Asset $source
-     * @return Asset copied asset
+     * @param  Model\Asset $target
+     * @param  Model\Asset $source
+     * @return Model\Asset copied asset
      */
     public function copyRecursive($target, $source) {
 
@@ -53,11 +58,11 @@ class Asset_Service extends Element_Service {
 
         $new = clone $source;
         $new->id = null;
-        if($new instanceof Asset_Folder){
+        if($new instanceof Asset\Folder){
             $new->setChilds(null);
         }
 
-        $new->setFilename(Element_Service::getSaveCopyName("asset", $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSaveCopyName("asset", $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -74,7 +79,7 @@ class Asset_Service extends Element_Service {
             $this->copyRecursive($new, $child);
         }
 
-        if($target instanceof Asset_Folder){
+        if($target instanceof Asset\Folder){
             $this->updateChilds($target,$new);
         }
 
@@ -94,10 +99,10 @@ class Asset_Service extends Element_Service {
         $new = clone $source;
         $new->id = null;
 
-        if($new instanceof Asset_Folder){
+        if($new instanceof Asset\Folder){
             $new->setChilds(null);
         }
-        $new->setFilename(Element_Service::getSaveCopyName("asset", $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSaveCopyName("asset", $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -107,7 +112,7 @@ class Asset_Service extends Element_Service {
         $new->setStream($source->getStream());
         $new->save();
 
-        if($target instanceof Asset_Folder){
+        if($target instanceof Asset\Folder){
             $this->updateChilds($target,$new);
         }
 
@@ -115,18 +120,19 @@ class Asset_Service extends Element_Service {
     }
 
     /**
-     * @param  Asset $target
-     * @param  Asset $source
-     * @return Asset the modified asset
+     * @param $target
+     * @param $source
+     * @return mixed
+     * @throws \Exception
      */
     public function copyContents($target, $source) {
 
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
-            throw new Exception("Source and target have to be the same type");
+            throw new \Exception("Source and target have to be the same type");
         }
 
-        if (!$source instanceof Asset_Folder) {
+        if (!$source instanceof Asset\Folder) {
             $target->setStream($source->getStream());
             $target->setCustomSettings($source->getCustomSettings());
         }
@@ -145,8 +151,7 @@ class Asset_Service extends Element_Service {
      */
     public static function gridAssetData($asset) {
 
-        $data = Element_Service::gridElementData($asset);
-
+        $data = Element\Service::gridElementData($asset);
         return $data;
     }
 
@@ -157,17 +162,17 @@ class Asset_Service extends Element_Service {
      */
     public static function pathExists ($path, $type = null) {
 
-        $path = Element_Service::correctPath($path);
+        $path = Element\Service::correctPath($path);
 
         try {
             $asset = new Asset();
 
-            if (Pimcore_Tool::isValidPath($path)) {
+            if (\Pimcore\Tool::isValidPath($path)) {
                 $asset->getResource()->getByPath($path);
                 return true;
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
 
         }
 
@@ -176,17 +181,12 @@ class Asset_Service extends Element_Service {
 
     /**
      * @static
-     * @param Element_Interface $element
-     * @return Element_Interface
+     * @param Element\ElementInterface $element
+     * @return Element\ElementInterface
      */
-    public static function loadAllFields (Element_Interface $element) {
+    public static function loadAllFields (Element\ElementInterface $element) {
 
         $element->getProperties();
-
-        //if($element instanceof Asset && method_exists($element, "getData")) {
-        //    $element->getData();
-        //}
-
         return $element;
     }
 
@@ -216,6 +216,10 @@ class Asset_Service extends Element_Service {
         return $asset;
     }
 
+    /**
+     * @param $metadata
+     * @return array
+     */
     public static function minimizeMetadata($metadata) {
         if (!is_array($metadata)) {
             return $metadata;
@@ -229,7 +233,7 @@ class Asset_Service extends Element_Service {
                 case "asset":
                 case "object":
                     {
-                        $element = Element_Service::getElementByPath($type, $item["data"]);
+                        $element = Element\Service::getElementByPath($type, $item["data"]);
                         if ($element) {
                             $item["data"] = $element->getId();
                         } else {
@@ -246,7 +250,11 @@ class Asset_Service extends Element_Service {
         return $result;
     }
 
-    public static function expandMetadata($metadata) {
+    /**
+     * @param $metadata
+     * @return array
+     */
+    public static function expandMetadataForEditmode($metadata) {
         if (!is_array($metadata)) {
             return $metadata;
         }
@@ -259,10 +267,11 @@ class Asset_Service extends Element_Service {
                 case "asset":
                 case "object":
                 {
+                    $element = $item["data"];
                     if (is_numeric($item["data"])) {
-                        $element = Element_Service::getElementById($type, $item["data"]);
+                        $element = Element\Service::getElementById($type, $item["data"]);
                     }
-                    if ($element) {
+                    if ($element instanceof Element\ElementInterface) {
                         $item["data"] = $element->getFullPath();
                     } else {
                         $item["data"] = "";
@@ -273,10 +282,15 @@ class Asset_Service extends Element_Service {
                 default:
                     //nothing to do
             }
+
+            //get the config from an predefined property-set (eg. select)
+            $predefined = Model\Metadata\Predefined::getByName($item['name']);
+            if ($predefined && $predefined->getType() == $item['type'] && $predefined->getConfig()) {
+                $item['config'] = $predefined->getConfig();
+            }
+
             $result[] = $item;
         }
         return $result;
     }
-
-
 }

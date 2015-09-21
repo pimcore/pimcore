@@ -15,25 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Dependency;
 
-    /**
-     * List of valid columns in database table
-     * This is used for automatic matching the objects properties to the database
-     *
-     * @var array
-     */
-    protected $validColumns = array();
+use Pimcore\Model;
+use Pimcore\Model\Element;
 
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("dependencies");
-    }
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Loads the relations for the given sourceId and type
@@ -74,19 +61,19 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
 
     /**
      * Clear all relations in the database
-     * @param Element_Interface $element
+     * @param Element\ElementInterface $element
      */
     public function cleanAllForElement($element) {
         try {
 
             $id = $element->getId();
-            $type = Element_Service::getElementType($element);
+            $type = Element\Service::getElementType($element);
 
             //schedule for sanity check
             $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", array($id, $type));
             if (is_array($data)) {
                 foreach ($data as $row) {
-                    $sanityCheck = new Element_Sanitycheck();
+                    $sanityCheck = new Element\Sanitycheck();
                     $sanityCheck->setId($row['sourceid']);
                     $sanityCheck->setType($row['sourcetype']);
                     $sanityCheck->save();
@@ -96,8 +83,8 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
             $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $id) . " AND " . $this->db->quoteInto("sourcetype = ?", $type));
             $this->db->delete("dependencies", $this->db->quoteInto("targetid = ?", $id) . " AND " . $this->db->quoteInto("targettype = ?", $type));
         }
-        catch (Exception $e) {
-            Logger::error($e);
+        catch (\Exception $e) {
+            \Logger::error($e);
         }
     }
 
@@ -112,8 +99,8 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
         try {
             $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $this->model->getSourceId()) . " AND " . $this->db->quoteInto("sourcetype = ?", $this->model->getSourceType()));
         }
-        catch (Exception $e) {
-            Logger::error($e);
+        catch (\Exception $e) {
+            \Logger::error($e);
         }
     }
 

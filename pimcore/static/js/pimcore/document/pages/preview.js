@@ -45,11 +45,16 @@ pimcore.document.pages.preview = Class.create({
                     {type: "desktop", name: '24" Desktop', width: 1920, height: 1200, icon: ""},
                     {type: "tablet", name: 'Velocity Cruz', width: 800, height: 600, icon: ""},
                     {type: "tablet", name: 'Samsung Galaxy', width: 1024, height: 600, icon: ""},
-                    {type: "tablet", name: 'Apple iPad 1&2', width: 1024, height: 768, icon: ""},
-                    {type: "tablet", name: 'Motorola Xoom', width: 1280, height: 800, icon: ""},
+                    {type: "tablet", name: 'Apple iPad (mini)', width: 1024, height: 768, icon: ""},
+                    {type: "tablet", name: 'Google Nexus 10', width: 1280, height: 800, icon: ""},
+                    {type: "tablet", name: 'Google Nexus 7', width: 960, height: 600, icon: ""},
                     {type: "mobile", name: 'Apple iPhone 3/4', width: 320, height: 480, icon: ""},
+                    {type: "mobile", name: 'Apple iPhone 5 (c/s)', width: 320, height: 568, icon: ""},
+                    {type: "mobile", name: 'Apple iPhone 6', width: 375, height: 667, icon: ""},
+                    {type: "mobile", name: 'Apple iPhone 6 Plus', width: 414, height: 736, icon: ""},
                     {type: "mobile", name: 'LG Optimus S', width: 320, height: 480, icon: ""},
                     {type: "mobile", name: 'Google Nexus S', width: 480, height: 800, icon: ""},
+                    {type: "mobile", name: 'Google Nexus 5 (five)', width: 360, height: 598, icon: ""},
                     {type: "tv", name: '480p TV', width: 640, height: 480, icon: ""},
                     {type: "tv", name: '720p TV', width: 1280, height: 720, icon: ""},
                     {type: "tv", name: '1080p TV', width: 1920, height: 1080, icon: ""}
@@ -61,6 +66,7 @@ pimcore.document.pages.preview = Class.create({
                     mobile: [],
                     tv: []
                 };
+
 
                 for(var i=0; i<previewModes.length; i++) {
                     menues[previewModes[i]["type"]].push({
@@ -255,33 +261,18 @@ pimcore.document.pages.preview = Class.create({
         var iframe = this.getIframe();
         var availableWidth = this.framePanel.getWidth()-50;
         var availableHeight = this.framePanel.getHeight()-50;
-        var positioningHeight = mode["height"];
-        var positioningWidth = mode["width"];
 
-        var zoom = 1;
-
-        if(mode["width"] > availableWidth || mode["height"] > availableHeight) {
-            if(mode["height"] > availableHeight) {
-                zoom = availableHeight / mode["height"];
-            } else {
-                zoom = availableWidth / mode["width"];
-            }
-
-            zoom = zoom-0.1;
-
-            positioningHeight = Math.floor(mode["height"] * zoom);
-            positioningWidth = Math.floor(mode["width"] * zoom);
+        if(availableWidth < mode["width"] || availableHeight < mode["height"]) {
+            Ext.MessageBox.alert(t("error"), t("screen_size_to_small"));
+            return;
         }
 
-        var top = Math.floor((availableHeight - positioningHeight)/2);
-        var left = Math.floor((availableWidth - positioningWidth)/2);
+        var top = Math.floor((availableHeight - mode["height"])/2);
+        var left = Math.floor((availableWidth - mode["width"])/2);
 
         iframe.applyStyles({
             position: "absolute",
-            "transform-origin": "0 0",
             border: "5px solid #323232",
-            transform: "scale(" + zoom + ")",
-            zoom: zoom,
             width: mode["width"] + "px",
             height: mode["height"] + "px",
             top: top + "px",

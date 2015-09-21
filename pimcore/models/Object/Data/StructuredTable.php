@@ -15,29 +15,45 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Data_StructuredTable {
+namespace Pimcore\Model\Object\Data;
+
+class StructuredTable {
 
     /**
      * @var array
      */
     public $data;
 
+    /**
+     * @param array $data
+     */
     public function __construct($data = array()) {
         if($data) {
             $this->data = $data;
         }
     }
 
+    /**
+     * @param $data
+     * @return $this
+     */
     public function setData($data) {
         $this->data = $data;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getData() {
         return $this->data;
     }
 
-
+    /**
+     * @param $name
+     * @param $arguments
+     * @throws \Exception
+     */
     public function __call($name, $arguments) {
 
         if(substr($name, 0, 3) == "get") {
@@ -58,7 +74,7 @@ class Object_Data_StructuredTable {
                 return $this->data[$key];
             }
 
-            throw new Exception("Requested data $key not available");
+            throw new \Exception("Requested data $key not available");
         }
 
 
@@ -78,14 +94,17 @@ class Object_Data_StructuredTable {
                     }
                 }
             } else if(array_key_exists($key, $this->data)) {
-                throw new Exception("Setting a whole row is not allowed.");
+                throw new \Exception("Setting a whole row is not allowed.");
             }
 
-            throw new Exception("Requested data $key not available");
+            throw new \Exception("Requested data $key not available");
         }
 
     }
 
+    /**
+     * @return bool
+     */
     public function isEmpty() {
 
         foreach($this->data as $dataRow) {
@@ -99,6 +118,9 @@ class Object_Data_StructuredTable {
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function __toString() {
 
         $string = "<table>";
@@ -118,6 +140,11 @@ class Object_Data_StructuredTable {
         return $string;
     }
 
+    /**
+     * @param $rowDefs
+     * @param $colDefs
+     * @return string
+     */
     public function getHtmlTable($rowDefs, $colDefs) {
         $string = "<table>";
 

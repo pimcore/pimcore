@@ -18,7 +18,7 @@ pimcore.settings.translations = Class.create({
 
     filterField: null,
     preconfiguredFilter: "",
-    
+
     initialize: function (filter) {
 
         this.filterField = new Ext.form.TextField({
@@ -31,7 +31,7 @@ pimcore.settings.translations = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        this.store.baseParams.searchString = input.getValue();
                         this.store.load();
                     }
                 }.bind(this)
@@ -46,7 +46,94 @@ pimcore.settings.translations = Class.create({
 
     getRowEditor: function () {
 
+        var StateFullProvider = Ext.extend(Ext.state.Provider, {
+            namespace: "default",
+
+            constructor : function(config){
+                StateFullProvider.superclass.constructor.call(this);
+                Ext.apply(this, config);
+
+                var data = localStorage.getItem(this.namespace);
+                if (!data) {
+                    this.state = {};
+                } else {
+                    data = JSON.parse(data);
+                    if (data.state && data.user == pimcore.currentuser.id) {
+                        this.state = data.state;
+                    } else {
+                        this.state = {};
+                    }
+                }
+            },
+
+            get : function(name, defaultValue){
+                try {
+                    if (typeof this.state[name] == "undefined") {
+                        return defaultValue
+                    } else {
+                        return this.decodeValue(this.state[name])
+                    }
+                } catch (e) {
+                    this.clear(name);
+                    return defaultValue;
+                }
+            },
+            set : function(name, value){
+                try {
+                    if (typeof value == "undefined" || value === null) {
+                        this.clear(name);
+                        return;
+                    }
+                    this.state[name] = this.encodeValue(value)
+
+                    var data = {
+                        state: this.state,
+                        user: pimcore.currentuser.id
+                    };
+                    var json = JSON.stringify(data);
+
+                    localStorage.setItem(this.namespace, json);
+                } catch (e) {
+                    this.clear(name);
+                }
+
+                this.fireEvent("statechange", this, name, value);
+            }
+        });
+
+        var provider = new StateFullProvider({
+            namespace : "pimcore_ui_states"
+        });
+
+
+        Ext.state.Manager.setProvider(provider);
+
+        var stateId = "tr_" + this.translationType;
+        var applyInitialSettings = false;
+        var showInfo = false;
+        var state = provider.get(stateId, null);
         var languages = this.languages;
+
+        var maxCols = 7;   // include creation date / modification date / action column)
+        var maxLanguages = maxCols - 3;
+
+        if (state == null) {
+            applyInitialSettings = true;
+            if (languages.length > maxLanguages) {
+                showInfo = true;
+            }
+        } else {
+            if (state.columns) {
+                for (var i = 0; i < state.columns.length; i++) {
+                    var colState = state.columns[i];
+                    if (colState.hidden) {
+                        showInfo = true;
+                        break;
+                    }
+                }
+            }
+        }
+
 
         var proxy = new Ext.data.HttpProxy({
             url: this.dataUrl,
@@ -65,33 +152,44 @@ pimcore.settings.translations = Class.create({
         ];
 
         for (var i = 0; i < languages.length; i++) {
+
             readerFields.push({name: languages[i]});
-            typesColumns.push({header: languages[i].toUpperCase(), sortable: false, dataIndex: languages[i],
-                                                                                editor: new Ext.form.TextField({})});
+            var columnConfig = {header: pimcore.available_languages[languages[i]], sortable: false, dataIndex: languages[i],
+                editor: new Ext.form.TextField({}), id: "translation_column_" + languages[i].toLowerCase()};
+            if (applyInitialSettings) {
+                var hidden = i >= maxLanguages;
+                columnConfig.hidden = hidden;
+            }
+
+            typesColumns.push(columnConfig);
+        }
+
+        if (showInfo) {
+            pimcore.helpers.showNotification(t("info"), t("there_are_more_columns"), null, null, 2000);
         }
 
         typesColumns.push({header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
-                                                                                renderer: function(d) {
-            var date = new Date(d * 1000);
-            return date.format("Y-m-d H:i:s");
-        }});
+            renderer: function(d) {
+                var date = new Date(d * 1000);
+                return date.format("Y-m-d H:i:s");
+            }});
         typesColumns.push({header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
-        renderer: function(d) {
-            var date = new Date(d * 1000);
-            return date.format("Y-m-d H:i:s");
-        }});
+            renderer: function(d) {
+                var date = new Date(d * 1000);
+                return date.format("Y-m-d H:i:s");
+            }});
 
         typesColumns.push({
-                xtype: 'actioncolumn',
-                width: 30,
-                items: [{
-                    tooltip: t('delete'),
-                    icon: "/pimcore/static/img/icon/cross.png",
-                    handler: function (grid, rowIndex) {
-                        grid.getStore().removeAt(rowIndex);
-                    }.bind(this)
-                }]
-            });
+            xtype: 'actioncolumn',
+            width: 30,
+            items: [{
+                tooltip: t('delete'),
+                icon: "/pimcore/static/img/icon/cross.png",
+                handler: function (grid, rowIndex) {
+                    grid.getStore().removeAt(rowIndex);
+                }.bind(this)
+            }]
+        });
 
         var reader = new Ext.data.JsonReader({
             totalProperty: 'total',
@@ -112,14 +210,13 @@ pimcore.settings.translations = Class.create({
             remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
-                filter: this.preconfiguredFilter
-            },            
+                searchString: this.preconfiguredFilter
+            },
             listeners: {
                 write : function(store, action, result, response, rs) {
                 }
             }
         });
-        this.store.load();
 
         this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: itemsPerPage,
@@ -154,18 +251,36 @@ pimcore.settings.translations = Class.create({
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
-        }));        
-        
-        
+        }));
+
+
+        // filters
+        this.gridFilters = new Ext.ux.grid.GridFilters({
+            encode: true,
+            local: false,
+            filters: [{
+                type: "date",
+                dataIndex: "creationDate"
+            },{
+                type: "date",
+                dataIndex: "modificationDate"
+            }
+            ]
+        });
+
         this.grid = new Ext.grid.EditorGridPanel({
             frame: false,
             autoScroll: true,
             store: this.store,
             columnLines: true,
             stripeRows: true,
+            plugins: [this.gridFilters],
             columns : typesColumns,
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
+            stateful: true,
+            stateId: stateId,
+            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             tbar: [
                 {
@@ -174,16 +289,24 @@ pimcore.settings.translations = Class.create({
                     iconCls: "pimcore_icon_add"
                 },
                 '-',{
-                  text: this.getHint(),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
+                    text: this.getHint(),
+                    xtype: "tbtext",
+                    style: "margin: 0 10px 0 0;"
                 },
                 "->",
                 {
                     text: t('cleanup'),
                     handler: this.cleanup.bind(this),
                     iconCls: "pimcore_icon_cleanup"
-                },{
+                },
+                "-",
+                {
+                    text: t('merge_csv'),
+                    handler: this.doMerge.bind(this),
+                    iconCls: "pimcore_icon_merge"
+                },
+                "-",
+                {
                     text: t('import_csv'),
                     handler: this.doImport.bind(this),
                     iconCls: "pimcore_icon_import"
@@ -194,15 +317,17 @@ pimcore.settings.translations = Class.create({
                     handler: this.doExport.bind(this),
                     iconCls: "pimcore_icon_export"
                 },'-',{
-                  text: t("filter") + "/" + t("search"),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
+                    text: t("filter") + "/" + t("search"),
+                    xtype: "tbtext",
+                    style: "margin: 0 10px 0 0;"
                 },this.filterField
             ],
             viewConfig: {
                 forceFit: true
             }
         });
+
+        this.store.load();
 
         return this.grid;
     },
@@ -215,18 +340,37 @@ pimcore.settings.translations = Class.create({
         });
     },
 
+    doMerge:function(){
+        pimcore.helpers.uploadDialog(this.mergeUrl, "Filedata", function(result) {
+            var data = result.response.responseText;
+            data = Ext.decode(data);
+
+            var merger = new pimcore.settings.translation.translationmerger(this.translationType, data, this);
+            this.refresh();
+        }.bind(this), function () {
+            Ext.MessageBox.alert(t("error"), t("error"));
+        });
+    },
+
+    refresh: function() {
+        this.store.reload();
+    },
+
     doExport:function(){
 
-        if(this.filterField.getValue()) {
+        var filtersActive = this.filterField.getValue() || this.gridFilters.getFilterData().length;
+        if(filtersActive) {
             Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
                 if (buttonValue == "yes") {
-                    window.open(Ext.urlAppend(this.exportUrl, "filter=" + this.filterField.getValue()));
+                    var queryString = "searchString=" + this.filterField.getValue();
+                    queryString += "&" + Ext.urlEncode(this.gridFilters.buildQuery(this.gridFilters.getFilterData()));
+                    pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
                 } else {
-                    window.open(this.exportUrl);
+                    pimcore.helpers.download(this.exportUrl);
                 }
             }.bind(this));
         } else {
-            window.open(this.exportUrl);
+            pimcore.helpers.download(this.exportUrl);
         }
     },
 
@@ -253,4 +397,3 @@ pimcore.settings.translations = Class.create({
         });
     }
 });
-

@@ -15,8 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Data_Geopoint {
+namespace Pimcore\Model\Object\Data;
 
+class Geopoint {
 
     /**
      * @var double
@@ -28,7 +29,10 @@ class Object_Data_Geopoint {
      */
     public $latitude;
 
-
+    /**
+     * @param null $longitude
+     * @param null $latitude
+     */
     public function __construct($longitude = null, $latitude = null) {
         if ($longitude !== null) {
             $this->setLongitude($longitude);
@@ -38,24 +42,41 @@ class Object_Data_Geopoint {
         }
     }
 
+    /**
+     * @return float
+     */
     public function getLongitude() {
         return $this->longitude;
     }
 
+    /**
+     * @param $longitude
+     * @return $this
+     */
     public function setLongitude($longitude) {
         $this->longitude = (double) $longitude;
         return $this;
     }
 
+    /**
+     * @return float
+     */
     public function getLatitude() {
         return $this->latitude;
     }
 
+    /**
+     * @param $latitude
+     * @return $this
+     */
     public function setLatitude($latitude) {
         $this->latitude = (double) $latitude;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function __toString() {
         return $this->longitude . "; " . $this->latitude;
     }

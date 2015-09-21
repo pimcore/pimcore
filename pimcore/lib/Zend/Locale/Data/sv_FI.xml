@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9280 $"/>
-		<generation date="$Date: 2013-08-27 13:07:13 -0500 (Tue, 27 Aug 2013) $"/>
+		<version number="$Revision: 9814 $"/>
+		<generation date="$Date: 2014-02-26 15:19:38 -0600 (Wed, 26 Feb 2014) $"/>
 		<language type="sv"/>
 		<territory type="FI"/>
 	</identity>
@@ -159,7 +159,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 	<units>
 		<unitLength type="long">
 			<unit type="temperature-celsius">
-				<unitPattern count="one" draft="contributed">{0} grader Celsius</unitPattern>
+				<unitPattern count="one" draft="contributed">{0} grad Celsius</unitPattern>
 				<unitPattern count="other" draft="contributed">{0} grader Celsius</unitPattern>
 			</unit>
 		</unitLength>

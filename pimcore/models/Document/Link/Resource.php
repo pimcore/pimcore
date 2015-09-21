@@ -15,33 +15,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Link_Resource extends Document_Resource {
+namespace Pimcore\Model\Document\Link;
 
-    /**
-     * Contains the valid database colums
-     *
-     * @var array
-     */
-    protected $validColumnsLink = array();
+use Pimcore\Model;
 
-    /**
-     * Get the valid database columns from database
-     *
-     * @return void
-     */
-    public function init() {
-
-        // document
-        parent::init();
-
-        $this->validColumnsLink = $this->getValidTableColumns("documents_link");
-    }
+class Resource extends Model\Document\Resource {
 
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
-     * @return void
+     * @throws \Exception
      */
     public function getById($id = null) {
         try {
@@ -59,11 +43,11 @@ class Document_Link_Resource extends Document_Resource {
                 $this->model->getHref();
             }
             else {
-                throw new Exception("Link with the ID " . $this->model->getId() . " doesn't exists");
+                throw new \Exception("Link with the ID " . $this->model->getId() . " doesn't exists");
             }
 
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -71,7 +55,7 @@ class Document_Link_Resource extends Document_Resource {
     /**
      * Create a new record for the object in the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function create() {
         try {
@@ -81,69 +65,23 @@ class Document_Link_Resource extends Document_Resource {
                 "id" => $this->model->getId()
             ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
 
-    }
-
-    /**
-     * Updates the data in the object to the database
-     *
-     * @return void
-     */
-    public function update() {
-        try {
-            $this->model->setModificationDate(time());
-            $document = get_object_vars($this->model);
-
-            foreach ($document as $key => $value) {
-
-                // check if the getter exists
-                $getter = "get" . ucfirst($key);
-                if(!method_exists($this->model,$getter)) {
-                    continue;
-                }
-
-                // get the value from the getter
-                if(in_array($key, $this->validColumnsDocument) || in_array($key, $this->validColumnsLink)) {
-                    $value = $this->model->$getter();
-                } else {
-                    continue;
-                }
-
-                if(is_bool($value)) {
-                    $value = (int)$value;
-                }
-                if (in_array($key, $this->validColumnsDocument)) {
-                    $dataDocument[$key] = $value;
-                }
-                if (in_array($key, $this->validColumnsLink)) {
-                    $dataLink[$key] = $value;
-                }
-            }
-            
-            $this->db->insertOrUpdate("documents", $dataDocument);
-            $this->db->insertOrUpdate("documents_link", $dataLink);
-
-            $this->updateLocks();
-        }
-        catch (Exception $e) {
-            throw $e;
-        }
     }
 
     /**
      * Deletes the object (and data) from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
         try {
             $this->db->delete("documents_link", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

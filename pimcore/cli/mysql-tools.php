@@ -13,10 +13,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+chdir(__DIR__);
+
 include_once("startup.php");
 
 try {
-    $opts = new Zend_Console_Getopt(array(
+    $opts = new \Zend_Console_Getopt(array(
         'verbose|v' => 'show detailed information (for debug, ...)',
         'help|h' => 'display this help',
         "mode|m=s" => "optimize,warmup"
@@ -27,7 +29,7 @@ try {
 
 try {
     $opts->parse();
-} catch (Zend_Console_Getopt_Exception $e) {
+} catch (\Zend_Console_Getopt_Exception $e) {
     echo $e->getMessage();
 }
 
@@ -47,15 +49,15 @@ if(!$opts->getOption("mode")) {
 
 
 if($opts->getOption("verbose")) {
-    $writer = new Zend_Log_Writer_Stream('php://output');
-    $logger = new Zend_Log($writer);
-    Logger::addLogger($logger);
+    $writer = new \Zend_Log_Writer_Stream('php://output');
+    $logger = new \Zend_Log($writer);
+    \Logger::addLogger($logger);
 
     // set all priorities
-    Logger::setVerbosePriorities();
+    \Logger::setVerbosePriorities();
 }
 
-$db = Pimcore_Resource::get();
+$db = \Pimcore\Resource::get();
 
 if($opts->getOption("mode") == "optimize") {
     $tables = $db->fetchAll("SHOW TABLES");
@@ -63,10 +65,10 @@ if($opts->getOption("mode") == "optimize") {
     foreach ($tables as $table) {
         $t = current($table);
         try {
-            Logger::debug("Running: OPTIMIZE TABLE " . $t);
+            \Logger::debug("Running: OPTIMIZE TABLE " . $t);
             $db->query("OPTIMIZE TABLE " . $t);
         } catch (Exception $e) {
-            Logger::error($e);
+            \Logger::error($e);
         }
     }
 } else if ($opts->getOption("mode") == "warmup") {
@@ -75,11 +77,11 @@ if($opts->getOption("mode") == "optimize") {
     foreach ($tables as $table) {
         $t = current($table);
         try {
-            Logger::debug("Running: SELECT COUNT(*) FROM $t");
+            \Logger::debug("Running: SELECT COUNT(*) FROM $t");
             $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
-            Logger::debug("Result: " . $res);
+            \Logger::debug("Result: " . $res);
         } catch (Exception $e) {
-            Logger::error($e);
+            \Logger::error($e);
         }
     }
 }

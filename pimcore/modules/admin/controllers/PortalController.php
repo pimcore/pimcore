@@ -13,16 +13,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_PortalController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+use Pimcore\Model\Site;
+
+class Admin_PortalController extends \Pimcore\Controller\Action\Admin {
 
     /**
-     * @var Pimcore_Helper_Dashboard
+     * @var \\Pimcore\\Helper\\Dashboard
      */
     protected $dashboardHelper = null;
 
     public function init() {
         parent::init();
-        $this->dashboardHelper = new Pimcore_Helper_Dashboard($this->getUser());
+        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getUser());
     }
 
     protected function getCurrentConfiguration () {
@@ -47,14 +52,19 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
     }
 
     public function createDashboardAction() {
+
+        $this->protectCSRF();
+
         $dashboards = $this->dashboardHelper->getAllDashboards();
-        $key = $this->getParam("key");
+        $key = trim($this->getParam("key"));
 
         if($dashboards[$key]) {
             $this->_helper->json(array("success" => false, "message" => "dashboard_already_exists"));
-        } else {
+        } else if (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);
             $this->_helper->json(array("success" => true));
+        } else {
+            $this->_helper->json(array("success" => false, "message" => "empty"));
         }
     }
 
@@ -159,10 +169,10 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         $dashboard = $this->getCurrentConfiguration();
         $id = $this->getParam("id");
 
-        $cache = Pimcore_Model_Cache::getInstance();
+        $cache = \Pimcore\Model\Cache::getInstance();
         if($cache) {
             $cache->setLifetime(10);
-            Zend_Feed_Reader::setCache($cache);
+            \Zend_Feed_Reader::setCache($cache);
         }
 
         $portlet = array();
@@ -179,9 +189,9 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         $feed = null;
         if(!empty($feedUrl)) {
             try {
-                $feed = Zend_Feed_Reader::import($feedUrl);
-            } catch (Exception $e) {
-                Logger::error($e);
+                $feed = \Zend_Feed_Reader::import($feedUrl);
+            } catch (\Exception $e) {
+                \Logger::error($e);
             }
         }
 
@@ -197,14 +207,20 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
                     break;
                 }
 
-
-                $entries[] = array(
+                $entry = array(
                     "title" => $entry->getTitle(),
                     "description" => $entry->getDescription(),
                     'authors' => $entry->getAuthors(),
                     'link' => $entry->getLink(),
                     'content' => $entry->getContent()
                 );
+
+                foreach($entry as &$content) {
+                    $content = strip_tags($content, "<h1><h2><h3><h4><h5><p><br><a><img><div><b><strong><i>");
+                    $content = preg_replace('/on([a-z]+)([ ]+)?=/i', "data-on$1=", $content);
+                }
+
+                $entries[] = $entry;
             }
         }
 
@@ -265,7 +281,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
     public function portletModifiedObjectsAction () {
 
-        $list = Object_Abstract::getList(array(
+        $list = Object::getList(array(
             "limit" => 10,
             "order" => "DESC",
             "orderKey" => "o_modificationDate",
@@ -290,7 +306,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
     public function portletModificationStatisticsAction () {
 
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
 
         $days = 31;
         $startDate = mktime(23,59,59,date("m"),date("d"),date("Y"));
@@ -307,11 +323,11 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
             $a = $db->fetchOne("SELECT COUNT(*) AS count FROM assets WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
             $d = $db->fetchOne("SELECT COUNT(*) AS count FROM documents WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
 
-            $date = new Zend_Date($start);
+            $date = new \Zend_Date($start);
 
             $data[] = array(
                 "timestamp" => $start,
-                "datetext" => $date->get(Zend_Date::DATE_LONG),
+                "datetext" => $date->get(\Zend_Date::DATE_LONG),
                 "objects" => (int) $o,
                 "documents" => (int) $d,
                 "assets" => (int) $a
@@ -325,9 +341,9 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
     public function portletAnalyticsSitesAction() {
 
-        $t = Zend_Registry::get("Zend_Translate");
+        $t = \Zend_Registry::get("Zend_Translate");
 
-        $sites = new Site_List();
+        $sites = new Site\Listing();
         $data = array(
             array (
                 "id" => 0,
@@ -336,7 +352,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         );
 
         foreach ($sites->load() as $site) {
-            if (Pimcore_Google_Analytics::isConfigured($site)) {
+            if (\Pimcore\Google\Analytics::isConfigured($site)) {
                 $data[] = array(
                     "id" => $site->getId(),
                     "site" => $site->getMainDomain()

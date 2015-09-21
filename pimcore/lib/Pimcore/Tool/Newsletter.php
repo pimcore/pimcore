@@ -13,16 +13,24 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_Newsletter {
+namespace Pimcore\Tool;
+
+use Pimcore\Mail;
+use Pimcore\Tool;
+use Pimcore\Model\Object;
+use Pimcore\Model\Document;
+use Pimcore\Model;
+
+class Newsletter {
 
     /**
-     * @var Object_Class
+     * @var Object\ClassDefinition
      */
     protected $class;
 
     /**
-     * @param Tool_Newsletter_Config $newsletter
-     * @param Object_Concrete $object
+     * @param Model\Tool\Newsletter\Config $newsletter
+     * @param Object\Concrete $object
      */
     public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null) {
 
@@ -35,14 +43,14 @@ class Pimcore_Tool_Newsletter {
             "object" => $object
         );
 
-        $mail = new Pimcore_Mail();
+        $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
 
-        if(Pimcore_Config::getSystemConfig()->newsletter->usespecific) {
+        if(\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
             $mail->init("newsletter");
         }
 
-        if(!Pimcore_Tool::getHostUrl() && $hostUrl) {
+        if(!Tool::getHostUrl() && $hostUrl) {
             $mail->setHostUrl($hostUrl);
         }
 
@@ -65,6 +73,10 @@ class Pimcore_Tool_Newsletter {
                     $links = $html->find("a");
                     foreach($links as $link) {
 
+                        if(preg_match("/^(mailto)/", trim(strtolower($link->href)))) {
+                            continue;
+                        }
+
                         $glue = "?";
                         if(strpos($link->href, "?")) {
                             $glue = "&";
@@ -85,20 +97,21 @@ class Pimcore_Tool_Newsletter {
     }
 
     /**
-     * @param int|string $class
+     * @param null $classId
+     * @throws \Exception
      */
     public function __construct($classId = null) {
 
         $class = null;
         if(is_string($classId)) {
-            $class = Object_Class::getByName($classId);
+            $class = Object\ClassDefinition::getByName($classId);
         } else if (is_int($classId)) {
-            $class = Object_Class::getById($classId);
+            $class = Object\ClassDefinition::getById($classId);
         } else if ($classId !== null) {
             throw new \Exception("No valid class identifier given (class name or ID)");
         }
 
-        if($class instanceof Object_Class) {
+        if($class instanceof Object\ClassDefinition) {
             $this->setClass($class);
         }
     }
@@ -107,7 +120,7 @@ class Pimcore_Tool_Newsletter {
      * @return string
      */
     protected function getClassName() {
-        return "Object_" . ucfirst($this->getClass()->getName());
+        return "\\Pimcore\\Model\\Object\\" . ucfirst($this->getClass()->getName());
     }
 
     /**
@@ -129,8 +142,8 @@ class Pimcore_Tool_Newsletter {
 
     /**
      * @param $params
-     * @return null|Object_Concrete
-     * @throws Exception
+     * @return mixed
+     * @throws \Exception
      */
     public function subscribe ($params) {
 
@@ -164,14 +177,14 @@ class Pimcore_Tool_Newsletter {
         $object->setUserModification(0);
         $object->setUserOwner(0);
         $object->setPublished(true);
-        $object->setKey(Pimcore_File::getValidFilename($object->getEmail() . "~" . substr(uniqid(), -3)));
+        $object->setKey(\Pimcore\File::getValidFilename($object->getEmail() . "~" . substr(uniqid(), -3)));
 
         if(!$onlyCreateVersion) {
             $object->save();
         }
 
         // generate token
-        $token = base64_encode(Zend_Json::encode(array(
+        $token = base64_encode(\Zend_Json::encode(array(
             "salt" => md5(microtime()),
             "email" => $object->getEmail(),
             "id" => $object->getId()
@@ -191,8 +204,10 @@ class Pimcore_Tool_Newsletter {
     }
 
     /**
-     * @param Object_Concrete $object
-     * @param Document_Email $mailDocument
+     * @param $object
+     * @param $mailDocument
+     * @param array $params
+     * @throws \Exception
      */
     public function sendConfirmationMail($object, $mailDocument, $params = array()) {
 
@@ -207,7 +222,7 @@ class Pimcore_Tool_Newsletter {
 
         $params = array_merge($defaultParameters, $params);
 
-        $mail = new Pimcore_Mail();
+        $mail = new Mail();
         $mail->addTo($object->getEmail());
         $mail->setDocument($mailDocument);
         $mail->setParams($params);
@@ -215,17 +230,18 @@ class Pimcore_Tool_Newsletter {
     }
 
     /**
-     * @param string $token
-     * @return Object_Contrete
+     * @param $token
+     * @return bool
+     * @throws \Zend_Json_Exception
      */
     public function getObjectByToken($token) {
 
         $originalToken = $token;
         $token = str_replace("~", "=", $token); // base64 can contain = which isn't safe in URL's
 
-        $data = Zend_Json::decode(base64_decode($token));
+        $data = \Zend_Json::decode(base64_decode($token));
         if($data) {
-            if($object = Object_Abstract::getById($data["id"])) {
+            if($object = Object::getById($data["id"])) {
 
                 if($version = $object->getLatestVersion()) {
                     $object = $version->getData();
@@ -300,7 +316,7 @@ class Pimcore_Tool_Newsletter {
 
 
     /**
-     * @param Object_Concrete $object
+     * @param $object
      * @return bool
      */
     public function unsubscribe($object) {
@@ -316,11 +332,11 @@ class Pimcore_Tool_Newsletter {
     }
 
     /**
-     * @param Object_Concrete $object
-     * @param string $title
+     * @param $object
+     * @param $title
      */
     public function addNoteOnObject($object, $title) {
-        $note = new Element_Note();
+        $note = new Model\Element\Note();
         $note->setElement($object);
         $note->setDate(time());
         $note->setType("newsletter");
@@ -329,14 +345,14 @@ class Pimcore_Tool_Newsletter {
         $note->setData(array(
             "ip" => array(
                 "type" => "text",
-                "data" => Pimcore_Tool::getClientIp()
+                "data" => Tool::getClientIp()
             )
         ));
         $note->save();
     }
 
     /**
-     * @param \Object_Class $class
+     * @param Object\ClassDefinition $class
      */
     public function setClass($class)
     {
@@ -344,7 +360,7 @@ class Pimcore_Tool_Newsletter {
     }
 
     /**
-     * @return \Object_Class
+     * @return Object\ClassDefinition
      */
     public function getClass()
     {

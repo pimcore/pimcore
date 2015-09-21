@@ -13,7 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
+
+use Pimcore\Tool;
+use Pimcore\Tool\Authentication;
+use Pimcore\Model;
+
+class AdminButton extends \Zend_Controller_Plugin_Abstract {
 
 
     /**
@@ -21,58 +27,43 @@ class Pimcore_Controller_Plugin_AdminButton extends Zend_Controller_Plugin_Abstr
      */
     public function dispatchLoopShutdown() {
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
-        if(!Pimcore_Tool::useFrontendOutputFilters($this->getRequest()) && !$this->getRequest()->getParam("pimcore_preview")) {
+        if(!Tool::useFrontendOutputFilters($this->getRequest()) && !$this->getRequest()->getParam("pimcore_preview")) {
             return;
         }
 
         if(isset($_COOKIE["pimcore_admin_sid"])) {
             try {
-                $user = Pimcore_Tool_Authentication::authenticateSession();
-                if($user instanceof User) {
-                    $body = $this->getResponse()->getBody();
+                // we should not start a session here as this can break the functionality of the site if
+                // the website itself uses sessions, so we include the code, and check asynchronously if the user is logged in
+                // this is done by the embedded script
+                $body = $this->getResponse()->getBody();
 
-                    $document = $this->getRequest()->getParam("document");
-                    if($document instanceof Document && !Staticroute::getCurrentRoute()) {
-                        $documentId = $document->getId();
-                    }
-
-                    if(!$documentId) {
-                        $documentId = "null";
-                    }
-
-                    $personas = array();
-                    $list = new Tool_Targeting_Persona_List();
-                    foreach($list->load() as $persona) {
-                        $personas[$persona->getId()] = $persona->getName();
-                    }
-
-                    $code = "\n\n\n<!-- pimcore admin console -->\n";
-                    $code .= '<script type="text/javascript">
-                        try {
-                            var pimcore = pimcore || {};
-                            pimcore["admin"] = {documentId: ' . $documentId . '};
-                            pimcore["personas"] = ' . Zend_Json::encode($personas) .';
-                        } catch (e) {}
-                    </script>';
-
-                    $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/admin/admin.js"></script>';
-                    $code .= '<link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/admin/admin.css" />' . "\n\n\n";
-
-                    // search for the end <head> tag, and insert the google analytics code before
-                    // this method is much faster than using simple_html_dom and uses less memory
-                    $bodyEndPosition = stripos($body, "</body>");
-                    if($bodyEndPosition !== false) {
-                        $body = substr_replace($body, $code . "\n\n</body>\n", $bodyEndPosition, 7);
-                    }
-
-                    $this->getResponse()->setBody($body);
+                $document = $this->getRequest()->getParam("document");
+                if($document instanceof Model\Document && !Model\Staticroute::getCurrentRoute()) {
+                    $documentId = $document->getId();
                 }
+
+                if(!isset($documentId) || !$documentId) {
+                    $documentId = "null";
+                }
+
+                $code = '<script type="text/javascript" src="/admin/admin-button/script?documentId=' . $documentId . '"></script>';
+
+                // search for the end <head> tag, and insert the google analytics code before
+                // this method is much faster than using simple_html_dom and uses less memory
+                $bodyEndPosition = stripos($body, "</body>");
+                if($bodyEndPosition !== false) {
+                    $body = substr_replace($body, $code . "\n\n</body>\n", $bodyEndPosition, 7);
+                }
+
+                $this->getResponse()->setBody($body);
+
             } catch (\Exception $e) {
-                Logger::error($e);
+                \Logger::error($e);
             }
         }
     }

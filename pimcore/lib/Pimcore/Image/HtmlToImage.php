@@ -12,8 +12,13 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Image_HtmlToImage {
+
+namespace Pimcore\Image;
+
+use Pimcore\Config; 
+use Pimcore\Tool\Console;
+
+class HtmlToImage {
 
     /**
      * @return bool
@@ -23,16 +28,15 @@ class Pimcore_Image_HtmlToImage {
     }
 
     /**
-     * @return string
-     * @throws Exception
+     * @return bool
      */
     public static function getWkhtmltoimageBinary () {
 
-        if(Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage) {
-            if(@is_executable(Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage)) {
-                return (string) Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage;
+        if(Config::getSystemConfig()->documents->wkhtmltoimage) {
+            if(@is_executable(Config::getSystemConfig()->documents->wkhtmltoimage)) {
+                return (string) Config::getSystemConfig()->documents->wkhtmltoimage;
             } else {
-                Logger::critical("wkhtmltoimage binary: " . Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage . " is not executable");
+                \Logger::critical("wkhtmltoimage binary: " . Config::getSystemConfig()->documents->wkhtmltoimage . " is not executable");
             }
         }
 
@@ -55,6 +59,9 @@ class Pimcore_Image_HtmlToImage {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public static function getXvfbBinary () {
         $paths = array("/usr/bin/xvfb-run","/usr/local/bin/xvfb-run","/bin/xvfb-run");
 
@@ -90,7 +97,7 @@ class Pimcore_Image_HtmlToImage {
             $command = self::getWkhtmltoimageBinary() . $arguments;
         }
 
-        Pimcore_Tool_Console::exec($command, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log", 60);
+        Console::exec($command, PIMCORE_LOG_DIRECTORY . "/wkhtmltoimage.log", 60);
 
         if(file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;

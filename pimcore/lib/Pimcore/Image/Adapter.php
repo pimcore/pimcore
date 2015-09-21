@@ -12,8 +12,10 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-abstract class Pimcore_Image_Adapter {
+
+namespace Pimcore\Image;
+
+abstract class Adapter {
 
     /**
      * @var int
@@ -46,7 +48,13 @@ abstract class Pimcore_Image_Adapter {
     protected $modified = false;
 
     /**
-     * @param int $height
+     * @var bool
+     */
+    protected $isAlphaPossible = false;
+
+    /**
+     * @param $height
+     * @return $this
      */
     public function setHeight($height)
     {
@@ -63,7 +71,8 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
-     * @param int $width
+     * @param $width
+     * @return $this
      */
     public function setWidth($width)
     {
@@ -110,7 +119,7 @@ abstract class Pimcore_Image_Adapter {
     /**
      * @param  $width
      * @param  $height
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function resize ($width, $height) {
 
@@ -119,7 +128,7 @@ abstract class Pimcore_Image_Adapter {
 
     /**
      * @param  $width
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function scaleByWidth ($width, $forceResize = false) {
 
@@ -133,7 +142,7 @@ abstract class Pimcore_Image_Adapter {
 
     /**
      * @param  $height
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function scaleByHeight ($height, $forceResize = false) {
 
@@ -148,7 +157,7 @@ abstract class Pimcore_Image_Adapter {
     /**
      * @param  $width
      * @param  $height
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function contain ($width, $height) {
 
@@ -169,7 +178,7 @@ abstract class Pimcore_Image_Adapter {
      * @param  $width
      * @param  $height
      * @param string $orientation
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function cover ($width, $height, $orientation = "center", $doNotScaleUp = true) {
 
@@ -218,18 +227,16 @@ abstract class Pimcore_Image_Adapter {
         if($cropX !== null && $cropY !== null) {
             $this->crop($cropX, $cropY, $width, $height);
         } else {
-            Logger::error("Cropping not processed, because X or Y is not defined or null, proceeding with next step");
+            \Logger::error("Cropping not processed, because X or Y is not defined or null, proceeding with next step");
         }
 
         return $this;
     }
 
     /**
-     * @param  $width
-     * @param  $height
-     * @param string $color
-     * @param string $orientation
-     * @return Pimcore_Image_Adapter
+     * @param $width
+     * @param $height
+     * @return $this
      */
     public function frame ($width, $height) {
         
@@ -237,10 +244,17 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
-     * @param  $angle
-     * @param bool $autoResize
-     * @param string $color
-     * @return Pimcore_Image_Adapter
+     * @param  int $tolerance
+     * @return self
+     */
+    public function trim ($tolerance) {
+
+        return $this;
+    }
+
+    /**
+     * @param $angle
+     * @return $this
      */
     public function rotate ($angle) {
 
@@ -252,7 +266,7 @@ abstract class Pimcore_Image_Adapter {
      * @param  $y
      * @param  $width
      * @param  $height
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function crop ($x, $y, $width, $height) {
 
@@ -262,7 +276,7 @@ abstract class Pimcore_Image_Adapter {
 
     /**
      * @param  $color
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function setBackgroundColor ($color) {
         return $this;
@@ -270,7 +284,7 @@ abstract class Pimcore_Image_Adapter {
 
     /**
      * @param  $image
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function setBackgroundImage ($image) {
         
@@ -281,7 +295,7 @@ abstract class Pimcore_Image_Adapter {
     /**
      * @param  $x
      * @param  $y
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function roundCorners ($x, $y) {
 
@@ -294,7 +308,7 @@ abstract class Pimcore_Image_Adapter {
      * @param int $y
      * @param int $alpha
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
 
@@ -302,8 +316,17 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
+     * @param $image
+     * @param string $composite
+     * @return $this
+     */
+    public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT") {
+        return $this;
+    }
+
+    /**
      * @param  $image
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function applyMask ($image) {
 
@@ -315,7 +338,7 @@ abstract class Pimcore_Image_Adapter {
      * @param $height
      * @param $x
      * @param $y
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function cropPercent ($width, $height, $x, $y) {
 
@@ -337,7 +360,7 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function grayscale () {
 
@@ -345,7 +368,7 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function sepia () {
 
@@ -353,7 +376,7 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public function sharpen () {
 
@@ -361,9 +384,36 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
+     * @return self
+     */
+    public function mirror ($mode) {
+
+        return $this;
+    }
+
+    /**
+     * @param int $radius
+     * @param float $sigma
+     * @return $this|Adapter
+     */
+    public function gaussianBlur($radius = 0, $sigma = 1.0) {
+        return $this;
+    }
+
+    /**
+     * @param int $brightness
+     * @param int $saturation
+     * @param int $hue
+     * @return $this
+     */
+    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100) {
+        return $this;
+    }
+
+    /**
      * @abstract
      * @param  $imagePath
-     * @return Pimcore_Image_Adapter
+     * @return self
      */
     public abstract function load ($imagePath, $options = []);
 
@@ -447,7 +497,8 @@ abstract class Pimcore_Image_Adapter {
     }
 
     /**
-     * @param $type
+     * @param string $type
+     * @return $this
      */
     public function setColorspace($type = "RGB") {
         return $this;
@@ -483,5 +534,12 @@ abstract class Pimcore_Image_Adapter {
     public function getModified()
     {
         return $this->modified;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setIsAlphaPossible($value) {
+        $this->isAlphaPossible = $value;
     }
 }

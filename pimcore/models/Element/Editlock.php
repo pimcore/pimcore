@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Editlock extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model;
+
+class Editlock extends Model\AbstractModel {
 
     /**
      * @var integer
@@ -52,7 +56,11 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public $cpath;
 
-
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return bool
+     */
     public static function isLocked($cid, $ctype) {
 
         if ($lock = self::getByElement($cid, $ctype)) {
@@ -67,6 +75,11 @@ class Element_Editlock extends Pimcore_Model_Abstract {
         return false;
     }
 
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return null|Editlock
+     */
     public static function getByElement($cid, $ctype) {
 
         try {
@@ -74,15 +87,35 @@ class Element_Editlock extends Pimcore_Model_Abstract {
             $lock->getResource()->getByElement($cid, $ctype);
             return $lock;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return null;
         }
     }
 
+    /**
+     * @param $sessionId
+     * @return bool|null
+     */
+    public static function clearSession($sessionId) {
+        try {
+            $lock = new self();
+            $lock->getResource()->clearSession($sessionId);
+            return true;
+        }
+        catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return bool|Editlock
+     */
     public static function lock($cid, $ctype) {
 
         // try to get user
-        if(!$user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if(!$user = \Pimcore\Tool\Admin::getCurrentUser()) {
             return false;
         }
 
@@ -97,6 +130,11 @@ class Element_Editlock extends Pimcore_Model_Abstract {
         return $lock;
     }
 
+    /**
+     * @param $cid
+     * @param $ctype
+     * @return bool
+     */
     public static function unlock($cid, $ctype) {
         if ($lock = self::getByElement($cid, $ctype)) {
             $lock->delete();
@@ -148,7 +186,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setUserId($userId) {
         if ($userId) {
-            if ($user = User::getById($userId)) {
+            if ($user = Model\User::getById($userId)) {
                 $this->userId = (int) $userId;
                 $this->setUser($user);
             }
@@ -221,7 +259,8 @@ class Element_Editlock extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param  $cpath
+     * @param $cpath
+     * @return $this
      */
     public function setCpath($cpath)
     {

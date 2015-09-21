@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ks"/>
 	</identity>
 	<localeDisplayNames>
@@ -24,46 +24,35 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">اَدَیٖگیے</language>
 			<language type="ae">اَویستَن</language>
 			<language type="af">اَفریٖکانٛز</language>
-			<language type="afa">ایفرو ایشیٲیی زبانہٕ</language>
 			<language type="afh">اَفرِہِلی</language>
 			<language type="ain">اینوٗ</language>
 			<language type="ak">اَکان</language>
 			<language type="akk">اَکادِیَن</language>
 			<language type="ale">اَلویتی</language>
-			<language type="alg">اَلگونکِیَن زبانہٕ</language>
 			<language type="alt">جنوٗبی اَلتایی</language>
 			<language type="am">اَمہاری</language>
 			<language type="an">اَراگونی</language>
 			<language type="ang">پرون اَنٛگریٖزی</language>
 			<language type="anp">اَنٛگِکا</language>
-			<language type="apa">اَپاچی زبانہٕ</language>
 			<language type="ar">عربی</language>
 			<language type="arc">اَرَمیک</language>
 			<language type="arn">ایرو کونِیَن</language>
 			<language type="arp">اَراپاہو</language>
-			<language type="art">بَناوَٹی زبانہٕ</language>
 			<language type="arw">اَراوَک</language>
 			<language type="as">اسٲمۍ</language>
 			<language type="ast">ایسٹوٗریَن</language>
-			<language type="ath">اَتھاپَسَکَن زبانہٕ</language>
-			<language type="aus">آسٹریلیٲیی زبانہٕ</language>
 			<language type="av">اَوارِک</language>
 			<language type="awa">اَوَدی</language>
 			<language type="ay">ایمارا</language>
 			<language type="az">اَزَربیجانی</language>
 			<language type="ba">بَشکیٖر</language>
-			<language type="bad">بَندا</language>
-			<language type="bai">بَمیٖلیکیے</language>
 			<language type="bal">بَلوٗچی</language>
 			<language type="ban">بالِنیٖز</language>
 			<language type="bas">باسا</language>
-			<language type="bat">بالتِک زبانہٕ</language>
 			<language type="be">بیلَروٗشیَن</language>
 			<language type="bej">بیجا</language>
 			<language type="bem">بیٚمبا</language>
-			<language type="ber">بیربیر</language>
 			<language type="bg">بینا</language>
-			<language type="bh">بِہٲرۍ</language>
 			<language type="bho">بوجپوٗری</language>
 			<language type="bi">بِسلاما</language>
 			<language type="bik">بِکول</language>
@@ -71,24 +60,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">سِکسِکا</language>
 			<language type="bm">بَمبارا</language>
 			<language type="bn">بَنٛگٲلۍ</language>
-			<language type="bnt">بَنتوٗ</language>
 			<language type="bo">تِبتی</language>
 			<language type="br">بریٹَن</language>
 			<language type="bra">برٛج</language>
 			<language type="bs">بوسنِیَن</language>
-			<language type="btk">بَتَک</language>
 			<language type="bua">بُرِیَت</language>
 			<language type="bug">بَگنیٖز</language>
 			<language type="byn">بٕلِن</language>
 			<language type="ca">کَتلان</language>
 			<language type="cad">کاڈو</language>
-			<language type="cai">مَرکَزی اَمریٖکی ہندوستٲنۍ زبانہٕ</language>
 			<language type="car">کارِب</language>
-			<language type="cau">کاکیشِیَن زبانہٕ</language>
 			<language type="cch">اتسَم</language>
 			<language type="ce">چیچَن</language>
 			<language type="ceb">سیباونو</language>
-			<language type="cel">سیلٹَک زبانہٕ</language>
 			<language type="ch">کَمورو</language>
 			<language type="chb">چیٖبچا</language>
 			<language type="chg">چھَگتاے</language>
@@ -99,25 +83,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chp">شیپویان</language>
 			<language type="chr">چیٚروکی</language>
 			<language type="chy">شییون</language>
-			<language type="cmc">شامِک زبانہٕ</language>
 			<language type="co">کارسِکَن</language>
 			<language type="cop">کاپٹِک</language>
-			<language type="cpe">اَنٛگریزَس پٮ۪ٹھ مَبنی کرِیول یا پَجِن</language>
-			<language type="cpf">فریٚنچَس پٮ۪ٹھ مَبنی کرِیول یا پَجِن</language>
-			<language type="cpp">پُرتَگیزَس پٮ۪ٹھ مَبنی کرِیول یا پَجِن</language>
 			<language type="cr">کری</language>
 			<language type="crh">کرٕمیٖن تُرکی</language>
-			<language type="crp">کرٕیول یا پِجِن</language>
 			<language type="cs">چیٚک</language>
 			<language type="csb">کَشوٗبِیَن</language>
 			<language type="cu">چٔرچ سلاوِک</language>
-			<language type="cus">کُشیٖتِک زبانہٕ</language>
 			<language type="cv">چُواش</language>
 			<language type="cy">ویٚلش</language>
 			<language type="da">ڈینِش</language>
 			<language type="dak">ڈکوٹا</language>
 			<language type="dar">دَرگوا</language>
-			<language type="day">دَیَک</language>
 			<language type="de">جٔرمَن</language>
 			<language type="de_AT">آسٹرِیَن جٔرمَن</language>
 			<language type="de_CH">سٕوِس ہاےجٔرمَن</language>
@@ -157,7 +134,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">فُلاہ</language>
 			<language type="fi">فِنِش</language>
 			<language type="fil">فِلِپیٖنو</language>
-			<language type="fiu">فِنو اَگرِیَن زبانہٕ</language>
 			<language type="fj">فِجیَن</language>
 			<language type="fo">فَروس</language>
 			<language type="fon">فون</language>
@@ -175,7 +151,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">گیےیو</language>
 			<language type="gba">گبایا</language>
 			<language type="gd">سکوٹِش گیےلِک</language>
-			<language type="gem">جٔرمینِک زبان</language>
 			<language type="gez">گیٖز</language>
 			<language type="gil">گِلبٔرٹیٖز</language>
 			<language type="gl">گیلِشِیَن</language>
@@ -197,7 +172,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">عبرٲنۍ</language>
 			<language type="hi">ہِندی</language>
 			<language type="hil">ہِلیٖگینَن</language>
-			<language type="him">ہِماچٔلۍ</language>
 			<language type="hit">ہِتایِت</language>
 			<language type="hmn">ہمونٛگ</language>
 			<language type="ho">ہِری موتوٗ</language>
@@ -214,15 +188,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">اِنٹَر لِنٛنگویے</language>
 			<language type="ig">اِگبو</language>
 			<language type="ii">سِچوان یٖی</language>
-			<language type="ijo">ایٖجو</language>
 			<language type="ik">اِنُپِیاک</language>
 			<language type="ilo">اِلوکو</language>
-			<language type="inc">ہنٛدوستٲنۍ زبان</language>
-			<language type="ine">اِنڈو یوٗروپیَن زبان</language>
 			<language type="inh">اِنٛگُش</language>
 			<language type="io">اِڈو</language>
-			<language type="ira">ایٖرٲنۍ زبان</language>
-			<language type="iro">ایٖروکیویَنزبان</language>
 			<language type="is">آیِسلینڈِک</language>
 			<language type="it">اِٹیلیَن</language>
 			<language type="iu">اِنُکتِتوٗ</language>
@@ -237,14 +206,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">کاچِن</language>
 			<language type="kaj">جُوٗ</language>
 			<language type="kam">کامبا</language>
-			<language type="kar">کاریٚن</language>
 			<language type="kaw">کَوی</language>
 			<language type="kbd">کَبارڈِیَن</language>
 			<language type="kcg">تَیَپ</language>
 			<language type="kfo">کورو</language>
 			<language type="kg">کونٛگو</language>
 			<language type="kha">کھاسی</language>
-			<language type="khi">کھویسَن زبان</language>
 			<language type="kho">کھوتَنیٖز</language>
 			<language type="ki">کِکُیوٗ</language>
 			<language type="kj">کُوانیاما</language>
@@ -260,7 +227,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">کَنوٗری</language>
 			<language type="krc">کراچیے بَلکار</language>
 			<language type="krl">کَریلِیَن</language>
-			<language type="kro">کروٗ</language>
 			<language type="kru">کُرُکھ</language>
 			<language type="ks">کٲشُر</language>
 			<language type="ku">کُردِش</language>
@@ -294,7 +260,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">میتَھلی</language>
 			<language type="mak">مَکَسار</language>
 			<language type="man">مَندِنٛگو</language>
-			<language type="map">ایسٹرونیشَیَن زبان</language>
 			<language type="mas">مَساے</language>
 			<language type="mdf">موکشا</language>
 			<language type="mdr">مَندَر</language>
@@ -306,29 +271,22 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mic">مِکمیک</language>
 			<language type="min">مِنَنٛگکَباو</language>
 			<language type="mk">میکَڈونیَن</language>
-			<language type="mkh">مون خَمَر زبان</language>
 			<language type="ml">مٔلیالَم</language>
 			<language type="mn">مَنٛگولی</language>
 			<language type="mnc">مانٛچوٗ</language>
 			<language type="mni">مَنیپوٗری</language>
-			<language type="mno">مَنوبو زبان</language>
-			<language type="mo">مولداوِیَن</language>
 			<language type="moh">موہاک</language>
 			<language type="mos">موسی</language>
 			<language type="mr">مَرٲٹھۍ</language>
 			<language type="ms">مَلَے</language>
 			<language type="mt">مَلتیٖس</language>
 			<language type="mul">واریاہ زبان</language>
-			<language type="mun">مُنڈا زبان</language>
 			<language type="mus">کریٖک</language>
 			<language type="mwl">مِراندیٖز</language>
 			<language type="mwr">مارواڑی</language>
 			<language type="my">بٔمیٖز</language>
-			<language type="myn">مَیَن زبان</language>
 			<language type="myv">ایٚرزِیا</language>
 			<language type="na">ناورُ</language>
-			<language type="nah">ناہاوتَل</language>
-			<language type="nai">شُمال امریٖکی ہندوستٲنۍ زبان</language>
 			<language type="nap">نیٖپالیٹَن</language>
 			<language type="nb">ناروییَن بوکمال</language>
 			<language type="nd">شُمال ڈَبیل</language>
@@ -337,7 +295,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">نیٚواری</language>
 			<language type="ng">ڈونٛگا</language>
 			<language type="nia">نِیاس</language>
-			<language type="nic">نیجَر کورڈوفانیَن زبان</language>
 			<language type="niu">نِیویَن</language>
 			<language type="nl">ڈَچ</language>
 			<language type="nl_BE">فلیٚمِش</language>
@@ -348,7 +305,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">ایٚن کو</language>
 			<language type="nr">جنوب ڈیٚبیل</language>
 			<language type="nso">شمالی ستھو</language>
-			<language type="nub">نوٗبیَن زبان</language>
 			<language type="nv">نَواجو</language>
 			<language type="nwc">کلاسِکَل نیواری</language>
 			<language type="ny">نِیَنجا</language>
@@ -363,21 +319,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">اوٚسیٚٹِک</language>
 			<language type="osa">اوٚسیج</language>
 			<language type="ota">اوٹومَن تُرکِش</language>
-			<language type="oto">اوٚٹامِیَن زبان</language>
 			<language type="pa">پَنجٲبۍ</language>
-			<language type="paa">پَپُواں زبان</language>
 			<language type="pag">پَنٛگاسِنَن</language>
 			<language type="pal">پَہلَوی</language>
 			<language type="pam">پَمپَنٛگا</language>
 			<language type="pap">پَپِیامیٚنٹو</language>
 			<language type="pau">پَلااُواں</language>
 			<language type="peo">پرون فارسی</language>
-			<language type="phi">پھِلِپٲنۍ زبان</language>
 			<language type="phn">فونیٖشیَن</language>
 			<language type="pi">پالی</language>
 			<language type="pl">پالِش</language>
 			<language type="pon">پانپیٚیَن</language>
-			<language type="pra">پرکرٕتی زبان</language>
 			<language type="pro">پرون پروویٚنچَل</language>
 			<language type="ps">پَشتوٗ</language>
 			<language type="pt">پُرتَگیٖز</language>
@@ -390,7 +342,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">رومانش</language>
 			<language type="rn">رُندی</language>
 			<language type="ro">رومٲنی</language>
-			<language type="roa">رومانٛس زبان</language>
+			<language type="ro_MD">مولداوِیَن</language>
 			<language type="rom">رومَنی</language>
 			<language type="root">روٗٹ</language>
 			<language type="ru">روٗسی</language>
@@ -399,8 +351,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">سَنسکرٕت</language>
 			<language type="sad">سَندَویے</language>
 			<language type="sah">یاکُت</language>
-			<language type="sai">جنوٗب امریٖکی ہندوستٲنۍ زبان</language>
-			<language type="sal">سیلِشَن زبان</language>
 			<language type="sam">سَمارِتَن اَرامیک</language>
 			<language type="sas">سَسَک</language>
 			<language type="sat">سَنتالی</language>
@@ -410,21 +360,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">سِندی</language>
 			<language type="se">شُمٲلی سَمی</language>
 			<language type="sel">سیٚلکُپ</language>
-			<language type="sem">سیٚمِٹِک زبان</language>
 			<language type="sg">سَنگو</language>
 			<language type="sga">پرون ایرِش</language>
 			<language type="sh">سیٚربو کروشِیَن</language>
 			<language type="shn">شان</language>
 			<language type="si">سِنہالا</language>
 			<language type="sid">سِدامو</language>
-			<language type="sio">سِیواَن زبان</language>
-			<language type="sit">سَینو تِبَتَن زبان</language>
 			<language type="sk">سلووَک</language>
 			<language type="sl">سلووینیَن</language>
-			<language type="sla">سلاوِک زبان</language>
 			<language type="sm">سَمواَن</language>
 			<language type="sma">جنوٗبی سَمی</language>
-			<language type="smi">سَمی زبان</language>
 			<language type="smj">لولیے سَمی</language>
 			<language type="smn">اِناری سَمی</language>
 			<language type="sms">سکولٹ سَمی</language>
@@ -432,13 +377,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">سونِنکیے</language>
 			<language type="so">سومٲلی</language>
 			<language type="sog">سوگڈِیَن</language>
-			<language type="son">سونٛگہاے</language>
 			<language type="sq">البانِیَن</language>
 			<language type="sr">سٔربِیَن</language>
 			<language type="srn">سرٛانَن ٹونٛگو</language>
 			<language type="srr">سیٚریر</language>
 			<language type="ss">سواتی</language>
-			<language type="ssa">نیٖلو سہارَن زبان</language>
 			<language type="st">جنوبی ستھو</language>
 			<language type="su">سَنڈَنیٖز</language>
 			<language type="suk">سُکُما</language>
@@ -448,7 +391,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sw">سواہِلی</language>
 			<language type="syr">سیٖریٲیی</language>
 			<language type="ta">تَمِل</language>
-			<language type="tai">تاے زبان</language>
 			<language type="te">تیلگوٗ</language>
 			<language type="tem">ٹِمنیے</language>
 			<language type="ter">ٹیٚریٚنو</language>
@@ -473,8 +415,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">ژھِمشِیان</language>
 			<language type="tt">تَتار</language>
 			<language type="tum">تُمبُکا</language>
-			<language type="tup">تُپی زبان</language>
-			<language type="tut">اَلتایِک زبان</language>
 			<language type="tvl">تُوالوٗ</language>
 			<language type="tw">توی</language>
 			<language type="ty">تاہیشِیَن</language>
@@ -492,11 +432,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo">وولَپُک</language>
 			<language type="vot">ووتِک</language>
 			<language type="wa">وَلوٗن</language>
-			<language type="wak">وَکاشَن زبان</language>
 			<language type="wal">والامو</language>
 			<language type="war">وَریے</language>
 			<language type="was">واشو</language>
-			<language type="wen">سرابِیَن زبان</language>
 			<language type="wo">وولوف</language>
 			<language type="xal">کالمِک</language>
 			<language type="xh">کھوسا</language>
@@ -504,14 +442,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap">یَپیٖز</language>
 			<language type="yi">یِدِش</language>
 			<language type="yo">یورُبا</language>
-			<language type="ypk">یُپِک زبان</language>
 			<language type="za">زُہانٛگ</language>
 			<language type="zap">زَپوتیٚک</language>
 			<language type="zen">زیناگا</language>
 			<language type="zh">چیٖنی</language>
 			<language type="zh_Hans">سیٚود چیٖنی</language>
 			<language type="zh_Hant">رِوٲجی چیٖنی</language>
-			<language type="znd">زینڑیے</language>
 			<language type="zu">زُلوٗ</language>
 			<language type="zun">زوٗنی</language>
 			<language type="zxx">کانٛہہ تہِ لِسانیاتی مواد نہٕ</language>
@@ -1342,9 +1278,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>پامَر</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>جنوٗبی پول</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>سیٚووا</exemplarCity>
 			</zone>
@@ -1593,9 +1526,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ٹورونٛٹو</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>مونٛٹرِیَل</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>اِقالیوٗیِت</exemplarCity>
@@ -2346,9 +2276,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>پھِنِکس</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>شِپراک</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ڈیٚنوَر</exemplarCity>

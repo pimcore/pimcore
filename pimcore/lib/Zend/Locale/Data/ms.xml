@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="ms"/>
 	</identity>
 	<localeDisplayNames>
@@ -20,34 +20,51 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ab">Abkhazia</language>
 			<language type="ach">Akoli</language>
 			<language type="af">Afrikaans</language>
+			<language type="agq" draft="contributed">Aghem</language>
 			<language type="ak">Akan</language>
 			<language type="am">Amharic</language>
 			<language type="ar">Arab</language>
 			<language type="ar_001">Arab Standard Moden</language>
 			<language type="as">Assam</language>
+			<language type="asa" draft="contributed">Asu</language>
 			<language type="ay">Aymara</language>
 			<language type="az">Azerbaijan</language>
 			<language type="az" alt="short">Azeri</language>
+			<language type="bax" draft="contributed">Bamun</language>
+			<language type="bbj" draft="contributed">Ghomala</language>
 			<language type="be">Belarus</language>
 			<language type="bem">Bemba</language>
+			<language type="bez" draft="contributed">Bena</language>
+			<language type="bfd" draft="contributed">Bafut</language>
 			<language type="bg">Bulgaria</language>
-			<language type="bh">Bihari</language>
+			<language type="bkm" draft="contributed">Kom</language>
 			<language type="bn">Benggala</language>
 			<language type="bo">Tibet</language>
 			<language type="br">Breton</language>
+			<language type="brx" draft="contributed">Bodo</language>
 			<language type="bs">Bosnia</language>
+			<language type="bss" draft="contributed">Akoose</language>
+			<language type="bum" draft="contributed">Bulu</language>
+			<language type="byv" draft="contributed">Medumba</language>
 			<language type="ca">Catalonia</language>
+			<language type="cay" draft="contributed">Cayuga</language>
+			<language type="cgg" draft="contributed">Chiga</language>
 			<language type="chr">Cherokee</language>
 			<language type="ckb">Kurdi Sorani</language>
 			<language type="co">Corsica</language>
 			<language type="cs">Czech</language>
 			<language type="cy">Wales</language>
 			<language type="da">Denmark</language>
+			<language type="dav" draft="contributed">Taita</language>
 			<language type="de">Jerman</language>
 			<language type="de_AT">Jerman Austria</language>
 			<language type="de_CH">Jerman Halus Switzerland</language>
+			<language type="dje" draft="contributed">Zarma</language>
 			<language type="dv">Divehi</language>
+			<language type="dyo" draft="contributed">Jola-Fonyi</language>
 			<language type="dz">Dzongkha</language>
+			<language type="dzg" draft="contributed">Dazaga</language>
+			<language type="ebu" draft="contributed">Embu</language>
 			<language type="ee">Ewe</language>
 			<language type="efi">Efik</language>
 			<language type="el">Greek</language>
@@ -81,6 +98,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gn">Guarani</language>
 			<language type="gsw">Jerman Switzerland</language>
 			<language type="gu">Gujerat</language>
+			<language type="guz" draft="contributed">Gusii</language>
 			<language type="ha">Hausa</language>
 			<language type="haw">Hawaii</language>
 			<language type="he">Ibrani</language>
@@ -90,33 +108,53 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="hu">Hungary</language>
 			<language type="hy">Armenia</language>
 			<language type="ia">Interlingua</language>
+			<language type="ibb" draft="contributed">Ibibio</language>
 			<language type="id">Indonesia</language>
 			<language type="ie">Interlingue</language>
 			<language type="ig">Igbo</language>
 			<language type="is">Iceland</language>
 			<language type="it">Itali</language>
 			<language type="ja">Jepun</language>
+			<language type="jgo" draft="contributed">Ngomba</language>
+			<language type="jmc" draft="contributed">Machame</language>
 			<language type="jv">Jawa</language>
 			<language type="ka">Georgia</language>
+			<language type="kbl" draft="contributed">Kanembu</language>
+			<language type="kde" draft="contributed">Makonde</language>
+			<language type="kea" draft="contributed">Kabuverdianu</language>
 			<language type="kg">Kongo</language>
+			<language type="khq" draft="contributed">Koyra Chiini</language>
 			<language type="kk">Kazakhstan</language>
+			<language type="kkj" draft="contributed">Kako</language>
+			<language type="kln" draft="contributed">Kalenjin</language>
 			<language type="km">Khmer</language>
 			<language type="kn">Kannada</language>
 			<language type="ko">Korea</language>
 			<language type="ks">Kashmir</language>
+			<language type="ksb" draft="contributed">Shambala</language>
+			<language type="ksf" draft="contributed">Bafia</language>
+			<language type="ksh" draft="contributed">Colognian</language>
 			<language type="ku">Kurdish</language>
 			<language type="ky">Kirghiz</language>
 			<language type="la">Latin</language>
+			<language type="lag" draft="contributed">Langi</language>
 			<language type="lb">Luxembourg</language>
 			<language type="lg">Ganda</language>
+			<language type="lkt" draft="contributed">Lakota</language>
 			<language type="ln">Lingala</language>
 			<language type="lo">Laos</language>
 			<language type="loz">Lozi</language>
 			<language type="lt">Lithuania</language>
 			<language type="lua">Luba-Lulua</language>
+			<language type="luy" draft="contributed">Luyia</language>
 			<language type="lv">Latvia</language>
+			<language type="maf" draft="contributed">Mafa</language>
+			<language type="mde" draft="contributed">Maba</language>
+			<language type="mer" draft="contributed">Meru</language>
 			<language type="mfe">Morisyen</language>
 			<language type="mg">Malagasy</language>
+			<language type="mgh" draft="contributed">Makhuwa-Meetto</language>
+			<language type="mgo" draft="contributed">Meta'</language>
 			<language type="mi">Maori</language>
 			<language type="mk">Macedonia</language>
 			<language type="ml">Malayalam</language>
@@ -124,15 +162,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mr">Marathi</language>
 			<language type="ms">Bahasa Melayu</language>
 			<language type="mt">Malta</language>
+			<language type="mua" draft="contributed">Mundang</language>
 			<language type="my">Burma</language>
+			<language type="mye" draft="contributed">Myene</language>
+			<language type="naq" draft="contributed">Nama</language>
 			<language type="nb">Bokmål Norway</language>
 			<language type="nd">Ndebele Utara</language>
 			<language type="ne">Nepal</language>
 			<language type="nl">Belanda</language>
 			<language type="nl_BE">Flemish</language>
+			<language type="nmg" draft="contributed">Kwasio</language>
 			<language type="nn">Nynorsk Norway</language>
 			<language type="no">Norway</language>
 			<language type="nso">Sotho Utara</language>
+			<language type="nus" draft="contributed">Nuer</language>
 			<language type="ny">Nyanja</language>
 			<language type="nyn">Nyankole</language>
 			<language type="oc">Occitania</language>
@@ -150,13 +193,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">Romansh</language>
 			<language type="rn">Rundi</language>
 			<language type="ro">Romania</language>
+			<language type="rof" draft="contributed">Rombo</language>
 			<language type="ru">Rusia</language>
 			<language type="rw">Kinyarwanda</language>
+			<language type="rwk" draft="contributed">Rwa</language>
 			<language type="sa">Sanskrit</language>
+			<language type="saq" draft="contributed">Samburu</language>
+			<language type="sba" draft="contributed">Ngambay</language>
+			<language type="sbp" draft="contributed">Sangu</language>
 			<language type="sd">Sindhi</language>
 			<language type="se">Sami Utara</language>
+			<language type="see" draft="contributed">Seneca</language>
+			<language type="seh" draft="contributed">Sena</language>
+			<language type="ses" draft="contributed">Koyraboro Senni</language>
 			<language type="sg">Sango</language>
 			<language type="sh">SerboCroatia</language>
+			<language type="shi" draft="contributed">Tachelhit</language>
+			<language type="shu" draft="contributed">Chadian Arab</language>
 			<language type="si">Sinhala</language>
 			<language type="sk">Slovak</language>
 			<language type="sl">Slovenia</language>
@@ -166,13 +219,15 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sq">Albania</language>
 			<language type="sr">Serbia</language>
 			<language type="ss">Swati</language>
+			<language type="ssy" draft="contributed">Saho</language>
 			<language type="st">Sotho Selatan</language>
 			<language type="su">Sunda</language>
 			<language type="sv">Sweden</language>
 			<language type="sw">Swahili</language>
-			<language type="swb">Comoria</language>
+			<language type="swc" draft="contributed">Congo Swahili</language>
 			<language type="ta">Tamil</language>
 			<language type="te">Telugu</language>
+			<language type="teo" draft="contributed">Teso</language>
 			<language type="tet">Tetum</language>
 			<language type="tg">Tajik</language>
 			<language type="th">Thai</language>
@@ -183,11 +238,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="to">Tonga</language>
 			<language type="tpi">Tok Pisin</language>
 			<language type="tr">Turki</language>
+			<language type="trv" draft="contributed">Taroko</language>
 			<language type="ts">Tsonga</language>
 			<language type="tt">Tatar</language>
 			<language type="tum">Tumbuka</language>
 			<language type="tw">Twi</language>
+			<language type="twq" draft="contributed">Tasawaq</language>
 			<language type="ty">Tahiti</language>
+			<language type="tzm" draft="contributed">Tamazight Atlas Tengah</language>
 			<language type="ug">Uighur</language>
 			<language type="ug" alt="variant">Uyghur</language>
 			<language type="uk">Ukraine</language>
@@ -196,8 +254,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="uz">Uzbekistan</language>
 			<language type="ve">Venda</language>
 			<language type="vi">Vietnam</language>
+			<language type="vun" draft="contributed">Vunjo</language>
+			<language type="wae" draft="contributed">Walser</language>
 			<language type="wo">Wolof</language>
 			<language type="xh">Xhosa</language>
+			<language type="xog" draft="contributed">Soga</language>
+			<language type="yav" draft="contributed">Yangben</language>
+			<language type="ybb" draft="contributed">Yemba</language>
 			<language type="yi">Yiddish</language>
 			<language type="yo">Yoruba</language>
 			<language type="zgh">Tamazight Maghribi Standard</language>
@@ -482,7 +545,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<territory type="PR">Puerto Rico</territory>
 			<territory type="PS">Wilayah Palestin</territory>
 			<territory type="PS" alt="short">Palestin</territory>
-			<territory type="PT">Feringgi</territory>
+			<territory type="PT">Portugal</territory>
 			<territory type="PW">Palau</territory>
 			<territory type="PY">Paraguay</territory>
 			<territory type="QA">Qatar</territory>

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9319 $"/>
-		<generation date="$Date: 2013-09-06 18:56:48 -0500 (Fri, 06 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="lt"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,54 +25,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adygėjų</language>
 			<language type="ae">avestų</language>
 			<language type="af">afrikanų</language>
-			<language type="afa">afroazijos kalba</language>
 			<language type="afh">afrihili</language>
 			<language type="agq">aghemų</language>
 			<language type="ain">ainų</language>
 			<language type="ak">akanų</language>
 			<language type="akk">akadianų</language>
 			<language type="ale">aleutų</language>
-			<language type="alg">algonkuanų kalba</language>
 			<language type="alt">pietų Altajaus</language>
 			<language type="am">amharų</language>
 			<language type="an">aragonesų</language>
 			<language type="ang">senoji anglų</language>
 			<language type="anp">angikų</language>
-			<language type="apa">apačių kalba</language>
 			<language type="ar">arabų</language>
 			<language type="ar_001">šiuolaikinė standartinė arabų</language>
 			<language type="arc">aramaikų</language>
 			<language type="arn">araukanų</language>
 			<language type="arp">arapahų</language>
-			<language type="art">dirbtinė kalba</language>
 			<language type="arw">aravakų</language>
 			<language type="as">asamų</language>
 			<language type="asa">asu</language>
 			<language type="ast">asturianų</language>
-			<language type="ath">athapaskanų kalba</language>
-			<language type="aus">australų kalba</language>
 			<language type="av">avarikų</language>
 			<language type="awa">avadhi</language>
 			<language type="ay">aimarų</language>
 			<language type="az">azerbaidžaniečių</language>
 			<language type="az" alt="short">azeri</language>
 			<language type="ba">baškirų</language>
-			<language type="bad">bandų</language>
-			<language type="bai">bamilekų kalba</language>
 			<language type="bal">baluči</language>
 			<language type="ban">balinezų</language>
 			<language type="bas">basų</language>
-			<language type="bat">baltų kalba</language>
 			<language type="bax">bamunų</language>
 			<language type="bbj">ghomalų</language>
 			<language type="be">baltarusių</language>
 			<language type="bej">bėjų</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berberų</language>
 			<language type="bez">benų</language>
 			<language type="bfd">bafutų</language>
 			<language type="bg">bulgarų</language>
-			<language type="bh">biharų</language>
 			<language type="bho">baučpuri</language>
 			<language type="bi">bislama</language>
 			<language type="bik">bikolų</language>
@@ -81,14 +70,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">siksika</language>
 			<language type="bm">bambarų</language>
 			<language type="bn">bengalų</language>
-			<language type="bnt">bantų</language>
 			<language type="bo">tibetiečių</language>
 			<language type="br">bretonų</language>
 			<language type="bra">brajų</language>
 			<language type="brx">bodo</language>
 			<language type="bs">bosnių</language>
 			<language type="bss">akūsų</language>
-			<language type="btk">batakų</language>
 			<language type="bua">buriatų</language>
 			<language type="bug">buginezų</language>
 			<language type="bum">bulu</language>
@@ -96,14 +83,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">medumbų</language>
 			<language type="ca">katalonų</language>
 			<language type="cad">kado</language>
-			<language type="cai">Centrinės Amerikos indėnų kalba</language>
 			<language type="car">karibų</language>
-			<language type="cau">kaukaziečių kalba</language>
 			<language type="cay">kaijūgų</language>
 			<language type="cch">atsamų</language>
 			<language type="ce">čečėnų</language>
 			<language type="ceb">cebuanų</language>
-			<language type="cel">keltų kalba</language>
 			<language type="cgg">čigų</language>
 			<language type="ch">čamorų</language>
 			<language type="chb">čibča</language>
@@ -116,26 +100,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">čerokių</language>
 			<language type="chy">čajenų</language>
 			<language type="ckb">soranių kurdų</language>
-			<language type="cmc">čamikų kalba</language>
 			<language type="co">korsikiečių</language>
 			<language type="cop">koptų</language>
-			<language type="cpe">kreolų arba pidžinų kalba pagal anglų</language>
-			<language type="cpf">kreolų arba pidžinų kalba pagal prancūzų</language>
-			<language type="cpp">kreolų arba pidžinų kalba pagal portugalų</language>
 			<language type="cr">kry</language>
 			<language type="crh">Krymo turkų</language>
-			<language type="crp">kreolų arba pidžinų kalba</language>
 			<language type="cs">čekų</language>
 			<language type="csb">kašubų</language>
 			<language type="cu">bažnytinė slavų</language>
-			<language type="cus">kušitik kalba</language>
 			<language type="cv">čiuvašų</language>
 			<language type="cy">valų</language>
 			<language type="da">danų</language>
 			<language type="dak">dakotų</language>
 			<language type="dar">dargva</language>
 			<language type="dav">taitų</language>
-			<language type="day">bidayuh kalba</language>
 			<language type="de">vokiečių</language>
 			<language type="de_AT">Austrijos vokiečių</language>
 			<language type="de_CH">Šveicarijos aukštutinė vokiečių</language>
@@ -145,7 +122,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">dinkų</language>
 			<language type="dje">zarmų</language>
 			<language type="doi">dogri</language>
-			<language type="dra">dravidų kalba</language>
 			<language type="dsb">Žemutinės Serbijos</language>
 			<language type="dua">dualų</language>
 			<language type="dum">Vidurio Vokietijos</language>
@@ -182,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fulahų</language>
 			<language type="fi">suomių</language>
 			<language type="fil">filipiniečių</language>
-			<language type="fiu">finougrų kalba</language>
 			<language type="fj">fidžių</language>
 			<language type="fo">farerų</language>
 			<language type="fon">fon</language>
@@ -200,7 +175,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gajo</language>
 			<language type="gba">gbaja</language>
 			<language type="gd">škotų (gėlų)</language>
-			<language type="gem">germanų kalba</language>
 			<language type="gez">gyz</language>
 			<language type="gil">kiribati</language>
 			<language type="gl">galisų</language>
@@ -223,7 +197,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">hebrajų</language>
 			<language type="hi">hindi</language>
 			<language type="hil">hiligainon</language>
-			<language type="him">himačali</language>
 			<language type="hit">hititų</language>
 			<language type="hmn">hmong</language>
 			<language type="ho">hiri motu</language>
@@ -241,15 +214,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">interkalba</language>
 			<language type="ig">igbų</language>
 			<language type="ii">sičuan ji</language>
-			<language type="ijo">ijo</language>
 			<language type="ik">inupiak</language>
 			<language type="ilo">iloko</language>
-			<language type="inc">indų kalba</language>
-			<language type="ine">indoeuropiečių kalba</language>
 			<language type="inh">ingušų</language>
 			<language type="io">ido</language>
-			<language type="ira">iraniečių kalba</language>
-			<language type="iro">irako kalba</language>
 			<language type="is">islandų</language>
 			<language type="it">italų</language>
 			<language type="iu">inukitut</language>
@@ -265,7 +233,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">kačin</language>
 			<language type="kaj">ju</language>
 			<language type="kam">kamba</language>
-			<language type="kar">karenų</language>
 			<language type="kaw">kavi</language>
 			<language type="kbd">kabardinų</language>
 			<language type="kbl">kanembų</language>
@@ -275,7 +242,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">koro</language>
 			<language type="kg">Kongo</language>
 			<language type="kha">kasi</language>
-			<language type="khi">koisan kalba</language>
 			<language type="kho">kotanezų</language>
 			<language type="khq">koyra čini</language>
 			<language type="ki">kikui</language>
@@ -294,7 +260,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">kanuri</language>
 			<language type="krc">karačiajų balkarijos</language>
 			<language type="krl">karelų</language>
-			<language type="kro">kru kalba</language>
 			<language type="kru">kuruk</language>
 			<language type="ks">kašmyrų</language>
 			<language type="ksb">sambalų</language>
@@ -334,7 +299,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">maithili</language>
 			<language type="mak">makasaro</language>
 			<language type="man">mandingo</language>
-			<language type="map">austronezų</language>
 			<language type="mas">masajų</language>
 			<language type="mde">mabų</language>
 			<language type="mdf">mokša</language>
@@ -349,15 +313,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">maorių</language>
 			<language type="mic">mikmak</language>
 			<language type="min">minankabu</language>
-			<language type="mis">įvairios kalbos</language>
 			<language type="mk">makedonų</language>
-			<language type="mkh">mon khmer kalba</language>
 			<language type="ml">malajalių</language>
 			<language type="mn">mongolų</language>
 			<language type="mnc">manču</language>
 			<language type="mni">manipuri</language>
-			<language type="mno">manobo kalba</language>
-			<language type="mo">moldavų</language>
 			<language type="moh">mohok</language>
 			<language type="mos">mosi</language>
 			<language type="mr">maratų</language>
@@ -365,17 +325,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">maltiečių</language>
 			<language type="mua">mundangų</language>
 			<language type="mul">kelios kalbos</language>
-			<language type="mun">munda kalba</language>
 			<language type="mus">krykų</language>
 			<language type="mwl">mirandezų</language>
 			<language type="mwr">marvari</language>
 			<language type="my">birmiečių</language>
 			<language type="mye">mjenų</language>
-			<language type="myn">majanų</language>
 			<language type="myv">erzyjų</language>
 			<language type="na">naurų</language>
-			<language type="nah">nahuatlų</language>
-			<language type="nai">Šiaurės Amerikos indėnų kalba</language>
 			<language type="nap">neapoliečių</language>
 			<language type="naq">namų</language>
 			<language type="nb">Norvegijos rašytinė – būkmolų</language>
@@ -385,7 +341,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">nevari</language>
 			<language type="ng">ndongų</language>
 			<language type="nia">nias</language>
-			<language type="nic">Nigerio kordofanų kalba</language>
 			<language type="niu">niuenų</language>
 			<language type="nl">olandų</language>
 			<language type="nl_BE">flamandų</language>
@@ -398,7 +353,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">enko</language>
 			<language type="nr">pietų ndebele</language>
 			<language type="nso">šiaurės sothų</language>
-			<language type="nub">nubijos kalba</language>
 			<language type="nus">nuerų</language>
 			<language type="nv">navajų</language>
 			<language type="nwc">klasikinė nevari</language>
@@ -414,21 +368,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">osetinų</language>
 			<language type="osa">osage</language>
 			<language type="ota">osmanų turkų</language>
-			<language type="oto">otomanų kalba</language>
 			<language type="pa">pendžabų</language>
-			<language type="paa">papuasų kalba</language>
 			<language type="pag">pangasinan</language>
 			<language type="pal">pahlavi</language>
 			<language type="pam">pampanga</language>
 			<language type="pap">papiemento</language>
 			<language type="pau">palau</language>
 			<language type="peo">senoji persų</language>
-			<language type="phi">filipinų kalba</language>
 			<language type="phn">finikiečių</language>
 			<language type="pi">pali</language>
 			<language type="pl">lenkų</language>
 			<language type="pon">ponapean</language>
-			<language type="pra">prakritų</language>
 			<language type="pro">senovės provansalų</language>
 			<language type="ps">puštūnų</language>
 			<language type="pt">portugalų</language>
@@ -441,7 +391,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">retoromanų</language>
 			<language type="rn">rundi</language>
 			<language type="ro">rumunų</language>
-			<language type="roa">romanų kalba</language>
+			<language type="ro_MD">moldavų</language>
 			<language type="rof">rombo</language>
 			<language type="rom">romų</language>
 			<language type="root">rūt</language>
@@ -452,8 +402,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sanskritas</language>
 			<language type="sad">sandavi</language>
 			<language type="sah">jakutų</language>
-			<language type="sai">Pietų Amerikos indėnų kalba</language>
-			<language type="sal">sališan kalba</language>
 			<language type="sam">samarėjų aramių</language>
 			<language type="saq">samburų</language>
 			<language type="sas">sasak</language>
@@ -468,25 +416,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">senecų</language>
 			<language type="seh">senų</language>
 			<language type="sel">selkup</language>
-			<language type="sem">samitų kalba</language>
 			<language type="ses">koyraboro seni</language>
 			<language type="sg">sango</language>
 			<language type="sga">senoji airių</language>
-			<language type="sgn">ženklų kalba</language>
 			<language type="sh">serbų-kroatų</language>
 			<language type="shi">tachelhitų</language>
 			<language type="shn">šan</language>
 			<language type="shu">chadian arabų</language>
 			<language type="si">sinhalų</language>
 			<language type="sid">sidamo</language>
-			<language type="sio">siouan kalba</language>
-			<language type="sit">sino tibeto kalba</language>
 			<language type="sk">slovakų</language>
 			<language type="sl">slovėnų</language>
-			<language type="sla">slavų kalba</language>
 			<language type="sm">samoa</language>
 			<language type="sma">pietų sami</language>
-			<language type="smi">samių kalba</language>
 			<language type="smj">lule sami</language>
 			<language type="smn">inari sami</language>
 			<language type="sms">skolt sami</language>
@@ -494,13 +436,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">soninke</language>
 			<language type="so">somaliečių</language>
 			<language type="sog">sogdien</language>
-			<language type="son">songhai</language>
 			<language type="sq">albanų</language>
 			<language type="sr">serbų</language>
 			<language type="srn">sranan tongo</language>
 			<language type="srr">sererų</language>
 			<language type="ss">svati</language>
-			<language type="ssa">Nilo Sacharos kalba</language>
 			<language type="ssy">saho</language>
 			<language type="st">pietų sesuto</language>
 			<language type="su">sundų</language>
@@ -514,7 +454,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">klasikinė siriečių</language>
 			<language type="syr">sirų</language>
 			<language type="ta">tamilų</language>
-			<language type="tai">tajų kalba</language>
 			<language type="te">telugų</language>
 			<language type="tem">timne</language>
 			<language type="teo">teso</language>
@@ -541,8 +480,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">tsimšian</language>
 			<language type="tt">totorių</language>
 			<language type="tum">tumbukų</language>
-			<language type="tup">tupi kalba</language>
-			<language type="tut">altaikų kalba</language>
 			<language type="tvl">tuvalu</language>
 			<language type="tw">tvi</language>
 			<language type="twq">tasavakų</language>
@@ -565,11 +502,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">vunjo</language>
 			<language type="wa">valonų</language>
 			<language type="wae">valserų</language>
-			<language type="wak">vakašan kalba</language>
 			<language type="wal">valamo</language>
 			<language type="war">varai</language>
 			<language type="was">vašo</language>
-			<language type="wen">sorbų kalba</language>
 			<language type="wo">volofų</language>
 			<language type="xal">kalmukų</language>
 			<language type="xh">kosų</language>
@@ -580,7 +515,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">jembų</language>
 			<language type="yi">jidiš</language>
 			<language type="yo">jorubų</language>
-			<language type="ypk">jupik kalba</language>
 			<language type="yue">kinų kalbos Kantono tarmė</language>
 			<language type="za">chuang</language>
 			<language type="zap">zapotekų</language>
@@ -590,7 +524,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">kinų</language>
 			<language type="zh_Hans">supaprastintoji kinų</language>
 			<language type="zh_Hant">tradicinė kinų</language>
-			<language type="znd">zande</language>
 			<language type="zu">zulų</language>
 			<language type="zun">zuni</language>
 			<language type="zxx">nėra kalbinio turinio</language>
@@ -1203,7 +1136,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 	</localeDisplayNames>
 	<characters>
 		<exemplarCharacters>[a ą b c č d e ę ė f g h i į y j k l m n o p r s š t u ų ū v z ž]</exemplarCharacters>
-		<exemplarCharacters type="auxiliary">[á à ã {ą\u0301} {ą\u0303} é è ẽ {ę\u0301} {ę\u0303} {ė\u0301} {ė\u0303} {i\u0307\u0301}í {i\u0307\u0300}ì {i\u0307\u0303}ĩ {į\u0301}{į\u0307\u0301} {į\u0303}{į\u0307\u0303} {j\u0303}{j\u0307\u0303} {l\u0303} {m\u0303} ñ ó ò õ q {r\u0303} ú ù ũ {ų\u0301} {ų\u0303} {ū\u0301} {ū\u0303} w x]</exemplarCharacters>
+		<exemplarCharacters type="auxiliary">[á à ã {ą\u0301} {ą\u0303} {ch} {dz} {dž} é è ẽ {ę\u0301} {ę\u0303} {ė\u0301} {ė\u0303} {i\u0307\u0301}í {i\u0307\u0300}ì {i\u0307\u0303}ĩ {į\u0301}{į\u0307\u0301} {į\u0303}{į\u0307\u0303} {j\u0303}{j\u0307\u0303} {l\u0303} {m\u0303} ñ ó ò õ q {r\u0303} ú ù ũ {ų\u0301} {ų\u0303} {ū\u0301} {ū\u0303} w x]</exemplarCharacters>
 		<exemplarCharacters type="index">[A Ą B C Č D E Ę Ė F G H I Į Y J K L M N O P R S Š T U Ų Ū V Z Ž]</exemplarCharacters>
 		<exemplarCharacters type="punctuation">[\- ‐ – — , ; \: ! ? . … “ „ ( ) \[ \] \{ \}]</exemplarCharacters>
 		<ellipsis type="final">{0}…</ellipsis>
@@ -1422,7 +1355,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMdd">MM.dd</dateFormatItem>
 						<dateFormatItem id="MMM">LLL</dateFormatItem>
 						<dateFormatItem id="MMMd">MMM-d</dateFormatItem>
-						<dateFormatItem id="MMMdd">MMM-dd</dateFormatItem>
 						<dateFormatItem id="MMMEd">MMM-d, E</dateFormatItem>
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y G</dateFormatItem>
@@ -1442,7 +1374,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="d">d–d</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="h">
-							<greatestDifference id="a">H–H</greatestDifference>
+							<greatestDifference id="a">h a–h a</greatestDifference>
 							<greatestDifference id="h">h–h a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="H">
@@ -1467,7 +1399,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">HH:mm–HH:mm v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
-							<greatestDifference id="a">H–H v</greatestDifference>
+							<greatestDifference id="a">h a–h a v</greatestDifference>
 							<greatestDifference id="h">h–h a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hv">
@@ -1864,7 +1796,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMdd">MM-dd</dateFormatItem>
 						<dateFormatItem id="MMM">LLL</dateFormatItem>
 						<dateFormatItem id="MMMd">MMM d</dateFormatItem>
-						<dateFormatItem id="MMMdd">MMM dd</dateFormatItem>
 						<dateFormatItem id="MMMEd">MMM d, E</dateFormatItem>
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
@@ -1886,7 +1817,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="d">dd–dd</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="h">
-							<greatestDifference id="a">HH–HH</greatestDifference>
+							<greatestDifference id="a">hh a–hh a</greatestDifference>
 							<greatestDifference id="h">hh–hh a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="H">
@@ -1911,7 +1842,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">HH:mm–HH:mm v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
-							<greatestDifference id="a">HH–HH v</greatestDifference>
+							<greatestDifference id="a">hh a–hh a v</greatestDifference>
 							<greatestDifference id="h">hh–hh a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hv">
@@ -2185,9 +2116,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Palmeris</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Pietų ašigalis</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Siova</exemplarCity>
 			</zone>
@@ -2445,9 +2373,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Torontas</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Monrealis</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Ikaluitas</exemplarCity>
@@ -3225,9 +3150,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Finiksas</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Šiprokas</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Denveris</exemplarCity>

@@ -40,7 +40,7 @@
 
 <?php
     $thumbnail = "";
-    if(Pimcore_Video::isAvailable()) {
+    if(\Pimcore\Video::isAvailable()) {
         $thumbnail = "/admin/asset/get-video-thumbnail/id/" . $this->asset->getId() . "/treepreview/true";
     }
 ?>

@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Page extends Document_PageSnippet {
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+use Pimcore\Model\Redirect;
+
+class Page extends Model\Document\PageSnippet {
 
 
     /**
@@ -73,16 +78,15 @@ class Document_Page extends Document_PageSnippet {
     public $usePersona;
 
     /**
-     * @see Document::delete and Document_PageSnippet::delete
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
         if ($this->getId() == 1) {
-            throw new Exception("root-node cannot be deleted");
+            throw new \Exception("root-node cannot be deleted");
         }
 
         // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect_List();
+        $redirects = new Redirect\Listing();
         $redirects->setCondition("target = ?", $this->getId());
         $redirects->load();
 
@@ -102,7 +106,7 @@ class Document_Page extends Document_PageSnippet {
 
         parent::update();
 
-        $config = Pimcore_Config::getSystemConfig();
+        $config = \Pimcore\Config::getSystemConfig();
         if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getFullPath()) {
             // create redirect for old path
             $redirect = new Redirect();
@@ -154,7 +158,7 @@ class Document_Page extends Document_PageSnippet {
      * @return string
      */
     public function getTitle() {
-        return Pimcore_Tool_Text::removeLineBreaks($this->title);
+        return \Pimcore\Tool\Text::removeLineBreaks($this->title);
     }
 
     /**
@@ -185,7 +189,8 @@ class Document_Page extends Document_PageSnippet {
     }
 
     /**
-     * @param array $metaData
+     * @param $metaData
+     * @return $this
      */
     public function setMetaData($metaData)
     {
@@ -209,7 +214,7 @@ class Document_Page extends Document_PageSnippet {
         $path = parent::getFullPath();
 
         // do not use pretty url's when in admin, the current document is wrapped by a hardlink or this document isn't in the current site
-        if(!Pimcore::inAdmin() && !($this instanceof Document_Hardlink_Wrapper_Interface) && Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
+        if(!\Pimcore::inAdmin() && !($this instanceof Hardlink\Wrapper\WrapperInterface) && \Pimcore\Tool\Frontend::isDocumentInCurrentSite($this)) {
             // check for a pretty url
             $prettyUrl = $this->getPrettyUrl();
             if(!empty($prettyUrl) && strlen($prettyUrl) > 1) {
@@ -221,7 +226,8 @@ class Document_Page extends Document_PageSnippet {
     }
 
     /**
-     * @param string $prettyUrl
+     * @param $prettyUrl
+     * @return $this
      */
     public function setPrettyUrl($prettyUrl)
     {
@@ -241,7 +247,8 @@ class Document_Page extends Document_PageSnippet {
     }
 
     /**
-     * @param string $css
+     * @param $css
+     * @return $this
      */
     public function setCss($css)
     {
@@ -262,6 +269,9 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setPersonas($personas)
     {
+        if(is_array($personas)) {
+            $personas = implode(",", $personas);
+        }
         $personas = trim($personas, " ,");
         if(!empty($personas)) {
             $personas = "," . $personas . ",";
@@ -277,6 +287,10 @@ class Document_Page extends Document_PageSnippet {
         return $this->personas;
     }
 
+    /**
+     * @param null $personaId
+     * @return null|string
+     */
     public function getPersonaElementPrefix($personaId = null) {
         $prefix = null;
 
@@ -291,6 +305,10 @@ class Document_Page extends Document_PageSnippet {
         return $prefix;
     }
 
+    /**
+     * @param $name
+     * @return string
+     */
     public function getPersonaElementName($name) {
         if($this->getUsePersona() && !preg_match("/^" . preg_quote($this->getPersonaElementPrefix(),"/") . "/", $name)) {
             $name = $this->getPersonaElementPrefix() . $name;
@@ -298,6 +316,10 @@ class Document_Page extends Document_PageSnippet {
         return $name;
     }
 
+    /**
+     * @param string $name
+     * @param string $data
+     */
     public function setElement($name, $data) {
 
         if($this->getUsePersona()) {
@@ -308,6 +330,10 @@ class Document_Page extends Document_PageSnippet {
         return parent::setElement($name, $data);
     }
 
+    /**
+     * @param string $name
+     * @return Model\Document\Tag
+     */
     public function getElement($name) {
 
         // check if a persona is requested for this page, if yes deliver a different version of the element (prefixed)

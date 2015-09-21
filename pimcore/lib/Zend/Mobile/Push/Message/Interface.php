@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -50,14 +50,14 @@ interface Zend_Mobile_Push_Message_Interface
     /**
      * Get Id
      *
-     * @return scalar
+     * @return int|string|float|bool Scalar
      */
     public function getId();
 
     /**
      * Set Id
      *
-     * @param scalar $id
+     * @param int|string|float|bool $id Scalar
      * @return Zend_Mobile_Push_Message_Abstract
      */
     public function setId($id);

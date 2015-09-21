@@ -13,7 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_API_Plugin_Broker {
+namespace Pimcore\API\Plugin;
+
+use Pimcore\Tool;
+
+class Broker {
 
     /**
      * Array of instance of objects extending Pimcore_API_Plugin_Abstract
@@ -29,55 +33,57 @@ class Pimcore_API_Plugin_Broker {
      */
     protected $_systemModules = array();
 
-
+    /**
+     * @return mixed|Broker
+     * @throws \Zend_Exception
+     */
     public static function getInstance() {
 
-        if(Zend_Registry::isRegistered("Pimcore_API_Plugin_Broker")) {
-            $broker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
-            if ($broker instanceof Pimcore_API_Plugin_Broker) {
+        if(\Zend_Registry::isRegistered("Pimcore_API_Plugin_Broker")) {
+            $broker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
+            if ($broker instanceof Broker) {
                 return $broker;
             }
         }
 
-        $broker = new Pimcore_API_Plugin_Broker();
-        Zend_Registry::set("Pimcore_API_Plugin_Broker", $broker);
+        $broker = new Broker();
+        \Zend_Registry::set("Pimcore_API_Plugin_Broker", $broker);
         return $broker;
     }
 
     /**
-     * @param string $module
-     * @return void
+     * @param $module
+     * @throws \Exception
      */
     public function registerModule($module) {
-        if (Pimcore_Tool::classExists($module)) {
+        if (Tool::classExists($module)) {
             $moduleInstance = new $module;
             $moduleInstance->init();
             $this->_systemModules[] = $moduleInstance;
         } else {
-            throw new Exception("unknown module [ $module ].");
+            throw new \Exception("unknown module [ $module ].");
         }
     }
 
 
     /**
-     *
-     * Register a Pimcore plugin
-     *
-     * @param Pimcore_API_Plugin_Abstract $plugin
-     * @param int $stackIndex
+     * @param AbstractPlugin $plugin
+     * @param null $stackIndex
+     * @return $this
+     * @throws Exception
      */
-    public function registerPlugin(Pimcore_API_Plugin_Abstract $plugin, $stackIndex = null) {
+    public function registerPlugin(AbstractPlugin $plugin, $stackIndex = null) {
         if (false !== array_search($plugin, $this->_plugins, true)) {
-            throw new Pimcore_API_Plugin_Exception('Plugin already registered');
+            throw new Exception('Plugin already registered');
         }
 
         //installed?
         if (!$plugin::isInstalled()) {
             if (is_object($plugin)) {
                 $className = get_class($plugin);
-                Logger::debug("Not registering plugin [ " . $className . " ] because it is not installed");
+                \Logger::debug("Not registering plugin [ " . $className . " ] because it is not installed");
             } else {
-                Logger::debug("Not registering plugin, it is not an object");
+                \Logger::debug("Not registering plugin, it is not an object");
             }
             return $this;
         }
@@ -87,7 +93,7 @@ class Pimcore_API_Plugin_Broker {
 
         if ($stackIndex) {
             if (isset($this->_plugins[$stackIndex])) {
-                throw new Pimcore_API_Plugin_Exception('Plugin with stackIndex "' . $stackIndex . '" already registered');
+                throw new Exception('Plugin with stackIndex "' . $stackIndex . '" already registered');
             }
             $this->_plugins[$stackIndex] = $plugin;
         } else {
@@ -106,16 +112,16 @@ class Pimcore_API_Plugin_Broker {
     }
 
     /**
-     * Unregister a Pimcore plugin.
-     *
-     * @param string|Pimcore_API_Plugin_Abstract $plugin Plugin object or class name
+     * @param $plugin
+     * @return $this
+     * @throws Exception
      */
     public function unregisterPlugin($plugin) {
-        if ($plugin instanceof Pimcore_API_Plugin_Abstract) {
+        if ($plugin instanceof AbstractPlugin) {
             // Given a plugin object, find it in the array
             $key = array_search($plugin, $this->_plugins, true);
             if (false === $key) {
-                throw new Pimcore_API_Plugin_Exception('Plugin never registered.');
+                throw new Exception('Plugin never registered.');
             }
             unset($this->_plugins[$key]);
         } elseif (is_string($plugin)) {
@@ -164,10 +170,8 @@ class Pimcore_API_Plugin_Broker {
     }
 
     /**
-     * Retrieve a plugin or plugins by class
-     *
-     * @param  string $class Class name of plugin(s) desired
-     * @return false|Pimcore_API_Plugin_Abstract|array Returns false if none found, plugin if only one found, and array of plugins if multiple plugins of same class found
+     * @param $class
+     * @return array|bool
      */
     public function getPlugin($class) {
         $found = array();
@@ -246,7 +250,7 @@ class Pimcore_API_Plugin_Broker {
                     }
                 }
             } catch (Exception $e) {
-                Logger::error("Plugin " . get_class($plugin) . " threw Exception when trying to get translations");
+                \Logger::error("Plugin " . get_class($plugin) . " threw Exception when trying to get translations");
             }
         }
         return $translations;

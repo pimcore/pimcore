@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Tool_Newsletter_Config {
+
+namespace Pimcore\Model\Tool\Newsletter;
+
+use Pimcore\Model;
+
+class Config {
 
     /**
      * @var string
@@ -58,15 +62,15 @@ class Tool_Newsletter_Config {
     public $googleAnalytics = true;
 
     /**
-     * @static
-     * @param  $name
-     * @return Tool_Newsletter_Config
+     * @param $name
+     * @return Config
+     * @throws \Exception
      */
     public static function getByName ($name) {
         $letter = new self();
         $letter->setName($name);
         if(!$letter->load()) {
-            throw new Exception("newsletter definition : " . $name . " does not exist");
+            throw new \Exception("newsletter definition : " . $name . " does not exist");
         }
 
         return $letter;
@@ -79,7 +83,7 @@ class Tool_Newsletter_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/newsletter";
         if(!is_dir($dir)) {
-            Pimcore_File::mkdir($dir);
+            \Pimcore\File::mkdir($dir);
         }
 
         return $dir;
@@ -99,8 +103,8 @@ class Tool_Newsletter_Config {
 
         $arrayConfig = object2array($this);
 
-        $config = new Zend_Config($arrayConfig);
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($arrayConfig);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => $this->getConfigFile()
         ));
@@ -114,7 +118,7 @@ class Tool_Newsletter_Config {
      */
     public function load () {
 
-        $configXml = new Zend_Config_Xml($this->getConfigFile());
+        $configXml = new \Zend_Config_Xml($this->getConfigFile());
         $configArray = $configXml->toArray();
 
         foreach ($configArray as $key => $value) {
@@ -144,7 +148,8 @@ class Tool_Newsletter_Config {
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -161,7 +166,8 @@ class Tool_Newsletter_Config {
     }
 
     /**
-     * @param string $name
+     * @param $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -193,10 +199,9 @@ class Tool_Newsletter_Config {
         return $this->document;
     }
 
-
-
     /**
-     * @param boolean $googleAnalytics
+     * @param $googleAnalytics
+     * @return $this
      */
     public function setGoogleAnalytics($googleAnalytics)
     {

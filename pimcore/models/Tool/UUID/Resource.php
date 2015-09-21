@@ -15,30 +15,22 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_UUID_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\UUID;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     const TABLE_NAME = 'uuids';
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
 
     /**
-     * Get the valid columns from the database
      *
-     * @return void
      */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns(static::TABLE_NAME);
-    }
-
     public function save () {
         $data = get_object_vars($this->model);
 
         foreach($data as $key => $value){
-            if(!in_array($key,$this->validColumns)){
+            if(!in_array($key, $this->getValidTableColumns(static::TABLE_NAME))){
                 unset($data[$key]);
             }
         }
@@ -46,17 +38,24 @@ class Tool_UUID_Resource extends Pimcore_Model_Resource_Abstract {
         $this->db->insertOrUpdate(self::TABLE_NAME,$data);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function delete(){
         $uuid = $this->model->getUuid();
         if(!$uuid){
-            throw new Exception("Couldn't delete UUID - no UUID specified.");
+            throw new \Exception("Couldn't delete UUID - no UUID specified.");
         }
         $this->db->delete(self::TABLE_NAME,"uuid='". $uuid ."'");
     }
 
+    /**
+     * @param $uuid
+     * @return Tool\UUID
+     */
     public function getByUuid($uuid){
         $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME ." where uuid='" . $uuid . "'");
-        $model = new Tool_UUID();
+        $model = new Model\Tool\UUID();
         $model->setValues($data);
         return $model;
     }

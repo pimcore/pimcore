@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -29,8 +29,16 @@
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @method $this appendFile($src, $type = 'text/javascript', array $attrs = array())
+ * @method $this appendScript($script, $type = 'text/javascript', array $attrs = array())
+ * @method $this offsetSetFile($index, $src, $type = 'text/javascript', array $attrs = array())
+ * @method $this offsetSetScript($index, $script, $type = 'text/javascript', array $attrs = array())
+ * @method $this prependFile($src, $type = 'text/javascript', array $attrs = array())
+ * @method $this prependScript($script, $type = 'text/javascript', array $attrs = array())
+ * @method $this setFile($src, $type = 'text/javascript', array $attrs = array())
+ * @method $this setScript($script, $type = 'text/javascript', array $attrs = array())
  */
 class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container_Standalone
 {
@@ -447,7 +455,11 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
             && !empty($item->attributes['conditional'])
             && is_string($item->attributes['conditional']))
         {
-            $html = $indent . '<!--[if ' . $item->attributes['conditional'] . ']> ' . $html . '<![endif]-->';
+            // inner wrap with comment end and start if !IE
+            if (str_replace(' ', '', $item->attributes['conditional']) === '!IE') {
+                $html = '<!-->' . $html . '<!--';
+            }
+            $html = $indent . '<!--[if ' . $item->attributes['conditional'] . ']>' . $html . '<![endif]-->';
         } else {
             $html = $indent . $html;
         }

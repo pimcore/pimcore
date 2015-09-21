@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Link extends Webservice_Data_Document {
+namespace Pimcore\Model\Webservice\Data\Document;
+
+use Pimcore\Model;
+
+class Link extends Model\Webservice\Data\Document {
     
     /**
      * @var integer

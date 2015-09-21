@@ -15,29 +15,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Tool\Email\Log;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Name of the db table
      * @var string
      */
     protected static $dbTable = 'email_log';
-
-     /**
-     * Contains the valid database columns
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid database columns from database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns(self::$dbTable);
-    }
 
      /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
@@ -66,7 +54,7 @@ class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
         $emailLog = get_object_vars($this->model);
 
         foreach ($emailLog as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns(self::$dbTable))) {
 
                 // check if the getter exists
                 $getter = "get" . ucfirst($key);
@@ -82,7 +70,7 @@ class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
                 }else if(is_array($value)){
                     //converts the dynamic params to a basic json string
                     $preparedData = self::createJsonLoggingObject($value);
-                    $value = Zend_Json::encode($preparedData);
+                    $value = \Zend_Json::encode($preparedData);
                 }
 
                 $data[$key] = $value;
@@ -92,8 +80,8 @@ class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
         try {
             $this->db->update(self::$dbTable, $data,  $this->db->quoteInto("id = ?", $this->model->getId()));
         }
-        catch (Exception $e) {
-            Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
+        catch (\Exception $e) {
+            \Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
     }
 
@@ -114,10 +102,8 @@ class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
         $this->save();
     }
 
-     /**
-     * Create a new record for the object in the database
-     *
-     * @return void
+    /**
+     * @throws \Exception
      */
     public function create() {
         try {
@@ -129,14 +115,18 @@ class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
             $this->model->setModificationDate($date);
 
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }
 
+    /**
+     * @param $data
+     * @return array|string
+     */
     protected function createJsonLoggingObject($data){
         if(!is_array($data)){
-            return Zend_Json::encode(new StdClass());
+            return \Zend_Json::encode(new \stdClass());
         }else{
            $loggingData = array();
            foreach($data as $key => $value){
@@ -152,18 +142,18 @@ class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
      *
      * @param $key
      * @param $value
-     * @return StdClass
+     * @return \stdClass
      */
     protected function prepareLoggingData($key,$value){
-        $class = new StdClass();
+        $class = new \stdClass();
         $class->key = $key.' '; //dirty hack - key has to be a string otherwise the treeGrid won't work
 
         if(is_string($value) || is_int($value) || is_null($value)){
             $class->data = array('type' => 'simple',
                 'value' => $value);
-        }elseif($value instanceof Zend_Date){
+        }elseif($value instanceof \Zend_Date){
             $class->data = array('type' => 'simple',
-                'value' => $value->get(Zend_Date::DATETIME));
+                'value' => $value->get(\Zend_Date::DATETIME));
         }elseif(is_object($value) && method_exists($value,'getId')){
             $class->data = array('type' => 'object',
                 'objectId' => $value->getId(),
@@ -175,5 +165,4 @@ class Tool_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
         }
         return $class;
     }
-
 }

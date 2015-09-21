@@ -15,12 +15,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Email extends Document_PageSnippet
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+
+class Email extends Model\Document\PageSnippet
 {
     /**
-     * Contains a Zend_Validate_EmailAddress object
+     * Contains a \Zend_Validate_EmailAddress object
      *
-     * @var Zend_Validate_EmailAddress
+     * @var \Zend_Validate_EmailAddress
      */
     protected static $validator;
 
@@ -151,7 +155,7 @@ class Document_Email extends Document_PageSnippet
     public static function validateEmailAddress($emailAddress)
     {
         if (is_null(self::$validator)) {
-            self::$validator = new Zend_Validate_EmailAddress();
+            self::$validator = new \Zend_Validate_EmailAddress();
         }
 
         $emailAddress = trim($emailAddress);

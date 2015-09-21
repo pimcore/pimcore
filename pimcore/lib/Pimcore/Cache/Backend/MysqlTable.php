@@ -13,11 +13,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Cache\Backend;
 
-class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface {
+use Pimcore\Resource;
+
+class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface {
 
     /**
-     * @var Zend_Db_Adapter_Abstract
+     * @var \Zend_Db_Adapter_Abstract
      */
     protected $db;
 
@@ -35,13 +38,13 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
     }
 
     /**
-     * @return Zend_Db_Adapter_Abstract
+     * @return \Zend_Db_Adapter_Abstract
      */
     protected function getDb () {
         if(!$this->db) {
             // we're using a new mysql connection here to avoid problems with active (nested) transactions
-            Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
-            $this->db = Pimcore_Resource::getConnection();
+            \Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
+            $this->db = Resource::getConnection();
         }
         return $this->db;
     }
@@ -90,8 +93,8 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
                 }
             }
             $this->getDb()->commit();
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             $this->getDb()->rollBack();
             $this->truncate();
             return false;
@@ -137,15 +140,15 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
      * @param  array  $tags Array of tags
      * @return boolean True if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
+    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
 
-        if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
+        if ($mode == \Zend_Cache::CLEANING_MODE_ALL) {
             $this->truncate();
         }
-        if ($mode == Zend_Cache::CLEANING_MODE_OLD) {
+        if ($mode == \Zend_Cache::CLEANING_MODE_OLD) {
             $this->getDb()->delete("cache", "expire < unix_timestamp() OR mtime < (unix_timestamp()-864000)");
         }
-        if ($mode == Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
+        if ($mode == \Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
                 $items = $this->getItemsByTag($tag);
                 $quotedIds = array();
@@ -168,11 +171,11 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
                 } catch (\Exception $e) {
                     $this->getDb()->rollBack();
                     $this->truncate();
-                    Logger::error($e);
+                    \Logger::error($e);
                 }
             }
         }
-        if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
+        if ($mode == \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
             
             $condParts = array("1=1");
             foreach ($tags as $tag) {
@@ -284,7 +287,7 @@ class Pimcore_Cache_Backend_MysqlTable extends Zend_Cache_Backend implements Zen
     /**
      * Return the filling percentage of the backend storage
      *
-     * @throws Zend_Cache_Exception
+     * @throws \Zend_Cache_Exception
      * @return int integer between 0 and 100
      */
     public function getFillingPercentage()

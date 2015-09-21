@@ -10,14 +10,24 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Object_Objectbrick
+ * @package    Object\Objectbrick
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Definition_Resource {
+namespace Pimcore\Model\Object\Objectbrick\Definition;
 
-    public function getTableName (Object_Class $class, $query = false) {
+use Pimcore\Model;
+use Pimcore\Model\Object;
+
+class Resource extends Model\Object\Fieldcollection\Definition\Resource {
+
+    /**
+     * @param Object\ClassDefinition $class
+     * @param bool $query
+     * @return string
+     */
+    public function getTableName (Object\ClassDefinition $class, $query = false) {
         if($query) {
             return "object_brick_query_" . $this->model->getKey() . "_" . $class->getId();
         } else {
@@ -25,7 +35,10 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
         }
     }
 
-    public function delete (Object_Class $class) {
+    /**
+     * @param Object\ClassDefinition $class
+     */
+    public function delete (Object\ClassDefinition $class) {
         $table = $this->getTableName($class, false);
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
 
@@ -33,7 +46,10 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
     }
 
-    public function createUpdateTable (Object_Class $class) {
+    /**
+     * @param Object\ClassDefinition $class
+     */
+    public function createUpdateTable (Object\ClassDefinition $class) {
 
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
@@ -62,7 +78,7 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
         $protectedColumnsStore = array("o_id", "fieldname");
         $protectedColumnsQuery = array("o_id", "fieldname");
 
-        Object_Class_Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
+        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
 
         foreach ($this->model->getFieldDefinitions() as $value) {
 

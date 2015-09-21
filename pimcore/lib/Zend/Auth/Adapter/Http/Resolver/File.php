@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage Zend_Auth_Adapter_Http
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage Zend_Auth_Adapter_Http
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Auth_Adapter_Http_Resolver_File implements Zend_Auth_Adapter_Http_Resolver_Interface
@@ -49,7 +49,6 @@ class Zend_Auth_Adapter_Http_Resolver_File implements Zend_Auth_Adapter_Http_Res
      * Constructor
      *
      * @param  string $path Complete filename where the credentials are stored
-     * @return void
      */
     public function __construct($path = '')
     {

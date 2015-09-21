@@ -13,59 +13,59 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Http {
+namespace Pimcore\File\Transfer\Adapter;
 
-    protected $sourceFile = null;
-    protected $destinationFile = null;
+use Pimcore\File;
 
+class Http extends \Zend_File_Transfer_Adapter_Http {
+
+    use \Pimcore\File\Transfer\Adapter\AdapterTrait;
+    /**
+     * @var null
+     */
     protected $httpClient = null;
 
-    public function setHttpClient(Zend_Http_Client $httpClient){
+    /**
+     * @param \Zend_Http_Client $httpClient
+     */
+    public function setHttpClient(\Zend_Http_Client $httpClient){
         $this->httpClient = $httpClient;
     }
 
+    /**
+     * @return null
+     */
     public function getHttpClient(){
         return $this->httpClient;
     }
 
-    public function setSourceFile($sourceFile){
-        $this->sourceFile = $sourceFile;
-        return $this;
-    }
-
-    public function getSourceFile(){
-        return $this->sourceFile;
-    }
-
-    public function setDestinationFile($destinationFile){
-        $this->destinationFile  = $destinationFile;
-    }
-
-    public function getDestinationFile(){
-        return $this->destinationFile;
-    }
-
+    /**
+     * @param null $options
+     * @return bool|void
+     * @throws \Exception
+     * @throws \Zend_Http_Client_Exception
+     */
     public function send($options = null)
     {
         $sourceFile = $this->getSourceFile();
         $destinationFile = $this->getDestinationFile();
 
         if(!$sourceFile){
-            throw new Exception("No sourceFile provided.");
+            throw new \Exception("No sourceFile provided.");
         }
 
         if(!$destinationFile){
-            throw new Exception("No destinationFile provided.");
+            throw new \Exception("No destinationFile provided.");
         }
 
         if(is_array($options)){
             if($options['overwrite'] == false && file_exists($destinationFile)){
-                throw new Exception("Destination file : '" . $destinationFile ."' already exists.");
+                throw new \Exception("Destination file : '" . $destinationFile ."' already exists.");
             }
         }
 
         if(!$this->getHttpClient()){
-            $httpClient = Pimcore_Tool::getHttpClient(null,array('timeout' => 3600*60));
+            $httpClient = \Pimcore\Tool::getHttpClient(null,array('timeout' => 3600*60));
         }else{
             $httpClient = $this->getHttpClient();
         }
@@ -74,16 +74,14 @@ class Pimcore_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Http
         $response = $httpClient->request();
         if($response->isSuccessful()){
             $data = $response->getBody();
-            Pimcore_File::mkdir(dirname($destinationFile));
-            $result = Pimcore_File::put($destinationFile,$data);
+            File::mkdir(dirname($destinationFile));
+            $result = File::put($destinationFile,$data);
             if($result === false){
-                throw new Exception("Couldn't write destination file:" . $destinationFile);
+                throw new \Exception("Couldn't write destination file:" . $destinationFile);
             }
         }else{
-            throw new Exception("Couldn't download file:" . $sourceFile);
+            throw new \Exception("Couldn't download file:" . $sourceFile);
         }
         return true;
     }
-
-
 }

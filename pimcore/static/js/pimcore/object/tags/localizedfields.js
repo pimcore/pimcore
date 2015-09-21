@@ -110,7 +110,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             var data = [];
             for (var i = 0; i < nrOfLanguages; i++) {
                 var language = this.frontendLanguages[i];
-                data.push([language, pimcore.available_languages[language]]);
+                data.push([language, ts(pimcore.available_languages[language])]);
             }
 
             var store = new Ext.data.ArrayStore({
@@ -202,7 +202,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 monitorResize: true,
                 cls: "object_field",
                 activeTab: 0,
-                height: 10,
+                height: "auto",
                 items: [],
                 deferredRender: true,
                 forceLayout: true,
@@ -217,26 +217,41 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             // this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
             panelConf.listeners = {
-                afterrender: function () {
+
+                afterlayout: function () {
+                    if (this.component.heightAlreadyFixed) {
+                        return;
+                    }
+
+                    // if there's already an interval => clear it!
+                    if(this.tabPanelAdjustInterval) {
+                        clearInterval(this.tabPanelAdjustInterval);
+                    }
+
                     this.tabPanelAdjustIntervalCounter = 0;
                     this.tabPanelAdjustInterval = window.setInterval(function () {
-
-                        this.tabPanelAdjustIntervalCounter++;
-                        if(this.tabPanelAdjustIntervalCounter > 20) {
-                            clearInterval(this.tabPanelAdjustInterval);
-                        }
-
                         if(!this.fieldConfig.height && !this.fieldConfig.region) {
+                            this.tabPanelAdjustIntervalCounter++;
+                            if(this.tabPanelAdjustIntervalCounter > 20) {
+                                clearInterval(this.tabPanelAdjustInterval);
+                            }
+
                             try {
                                 var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
                                 var panelBody = Ext.get(panelBodies[0]);
                                 panelBody.applyStyles("height: auto;");
                                 var height = panelBody.getHeight();
-                                // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
-                                this.component.setHeight(height+100);
+                                if (height > 0) {
+                                    // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
+                                    this.component.setHeight(height+100);
+                                    clearInterval(this.tabPanelAdjustInterval);
 
-                                //this.tabPanel.getEl().applyStyles("position:relative;");
-                                this.component.doLayout();
+                                    //this.tabPanel.getEl().applyStyles("position:relative;");
+                                    this.component.doLayout();
+                                    this.component.heightAlreadyFixed = true;
+
+                                }
+
                             } catch (e) {
                                 console.log(e);
                             }
@@ -260,6 +275,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     padding: "10px",
                     deferredRender: false,
                     hideMode: "offsets",
+                    iconCls: "pimcore_icon_language_" + this.frontendLanguages[i].toLowerCase(),
                     title: pimcore.available_languages[this.frontendLanguages[i]],
                     items: this.getRecursiveLayout(this.fieldConfig, !editable).items
                 };
@@ -289,7 +305,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         return this.component;
     },
 
-    getDataForField: function (name) {
+    getDataForField: function (fieldConfig) {
+        var name = fieldConfig.name;
         try {
             if (this.data[this.currentLanguage]) {
                 if (typeof this.data[this.currentLanguage][name] !== undefined){
@@ -302,7 +319,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         return;
     },
 
-    getMetaDataForField: function(name) {
+    getMetaDataForField: function(fieldConfig) {
+        var name = fieldConfig.name;
         try {
             if (this.metaData[this.currentLanguage]) {
                 if (this.metaData[this.currentLanguage][name]) {
@@ -401,7 +419,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         var currentLanguage;
 
-        for (var i=0; i < this.frontendLanguages; i++) {
+        for (var i=0; i < this.frontendLanguages.length; i++) {
 
             currentLanguage = this.frontendLanguages[i];
 

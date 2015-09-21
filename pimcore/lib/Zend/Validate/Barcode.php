@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Barcode extends Zend_Validate_Abstract
@@ -77,7 +77,6 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
      *
      * @param  string|Zend_Config|
      *         Zend_Validate_Barcode_BarcodeAdapter $adapter Barcode adapter to use
-     * @return void
      * @throws Zend_Validate_Exception
      */
     public function __construct($adapter)
@@ -126,7 +125,7 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
      *
      * @param  string|Zend_Validate_Barcode $adapter Barcode adapter to use
      * @param  array  $options Options for this adapter
-     * @return void
+     * @return $this
      * @throws Zend_Validate_Exception
      */
     public function setAdapter($adapter, $options = null)

@@ -24,9 +24,11 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 */
 
-Class Pimcore_Image_GifAnimator {
+namespace Pimcore\Image;
+
+Class GifAnimator {
     var $GIF = "GIF89a";		/* GIF header 6 bytes	*/
-    var $VER = "Pimcore_Image_GifAnimator V2.05";	/* Encoder version		*/
+    var $VER = "self V2.05";	/* Encoder version		*/
 
     var $BUF = Array ( );
     var $LOP =  0;
@@ -47,7 +49,7 @@ Class Pimcore_Image_GifAnimator {
     ::	GIFEncoder...
     ::
     */
-    function Pimcore_Image_GifAnimator	(
+    function self	(
         $GIF_src, $GIF_dly, $GIF_lop, $GIF_dis,
         $GIF_red, $GIF_grn, $GIF_blu, $GIF_mod
     ) {
@@ -85,11 +87,11 @@ Class Pimcore_Image_GifAnimator {
                 }
             }
         }
-        Pimcore_Image_GifAnimator::GIFAddHeader ( );
+        self::GIFAddHeader ( );
         for ( $i = 0; $i < count ( $this->BUF ); $i++ ) {
-            Pimcore_Image_GifAnimator::GIFAddFrames ( $i, $GIF_dly [ $i ] );
+            self::GIFAddFrames ( $i, $GIF_dly [ $i ] );
         }
-        Pimcore_Image_GifAnimator::GIFAddFooter ( );
+        self::GIFAddFooter ( );
     }
     /*
     :::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -105,7 +107,7 @@ Class Pimcore_Image_GifAnimator {
 
             $this->GIF .= substr ( $this->BUF [ 0 ], 6, 7		);
             $this->GIF .= substr ( $this->BUF [ 0 ], 13, $cmap	);
-            $this->GIF .= "!\377\13NETSCAPE2.0\3\1" . Pimcore_Image_GifAnimator::GIFWord ( $this->LOP ) . "\0";
+            $this->GIF .= "!\377\13NETSCAPE2.0\3\1" . self::GIFWord ( $this->LOP ) . "\0";
         }
     }
     /*
@@ -157,7 +159,7 @@ Class Pimcore_Image_GifAnimator {
         }
         if ( ord ( $this->BUF [ $i ] { 10 } ) & 0x80 && $this->IMG > -1 ) {
             if ( $Global_len == $Locals_len ) {
-                if ( Pimcore_Image_GifAnimator::GIFBlockCompare ( $Global_rgb, $Locals_rgb, $Global_len ) ) {
+                if ( self::GIFBlockCompare ( $Global_rgb, $Locals_rgb, $Global_len ) ) {
                     $this->GIF .= ( $Locals_ext . $Locals_img . $Locals_tmp );
                 }
                 else {

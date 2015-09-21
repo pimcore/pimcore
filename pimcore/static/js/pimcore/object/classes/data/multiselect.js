@@ -45,7 +45,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
     getGroup: function () {
         return "select";
     },
-    
+
     getIconClass: function () {
         return "pimcore_icon_multiselect";
     },
@@ -62,6 +62,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         });
 
         this.valueGrid = new Ext.grid.EditorGridPanel({
+            enableDragDrop: true,
+            ddGroup: 'objectclassmultiselect',
             tbar: [{
                 xtype: "tbtext",
                 text: t("selection_options")
@@ -73,19 +75,35 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                         key: "",
                         value: ""
                     });
-                    this.valueStore.insert(0, u);
+
+                    var selectedRow = this.selectionModel.getSelected();
+                    var idx;
+                    if (selectedRow) {
+                        idx = this.valueStore.indexOf(selectedRow) + 1;
+                    } else {
+                        idx = this.valueStore.getCount();
+                    }
+                    this.valueStore.insert(idx, u);
+                    this.selectionModel.selectRow(idx);
                 }.bind(this)
-            }],
+            },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_tab_edit",
+                    handler: this.showoptioneditor.bind(this)
+
+                }
+            ],
             style: "margin-top: 10px",
             store: this.valueStore,
             disabled: this.isInCustomLayoutEditor(),
             selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             columns: [
-                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}),
-                                                    width: 200},
-                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}),
-                                                    width: 200},
+                {header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                    width: 200},
+                {header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                    width: 200},
                 {
                     xtype:'actioncolumn',
                     width:30,
@@ -97,7 +115,9 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                 if (rowIndex > 0) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
-                                    grid.getStore().insert(rowIndex - 1, [rec]);
+                                    grid.getStore().insert(--rowIndex, [rec]);
+                                    var sm = this.valueGrid.getSelectionModel();
+                                    this.selectionModel.selectRow(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -114,7 +134,9 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                 if (rowIndex < (grid.getStore().getCount() - 1)) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
-                                    grid.getStore().insert(rowIndex + 1, [rec]);
+                                    grid.getStore().insert(++rowIndex, [rec]);
+                                    var sm = this.valueGrid.getSelectionModel();
+                                    this.selectionModel.selectRow(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -136,6 +158,36 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             ],
             autoHeight: true
         });
+
+        this.selectionModel = this.valueGrid.getSelectionModel();;
+        this.valueGrid.on("afterrender", function () {
+
+            var dropTargetEl = this.valueGrid.getEl();
+            var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
+                ddGroup    : 'objectclassmultiselect',
+                getTargetFromEvent: function(e) {
+                    return this.valueGrid.getEl().dom;
+                }.bind(this),
+                onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                    if(data["grid"] && data["grid"] == this.valueGrid) {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
+                    return Ext.dd.DropZone.prototype.dropNotAllowed;
+                }.bind(this),
+                onNodeDrop : function(target, dd, e, data) {
+                    if(data["grid"] && data["grid"] == this.valueGrid) {
+                        var rowIndex = this.valueGrid.getView().findRowIndex(e.target);
+                        if(rowIndex !== false) {
+                            var store = this.valueGrid.getStore();
+                            var rec = store.getAt(data.rowIndex);
+                            store.removeAt(data.rowIndex);
+                            store.insert(rowIndex, [rec]);
+                        }
+                    }
+                    return false;
+                }.bind(this)
+            });
+        }.bind(this));
 
         $super();
 
@@ -187,5 +239,10 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     height: source.datax.height
                 });
         }
+    },
+
+    showoptioneditor: function() {
+        var editor = new pimcore.object.helpers.optionEditor(this.valueStore);
+        editor.edit();
     }
 });

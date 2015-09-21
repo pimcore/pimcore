@@ -28,6 +28,7 @@
         <logrecipient/>
         <viewSuffix/>
         <instanceIdentifier/>
+        <show_cookie_notice/>
     </general>
     <database>
         <adapter>Mysqli</adapter>
@@ -47,7 +48,7 @@
         <default_controller>default</default_controller>
         <default_action>default</default_action>
         <error_pages>
-            <default>/</default>
+            <default>/error</default>
         </error_pages>
         <createredirectwhenmoved/>
         <allowtrailingslash>no</allowtrailingslash>
@@ -81,8 +82,8 @@
             <apikey/>
         </translate>
         <google>
-            <client_id/>
-            <email/>
+            <client_id>655439141282-tic94n6q3j7ca5c5as132sspeftu5pli.apps.googleusercontent.com</client_id>
+            <email>655439141282-tic94n6q3j7ca5c5as132sspeftu5pli@developer.gserviceaccount.com</email>
             <simpleapikey>AIzaSyCo9Wj49hYJWW2WgOju4iMYNTvdcBxmyQ8</simpleapikey>
             <browserapikey>AIzaSyBJX16kWAmUVEz1c1amzp2iKqAfumbcoQQ</browserapikey>
         </google>

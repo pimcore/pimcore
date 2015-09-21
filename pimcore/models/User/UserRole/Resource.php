@@ -15,8 +15,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_UserRole_Resource extends User_Abstract_Resource {
+namespace Pimcore\Model\User\UserRole;
 
+use Pimcore\Model;
+
+class Resource extends Model\User\AbstractUser\Resource {
+
+    /**
+     * @param $id
+     * @throws \Exception
+     */
     public function getById($id) {
         parent::getById($id);
 
@@ -25,6 +33,10 @@ class User_UserRole_Resource extends User_Abstract_Resource {
         }
     }
 
+    /**
+     * @param $name
+     * @throws \Exception
+     */
     public function getByName($name) {
         parent::getByName($name);
 
@@ -33,13 +45,16 @@ class User_UserRole_Resource extends User_Abstract_Resource {
         }
     }
 
+    /**
+     *
+     */
     public function loadWorkspaces () {
 
         $types = array("asset","document","object");
 
         foreach ($types as $type) {
             $workspaces = array();
-            $className = "User_Workspace_" . ucfirst($type);
+            $className = "\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($type);
             $result = $this->db->fetchAll("SELECT * FROM users_workspaces_" . $type . " WHERE userId = ?", $this->model->getId());
             foreach ($result as $row) {
                 $workspace = new $className();
@@ -51,6 +66,9 @@ class User_UserRole_Resource extends User_Abstract_Resource {
         }
     }
 
+    /**
+     *
+     */
     public function emptyWorkspaces () {
         $this->db->delete("users_workspaces_asset", $this->db->quoteInto("userId = ?", $this->model->getId() ));
         $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $this->model->getId() ));

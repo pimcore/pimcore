@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -27,7 +27,7 @@
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Alpha extends Zend_Validate_Abstract
@@ -65,8 +65,7 @@ class Zend_Validate_Alpha extends Zend_Validate_Abstract
     /**
      * Sets default option values for this instance
      *
-     * @param  boolean|Zend_Config $allowWhiteSpace
-     * @return void
+     * @param boolean|Zend_Config $allowWhiteSpace
      */
     public function __construct($allowWhiteSpace = false)
     {

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
-<!-- Copyright © 1991-2013 Unicode, Inc.
+<!-- Copyright © 1991-2014 Unicode, Inc.
 CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
 For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9862 $"/>
+		<generation date="$Date: 2014-03-03 17:35:05 -0600 (Mon, 03 Mar 2014) $"/>
 		<language type="sr"/>
 		<script type="Latn"/>
 	</identity>
@@ -26,48 +26,37 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">Adigejski</language>
 			<language type="ae">Avestanski</language>
 			<language type="af">Afrikanerski</language>
-			<language type="afa">Afro-azijatski</language>
 			<language type="afh">Afrihili</language>
 			<language type="ain">Ainu</language>
 			<language type="ak">Akan</language>
 			<language type="akk">Akadijski</language>
 			<language type="ale">Aljut</language>
-			<language type="alg">Algonkvijanski jezik</language>
 			<language type="alt">Južni altai</language>
 			<language type="am">Amharski</language>
 			<language type="an">Aragonežanski</language>
 			<language type="ang">Staroengleski</language>
 			<language type="anp">Angika</language>
-			<language type="apa">Apački jezik</language>
 			<language type="ar">Arapski</language>
 			<language type="ar_001" draft="contributed">moderan standardni arapski</language>
 			<language type="arc">Armajski</language>
 			<language type="arn">Arokanijski</language>
 			<language type="arp">Arapaho</language>
-			<language type="art">Veštački</language>
 			<language type="arw">Aravak</language>
 			<language type="as">Asemijski</language>
 			<language type="ast">Asturijski</language>
-			<language type="ath">Atapaskan</language>
-			<language type="aus">Australijski jezik</language>
 			<language type="av">Avarski</language>
 			<language type="awa">Avadhi</language>
 			<language type="ay">Ajmara</language>
 			<language type="az">Azerbejdžanski</language>
 			<language type="az" alt="short" draft="contributed">Azerski</language>
 			<language type="ba">Baškir</language>
-			<language type="bad">Banda</language>
-			<language type="bai">Bamileke</language>
 			<language type="bal">Baluči</language>
 			<language type="ban">Balinezijski</language>
 			<language type="bas">Basa</language>
-			<language type="bat">Baltički jezik</language>
 			<language type="be">Beloruski</language>
 			<language type="bej">Beja</language>
 			<language type="bem">Bemba</language>
-			<language type="ber">Berber</language>
 			<language type="bg">Bugarski</language>
-			<language type="bh">Biharski</language>
 			<language type="bho">Bojpuri</language>
 			<language type="bi">Bislama</language>
 			<language type="bik">Bikol</language>
@@ -75,24 +64,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">Sisika</language>
 			<language type="bm">Bambara</language>
 			<language type="bn">Benglaski</language>
-			<language type="bnt">Bantu</language>
 			<language type="bo">Tibetanski</language>
 			<language type="br">Bretonski</language>
 			<language type="bra">Braj</language>
 			<language type="bs">Bosanski</language>
-			<language type="btk">Batak</language>
 			<language type="bua">Buriat</language>
 			<language type="bug">Buginežanski</language>
 			<language type="byn">Blin</language>
 			<language type="ca">Katalonski</language>
 			<language type="cad">Kado</language>
-			<language type="cai">Centralno američki Indijanski jezik</language>
 			<language type="car">Karipski</language>
-			<language type="cau">Kavkaski</language>
 			<language type="cch">Atsamski</language>
 			<language type="ce">Čečenski</language>
 			<language type="ceb">Cebuano</language>
-			<language type="cel">Keltski</language>
 			<language type="ch">Čamoro</language>
 			<language type="chb">Čibča</language>
 			<language type="chg">Čagatai</language>
@@ -104,25 +88,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">Čeroki</language>
 			<language type="chy">Čejenski</language>
 			<language type="ckb" draft="contributed">sorani kurdski</language>
-			<language type="cmc">Čamski jezik</language>
 			<language type="co">Korzikanski</language>
 			<language type="cop">Koptski</language>
-			<language type="cpe">Kreolski ili pidžin zasnovan na engleskom</language>
-			<language type="cpf">Kreolski ili pidžin zasnovan na francuskom</language>
-			<language type="cpp">Kreolski ili pidžin baziran na portugalskom</language>
 			<language type="cr">Kri</language>
 			<language type="crh">Krimeanski turski</language>
-			<language type="crp">kreolski ili pidžin</language>
 			<language type="cs">Češki</language>
 			<language type="csb">Kašubijanski</language>
 			<language type="cu">Staroslovenski</language>
-			<language type="cus">Kušitički jezik</language>
 			<language type="cv">Čuvaški</language>
 			<language type="cy">Velški</language>
 			<language type="da">Danski</language>
 			<language type="dak">Dakota</language>
 			<language type="dar">Dargva</language>
-			<language type="day">Dajaški</language>
 			<language type="de">Nemački</language>
 			<language type="de_AT">Austrijski nemački</language>
 			<language type="de_CH">Švajcarski visoki nemački</language>
@@ -131,7 +108,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="dgr">Dogrib</language>
 			<language type="din">Dinka</language>
 			<language type="doi">Dogri</language>
-			<language type="dra">Darvidijski jezik</language>
 			<language type="dsb">Niski sorbijanski</language>
 			<language type="dua">Duala</language>
 			<language type="dum">Srednji holandski</language>
@@ -166,7 +142,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">Fulah</language>
 			<language type="fi">Finski</language>
 			<language type="fil">Filipinski</language>
-			<language type="fiu">Ugro-finski</language>
 			<language type="fj">Fidžijski</language>
 			<language type="fo">Farski</language>
 			<language type="fon">Fon</language>
@@ -184,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">Gajo</language>
 			<language type="gba">Gbaja</language>
 			<language type="gd">Škotski Galski</language>
-			<language type="gem">Germanski jezik</language>
 			<language type="gez">Džiz</language>
 			<language type="gil">Gilbertški</language>
 			<language type="gl">Galski</language>
@@ -206,7 +180,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">Hebrejski</language>
 			<language type="hi">Hindi</language>
 			<language type="hil">Hiligajnon</language>
-			<language type="him">Himačali</language>
 			<language type="hit">Hitite</language>
 			<language type="hmn">Hmong</language>
 			<language type="ho">Hiri Motu</language>
@@ -223,15 +196,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">Međujezički</language>
 			<language type="ig">Igbo</language>
 			<language type="ii">Sičuan ji</language>
-			<language type="ijo">Ijo</language>
 			<language type="ik">Unupiak</language>
 			<language type="ilo">Iloko</language>
-			<language type="inc">Indik</language>
-			<language type="ine">Indo-evropski jezik</language>
 			<language type="inh">Ingviški</language>
 			<language type="io">Ido</language>
-			<language type="ira">Iranski jezik</language>
-			<language type="iro">Irokvojanski</language>
 			<language type="is">Islandski</language>
 			<language type="it">Italijanski</language>
 			<language type="iu">Inuktitut</language>
@@ -246,14 +214,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">Kačin</language>
 			<language type="kaj">Đu</language>
 			<language type="kam">Kamba</language>
-			<language type="kar">Karenski</language>
 			<language type="kaw">Kavi</language>
 			<language type="kbd">Kabardijski</language>
 			<language type="kcg">Tjap</language>
 			<language type="kfo">Koro</language>
 			<language type="kg">Kongo</language>
 			<language type="kha">Kasi</language>
-			<language type="khi">Koisanski jezik</language>
 			<language type="kho">Kotaneški</language>
 			<language type="ki">Kikuju</language>
 			<language type="kj">Kuanjama</language>
@@ -269,7 +235,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">Kanuri</language>
 			<language type="krc">Karačaj-balkar</language>
 			<language type="krl">Karelijski</language>
-			<language type="kro">Kru</language>
 			<language type="kru">Kurukh</language>
 			<language type="ks">Kašmirski</language>
 			<language type="ku">Kurdski</language>
@@ -303,7 +268,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">Maitili</language>
 			<language type="mak">Makasar</language>
 			<language type="man">Mandingo</language>
-			<language type="map">Austronežanski</language>
 			<language type="mas">Masai</language>
 			<language type="mdf">Mokša</language>
 			<language type="mdr">Mandar</language>
@@ -315,31 +279,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">Maorski</language>
 			<language type="mic">Mikmak</language>
 			<language type="min">Minangkabau</language>
-			<language type="mis">Razni jezici</language>
 			<language type="mk">Makedonski</language>
-			<language type="mkh">Mon-kmerski jezik</language>
 			<language type="ml">Malajalam</language>
 			<language type="mn">Mongolski</language>
 			<language type="mnc">Manču</language>
 			<language type="mni">Manipuri</language>
-			<language type="mno">Manobo jezik</language>
-			<language type="mo">Moldavski</language>
 			<language type="moh">Mahavski</language>
 			<language type="mos">Mosi</language>
 			<language type="mr">Marati</language>
 			<language type="ms">Malajski</language>
 			<language type="mt">Melteški</language>
 			<language type="mul">Više jezika</language>
-			<language type="mun">Munda jezik</language>
 			<language type="mus">Kriški</language>
 			<language type="mwl">Mirandeški</language>
 			<language type="mwr">Marvari</language>
 			<language type="my">Burmanski</language>
-			<language type="myn">Majanski jezik</language>
 			<language type="myv">Erzija</language>
 			<language type="na">Nauru</language>
-			<language type="nah">Nahuatl</language>
-			<language type="nai">Jezik severnoameričkih Indijanaca</language>
 			<language type="nap">Neapolitanski</language>
 			<language type="nb">Norveški bokmal</language>
 			<language type="nd">Severni ndebele</language>
@@ -348,7 +304,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">Nevari</language>
 			<language type="ng">Ndonga</language>
 			<language type="nia">Nias</language>
-			<language type="nic">Niger-kordofanijski jezik</language>
 			<language type="niu">Niuean</language>
 			<language type="nl">Holandski</language>
 			<language type="nl_BE">Flamanski</language>
@@ -359,7 +314,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">N’ko</language>
 			<language type="nr">Južni ndebele</language>
 			<language type="nso">Severni soto</language>
-			<language type="nub">Nubijski jezik</language>
 			<language type="nv">Navaho</language>
 			<language type="nwc">Klasični nevari</language>
 			<language type="ny">Njanja</language>
@@ -374,21 +328,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">Osetski</language>
 			<language type="osa">Osage</language>
 			<language type="ota">Otomanski turski</language>
-			<language type="oto">Otomanski jezik</language>
 			<language type="pa">Pandžabski</language>
-			<language type="paa">Papuanski jezik</language>
 			<language type="pag">Pangasinski</language>
 			<language type="pal">Pahlavi</language>
 			<language type="pam">Pampanga</language>
 			<language type="pap">Papiamento</language>
 			<language type="pau">Palauanski</language>
 			<language type="peo">Staropersijski</language>
-			<language type="phi">Filipinski jezik</language>
 			<language type="phn">Feničanski</language>
 			<language type="pi">Pali</language>
 			<language type="pl">Poljski</language>
 			<language type="pon">Ponpejski</language>
-			<language type="pra">Prakritski</language>
 			<language type="pro">Staroprovansalski</language>
 			<language type="ps">Paštunski</language>
 			<language type="ps" alt="variant" draft="contributed">pašto</language>
@@ -402,7 +352,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">Reto-Romanski</language>
 			<language type="rn">Rundi</language>
 			<language type="ro">Rumunski</language>
-			<language type="roa">Romanski jezik</language>
+			<language type="ro_MD">Moldavski</language>
 			<language type="rom">Romani</language>
 			<language type="root">Rut</language>
 			<language type="ru">Ruski</language>
@@ -411,8 +361,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">Sanskrit</language>
 			<language type="sad">Sandave</language>
 			<language type="sah">Jakut</language>
-			<language type="sai">Jezik južnoameričkih Indijanaca</language>
-			<language type="sal">Sališanski jezik</language>
 			<language type="sam">Samaritanski aramejski</language>
 			<language type="sas">Sasak</language>
 			<language type="sat">Santali</language>
@@ -422,22 +370,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">Sindi</language>
 			<language type="se">Severni sami</language>
 			<language type="sel">Selkap</language>
-			<language type="sem">Semitski jezik</language>
 			<language type="sg">Sango</language>
 			<language type="sga">Staroirski</language>
-			<language type="sgn">Znakovni jezik</language>
 			<language type="sh">Srpskohrvatski</language>
 			<language type="shn">Šan</language>
 			<language type="si">Singaleski</language>
 			<language type="sid">Sidamo</language>
-			<language type="sio">Siuanski jezik</language>
-			<language type="sit">Sino-tibetanski jezik</language>
 			<language type="sk">Slovački</language>
 			<language type="sl">Slovenački</language>
-			<language type="sla">Slovenski jezik</language>
 			<language type="sm">Samoanski</language>
 			<language type="sma">Južni sami</language>
-			<language type="smi">Sami jezik</language>
 			<language type="smj">Lule sami</language>
 			<language type="smn">Inari sami</language>
 			<language type="sms">Skoltski jezik</language>
@@ -445,13 +387,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">Soninke</language>
 			<language type="so">Somalski</language>
 			<language type="sog">Sodžijenski</language>
-			<language type="son">Songai</language>
 			<language type="sq">Albanski</language>
 			<language type="sr">Srpski</language>
 			<language type="srn">Srananski tongo</language>
 			<language type="srr">Serer</language>
 			<language type="ss">Svati</language>
-			<language type="ssa">Nilo-saharski jezik</language>
 			<language type="st">Sesoto</language>
 			<language type="su">Sudanski</language>
 			<language type="suk">Sukuma</language>
@@ -463,7 +403,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">Klasični sirijski</language>
 			<language type="syr">Sirijski</language>
 			<language type="ta">Tamilski</language>
-			<language type="tai">Tai jezik</language>
 			<language type="te">Telugu</language>
 			<language type="tem">Timne</language>
 			<language type="ter">Tereno</language>
@@ -488,8 +427,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">Tsimšian</language>
 			<language type="tt">Tatarski</language>
 			<language type="tum">Tumbuka</language>
-			<language type="tup">Tupi jezik</language>
-			<language type="tut">Altaički jezik</language>
 			<language type="tvl">Tuvalu</language>
 			<language type="tw">Tvi</language>
 			<language type="ty">Tahićanski</language>
@@ -509,11 +446,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo">Volapuk</language>
 			<language type="vot">Votski</language>
 			<language type="wa">Valun</language>
-			<language type="wak">Vakašanski jezik</language>
 			<language type="wal">Valamo</language>
 			<language type="war">Varaj</language>
 			<language type="was">Vašo</language>
-			<language type="wen">Sorbijanski jezik</language>
 			<language type="wo">Volof</language>
 			<language type="xal">Kalmik</language>
 			<language type="xh">Kshosa</language>
@@ -521,7 +456,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap">Japeški</language>
 			<language type="yi">Jidiš</language>
 			<language type="yo">Joruba</language>
-			<language type="ypk">Jupik</language>
 			<language type="yue">Kantonski</language>
 			<language type="za">Žuang</language>
 			<language type="zap">Zapotečki</language>
@@ -531,7 +465,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">Kineski</language>
 			<language type="zh_Hans">Kineski (pojednostavljen)</language>
 			<language type="zh_Hant">Kineski (tradicionalni)</language>
-			<language type="znd">Zande</language>
 			<language type="zu">Zulu</language>
 			<language type="zun">Zuni</language>
 			<language type="zxx">Bez lingvističkog sadržaja</language>
@@ -1271,16 +1204,15 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMdd">dd.MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d. MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d. MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd">dd. MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E d. MMMM</dateFormatItem>
 						<dateFormatItem id="ms">mm.ss</dateFormatItem>
 						<dateFormatItem id="y">y. G</dateFormatItem>
 						<dateFormatItem id="yyyy">y. G</dateFormatItem>
-						<dateFormatItem id="yyyyM">M. y. G</dateFormatItem>
+						<dateFormatItem id="yyyyM">M.y. G</dateFormatItem>
 						<dateFormatItem id="yyyyMd" draft="contributed">d.M.y. G</dateFormatItem>
 						<dateFormatItem id="yyyyMEd" draft="contributed">E, d.M.y. G</dateFormatItem>
-						<dateFormatItem id="yyyyMM">MM.y G</dateFormatItem>
-						<dateFormatItem id="yyyyMMdd">dd.MM.y G</dateFormatItem>
+						<dateFormatItem id="yyyyMM">MM.y. G</dateFormatItem>
+						<dateFormatItem id="yyyyMMdd">dd.MM.y. G</dateFormatItem>
 						<dateFormatItem id="yyyyMMM">MMM y. G</dateFormatItem>
 						<dateFormatItem id="yyyyMMMd" draft="contributed">d. MMM y. G</dateFormatItem>
 						<dateFormatItem id="yyyyMMMEd">E, d. MMM y. G</dateFormatItem>
@@ -1709,15 +1641,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMdd">dd.MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d. MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d. MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd">dd. MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E d. MMMM</dateFormatItem>
 						<dateFormatItem id="ms">mm.ss</dateFormatItem>
 						<dateFormatItem id="y">y.</dateFormatItem>
-						<dateFormatItem id="yM">y-M</dateFormatItem>
-						<dateFormatItem id="yMd" draft="contributed">d. M. y.</dateFormatItem>
-						<dateFormatItem id="yMEd">E, d. M. y.</dateFormatItem>
-						<dateFormatItem id="yMM">MM.y</dateFormatItem>
-						<dateFormatItem id="yMMdd">dd.MM.y</dateFormatItem>
+						<dateFormatItem id="yM">M.y.</dateFormatItem>
+						<dateFormatItem id="yMd" draft="contributed">d.M.y.</dateFormatItem>
+						<dateFormatItem id="yMEd">E, d.M.y.</dateFormatItem>
+						<dateFormatItem id="yMM">MM.y.</dateFormatItem>
+						<dateFormatItem id="yMMdd">dd.MM.y.</dateFormatItem>
 						<dateFormatItem id="yMMM">MMM y.</dateFormatItem>
 						<dateFormatItem id="yMMMd" draft="contributed">d. MMM y.</dateFormatItem>
 						<dateFormatItem id="yMMMEd">E, d. MMM y.</dateFormatItem>
@@ -2394,6 +2325,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Andorra">
 				<exemplarCity draft="contributed">Andora</exemplarCity>
 			</zone>
+			<zone type="Asia/Dubai">
+				<exemplarCity>Dubai</exemplarCity>
+			</zone>
+			<zone type="Asia/Kabul">
+				<exemplarCity>Kabul</exemplarCity>
+			</zone>
 			<zone type="America/Antigua">
 				<exemplarCity>Antigva</exemplarCity>
 			</zone>
@@ -2406,11 +2343,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Yerevan">
 				<exemplarCity draft="contributed">Jerevan</exemplarCity>
 			</zone>
+			<zone type="Africa/Luanda">
+				<exemplarCity>Luanda</exemplarCity>
+			</zone>
 			<zone type="Antarctica/Rothera">
 				<exemplarCity>Rotera</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Južni pol</exemplarCity>
+			<zone type="Antarctica/Palmer">
+				<exemplarCity>Palmer</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Šova</exemplarCity>
@@ -2420,6 +2360,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Antarctica/Davis">
 				<exemplarCity>Dejvis</exemplarCity>
+			</zone>
+			<zone type="Antarctica/Vostok">
+				<exemplarCity>Vostok</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Casey">
 				<exemplarCity>Kasej</exemplarCity>
@@ -2433,17 +2376,26 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Argentina/Rio_Gallegos">
 				<exemplarCity>Rio Gelegos</exemplarCity>
 			</zone>
+			<zone type="America/Mendoza">
+				<exemplarCity>Mendoza</exemplarCity>
+			</zone>
 			<zone type="America/Argentina/San_Juan">
 				<exemplarCity>San Huan</exemplarCity>
 			</zone>
 			<zone type="America/Argentina/Ushuaia">
 				<exemplarCity>Ušuaija</exemplarCity>
 			</zone>
+			<zone type="America/Argentina/La_Rioja">
+				<exemplarCity>La Rioja</exemplarCity>
+			</zone>
 			<zone type="America/Argentina/San_Luis">
 				<exemplarCity>San Lui</exemplarCity>
 			</zone>
 			<zone type="America/Catamarca">
 				<exemplarCity>Katamarka</exemplarCity>
+			</zone>
+			<zone type="America/Argentina/Salta">
+				<exemplarCity>Salta</exemplarCity>
 			</zone>
 			<zone type="America/Jujuy">
 				<exemplarCity>Žužui</exemplarCity>
@@ -2453,6 +2405,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Cordoba">
 				<exemplarCity>Kordoba</exemplarCity>
+			</zone>
+			<zone type="America/Buenos_Aires">
+				<exemplarCity>Buenos Aires</exemplarCity>
+			</zone>
+			<zone type="Pacific/Pago_Pago">
+				<exemplarCity>Pago Pago</exemplarCity>
 			</zone>
 			<zone type="Europe/Vienna">
 				<exemplarCity draft="contributed">Beč</exemplarCity>
@@ -2478,6 +2436,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Australia/Melbourne">
 				<exemplarCity>Melburn</exemplarCity>
 			</zone>
+			<zone type="Australia/Hobart">
+				<exemplarCity>Hobart</exemplarCity>
+			</zone>
+			<zone type="Australia/Lindeman">
+				<exemplarCity>Lindeman</exemplarCity>
+			</zone>
 			<zone type="Australia/Sydney">
 				<exemplarCity>Sidnej</exemplarCity>
 			</zone>
@@ -2490,8 +2454,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Australia/Lord_Howe">
 				<exemplarCity>Lord Hov</exemplarCity>
 			</zone>
+			<zone type="America/Aruba">
+				<exemplarCity>Aruba</exemplarCity>
+			</zone>
 			<zone type="Europe/Mariehamn">
 				<exemplarCity draft="contributed">Marihamn</exemplarCity>
+			</zone>
+			<zone type="Asia/Baku">
+				<exemplarCity>Baku</exemplarCity>
+			</zone>
+			<zone type="Europe/Sarajevo">
+				<exemplarCity draft="contributed">Sarajevo</exemplarCity>
+			</zone>
+			<zone type="America/Barbados">
+				<exemplarCity>Barbados</exemplarCity>
 			</zone>
 			<zone type="Asia/Dhaka">
 				<exemplarCity>Daka</exemplarCity>
@@ -2517,11 +2493,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/St_Barthelemy">
 				<exemplarCity draft="contributed">Sv. Bartolomej</exemplarCity>
 			</zone>
+			<zone type="Atlantic/Bermuda">
+				<exemplarCity draft="contributed">Bermuda</exemplarCity>
+			</zone>
 			<zone type="Asia/Brunei">
 				<exemplarCity>Bruneji</exemplarCity>
 			</zone>
+			<zone type="America/La_Paz">
+				<exemplarCity>La Paz</exemplarCity>
+			</zone>
 			<zone type="America/Kralendijk">
 				<exemplarCity draft="contributed">Kralendajk</exemplarCity>
+			</zone>
+			<zone type="America/Eirunepe">
+				<exemplarCity>Eirunepe</exemplarCity>
 			</zone>
 			<zone type="America/Rio_Branco">
 				<exemplarCity>Rio Branko</exemplarCity>
@@ -2529,17 +2514,35 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Porto_Velho">
 				<exemplarCity>Porto Veljo</exemplarCity>
 			</zone>
+			<zone type="America/Boa_Vista">
+				<exemplarCity>Boa Vista</exemplarCity>
+			</zone>
+			<zone type="America/Manaus">
+				<exemplarCity>Manaus</exemplarCity>
+			</zone>
 			<zone type="America/Cuiaba">
 				<exemplarCity>Kuiaba</exemplarCity>
 			</zone>
+			<zone type="America/Santarem">
+				<exemplarCity>Santarem</exemplarCity>
+			</zone>
 			<zone type="America/Campo_Grande">
 				<exemplarCity>Kampo Grande</exemplarCity>
+			</zone>
+			<zone type="America/Belem">
+				<exemplarCity>Belem</exemplarCity>
 			</zone>
 			<zone type="America/Araguaina">
 				<exemplarCity>Aragvajana</exemplarCity>
 			</zone>
 			<zone type="America/Sao_Paulo">
 				<exemplarCity>Sao Paolo</exemplarCity>
+			</zone>
+			<zone type="America/Bahia">
+				<exemplarCity>Bahia</exemplarCity>
+			</zone>
+			<zone type="America/Fortaleza">
+				<exemplarCity>Fortaleza</exemplarCity>
 			</zone>
 			<zone type="America/Maceio">
 				<exemplarCity>Masejo</exemplarCity>
@@ -2559,11 +2562,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Africa/Gaborone">
 				<exemplarCity>Gaboron</exemplarCity>
 			</zone>
+			<zone type="Europe/Minsk">
+				<exemplarCity draft="contributed">Minsk</exemplarCity>
+			</zone>
+			<zone type="America/Belize">
+				<exemplarCity>Belize</exemplarCity>
+			</zone>
 			<zone type="America/Dawson">
 				<exemplarCity>Doson</exemplarCity>
 			</zone>
 			<zone type="America/Whitehorse">
 				<exemplarCity>Vajthors</exemplarCity>
+			</zone>
+			<zone type="America/Inuvik">
+				<exemplarCity>Inuvik</exemplarCity>
 			</zone>
 			<zone type="America/Vancouver">
 				<exemplarCity>Vankuver</exemplarCity>
@@ -2577,11 +2589,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Yellowknife">
 				<exemplarCity draft="contributed">Jelounajf</exemplarCity>
 			</zone>
+			<zone type="America/Edmonton">
+				<exemplarCity>Edmonton</exemplarCity>
+			</zone>
 			<zone type="America/Swift_Current">
 				<exemplarCity>Svift Kurent</exemplarCity>
 			</zone>
 			<zone type="America/Cambridge_Bay">
 				<exemplarCity>Kembridž Bej</exemplarCity>
+			</zone>
+			<zone type="America/Regina">
+				<exemplarCity>Regina</exemplarCity>
 			</zone>
 			<zone type="America/Winnipeg">
 				<exemplarCity>Vinipeg</exemplarCity>
@@ -2592,14 +2610,26 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Rainy_River">
 				<exemplarCity>Rejni River</exemplarCity>
 			</zone>
+			<zone type="America/Rankin_Inlet">
+				<exemplarCity>Rankin Inlet</exemplarCity>
+			</zone>
 			<zone type="America/Coral_Harbour">
 				<exemplarCity>Koral Harbur</exemplarCity>
 			</zone>
 			<zone type="America/Thunder_Bay">
 				<exemplarCity>Tander Bej</exemplarCity>
 			</zone>
+			<zone type="America/Nipigon">
+				<exemplarCity>Nipigon</exemplarCity>
+			</zone>
+			<zone type="America/Toronto">
+				<exemplarCity>Toronto</exemplarCity>
+			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Ikvaluit</exemplarCity>
+			</zone>
+			<zone type="America/Pangnirtung">
+				<exemplarCity>Pangnirtung</exemplarCity>
 			</zone>
 			<zone type="America/Moncton">
 				<exemplarCity>Monkton</exemplarCity>
@@ -2628,6 +2658,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Africa/Lubumbashi">
 				<exemplarCity>Lumumbaši</exemplarCity>
 			</zone>
+			<zone type="Africa/Bangui">
+				<exemplarCity>Bangui</exemplarCity>
+			</zone>
 			<zone type="Africa/Brazzaville">
 				<exemplarCity>Brazavil</exemplarCity>
 			</zone>
@@ -2636,6 +2669,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Africa/Abidjan">
 				<exemplarCity>Abidžan</exemplarCity>
+			</zone>
+			<zone type="Pacific/Rarotonga">
+				<exemplarCity>Rarotonga</exemplarCity>
 			</zone>
 			<zone type="Pacific/Easter">
 				<exemplarCity>Uskršnje ostrvo</exemplarCity>
@@ -2658,8 +2694,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Shanghai">
 				<exemplarCity>Šangaj</exemplarCity>
 			</zone>
+			<zone type="Asia/Harbin">
+				<exemplarCity>Harbin</exemplarCity>
+			</zone>
+			<zone type="America/Bogota">
+				<exemplarCity>Bogota</exemplarCity>
+			</zone>
 			<zone type="America/Costa_Rica">
 				<exemplarCity>Kostarika</exemplarCity>
+			</zone>
+			<zone type="America/Havana">
+				<exemplarCity>Havana</exemplarCity>
 			</zone>
 			<zone type="Atlantic/Cape_Verde">
 				<exemplarCity draft="contributed">Zelenortska Ostrva</exemplarCity>
@@ -2679,6 +2724,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Busingen">
 				<exemplarCity draft="contributed">Bisingen</exemplarCity>
 			</zone>
+			<zone type="Europe/Berlin">
+				<exemplarCity draft="contributed">Berlin</exemplarCity>
+			</zone>
 			<zone type="Africa/Djibouti">
 				<exemplarCity>Džibuti</exemplarCity>
 			</zone>
@@ -2688,8 +2736,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Dominica">
 				<exemplarCity>Dominika</exemplarCity>
 			</zone>
+			<zone type="America/Santo_Domingo">
+				<exemplarCity>Santo Domingo</exemplarCity>
+			</zone>
 			<zone type="Africa/Algiers">
 				<exemplarCity>alžirsko</exemplarCity>
+			</zone>
+			<zone type="Pacific/Galapagos">
+				<exemplarCity>Galapagos</exemplarCity>
 			</zone>
 			<zone type="America/Guayaquil">
 				<exemplarCity>Gvajakil</exemplarCity>
@@ -2712,8 +2766,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Africa/Ceuta">
 				<exemplarCity>Seuta</exemplarCity>
 			</zone>
+			<zone type="Europe/Madrid">
+				<exemplarCity draft="contributed">Madrid</exemplarCity>
+			</zone>
 			<zone type="Africa/Addis_Ababa">
 				<exemplarCity>Adis Abeba</exemplarCity>
+			</zone>
+			<zone type="Europe/Helsinki">
+				<exemplarCity draft="contributed">Helsinki</exemplarCity>
 			</zone>
 			<zone type="Pacific/Fiji">
 				<exemplarCity draft="contributed">Fidži</exemplarCity>
@@ -2743,6 +2803,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<long>
 					<daylight draft="contributed">britansko letnje vreme</daylight>
 				</long>
+				<exemplarCity draft="contributed">London</exemplarCity>
+			</zone>
+			<zone type="America/Grenada">
+				<exemplarCity>Grenada</exemplarCity>
+			</zone>
+			<zone type="Asia/Tbilisi">
+				<exemplarCity draft="contributed">Tbilisi</exemplarCity>
 			</zone>
 			<zone type="America/Cayenne">
 				<exemplarCity>Kajen</exemplarCity>
@@ -2752,6 +2819,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Africa/Accra">
 				<exemplarCity>Akra</exemplarCity>
+			</zone>
+			<zone type="Europe/Gibraltar">
+				<exemplarCity draft="contributed">Gibraltar</exemplarCity>
 			</zone>
 			<zone type="America/Thule">
 				<exemplarCity>Tule</exemplarCity>
@@ -2774,6 +2844,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Guadeloupe">
 				<exemplarCity>Gvadalupe</exemplarCity>
 			</zone>
+			<zone type="Africa/Malabo">
+				<exemplarCity>Malabo</exemplarCity>
+			</zone>
 			<zone type="Europe/Athens">
 				<exemplarCity draft="contributed">Atina</exemplarCity>
 			</zone>
@@ -2783,14 +2856,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Guatemala">
 				<exemplarCity>Gvatemala</exemplarCity>
 			</zone>
+			<zone type="Pacific/Guam">
+				<exemplarCity>Guam</exemplarCity>
+			</zone>
 			<zone type="Africa/Bissau">
 				<exemplarCity>Bisao</exemplarCity>
 			</zone>
 			<zone type="America/Guyana">
 				<exemplarCity>Guana</exemplarCity>
 			</zone>
+			<zone type="Asia/Hong_Kong">
+				<exemplarCity>Hong Kong</exemplarCity>
+			</zone>
 			<zone type="America/Tegucigalpa">
 				<exemplarCity draft="contributed">Tegusigalpa</exemplarCity>
+			</zone>
+			<zone type="Europe/Zagreb">
+				<exemplarCity draft="contributed">Zagreb</exemplarCity>
 			</zone>
 			<zone type="America/Port-au-Prince">
 				<exemplarCity>Port-o-Prens</exemplarCity>
@@ -2800,6 +2882,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Jakarta">
 				<exemplarCity>Džakarta</exemplarCity>
+			</zone>
+			<zone type="Asia/Pontianak">
+				<exemplarCity>Pontianak</exemplarCity>
 			</zone>
 			<zone type="Asia/Makassar">
 				<exemplarCity>Makasar</exemplarCity>
@@ -2861,6 +2946,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Pacific/Enderbury">
 				<exemplarCity>Enderberi</exemplarCity>
 			</zone>
+			<zone type="Pacific/Kiritimati">
+				<exemplarCity>Kiritimati</exemplarCity>
+			</zone>
 			<zone type="Pacific/Tarawa">
 				<exemplarCity>Tarava</exemplarCity>
 			</zone>
@@ -2885,6 +2973,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Aqtau">
 				<exemplarCity>Aktau</exemplarCity>
 			</zone>
+			<zone type="Asia/Oral">
+				<exemplarCity>Oral</exemplarCity>
+			</zone>
 			<zone type="Asia/Aqtobe">
 				<exemplarCity>Akutobe</exemplarCity>
 			</zone>
@@ -2903,17 +2994,29 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/St_Lucia">
 				<exemplarCity>Sv. Lucija</exemplarCity>
 			</zone>
+			<zone type="Europe/Vaduz">
+				<exemplarCity draft="contributed">Vaduz</exemplarCity>
+			</zone>
 			<zone type="Asia/Colombo">
 				<exemplarCity>Kolombo</exemplarCity>
 			</zone>
 			<zone type="Africa/Monrovia">
 				<exemplarCity>Monrovija</exemplarCity>
 			</zone>
+			<zone type="Africa/Maseru">
+				<exemplarCity>Maseru</exemplarCity>
+			</zone>
 			<zone type="Europe/Vilnius">
 				<exemplarCity draft="contributed">Viljnus</exemplarCity>
 			</zone>
 			<zone type="Europe/Luxembourg">
 				<exemplarCity draft="contributed">Luksemburg</exemplarCity>
+			</zone>
+			<zone type="Europe/Riga">
+				<exemplarCity draft="contributed">Riga</exemplarCity>
+			</zone>
+			<zone type="Africa/Tripoli">
+				<exemplarCity>Tripoli</exemplarCity>
 			</zone>
 			<zone type="Africa/Casablanca">
 				<exemplarCity>Kazablanka</exemplarCity>
@@ -2924,17 +3027,32 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Chisinau">
 				<exemplarCity draft="contributed">Kišinjev</exemplarCity>
 			</zone>
+			<zone type="Europe/Podgorica">
+				<exemplarCity draft="contributed">Podgorica</exemplarCity>
+			</zone>
 			<zone type="America/Marigot">
 				<exemplarCity draft="contributed">Marigo</exemplarCity>
+			</zone>
+			<zone type="Indian/Antananarivo">
+				<exemplarCity draft="contributed">Antananarivo</exemplarCity>
 			</zone>
 			<zone type="Pacific/Kwajalein">
 				<exemplarCity>Kvadžalejin</exemplarCity>
 			</zone>
+			<zone type="Pacific/Majuro">
+				<exemplarCity>Majuro</exemplarCity>
+			</zone>
 			<zone type="Europe/Skopje">
 				<exemplarCity draft="contributed">Skoplje</exemplarCity>
 			</zone>
+			<zone type="Africa/Bamako">
+				<exemplarCity>Bamako</exemplarCity>
+			</zone>
 			<zone type="Asia/Rangoon">
 				<exemplarCity draft="contributed">Rangun</exemplarCity>
+			</zone>
+			<zone type="Asia/Hovd">
+				<exemplarCity>Hovd</exemplarCity>
 			</zone>
 			<zone type="Asia/Ulaanbaatar">
 				<exemplarCity>Ulan Bator</exemplarCity>
@@ -2957,6 +3075,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Montserrat">
 				<exemplarCity>Montserat</exemplarCity>
 			</zone>
+			<zone type="Europe/Malta">
+				<exemplarCity draft="contributed">Malta</exemplarCity>
+			</zone>
 			<zone type="Indian/Mauritius">
 				<exemplarCity draft="contributed">Mauricijus</exemplarCity>
 			</zone>
@@ -2975,6 +3096,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Hermosillo">
 				<exemplarCity>Hermosiljo</exemplarCity>
 			</zone>
+			<zone type="America/Mazatlan">
+				<exemplarCity>Mazatlan</exemplarCity>
+			</zone>
 			<zone type="America/Chihuahua">
 				<exemplarCity>Čihuahua</exemplarCity>
 			</zone>
@@ -2990,11 +3114,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Mexico_City">
 				<exemplarCity>Meksiko Siti</exemplarCity>
 			</zone>
+			<zone type="America/Matamoros">
+				<exemplarCity draft="contributed">Matamoros</exemplarCity>
+			</zone>
+			<zone type="America/Merida">
+				<exemplarCity>Merida</exemplarCity>
+			</zone>
 			<zone type="America/Cancun">
 				<exemplarCity>Kankun</exemplarCity>
 			</zone>
+			<zone type="Asia/Kuala_Lumpur">
+				<exemplarCity>Kuala Lumpur</exemplarCity>
+			</zone>
 			<zone type="Asia/Kuching">
 				<exemplarCity>Kučing</exemplarCity>
+			</zone>
+			<zone type="Africa/Maputo">
+				<exemplarCity>Maputo</exemplarCity>
 			</zone>
 			<zone type="Africa/Windhoek">
 				<exemplarCity>Vindhuk</exemplarCity>
@@ -3005,11 +3141,29 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Africa/Niamey">
 				<exemplarCity>Nijamej</exemplarCity>
 			</zone>
+			<zone type="Pacific/Norfolk">
+				<exemplarCity>Norfolk</exemplarCity>
+			</zone>
+			<zone type="Africa/Lagos">
+				<exemplarCity>Lagos</exemplarCity>
+			</zone>
 			<zone type="America/Managua">
 				<exemplarCity>Managva</exemplarCity>
 			</zone>
+			<zone type="Europe/Amsterdam">
+				<exemplarCity draft="contributed">Amsterdam</exemplarCity>
+			</zone>
+			<zone type="Europe/Oslo">
+				<exemplarCity draft="contributed">Oslo</exemplarCity>
+			</zone>
 			<zone type="Asia/Katmandu">
 				<exemplarCity>Katmandu</exemplarCity>
+			</zone>
+			<zone type="Pacific/Nauru">
+				<exemplarCity>Nauru</exemplarCity>
+			</zone>
+			<zone type="Pacific/Niue">
+				<exemplarCity>Niue</exemplarCity>
 			</zone>
 			<zone type="Pacific/Chatham">
 				<exemplarCity>Katham</exemplarCity>
@@ -3020,6 +3174,15 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Muscat">
 				<exemplarCity>Muskat</exemplarCity>
 			</zone>
+			<zone type="America/Panama">
+				<exemplarCity>Panama</exemplarCity>
+			</zone>
+			<zone type="America/Lima">
+				<exemplarCity>Lima</exemplarCity>
+			</zone>
+			<zone type="Pacific/Tahiti">
+				<exemplarCity>Tahiti</exemplarCity>
+			</zone>
 			<zone type="Pacific/Marquesas">
 				<exemplarCity>Markiz</exemplarCity>
 			</zone>
@@ -3028,6 +3191,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Pacific/Port_Moresby">
 				<exemplarCity>Port Morzbi</exemplarCity>
+			</zone>
+			<zone type="Asia/Manila">
+				<exemplarCity>Manila</exemplarCity>
 			</zone>
 			<zone type="Asia/Karachi">
 				<exemplarCity>Karači</exemplarCity>
@@ -3044,6 +3210,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Puerto_Rico">
 				<exemplarCity>Porto Riko</exemplarCity>
 			</zone>
+			<zone type="Asia/Gaza">
+				<exemplarCity>Gaza</exemplarCity>
+			</zone>
+			<zone type="Asia/Hebron">
+				<exemplarCity draft="contributed">Hebron</exemplarCity>
+			</zone>
 			<zone type="Atlantic/Azores">
 				<exemplarCity>Azori</exemplarCity>
 			</zone>
@@ -3053,11 +3225,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Lisbon">
 				<exemplarCity draft="contributed">Lisabon</exemplarCity>
 			</zone>
+			<zone type="Pacific/Palau">
+				<exemplarCity>Palau</exemplarCity>
+			</zone>
 			<zone type="America/Asuncion">
 				<exemplarCity>Asunsion</exemplarCity>
 			</zone>
 			<zone type="Asia/Qatar">
 				<exemplarCity draft="contributed">Katar</exemplarCity>
+			</zone>
+			<zone type="Indian/Reunion">
+				<exemplarCity draft="contributed">Reunion</exemplarCity>
 			</zone>
 			<zone type="Europe/Bucharest">
 				<exemplarCity draft="contributed">Bukurešt</exemplarCity>
@@ -3065,11 +3243,26 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Belgrade">
 				<exemplarCity draft="contributed">Beograd</exemplarCity>
 			</zone>
+			<zone type="Europe/Kaliningrad">
+				<exemplarCity>Kaliningrad</exemplarCity>
+			</zone>
 			<zone type="Europe/Moscow">
 				<exemplarCity>Moskva</exemplarCity>
 			</zone>
+			<zone type="Europe/Volgograd">
+				<exemplarCity>Volgograd</exemplarCity>
+			</zone>
+			<zone type="Europe/Samara">
+				<exemplarCity>Samara</exemplarCity>
+			</zone>
 			<zone type="Asia/Yekaterinburg">
 				<exemplarCity>Jekaterinburg</exemplarCity>
+			</zone>
+			<zone type="Asia/Omsk">
+				<exemplarCity>Omsk</exemplarCity>
+			</zone>
+			<zone type="Asia/Novosibirsk">
+				<exemplarCity>Novosibirsk</exemplarCity>
 			</zone>
 			<zone type="Asia/Novokuznetsk">
 				<exemplarCity draft="contributed">Novokuznjeck</exemplarCity>
@@ -3083,11 +3276,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Yakutsk">
 				<exemplarCity>Jakutsk</exemplarCity>
 			</zone>
+			<zone type="Asia/Vladivostok">
+				<exemplarCity>Vladivostok</exemplarCity>
+			</zone>
 			<zone type="Asia/Khandyga">
 				<exemplarCity draft="contributed">Handiga</exemplarCity>
 			</zone>
 			<zone type="Asia/Sakhalin">
 				<exemplarCity>Sahalin</exemplarCity>
+			</zone>
+			<zone type="Asia/Ust-Nera">
+				<exemplarCity draft="contributed">Ust-Nera</exemplarCity>
+			</zone>
+			<zone type="Asia/Magadan">
+				<exemplarCity>Magadan</exemplarCity>
 			</zone>
 			<zone type="Asia/Kamchatka">
 				<exemplarCity>Kamčatka</exemplarCity>
@@ -3095,11 +3297,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Anadyr">
 				<exemplarCity>Anadir</exemplarCity>
 			</zone>
+			<zone type="Africa/Kigali">
+				<exemplarCity>Kigali</exemplarCity>
+			</zone>
 			<zone type="Asia/Riyadh">
 				<exemplarCity draft="contributed">Rijad</exemplarCity>
 			</zone>
 			<zone type="Pacific/Guadalcanal">
 				<exemplarCity draft="contributed">Gvadalkanal</exemplarCity>
+			</zone>
+			<zone type="Indian/Mahe">
+				<exemplarCity draft="contributed">Mahe</exemplarCity>
 			</zone>
 			<zone type="Africa/Khartoum">
 				<exemplarCity>Kartum</exemplarCity>
@@ -3113,11 +3321,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Atlantic/St_Helena">
 				<exemplarCity draft="contributed">Sv. Jelena</exemplarCity>
 			</zone>
+			<zone type="Europe/Ljubljana">
+				<exemplarCity draft="contributed">Ljubljana</exemplarCity>
+			</zone>
 			<zone type="Arctic/Longyearbyen">
 				<exemplarCity draft="contributed">Longjerbjen</exemplarCity>
 			</zone>
+			<zone type="Europe/Bratislava">
+				<exemplarCity draft="contributed">Bratislava</exemplarCity>
+			</zone>
 			<zone type="Africa/Freetown">
 				<exemplarCity>Fritaun</exemplarCity>
+			</zone>
+			<zone type="Europe/San_Marino">
+				<exemplarCity draft="contributed">San Marino</exemplarCity>
+			</zone>
+			<zone type="Africa/Dakar">
+				<exemplarCity>Dakar</exemplarCity>
 			</zone>
 			<zone type="Africa/Mogadishu">
 				<exemplarCity>Mogadiš</exemplarCity>
@@ -3128,6 +3348,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Africa/Juba">
 				<exemplarCity draft="contributed">Džuba</exemplarCity>
 			</zone>
+			<zone type="Africa/Sao_Tome">
+				<exemplarCity>Sao Tome</exemplarCity>
+			</zone>
 			<zone type="America/El_Salvador">
 				<exemplarCity>Salvador</exemplarCity>
 			</zone>
@@ -3137,11 +3360,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Damascus">
 				<exemplarCity>Damask</exemplarCity>
 			</zone>
+			<zone type="Africa/Mbabane">
+				<exemplarCity>Mbabane</exemplarCity>
+			</zone>
+			<zone type="America/Grand_Turk">
+				<exemplarCity>Grand Turk</exemplarCity>
+			</zone>
 			<zone type="Africa/Ndjamena">
 				<exemplarCity>Ndžamena</exemplarCity>
 			</zone>
 			<zone type="Indian/Kerguelen">
 				<exemplarCity draft="contributed">Kergelen</exemplarCity>
+			</zone>
+			<zone type="Africa/Lome">
+				<exemplarCity>Lome</exemplarCity>
 			</zone>
 			<zone type="Asia/Bangkok">
 				<exemplarCity>Bankok</exemplarCity>
@@ -3149,14 +3381,29 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Asia/Dushanbe">
 				<exemplarCity>Dušanbe</exemplarCity>
 			</zone>
+			<zone type="Pacific/Fakaofo">
+				<exemplarCity draft="contributed">Fakaofo</exemplarCity>
+			</zone>
+			<zone type="Asia/Dili">
+				<exemplarCity>Dili</exemplarCity>
+			</zone>
 			<zone type="Asia/Ashgabat">
 				<exemplarCity>Ašhabad</exemplarCity>
 			</zone>
 			<zone type="Africa/Tunis">
 				<exemplarCity>tunižansko</exemplarCity>
 			</zone>
+			<zone type="Pacific/Tongatapu">
+				<exemplarCity>Tongatapu</exemplarCity>
+			</zone>
+			<zone type="Europe/Istanbul">
+				<exemplarCity draft="contributed">Istanbul</exemplarCity>
+			</zone>
 			<zone type="America/Port_of_Spain">
 				<exemplarCity draft="contributed">Port of Spejn</exemplarCity>
+			</zone>
+			<zone type="Pacific/Funafuti">
+				<exemplarCity draft="contributed">Funafuti</exemplarCity>
 			</zone>
 			<zone type="Asia/Taipei">
 				<exemplarCity draft="contributed">Tajpej</exemplarCity>
@@ -3170,8 +3417,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Kiev">
 				<exemplarCity>Kijev</exemplarCity>
 			</zone>
+			<zone type="Europe/Simferopol">
+				<exemplarCity>Simferopol</exemplarCity>
+			</zone>
 			<zone type="Europe/Zaporozhye">
 				<exemplarCity>Zaporožje</exemplarCity>
+			</zone>
+			<zone type="Africa/Kampala">
+				<exemplarCity>Kampala</exemplarCity>
 			</zone>
 			<zone type="Pacific/Midway">
 				<exemplarCity>Midvej</exemplarCity>
@@ -3182,8 +3435,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Pacific/Wake">
 				<exemplarCity>Vejk</exemplarCity>
 			</zone>
+			<zone type="America/Adak">
+				<exemplarCity>Adak</exemplarCity>
+			</zone>
 			<zone type="America/Nome">
 				<exemplarCity>Nom</exemplarCity>
+			</zone>
+			<zone type="Pacific/Honolulu">
+				<exemplarCity>Honolulu</exemplarCity>
 			</zone>
 			<zone type="America/Anchorage">
 				<exemplarCity>Enkoridž</exemplarCity>
@@ -3191,8 +3450,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Yakutat">
 				<exemplarCity draft="contributed">Jakutat</exemplarCity>
 			</zone>
+			<zone type="America/Sitka">
+				<exemplarCity draft="contributed">Sitka</exemplarCity>
+			</zone>
 			<zone type="America/Juneau">
 				<exemplarCity>Žuno</exemplarCity>
+			</zone>
+			<zone type="America/Metlakatla">
+				<exemplarCity draft="contributed">Metlakatla</exemplarCity>
 			</zone>
 			<zone type="America/Los_Angeles">
 				<exemplarCity>Los Anđeles</exemplarCity>
@@ -3203,8 +3468,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Phoenix">
 				<exemplarCity>Feniks</exemplarCity>
 			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Šiprok</exemplarCity>
+			<zone type="America/Denver">
+				<exemplarCity>Denver</exemplarCity>
 			</zone>
 			<zone type="America/North_Dakota/Beulah">
 				<exemplarCity draft="contributed">Bijula, Severna Dakota</exemplarCity>
@@ -3239,6 +3504,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Indiana/Marengo">
 				<exemplarCity>Marengo, Indijana</exemplarCity>
 			</zone>
+			<zone type="America/Indianapolis">
+				<exemplarCity>Indianapolis</exemplarCity>
+			</zone>
 			<zone type="America/Louisville">
 				<exemplarCity>Luivile</exemplarCity>
 			</zone>
@@ -3248,8 +3516,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Kentucky/Monticello">
 				<exemplarCity>Montičelo, Kentaki</exemplarCity>
 			</zone>
+			<zone type="America/Detroit">
+				<exemplarCity>Detroit</exemplarCity>
+			</zone>
 			<zone type="America/New_York">
 				<exemplarCity>Njujork</exemplarCity>
+			</zone>
+			<zone type="America/Montevideo">
+				<exemplarCity>Montevideo</exemplarCity>
+			</zone>
+			<zone type="Asia/Samarkand">
+				<exemplarCity>Samarkand</exemplarCity>
 			</zone>
 			<zone type="Asia/Tashkent">
 				<exemplarCity>Taškent</exemplarCity>
@@ -3262,6 +3539,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Caracas">
 				<exemplarCity>Karakas</exemplarCity>
+			</zone>
+			<zone type="America/Tortola">
+				<exemplarCity>Tortola</exemplarCity>
 			</zone>
 			<zone type="America/St_Thomas">
 				<exemplarCity>Sv. Toma</exemplarCity>
@@ -3278,11 +3558,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Pacific/Apia">
 				<exemplarCity draft="contributed">Apija</exemplarCity>
 			</zone>
+			<zone type="Asia/Aden">
+				<exemplarCity>Aden</exemplarCity>
+			</zone>
 			<zone type="Indian/Mayotte">
 				<exemplarCity draft="contributed">Majot</exemplarCity>
 			</zone>
 			<zone type="Africa/Johannesburg">
 				<exemplarCity>Johanesburg</exemplarCity>
+			</zone>
+			<zone type="Africa/Lusaka">
+				<exemplarCity>Lusaka</exemplarCity>
+			</zone>
+			<zone type="Africa/Harare">
+				<exemplarCity>Harare</exemplarCity>
 			</zone>
 			<metazone type="Acre">
 				<long>
@@ -3598,6 +3887,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Srednjeevropsko standardno vreme</standard>
 					<daylight>Srednjeevropsko letnje računanje vremena</daylight>
 				</long>
+				<short>
+					<generic>CET</generic>
+					<standard>CET</standard>
+					<daylight>CEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Eastern">
 				<long>
@@ -3605,6 +3899,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Istočnoevropsko standardno vreme</standard>
 					<daylight>Istočnoevropsko letnje računanje vremena</daylight>
 				</long>
+				<short>
+					<generic>EET</generic>
+					<standard>EET</standard>
+					<daylight>EEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Europe_Western">
 				<long>
@@ -3612,6 +3911,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<standard>Zapadnoevropsko standardno vreme</standard>
 					<daylight>Zapadnoevropsko letnje računanje vremena</daylight>
 				</long>
+				<short>
+					<generic>WET</generic>
+					<standard>WET</standard>
+					<daylight>WEST</daylight>
+				</short>
 			</metazone>
 			<metazone type="Falkland">
 				<long>
@@ -3663,6 +3967,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<long>
 					<standard>Grinvič srednje vreme</standard>
 				</long>
+				<short>
+					<standard>GMT</standard>
+				</short>
 			</metazone>
 			<metazone type="Greenland_Eastern">
 				<long>
@@ -6356,9 +6663,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other" draft="contributed">{0} kubnih kilometara</unitPattern>
 			</unit>
 			<unit type="volume-cubic-mile">
-				<unitPattern count="one" draft="contributed">{0} kubni metar</unitPattern>
-				<unitPattern count="few" draft="contributed">{0} kubna metra</unitPattern>
-				<unitPattern count="other" draft="contributed">{0} kubnih metara</unitPattern>
+				<unitPattern count="one" draft="contributed">{0} kubni milja</unitPattern>
+				<unitPattern count="few" draft="contributed">{0} kubne milje</unitPattern>
+				<unitPattern count="other" draft="contributed">{0} kubnih milja</unitPattern>
 			</unit>
 			<unit type="volume-liter">
 				<unitPattern count="one" draft="contributed">{0} litar</unitPattern>

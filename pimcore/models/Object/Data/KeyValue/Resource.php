@@ -15,14 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Object\Data\KeyValue;
 
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Get the valid columns from the database
@@ -69,7 +66,7 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
         $sql = $this->db->quoteInto("o_id = ?", $this->model->getObjectId());
 
         // $sql = "o_id = " . $this->model->getObjectId();
-        Logger::debug("query= " . $sql);
+        \Logger::debug("query= " . $sql);
         $this->db->delete($this->getTableName(), $sql);
     }
 
@@ -79,7 +76,7 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function update() {
-        Logger::debug("update called");
+        \Logger::debug("update called");
     }
 
     /**
@@ -90,6 +87,9 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
     public function create() {
     }
 
+    /**
+     * @return string
+     */
     public function getTableName() {
         $model = $this->model;
         $class = $model->getClass();
@@ -97,15 +97,18 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
         return "object_keyvalue_" . $classId;
     }
 
+    /**
+     *
+     */
     public function createUpdateTable () {
-        Logger::debug("createUpdateTable called");
+        \Logger::debug("createUpdateTable called");
 
         $model = $this->model;
         $class = $model->getClass();;
         $classId = $class->getId();
         $table = $this->getTableName();
 
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
         $db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
     		`id` INT NOT NULL AUTO_INCREMENT,
     		`o_id` INT NOT NULL,
@@ -127,20 +130,22 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
             $db->query("ALTER TABLE `" . $table . "` ADD COLUMN `metadata` LONGTEXT NULL AFTER `translated`;");
         }
 
-        Logger::debug("createUpdateTable done");
+        \Logger::debug("createUpdateTable done");
     }
 
+    /**
+     *
+     */
     public function load() {
         $model = $this->model;
-        Logger::debug("load called");
+        \Logger::debug("load called");
 
         $table = $this->getTableName();
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
         $sql = "SELECT * FROM " . $table . " WHERE o_id = " . $model->getObjectId();
         $result = $db->fetchAll($sql);
         $model->setProperties($result);
 
-        Logger::debug("result=" . $result);
+        \Logger::debug("result=" . $result);
     }
-
 }

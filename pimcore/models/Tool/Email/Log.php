@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Email_Log extends Pimcore_Model_Abstract
+namespace Pimcore\Model\Tool\Email;
+
+use Pimcore\Model;
+use Pimcore\File; 
+
+class Log extends Model\AbstractModel
 {
 
     /**
@@ -124,9 +129,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     public $subject;
 
     /**
-     * sets the email document id
-     *
-     * @param integer | null $id
+     * @param $id
+     * @return $this
      */
     public function setDocumentId($id)
     {
@@ -135,9 +139,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the request URI
-     *
-     * @param string $requestUri
+     * @param $requestUri
+     * @return $this
      */
     public function setRequestUri($requestUri)
     {
@@ -166,9 +169,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the email log id
-     *
-     * @param integer $id
+     * @param $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -177,9 +179,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the subject
-     *
-     * @param string $subject
+     * @param $subject
+     * @return $this
      */
     public function setSubject($subject)
     {
@@ -211,7 +212,7 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
             return null;
         }
 
-        $emailLog = new Tool_Email_Log();
+        $emailLog = new Model\Tool\Email\Log();
         $emailLog->getResource()->getById($id);
         $emailLog->setEmailLogExistsHtml();
         $emailLog->setEmailLogExistsText();
@@ -229,9 +230,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the dynamic parameters (will be converted to a JSON string)
-     *
-     * @param array $params
+     * @param $params
+     * @return $this
      */
     public function setParams($params)
     {
@@ -409,26 +409,25 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     {
         $this->getResource()->update();
         if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
-            Pimcore_File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
+            File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
         }
 
         if ($html = $this->getBodyHtml()) {
-            if (Pimcore_File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log', $html) === false) {
-                Logger::warn('Could not write html email log file. LogId: ' . $this->getId());
+            if (File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log', $html) === false) {
+                \Logger::warn('Could not write html email log file. LogId: ' . $this->getId());
             }
         }
 
         if ($text = $this->getBodyText()) {
-            if (Pimcore_File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log', $text) === false) {
-                Logger::warn('Could not write text email log file. LogId: ' . $this->getId());
+            if (File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log', $text) === false) {
+                \Logger::warn('Could not write text email log file. LogId: ' . $this->getId());
             }
         }
     }
 
     /**
-     * Sets the "to" recipients (multiple recipients should be separated by a ",")
-     *
-     * @param string $to
+     * @param $to
+     * @return $this
      */
     public function setTo($to)
     {
@@ -456,9 +455,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the carbon copy recipients (multiple recipients should be separated by a ",")
-     *
-     * @param string $cc
+     * @param $cc
+     * @return $this
      */
     public function setCc($cc)
     {
@@ -486,9 +484,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the blind carbon copy recipients (multiple recipients should be separated by a ",")
-     *
-     * @param string $bcc
+     * @param $bcc
+     * @return $this
      */
     public function setBcc($bcc)
     {
@@ -516,9 +513,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the "from" email address
-     *
-     * @param string $from
+     * @param $from
+     * @return $this
      */
     public function setFrom($from)
     {
@@ -537,9 +533,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the html content of the email
-     *
-     * @param string $html
+     * @param $html
+     * @return $this
      */
     public function setBodyHtml($html)
     {
@@ -558,9 +553,8 @@ class Tool_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
-     * Sets the text version of the email
-     *
-     * @param string $text
+     * @param $text
+     * @return $this
      */
     public function setBodyText($text)
     {

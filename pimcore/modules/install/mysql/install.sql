@@ -1,20 +1,46 @@
+
+SET NAMES UTF8;
+
+DROP TABLE IF EXISTS `application_logs`;
+CREATE TABLE `application_logs` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `timestamp` datetime NOT NULL,
+  `message` varchar(1024) DEFAULT NULL,
+  `priority` int(10) DEFAULT NULL,
+  `fileobject` varchar(1024) DEFAULT NULL,
+  `info` varchar(1024) DEFAULT NULL,
+  `component` varchar(255) DEFAULT NULL,
+  `source` varchar(255) DEFAULT NULL,
+  `relatedobject` bigint(20) DEFAULT NULL,
+  `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
+  `maintenanceChecked` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `component` (`component`),
+  KEY `timestamp` (`timestamp`),
+  KEY `relatedobject` (`relatedobject`),
+  KEY `priority` (`priority`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
   `filename` varchar(255) DEFAULT '',
-  `path` varchar(255) DEFAULT NULL,
+  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `mimetype` varchar(255) DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `customSettings` text,
+  `hasMetaData` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
-  KEY `path` (`path`)
+  KEY `path` (`path`),
+  KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `assets_metadata`;
@@ -22,7 +48,7 @@ CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `language` varchar(255) DEFAULT NULL,
-  `type` ENUM('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   KEY `cid` (`cid`)
 ) DEFAULT CHARSET=utf8;
@@ -33,11 +59,12 @@ CREATE TABLE `assets_metadata_predefined` (
   `name` varchar(255) DEFAULT NULL,
   `description` text,
   `language` varchar(255) DEFAULT NULL,
-  `type` enum('input','textarea','asset','document','object','date') DEFAULT NULL,
+  `type` enum('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   `targetSubtype` enum('image', 'text', 'audio', 'video', 'document', 'archive', 'unknown') DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
+  `config` text,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `id` (`id`),
@@ -76,6 +103,7 @@ CREATE TABLE `classes` (
   `allowInherit` tinyint(1) unsigned DEFAULT '0',
   `allowVariants` tinyint(1) unsigned DEFAULT '0',
   `parentClass` varchar(255) DEFAULT NULL,
+  `useTraits` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
   `previewUrl` varchar(255) DEFAULT NULL,
   `propertyVisibility` text,
@@ -84,56 +112,7 @@ CREATE TABLE `classes` (
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `content_analysis`;
-CREATE TABLE `content_analysis` (
-  `id` varchar(44) NOT NULL DEFAULT '',
-  `host` varchar(255) DEFAULT NULL,
-  `site` int(11) DEFAULT NULL,
-  `url` varchar(2000) NOT NULL DEFAULT '',
-  `type` enum('document','route') DEFAULT NULL,
-  `typeReference` int(11) DEFAULT NULL,
-  `facebookShares` int(11) DEFAULT NULL,
-  `googlePlusOne` int(11) DEFAULT NULL,
-  `links` int(5) DEFAULT NULL,
-  `linksExternal` int(5) DEFAULT NULL,
-  `h1` int(3) DEFAULT NULL,
-  `h2` int(3) DEFAULT NULL,
-  `h3` int(3) DEFAULT NULL,
-  `h4` int(3) DEFAULT NULL,
-  `h5` int(3) DEFAULT NULL,
-  `h6` int(3) DEFAULT NULL,
-  `h1Text` varchar(1000) DEFAULT NULL,
-  `imgWithoutAlt` int(3) DEFAULT NULL,
-  `imgWithAlt` int(3) DEFAULT NULL,
-  `title` varchar(1000) DEFAULT NULL,
-  `description` varchar(1000) DEFAULT NULL,
-  `urlLength` int(4) DEFAULT NULL,
-  `urlParameters` int(2) DEFAULT NULL,
-  `microdata` int(3) DEFAULT NULL,
-  `opengraph` int(3) DEFAULT NULL,
-  `twitter` int(3) DEFAULT NULL,
-  `robotsTxtBlocked` tinyint(1) DEFAULT NULL,
-  `robotsMetaBlocked` tinyint(1) DEFAULT NULL,
-  `lastUpdate` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `host` (`host`),
-  KEY `lastUpdate` (`lastUpdate`),
-  KEY `site` (`site`)
-) DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `content_index`;
-CREATE TABLE `content_index` (
-  `id` varchar(44) NOT NULL DEFAULT '',
-  `site` int(11) DEFAULT NULL,
-  `url` varchar(2000) NOT NULL DEFAULT '',
-  `content` longblob,
-  `type` enum('document','route') DEFAULT NULL,
-  `typeReference` int(11) DEFAULT NULL,
-  `lastUpdate` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `lastUpdate` (`lastUpdate`)
-) DEFAULT CHARSET=utf8;
-
+DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`classId` INT(11) UNSIGNED NOT NULL,
@@ -143,6 +122,7 @@ CREATE TABLE `custom_layouts` (
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
 	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
+	`default` tinyint(4) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`, `classId`)
 ) DEFAULT CHARSET=utf8;
@@ -166,7 +146,7 @@ CREATE TABLE `documents` (
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('page','link','snippet','folder','hardlink','email') DEFAULT NULL,
   `key` varchar(255) DEFAULT '',
-  `path` varchar(255) DEFAULT NULL,
+  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -174,10 +154,12 @@ CREATE TABLE `documents` (
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `fullpath` (`path`,`key`),
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `path` (`path`),
-  KEY `published` (`published`)
+  KEY `published` (`published`),
+  KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_doctypes`;
@@ -227,7 +209,7 @@ CREATE TABLE `documents_hardlink` (
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
   `childsFromSource` tinyint(1) DEFAULT NULL,
-  UNIQUE KEY `id` (`id`)
+  PRIMARY KEY `id` (`id`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_link`;
@@ -298,14 +280,14 @@ DROP TABLE IF EXISTS `email_log`;
 CREATE TABLE `email_log` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `documentId` int(11) DEFAULT NULL,
-  `requestUri` varchar(255) DEFAULT NULL,
+  `requestUri` varchar(500) DEFAULT NULL,
   `params` text,
-  `from` varchar(255) DEFAULT NULL,
-  `to` varchar(255) DEFAULT NULL,
-  `cc` varchar(255) DEFAULT NULL,
-  `bcc` varchar(255) DEFAULT NULL,
+  `from` varchar(500) DEFAULT NULL,
+  `to` longtext,
+  `cc` longtext,
+  `bcc` longtext,
   `sentDate` bigint(20) DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
+  `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -329,23 +311,23 @@ CREATE TABLE `glossary` (
 
 DROP TABLE IF EXISTS `http_error_log`;
 CREATE TABLE `http_error_log` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `path` varchar(1000) DEFAULT NULL,
+  `uri` varchar(3000) CHARACTER SET ascii DEFAULT NULL,
   `code` int(3) DEFAULT NULL,
   `parametersGet` longtext,
   `parametersPost` longtext,
   `cookies` longtext,
   `serverVars` longtext,
   `date` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `path` (`path`(255)),
+  `count` bigint(20) DEFAULT NULL,
+  KEY (`uri` (765)),
   KEY `code` (`code`),
-  KEY `date` (`date`)
+  KEY `date` (`date`),
+  KEY `count` (`count`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `keyvalue_groups`;
 CREATE TABLE `keyvalue_groups` (
-    `id` INT NOT NULL AUTO_INCREMENT,
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255),
     `creationDate` bigint(20) unsigned DEFAULT '0',
@@ -418,7 +400,7 @@ CREATE TABLE `objects` (
   `o_parentId` int(11) unsigned DEFAULT NULL,
   `o_type` enum('object','folder','variant') DEFAULT NULL,
   `o_key` varchar(255) default '',
-  `o_path` varchar(255) DEFAULT NULL,
+  `o_path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `o_index` int(11) unsigned DEFAULT '0',
   `o_published` tinyint(1) unsigned DEFAULT '1',
   `o_creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -428,18 +410,20 @@ CREATE TABLE `objects` (
   `o_classId` int(11) unsigned DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`o_id`),
+  UNIQUE KEY `fullpath` (`o_path`,`o_key`),
   KEY `key` (`o_key`),
   KEY `path` (`o_path`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
-  KEY `type` (`o_type`)
+  KEY `type` (`o_type`),
+  KEY `o_modificationDate` (`o_modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `name` varchar(255) NOT NULL DEFAULT '',
   `type` enum('text','date','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
@@ -478,7 +462,7 @@ CREATE TABLE `recyclebin` (
   `id` int(11) NOT NULL auto_increment,
   `type` varchar(20) default NULL,
   `subtype` varchar(20) default NULL,
-  `path` varchar(255) default NULL,
+  `path` varchar(765) default NULL,
   `amount` int(3) default NULL,
   `date` bigint(20) default NULL,
   `deletedby` varchar(50) DEFAULT NULL,
@@ -528,7 +512,7 @@ CREATE TABLE `schedule_tasks` (
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
-  `fullpath` varchar(330) DEFAULT NULL,
+  `fullpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(255) DEFAULT NULL,
@@ -550,6 +534,7 @@ CREATE TABLE `search_backend_data` (
   FULLTEXT KEY `properties` (`properties`),
   FULLTEXT KEY `fulltext` (`data`,`properties`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/* Engine is changed to InnoDB (if available) in Pimcore\Model\Tool\Setup\Resource::database() - not here because all comments are removed */
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -606,6 +591,19 @@ CREATE TABLE `targeting_rules` (
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tmp_store` (
+  `id` varchar(255) NOT NULL DEFAULT '',
+  `tag` varchar(255) DEFAULT NULL,
+  `data` longtext,
+  `serialized` tinyint(2) NOT NULL DEFAULT '0',
+  `date` int(10) DEFAULT NULL,
+  `expiryDate` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tag` (`tag`),
+  KEY `date` (`date`),
+  KEY `expiryDate` (`expiryDate`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `tracking_events`;
@@ -714,7 +712,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -733,7 +731,7 @@ CREATE TABLE `users_workspaces_asset` (
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -754,7 +752,7 @@ CREATE TABLE `users_workspaces_document` (
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(255) DEFAULT NULL,
+  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -781,7 +779,7 @@ CREATE TABLE `uuids` (
   `itemId` BIGINT(20) UNSIGNED NOT NULL,
   `type` VARCHAR(25) NOT NULL,
   `instanceIdentifier` VARCHAR(50) NOT NULL,
-  UNIQUE INDEX `itemId_type_uuid` (`itemId`, `type`, `uuid`)
+  PRIMARY KEY (`itemId`, `type`, `uuid`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `versions`;
@@ -811,5 +809,60 @@ CREATE TABLE `website_settings` (
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `siteId` (`siteId`)
-)
-DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `classificationstore_groups`;
+CREATE TABLE `classificationstore_groups` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`parentId` BIGINT(20) NOT NULL DEFAULT '0',
+	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`description` VARCHAR(255) NULL DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`sorter` INT(10) NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `classificationstore_keys`;
+CREATE TABLE `classificationstore_keys` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`description` TEXT NULL,
+	`type` ENUM('input','textarea','wysiwyg','checkbox','numeric','slider','select','multiselect','date','datetime','language','languagemultiselect','country','countrymultiselect','table') NULL DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`definition` LONGTEXT NULL,
+	`enabled` TINYINT(1) NULL DEFAULT NULL,
+	`sorter` INT(10) NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `classificationstore_relations`;
+CREATE TABLE `classificationstore_relations` (
+	`groupId` BIGINT(20) NOT NULL,
+	`keyId` BIGINT(20) NOT NULL,
+	PRIMARY KEY (`groupId`, `keyId`),
+	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
+	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
+	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `classificationstore_collections`;
+CREATE TABLE `classificationstore_collections` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`description` VARCHAR(255) NULL DEFAULT NULL,
+	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
+CREATE TABLE `classificationstore_collectionrelations` (
+	`colId` BIGINT(20) NOT NULL,
+	`groupId` BIGINT(20) NOT NULL,
+	PRIMARY KEY (`colId`, `groupId`),
+	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8;

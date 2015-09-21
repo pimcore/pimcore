@@ -12,8 +12,13 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
+
+namespace Pimcore\Video\Adapter;
+
+use Pimcore\Video\Adapter;
+use Pimcore\Tool\Console; 
+
+class Ffmpeg extends Adapter {
 
 
     /**
@@ -37,29 +42,29 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public function isAvailable() {
         try {
             $ffmpeg = self::getFfmpegCli();
-            $phpCli = Pimcore_Tool_Console::getPhpCli();
+            $phpCli = Console::getPhpCli();
             if($ffmpeg && $phpCli) {
                 return true;
             }
-        } catch (Exception $e) {
-            Logger::warning($e);
+        } catch (\Exception $e) {
+            \Logger::warning($e);
         }
 
         return false;
     }
 
     /**
-     * @static
-     * @return string
+     * @return mixed
+     * @throws \Exception
      */
     public static function getFfmpegCli () {
 
-        $ffmpegPath = Pimcore_Config::getSystemConfig()->assets->ffmpeg;
+        $ffmpegPath = \Pimcore\Config::getSystemConfig()->assets->ffmpeg;
         if($ffmpegPath) {
             if(@is_executable($ffmpegPath)) {
                 return $ffmpegPath;
             } else {
-                Logger::critical("FFMPEG binary: " . $ffmpegPath . " is not executable");
+                \Logger::critical("FFMPEG binary: " . $ffmpegPath . " is not executable");
             }
         }
 
@@ -76,12 +81,12 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             }
         }
 
-        throw new Exception("No ffmpeg executable found, please configure the correct path in the system settings");
+        throw new \Exception("No ffmpeg executable found, please configure the correct path in the system settings");
     }
 
     /**
-     * @param string $file
-     * @return Pimcore_Video_Adapter
+     * @param $file
+     * @return $this|mixed
      */
     public function load($file) {
         $this->file = $file;
@@ -91,8 +96,8 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     /**
-     * @param  $path
-     * @return Pimcore_Video_Adapter
+     * @return mixed|void
+     * @throws \Exception
      */
     public function save () {
         if($this->getDestinationFile()) {
@@ -119,23 +124,23 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             } else if($this->getFormat() == "webm") {
                 // check for vp9 support
                 $webmCodec = "libvpx";
-                $codecs = Pimcore_Tool_Console::exec(self::getFfmpegCli() . " -codecs");
+                $codecs = Console::exec(self::getFfmpegCli() . " -codecs");
                 if(stripos($codecs, "vp9")) {
                     //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
                 }
 
                 $arguments = "-strict experimental -f webm -vcodec " . $webmCodec . " -acodec libvorbis -ar 44000 -g 100 " . $arguments;
             } else {
-                throw new Exception("Unsupported video output format: " . $this->getFormat());
+                throw new \Exception("Unsupported video output format: " . $this->getFormat());
             }
 
             // add some global arguments
             $arguments = "-threads 0 " . $arguments;
 
             $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' ' . $arguments . " " . str_replace("/", DIRECTORY_SEPARATOR, $this->getDestinationFile());
-            Pimcore_Tool_Console::execInBackground($cmd, $this->getConversionLogFile());
+            Console::execInBackground($cmd, $this->getConversionLogFile());
         } else {
-            throw new Exception("There is no destination file for video converter");
+            throw new \Exception("There is no destination file for video converter");
         }
     }
 
@@ -149,15 +154,19 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         }
 
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
-        Pimcore_Tool_Console::exec($cmd, null, 60);
+        Console::exec($cmd, null, 60);
     }
 
+    /**
+     * @return int
+     * @throws \Exception
+     */
     public function getDuration () {
 
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-info-" . uniqid() . ".out";
 
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file);
-        Pimcore_Tool_Console::exec($cmd, $tmpFile, null, 60);
+        Console::exec($cmd, $tmpFile, null, 60);
 
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);
@@ -169,7 +178,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
      *
      */
     public function destroy() {
-        Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
+        \Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
         $this->deleteConversionLogFile();
     }
 
@@ -220,8 +229,8 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
            || stripos($log, "error") !== false
            || stripos($log, "unable") !== false) {
 
-            Logger::critical("Problem converting video: " . $this->file . " to format " . $this->getFormat());
-            Logger::critical($log);
+            \Logger::critical("Problem converting video: " . $this->file . " to format " . $this->getFormat());
+            \Logger::critical($log);
 
             // create a copy of the conversion log, so that it will persist
             copy($this->getConversionLogFile() , str_replace(".log", ".error.log", $this->getConversionLogFile()));
@@ -256,13 +265,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             $percent = 1;
         }
 
-        Logger::debug("Video transcoding status of " . $this->getDestinationFile() . ": " . $percent . " - " . $this->getFormat());
+        \Logger::debug("Video transcoding status of " . $this->getDestinationFile() . ": " . $percent . " - " . $this->getFormat());
 
         return $percent;
     }
 
     /**
-     * @param string $processId
+     * @param $processId
+     * @return $this
      */
     public function setProcessId($processId)
     {
@@ -278,16 +288,30 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         return $this->processId;
     }
 
+    /**
+     * @return string
+     */
     protected function getConversionLogFile () {
         return PIMCORE_LOG_DIRECTORY . "/ffmpeg-" . $this->getProcessId() . "-" . $this->getFormat() . ".log";
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function addArgument($key, $value) {
         $this->arguments[$key] = $value;
     }
 
+    /**
+     * @param $videoBitrate
+     * @return $this
+     */
     public function setVideoBitrate($videoBitrate) {
         $videoBitrate = intval($videoBitrate);
+
+        $videoBitrate = ceil($videoBitrate/2) * 2;
+
         parent::setVideoBitrate($videoBitrate);
 
         if($videoBitrate) {
@@ -296,8 +320,15 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         return $this;
     }
 
+    /**
+     * @param $audioBitrate
+     * @return $this
+     */
     public function setAudioBitrate($audioBitrate) {
         $audioBitrate = intval($audioBitrate);
+
+        $audioBitrate = ceil($audioBitrate/2) * 2;
+
         parent::setAudioBitrate($audioBitrate);
 
         if($audioBitrate) {
@@ -306,6 +337,10 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         return $this;
     }
 
+    /**
+     * @param $width
+     * @param $height
+     */
     public function resize ($width, $height) {
         // ensure $width & $height are even (mp4 requires this)
         $width = ceil($width/2) * 2;
@@ -313,16 +348,21 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         $this->addArgument("resize", "-s ".$width."x".$height);
     }
 
+    /**
+     * @param $width
+     */
     public function scaleByWidth ($width) {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width/2) * 2;
         $this->addArgument("scaleByWidth", '-vf "scale='.$width.':trunc(ow/a/vsub)*vsub"');
     }
 
+    /**
+     * @param $height
+     */
     public function scaleByHeight ($height) {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height/2) * 2;
         $this->addArgument("scaleByHeight", '-vf "scale=trunc(oh/(ih/iw)/hsub)*hsub:'.$height.'"');
     }
-
 }

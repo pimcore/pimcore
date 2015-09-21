@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage Zend_Controller_Action_Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -68,7 +68,7 @@
  * @uses       Zend_Controller_Action_Helper_Abstract
  * @package    Zend_Controller
  * @subpackage Zend_Controller_Action_Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_Helper_Abstract
@@ -841,9 +841,21 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
         $inflector  = $this->getInflector();
         $request    = $this->getRequest();
         $dispatcher = $this->getFrontController()->getDispatcher();
-        $module     = $dispatcher->formatModuleName($request->getModuleName());
-        $controller = $request->getControllerName();
-        $action     = $dispatcher->formatActionName($request->getActionName());
+
+        // Format module name
+        $module = $dispatcher->formatModuleName($request->getModuleName());
+
+        // Format controller name
+        // require_once 'Zend/Filter/Word/CamelCaseToDash.php';
+        $filter     = new Zend_Filter_Word_CamelCaseToDash();
+        $controller = $filter->filter($request->getControllerName());
+        $controller = $dispatcher->formatControllerName($controller);
+        if ('Controller' == substr($controller, -10)) {
+            $controller = substr($controller, 0, -10);
+        }
+
+        // Format action name
+        $action = $dispatcher->formatActionName($request->getActionName());
 
         $params     = compact('module', 'controller', 'action');
         foreach ($vars as $key => $value) {

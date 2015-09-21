@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Snippet extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Model\Cache;
+use Pimcore\Model\Document;
+
+class Snippet extends Model\Document\Tag {
 
     /**
      * Contains the ID of the linked snippet
@@ -27,13 +33,13 @@ class Document_Tag_Snippet extends Document_Tag {
     /**
      * Contains the object for the snippet
      *
-     * @var Document_Snippet
+     * @var Document\Snippet
      */
     public $snippet;
 
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -41,7 +47,7 @@ class Document_Tag_Snippet extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -70,7 +76,7 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
-        if ($this->snippet instanceof Document_Snippet) {
+        if ($this->snippet instanceof Document\Snippet) {
             return array(
                 "id" => $this->id,
                 "path" => $this->snippet->getFullPath()
@@ -80,13 +86,13 @@ class Document_Tag_Snippet extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend() {
-        if ($this->getView() instanceof Zend_View) {
+        if ($this->getView() instanceof \Zend_View) {
             try {
-                if ($this->snippet instanceof Document_Snippet) {
+                if ($this->snippet instanceof Document\Snippet) {
                     $params = $this->options;
                     $params["document"] = $this->snippet;
 
@@ -94,18 +100,18 @@ class Document_Tag_Snippet extends Document_Tag {
 
                         // check if output-cache is enabled, if so, we're also using the cache here
                         $cacheKey = null;
-                        if($cacheConfig = Pimcore_Tool_Frontend::isOutputCacheEnabled()) {
+                        if($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
 
-                            // cleanup params to avoid serializing Element_Interface objects
+                            // cleanup params to avoid serializing Element\ElementInterface objects
                             $cacheParams = $params;
                             array_walk($cacheParams, function (&$value, $key) {
-                                if($value instanceof Element_Interface) {
+                                if($value instanceof Model\Element\ElementInterface) {
                                     $value = $value->getId();
                                 }
                             });
 
                             $cacheKey = "tag_snippet__" . md5(serialize($cacheParams));
-                            if($content = Pimcore_Model_Cache::load($cacheKey)) {
+                            if($content = Cache::load($cacheKey)) {
                                 return $content;
                             }
                         }
@@ -114,18 +120,22 @@ class Document_Tag_Snippet extends Document_Tag {
 
                         // write contents to the cache, if output-cache is enabled
                         if($cacheConfig) {
-                            Pimcore_Model_Cache::save($content, $cacheKey, array("output"), $cacheConfig["lifetime"]);
+                            Cache::save($content, $cacheKey, array("output","output_inline"), $cacheConfig["lifetime"]);
                         }
+
+                        // we need to add a component id to all first level html containers
+                        $componentId = 'document:' . $this->getDocumentId() . '.type:tag-snippet.name:' . $this->snippet->getId();
+                        $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
 
                         return $content;
                     }
                     return "";
                 }
-            } catch (Exception $e) {
-                if(Pimcore::inDebugMode()) {
+            } catch (\Exception $e) {
+                if(\Pimcore::inDebugMode()) {
                     return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
                 }
-                Logger::error($e);
+                \Logger::error($e);
             }
         } else {
             return null;
@@ -133,27 +143,27 @@ class Document_Tag_Snippet extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data) {
         if (intval($data) > 0) {
             $this->id = $data;
-            $this->snippet = Document_Snippet::getById($this->id);
+            $this->snippet = Document\Snippet::getById($this->id);
         }
         return $this;
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
     public function setDataFromEditmode($data) {
         if (intval($data) > 0) {
             $this->id = $data;
-            $this->snippet = Document_Snippet::getById($this->id);
+            $this->snippet = Document\Snippet::getById($this->id);
         }
         return $this;
     }
@@ -162,7 +172,7 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return boolean
      */
     public function isEmpty() {
-        if($this->snippet instanceof Document_Snippet) {
+        if($this->snippet instanceof Document\Snippet) {
             return false;
         }
         return true;
@@ -175,7 +185,7 @@ class Document_Tag_Snippet extends Document_Tag {
     public function resolveDependencies () {
         $dependencies = array();
         
-        if ($this->snippet instanceof Document_Snippet) {
+        if ($this->snippet instanceof Document\Snippet) {
 
             $key = "document_" . $this->snippet->getId();
 
@@ -190,11 +200,9 @@ class Document_Tag_Snippet extends Document_Tag {
 
 
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
@@ -202,12 +210,12 @@ class Document_Tag_Snippet extends Document_Tag {
 
             $this->id = $data->id;
             if (is_numeric($this->id)) {
-                $this->snippet = Document_Snippet::getById($this->id);
-                if (!$this->snippet instanceof Document_Snippet) {
-                    throw new Exception("cannot get values from web service import - referenced snippet with id [ " . $this->id . " ] is unknown");
+                $this->snippet = Document\Snippet::getById($this->id);
+                if (!$this->snippet instanceof Document\Snippet) {
+                    throw new \Exception("cannot get values from web service import - referenced snippet with id [ " . $this->id . " ] is unknown");
                 }
             } else {
-                throw new Exception("cannot get values from web service import - id is not valid");
+                throw new \Exception("cannot get values from web service import - id is not valid");
             }
 
 
@@ -233,7 +241,7 @@ class Document_Tag_Snippet extends Document_Tag {
     }
 
     /**
-     * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
+     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
      *
      * @return void
      */
@@ -264,7 +272,7 @@ class Document_Tag_Snippet extends Document_Tag {
     }
 
     /**
-     * @param \Document_Snippet $snippet
+     * @param Document\Snippet $snippet
      */
     public function setSnippet($snippet)
     {
@@ -272,7 +280,7 @@ class Document_Tag_Snippet extends Document_Tag {
     }
 
     /**
-     * @return \Document_Snippet
+     * @return Document\Snippet
      */
     public function getSnippet()
     {

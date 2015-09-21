@@ -118,6 +118,7 @@ pimcore.element.dependencies = Class.create({
                 {header: t("type"), sortable: true, dataIndex: 'type'},
                 {header: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],
+            collapsible: true,
             columnLines: true,
             autoExpandColumn: "path",
             stripeRows: true,
@@ -160,6 +161,7 @@ pimcore.element.dependencies = Class.create({
                 {header: t("type"), sortable: true, dataIndex: 'type'},
                 {header: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],
+            collapsible: true,
             autoExpandColumn: "path",
             columnLines: true,
             stripeRows: true,

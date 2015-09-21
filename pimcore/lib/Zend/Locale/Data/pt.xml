@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="pt"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,75 +25,70 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">adigue</language>
 			<language type="ae">avéstico</language>
 			<language type="af">africâner</language>
-			<language type="afa">idioma afro-asiático</language>
 			<language type="afh">afrihili</language>
+			<language type="agq" draft="contributed">aghem</language>
 			<language type="ain">ainu</language>
 			<language type="ak">akan</language>
 			<language type="akk">acadiano</language>
 			<language type="ale">aleúte</language>
-			<language type="alg">idioma algonquiano</language>
 			<language type="alt">altai do sul</language>
 			<language type="am">amárico</language>
 			<language type="an">aragonês</language>
 			<language type="ang">inglês arcaico</language>
 			<language type="anp">angika</language>
-			<language type="apa">idioma apache</language>
 			<language type="ar">árabe</language>
 			<language type="ar_001">árabe moderno</language>
 			<language type="arc">aramaico</language>
 			<language type="arn">araucano</language>
 			<language type="arp">arapaho</language>
-			<language type="art">idioma artificial</language>
 			<language type="arw">arauaqui</language>
 			<language type="as">assamês</language>
 			<language type="asa" draft="contributed">asa</language>
 			<language type="ast">asturiano</language>
-			<language type="ath">idioma atabascano</language>
-			<language type="aus">idioma australiano</language>
 			<language type="av">avaric</language>
 			<language type="awa">awadhi</language>
 			<language type="ay">aimara</language>
 			<language type="az">azerbaijano</language>
 			<language type="az" alt="short" draft="contributed">azeri</language>
 			<language type="ba">bashkir</language>
-			<language type="bad">banda</language>
-			<language type="bai">idioma bamileke</language>
 			<language type="bal">balúchi</language>
 			<language type="ban">balinês</language>
 			<language type="bas">basa</language>
-			<language type="bat">idioma báltico</language>
+			<language type="bax" draft="contributed">bamum</language>
+			<language type="bbj" draft="contributed">ghomala'</language>
 			<language type="be">bielo-russo</language>
 			<language type="bej">beja</language>
 			<language type="bem">bemba</language>
-			<language type="ber">berbere</language>
+			<language type="bez" draft="contributed">bena</language>
+			<language type="bfd" draft="contributed">bafut</language>
 			<language type="bg">búlgaro</language>
-			<language type="bh">biari</language>
 			<language type="bho">bhojpuri</language>
 			<language type="bi">bislamá</language>
 			<language type="bik">bikol</language>
 			<language type="bin">bini</language>
+			<language type="bkm" draft="contributed">kom</language>
 			<language type="bla">siksika</language>
 			<language type="bm">bambara</language>
 			<language type="bn">bengali</language>
-			<language type="bnt">banto</language>
 			<language type="bo">tibetano</language>
 			<language type="br">bretão</language>
 			<language type="bra">braj</language>
 			<language type="brx" draft="contributed">bodo</language>
 			<language type="bs">bósnio</language>
-			<language type="btk">bataque</language>
+			<language type="bss" draft="contributed">akoose</language>
 			<language type="bua">buriat</language>
 			<language type="bug">buguinês</language>
+			<language type="bum" draft="contributed">bulu</language>
 			<language type="byn">blin</language>
+			<language type="byv" draft="contributed">medumba</language>
 			<language type="ca">catalão</language>
 			<language type="cad">caddo</language>
-			<language type="cai">idioma indígena centro-americano</language>
 			<language type="car">caribe</language>
-			<language type="cau">idioma caucásico</language>
+			<language type="cay" draft="contributed">cayuga</language>
 			<language type="cch">atsam</language>
 			<language type="ce">checheno</language>
 			<language type="ceb">cebuano</language>
-			<language type="cel">idioma celta</language>
+			<language type="cgg" draft="contributed">chiga</language>
 			<language type="ch">chamorro</language>
 			<language type="chb">chibcha</language>
 			<language type="chg">chagatai</language>
@@ -104,26 +99,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chp">chipewyan</language>
 			<language type="chr">cherokee</language>
 			<language type="chy">cheiene</language>
-			<language type="ckb" draft="contributed">Sorâni curdo</language>
-			<language type="cmc">idioma chamic</language>
+			<language type="ckb" draft="contributed">sorâni curdo</language>
 			<language type="co">córsico</language>
 			<language type="cop">copta</language>
-			<language type="cpe">crioulo ou pidgin baseado no inglês</language>
-			<language type="cpf">crioulo ou pidgin baseado no francês</language>
-			<language type="cpp">crioulo ou pidgin baseado no português</language>
 			<language type="cr">cree</language>
 			<language type="crh">turco da Crimeia</language>
-			<language type="crp">crioulo ou pidgin</language>
 			<language type="cs">tcheco</language>
 			<language type="csb">kashubian</language>
 			<language type="cu">eslavo eclesiástico</language>
-			<language type="cus">idioma cuchítico</language>
 			<language type="cv">chuvash</language>
 			<language type="cy">galês</language>
 			<language type="da">dinamarquês</language>
 			<language type="dak">dacota</language>
 			<language type="dar">dargwa</language>
-			<language type="day">dayak</language>
+			<language type="dav" draft="contributed">taita</language>
 			<language type="de">alemão</language>
 			<language type="de_AT">alemão austríaco</language>
 			<language type="de_CH">alto alemão suíço</language>
@@ -131,14 +120,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="den">slave</language>
 			<language type="dgr">dogrib</language>
 			<language type="din">dinka</language>
+			<language type="dje" draft="contributed">zarma</language>
 			<language type="doi">dogri</language>
-			<language type="dra">idioma dravidiano</language>
 			<language type="dsb">sérvio baixo</language>
 			<language type="dua">duala</language>
 			<language type="dum">holandês médio</language>
 			<language type="dv">divehi</language>
+			<language type="dyo" draft="contributed">jola-fonyi</language>
 			<language type="dyu">diúla</language>
 			<language type="dz">dzonga</language>
+			<language type="dzg" draft="contributed">dazaga</language>
 			<language type="ebu" draft="contributed">embu</language>
 			<language type="ee">eve</language>
 			<language type="efi">efique</language>
@@ -168,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">fula</language>
 			<language type="fi">finlandês</language>
 			<language type="fil">filipino</language>
-			<language type="fiu">idioma fino-úgrico</language>
 			<language type="fj">fijiano</language>
 			<language type="fo">feroês</language>
 			<language type="fon">fom</language>
@@ -186,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">gayo</language>
 			<language type="gba">gbaia</language>
 			<language type="gd">gaélico escocês</language>
-			<language type="gem">idioma germânico</language>
 			<language type="gez">geez</language>
 			<language type="gil">gilbertês</language>
 			<language type="gl">galego</language>
@@ -200,6 +189,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="grc">grego arcaico</language>
 			<language type="gsw">alemão suíço</language>
 			<language type="gu">guzerate</language>
+			<language type="guz" draft="contributed">gusii</language>
 			<language type="gv">manx</language>
 			<language type="gwi">gwichʼin</language>
 			<language type="ha">hauçá</language>
@@ -208,7 +198,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">hebraico</language>
 			<language type="hi">híndi</language>
 			<language type="hil">hiligaynon</language>
-			<language type="him">himachali</language>
 			<language type="hit">hitita</language>
 			<language type="hmn">hmong</language>
 			<language type="ho">hiri motu</language>
@@ -221,25 +210,22 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="hz">herero</language>
 			<language type="ia">interlíngua</language>
 			<language type="iba">iban</language>
+			<language type="ibb" draft="contributed">ibibio</language>
 			<language type="id">indonésio</language>
 			<language type="ie">interlingue</language>
 			<language type="ig">ibo</language>
 			<language type="ii">sichuan yi</language>
-			<language type="ijo">ijo</language>
 			<language type="ik">inupiaque</language>
 			<language type="ilo">ilocano</language>
-			<language type="inc">idioma índico</language>
-			<language type="ine">idioma indo-europeu</language>
 			<language type="inh">inguche</language>
 			<language type="io">ido</language>
-			<language type="ira">iraniano</language>
-			<language type="iro">idioma iroquês</language>
 			<language type="is">islandês</language>
 			<language type="it">italiano</language>
 			<language type="iu">inuktitut</language>
 			<language type="ja">japonês</language>
 			<language type="jbo">lojban</language>
 			<language type="jgo">nguemba</language>
+			<language type="jmc" draft="contributed">machame</language>
 			<language type="jpr">judaico-persa</language>
 			<language type="jrb">judaico-arábico</language>
 			<language type="jv">javanês</language>
@@ -249,20 +235,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">kachin</language>
 			<language type="kaj">jju</language>
 			<language type="kam">kamba</language>
-			<language type="kar">karen</language>
 			<language type="kaw">kawi</language>
 			<language type="kbd">kabardiano</language>
+			<language type="kbl" draft="contributed">kanembu</language>
 			<language type="kcg">tyap</language>
+			<language type="kde" draft="contributed">maconde</language>
 			<language type="kea" draft="contributed">kabuverdianu</language>
 			<language type="kfo">koro</language>
 			<language type="kg">congolês</language>
 			<language type="kha">khasi</language>
-			<language type="khi">idioma coisã</language>
 			<language type="kho">khotanês</language>
+			<language type="khq" draft="contributed">koyra chiini</language>
 			<language type="ki">quicuio</language>
 			<language type="kj">kuanyama</language>
 			<language type="kk">cazaque</language>
+			<language type="kkj" draft="contributed">kako</language>
 			<language type="kl">groenlandês</language>
+			<language type="kln" draft="contributed">kalenjin</language>
 			<language type="km">cmer</language>
 			<language type="kmb">quimbundo</language>
 			<language type="kn">canarês</language>
@@ -273,9 +262,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">canúri</language>
 			<language type="krc">karachay-balkar</language>
 			<language type="krl">idioma carélio</language>
-			<language type="kro">kru</language>
 			<language type="kru">kurukh</language>
 			<language type="ks">caxemira</language>
+			<language type="ksb" draft="contributed">shambala</language>
+			<language type="ksf" draft="contributed">bafia</language>
+			<language type="ksh" draft="contributed">kölsch</language>
 			<language type="ku">curdo</language>
 			<language type="kum">kumyk</language>
 			<language type="kut">kutenai</language>
@@ -284,12 +275,14 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ky">quirguiz</language>
 			<language type="la">latim</language>
 			<language type="lad">ladino</language>
+			<language type="lag" draft="contributed">langi</language>
 			<language type="lah">lahnda</language>
 			<language type="lam">lamba</language>
 			<language type="lb">luxemburguês</language>
 			<language type="lez">lezghian</language>
 			<language type="lg">luganda</language>
 			<language type="li">limburguês</language>
+			<language type="lkt" draft="contributed">lacota</language>
 			<language type="ln">lingala</language>
 			<language type="lo">laosiano</language>
 			<language type="lol">mongo</language>
@@ -301,51 +294,50 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="lun">lunda</language>
 			<language type="luo">luo</language>
 			<language type="lus">lushai</language>
+			<language type="luy" draft="contributed">luyia</language>
 			<language type="lv">letão</language>
 			<language type="mad">madurês</language>
+			<language type="maf" draft="contributed">mafa</language>
 			<language type="mag">magahi</language>
 			<language type="mai">maithili</language>
 			<language type="mak">makasar</language>
 			<language type="man">mandinga</language>
-			<language type="map">austronésio</language>
 			<language type="mas">massai</language>
+			<language type="mde" draft="contributed">maba</language>
 			<language type="mdf">mocsa</language>
 			<language type="mdr">mandar</language>
 			<language type="men">mende</language>
-			<language type="mfe" draft="contributed">Morisyen</language>
+			<language type="mer" draft="contributed">meru</language>
+			<language type="mfe" draft="contributed">morisyen</language>
 			<language type="mg">malgaxe</language>
 			<language type="mga">irlandês médio</language>
+			<language type="mgh" draft="contributed">macua</language>
 			<language type="mgo" draft="contributed">meta'</language>
 			<language type="mh">marshalês</language>
 			<language type="mi">maori</language>
 			<language type="mic">miquemaque</language>
 			<language type="min">minangkabau</language>
-			<language type="mis">idiomas diversos</language>
 			<language type="mk">macedônio</language>
-			<language type="mkh">idioma mon-khmer</language>
 			<language type="ml">malaiala</language>
 			<language type="mn">mongol</language>
 			<language type="mnc">manchu</language>
 			<language type="mni">manipuri</language>
-			<language type="mno">idioma manobo</language>
-			<language type="mo">moldávio</language>
 			<language type="moh">mohawk</language>
 			<language type="mos">mossi</language>
 			<language type="mr">marata</language>
 			<language type="ms">malaio</language>
 			<language type="mt">maltês</language>
+			<language type="mua" draft="contributed">mundang</language>
 			<language type="mul">idiomas múltiplos</language>
-			<language type="mun">idiomas munda</language>
 			<language type="mus">creek</language>
 			<language type="mwl">mirandês</language>
 			<language type="mwr">marwari</language>
 			<language type="my">birmanês</language>
-			<language type="myn">maia</language>
+			<language type="mye" draft="contributed">myene</language>
 			<language type="myv">erzya</language>
 			<language type="na">nauruano</language>
-			<language type="nah">náuatle</language>
-			<language type="nai">idioma indígena norte-americano</language>
 			<language type="nap">napolitano</language>
+			<language type="naq" draft="contributed">nama</language>
 			<language type="nb">bokmål norueguês</language>
 			<language type="nd">ndebele do norte</language>
 			<language type="nds">baixo-alemão</language>
@@ -353,18 +345,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">newari</language>
 			<language type="ng">dongo</language>
 			<language type="nia">nias</language>
-			<language type="nic">idioma cordofano-nigeriano</language>
 			<language type="niu">niueano</language>
 			<language type="nl">holandês</language>
 			<language type="nl_BE">flamengo</language>
+			<language type="nmg" draft="contributed">kwasio</language>
 			<language type="nn">nynorsk norueguês</language>
+			<language type="nnh" draft="contributed">ngiemboon</language>
 			<language type="no">norueguês</language>
 			<language type="nog">nogai</language>
 			<language type="non">nórdico arcaico</language>
 			<language type="nqo">n'ko</language>
 			<language type="nr">ndebele do sul</language>
 			<language type="nso">soto setentrional</language>
-			<language type="nub">idioma núbio</language>
+			<language type="nus" draft="contributed">nuer</language>
 			<language type="nv">navajo</language>
 			<language type="nwc">newari clássico</language>
 			<language type="ny">nianja</language>
@@ -379,21 +372,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ossetic</language>
 			<language type="osa">osage</language>
 			<language type="ota">turco otomano</language>
-			<language type="oto">idioma otomano</language>
 			<language type="pa">panjabi</language>
-			<language type="paa">idioma papuano</language>
 			<language type="pag">pangasinã</language>
 			<language type="pal">pálavi</language>
 			<language type="pam">pampanga</language>
 			<language type="pap">papiamento</language>
 			<language type="pau">palauano</language>
 			<language type="peo">persa arcaico</language>
-			<language type="phi">idioma filipino</language>
 			<language type="phn">fenício</language>
 			<language type="pi">páli</language>
 			<language type="pl">polonês</language>
 			<language type="pon">pohnpeian</language>
-			<language type="pra">idioma prácrito</language>
 			<language type="pro">provençal arcaico</language>
 			<language type="ps">pashto</language>
 			<language type="ps" alt="variant" draft="contributed">pushto</language>
@@ -407,7 +396,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">romanche</language>
 			<language type="rn">rundi</language>
 			<language type="ro">romeno</language>
-			<language type="roa">idioma românico</language>
+			<language type="ro_MD">moldávio</language>
 			<language type="rof" draft="contributed">rombo</language>
 			<language type="rom">romani</language>
 			<language type="ru">russo</language>
@@ -417,33 +406,33 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">sânscrito</language>
 			<language type="sad">sandawe</language>
 			<language type="sah">iacuto</language>
-			<language type="sai">idioma indígena sul-americano</language>
-			<language type="sal">idioma salisano</language>
 			<language type="sam">aramaico samaritano</language>
+			<language type="saq" draft="contributed">samburu</language>
 			<language type="sas">sasak</language>
 			<language type="sat">santali</language>
+			<language type="sba" draft="contributed">ngambay</language>
+			<language type="sbp" draft="contributed">sangu</language>
 			<language type="sc">sardo</language>
 			<language type="scn">siciliano</language>
 			<language type="sco">escocês</language>
 			<language type="sd">sindi</language>
 			<language type="se">sami do norte</language>
+			<language type="see" draft="contributed">seneca</language>
+			<language type="seh" draft="contributed">sena</language>
 			<language type="sel">selkup</language>
-			<language type="sem">idioma semítico</language>
+			<language type="ses" draft="contributed">koyraboro senni</language>
 			<language type="sg">sango</language>
 			<language type="sga">irlandês arcaico</language>
-			<language type="sgn">linguagem de sinais</language>
 			<language type="sh">servo-croata</language>
+			<language type="shi" draft="contributed">tachelhit</language>
 			<language type="shn">shan</language>
+			<language type="shu" draft="contributed">árabe chadiano</language>
 			<language type="si">cingalês</language>
 			<language type="sid">sidamo</language>
-			<language type="sio">idioma sioux</language>
-			<language type="sit">idioma sino-tibetano</language>
 			<language type="sk">eslovaco</language>
 			<language type="sl">esloveno</language>
-			<language type="sla">idioma eslavo</language>
 			<language type="sm">samoano</language>
 			<language type="sma">sami do sul</language>
-			<language type="smi">idioma sami</language>
 			<language type="smj">lule sami</language>
 			<language type="smn">inari sami</language>
 			<language type="sms">skolt sami</language>
@@ -451,13 +440,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">soninquê</language>
 			<language type="so">somali</language>
 			<language type="sog">sogdiano</language>
-			<language type="son">songai</language>
 			<language type="sq">albanês</language>
 			<language type="sr">sérvio</language>
 			<language type="srn">idioma surinamês</language>
 			<language type="srr">serere</language>
 			<language type="ss">swati</language>
-			<language type="ssa">idioma nilo-saariano</language>
+			<language type="ssy" draft="contributed">saho</language>
 			<language type="st">soto do sul</language>
 			<language type="su">sundanês</language>
 			<language type="suk">sukuma</language>
@@ -466,12 +454,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sv">sueco</language>
 			<language type="sw">suaíli</language>
 			<language type="swb">comoriano</language>
+			<language type="swc" draft="contributed">suaíli do Congo</language>
 			<language type="syc">siríaco clássico</language>
 			<language type="syr">siríaco</language>
 			<language type="ta">tâmil</language>
-			<language type="tai">idioma tailandês</language>
 			<language type="te">telugu</language>
 			<language type="tem">timne</language>
+			<language type="teo" draft="contributed">teso</language>
 			<language type="ter">tereno</language>
 			<language type="tet">tétum</language>
 			<language type="tg">tadjique</language>
@@ -490,16 +479,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tog">tonganês de Nyasa</language>
 			<language type="tpi">tok pisin</language>
 			<language type="tr">turco</language>
+			<language type="trv" draft="contributed">taroko</language>
 			<language type="ts">tsonga</language>
 			<language type="tsi">tsimshian</language>
 			<language type="tt">tatar</language>
 			<language type="tum">tumbuka</language>
-			<language type="tup">idioma tupi</language>
-			<language type="tut">idioma altaico</language>
 			<language type="tvl">tuvaluano</language>
 			<language type="tw">twi</language>
+			<language type="twq" draft="contributed">tasawaq</language>
 			<language type="ty">taitiano</language>
 			<language type="tyv">tuvinian</language>
+			<language type="tzm" draft="contributed">tamazight</language>
 			<language type="udm">udmurt</language>
 			<language type="ug">uigur</language>
 			<language type="uga">ugarítico</language>
@@ -513,21 +503,22 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vi">vietnamita</language>
 			<language type="vo">volapuque</language>
 			<language type="vot">votic</language>
+			<language type="vun" draft="contributed">vunjo</language>
 			<language type="wa">valão</language>
 			<language type="wae" draft="contributed">walser</language>
-			<language type="wak">idioma wakashan</language>
 			<language type="wal">walamo</language>
 			<language type="war">waray</language>
 			<language type="was">washo</language>
-			<language type="wen">idioma sorábio</language>
 			<language type="wo">uólofe</language>
 			<language type="xal">kalmyk</language>
 			<language type="xh">xosa</language>
+			<language type="xog" draft="contributed">lusoga</language>
 			<language type="yao">yao</language>
 			<language type="yap">yapese</language>
+			<language type="yav" draft="contributed">yangben</language>
+			<language type="ybb" draft="contributed">yemba</language>
 			<language type="yi">iídiche</language>
 			<language type="yo">ioruba</language>
-			<language type="ypk">idioma iúpique</language>
 			<language type="yue">cantonês</language>
 			<language type="za">zhuang</language>
 			<language type="zap">zapoteca</language>
@@ -537,7 +528,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">chinês</language>
 			<language type="zh_Hans">chinês simplificado</language>
 			<language type="zh_Hant">chinês tradicional</language>
-			<language type="znd">zande</language>
 			<language type="zu">zulu</language>
 			<language type="zun">zunhi</language>
 			<language type="zxx">sem conteúdo linguístico</language>
@@ -1161,6 +1151,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
 		<contextTransformUsage type="languages">
+			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
+			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
+		</contextTransformUsage>
+		<contextTransformUsage type="relative">
 			<contextTransform type="stand-alone">titlecase-firstword</contextTransform>
 			<contextTransform type="uiListOrMenu">titlecase-firstword</contextTransform>
 		</contextTransformUsage>
@@ -2466,9 +2460,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Europe/Tirane">
 				<exemplarCity>Tirana</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Pólo Sul</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Showa</exemplarCity>
@@ -5564,8 +5555,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other" draft="contributed">{0} horas</unitPattern>
 			</unit>
 			<unit type="duration-millisecond">
-				<unitPattern count="one">{0} milessegundo</unitPattern>
-				<unitPattern count="other">{0} milessegundos</unitPattern>
+				<unitPattern count="one">{0} milissegundo</unitPattern>
+				<unitPattern count="other">{0} milissegundos</unitPattern>
 			</unit>
 			<unit type="duration-minute">
 				<unitPattern count="one" draft="contributed">{0} minuto</unitPattern>
@@ -5673,7 +5664,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</unit>
 			<unit type="speed-meter-per-second">
 				<unitPattern count="one">{0} metro por segundo</unitPattern>
-				<unitPattern count="other">{0} metro por segundo</unitPattern>
+				<unitPattern count="other">{0} metros por segundo</unitPattern>
 			</unit>
 			<unit type="speed-mile-per-hour">
 				<unitPattern count="one">{0} milha por hora</unitPattern>

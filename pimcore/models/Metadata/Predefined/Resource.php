@@ -15,23 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Metadata\Predefined;
 
-    /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
+use Pimcore\Model;
 
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("assets_metadata_predefined");
-    }
+class Resource extends Model\Resource\AbstractResource {
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
@@ -51,18 +39,33 @@ class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
 
 
     /**
-     * Get the data for the object from database for the given key, or from the key which is set in the object
+     * Get the data for the object from database for the given name, or from the name which is set in the object
      *
-     * @param string $key
+     * @param string $name
      * @return void
      */
-    public function getByKeyAndLanguage($key = null, $language = null) {
+    public function getByNameAndLanguage($name = null, $language = null) {
 
-        if ($key != null) {
-            $this->model->setKey($key);
+        $condition = [];
+        $params = [];
+        if ($name != null) {
+            $condition[] = "`name` = ?";
+            $params[] = $name;
+            $this->model->setName($name);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE `key` = ?", $this->model->getKey());
+        if ($language != null) {
+            $condition[] = "`language` = ?";
+            $params[] = $language;
+            $this->model->setLanguage($language);
+        }
+
+        $data = [];
+        if($condition) {
+            $condition = " WHERE " . implode(" AND ", $condition);
+            $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined" . $condition, $params);
+        }
+
         $this->assignVariablesToModel($data);
     }
 
@@ -88,9 +91,7 @@ class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's a good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -100,7 +101,7 @@ class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->validColumns)) {
+                if (in_array($key, $this->getValidTableColumns("assets_metadata_predefined"))) {
                     if(is_bool($value)) {
                         $value = (int)$value;
                     }
@@ -110,7 +111,7 @@ class Metadata_Predefined_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("assets_metadata_predefined", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

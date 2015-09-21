@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="te"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,48 +25,37 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">అడిగాబ్జే</language>
 			<language type="ae">అవేస్టాన్</language>
 			<language type="af">ఆఫ్రికాన్స్</language>
-			<language type="afa">ఆఫ్రో-ఆశియా భాష</language>
 			<language type="afh">అఫ్రిహిలి</language>
 			<language type="ain">ఐను</language>
 			<language type="ak">అకాన్</language>
 			<language type="akk">అక్కాడియాన్</language>
 			<language type="ale">అలియుట్</language>
-			<language type="alg">ఆల్గొంక్వియన్ భాష</language>
 			<language type="alt">దక్షిణ ఆల్టై</language>
 			<language type="am">అమ్హారిక్</language>
 			<language type="an">అరగోనిస్</language>
 			<language type="ang">ప్రాచీన ఆగ్లం</language>
 			<language type="anp">ఆంగిక</language>
-			<language type="apa">అప్పాచి భాష</language>
 			<language type="ar">అరబిక్</language>
 			<language type="ar_001">ఆధునిక ప్రామాణిక అరబిక్</language>
 			<language type="arc">అరామేక్</language>
 			<language type="arn">అరౌకేనియన్</language>
 			<language type="arp">అరాపాహో</language>
-			<language type="art">కృత్రిమ భాష</language>
 			<language type="arw">అరావాక్</language>
 			<language type="as">అస్సామీ</language>
 			<language type="ast">అస్టురియాన్</language>
-			<language type="ath">ఆతాపాస్కన్ భాష</language>
-			<language type="aus">ఆస్ట్రేలియన్ భాష</language>
 			<language type="av">అవారిక్</language>
 			<language type="awa">అవధి</language>
 			<language type="ay">ఐమారా</language>
 			<language type="az">అజర్బైజాని</language>
 			<language type="az" alt="short">అజెరి</language>
 			<language type="ba">బష్కిర్</language>
-			<language type="bad">బాండా</language>
-			<language type="bai">బమిలేకే భాష</language>
 			<language type="bal">బాలుచి</language>
 			<language type="ban">బాలినీస్</language>
 			<language type="bas">బసా</language>
-			<language type="bat">బాల్టిక్ భాష</language>
 			<language type="be">బెలరుశియన్</language>
 			<language type="bej">బేజా</language>
 			<language type="bem">బెంబా</language>
-			<language type="ber">బెర్బెర్</language>
 			<language type="bg">బల్గేరియన్</language>
-			<language type="bh">బీహారి</language>
 			<language type="bho">భోజ్ పూరి</language>
 			<language type="bi">బిస్లామా</language>
 			<language type="bik">బికోల్</language>
@@ -74,25 +63,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">సిక్ సికా</language>
 			<language type="bm">బంబారా</language>
 			<language type="bn">బెంగాలీ</language>
-			<language type="bnt">బంటు</language>
 			<language type="bo">టిబెటన్</language>
 			<language type="br">బ్రెటన్</language>
 			<language type="bra">బ్రాజ్</language>
 			<language type="brx" draft="unconfirmed">బోడో</language>
 			<language type="bs">బోస్నియన్</language>
-			<language type="btk">బటక్</language>
 			<language type="bua">బురియట్</language>
 			<language type="bug">బ్యుగినిస్</language>
 			<language type="byn">బ్లిన్</language>
 			<language type="ca">కెటలాన్</language>
 			<language type="cad">కేడ్డో</language>
-			<language type="cai">మధ్య అమెరికెన్ ఇండియన్ భాష</language>
 			<language type="car">కేరిబ్</language>
-			<language type="cau">కోకేషియన్ భాష</language>
 			<language type="cch">అట్సామ్</language>
 			<language type="ce">చెచెన్</language>
 			<language type="ceb">సేబుఆనో</language>
-			<language type="cel">సెల్టిక్ భాష</language>
 			<language type="ch">చమర్రో</language>
 			<language type="chb">చిబ్చా</language>
 			<language type="chg">చాగటై</language>
@@ -104,25 +88,18 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">చెరోకీ</language>
 			<language type="chy">చేయేన్</language>
 			<language type="ckb">సొరాని కుర్దిష్</language>
-			<language type="cmc">చామిక్ భాష</language>
 			<language type="co">కోర్సికన్</language>
 			<language type="cop">కోప్టిక్</language>
-			<language type="cpe">ఆంగ్లం ఆధారిత క్రియోల్ లేదా పిగ్డిన్</language>
-			<language type="cpf">ప్రెంచ్ -ఆధారిత క్రియోల్ లేదా పిగ్డిన్</language>
-			<language type="cpp">పోర్చుగీస్ -ఆధారిత క్రియోల్ లేదా పిగ్డిన్</language>
 			<language type="cr">క్రి</language>
 			<language type="crh">క్రిమియన్ టర్కిష్</language>
-			<language type="crp">క్రియోల్ లేదా పిగ్డిన్</language>
 			<language type="cs">చెక్</language>
 			<language type="csb">కషుబియన్</language>
 			<language type="cu">చర్చ స్లావిక్</language>
-			<language type="cus">కుషిటిక్ భాష</language>
 			<language type="cv">చువాష్</language>
 			<language type="cy">వెల్ష్</language>
 			<language type="da">డేనిష్</language>
 			<language type="dak">డకోటా</language>
 			<language type="dar">డార్గ్వా</language>
-			<language type="day">దయక్</language>
 			<language type="de">జర్మన్</language>
 			<language type="de_AT">ఆస్ట్రేలియన్ జర్మన్</language>
 			<language type="de_CH">స్విస్ హై జర్మన్</language>
@@ -131,7 +108,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="dgr">డోగ్రిబ్</language>
 			<language type="din">డింకా</language>
 			<language type="doi">డోగ్రి</language>
-			<language type="dra">ద్రవిడియన్ భాష</language>
 			<language type="dsb">లోవర్ సోర్బియన్</language>
 			<language type="dua">దుఆలా</language>
 			<language type="dum">మధ్యమ డచ్</language>
@@ -166,7 +142,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">ఫ్యుల</language>
 			<language type="fi">ఫిన్నిష్</language>
 			<language type="fil">ఫిలిపినో</language>
-			<language type="fiu">ఫిన్నో- యుగ్రియన్ భాష</language>
 			<language type="fj">ఫిజియన్</language>
 			<language type="fo">ఫారోయీజ్</language>
 			<language type="fon">ఫాన్</language>
@@ -184,7 +159,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">గాయో</language>
 			<language type="gba">గ్బాయా</language>
 			<language type="gd">స్కాటిష్ గేలిక్</language>
-			<language type="gem">జర్మేనిక్ భాష</language>
 			<language type="gez">జీజ్</language>
 			<language type="gil">గిల్బర్టీస్</language>
 			<language type="gl">గెలిషియన్</language>
@@ -206,7 +180,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">హీబ్రు</language>
 			<language type="hi">హిందీ</language>
 			<language type="hil">హిలి గేయినోన్</language>
-			<language type="him">హిమాచలి</language>
 			<language type="hit">హిట్టిటే</language>
 			<language type="hmn">మోంగ్</language>
 			<language type="ho">హిరి మోటు</language>
@@ -224,15 +197,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">ఇంటర్ లింగ్</language>
 			<language type="ig">ఇగ్బో</language>
 			<language type="ii">శిషువన్ ఈ</language>
-			<language type="ijo">ఐజో</language>
 			<language type="ik">ఇనూపైఏక్</language>
 			<language type="ilo">ఐయోకో</language>
-			<language type="inc">భారతీయ భాష</language>
-			<language type="ine">ఇండో-ఐరోపియన్ భాష</language>
 			<language type="inh">ఇంగుష్</language>
 			<language type="io">ఈడౌ</language>
-			<language type="ira">ఇరానియన్ భాష</language>
-			<language type="iro">ఇరోక్వియన్ భాష</language>
 			<language type="is">ఐస్లాండిక్</language>
 			<language type="it">ఇటాలియన్</language>
 			<language type="iu">ఇనుక్టిటుట్</language>
@@ -247,14 +215,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">కాచిన్</language>
 			<language type="kaj">జ్యూ</language>
 			<language type="kam">కంబా</language>
-			<language type="kar">కరెన్</language>
 			<language type="kaw">కావి</language>
 			<language type="kbd">కబార్డియన్</language>
 			<language type="kcg">ట్యాప్</language>
 			<language type="kfo">కోరో</language>
 			<language type="kg">కోంగో</language>
 			<language type="kha">ఖాసి</language>
-			<language type="khi">ఖోఇసన్ భాష</language>
 			<language type="kho">ఖటోనీస్</language>
 			<language type="ki">కికుయు</language>
 			<language type="kj">క్వాన్యామ</language>
@@ -270,7 +236,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">కానురి</language>
 			<language type="krc">కరచే-బల్కార్</language>
 			<language type="krl">కరేలియన్</language>
-			<language type="kro">కృ</language>
 			<language type="kru">కూరుఖ్</language>
 			<language type="ks">కాశ్మీరి</language>
 			<language type="ku">కర్డిష్</language>
@@ -304,7 +269,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">మైథిలి</language>
 			<language type="mak">మకాసార్</language>
 			<language type="man">మండింగో</language>
-			<language type="map">ఆస్ట్రోనిశియన్</language>
 			<language type="mas">మాసాయి</language>
 			<language type="mdf">మొక్షా</language>
 			<language type="mdr">మండార్</language>
@@ -316,31 +280,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mi">మయోరి</language>
 			<language type="mic">మికమాక్</language>
 			<language type="min">మినాంగ్కాబో</language>
-			<language type="mis">మిశ్రమ భాష</language>
 			<language type="mk">మసడోనియన్</language>
-			<language type="mkh">మోన్-ఖ్మేర్ భాష</language>
 			<language type="ml">మలయాళం</language>
 			<language type="mn">మంగోలియన్</language>
 			<language type="mnc">మంచు</language>
 			<language type="mni">మణిపూరి</language>
-			<language type="mno">మనోబో భాష</language>
-			<language type="mo">మొల్డావియన్</language>
 			<language type="moh">మోహుక్</language>
 			<language type="mos">మోస్సి</language>
 			<language type="mr">మరాఠీ</language>
 			<language type="ms">మలేయ్</language>
 			<language type="mt">మాల్టీస్</language>
 			<language type="mul">బహుళ భాషలు</language>
-			<language type="mun">ముండ భాష</language>
 			<language type="mus">క్రీక్</language>
 			<language type="mwl">మిరాండిస్</language>
 			<language type="mwr">మార్వాడి</language>
 			<language type="my">బర్మీస్</language>
-			<language type="myn">మాయన్ భాష</language>
 			<language type="myv">ఎర్జియా</language>
 			<language type="na">నౌరు</language>
-			<language type="nah">నాహుఅటిల్</language>
-			<language type="nai">ఉత్తర అమెరికా ఇండియన్ భాష</language>
 			<language type="nap">నియాపోలిటన్</language>
 			<language type="nb">నార్వీజియన్ బొక్మాల్</language>
 			<language type="nd">ఉత్తర దెబెలె</language>
@@ -349,7 +305,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">నెవారి</language>
 			<language type="ng">దోంగా</language>
 			<language type="nia">నియాస్</language>
-			<language type="nic">నైజర్- కోర్దోఫియన్ భాష</language>
 			<language type="niu">నియూఇయాన్</language>
 			<language type="nl">డచ్</language>
 			<language type="nl_BE">ఫ్లెమిష్</language>
@@ -360,7 +315,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">న్కో</language>
 			<language type="nr">దక్షిణ దెబెలె</language>
 			<language type="nso">ఉత్తర సోతో</language>
-			<language type="nub">నూబియన్ భాష</language>
 			<language type="nv">నవాహో</language>
 			<language type="nwc">సాంప్రదాయ న్యుఆరి</language>
 			<language type="ny">న్యాన్జా</language>
@@ -375,21 +329,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">ఒసేటిక్</language>
 			<language type="osa">ఒసాజ్</language>
 			<language type="ota">ఒట్టోమన్ టర్కిష్</language>
-			<language type="oto">ఒటోమియన్ భాష</language>
 			<language type="pa">పంజాబీ</language>
-			<language type="paa">పాపుఅన్ భాష</language>
 			<language type="pag">పంగా సినాన్</language>
 			<language type="pal">పహ్లావి</language>
 			<language type="pam">పంపగ్న</language>
 			<language type="pap">పపియమేంటో</language>
 			<language type="pau">పాలుఆన్</language>
 			<language type="peo">ప్రాచీన పర్షియన్</language>
-			<language type="phi">ఫిలిప్పీన్ భాష</language>
 			<language type="phn">ఫోనికన్</language>
 			<language type="pi">పాలీ</language>
 			<language type="pl">పోలిష్</language>
 			<language type="pon">పోహ్న్పెయన్</language>
-			<language type="pra">ప్రాక్రిత్ భాష</language>
 			<language type="pro">ప్రాచీన ప్రోవెంసాల్</language>
 			<language type="ps">పాష్టో</language>
 			<language type="ps" alt="variant">పుష్టో</language>
@@ -403,7 +353,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">రోమన్ష్</language>
 			<language type="rn">రండి</language>
 			<language type="ro">రోమానియన్</language>
-			<language type="roa">రోమాన్స్ భాష</language>
+			<language type="ro_MD">మొల్డావియన్</language>
 			<language type="rom">రోమానీ</language>
 			<language type="root">రూట్</language>
 			<language type="ru">రష్యన్</language>
@@ -412,8 +362,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">సంస్కృతం</language>
 			<language type="sad">సండావి</language>
 			<language type="sah">యాకుట్</language>
-			<language type="sai">దక్షిణ అమెరికా ఇండియన్ భాష</language>
-			<language type="sal">సాలిషాన్ భాష</language>
 			<language type="sam">సమారిటన్ అరమేక్</language>
 			<language type="sas">ససక్</language>
 			<language type="sat">సంటాలి</language>
@@ -423,22 +371,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">సింధీ</language>
 			<language type="se">ఉత్తర సామి</language>
 			<language type="sel">సేల్కప్</language>
-			<language type="sem">సెమిటిక్ భాష</language>
 			<language type="sg">సాంగో</language>
 			<language type="sga">ప్రాచీన ఐరిష్</language>
-			<language type="sgn">సంజ్ఞ భాష</language>
 			<language type="sh">సేర్బో-క్రొయేషియన్</language>
 			<language type="shn">షాన్</language>
 			<language type="si">సింహళం</language>
 			<language type="sid">సిడామో</language>
-			<language type="sio">షిఒయన్ భాష</language>
-			<language type="sit">సైనో- టిబిటన్ భాష</language>
 			<language type="sk">స్లోవాక్</language>
 			<language type="sl">స్లోవేనియాన్</language>
-			<language type="sla">స్లావిక్ భాష</language>
 			<language type="sm">సమోవన్</language>
 			<language type="sma">దక్షిణ సామి</language>
-			<language type="smi">సామి భాష</language>
 			<language type="smj">లులే సామి</language>
 			<language type="smn">ఇనారి సామి</language>
 			<language type="sms">స్కోల్ట్ సామి</language>
@@ -446,13 +388,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">సోనింకి</language>
 			<language type="so">సోమాలి</language>
 			<language type="sog">సోగ్డియన్</language>
-			<language type="son">సొంఘై</language>
 			<language type="sq">అల్బేనియన్</language>
 			<language type="sr">సెర్బియన్</language>
 			<language type="srn">స్రానన్ టోనగో</language>
 			<language type="srr">సెరేర్</language>
 			<language type="ss">స్వాతి</language>
-			<language type="ssa">నీలో సహారా భాష</language>
 			<language type="st">దక్షిణ సోతో</language>
 			<language type="su">సుడానీస్</language>
 			<language type="suk">సుకుమా</language>
@@ -464,7 +404,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">సాంప్రదాయ సిరియాక్</language>
 			<language type="syr">సిరియాక్</language>
 			<language type="ta">తమిళము</language>
-			<language type="tai">టై భాష</language>
 			<language type="te">తెలుగు</language>
 			<language type="tem">టింనే</language>
 			<language type="ter">టెరెనో</language>
@@ -489,8 +428,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">శింషీయన్</language>
 			<language type="tt">టాటర్</language>
 			<language type="tum">టుంబుకా</language>
-			<language type="tup">టుపి భాష</language>
-			<language type="tut">ఆల్టియాక్ భాష</language>
 			<language type="tvl">టువాలు</language>
 			<language type="tw">ట్వి</language>
 			<language type="ty">తహితియన్</language>
@@ -509,11 +446,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vo">వోలాపుక్</language>
 			<language type="vot">వోటిక్</language>
 			<language type="wa">వాలూన్</language>
-			<language type="wak">వాక్షన్ భాష</language>
 			<language type="wal">వాలామో</language>
 			<language type="war">వారే</language>
 			<language type="was">వాషో</language>
-			<language type="wen">సోర్బియన్ భాష</language>
 			<language type="wo">వొలాఫ్</language>
 			<language type="xal">కల్మిక్</language>
 			<language type="xh">షోసా</language>
@@ -521,7 +456,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="yap">యాపిస్</language>
 			<language type="yi">ఇడ్డిష్</language>
 			<language type="yo">యోరుబా</language>
-			<language type="ypk">యుపిక్ భాష</language>
 			<language type="yue">కాంటనీస్</language>
 			<language type="za">జువాన్</language>
 			<language type="zap">జపోటెక్</language>
@@ -531,7 +465,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">చైనీస్</language>
 			<language type="zh_Hans">సరళీకృత చైనీస్</language>
 			<language type="zh_Hant">సాంప్రదాయ చైనీస్</language>
-			<language type="znd">జండే</language>
 			<language type="zu">జూలూ</language>
 			<language type="zun">జుని</language>
 			<language type="zxx">లిపి లేదు</language>
@@ -1986,9 +1919,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>పామెర్</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>దక్షిణ ధృవం</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>స్యోవా</exemplarCity>
 			</zone>
@@ -2261,9 +2191,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>టొరంటో</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>మోన్‌ట్రియల్</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>ఇక్వాలిట్</exemplarCity>
@@ -3107,9 +3034,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ఫోనిక్స్</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>షిప్‌రోక్</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>డెన్వెర్</exemplarCity>

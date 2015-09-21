@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Element_Recyclebin extends Pimcore_Model_Abstract {
+
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model;
+
+class Recyclebin extends Model\AbstractModel {
     
     public function flush () {
         $this->getResource()->flush();

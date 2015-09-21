@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -35,7 +35,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -44,7 +44,7 @@ class Zend_Mobile_Push_Mpns extends Zend_Mobile_Push_Abstract
     /**
      * Http Client
      *
-     * @var Client
+     * @var Zend_Http_Client
      */
     protected $_httpClient;
 
@@ -78,9 +78,15 @@ class Zend_Mobile_Push_Mpns extends Zend_Mobile_Push_Abstract
     /**
      * Send Message
      *
-     * @param Zend_Mobile_Push_Message_Mpns $message
-     * @return boolean
+     * @param  Zend_Mobile_Push_Message_Abstract $message
+     * @throws Zend_Http_Client_Exception
      * @throws Zend_Mobile_Push_Exception
+     * @throws Zend_Mobile_Push_Exception_DeviceQuotaExceeded
+     * @throws Zend_Mobile_Push_Exception_InvalidPayload
+     * @throws Zend_Mobile_Push_Exception_InvalidToken
+     * @throws Zend_Mobile_Push_Exception_QuotaExceeded
+     * @throws Zend_Mobile_Push_Exception_ServerUnavailable
+     * @return boolean
      */
     public function send(Zend_Mobile_Push_Message_Abstract $message)
     {

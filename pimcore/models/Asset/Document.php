@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Document extends Asset {
+namespace Pimcore\Model\Asset;
+
+use Pimcore\Model\Cache;
+use Pimcore\Model;
+use Pimcore\Tool;
+
+class Document extends Model\Asset {
 
     /**
      * @var string
@@ -37,6 +43,8 @@ class Asset_Document extends Asset {
             } catch (\Exception $e) {
 
             }
+
+            unlink($tmpFile);
         }
 
         parent::update();
@@ -48,20 +56,20 @@ class Asset_Document extends Asset {
             $path = $this->getFileSystemPath();
         }
 
-        if(!Pimcore_Document::isAvailable()) {
-            Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
+        if(!\Pimcore\Document::isAvailable()) {
+            \Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
             return null;
         }
 
         try {
-            $converter = Pimcore_Document::getInstance();
+            $converter = \Pimcore\Document::getInstance();
             $converter->load($path);
 
             // read from blob here, because in $this->update() (see above) $this->getFileSystemPath() contains the old data
             $pageCount = $converter->getPageCount();
             return $pageCount;
         } catch (\Exception $e) {
-            Logger::error($e);
+            \Logger::error($e);
         }
 
         return $pageCount;
@@ -85,52 +93,58 @@ class Asset_Document extends Asset {
         // just 4 testing
         //$this->clearThumbnails(true);
 
-        if(!Pimcore_Document::isAvailable()) {
-            Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
+        if(!\Pimcore\Document::isAvailable()) {
+            \Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
             return "/pimcore/static/img/filetype-not-supported.png";
         }
 
-        $thumbnail = Asset_Image_Thumbnail_Config::getByAutoDetect($thumbnailName);
+        $thumbnail = Image\Thumbnail\Config::getByAutoDetect($thumbnailName);
         $thumbnail->setName("document_" . $thumbnail->getName()."-".$page);
 
         try {
             if(!$deferred) {
-                $converter = Pimcore_Document::getInstance();
+                $converter = \Pimcore\Document::getInstance();
                 $converter->load($this->getFileSystemPath());
                 $path = PIMCORE_TEMPORARY_DIRECTORY . "/document-image-cache/document_" . $this->getId() . "__thumbnail_" .  $page . ".png";
                 if(!is_dir(dirname($path))) {
-                    Pimcore_File::mkdir(dirname($path));
+                    \Pimcore\File::mkdir(dirname($path));
                 }
 
-                if(!is_file($path)) {
+                $lockKey = "document-thumbnail-" . $this->getId() . "-" . $page;
+
+                if(!is_file($path) && !Model\Tool\Lock::isLocked($lockKey)) {
+                    Model\Tool\Lock::lock($lockKey);
                     $converter->saveImage($path, $page);
+                    Model\Tool\Lock::release($lockKey);
+                } else if(Model\Tool\Lock::isLocked($lockKey)) {
+                    return "/pimcore/static/img/please-wait.png";
                 }
             }
 
             if($thumbnail) {
-                $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail, $path, $deferred);
+                $path = Image\Thumbnail\Processor::process($this, $thumbnail, $path, $deferred);
             }
 
             return preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT) . "@", "", $path);
-        } catch (Exception $e) {
-            Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath());
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath());
+            \Logger::error($e);
         }
 
         return "/pimcore/static/img/filetype-not-supported.png";
     }
 
     public function getText($page = null) {
-        if(Pimcore_Document::isAvailable() && Pimcore_Document::isFileTypeSupported($this->getFilename())) {
+        if(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
             $cacheKey = "asset_document_text_" . $this->getId() . "_" . ($page ? $page : "all");
-            if(!$text = Pimcore_Model_Cache::load($cacheKey)) {
-                $document = Pimcore_Document::getInstance();
+            if(!$text = Cache::load($cacheKey)) {
+                $document = \Pimcore\Document::getInstance();
                 $text = $document->getText($page, $this->getFileSystemPath());
-                Pimcore_Model_Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
+                Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
             }
             return $text;
         } else {
-            Logger::error("Couldn't get text out of document " . $this->getFullPath() . " no document adapter is available");
+            \Logger::error("Couldn't get text out of document " . $this->getFullPath() . " no document adapter is available");
         }
 
         return null;

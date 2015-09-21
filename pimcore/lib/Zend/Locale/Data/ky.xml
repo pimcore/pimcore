@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ky"/>
 	</identity>
 	<localeDisplayNames>
@@ -26,7 +26,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">азербайжанча</language>
 			<language type="be">беларусча</language>
 			<language type="bg">болгарияча</language>
-			<language type="bh">бихариче</language>
 			<language type="bn">бангладешче</language>
 			<language type="bo">тибетче</language>
 			<language type="br">бретон</language>
@@ -151,7 +150,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vi">вьетнамча</language>
 			<language type="wo">уолофчо</language>
 			<language type="xh">косача</language>
-			<language type="yi">еврей</language>
+			<language type="yi">идишче</language>
 			<language type="yo">йорубача</language>
 			<language type="zgh">марокко тамазигт адабий тилинде</language>
 			<language type="zh">кытайча</language>
@@ -1371,9 +1370,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Палмер</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Түштүк Уюл</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Саоа</exemplarCity>
 			</zone>
@@ -1646,9 +1642,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Торонто</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Монреал</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Икалуит</exemplarCity>
@@ -2492,9 +2485,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Феникс</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Шипрок</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Денвер</exemplarCity>

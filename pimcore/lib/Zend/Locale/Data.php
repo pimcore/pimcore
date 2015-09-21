@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage Data
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -34,7 +34,7 @@
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage Data
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Locale_Data
@@ -42,8 +42,7 @@ class Zend_Locale_Data
     /**
      * Locale files
      *
-     * @var ressource
-     * @access private
+     * @var array
      */
     private static $_ldml = array();
 
@@ -51,7 +50,6 @@ class Zend_Locale_Data
      * List of values which are collected
      *
      * @var array
-     * @access private
      */
     private static $_list = array();
 
@@ -59,7 +57,6 @@ class Zend_Locale_Data
      * Internal cache for ldml values
      *
      * @var Zend_Cache_Core
-     * @access private
      */
     private static $_cache = null;
 
@@ -73,8 +70,7 @@ class Zend_Locale_Data
     /**
      * Internal option, cache disabled
      *
-     * @var    boolean
-     * @access private
+     * @var boolean
      */
     private static $_cacheDisabled = false;
 
@@ -147,8 +143,8 @@ class Zend_Locale_Data
      * @param  string $attribute
      * @param  string $value
      * @param  array  $temp
+     * @return bool
      * @throws Zend_Locale_Exception
-     * @access private
      */
     private static function _findRoute($locale, $path, $attribute, $value, &$temp)
     {
@@ -223,11 +219,13 @@ class Zend_Locale_Data
     /**
      * Read the right LDML file
      *
-     * @param  string $locale
-     * @param  string $path
-     * @param  string $attribute
-     * @param  string $value
-     * @access private
+     * @param  string      $locale
+     * @param  string      $path
+     * @param  string|bool $attribute
+     * @param  string|bool $value
+     * @param  array       $temp
+     * @return array
+     * @throws Zend_Locale_Exception
      */
     private static function _getFile($locale, $path, $attribute = false, $value = false, $temp = array())
     {
@@ -243,6 +241,14 @@ class Zend_Locale_Data
         // 3. -> zh
         // 4. -> root
         if (($locale != 'root') && ($result)) {
+            // Search for parent locale
+            if (false !== strpos($locale, '_')) {
+                $parentLocale = self::getContent($locale, 'parentlocale');
+                if ($parentLocale) {
+                    $temp = self::_getFile($parentLocale, $path, $attribute, $value, $temp);
+                }
+            }
+
             $locale = substr($locale, 0, -strlen(strrchr($locale, '_')));
             if (!empty($locale)) {
                 $temp = self::_getFile($locale, $path, $attribute, $value, $temp);
@@ -278,8 +284,9 @@ class Zend_Locale_Data
     /**
      * Internal function for checking the locale
      *
-     * @param string|Zend_Locale $locale Locale to check
+     * @param  string|Zend_Locale $locale Locale to check
      * @return string
+     * @throws Zend_Locale_Exception
      */
     private static function _checkLocale($locale)
     {
@@ -292,17 +299,21 @@ class Zend_Locale_Data
             throw new Zend_Locale_Exception("Locale (" . (string) $locale . ") is a unknown locale");
         }
 
+        if (Zend_Locale::isAlias($locale)) {
+            // Return a valid CLDR locale so that the XML file can be loaded.
+            return Zend_Locale::getAlias($locale);
+        }
         return (string) $locale;
     }
 
     /**
      * Read the LDML file, get a array of multipath defined value
      *
-     * @param  string $locale
-     * @param  string $path
-     * @param  string $value
+     * @param  string      $locale
+     * @param  string      $path
+     * @param  bool|string $value
      * @return array
-     * @access public
+     * @throws Zend_Locale_Exception
      */
     public static function getList($locale, $path, $value = false)
     {
@@ -323,7 +334,7 @@ class Zend_Locale_Data
         }
 
         $val = urlencode($val);
-        $id = strtr('Zend_LocaleL_' . $locale . '_' . $path . '_' . $val, array('-' => '_', '%' => '_', '+' => '_'));
+        $id  = self::_filterCacheId('Zend_LocaleL_' . $locale . '_' . $path . '_' . $val);
         if (!self::$_cacheDisabled && ($result = self::$_cache->load($id))) {
             return unserialize($result);
         }
@@ -948,11 +959,11 @@ class Zend_Locale_Data
     /**
      * Read the LDML file, get a single path defined value
      *
-     * @param  string $locale
-     * @param  string $path
-     * @param  string $value
+     * @param  string      $locale
+     * @param  string      $path
+     * @param  bool|string $value
      * @return string
-     * @access public
+     * @throws Zend_Locale_Exception
      */
     public static function getContent($locale, $path, $value = false)
     {
@@ -972,7 +983,7 @@ class Zend_Locale_Data
             $val = implode('_' , $value);
         }
         $val = urlencode($val);
-        $id = strtr('Zend_LocaleC_' . $locale . '_' . $path . '_' . $val, array('-' => '_', '%' => '_', '+' => '_'));
+        $id  = self::_filterCacheId('Zend_LocaleC_' . $locale . '_' . $path . '_' . $val);
         if (!self::$_cacheDisabled && ($result = self::$_cache->load($id))) {
             return unserialize($result);
         }
@@ -1471,6 +1482,13 @@ class Zend_Locale_Data
                 $temp = self::_getFile($locale, '/ldml/units/unitLength/unit[@type=\'' . $value[0] . '\']/unitPattern[@count=\'' . $value[1] . '\']', '');
                 break;
 
+            case 'parentlocale':
+                if (false === $value) {
+                    $value = $locale;
+                }
+                $temp = self::_getFile('supplementalData', "/supplementalData/parentLocales/parentLocale[contains(@locales, '" . $value . "')]", 'parent', 'parent');
+                break;
+
             default :
                 // require_once 'Zend/Locale/Exception.php';
                 throw new Zend_Locale_Exception("Unknown detail ($path) for parsing locale data.");
@@ -1553,7 +1571,7 @@ class Zend_Locale_Data
     /**
      * Disables the cache
      *
-     * @param unknown_type $flag
+     * @param bool $flag
      */
     public static function disableCache($flag)
     {
@@ -1563,7 +1581,7 @@ class Zend_Locale_Data
     /**
      * Internal method to check if the given cache supports tags
      *
-     * @param Zend_Cache $cache
+     * @return bool
      */
     private static function _getTagSupportForCache()
     {
@@ -1576,5 +1594,24 @@ class Zend_Locale_Data
         }
 
         return self::$_cacheTags;
+    }
+
+    /**
+     * Filter an ID to only allow valid variable characters
+     *
+     * @param  string $value
+     * @return string
+     */
+    protected static function _filterCacheId($value)
+    {
+        return strtr(
+            $value,
+            array(
+                '-' => '_',
+                '%' => '_',
+                '+' => '_',
+                '.' => '_',
+            )
+        );
     }
 }

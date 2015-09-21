@@ -15,58 +15,39 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Site_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Site;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("sites");
-    }
-
-    /**
-     * Get the data for the object from database for the given id
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id) {
         $data = $this->db->fetchRow("SELECT * FROM sites WHERE id = ?", $id);
         if (!$data["id"]) {
-            throw new Exception("there is no site for the requested id");
+            throw new \Exception("there is no site for the requested id");
         }
         $this->assignVariablesToModel($data);
     }
 
     /**
-     * Get the data for the object from database for the given root-id (which is a document-id)
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getByRootId($id) {
         $data = $this->db->fetchRow("SELECT * FROM sites WHERE rootId = ?", $id);
         if (!$data["id"]) {
-            throw new Exception("there is no site for the requested rootId");
+            throw new \Exception("there is no site for the requested rootId");
         }
         $this->assignVariablesToModel($data);
     }
 
     /**
-     * Get the data for the object from database for the given domain
-     *
-     * @param string $domain
-     * @return void
+     * @param $domain
+     * @throws \Exception
      */
     public function getByDomain($domain) {
         $data = $this->db->fetchRow("SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?", array($domain, "%\"" . $domain . "\"%"));
@@ -97,7 +78,7 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
             }
 
             if (!$data["id"]) {
-                throw new Exception("there is no site for the requested domain");
+                throw new \Exception("there is no site for the requested domain");
             }
         }
         $this->assignVariablesToModel($data);
@@ -142,10 +123,10 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
         $site = get_object_vars($this->model);
 
         foreach ($site as $key => $value) {
-            if (in_array($key, $this->validColumns)) {
+            if (in_array($key, $this->getValidTableColumns("sites"))) {
 
                 if (is_array($value) || is_object($value)) {
-                    $value = Pimcore_Tool_Serialize::serialize($value);
+                    $value = \Pimcore\Tool\Serialize::serialize($value);
                 }
                 if(is_bool($value)) {
                     $value = (int) $value;

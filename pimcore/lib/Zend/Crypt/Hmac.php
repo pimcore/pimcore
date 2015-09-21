@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage Hmac
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@
  * @todo       Check if mhash() is a required alternative (will be PECL-only soon)
  * @category   Zend
  * @package    Zend_Crypt
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Crypt_Hmac extends Zend_Crypt
@@ -85,7 +85,7 @@ class Zend_Crypt_Hmac extends Zend_Crypt
      * @param string $hash
      * @param string $data
      * @param string $output
-     * @param boolean $internal
+     * @throws Zend_Crypt_Hmac_Exception
      * @return string
      */
     public static function compute($key, $hash, $data, $output = self::STRING)
@@ -108,6 +108,7 @@ class Zend_Crypt_Hmac extends Zend_Crypt
      * Setter for the hash method.
      *
      * @param string $hash
+     * @throws Zend_Crypt_Hmac_Exception
      * @return Zend_Crypt_Hmac
      */
     protected static function _setHashAlgorithm($hash)
@@ -147,7 +148,7 @@ class Zend_Crypt_Hmac extends Zend_Crypt
     {
         if (function_exists('hash_hmac')) {
             if ($output == self::BINARY) {
-                return hash_hmac(self::$_hashAlgorithm, $data, self::$_key, 1);
+                return hash_hmac(self::$_hashAlgorithm, $data, self::$_key, true);
             }
             return hash_hmac(self::$_hashAlgorithm, $data, self::$_key);
         }

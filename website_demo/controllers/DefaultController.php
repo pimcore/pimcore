@@ -1,6 +1,8 @@
 <?php
 
-class DefaultController extends Website_Controller_Action {
+use Website\Controller\Action;
+
+class DefaultController extends Action {
 
 	public function defaultAction () {
 

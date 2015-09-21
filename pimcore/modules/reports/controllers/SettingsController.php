@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports {
+class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports {
     
     public function getAction () {
 
@@ -33,27 +33,14 @@ class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports
 
         $this->checkPermission("system_settings");
 
-        $values = Zend_Json::decode($this->getParam("data"));
+        $values = \Zend_Json::decode($this->getParam("data"));
 
-        $config = new Zend_Config($values, true);
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($values, true);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml"
         ));
         $writer->write();
-
-        $this->_helper->json(array("success" => true));
-    }
-
-    public function cleanupExistingContentAnalysisDataAction() {
-
-
-        $patterns = explode("\n", $this->getParam("excludePatterns"));
-
-        if(count($patterns) > 0) {
-            $service = new Tool_ContentAnalysis_Service();
-            $service->cleanupExistingData($patterns);
-        }
 
         $this->_helper->json(array("success" => true));
     }

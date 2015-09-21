@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage Renderer
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Image.php 20366 2010-01-18 03:56:52Z ralph $
  */
@@ -28,7 +28,7 @@
  *
  * @category   Zend
  * @package    Zend_Barcode
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Barcode_Renderer_Svg extends Zend_Barcode_Renderer_RendererAbstract
@@ -60,9 +60,10 @@ class Zend_Barcode_Renderer_Svg extends Zend_Barcode_Renderer_RendererAbstract
 
     /**
      * Set height of the result image
+     *
      * @param null|integer $value
      * @return Zend_Image_Barcode_Abstract
-     * @throw Zend_Image_Barcode_Exception
+     * @throws Zend_Barcode_Renderer_Exception
      */
     public function setHeight($value)
     {
@@ -90,7 +91,8 @@ class Zend_Barcode_Renderer_Svg extends Zend_Barcode_Renderer_RendererAbstract
      * Set barcode width
      *
      * @param mixed $value
-     * @return void
+     * @return self
+     * @throws Zend_Barcode_Renderer_Exception
      */
     public function setWidth($value)
     {
@@ -117,9 +119,9 @@ class Zend_Barcode_Renderer_Svg extends Zend_Barcode_Renderer_RendererAbstract
     /**
      * Set an image resource to draw the barcode inside
      *
-     * @param DOMDocument $value
+     * @param $svg
      * @return Zend_Barcode_Renderer
-     * @throw Zend_Barcode_Renderer_Exception
+     * @throws Zend_Barcode_Renderer_Exception
      */
     public function setResource($svg)
     {
@@ -237,6 +239,7 @@ class Zend_Barcode_Renderer_Svg extends Zend_Barcode_Renderer_RendererAbstract
      * Check barcode dimensions
      *
      * @return void
+     * @throws Zend_Barcode_Renderer_Exception
      */
     protected function _checkDimensions()
     {
@@ -341,13 +344,13 @@ class Zend_Barcode_Renderer_Svg extends Zend_Barcode_Renderer_RendererAbstract
     /**
      * Draw a polygon in the svg resource
      *
-     * @param string $text
-     * @param float $size
-     * @param array $position
-     * @param string $font
-     * @param integer $color
-     * @param string $alignment
-     * @param float $orientation
+     * @param string    $text
+     * @param float     $size
+     * @param array     $position
+     * @param string    $font
+     * @param integer   $color
+     * @param string    $alignment
+     * @param float|int $orientation
      */
     protected function _drawText($text, $size, $position, $font, $color, $alignment = 'center', $orientation = 0)
     {

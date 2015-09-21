@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -13,12 +13,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
+
+use Pimcore\Model\Asset;
+use Pimcore\Model\Tool\TmpStore;
+
+class Thumbnail extends \Zend_Controller_Plugin_Abstract {
 
     /**
-     * @param Zend_Controller_Request_Abstract $request
+     * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(Zend_Controller_Request_Abstract $request) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
@@ -29,33 +34,38 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
 
             if($asset = Asset::getById($assetId)) {
                 try {
-
+                    $page = 1;
+                    $thumbnailFile = null;
                     $thumbnailConfig = null;
-                    $deferredConfig = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $assetId . "__" . md5($request->getPathInfo()) . ".deferred.config";
-                    if(file_exists($deferredConfig)) {
-                        $thumbnailConfig = unserialize(file_get_contents($deferredConfig));
-                        @unlink($deferredConfig); // cleanup, this isn't needed anymore
-                        if(!$thumbnailConfig instanceof Asset_Image_Thumbnail_Config) {
-                            throw new \Exception("Deferred thumbnail config file doesn't contain a valid Asset_Image_Thumbnail_Config object");
-                        }
-                    } else {
-                        // just check if the thumbnail exists -> throws exception otherwise
-                        $thumbnailConfig = Asset_Image_Thumbnail_Config::getByName($thumbnailName);
-                    }
+                    $deferredConfigId = "thumb_" . $assetId . "__" . md5($request->getPathInfo());
+                    if($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
+                        $thumbnailConfig = $thumbnailConfigItem->getData();
+                        TmpStore::delete($deferredConfigId);
 
-                    if($asset instanceof Asset_Document) {
-                        $page = 1;
+                        if(!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
+                            throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
+                        }
 
                         $tmpPage = array_pop(explode("-", $thumbnailName));
                         if(is_numeric($tmpPage)) {
                             $page = $tmpPage;
                         }
+                    } else {
+                        //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
+                        if(preg_match("|document_(.*)\-(\d+)$|",$thumbnailName,$matchesThumbs)){
+                            $thumbnailName = $matchesThumbs[1];
+                            $page = (int)$matchesThumbs[2];
+                        }
+                        // just check if the thumbnail exists -> throws exception otherwise
+                        $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
+                    }
 
+                    if($asset instanceof Asset\Document) {
                         $thumbnailConfig->setName(preg_replace("/\-[\d]+/","",$thumbnailConfig->getName()));
                         $thumbnailConfig->setName(str_replace("document_","",$thumbnailConfig->getName()));
 
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getImageThumbnail($thumbnailConfig, $page);
-                    } else if ($asset instanceof Asset_Image) {
+                    } else if ($asset instanceof Asset\Image) {
                         //check if high res image is called
                         if(array_key_exists(5, $matches)) {
                             $highResFactor = (float) str_replace(array("@","x"),"", $matches[5]);
@@ -65,34 +75,43 @@ class Pimcore_Controller_Plugin_Thumbnail extends Zend_Controller_Plugin_Abstrac
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailConfig);
                     }
 
-                    $imageContent = file_get_contents($thumbnailFile);
-                    $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
-                    if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
-                        header("Content-Type: image/".$fileExtension, true);
-                    } else {
-                        header("Content-Type: " . $asset->getMimetype(), true);
+                    if($thumbnailFile && file_exists($thumbnailFile)) {
+                        $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
+                        if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
+                            header("Content-Type: image/".$fileExtension, true);
+                        } else {
+                            header("Content-Type: " . $asset->getMimetype(), true);
+                        }
+
+                        header("Content-Length: " . filesize($thumbnailFile), true);
+                        while (@ob_end_flush()) ;
+                        flush();
+
+                        readfile($thumbnailFile);
+                        exit;
                     }
-
-                    header("Content-Length: " . filesize($thumbnailFile), true);
-                    echo $imageContent;
-                    exit;
-
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // nothing to do
-                    Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
+                    \Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
                 }
             }
         }
     }
 
-
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
 
-        if(!Asset_Image_Thumbnail::isPictureElementInUse()) {
+        if(!Asset\Image\Thumbnail::isPictureElementInUse()) {
             return;
         }
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!Asset\Image\Thumbnail::getEmbedPicturePolyfill()) {
+            return;
+        }
+
+        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 

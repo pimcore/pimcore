@@ -25,11 +25,11 @@
         }
 
         #container h1.facebook {
-            background: url(/pimcore/static/img/icon/facebook-like.png) left center no-repeat;
+            background: url(/pimcore/static6/img/icon/facebook-like.png) left center no-repeat;
         }
 
         #container h1.gplus {
-            background: url(/pimcore/static/img/icon/google-plus-icon.png) left center no-repeat;
+            background: url(/pimcore/static6/img/icon/google-plus-icon.png) left center no-repeat;
         }
 
         .statistics-list {
@@ -135,32 +135,32 @@
                         <div class="triangle up"></div>
                     </div>
                 <?php } ?>
-                <div class="amount"><?php echo $this->summary["timeline"]["facebook"][0]; ?></div>
+                <div class="amount"><?= $this->summary["timeline"]["facebook"][0]; ?></div>
                 <?php if (!$fbTrendUp) { ?>
                     <div class="trend">
                         <div class="triangle down"></div>
                     </div>
                 <?php } ?>
                 <div class="sparkline">
-                    <img src="https://chart.googleapis.com/chart?chf=bg,s,323232&cht=lc&chs=180x40&chd=t:<?php echo implode(",",$this->summary["timeline"]["facebook"]); ?>&chds=<?php echo min($this->summary["timeline"]["facebook"]); ?>,<?php echo max($this->summary["timeline"]["facebook"]); ?>&" />
+                    <img src="https://chart.googleapis.com/chart?chf=bg,s,323232&cht=lc&chs=180x40&chd=t:<?= implode(",",$this->summary["timeline"]["facebook"]); ?>&chds=<?= min($this->summary["timeline"]["facebook"]); ?>,<?= max($this->summary["timeline"]["facebook"]); ?>&" />
                 </div>
             </div>
             <div class="list">
                 <table>
                     <tr>
-                        <th colspan="2"><?php echo $this->translate("top_shares_pages"); ?></th>
+                        <th colspan="2"><?= $this->translate("top_shares_pages"); ?></th>
                     </tr>
                     <?php foreach ($this->summary["top"]["facebook"] as $top) { ?>
                         <tr>
-                            <td valign="top" style="padding-right: 5px;"><?php echo $top["shares"]; ?></td>
-                            <td><?php echo $top["url"]; ?></td>
+                            <td valign="top" style="padding-right: 5px;"><?= $top["shares"]; ?></td>
+                            <td><?= $top["url"]; ?></td>
                         </tr>
                     <?php } ?>
                 </table>
             </div>
         <?php } else { ?>
             <div class="text">
-                <?php echo $this->translate("sorry_no_data_available"); ?>
+                <?= $this->translate("sorry_no_data_available"); ?>
             </div>
         <?php } ?>
         <span class="clear"></span>
@@ -185,32 +185,32 @@
                         <div class="triangle up"></div>
                     </div>
                 <?php } ?>
-                <div class="amount"><?php echo $this->summary["timeline"]["plusone"][0]; ?></div>
+                <div class="amount"><?= $this->summary["timeline"]["plusone"][0]; ?></div>
                 <?php if (!$poTrendUp) { ?>
                     <div class="trend">
                         <div class="triangle down"></div>
                     </div>
                 <?php } ?>
                 <div class="sparkline">
-                    <img src="https://chart.googleapis.com/chart?chf=bg,s,323232&cht=lc&chs=180x40&chd=t:<?php echo implode(",",$this->summary["timeline"]["plusone"]); ?>&chds=<?php echo min($this->summary["timeline"]["plusone"]); ?>,<?php echo max($this->summary["timeline"]["plusone"]); ?>&" />
+                    <img src="https://chart.googleapis.com/chart?chf=bg,s,323232&cht=lc&chs=180x40&chd=t:<?= implode(",",$this->summary["timeline"]["plusone"]); ?>&chds=<?= min($this->summary["timeline"]["plusone"]); ?>,<?= max($this->summary["timeline"]["plusone"]); ?>&" />
                 </div>
             </div>
             <div class="list">
                 <table>
                     <tr>
-                        <th colspan="2"><?php echo $this->translate("top_shares_pages"); ?></th>
+                        <th colspan="2"><?= $this->translate("top_shares_pages"); ?></th>
                     </tr>
                     <?php foreach ($this->summary["top"]["plusone"] as $top) { ?>
                         <tr>
-                            <td valign="top" style="padding-right: 5px;"><?php echo $top["shares"]; ?></td>
-                            <td><?php echo $top["url"]; ?></td>
+                            <td valign="top" style="padding-right: 5px;"><?= $top["shares"]; ?></td>
+                            <td><?= $top["url"]; ?></td>
                         </tr>
                     <?php } ?>
                 </table>
             </div>
         <?php } else { ?>
             <div class="text">
-                <?php echo $this->translate("sorry_no_data_available"); ?>
+                <?= $this->translate("sorry_no_data_available"); ?>
             </div>
         <?php } ?>
         <span class="clear"></span>

@@ -15,15 +15,19 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_JsonEncoder {
+namespace Pimcore\Model\Webservice;
+
+class JsonEncoder {
 
     public function encode($data,$returnData = false) {
-        $data = Zend_Json::encode($data, null, array());
+
+        $data = \Pimcore\Tool\Serialize::removeReferenceLoops($data);
+        $data = \Zend_Json::encode($data, null, array());
 
         if($returnData){
             return $data;
         }else{
-            $response = Zend_Controller_Front::getInstance()->getResponse();
+            $response = \Zend_Controller_Front::getInstance()->getResponse();
             $response->setHeader('Content-Type', 'application/json', true);
             $response->setBody($data);
             $response->sendResponse();
@@ -32,7 +36,7 @@ class Webservice_JsonEncoder {
     }
 
     public function decode($data){
-        $data = Zend_Json::decode($data);
+        $data = \Zend_Json::decode($data);
         return $data;
     }
 }

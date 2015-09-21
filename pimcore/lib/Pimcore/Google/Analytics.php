@@ -13,40 +13,66 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Google_Analytics {
-    
+namespace Pimcore\Google;
+
+use Pimcore\Config;
+use Pimcore\Model;
+
+class Analytics {
+
+    /**
+     * @var array
+     */
     public static $stack = array();
 
+    /**
+     * @var null
+     */
     public static $defaultPath = null;
 
+    /**
+     * @var array
+     */
     protected static $additionalCodes = [
         "beforeInit" => [],
         "beforePageview" => [],
         "beforeEnd" => []
     ];
-    
-    public static function isConfigured (Site $site = null) {
+
+    /**
+     * @param Model\Site $site
+     * @return bool
+     */
+    public static function isConfigured (Model\Site $site = null) {
         if(self::getSiteConfig($site) && self::getSiteConfig($site)->profile) {
             return true;
         }
         return false;
     }
 
+    /**
+     * @param null $site
+     * @return bool
+     */
     public static function getSiteConfig ($site = null) {
         
-        $siteKey = Pimcore_Tool_Frontend::getSiteKey($site);
+        $siteKey = \Pimcore\Tool\Frontend::getSiteKey($site);
         
-        $config = Pimcore_Config::getReportConfig();
+        $config = Config::getReportConfig();
         if (!$config->analytics) {
             return false;
         }
 
         if($config->analytics->sites->$siteKey) {
-            return Pimcore_Config::getReportConfig()->analytics->sites->$siteKey;
+            return Config::getReportConfig()->analytics->sites->$siteKey;
         }
         return false;
     }
-    
+
+    /**
+     * @param null $config
+     * @return string
+     */
     public static function getCode ($config = null) {
                 
         if(is_null($config)){
@@ -138,20 +164,32 @@ class Pimcore_Google_Analytics {
     public static function addAdditionalCode($code, $where = "beforeEnd") {
         self::$additionalCodes[$where][] = $code;
     }
-    
-    public static function trackElement (Element_Interface $element) {
-        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
-    }
-    
-    public static function trackPageView ($path) {
-        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
+
+    /**
+     * @param Model\Element\ElementInterface $element
+     */
+    public static function trackElement (Model\Element\ElementInterface $element) {
+        \Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
     }
 
+    /**
+     * @param $path
+     */
+    public static function trackPageView ($path) {
+        \Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
+    }
+
+    /**
+     * @param $defaultPath
+     */
     public static function setDefaultPath($defaultPath)
     {
         self::$defaultPath = $defaultPath;
     }
 
+    /**
+     * @return null
+     */
     public static function getDefaultPath()
     {
         return self::$defaultPath;

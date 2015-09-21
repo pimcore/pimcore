@@ -15,10 +15,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Area extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Tool;
+use Pimcore\Model;
+use Pimcore\ExtensionManager;
+use Pimcore\Model\Document;
+
+class Area extends Model\Document\Tag {
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Model\Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -26,7 +33,7 @@ class Document_Tag_Area extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Model\Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -34,7 +41,7 @@ class Document_Tag_Area extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::admin
+     * @see Model\Document\Tag\TagInterface::admin
      */
     public function admin() {
         // get configuration data for admin
@@ -53,7 +60,7 @@ class Document_Tag_Area extends Document_Tag {
             "type" => $this->getType(),
             "inherited" => $this->getInherited()
         );
-        $options = @Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
+        $options = @\Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
 
         if($this->editmode) {
             echo '
@@ -74,43 +81,44 @@ class Document_Tag_Area extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Model\Document\Tag\TagInterface::frontend
      */
     public function frontend() {
 
         $count = 0;
 
         $this->setupStaticEnvironment();
-        $suffixes = Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         $suffixes[] = $this->getName();
-        Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $options = $this->getOptions();
 
         $this->current = $count;
 
         // don't show disabled bricks
-        if(!Pimcore_ExtensionManager::isEnabled("brick", $options["type"]) && $options['dontCheckEnabled'] != true) {
+        if(!ExtensionManager::isEnabled("brick", $options["type"]) && $options['dontCheckEnabled'] != true) {
             return;
         }
 
         // create info object and assign it to the view
         $info = null;
         try {
-            $info = new Document_Tag_Area_Info();
+            $info = new Area\Info();
+            $info->setTag($this);
             $info->setId($options["type"]);
             $info->setIndex($count);
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($options["type"],"brick")));
-            $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($options["type"]));
-        } catch (Exception $e) {
+            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", ExtensionManager::getPathForExtension($options["type"],"brick")));
+            $info->setConfig(ExtensionManager::getBrickConfig($options["type"]));
+        } catch (\Exception $e) {
             $info = null;
         }
 
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
         $suffixes[] = 1;
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
 
-        if($this->getView() instanceof Zend_View) {
+        if($this->getView() instanceof \Zend_View) {
 
             $this->getView()->brick = $info;
             $areas = $this->getAreaDirs();
@@ -135,14 +143,25 @@ class Document_Tag_Area extends Document_Tag {
             if(is_file($action)) {
                 include_once($action);
 
-                $actionClassname = "Document_Tag_Area_" . ucfirst($options["type"]);
-                if(Pimcore_Tool::classExists($actionClassname)) {
+
+                $actionClassFound = true;
+
+                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . ucfirst($options["type"]);
+                if(!Tool::classExists($actionClassname, false)) {
+                    // also check the legacy prefixed class name, as this is used by some plugins
+                    $actionClassname = "\\Document_Tag_Area_" . ucfirst($options["type"]);
+                    if(!Tool::classExists($actionClassname, false)) {
+                        $actionClassFound = false;
+                    }
+                }
+
+                if($actionClassFound) {
                     $actionObject = new $actionClassname();
 
-                    if($actionObject instanceof Document_Tag_Area_Abstract) {
+                    if($actionObject instanceof Area\AbstractArea) {
                         $actionObject->setView($this->getView());
 
-                        $areaConfig = new Zend_Config_Xml($areas[$options["type"]] . "/area.xml");
+                        $areaConfig = new \Zend_Config_Xml($areas[$options["type"]] . "/area.xml");
                         $actionObject->setConfig($areaConfig);
 
                         // params
@@ -185,7 +204,7 @@ class Document_Tag_Area extends Document_Tag {
                 if(is_file($edit) && $editmode) {
                     $this->getView()->editmode = true;
 
-                    echo '<div class="pimcore_area_editmode">';
+                    echo '<div class="pimcore_area_editmode pimcore_area_editmode_hidden">';
                     $this->getView()->template($edit);
                     echo '</div>';
                 }
@@ -204,17 +223,17 @@ class Document_Tag_Area extends Document_Tag {
         }
 
         
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
         array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
         
-        $suffixes = Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Model\Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
@@ -223,7 +242,7 @@ class Document_Tag_Area extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Model\Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -239,8 +258,8 @@ class Document_Tag_Area extends Document_Tag {
     public function setupStaticEnvironment() {
 
         // setup static environment for blocks
-        if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $current = Zend_Registry::get("pimcore_tag_block_current");
+        if(\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
+            $current = \Zend_Registry::get("pimcore_tag_block_current");
             if (!is_array($current)) {
                 $current = array();
             }
@@ -248,8 +267,8 @@ class Document_Tag_Area extends Document_Tag {
             $current = array();
         }
 
-        if(Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
+        if(\Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
+            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
             if (!is_array($numeration)) {
                 $numeration = array();
             }
@@ -257,8 +276,8 @@ class Document_Tag_Area extends Document_Tag {
             $numeration = array();
         }
 
-        Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
-        Zend_Registry::set("pimcore_tag_block_current", $current);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
+        \Zend_Registry::set("pimcore_tag_block_current", $current);
 
     }
 
@@ -273,22 +292,22 @@ class Document_Tag_Area extends Document_Tag {
      * @return array
      */
     public function getAreaDirs () {
-        return Pimcore_ExtensionManager::getBrickDirectories();
+        return ExtensionManager::getBrickDirectories();
     }
 
     public function getBrickConfigs() {
-        return Pimcore_ExtensionManager::getBrickConfigs();
+        return ExtensionManager::getBrickConfigs();
     }
 
     /**
      * @param $name
      *
-     * @return Document_Tag
+     * @return Model\Document\Tag
      */
     public function getElement($name)
     {
         // init
-        $doc = Document_Page::getById( $this->getDocumentId() );
+        $doc = Model\Document\Page::getById( $this->getDocumentId() );
         $id = sprintf('%s%s%d', $name, $this->getName(), 1);
         $element = $doc->getElement( $id );
         $element->suffixes = array( $this->getName() );

@@ -5,10 +5,13 @@
  */
 
 namespace Whoops\Handler;
-use Whoops\Handler\Handler;
-use Whoops\Util\TemplateHelper;
+
 use InvalidArgumentException;
 use RuntimeException;
+use UnexpectedValueException;
+use Whoops\Exception\Formatter;
+use Whoops\Util\Misc;
+use Whoops\Util\TemplateHelper;
 
 class PrettyPageHandler extends Handler
 {
@@ -69,7 +72,7 @@ class PrettyPageHandler extends Handler
         "sublime"  => "subl://open?url=file://%file&line=%line",
         "textmate" => "txmt://open?url=file://%file&line=%line",
         "emacs"    => "emacs://open?url=file://%file&line=%line",
-        "macvim"   => "mvim://open/?url=file://%file&line=%line"
+        "macvim"   => "mvim://open/?url=file://%file&line=%line",
     );
 
     /**
@@ -79,7 +82,7 @@ class PrettyPageHandler extends Handler
     {
         if (ini_get('xdebug.file_link_format') || extension_loaded('xdebug')) {
             // Register editor using xdebug's file_link_format option.
-            $this->editors['xdebug'] = function($file, $line) {
+            $this->editors['xdebug'] = function ($file, $line) {
                 return str_replace(array('%f', '%l'), array($file, $line), ini_get('xdebug.file_link_format'));
             };
         }
@@ -96,8 +99,7 @@ class PrettyPageHandler extends Handler
         if (!$this->handleUnconditionally()) {
             // Check conditions for outputting HTML:
             // @todo: Make this more robust
-            if(php_sapi_name() === 'cli') {
-
+            if (php_sapi_name() === 'cli') {
                 // Help users who have been relying on an internal test value
                 // fix their code to the proper method
                 if (isset($_ENV['whoops-test'])) {
@@ -112,7 +114,7 @@ class PrettyPageHandler extends Handler
         }
 
         // @todo: Make this more dynamic
-        $helper = new TemplateHelper;
+        $helper = new TemplateHelper();
 
         $templateFile = $this->getResource("views/layout.html.php");
         $cssFile      = $this->getResource("css/whoops.base.css");
@@ -125,6 +127,13 @@ class PrettyPageHandler extends Handler
 
         $inspector = $this->getInspector();
         $frames    = $inspector->getFrames();
+
+        $code = $inspector->getException()->getCode();
+
+        if ($inspector->getException() instanceof \ErrorException) {
+            // ErrorExceptions wrap the php-error types within the "severity" property
+            $code = Misc::translateErrorCode($inspector->getException()->getSeverity());
+        }
 
         // List of variables that will be passed to the layout template.
         $vars = array(
@@ -141,13 +150,15 @@ class PrettyPageHandler extends Handler
             "frame_code"  => $this->getResource("views/frame_code.html.php"),
             "env_details" => $this->getResource("views/env_details.html.php"),
 
-            "title"        => $this->getPageTitle(),
-            "name"         => explode("\\", $inspector->getExceptionName()),
-            "message"      => $inspector->getException()->getMessage(),
-            "frames"       => $frames,
-            "has_frames"   => !!count($frames),
-            "handler"      => $this,
-            "handlers"     => $this->getRun()->getHandlers(),
+            "title"          => $this->getPageTitle(),
+            "name"           => explode("\\", $inspector->getExceptionName()),
+            "message"        => $inspector->getException()->getMessage(),
+            "code"           => $code,
+            "plain_exception" => Formatter::formatExceptionPlain($inspector),
+            "frames"         => $frames,
+            "has_frames"     => !!count($frames),
+            "handler"        => $this,
+            "handlers"       => $this->getRun()->getHandlers(),
 
             "tables"      => array(
                 "Server/Request Data"   => $_SERVER,
@@ -155,9 +166,9 @@ class PrettyPageHandler extends Handler
                 "POST Data"             => $_POST,
                 "Files"                 => $_FILES,
                 "Cookies"               => $_COOKIE,
-                "Session"               => isset($_SESSION) ? $_SESSION:  array(),
-                "Environment Variables" => $_ENV
-            )
+                "Session"               => isset($_SESSION) ? $_SESSION :  array(),
+                "Environment Variables" => $_ENV,
+            ),
         );
 
         if (isset($customCssFile)) {
@@ -166,7 +177,7 @@ class PrettyPageHandler extends Handler
 
         // Add extra entries list of data tables:
         // @todo: Consolidate addDataTable and addDataTableCallback
-        $extraTables = array_map(function($table) {
+        $extraTables = array_map(function ($table) {
             return $table instanceof \Closure ? $table() : $table;
         }, $this->getDataTables());
         $vars["tables"] = array_merge($extraTables, $vars["tables"]);
@@ -196,8 +207,8 @@ class PrettyPageHandler extends Handler
      * be flattened with print_r.
      *
      * @throws InvalidArgumentException If $callback is not callable
-     * @param string   $label
-     * @param callable $callback Callable returning an associative array
+     * @param  string                   $label
+     * @param  callable                 $callback Callable returning an associative array
      */
     public function addDataTableCallback($label, /* callable */ $callback)
     {
@@ -205,7 +216,7 @@ class PrettyPageHandler extends Handler
             throw new InvalidArgumentException('Expecting callback argument to be callable');
         }
 
-        $this->extraTables[$label] = function() use ($callback) {
+        $this->extraTables[$label] = function () use ($callback) {
             try {
                 $result = call_user_func($callback);
 
@@ -222,12 +233,12 @@ class PrettyPageHandler extends Handler
      * Returns all the extra data tables registered with this handler.
      * Optionally accepts a 'label' parameter, to only return the data
      * table under that label.
-     * @param string|null $label
+     * @param  string|null      $label
      * @return array[]|callable
      */
     public function getDataTables($label = null)
     {
-        if($label !== null) {
+        if ($label !== null) {
             return isset($this->extraTables[$label]) ?
                    $this->extraTables[$label] : array();
         }
@@ -239,18 +250,17 @@ class PrettyPageHandler extends Handler
      * Allows to disable all attempts to dynamically decide whether to
      * handle or return prematurely.
      * Set this to ensure that the handler will perform no matter what.
-     * @param bool|null $value
+     * @param  bool|null $value
      * @return bool|null
      */
     public function handleUnconditionally($value = null)
     {
-        if(func_num_args() == 0) {
+        if (func_num_args() == 0) {
             return $this->handleUnconditionally;
         }
 
         $this->handleUnconditionally = (bool) $value;
     }
-
 
     /**
      * Adds an editor resolver, identified by a string
@@ -265,8 +275,8 @@ class PrettyPageHandler extends Handler
      *       unlink($file);
      *       return "http://stackoverflow.com";
      *   });
-     * @param  string $identifier
-     * @param  string $resolver
+     * @param string $identifier
+     * @param string $resolver
      */
     public function addEditor($identifier, $resolver)
     {
@@ -285,11 +295,11 @@ class PrettyPageHandler extends Handler
      *   $run->setEditor('sublime');
      *
      * @throws InvalidArgumentException If invalid argument identifier provided
-     * @param string|callable $editor
+     * @param  string|callable          $editor
      */
     public function setEditor($editor)
     {
-        if(!is_callable($editor) && !isset($this->editors[$editor])) {
+        if (!is_callable($editor) && !isset($this->editors[$editor])) {
             throw new InvalidArgumentException(
                 "Unknown editor identifier: $editor. Known editors:" .
                 implode(",", array_keys($this->editors))
@@ -306,37 +316,96 @@ class PrettyPageHandler extends Handler
      * file reference.
      *
      * @throws InvalidArgumentException If editor resolver does not return a string
-     * @param  string $filePath
-     * @param  int    $line
-     * @return false|string
+     * @param  string                   $filePath
+     * @param  int                      $line
+     * @return string|bool
      */
     public function getEditorHref($filePath, $line)
     {
-        if($this->editor === null) {
+        $editor = $this->getEditor($filePath, $line);
+
+        if (!$editor) {
             return false;
-        }
-
-        $editor = $this->editor;
-        if(is_string($editor)) {
-            $editor = $this->editors[$editor];
-        }
-
-        if(is_callable($editor)) {
-            $editor = call_user_func($editor, $filePath, $line);
         }
 
         // Check that the editor is a string, and replace the
         // %line and %file placeholders:
-        if(!is_string($editor)) {
-            throw new InvalidArgumentException(
-                __METHOD__ . " should always resolve to a string; got something else instead"
+        if (!isset($editor['url']) || !is_string($editor['url'])) {
+            throw new UnexpectedValueException(
+                __METHOD__ . " should always resolve to a string or a valid editor array; got something else instead."
             );
         }
 
-        $editor = str_replace("%line", rawurlencode($line), $editor);
-        $editor = str_replace("%file", rawurlencode($filePath), $editor);
+        $editor['url'] = str_replace("%line", rawurlencode($line), $editor['url']);
+        $editor['url'] = str_replace("%file", rawurlencode($filePath), $editor['url']);
 
-        return $editor;
+        return $editor['url'];
+    }
+
+    /**
+     * Given a boolean if the editor link should
+     * act as an Ajax request. The editor must be a
+     * valid callable function/closure
+     *
+     * @throws UnexpectedValueException  If editor resolver does not return a boolean
+     * @param  string                   $filePath
+     * @param  int                      $line
+     * @return bool
+     */
+    public function getEditorAjax($filePath, $line)
+    {
+        $editor = $this->getEditor($filePath, $line);
+
+        // Check that the ajax is a bool
+        if (!isset($editor['ajax']) || !is_bool($editor['ajax'])) {
+            throw new UnexpectedValueException(
+                __METHOD__ . " should always resolve to a bool; got something else instead."
+            );
+        }
+        return $editor['ajax'];
+    }
+
+    /**
+     * Given a boolean if the editor link should
+     * act as an Ajax request. The editor must be a
+     * valid callable function/closure
+     *
+     * @throws UnexpectedValueException  If editor resolver does not return a boolean
+     * @param  string                   $filePath
+     * @param  int                      $line
+     * @return mixed
+     */
+    protected function getEditor($filePath, $line)
+    {
+        if ($this->editor === null && !is_string($this->editor) && !is_callable($this->editor))
+        {
+            return false;
+        }
+        else if(is_string($this->editor) && isset($this->editors[$this->editor]) && !is_callable($this->editors[$this->editor]))
+        {
+           return array(
+                'ajax' => false,
+                'url' => $this->editors[$this->editor],
+            );
+        }
+        else if(is_callable($this->editor) || (isset($this->editors[$this->editor]) && is_callable($this->editors[$this->editor])))
+        {
+            if(is_callable($this->editor))
+            {
+                $callback = call_user_func($this->editor, $filePath, $line);
+            }
+            else
+            {
+                $callback = call_user_func($this->editors[$this->editor], $filePath, $line);
+            }
+
+            return array(
+                'ajax' => isset($callback['ajax']) ? $callback['ajax'] : false,
+                'url' => (is_array($callback) ? $callback['url'] : $callback),
+            );
+        }
+
+        return false;
     }
 
     /**
@@ -367,7 +436,7 @@ class PrettyPageHandler extends Handler
      */
     public function addResourcePath($path)
     {
-        if(!is_dir($path)) {
+        if (!is_dir($path)) {
             throw new InvalidArgumentException(
                 "'$path' is not a valid directory"
             );
@@ -410,16 +479,16 @@ class PrettyPageHandler extends Handler
     {
         // If the resource was found before, we can speed things up
         // by caching its absolute, resolved path:
-        if(isset($this->resourceCache[$resource])) {
+        if (isset($this->resourceCache[$resource])) {
             return $this->resourceCache[$resource];
         }
 
         // Search through available search paths, until we find the
         // resource we're after:
-        foreach($this->searchPaths as $path) {
+        foreach ($this->searchPaths as $path) {
             $fullPath = $path . "/$resource";
 
-            if(is_file($fullPath)) {
+            if (is_file($fullPath)) {
                 // Cache the result:
                 $this->resourceCache[$resource] = $fullPath;
                 return $fullPath;

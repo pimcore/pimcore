@@ -13,18 +13,26 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+chdir(__DIR__);
+
 include_once("startup.php");
 
+use Pimcore\Model\Search;
+
 // clear all data
-$db = Pimcore_Resource::get();
+$db = \Pimcore\Resource::get();
 $db->query("TRUNCATE `search_backend_data`;");
 
 $elementsPerLoop = 100;
 $types = array("asset","document","object");
 
 foreach ($types as $type) {
-    $listClassName = ucfirst($type) . "_List";
+    $listClassName = "\\Pimcore\\Model\\" . ucfirst($type) . "\\Listing";
     $list = new $listClassName();
+    if(method_exists($list, "setUnpublished")) {
+        $list->setUnpublished(true);
+    }
+
     $elementsTotal = $list->getTotalCount();
 
     for($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
@@ -36,19 +44,19 @@ foreach ($types as $type) {
         $elements = $list->load();
         foreach ($elements as $element) {
             try {
-                $searchEntry = Search_Backend_Data::getForElement($element);
-                if($searchEntry instanceof Search_Backend_Data and $searchEntry->getId() instanceof Search_Backend_Data_Id ) {
+                $searchEntry = Search\Backend\Data::getForElement($element);
+                if($searchEntry instanceof Search\Backend\Data and $searchEntry->getId() instanceof Search\Backend\Data_Id ) {
                     $searchEntry->setDataFromElement($element);
                 } else {
-                    $searchEntry = new Search_Backend_Data($element);
+                    $searchEntry = new Search\Backend\Data($element);
                 }
 
                 $searchEntry->save();
             } catch (Exception $e) {
-                Logger::err($e);
+                \Logger::err($e);
             }
         }
-        Pimcore::collectGarbage();
+        \Pimcore::collectGarbage();
     }
 }
 

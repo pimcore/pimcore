@@ -13,12 +13,18 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+namespace Pimcore\Tool;
 
-include_once("simple_html_dom.php");
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Element;
 
-class Pimcore_Tool_Text
+class Text
 {
-
+    /**
+     * @param string $text
+     * @return mixed|string
+     */
     public static function removeLineBreaks ($text = "") {
 
         $text = str_replace(array("\r\n", "\n", "\r", "\t"), " ", $text);
@@ -26,7 +32,11 @@ class Pimcore_Tool_Text
 
         return $text;
     }
-    
+
+    /**
+     * @param $text
+     * @return mixed
+     */
     public static function wysiwygText($text)
     {
         if(empty($text)) {
@@ -42,9 +52,9 @@ class Pimcore_Tool_Text
 
                 $id = $idMatches[0];
                 $type = $typeMatches[0];
-                $element = Element_Service::getElementById($type, $id);
+                $element = Element\Service::getElementById($type, $id);
 
-                if($element instanceof Element_Interface) {
+                if($element instanceof Element\ElementInterface) {
                     $path = "";
                     $oldTag = $matches[0][$i];
 
@@ -69,7 +79,7 @@ class Pimcore_Tool_Text
                         $linkAttr = "src";
 
                         // only for images
-                        if(!$element instanceof Asset_Image) {
+                        if(!$element instanceof Asset\Image) {
                             continue;
                         }
 
@@ -82,14 +92,14 @@ class Pimcore_Tool_Text
                         preg_match("/height=\"([^\"]+)*\"/", $oldTag, $heightAttr);
                         preg_match("/style=\"([^\"]+)*\"/", $oldTag, $styleAttr);
 
-                        if ($widthAttr[1] || $heightAttr[1]) {
+                        if ((isset($widthAttr[1]) && $widthAttr[1]) || (isset($heightAttr[1]) && $heightAttr[1])) {
                             $config = array(
                                 "width" => intval($widthAttr[1]),
                                 "height" => intval($heightAttr[1])
                             );
                         }
 
-                        if ($styleAttr[1] && preg_match("/(width|height)/",$styleAttr[1])) {
+                        if (isset($styleAttr[1]) && $styleAttr[1] && preg_match("/(width|height)/",$styleAttr[1])) {
 
                             $config = array(); // reset the config if it was set already before (attributes)
 
@@ -150,6 +160,8 @@ class Pimcore_Tool_Text
     public static function replaceWysiwygTextRelationIds($idMapping, $text)
     {
         if (!empty($text)) {
+
+            include_once("simple_html_dom.php");
 
             $html = str_get_html($text);
             if(!$html) {
@@ -213,14 +225,14 @@ class Pimcore_Tool_Text
     public static function getElementsTagsInWysiwyg($text) {
 
         $hash = "elements_raw_wysiwyg_text_" . md5($text);
-        if(Zend_Registry::isRegistered($hash)) {
-            return Zend_Registry::get($hash);
+        if(\Zend_Registry::isRegistered($hash)) {
+            return \Zend_Registry::get($hash);
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
         preg_match_all("@\<(a|img)[^>]*((?:pimcore_id|pimcore_type)+=\"[0-9]+\")[^>]*((?:pimcore_id|pimcore_type)+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
 
-        Zend_Registry::set($hash, $matches);
+        \Zend_Registry::set($hash, $matches);
 
         return $matches;
     }
@@ -233,8 +245,8 @@ class Pimcore_Tool_Text
     public static function getElementsInWysiwyg ($text) {
 
         $hash = "elements_wysiwyg_text_" . md5($text);
-        if(Zend_Registry::isRegistered($hash)) {
-            return Zend_Registry::get($hash);
+        if(\Zend_Registry::isRegistered($hash)) {
+            return \Zend_Registry::get($hash);
         }
 
         $elements = array();
@@ -248,9 +260,9 @@ class Pimcore_Tool_Text
                 $id = $idMatches[0];
                 $type = $typeMatches[0];
 
-                $element = Element_Service::getElementById($type, $id);
+                $element = Element\Service::getElementById($type, $id);
 
-                if($id && $type && $element instanceof Element_Interface) {
+                if($id && $type && $element instanceof Element\ElementInterface) {
                     $elements[] = array(
                         "id" => $id,
                         "type" => $type,
@@ -260,7 +272,7 @@ class Pimcore_Tool_Text
             }
         }
 
-        Zend_Registry::set($hash, $elements);
+        \Zend_Registry::set($hash, $elements);
 
         return $elements;
     }
@@ -290,7 +302,11 @@ class Pimcore_Tool_Text
         return $dependencies;
     }
 
-
+    /**
+     * @param $text
+     * @param array $tags
+     * @return array
+     */
     public static function getCacheTagsOfWysiwygText($text, $tags = array())
     {
         $tags = is_array($tags) ? $tags : array();
@@ -308,14 +324,22 @@ class Pimcore_Tool_Text
         return $tags;
     }
 
+    /**
+     * @param $text
+     * @return string
+     */
     public static function convertToUTF8($text) {
-        $encoding = Pimcore_Tool_Text::detectEncoding($text);
+        $encoding = self::detectEncoding($text);
         if ($encoding) {
             $text = iconv($encoding, "UTF-8", $text);
         }
         return $text;
     }
 
+    /**
+     * @param $text
+     * @return string
+     */
     public static function detectEncoding($text)
     {
 

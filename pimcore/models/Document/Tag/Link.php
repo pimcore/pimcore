@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Link extends Document_Tag
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
+
+class Link extends Model\Document\Tag
 {
 
     /**
@@ -26,7 +32,7 @@ class Document_Tag_Link extends Document_Tag
     public $data;
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType()
@@ -35,7 +41,7 @@ class Document_Tag_Link extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData()
@@ -44,7 +50,7 @@ class Document_Tag_Link extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend()
@@ -105,16 +111,16 @@ class Document_Tag_Link extends Document_Tag
                 $doc = Document::getById($this->data["internalId"]);
                 if (!$doc) {
                     $sane = false;
-                    Logger::notice("Detected insane relation, removing reference to non existent document with id [" . $this->getDocumentId() . "]");
-                    $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
+                    \Logger::notice("Detected insane relation, removing reference to non existent document with id [" . $this->getDocumentId() . "]");
+                    $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
             } else if ($this->data["internalType"] == "asset") {
                 $asset = Asset::getById($this->data["internalId"]);
                 if (!$asset) {
                     $sane = false;
-                    Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->getDocumentId() . "]");
-                    $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
+                    \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->getDocumentId() . "]");
+                    $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
             }
@@ -128,7 +134,6 @@ class Document_Tag_Link extends Document_Tag
      */
     public function getHref()
     {
-
         if ($this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 if ($doc = Document::getById($this->data["internalId"])) {
@@ -224,13 +229,13 @@ class Document_Tag_Link extends Document_Tag
 
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data)
     {
-        $this->data = Pimcore_Tool_Serialize::unserialize($data);
+        $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if(!is_array($this->data)) {
             $this->data = array();
         }
@@ -238,7 +243,7 @@ class Document_Tag_Link extends Document_Tag
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -280,34 +285,6 @@ class Document_Tag_Link extends Document_Tag
         return (strlen($this->getHref()) < 1);
     }
 
-
-    /**
-     * This is a dummy and is mostly implemented by relation types
-     * @param $ownerDocument
-     * @param array $blockedTags
-     */
-    /*public function getCacheTags($ownerDocument, $blockedTags = array()) {
-
-        $tags = array();
-
-        if ($this->data["internal"]) {
-            if ($this->data["internalType"] == "document") {
-                if ($doc = Document::getById($this->data["internalId"])) {
-                    if ($doc->getId() != $ownerDocument->getId() and !in_array($doc->getCacheTag(), $blockedTags)) {
-                        $tags = array_merge($tags, $doc->getCacheTags($blockedTags));
-                    }
-                }
-            }
-            else if ($this->data["internalType"] == "asset") {
-                if ($asset = Asset::getById($this->data["internalId"])) {
-                    $tags = array_merge($tags, $asset->getCacheTags($blockedTags));
-                }
-            }
-        }
-
-        return $tags;
-    }*/
-
     /**
      * @return array
      */
@@ -345,15 +322,13 @@ class Document_Tag_Link extends Document_Tag
     }
 
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $wsElement
-     * @return void
+     * @param Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null)
     {
-        if ($wsElement->value->data instanceof stdClass) {
+        if ($wsElement->value->data instanceof \stdClass) {
             $wsElement->value->data = (array) $wsElement->value->data;
         }
 
@@ -373,7 +348,7 @@ class Document_Tag_Link extends Document_Tag
                             if ($idMapper && $idMapper->ignoreMappingFailures()) {
                                 $idMapper->recordMappingFailure("document", $this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
                             } else {
-                                throw new Exception("cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
+                                throw new \Exception("cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
                             }
                         }
                     } else if ($this->data["internalType"] == "asset") {
@@ -385,7 +360,7 @@ class Document_Tag_Link extends Document_Tag
                             if ($idMapper && $idMapper->ignoreMappingFailures()) {
                                 $idMapper->recordMappingFailure("document", $this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
                             } else {
-                                throw new Exception("cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
+                                throw new \Exception("cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
                             }
                         }
                     }
@@ -393,7 +368,7 @@ class Document_Tag_Link extends Document_Tag
             }
 
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            throw new \Exception("cannot get values from web service import - invalid data");
         }
 
     }

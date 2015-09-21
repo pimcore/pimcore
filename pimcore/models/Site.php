@@ -15,7 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Site extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+class Site extends AbstractModel {
 
     /**
      * @var integer
@@ -35,7 +37,7 @@ class Site extends Pimcore_Model_Abstract {
     public $rootId;
 
     /**
-     * @var Document_Page
+     * @var Document\Page
      */
     public $rootDocument;
 
@@ -92,27 +94,28 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $domain
-     * @return Site
+     * @param $domain
+     * @return mixed|Site|string
+     * @throws \Exception
      */
     public static function getByDomain($domain) {
         
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
         $cacheKey = "site_domain_". md5($domain);
-        if (!$site = Pimcore_Model_Cache::load($cacheKey)) {
+        if (!$site = Cache::load($cacheKey)) {
             $site = new self();
             
             try {
                 $site->getResource()->getByDomain($domain);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $site = "failed";
             }
             
-            Pimcore_Model_Cache::save($site, $cacheKey, array("system","site"));
+            Cache::save($site, $cacheKey, array("system","site"));
         }
         
         if($site == "failed" || !$site) {
-            throw new Exception("there is no site for the requested domain");
+            throw new \Exception("there is no site for the requested domain");
         }
         
         return $site;
@@ -154,7 +157,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public static function isSiteRequest () {
 
-        if(Zend_Registry::isRegistered("pimcore_site")) {
+        if(\Zend_Registry::isRegistered("pimcore_site")) {
             return true;
         }
 
@@ -162,17 +165,15 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
-     * returns the current active site if present, otherwise throws an exception
-     * @static
-     * @return Site
-     * @throw Exception
+     * @throws \Exception
+     * @throws \Zend_Exception
      */
     public static function getCurrentSite() {
-        if(Zend_Registry::isRegistered("pimcore_site")) {
-            $site = Zend_Registry::get("pimcore_site");
+        if(\Zend_Registry::isRegistered("pimcore_site")) {
+            $site = \Zend_Registry::get("pimcore_site");
             return $site;
         } else {
-            throw new Exception("This request/process is not inside a subsite");
+            throw new \Exception("This request/process is not inside a subsite");
         }
     }
 
@@ -198,7 +199,7 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @return Document_Page
+     * @return Document\Page
      */
     public function getRootDocument() {
         return $this->rootDocument;
@@ -219,7 +220,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setDomains($domains) {
         if (is_string($domains)) {
-            $domains = Pimcore_Tool_Serialize::unserialize($domains);
+            $domains = \Pimcore\Tool\Serialize::unserialize($domains);
         }
         $this->domains = $domains;
         return $this;
@@ -238,7 +239,7 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param Document_Page $rootDocument
+     * @param Document\Page $rootDocument
      * @return void
      */
     public function setRootDocument($rootDocument) {
@@ -247,7 +248,8 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $path
+     * @param $path
+     * @return $this
      */
     public function setRootPath($path) {
         $this->rootPath = $path;
@@ -317,17 +319,18 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function clearDependentCache() {
         
-        // this is mostly called in Site_Resource not here
+        // this is mostly called in Site\Resource not here
         try {
-            Pimcore_Model_Cache::clearTag("site");
+            Cache::clearTag("site");
         }
-        catch (Exception $e) {
-            Logger::crit($e);
+        catch (\Exception $e) {
+            \Logger::crit($e);
         }
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -344,7 +347,8 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {

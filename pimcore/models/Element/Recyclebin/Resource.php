@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Recyclebin_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Element\Recyclebin;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
     
     public function flush () {
         $this->db->delete("recyclebin");

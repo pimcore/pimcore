@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Webservice_Data_Document extends Webservice_Data {
+namespace Pimcore\Model\Webservice\Data;
+
+use Pimcore\Model;
+use Pimcore\Model\Webservice;
+
+abstract class Document extends Model\Webservice\Data {
 
     /**
      * @var integer
@@ -53,12 +58,15 @@ abstract class Webservice_Data_Document extends Webservice_Data {
     public $userOwner;
    
     /**
-     * @var Webservice_Data_Property[]
+     * @var Webservice\Data\Property[]
      */
     public $properties;
 
-
-    public function map($object) {
+    /**
+     * @param $object
+     * @param null $options
+     */
+    public function map($object, $options = null) {
         parent::map($object);
 
         $keys = get_object_vars($this);
@@ -66,7 +74,7 @@ abstract class Webservice_Data_Document extends Webservice_Data {
             if ($object->hasChilds()) {
                 $this->childs = array(); 
                 foreach ($object->getChilds() as $child) {
-                    $item = new Webservice_Data_Document_List_Item();
+                    $item = new Webservice\Data\Document\Listing\Item();
                     $item->id = $child->getId();
                     $item->type = $child->getType();
 

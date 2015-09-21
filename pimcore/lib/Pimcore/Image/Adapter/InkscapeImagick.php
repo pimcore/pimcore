@@ -12,8 +12,13 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagick {
+
+namespace Pimcore\Image\Adapter;
+
+use Pimcore\Image\Adapter\Imagick;
+use Pimcore\Tool\Console; 
+
+class InkscapeImagick extends Imagick {
 
     protected $isOriginal = true;
 
@@ -33,7 +38,7 @@ class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagic
 
     /**
      * @param $width
-     * @return Pimcore_Image_Adapter|void
+     * @return $this|\Pimcore\Image\Adapter
      */
     public function scaleByWidth ($width) {
 
@@ -46,7 +51,7 @@ class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagic
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_svg_width_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
-        Pimcore_Tool_Console::exec(self::getBinary() . " -w " . $width . " -D -f " . $this->imagePath . " -e " . $tmpFile);
+        Console::exec(self::getBinary() . " -w " . $width . " -D -f " . $this->imagePath . " -e " . $tmpFile);
         $this->initImagick($tmpFile);
 
         return $this;
@@ -54,7 +59,7 @@ class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagic
 
     /**
      * @param $height
-     * @return Pimcore_Image_Adapter|void
+     * @return $this|\Pimcore\Image\Adapter
      */
     public function scaleByHeight ($height) {
 
@@ -67,7 +72,7 @@ class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagic
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_svg_height_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
-        Pimcore_Tool_Console::exec(self::getBinary() . " -h " . $height . " -D -f " . $this->imagePath . " -e " . $tmpFile);
+        Console::exec(self::getBinary() . " -h " . $height . " -D -f " . $this->imagePath . " -e " . $tmpFile);
         $this->initImagick($tmpFile);
 
 
@@ -75,9 +80,9 @@ class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagic
     }
 
     /**
-     * @param  $width
-     * @param  $height
-     * @return Pimcore_Image_Adapter
+     * @param $width
+     * @param $height
+     * @return $this|Imagick
      */
     public function resize ($width, $height) {
 
@@ -91,7 +96,7 @@ class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagic
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_svg_resize_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
-        Pimcore_Tool_Console::exec(self::getBinary() . " -w " . $width . " -h " . $height . " -D -f " . $this->imagePath . " -e " . $tmpFile);
+        Console::exec(self::getBinary() . " -w " . $width . " -h " . $height . " -D -f " . $this->imagePath . " -e " . $tmpFile);
         $this->initImagick($tmpFile);
 
         return $this;

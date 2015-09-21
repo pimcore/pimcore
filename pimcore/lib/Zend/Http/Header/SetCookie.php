@@ -17,7 +17,7 @@
  * @package    Zend_Http
  * @subpackage Header
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -32,6 +32,11 @@
 // require_once "Zend/Http/Header/Exception/RuntimeException.php";
 
 /**
+ * @see Zend_Http_Header_HeaderValue
+ */
+// require_once "Zend/Http/Header/HeaderValue.php";
+
+/**
  * Zend_Http_Client is an implementation of an HTTP client in PHP. The client
  * supports basic features like sending different HTTP requests and handling
  * redirections, as well as more advanced features like proxy settings, HTTP
@@ -41,7 +46,7 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage Header
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Http_Header_SetCookie
@@ -311,6 +316,7 @@ class Zend_Http_Header_SetCookie
      */
     public function setValue($value)
     {
+        Zend_Http_Header_HeaderValue::assertValid($value);
         $this->value = $value;
         return $this;
     }
@@ -405,6 +411,7 @@ class Zend_Http_Header_SetCookie
      */
     public function setDomain($domain)
     {
+        Zend_Http_Header_HeaderValue::assertValid($domain);
         $this->domain = $domain;
         return $this;
     }
@@ -422,6 +429,7 @@ class Zend_Http_Header_SetCookie
      */
     public function setPath($path)
     {
+        Zend_Http_Header_HeaderValue::assertValid($path);
         $this->path = $path;
         return $this;
     }

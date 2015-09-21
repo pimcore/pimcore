@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="es"/>
 		<territory type="MX"/>
 	</identity>
@@ -1294,9 +1294,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity draft="contributed">Palmer</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity draft="contributed">Polo Sur</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity draft="contributed">Syowa</exemplarCity>
 			</zone>
@@ -1569,9 +1566,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity draft="contributed">Toronto</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity draft="contributed">Montreal</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity draft="contributed">Iqaluit</exemplarCity>
@@ -2413,9 +2407,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Phoenix">
 				<exemplarCity draft="contributed">Phoenix</exemplarCity>
 			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity draft="contributed">Shiprock</exemplarCity>
-			</zone>
 			<zone type="America/Denver">
 				<exemplarCity draft="contributed">Denver</exemplarCity>
 			</zone>
@@ -3047,6 +3038,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<metazone type="Mawson">
 				<long>
 					<standard draft="contributed">Hora de Mawson</standard>
+				</long>
+			</metazone>
+			<metazone type="Mexico_Northwest">
+				<long>
+					<generic>Hora del noroeste</generic>
+					<standard>Hora estándar del noroeste</standard>
+					<daylight>Hora de verano del noroeste</daylight>
+				</long>
+			</metazone>
+			<metazone type="Mexico_Pacific">
+				<long>
+					<generic>Hora del Pacífico</generic>
+					<standard>Hora estándar del Pacífico</standard>
+					<daylight>Hora de verano del Pacífico</daylight>
 				</long>
 			</metazone>
 			<metazone type="Mongolia">

@@ -194,11 +194,6 @@
     background: url(/pimcore/static/img/panel-loader.gif) left center no-repeat !important;
 }
 
-
-.pimcore_icon_systemlog {
-    background: url(/pimcore/static/img/icon/text_padding_bottom.png) left center no-repeat !important;
-}
-
 .pimcore_icon_menu_file {
     background: url(/pimcore/static/img/icon/application.png) no-repeat !important;
 }
@@ -213,6 +208,10 @@
 
 .pimcore_icon_menu_help {
     background: url(/pimcore/static/img/icon/help.png) no-repeat !important;
+}
+
+.pimcore_icon_menu_webbrowser {
+    background: url(/pimcore/static/img/icon/web-browser_small.png) no-repeat !important;
 }
 
 .pimcore_icon_users {
@@ -242,6 +241,10 @@
 
 .pimcore_icon_extensionmanager_admin {
     background: url(/pimcore/static/img/icon/plugin_edit.png) left center no-repeat !important;
+}
+
+.pimcore_icon_log_admin {
+    background: url(/pimcore/static/img/icon/text_signature.png) left center no-repeat !important;
 }
 
 .pimcore_icon_menu_plugin_download {
@@ -1372,4 +1375,45 @@
 
 .pimcore_icon_search_and_move {
     background: url(/pimcore/static/img/icon/database_copy.png) left center no-repeat !important;
+}
+
+.pimcore_icon_merge {
+    background: url(/pimcore/static/img/icon/arrow_join.png) left center no-repeat !important;
+}
+
+.pimcore_icon_arrow_right  {
+    background: url(/pimcore/static/img/icon/arrow_right.png) left center no-repeat !important;
+}
+
+
+.pimcore_icon_revert  {
+    background: url(/pimcore/static/img/icon/arrow_rotate_clockwise.png) left center no-repeat !important;
+}
+
+.pimcore_icon_hourglass  {
+    background: url(/pimcore/static/img/icon/hourglass.png) left center no-repeat !important;
+}
+
+.pimcore_icon_cancel  {
+    background: url(/pimcore/static/img/icon/cancel.png) left center no-repeat !important;
+}
+
+.pimcore_icon_classificationstore  {
+    background: url(/pimcore/static/img/icon/classificationstore.png) left center no-repeat !important;
+}
+
+.pimcore_icon_classificationstore_icon_group  {
+    background: url(/pimcore/static/img/icon/classificationstore-group.png) left center no-repeat !important;
+}
+
+.pimcore_icon_classificationstore_icon_subgroup  {
+    background: url(/pimcore/static/img/icon/classificationstore-subgroup.png) left center no-repeat !important;
+}
+
+.pimcore_icon_classificationstore_icon_cs_collections  {
+    background: url(/pimcore/static/img/icon/application_view_tile.png) left center no-repeat !important;
+}
+
+.pimcore_icon_white_flag  {
+    background: url(/pimcore/static/img/icon/white_flag.png) left center no-repeat !important;
 }

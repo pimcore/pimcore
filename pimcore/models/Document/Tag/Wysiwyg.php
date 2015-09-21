@@ -14,10 +14,15 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
+
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Tool\Text; 
+
 include_once("simple_html_dom.php");
 
-class Document_Tag_Wysiwyg extends Document_Tag {
+class Wysiwyg extends Model\Document\Tag {
 
     /**
      * Contains the text
@@ -28,7 +33,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
 
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -36,7 +41,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -49,19 +54,19 @@ class Document_Tag_Wysiwyg extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
-        return Pimcore_Tool_Text::wysiwygText($this->text);
+        return Text::wysiwygText($this->text);
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return string
      */
     public function frontend() {
-        return Pimcore_Tool_Text::wysiwygText($this->text);
+        return Text::wysiwygText($this->text);
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
@@ -72,7 +77,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
 
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -90,18 +95,16 @@ class Document_Tag_Wysiwyg extends Document_Tag {
 
 
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Model\Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            throw new \Exception("cannot get values from web service import - invalid data");
         }
     }
     
@@ -109,16 +112,17 @@ class Document_Tag_Wysiwyg extends Document_Tag {
      * @return array
      */
     public function resolveDependencies() {
-        return Pimcore_Tool_Text::getDependenciesOfWysiwygText($this->text);
+        return Text::getDependenciesOfWysiwygText($this->text);
     }
-    
-    
+
+
     /**
      * @param $ownerDocument
      * @param array $blockedTags
+     * @return array
      */
     public function getCacheTags($ownerDocument, $blockedTags = array()) {
-        return Pimcore_Tool_Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
+        return Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
     }
 
 

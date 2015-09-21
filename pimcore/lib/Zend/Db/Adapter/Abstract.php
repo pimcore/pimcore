@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -37,7 +37,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Adapter_Abstract
@@ -930,13 +930,7 @@ abstract class Zend_Db_Adapter_Abstract
         if ($count === null) {
             return str_replace('?', $this->quote($value, $type), $text);
         } else {
-            while ($count > 0) {
-                if (strpos($text, '?') !== false) {
-                    $text = substr_replace($text, $this->quote($value, $type), strpos($text, '?'), 1);
-                }
-                --$count;
-            }
-            return $text;
+            return implode($this->quote($value, $type), explode('?', $text, $count + 1));
         }
     }
 

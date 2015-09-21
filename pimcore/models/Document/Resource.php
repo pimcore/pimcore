@@ -15,31 +15,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Resource extends Element_Resource
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+use Pimcore\Tool\Serialize;
+
+class Resource extends Model\Element\Resource
 {
-
     /**
-     * Contains the valid database colums
-     *
-     * @var array
-     */
-    protected $validColumnsDocument = array();
-
-    /**
-     * Get the valid database columns from database
-     *
-     * @return void
-     */
-    public function init()
-    {
-        $this->validColumnsDocument = $this->getValidTableColumns("documents");
-    }
-
-    /**
-     * Get the data for the object by the given id
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id)
     {
@@ -48,21 +33,19 @@ class Document_Resource extends Element_Resource
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                     WHERE documents.id = ?", $id);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Document with the ID " . $id . " doesn't exists");
+            throw new \Exception("Document with the ID " . $id . " doesn't exists");
         }
     }
 
     /**
-     * Get the data for the document from database for the given path
-     *
-     * @param string $path
-     * @return void
+     * @param $path
+     * @throws \Exception
      */
     public function getByPath($path)
     {
@@ -83,21 +66,17 @@ class Document_Resource extends Element_Resource
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new Exception("document with path $path doesn't exist");
+                throw new \Exception("document with path $path doesn't exist");
             }
         }
     }
 
 
     /**
-     * Create a new record for the object in the database
-     *
-     * @return void
+     * @throws \Exception
      */
     public function create()
     {
-
-
         try {
             $this->db->insert("documents", array(
                 "key" => $this->model->getKey(),
@@ -112,78 +91,112 @@ class Document_Resource extends Element_Resource
             if (!$this->model->getKey()) {
                 $this->model->setKey($this->model->getId());
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
     }
 
     /**
-     * Updates the object's data to the database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update()
     {
         try {
+
+            $typeSpecificTable = null;
+            $validColumnsTypeSpecific = [];
+            if(in_array($this->model->getType(), ["email","hardlink","link","page","snippet"])) {
+                $typeSpecificTable = "documents_" . $this->model->getType();
+                $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
+            }
+
             $this->model->setModificationDate(time());
 
             $document = get_object_vars($this->model);
 
+            $dataDocument = [];
+            $dataTypeSpecific = [];
+
             foreach ($document as $key => $value) {
-                if (in_array($key, $this->validColumnsDocument)) {
 
-                    // check if the getter exists
-                    $getter = "get" . ucfirst($key);
-                    if (!method_exists($this->model, $getter)) {
-                        continue;
-                    }
+                // check if the getter exists
+                $getter = "get" . ucfirst($key);
+                if(!method_exists($this->model,$getter)) {
+                    continue;
+                }
 
-                    // get the value from the getter
+                // get the value from the getter
+                if(in_array($key, $this->getValidTableColumns("documents")) || in_array($key, $validColumnsTypeSpecific)) {
                     $value = $this->model->$getter();
+                } else {
+                    continue;
+                }
 
-                    if (is_bool($value)) {
-                        $value = (int)$value;
-                    }
-                    $data[$key] = $value;
+                if(is_bool($value)) {
+                    $value = (int)$value;
+                }
+                if(is_array($value)) {
+                    $value = Serialize::serialize($value);
+                }
+
+                if (in_array($key, $this->getValidTableColumns("documents"))) {
+                    $dataDocument[$key] = $value;
+                }
+                if (in_array($key, $validColumnsTypeSpecific)) {
+                    $dataTypeSpecific[$key] = $value;
                 }
             }
 
-            $this->db->insertOrUpdate("documents", $data);
+            // use the real document path, just for the case that a documents gets saved in the frontend
+            // and the page is within a site. see also: PIMCORE-2684
+            $dataDocument["path"] = $this->model->getRealPath();
+
+            // update the values in the database
+            $this->db->insertOrUpdate("documents", $dataDocument);
+
+            if($typeSpecificTable) {
+                $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
+            }
 
             $this->updateLocks();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Deletes the object from database
-     *
-     * @return void
+     * @throws \Exception
      */
     public function delete()
     {
         try {
             $this->db->delete("documents", $this->db->quoteInto("id = ?", $this->model->getId()));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function updateWorkspaces() {
         $this->db->update("users_workspaces_document", array(
             "cpath" => $this->model->getRealFullPath()
         ), "cid = " . $this->model->getId());
     }
 
+    /**
+     * @param $oldPath
+     * @return array
+     */
     public function updateChildsPaths($oldPath)
     {
         //get documents to empty their cache
         $documents = $this->db->fetchCol("SELECT id FROM documents WHERE path LIKE ?", $oldPath . "%");
 
         $userId = "0";
-        if ($user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
             $userId = $user->getId();
         }
 
@@ -209,8 +222,8 @@ class Document_Resource extends Element_Resource
         $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
-        } catch (Exception $e) {
-            Logger::error("could not  get current document path from DB");
+        } catch (\Exception $e) {
+            \Logger::error("could not  get current document path from DB");
 
         }
 
@@ -243,7 +256,7 @@ class Document_Resource extends Element_Resource
         foreach ($propertiesRaw as $propertyRaw) {
 
             try {
-                $property = new Property();
+                $property = new Model\Property();
                 $property->setType($propertyRaw["type"]);
                 $property->setCid($this->model->getId());
                 $property->setName($propertyRaw["name"]);
@@ -263,8 +276,8 @@ class Document_Resource extends Element_Resource
                 }
 
                 $properties[$propertyRaw["name"]] = $property;
-            } catch (Exception $e) {
-                Logger::error("can't add property " . $propertyRaw["name"] . " to document " . $this->model->getRealFullPath());
+            } catch (\Exception $e) {
+                \Logger::error("can't add property " . $propertyRaw["name"] . " to document " . $this->model->getRealFullPath());
             }
         }
 
@@ -338,6 +351,20 @@ class Document_Resource extends Element_Resource
         return $c;
     }
 
+	/**
+	 * Quick test if there are siblings
+	 *
+	 * @return boolean
+	 */
+	public function hasSiblings() {
+		$c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+		return (bool)$c;
+	}
+
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     public function isLocked()
     {
 
@@ -361,6 +388,9 @@ class Document_Resource extends Element_Resource
         return false;
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function updateLocks()
     {
         // tree_locks
@@ -383,9 +413,13 @@ class Document_Resource extends Element_Resource
         return $lockIds;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @return bool
+     */
     public function isAllowed($type, $user)
     {
-
         // collect properties via parent - ids
         $parentIds = array(1);
 
@@ -402,7 +436,7 @@ class Document_Resource extends Element_Resource
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_document WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC, ABS(userId-" . $user->getId() . ") ASC LIMIT 1");
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_document WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") AND `".$type."` = 1 ORDER BY LENGTH(cpath) DESC, ABS(userId-" . $user->getId() . ") ASC LIMIT 1");
 
             if ($permissionsParent) {
                 return true;
@@ -416,23 +450,30 @@ class Document_Resource extends Element_Resource
                     $path = "/";
                 }
 
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",", $userIds) . ") LIMIT 1", $path . "%");
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",", $userIds) . ") AND list = 1 LIMIT 1", $path . "%");
                 if ($permissionsChilds) {
                     return true;
                 }
             }
-        } catch (Exception $e) {
-            Logger::warn("Unable to get permission " . $type . " for document " . $this->model->getId());
+        } catch (\Exception $e) {
+            \Logger::warn("Unable to get permission " . $type . " for document " . $this->model->getId());
         }
 
         return false;
     }
 
+    /**
+     * @param $index
+     * @throws \Zend_Db_Adapter_Exception
+     */
     public function saveIndex($index)
     {
         $this->db->update("documents", array("index" => $index), $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
+    /**
+     * @return string
+     */
     public function getNextIndex()
     {
         $index = $this->db->fetchOne("SELECT MAX(`index`) FROM documents WHERE parentId = ?", array($this->model->getParentId()));

@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  * @since      Preview Release 0.2
@@ -43,7 +43,7 @@
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Session extends Zend_Session_Abstract
@@ -811,9 +811,9 @@ class Zend_Session extends Zend_Session_Abstract
             }
             $validator = new $validator_name;
             if ($validator->validate() === false) {
-                /** @see Zend_Session_Exception */
-                // require_once 'Zend/Session/Exception.php';
-                throw new Zend_Session_Exception("This session is not valid according to {$validator_name}.");
+                /** @see Zend_Session_Validator_Exception */
+                // require_once 'Zend/Session/Validator/Exception.php';
+                throw new Zend_Session_Validator_Exception("This session is not valid according to {$validator_name}.");
             }
         }
     }

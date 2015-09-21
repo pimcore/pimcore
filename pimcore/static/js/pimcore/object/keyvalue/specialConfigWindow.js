@@ -89,6 +89,7 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
     getEditPanel: function () {
         this.resultPanel = new Ext.Panel({
             layout: "fit",
+            autoScroll: true,
             items: [this.getGridPanel()],
             tbar: [
                 {

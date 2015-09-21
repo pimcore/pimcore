@@ -51,6 +51,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             },
             baseParams: {
                 class_id: this.object.data.general.o_classId,
+                object_id: this.object.id,
                 field_name: this.getName()
             }
         });
@@ -95,6 +96,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 }
             }
         }
+
+        this.tabpanel.setActiveTab(0);
 
         pimcore.layout.refresh();
     },
@@ -257,11 +260,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.currentMetaData = {};
     },
 
-    getDataForField: function (name) {
+    getDataForField: function (fieldConfig) {
+        var name = fieldConfig.name;
         return this.currentData[name];
     },
 
-    getMetaDataForField: function(name) {
+    getMetaDataForField: function(fieldConfig) {
+        var name = fieldConfig.name;
         return this.currentMetaData[name];
     },
 

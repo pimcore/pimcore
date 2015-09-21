@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Renderer_Html
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -35,7 +35,7 @@
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Renderer_Html
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Markup_Renderer_Html_Url extends Zend_Markup_Renderer_Html_HtmlAbstract

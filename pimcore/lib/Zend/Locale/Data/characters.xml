@@ -7,8 +7,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 
 <supplementalData>
-	<version number="$Revision: 8242 $"/>
-	<generation date="$Date: 2013-02-24 21:06:02 -0600 (Sun, 24 Feb 2013) $"/>
+	<version number="$Revision: 9123 $"/>
+	<generation date="$Date: 2013-08-05 13:50:51 -0500 (Mon, 05 Aug 2013) $"/>
 	<characters>
 		<character-fallback>
 			<character value = "©">
@@ -216,7 +216,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<substitute>INR</substitute>
 			</character>
 			<character value = "₺">
-				<substitute>TRY</substitute>
+				<substitute>TL</substitute>
 			</character>
 			<character value = "℞">
 				<substitute>Rx</substitute>

@@ -15,7 +15,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Service extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+use Pimcore\Model\Dependency;
+use Pimcore\File;
+
+class Service extends Model\AbstractModel {
 
     /**
      * @static
@@ -26,10 +35,10 @@ class Element_Service extends Pimcore_Model_Abstract {
 
         $path = "";
 
-        if ($element instanceof Element_Interface) {
-            $elementType = Element_Service::getElementType($element);
+        if ($element instanceof ElementInterface) {
+            $elementType = self::getElementType($element);
             $nid = $element->getParentId();
-            $ne = Element_Service::getElementById($elementType, $nid);
+            $ne = self::getElementById($elementType, $nid);
         }
 
         if ($ne) {
@@ -43,6 +52,29 @@ class Element_Service extends Pimcore_Model_Abstract {
         return $path;
     }
 
+    /**
+     * @static
+     * @param  $list array | \Pimcore\Model\Listing\AbstractListing
+     * @return array
+     */
+    public static function getIdList($list,$idGetter = 'getId'){
+       $ids = array();
+       if(is_array($list)){
+           foreach($list as $entry){
+               if(is_object($entry) && method_exists($entry,$idGetter)){
+                   $ids[] = $entry->$idGetter();
+               }elseif(is_scalar($entry)){
+                   $ids[] = $entry;
+               }
+           }
+       }
+
+       if($list instanceof \Pimcore\Model\Listing\AbstractListing){
+               $ids = $list->loadIdList();
+       }
+        $ids = array_unique($ids);
+       return $ids;
+    }
 
     /**
      * @param Dependency $d
@@ -91,16 +123,16 @@ class Element_Service extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param Document|Asset|Object_Abstract $element
+     * @param Document|Asset|Object\AbstractObject $element
      * @return array
      */
     public static function getDependencyForFrontend($element)
     {
-        if ($element instanceof Element_Interface) {
+        if ($element instanceof ElementInterface) {
             return array(
                 "id" => $element->getId(),
                 "path" => $element->getFullPath(),
-                "type" => Element_Service::getElementType($element),
+                "type" => self::getElementType($element),
                 "subtype" => $element->getType()
             );
         }
@@ -108,13 +140,13 @@ class Element_Service extends Pimcore_Model_Abstract {
 
     /**
      * @param array $config
-     * @return Object_Abstract|Document|Asset
+     * @return Object\AbstractObject|Document|Asset
      */
     public static function getDependedElement($config)
     {
 
         if ($config["type"] == "object") {
-            return Object_Abstract::getById($config["id"]);
+            return Object::getById($config["id"]);
         }
         else if ($config["type"] == "asset") {
             return Asset::getById($config["id"]);
@@ -131,13 +163,13 @@ class Element_Service extends Pimcore_Model_Abstract {
      * determines whether an element is published
      *
      * @static
-     * @param  Element_Interface $element
+     * @param  ElementInterface $element
      * @return bool
      */
     public static function isPublished($element = null)
     {
 
-        if ($element instanceof Element_Interface) {
+        if ($element instanceof ElementInterface) {
             if (method_exists($element, "isPublished")) {
                 return $element->isPublished();
             }
@@ -152,14 +184,14 @@ class Element_Service extends Pimcore_Model_Abstract {
      * @static
      * @param  string $type
      * @param  string $path
-     * @return Element_Interface
+     * @return ElementInterface
      */
     public static function getElementByPath($type, $path)
     {
         if ($type == "asset") {
             $element = Asset::getByPath($path);
         } else if ($type == "object") {
-            $element = Object_Abstract::getByPath($path);
+            $element = Object::getByPath($path);
         } else if ($type == "document") {
             $element = Document::getByPath($path);
         }
@@ -170,16 +202,16 @@ class Element_Service extends Pimcore_Model_Abstract {
     /**
      * Returns a uniqe key for the element in the $target-Path (recursive)
      * @static
-     * @return Element_Interface|string
+     * @return ElementInterface|string
      * @param string $type
      * @param string $sourceKey
-     * @param Element_Interface $target
+     * @param ElementInterface $target
      */
     public static function getSaveCopyName($type, $sourceKey, $target)
     {
         if (self::pathExists($target->getFullPath() . "/" . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
-            if($type == "asset" && $fileExtension = Pimcore_File::getFileExtension($sourceKey)) {
+            if($type == "asset" && $fileExtension = File::getFileExtension($sourceKey)) {
                 $sourceKey = str_replace("." . $fileExtension, "_copy." . $fileExtension, $sourceKey);
             } else {
                 $sourceKey .= "_copy";
@@ -198,11 +230,11 @@ class Element_Service extends Pimcore_Model_Abstract {
      */
     public static function pathExists ($path, $type = null) {
         if($type == "asset") {
-            return Asset_Service::pathExists($path);
+            return Asset\Service::pathExists($path);
         } else if ($type == "document") {
-            return Document_Service::pathExists($path);
+            return Document\Service::pathExists($path);
         } else if ($type == "object") {
-            return Object_Service::pathExists($path);
+            return Object\Service::pathExists($path);
         }
 
         return;
@@ -213,7 +245,7 @@ class Element_Service extends Pimcore_Model_Abstract {
      * @static
      * @param  string $type
      * @param  int $id
-     * @return Element_Interface
+     * @return ElementInterface
      */
     public static function getElementById($type, $id)
     {
@@ -221,7 +253,7 @@ class Element_Service extends Pimcore_Model_Abstract {
         if ($type == "asset") {
             $element = Asset::getById($id);
         } else if ($type == "object") {
-            $element = Object_Abstract::getById($id);
+            $element = Object::getById($id);
         } else if ($type == "document") {
             $element = Document::getById($id);
         }
@@ -230,13 +262,13 @@ class Element_Service extends Pimcore_Model_Abstract {
 
     /**
      * @static
-     * @param  Element_Interface $element $element
+     * @param  ElementInterface $element $element
      * @return string
      */
     public static function getElementType($element)
     {
         $type = null;
-        if ($element instanceof Object_Abstract) {
+        if ($element instanceof Object\AbstractObject) {
             $type = "object";
         } else if ($element instanceof Document) {
             $type = "document";
@@ -250,7 +282,7 @@ class Element_Service extends Pimcore_Model_Abstract {
      * determines the type of an element (object,asset,document)
      *
      * @static
-     * @param  Element_Interface $element
+     * @param  ElementInterface $element
      * @return string
      */
     public static function getType($element)
@@ -262,47 +294,49 @@ class Element_Service extends Pimcore_Model_Abstract {
      * Schedules element with this id for sanity check to be cleaned of broken relations
      *
      * @static
-     * @param  Element_Interface $element
+     * @param  ElementInterface $element
      * @return void
      */
     public static function scheduleForSanityCheck($element)
     {
 
         $type = self::getElementType($element);
-        $sanityCheck = new Element_Sanitycheck($element->getId(), $type);
+        $sanityCheck = new Sanitycheck($element->getId(), $type);
         $sanityCheck->save();
 
 
     }
 
+    /**
+     *
+     */
     public static function runSanityCheck() {
 
-        $sanityCheck = Element_Sanitycheck::getNext();
+        $sanityCheck = Sanitycheck::getNext();
         while ($sanityCheck) {
 
             $element = self::getElementById($sanityCheck->getType(), $sanityCheck->getId());
             if ($element) {
                 try {
                     self::performSanityCheck($element);
-                } catch (Exception $e) {
-                    Logger::error("Element_Service: sanity check for element with id [ " . $element->getId() . " ] and type [ " . self::getType($element) . " ] failed");
+                } catch (\Exception $e) {
+                    \Logger::error("Element\\Service: sanity check for element with id [ " . $element->getId() . " ] and type [ " . self::getType($element) . " ] failed");
                 }
                 $sanityCheck->delete();
             } else {
                 $sanityCheck->delete();
             }
-            $sanityCheck = Element_Sanitycheck::getNext();
+            $sanityCheck = Sanitycheck::getNext();
 
             // reduce load on server
-            Logger::debug("Now timeout for 3 seconds");
+            \Logger::debug("Now timeout for 3 seconds");
             sleep(3);
         }
-
     }
 
     /**
      * @static
-     * @param  Element_Interface $element
+     * @param  ElementInterface $element
      * @return void
      */
     protected static function performSanityCheck($element)
@@ -347,7 +381,7 @@ class Element_Service extends Pimcore_Model_Abstract {
                 "type"
             );
 
-            if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof Object_Abstract) {
+            if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof Object\AbstractObject) {
 
                 $pa = array();
 
@@ -367,6 +401,15 @@ class Element_Service extends Pimcore_Model_Abstract {
             else {
                 $properties[$key] = object2array($p);
             }
+
+            // add config from predefined properties
+            if ($p->getName() && $p->getType()) {
+                $predefined = Model\Property\Predefined::getByKey($p->getName());
+
+                if ($predefined && $predefined->getType() == $p->getType()) {
+                    $properties[$key]["config"] = $predefined->getConfig();
+                }
+            }
         }
 
         return $properties;
@@ -374,8 +417,8 @@ class Element_Service extends Pimcore_Model_Abstract {
 
 
     /**
-     * @param  Element_Interface $target the parent element
-     * @param  Element_Interface $new the newly inserted child
+     * @param  ElementInterface $target the parent element
+     * @param  ElementInterface $new the newly inserted child
      * @return void
      */
     protected function updateChilds($target, $new)
@@ -400,15 +443,15 @@ class Element_Service extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param  Element_interface $element
+     * @param  ElementInterface $element
      * @return array
      */
-    public static function gridElementData(Element_Interface $element)
+    public static function gridElementData(ElementInterface $element)
     {
         $data = array(
             "id" => $element->getId(),
             "fullpath" => $element->getFullPath(),
-            "type" => Element_Service::getType($element),
+            "type" => self::getType($element),
             "subtype" => $element->getType(),
             "filename" => self::getFilename($element),
             "creationDate" => $element->getCreationDate(),
@@ -425,12 +468,12 @@ class Element_Service extends Pimcore_Model_Abstract {
 
 
     /**
-     * @param Element_Interface $element
+     * @param ElementInterface $element
      * @return string
      */
-    public static function getFilename(Element_Interface $element)
+    public static function getFilename(ElementInterface $element)
     {
-        if ($element instanceof Document || $element instanceof Object_Abstract) {
+        if ($element instanceof Document || $element instanceof Object\AbstractObject) {
             return $element->getKey();
         } else if ($element instanceof Asset) {
             return $element->getFilename();
@@ -451,7 +494,7 @@ class Element_Service extends Pimcore_Model_Abstract {
         // get workspaces
         $workspaces = $user->{"getWorkspaces".ucfirst($type)}();
         foreach ($user->getRoles() as $roleId) {
-            $role = User_Role::getById($roleId);
+            $role = Model\User\Role::getById($roleId);
             $workspaces = array_merge($workspaces, $role->{"getWorkspaces".ucfirst($type)}());
         }
 
@@ -470,8 +513,8 @@ class Element_Service extends Pimcore_Model_Abstract {
     }
 
     /**
-     * renews all references, for example after unserializing an Element_Interface
-     * @param  Document|Asset|Object_Abstract $data
+     * renews all references, for example after unserializing an ElementInterface
+     * @param  Document|Asset|Object\AbstractObject $data
      * @return mixed
      */
     public static function renewReferences($data, $initial = true)
@@ -482,25 +525,27 @@ class Element_Service extends Pimcore_Model_Abstract {
             }
             return $data;
         } else if (is_object($data)) {
-            if ($data instanceof Element_Interface && !$initial) {
-                return Element_Service::getElementById(Element_Service::getElementType($data), $data->getId());
+            if ($data instanceof ElementInterface && !$initial) {
+                return self::getElementById(self::getElementType($data), $data->getId());
             } else {
 
                 // if this is the initial element set the correct path and key
-                if ($data instanceof Element_Interface && $initial) {
+                if ($data instanceof ElementInterface && $initial) {
 
-                    $originalElement = Element_Service::getElementById(Element_Service::getElementType($data), $data->getId());
+                    $originalElement = self::getElementById(self::getElementType($data), $data->getId());
 
                     if ($originalElement) {
                         if ($data instanceof Asset) {
                             $data->setFilename($originalElement->getFilename());
                         } else if ($data instanceof Document) {
                             $data->setKey($originalElement->getKey());
-                        } else if ($data instanceof Object_Abstract) {
+                        } else if ($data instanceof Object\AbstractObject) {
                             $data->setKey($originalElement->getKey());
                         }
 
-                        $data->setPath($originalElement->getPath());
+                        if (!Object\AbstractObject::doNotRestoreKeyAndPath()) {
+                            $data->setPath($originalElement->getPath());
+                        }
                     }
                 }
 
@@ -533,17 +578,17 @@ class Element_Service extends Pimcore_Model_Abstract {
 
     /**
      * @static
-     * @param Element_Interface $element
-     * @return Element_Interface
+     * @param ElementInterface $element
+     * @return ElementInterface
      */
-    public static function loadAllFields (Element_Interface $element) {
+    public static function loadAllFields (ElementInterface $element) {
 
         if($element instanceof Document) {
-            Document_Service::loadAllDocumentFields($element);
-        } else if ($element instanceof Object_Concrete) {
-            Object_Service::loadAllObjectFields($element);
+            Document\Service::loadAllDocumentFields($element);
+        } else if ($element instanceof Object\Concrete) {
+            Object\Service::loadAllObjectFields($element);
         } else if ($element instanceof Asset) {
-            Asset_Service::loadAllFields($element);
+            Asset\Service::loadAllFields($element);
         }
 
         return $element;
@@ -566,43 +611,36 @@ class Element_Service extends Pimcore_Model_Abstract {
         return strlen($var) > 0;
     }
 
-
-
     /**
-     * Creates Object/Document/Asset folders by a path
-     *
-     * @param string $path
-     * @param Object | Document | Asset $type
+     * @param $path
      * @param array $options
-     * @throws Exception
+     * @return null
+     * @throws \Exception
      */
     public static function createFolderByPath($path,$options = array()) {
         $calledClass = get_called_class();
         if($calledClass == __CLASS__){
-            throw new Exception("This method must be called from a extended class. e.g Asset_Service, Object_Service, Document_Service");
+            throw new \Exception("This method must be called from a extended class. e.g Asset\\Service, Object\\Service, Document\\Service");
         }
 
-        $type = str_replace('_Service','',$calledClass);
-        $folderType = $type . '_Folder';
+        $type = str_replace('\Service','',$calledClass);
+        $type = "\\" . ltrim($type, "\\");
+        $folderType = $type . '\Folder';
 
         $lastFolder = null;
         $pathsArray = array();
         $parts = explode('/', $path);
-        $parts = array_filter($parts, "Element_Service::filterNullValues");
+        $parts = array_filter($parts, "\\Pimcore\\Model\\Element\\Service::filterNullValues");
 
         $sanitizedPath = "/";
         foreach($parts as $part) {
-            $sanitizedPath = $sanitizedPath . Pimcore_File::getValidFilename($part) . "/";
-        }
-
-        if ($type == "Object") {
-            $type = "Object_Abstract";
+            $sanitizedPath = $sanitizedPath . File::getValidFilename($part) . "/";
         }
 
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
 
             foreach ($parts as $part) {
-                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . Pimcore_File::getValidFilename($part);
+                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . File::getValidFilename($part);
             }
 
             for ($i = 0; $i < count($pathsArray); $i++) {
@@ -610,7 +648,7 @@ class Element_Service extends Pimcore_Model_Abstract {
                 if (!($type::getByPath($currentPath) instanceof $type)) {
                     $parentFolderPath = ($i ==0) ? '/' : $pathsArray[$i - 1];
 
-                    $parentFolder = $folderType::getByPath($parentFolderPath);
+                    $parentFolder = $type::getByPath($parentFolderPath);
 
                     $folder = new $folderType();
                     $folder->setParent($parentFolder);

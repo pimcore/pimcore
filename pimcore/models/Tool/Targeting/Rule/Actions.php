@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Targeting_Rule_Actions {
+namespace Pimcore\Model\Tool\Targeting\Rule;
+
+use Pimcore\Model;
+
+class Actions {
 
     /**
      * @var bool
@@ -83,7 +87,8 @@ class Tool_Targeting_Rule_Actions {
     public $personaEnabled = false;
 
     /**
-     * @param boolean $programmaticallyEnabled
+     * @param $programmaticallyEnabled
+     * @return $this
      */
     public function setProgrammaticallyEnabled($programmaticallyEnabled)
     {
@@ -100,7 +105,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param string $codesnippetCode
+     * @param $codesnippetCode
+     * @return $this
      */
     public function setCodesnippetCode($codesnippetCode)
     {
@@ -117,7 +123,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param string $codesnippetPosition
+     * @param $codesnippetPosition
+     * @return $this
      */
     public function setCodesnippetPosition($codesnippetPosition)
     {
@@ -134,7 +141,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param string $codesnippetSelector
+     * @param $codesnippetSelector
+     * @return $this
      */
     public function setCodesnippetSelector($codesnippetSelector)
     {
@@ -151,7 +159,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param string $eventKey
+     * @param $eventKey
+     * @return $this
      */
     public function setEventKey($eventKey)
     {
@@ -168,7 +177,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param string $eventValue
+     * @param $eventValue
+     * @return $this
      */
     public function setEventValue($eventValue)
     {
@@ -185,7 +195,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param int $redirectCode
+     * @param $redirectCode
+     * @return $this
      */
     public function setRedirectCode($redirectCode)
     {
@@ -202,12 +213,13 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param string $redirectUrl
+     * @param $redirectUrl
+     * @return $this
      */
     public function setRedirectUrl($redirectUrl)
     {
         if(is_string($redirectUrl)) {
-            if($doc = Document::getByPath($redirectUrl)) {
+            if($doc = Model\Document::getByPath($redirectUrl)) {
                 $redirectUrl = $doc->getId();
             }
         }
@@ -224,7 +236,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param boolean $codesnippetEnabled
+     * @param $codesnippetEnabled
+     * @return $this
      */
     public function setCodesnippetEnabled($codesnippetEnabled)
     {
@@ -241,7 +254,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param boolean $eventEnabled
+     * @param $eventEnabled
+     * @return $this
      */
     public function setEventEnabled($eventEnabled)
     {
@@ -258,7 +272,8 @@ class Tool_Targeting_Rule_Actions {
     }
 
     /**
-     * @param boolean $redirectEnabled
+     * @param $redirectEnabled
+     * @return $this
      */
     public function setRedirectEnabled($redirectEnabled)
     {

@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Reports {
+use Pimcore\Model\Tool\CustomReport;
+
+class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Reports {
 
     public function init() {
         parent::init();
@@ -23,7 +25,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
     public function treeAction () {
 
-        $reports = Tool_CustomReport_Config::getReportsList();
+        $reports = CustomReport\Config::getReportsList();
 
         if($this->getParam("portlet")) {
             $this->_helper->json(array("data" => $reports));
@@ -37,14 +39,14 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
     public function addAction () {
 
         try {
-            Tool_CustomReport_Config::getByName($this->getParam("name"));
+            CustomReport\Config::getByName($this->getParam("name"));
             $alreadyExist = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $report = new Tool_CustomReport_Config();
+            $report = new CustomReport\Config();
             $report->setName($this->getParam("name"));
             $report->save();
         }
@@ -54,7 +56,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
     public function deleteAction () {
 
-        $report = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $report = CustomReport\Config::getByName($this->getParam("name"));
         $report->delete();
 
         $this->_helper->json(array("success" => true));
@@ -63,15 +65,15 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
     public function getAction () {
 
-        $report = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $report = CustomReport\Config::getByName($this->getParam("name"));
         $this->_helper->json($report);
     }
 
 
     public function updateAction () {
 
-        $report = Tool_CustomReport_Config::getByName($this->getParam("name"));
-        $data = Zend_Json::decode($this->getParam("configuration"));
+        $report = CustomReport\Config::getByName($this->getParam("name"));
+        $data = \Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
         foreach ($data as $key => $value) {
             $setter = "set" . ucfirst($key);
@@ -96,10 +98,10 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         try {
 
-            $adapter = Tool_CustomReport_Config::getAdapter($configuration);
+            $adapter = CustomReport\Config::getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
             $success = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
         }
 
@@ -112,14 +114,14 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
 
     public function getReportConfigAction() {
-        $dir = Tool_CustomReport_Config::getWorkingDir();
+        $dir = CustomReport\Config::getWorkingDir();
 
         $reports = array();
         $files = scandir($dir);
         foreach ($files as $file) {
             if(strpos($file, ".xml")) {
                 $name = str_replace(".xml", "", $file);
-                $report = Tool_CustomReport_Config::getByName($name);
+                $report = CustomReport\Config::getByName($name);
                 $reports[] = array(
                     "name" => $report->getName(),
                     "niceName" => $report->getNiceName(),
@@ -141,17 +143,21 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         $offset = $this->getParam("start", 0);
         $limit = $this->getParam("limit", 40);
-        $sort = $this->getParam("sort");
-        $dir = $this->getParam("dir");
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if($sortingSettings['orderKey']) {
+            $sort = $sortingSettings['orderKey'];
+            $dir = $sortingSettings['order'];
+        }
+
         $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
 
         $drillDownFilters = $this->getParam("drillDownFilters", null);
 
-        $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $config = CustomReport\Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
 
-        $adapter = Tool_CustomReport_Config::getAdapter($configuration, $config);
+        $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters, $config);
 
@@ -169,11 +175,11 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
         $drillDownFilters = $this->getParam("drillDownFilters", null);
 
-        $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $config = CustomReport\Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
 
-        $adapter = Tool_CustomReport_Config::getAdapter($configuration, $config);
+        $adapter = CustomReport\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
         $this->_helper->json(array(
             "success" => true,
@@ -187,11 +193,11 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
         $drillDownFilters = $this->getParam("drillDownFilters", null);
 
-        $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $config = CustomReport\Config::getByName($this->getParam("name"));
 
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
-        $adapter = Tool_CustomReport_Config::getAdapter($configuration, $config);
+        $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
@@ -210,7 +216,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
         $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
         $drillDownFilters = $this->getParam("drillDownFilters", null);
 
-        $config = Tool_CustomReport_Config::getByName($this->getParam("name"));
+        $config = CustomReport\Config::getByName($this->getParam("name"));
 
         $columns = $config->getColumnConfiguration();
         $fields = array();
@@ -222,7 +228,7 @@ class Reports_CustomReportController extends Pimcore_Controller_Action_Admin_Rep
 
         $configuration = $config->getDataSourceConfig();
         $configuration = $configuration[0];
-        $adapter = Tool_CustomReport_Config::getAdapter($configuration, $config);
+        $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);
 

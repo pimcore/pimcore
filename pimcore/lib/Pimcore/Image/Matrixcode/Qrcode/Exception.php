@@ -12,7 +12,7 @@
  * through the world-wide-web, please send a note to license@zend.com
  * so we can mail you a copy immediately.
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -21,10 +21,13 @@
 /**
  * Pimcore_Image_Matrixcode_Exception
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Image_Matrixcode_Qrcode_Exception extends Zend_Exception
-{
+
+namespace Pimcore\Image\Matrixcode\Qrcode;
+
+class Exception extends \Zend_Exception {
+
 }

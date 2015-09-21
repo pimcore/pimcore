@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9876 $"/>
+		<generation date="$Date: 2014-03-05 23:14:25 -0600 (Wed, 05 Mar 2014) $"/>
 		<language type="am"/>
 	</identity>
 	<localeDisplayNames>
@@ -33,7 +33,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="be">ቤላራሻኛ</language>
 			<language type="bem">ቤምባ</language>
 			<language type="bg">ቡልጋሪኛ</language>
-			<language type="bh">ቢሃሪ</language>
 			<language type="bi">ቢስላምኛ</language>
 			<language type="bn">ቤንጋሊኛ</language>
 			<language type="bo">ቲቤታንኛ</language>
@@ -128,7 +127,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mk">ማሴዶንኛ</language>
 			<language type="ml">ማላያላምኛ</language>
 			<language type="mn">ሞንጎላዊኛ</language>
-			<language type="mo">ሞልዳቫዊና</language>
 			<language type="mr">ማራቲኛ</language>
 			<language type="ms">ማላይኛ</language>
 			<language type="mt">ማልቲስኛ</language>
@@ -159,6 +157,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">ሮማንሽ</language>
 			<language type="rn">ሩንዲኛ</language>
 			<language type="ro">ሮማኒያን</language>
+			<language type="ro_MD">ሞልዳቫዊና</language>
 			<language type="ru">ራሽኛ</language>
 			<language type="rw">ኪንያርዋንድኛ</language>
 			<language type="sa">ሳንስክሪትኛ</language>
@@ -948,7 +947,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="h">h – h a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="H">
-							<greatestDifference id="H">hh–hh a</greatestDifference>
+							<greatestDifference id="H">HH–HH</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hm">
 							<greatestDifference id="a">h:mm a – h:mm a</greatestDifference>
@@ -956,8 +955,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">h:mm – h:mm a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hm">
-							<greatestDifference id="H">hh:mm–hh:mm a</greatestDifference>
-							<greatestDifference id="m">hh:mm–hh:mm a</greatestDifference>
+							<greatestDifference id="H">HH:mm–HH:mm</greatestDifference>
+							<greatestDifference id="m">HH:mm–HH:mm</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
 							<greatestDifference id="a">h:mm a – h:mm a v</greatestDifference>
@@ -965,15 +964,15 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">h:mm – h:mm a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hmv">
-							<greatestDifference id="H">hh:mm–hh:mm a v</greatestDifference>
-							<greatestDifference id="m">hh:mm–hh:mm a v</greatestDifference>
+							<greatestDifference id="H">HH:mm–HH:mm v</greatestDifference>
+							<greatestDifference id="m">HH:mm–HH:mm v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
 							<greatestDifference id="a">h a – h a v</greatestDifference>
 							<greatestDifference id="h">h – h a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hv">
-							<greatestDifference id="H">hh–hh a v</greatestDifference>
+							<greatestDifference id="H">HH–HH v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="M">
 							<greatestDifference id="M">M–M</greatestDifference>
@@ -1379,7 +1378,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="h">h – h a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="H">
-							<greatestDifference id="H">hh–hh a</greatestDifference>
+							<greatestDifference id="H">HH–HH</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hm">
 							<greatestDifference id="a">h:mm a – h:mm a</greatestDifference>
@@ -1387,8 +1386,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">h:mm – h:mm a</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hm">
-							<greatestDifference id="H">hh:mm–hh:mm a</greatestDifference>
-							<greatestDifference id="m">hh:mm–hh:mm a</greatestDifference>
+							<greatestDifference id="H">HH:mm–HH:mm</greatestDifference>
+							<greatestDifference id="m">HH:mm–HH:mm</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hmv">
 							<greatestDifference id="a">h:mm a – h:mm a v</greatestDifference>
@@ -1396,15 +1395,15 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="m">h:mm – h:mm a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hmv">
-							<greatestDifference id="H">hh:mm–hh:mm a v</greatestDifference>
-							<greatestDifference id="m">hh:mm–hh:mm a v</greatestDifference>
+							<greatestDifference id="H">HH:mm–HH:mm v</greatestDifference>
+							<greatestDifference id="m">HH:mm–HH:mm v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="hv">
 							<greatestDifference id="a">h a – h a v</greatestDifference>
 							<greatestDifference id="h">h – h a v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Hv">
-							<greatestDifference id="H">hh–hh a v</greatestDifference>
+							<greatestDifference id="H">HH–HH v</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="M">
 							<greatestDifference id="M">M–M</greatestDifference>
@@ -1668,9 +1667,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>ፓልመር</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>የደቡብ ዋልታ</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>ስዮዋ</exemplarCity>
@@ -1944,9 +1940,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ቶሮንቶ</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>ሞንትሪያል</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>ኢኳሊውት</exemplarCity>
@@ -2784,9 +2777,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ፊኒክስ</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>ሺፕሮክ</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ዴንቨር</exemplarCity>
@@ -4712,8 +4702,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ሰከንድ</unitPattern>
 			</unit>
 			<unit type="angle-degree">
-				<unitPattern count="one">{0}°ዲግሪ</unitPattern>
-				<unitPattern count="other">{0}°ዲግሪ</unitPattern>
+				<unitPattern count="one">{0} ዲግሪ</unitPattern>
+				<unitPattern count="other">{0} ዲግሪ</unitPattern>
 			</unit>
 			<unit type="area-acre">
 				<unitPattern count="one">{0} ኤክር</unitPattern>
@@ -4868,16 +4858,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ዲግሪ ሴልሺየስ</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
-				<unitPattern count="one">{0}°ዲግሪ ፋራንሃይት</unitPattern>
-				<unitPattern count="other">{0}°ዲግሪ ፋራንሃይት</unitPattern>
+				<unitPattern count="one">{0} ዲግሪ ፋራንሃይት</unitPattern>
+				<unitPattern count="other">{0} ዲግሪ ፋራንሃይት</unitPattern>
 			</unit>
 			<unit type="volume-cubic-kilometer">
 				<unitPattern count="one">{0} ኩቢክ ኪሎሜትር</unitPattern>
 				<unitPattern count="other">{0} ኩቢክ ኪሎሜትር</unitPattern>
 			</unit>
 			<unit type="volume-cubic-mile">
-				<unitPattern count="one">{0} ኩቢክ ማይል³</unitPattern>
-				<unitPattern count="other">{0} ኩቢክ ማይል³</unitPattern>
+				<unitPattern count="one">{0} ኩቢክ ማይል</unitPattern>
+				<unitPattern count="other">{0} ኩቢክ ማይል</unitPattern>
 			</unit>
 			<unit type="volume-liter">
 				<unitPattern count="one">{0} ሊትር</unitPattern>
@@ -5242,8 +5232,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ማይል/ሰ</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
-				<unitPattern count="one">{0}°ሴ</unitPattern>
-				<unitPattern count="other">{0}°ሴ</unitPattern>
+				<unitPattern count="one">{0}°</unitPattern>
+				<unitPattern count="other">{0}°</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
 				<unitPattern count="one">{0}°ፋ</unitPattern>

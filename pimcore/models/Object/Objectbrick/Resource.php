@@ -10,25 +10,30 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Object_Objectbrick
+ * @package    Object\Objectbrick
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
+namespace Pimcore\Model\Object\Objectbrick;
+
+use Pimcore\Model;
+use Pimcore\Model\Object;
+
+class Resource extends Model\Object\Fieldcollection\Resource {
 
     /**
-     * @param Object_Concrete $object
+     * @param Object\Concrete $object
      * @return array
      */
-    public function load(Object_Concrete $object) {
+    public function load(Object\Concrete $object) {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = array();
         
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
-                $definition = Object_Objectbrick_Definition::getByKey($type);
-            } catch (Exception $e) {
+                $definition = Object\Objectbrick\Definition::getByKey($type);
+            } catch (\Exception $e) {
                 continue;
             }
              
@@ -36,13 +41,13 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
             
             try {
                 $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = ? AND fieldname = ?", array($object->getId(), $this->model->getFieldname()));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $results = array();
             }
 
             //$allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'objectbrick' AND ownername = ?", array($object->getO_id(), $this->model->getFieldname()));
             $fieldDefinitions = $definition->getFieldDefinitions();
-            $brickClass = "Object_Objectbrick_Data_" . ucfirst($type);
+            $brickClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($type);
 
             foreach ($results as $result) {
                 $brick = new $brickClass($object);
@@ -51,17 +56,6 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
 
                 foreach ($fieldDefinitions as $key => $fd) {
 
-                    /*if ($fd->isRelationType()) {
-
-                        $relations = array();
-                        foreach ($allRelations as $relation) {
-                            if ($relation["fieldname"] == $key) {
-                                $relations[] = $relation;
-                            }
-                        }
-
-                        $brick->setValue( $key, $fd->getDataFromResource($relations));
-                    }*/
                     if (method_exists($fd, "load")) {
                         // datafield has it's own loader
                         $value = $fd->load($brick);
@@ -97,11 +91,11 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
     }
 
     /**
-     * @throws Exception
-     * @param Object_Concrete $object
+     * @throws \Exception
+     * @param Object\Concrete $object
      * @return void
      */
-    public function delete (Object_Concrete $object) {
-        throw new Exception("Not implemented yet");
+    public function delete (Object\Concrete $object) {
+        throw new \Exception("Not implemented yet");
     }
 }

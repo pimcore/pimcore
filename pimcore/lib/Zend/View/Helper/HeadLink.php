@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -30,8 +30,16 @@
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @method $this appendAlternate($href, $type, $title, $extras)
+ * @method $this appendStylesheet($href, $media = 'screen', $conditionalStylesheet = false, array $extras = array())
+ * @method $this offsetSetAlternate($index, $href, $type, $title, $extras)
+ * @method $this offsetSetStylesheet($index, $href, $media = 'screen', $conditionalStylesheet = false, array $extras = array())
+ * @method $this prependAlternate($href, $type, $title, $extras)
+ * @method $this prependStylesheet($href, $media = 'screen', $conditionalStylesheet = false, array $extras = array())
+ * @method $this setAlternate($href, $type, $title, $extras)
+ * @method $this setStylesheet($href, $media = 'screen', $conditionalStylesheet = false, array $extras = array())
  */
 class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_Standalone
 {
@@ -311,7 +319,10 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
             && !empty($attributes['conditionalStylesheet'])
             && is_string($attributes['conditionalStylesheet']))
         {
-            $link = '<!--[if ' . $attributes['conditionalStylesheet'] . ']> ' . $link . '<![endif]-->';
+            if (str_replace(' ', '', $attributes['conditionalStylesheet']) === '!IE') {
+                $link = '<!-->' . $link . '<!--';
+            }
+            $link = '<!--[if ' . $attributes['conditionalStylesheet'] . ']>' . $link . '<![endif]-->';
         }
 
         return $link;

@@ -12,8 +12,14 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
+
+namespace Pimcore\Document\Adapter;
+
+use Pimcore\Document\Adapter;
+use Pimcore\Tool\Console;
+use Pimcore\Config; 
+
+class Ghostscript extends Adapter {
 
     /**
      * @var string
@@ -26,12 +32,12 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
     public function isAvailable() {
         try {
             $ghostscript = self::getGhostscriptCli();
-            $phpCli = Pimcore_Tool_Console::getPhpCli();
+            $phpCli = Console::getPhpCli();
             if($ghostscript && $phpCli) {
                 return true;
             }
-        } catch (Exception $e) {
-            Logger::warning($e);
+        } catch (\Exception $e) {
+            \Logger::warning($e);
         }
 
         return false;
@@ -52,17 +58,17 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
     }
 
     /**
-     * @static
-     * @return string
+     * @return mixed
+     * @throws \Exception
      */
     public static function getGhostscriptCli () {
 
-        $gsPath = Pimcore_Config::getSystemConfig()->assets->ghostscript;
+        $gsPath = Config::getSystemConfig()->assets->ghostscript;
         if($gsPath) {
             if(@is_executable($gsPath)) {
                 return $gsPath;
             } else {
-                Logger::critical("Ghostscript binary: " . $gsPath . " is not executable");
+                \Logger::critical("Ghostscript binary: " . $gsPath . " is not executable");
             }
         }
 
@@ -78,23 +84,23 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
             }
         }
 
-        throw new Exception("No Ghostscript executable found, please configure the correct path in the system settings");
+        throw new \Exception("No Ghostscript executable found, please configure the correct path in the system settings");
     }
 
 
     /**
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getPdftotextCli () {
 
         // check the system-config for a path
-        $configPath = Pimcore_Config::getSystemConfig()->assets->pdftotext;
+        $configPath = Config::getSystemConfig()->assets->pdftotext;
         if($configPath) {
             if(@is_executable($configPath)) {
                 return $configPath;
             } else {
-                Logger::critical("Binary: " . $configPath . " is not executable");
+                \Logger::critical("Binary: " . $configPath . " is not executable");
             }
         }
 
@@ -110,13 +116,13 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
             }
         }
 
-        throw new Exception("No pdftotext executable found, please configure the correct path in the system settings");
+        throw new \Exception("No pdftotext executable found, please configure the correct path in the system settings");
     }
 
     /**
      * @param $path
      * @return $this
-     * @throws Exception
+     * @throws \Exception
      */
     public function load($path) {
 
@@ -128,7 +134,7 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
 
         if(!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
-            Logger::error($message);
+            \Logger::error($message);
             throw new \Exception($message);
         }
 
@@ -137,6 +143,10 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
         return $this;
     }
 
+    /**
+     * @param null $path
+     * @throws \Exception
+     */
     public function getPdf($path = null) {
 
         if(!$path && $this->path) {
@@ -148,18 +158,17 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
         }
 
         $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
-        Logger::error($message);
+        \Logger::error($message);
         throw new \Exception($message);
     }
 
     /**
-     * @param bool $blob
-     * @return int
-     * @throws Exception
+     * @return string
+     * @throws \Exception
      */
     public function getPageCount() {
 
-        $pages = Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
+        $pages = Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
         $pages = trim($pages);
 
         if(!is_numeric($pages)) {
@@ -177,14 +186,19 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
     public function saveImage($path, $page = 1, $resolution = 200) {
 
         try {
-            Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . $path . " " . $this->path, null, 240);
+            Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . $path . " " . $this->path, null, 240);
             return $this;
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             return false;
         }
     }
 
+    /**
+     * @param null $page
+     * @param null $path
+     * @return bool|string
+     */
     public function getText($page = null, $path = null) {
         try {
 
@@ -196,14 +210,14 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
                 if($page) {
                     $pageRange = "-f " . $page . " -l " . $page . " ";
                 }
-                $text = Pimcore_Tool_Console::exec(self::getPdftotextCli() . " " . $pageRange . $path . " -", null, 120);
+                $text = Console::exec(self::getPdftotextCli() . " " . $pageRange . $path . " -", null, 120);
             } catch (\Exception $e) {
                 // pure ghostscript way
                 if($page) {
                     $pageRange = "-dFirstPage=" . $page . " -dLastPage=" . $page . " ";
                 }
                 $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
-                Pimcore_Tool_Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path, null, 120);
+                Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path, null, 120);
 
                 if(is_file($textFile)) {
                     $text =  file_get_contents($textFile);
@@ -216,8 +230,8 @@ class Pimcore_Document_Adapter_Ghostscript extends Pimcore_Document_Adapter {
             }
             return $text;
 
-        } catch (Exception $e) {
-            Logger::error($e);
+        } catch (\Exception $e) {
+            \Logger::error($e);
             return false;
         }
     }

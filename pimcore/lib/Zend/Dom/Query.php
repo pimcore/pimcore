@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Dom
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -40,7 +40,7 @@
  *
  * @package    Zend_Dom
  * @subpackage Query
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Dom_Query
@@ -85,8 +85,8 @@ class Zend_Dom_Query
     /**
      * Constructor
      *
-     * @param  null|string $document
-     * @return void
+     * @param null|string $document
+     * @param null|string $encoding
      */
     public function __construct($document = null, $encoding = null)
     {
@@ -239,7 +239,8 @@ class Zend_Dom_Query
      * Perform an XPath query
      *
      * @param  string|array $xpathQuery
-     * @param  string $query CSS selector query
+     * @param  string       $query CSS selector query
+     * @throws Zend_Dom_Exception
      * @return Zend_Dom_Query_Result
      */
     public function queryXpath($xpathQuery, $query = null)

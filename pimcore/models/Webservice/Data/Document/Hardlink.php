@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Hardlink extends Webservice_Data_Document {
+namespace Pimcore\Model\Webservice\Data\Document;
+
+use Pimcore\Model;
+
+class Hardlink extends Model\Webservice\Data\Document {
 
     /**
      * static type of this object

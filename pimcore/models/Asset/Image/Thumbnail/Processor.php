@@ -14,8 +14,15 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Asset_Image_Thumbnail_Processor {
+
+namespace Pimcore\Model\Asset\Image\Thumbnail;
+
+use Pimcore\File;
+use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Tool\StopWatch;
+use Pimcore\Model\Asset;
+
+class Processor {
 
 
     protected static $argumentMapping = array(
@@ -25,17 +32,22 @@ class Asset_Image_Thumbnail_Processor {
         "contain" => array("width","height"),
         "cover" => array("width","height","positioning","doNotScaleUp"),
         "frame" => array("width","height"),
+        "trim" => array("tolerance"),
         "rotate" => array("angle"),
         "crop" => array("x","y","width","height"),
         "setBackgroundColor" => array("color"),
         "roundCorners" => array("width","height"),
         "setBackgroundImage" => array("path"),
         "addOverlay" => array("path", "x", "y", "alpha", "composite", "origin"),
+        "addOverlayFit" => array("path", "composite"),
         "applyMask" => array("path"),
         "cropPercent" => array("width","height","x","y"),
         "grayscale" => array(),
         "sepia" => array(),
-        "sharpen" => array('radius', 'sigma', 'amount', 'threshold')
+        "sharpen" => array('radius', 'sigma', 'amount', 'threshold'),
+        "gaussianBlur" => array('radius', 'sigma'),
+        "brightnessSaturation" => array('brightness', 'saturation', "hue"),
+        "mirror" => array("mode")
     );
 
     /**
@@ -65,32 +77,33 @@ class Asset_Image_Thumbnail_Processor {
 
     /**
      * @param $asset
-     * @param Asset_Image_Thumbnail_Config $config
+     * @param Config $config
      * @param null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @return mixed|string
      */
-    public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null, $deferred = false) {
+    public static function process ($asset, Config $config, $fileSystemPath = null, $deferred = false) {
 
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
-        $modificationDate = 0;
 
-        if(!$fileSystemPath) {
+        if(!$fileSystemPath && $asset instanceof Asset) {
             $fileSystemPath = $asset->getFileSystemPath();
         }
 
         if($asset instanceof Asset) {
             $id = $asset->getId();
-            $modificationDate = $asset->getModificationDate();
         } else {
             $id = "dyn~" . crc32($fileSystemPath);
-            if(file_exists($fileSystemPath)) {
-                $modificationDate = filemtime($fileSystemPath);
-            }
         }
 
-        $fileExt = Pimcore_File::getFileExtension(basename($fileSystemPath));
+        if(!file_exists($fileSystemPath)) {
+            return "/pimcore/static/img/filetype-not-supported.png";
+        }
+
+        $modificationDate = filemtime($fileSystemPath);
+
+        $fileExt = File::getFileExtension(basename($fileSystemPath));
 
         // simple detection for source type if SOURCE is selected
         if($format == "source" || empty($format)) {
@@ -101,7 +114,7 @@ class Asset_Image_Thumbnail_Processor {
         if($format == "print") {
             $format = self::getAllowedFormat($fileExt, array("svg","jpeg","png","tiff"), "png");
 
-            if(($format == "tiff" || $format == "svg") && Pimcore_Tool::isFrontentRequestByAdmin()) {
+            if(($format == "tiff" || $format == "svg") && \Pimcore\Tool::isFrontentRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = "png";
             } else if($format == "tiff") {
@@ -123,7 +136,7 @@ class Asset_Image_Thumbnail_Processor {
 
 
         $thumbDir = $asset->getImageThumbnailSavePath() . "/thumb__" . $config->getName();
-        $filename = preg_replace("/\." . preg_quote(Pimcore_File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename());
+        $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename());
         // add custom suffix if available
         if($config->getFilenameSuffix()) {
             $filename .= "~-~" . $config->getFilenameSuffix();
@@ -137,34 +150,87 @@ class Asset_Image_Thumbnail_Processor {
         $fsPath = $thumbDir . "/" . $filename;
 
         if(!is_dir(dirname($fsPath))) {
-            Pimcore_File::mkdir(dirname($fsPath));
+            File::mkdir(dirname($fsPath));
         }
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
-
-        // deferred means that the image will be generated on-the-fly (when requested by the browser)
-        // the configuration is saved for later use in Pimcore_Controller_Plugin_Thumbnail::routeStartup()
-        // so that it can be used also with dynamic configurations
-        if($deferred) {
-            $configPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/thumb_" . $id . "__" . md5($path) . ".deferred.config";
-            Pimcore_File::put($configPath, Pimcore_Tool_Serialize::serialize($config));
-
-            return $path;
-        }
 
         // check for existing and still valid thumbnail
         if (is_file($fsPath) and filemtime($fsPath) >= $modificationDate) {
             return $path;
         }
 
+        // deferred means that the image will be generated on-the-fly (when requested by the browser)
+        // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
+        // so that it can be used also with dynamic configurations
+        if($deferred) {
+            $configId = "thumb_" . $id . "__" . md5($path);
+            TmpStore::add($configId, $config, "thumbnail_deferred");
+
+            return $path;
+        }
+
         // transform image
-        $image = Asset_Image::getImageTransformInstance();
+        $image = Asset\Image::getImageTransformInstance();
         if(!$image->load($fileSystemPath)) {
             return "/pimcore/static/img/filetype-not-supported.png";
         }
 
         $image->setUseContentOptimizedFormat($contentOptimizedFormat);
 
+
+        $startTime = StopWatch::microtime_float();
+
         $transformations = $config->getItems();
+
+        // check if the original image has an orientation exif flag
+        // if so add a transformation at the beginning that rotates and/or mirrors the image
+        if (function_exists("exif_read_data")) {
+            $exif = @exif_read_data($fileSystemPath);
+            if (is_array($exif)) {
+                if(array_key_exists("Orientation", $exif)) {
+                    $orientation = intval($exif["Orientation"]);
+
+                    if($orientation > 1) {
+                        $angleMappings = [
+                            2 => 180,
+                            3 => 180,
+                            4 => 180,
+                            5 => 90,
+                            6 => 90,
+                            7 => 90,
+                            8 => 270,
+                        ];
+
+                        if(array_key_exists($orientation, $angleMappings)) {
+                            array_unshift($transformations, [
+                                "method" => "rotate",
+                                "arguments" => [
+                                    "angle" => $angleMappings[$orientation]
+                                ]
+                            ]);
+                        }
+
+                        // values that have to be mirrored, this is not very common, but should be covered anyway
+                        $mirrorMappings = [
+                            2 => "vertical",
+                            4 => "horizontal",
+                            5 => "vertical",
+                            7 => "horizontal"
+                        ];
+
+                        if(array_key_exists($orientation, $mirrorMappings)) {
+                            array_unshift($transformations, [
+                                "method" => "mirror",
+                                "arguments" => [
+                                    "mode" => $mirrorMappings[$orientation]
+                                ]
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+
         if(is_array($transformations) && count($transformations) > 0) {
             foreach ($transformations as $transformation) {
                 if(!empty($transformation)) {
@@ -197,11 +263,46 @@ class Asset_Image_Thumbnail_Processor {
         $image->save($fsPath, $format, $config->getQuality());
 
         if($contentOptimizedFormat) {
-            Pimcore_Image_Optimizer::optimize($fsPath);
+            $tmpStoreKey = str_replace(PIMCORE_TEMPORARY_DIRECTORY . "/", "", $fsPath);
+            TmpStore::add($tmpStoreKey, "-", "image-optimize-queue");
         }
 
         clearstatcache();
 
+        \Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
+
+        // set proper permissions
+        @chmod($fsPath, File::getDefaultMode());
+
+        // quick bugfix / workaround, it seems that imagemagick / image optimizers creates sometimes empty PNG chunks (total size 33 bytes)
+        // no clue why it does so as this is not continuous reproducible, and this is the only fix we can do for now
+        // if the file is corrupted the file will be created on the fly when requested by the browser (because it's deleted here)
+        if(is_file($fsPath) && filesize($fsPath) < 50) {
+            unlink($fsPath);
+        }
+
         return $path;
+    }
+
+    /**
+     *
+     */
+    public static function processOptimizeQueue() {
+
+        $ids = TmpStore::getIdsByTag("image-optimize-queue");
+
+        // id = path of image relative to PIMCORE_TEMPORARY_DIRECTORY
+        foreach($ids as $id) {
+            $file = PIMCORE_TEMPORARY_DIRECTORY . "/" . $id;
+            if(file_exists($file)) {
+                $originalFilesize = filesize($file);
+                \Pimcore\Image\Optimizer::optimize($file);
+                \Logger::debug("Optimized image: " . $file . " saved " . formatBytes($originalFilesize-filesize($file)));
+            } else {
+                \Logger::debug("Skip optimizing of " . $file . " because it doesn't exist anymore");
+            }
+
+            TmpStore::delete($id);
+        }
     }
 }

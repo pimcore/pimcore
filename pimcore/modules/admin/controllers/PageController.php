@@ -13,24 +13,30 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
+use Pimcore\File;
+use Pimcore\Tool;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+use Pimcore\Model\Redirect;
+
+class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document {
 
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
+        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
+                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($this->getParam("id"), "document");
 
-        $page = Document_Page::getById($this->getParam("id"));
+        $page = Document\Page::getById($this->getParam("id"));
         $page = $this->getLatestVersion($page);
-        
+
         $page->setVersions(array_splice($page->getVersions(), 0, 1));
         $page->getScheduledTasks();
-        $page->idPath = Element_Service::getIdPath($page);
+        $page->idPath = Element\Service::getIdPath($page);
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
         $page->setParent(null);
@@ -40,7 +46,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         }
 
         // get depending redirects
-        $redirectList = new Redirect_List();
+        $redirectList = new Redirect\Listing();
         $redirectList->setCondition("target = ?", $page->getId());
         $page->redirects = $redirectList->load();
 
@@ -50,7 +56,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         // cleanup properties
         $this->minimizeProperties($page);
- 
+
         if ($page->isAllowed("view")) {
             $this->_helper->json($page);
         }
@@ -61,8 +67,8 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
     public function saveAction() {
 
         if ($this->getParam("id")) {
-            $page = Document_Page::getById($this->getParam("id"));
-            
+            $page = Document\Page::getById($this->getParam("id"));
+
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getUser()->getId());
 
@@ -75,13 +81,13 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
             $settings = array();
             if($this->getParam("settings")) {
-                $settings = Zend_Json::decode($this->getParam("settings"));
+                $settings = \Zend_Json::decode($this->getParam("settings"));
             }
 
             // check for redirects
             if($this->getUser()->isAllowed("redirects") && $this->getParam("settings")) {
                 if(is_array($settings)) {
-                    $redirectList = new Redirect_List();
+                    $redirectList = new Redirect\Listing();
                     $redirectList->setCondition("target = ?", $page->getId());
                     $existingRedirects = $redirectList->load();
                     $existingRedirectIds = array();
@@ -116,18 +122,21 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                 }
             }
 
-            $metaData = array();
-            for($i=1; $i<30; $i++) {
-                if(array_key_exists("metadata_idName_" . $i, $settings)) {
-                    $metaData[] = array(
-                        "idName" => $settings["metadata_idName_" . $i],
-                        "idValue" => $settings["metadata_idValue_" . $i],
-                        "contentName" => $settings["metadata_contentName_" . $i],
-                        "contentValue" => $settings["metadata_contentValue_" . $i],
-                    );
+            // check if settings exist, before saving meta data
+            if($this->getParam("settings") && is_array($settings)) {
+                $metaData = array();
+                for($i=1; $i<30; $i++) {
+                    if(array_key_exists("metadata_idName_" . $i, $settings)) {
+                        $metaData[] = array(
+                            "idName" => $settings["metadata_idName_" . $i],
+                            "idValue" => $settings["metadata_idValue_" . $i],
+                            "contentName" => $settings["metadata_contentName_" . $i],
+                            "contentValue" => $settings["metadata_contentValue_" . $i],
+                        );
+                    }
                 }
+                $page->setMetaData($metaData);
             }
-            $page->setMetaData($metaData);
 
             // only save when publish or unpublish
             if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
@@ -138,8 +147,8 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                     $page->save();
                     $this->saveToSession($page);
                     $this->_helper->json(array("success" => true));
-                } catch (Exception $e) {
-                    Logger::err($e);
+                } catch (\Exception $e) {
+                    \Logger::err($e);
                     $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
                 }
 
@@ -152,8 +161,8 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                         $page->saveVersion();
                         $this->saveToSession($page);
                         $this->_helper->json(array("success" => true));
-                    } catch (Exception $e) {
-                        Logger::err($e);
+                    } catch (\Exception $e) {
+                        \Logger::err($e);
                         $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
                     }
 
@@ -167,13 +176,13 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $page = Document::getById($this->getParam("id"));
 
-        if($page instanceof Document_Page) {
+        if($page instanceof Document\Page) {
             $this->view->previewUrl = $page->getFullPath() . "?pimcore_preview=true&time=" . time();
         }
     }
 
     public function getListAction() {
-        $list = new Document_List();
+        $list = new Document\Listing();
         $list->setCondition("type = ?", array("page"));
         $data = $list->loadIdPathList();
 
@@ -191,10 +200,10 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
             $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $this->getParam("id") . ".jpg";
             $dir = dirname($file);
             if(!is_dir($dir)) {
-                Pimcore_File::mkdir($dir);
+                File::mkdir($dir);
             }
 
-            Pimcore_File::put($file, $data);
+            File::put($file, $data);
         }
 
         $this->_helper->json(array("success" => true));
@@ -206,9 +215,9 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         if($this->getParam("id")) {
 
             $doc = Document::getById($this->getParam("id"));
-            $url = Pimcore_Tool::getHostUrl() . $doc->getRealFullPath() . "?pimcore_preview=true";
+            $url = Tool::getHostUrl() . $doc->getRealFullPath() . "?pimcore_preview=true";
 
-            $config = Pimcore_Config::getSystemConfig();
+            $config = \Pimcore\Config::getSystemConfig();
             if ($config->general->http_auth) {
                 $username = $config->general->http_auth->username;
                 $password = $config->general->http_auth->password;
@@ -222,12 +231,12 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
             $dir = dirname($file);
             if(!is_dir($dir)) {
-                Pimcore_File::mkdir($dir);
+                File::mkdir($dir);
             }
 
             try {
-                if(Pimcore_Image_HtmlToImage::convert($url, $tmpFile)) {
-                    $im = Pimcore_Image::getInstance();
+                if(\Pimcore\Image\HtmlToImage::convert($url, $tmpFile)) {
+                    $im = \Pimcore\Image::getInstance();
                     $im->load($tmpFile);
                     $im->scaleByWidth(400);
                     $im->save($file, "jpeg", 85);
@@ -236,8 +245,8 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
                     $success = true;
                 }
-            } catch (Exception $e) {
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error($e);
             }
         }
 
@@ -260,11 +269,11 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
             $success = false;
         }
 
-        if(!Pimcore_Tool::isValidPath($path)) {
+        if(!Tool::isValidPath($path)) {
             $success = false;
         }
 
-        $list = new Document_List();
+        $list = new Document\Listing();
         $list->setCondition("(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?", array(
             $path, $path, $docId
@@ -286,7 +295,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $doc = Document::getById($docId);
 
         foreach($doc->getElements() as $element) {
-            if($personaId && $doc instanceof Document_Page) {
+            if($personaId && $doc instanceof Document\Page) {
                 if(preg_match("/^" . preg_quote($doc->getPersonaElementPrefix($personaId), "/") . "/", $element->getName())) {
                     $doc->removeElement($element->getName());
                 }

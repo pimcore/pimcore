@@ -78,6 +78,7 @@ pimcore.settings.metadata.predefined = Class.create({
 
 
             },
+            {name: 'config', allowBlank: true},
             {name: 'targetSubtype', allowBlank: true},
             {name: 'language', allowBlank: true},
             {name: 'creationDate', allowBlank: true},
@@ -201,7 +202,9 @@ pimcore.settings.metadata.predefined = Class.create({
                     ["document", "Document"],
                     ["asset", "Asset"],
                     ["object", "Object"],
-                    ["date", "Date"]
+                    ["date", "Date"],
+                    ["checkbox", "checkbox"],
+                    ["select", "select"]
                 ]
 
             })},
@@ -212,6 +215,12 @@ pimcore.settings.metadata.predefined = Class.create({
                 editable: true,
                 getCellEditor: this.getCellEditor.bind(this),
                 renderer: this.getCellRenderer.bind(this)
+            },
+            {header: t("configuration"),
+                width: 100,
+                sortable: false,
+                dataIndex: 'config',
+                editor: new Ext.form.TextField({})
             },
             {
                 header: t('language'),

@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
+namespace Pimcore\Model\Webservice\Data\Document;
+
+use Pimcore\Model;
+use Pimcore\Model\Webservice;
+
+class PageSnippet extends Model\Webservice\Data\Document {
     
     /**
      * @var string
@@ -33,12 +38,12 @@ class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
     public $template;
 
     /**
-     * @var Webservice_Data_Document_Element[]
+     * @var Webservice\Data\Document\Element[]
      */
     public $elements;
 
-    
-    public function map ($object) {
+
+    public function map($object, $options = null) {
 
         $originalElements = array();
         if(is_array($object->getElements())){
@@ -50,7 +55,7 @@ class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
         $this->elements = array();
         foreach($originalElements as $element) {
 
-            $el = new Webservice_Data_Document_Element();
+            $el = new Webservice\Data\Document\Element();
             $el->name = $element->getName();
             $el->type = $element->getType();
             $el->value = $element->getForWebserviceExport();
@@ -58,8 +63,13 @@ class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
 
         }
     }
-    
-    
+
+    /**
+     * @param $object
+     * @param bool $disableMappingExceptions
+     * @param null $idMapper
+     * @throws \Exception
+     */
     public function reverseMap ($object, $disableMappingExceptions = false, $idMapper = null) {
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
         
@@ -69,7 +79,7 @@ class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
         if(is_array($this->elements)) {
             foreach ($this->elements as $element) {
 
-                $tag = Document_Tag::factory($element->type,$element->name,$this->id);
+                $tag = Model\Document\Tag::factory($element->type,$element->name,$this->id);
                 $tag->getFromWebserviceImport($element, $idMapper);
 
                 $object->elements[$element->name] = $tag;

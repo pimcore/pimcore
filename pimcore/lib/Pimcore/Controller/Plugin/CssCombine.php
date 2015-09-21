@@ -13,18 +13,32 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Plugin_CssCombine extends Zend_Controller_Plugin_Abstract {
+namespace Pimcore\Controller\Plugin;
 
+use Pimcore\Tool;
+use Pimcore\File;
+
+class CssCombine extends \Zend_Controller_Plugin_Abstract {
+
+    /**
+     * @var bool
+     */
     protected $enabled = true;
 
+    /**
+     * @return bool
+     */
     public function disable() {
         $this->enabled = false;
         return true;
     }
 
+    /**
+     *
+     */
     public function dispatchLoopShutdown() {
 
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
+        if(!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
@@ -75,7 +89,7 @@ class Pimcore_Controller_Plugin_CssCombine extends Zend_Controller_Plugin_Abstra
 
                     if(!is_file($stylesheetPath)) {
                         // put minified contents into one single file
-                        Pimcore_File::put($stylesheetPath, $stylesheetContent);
+                        File::put($stylesheetPath, $stylesheetContent);
                     }
 
                     $head = $html->find("head",0);
@@ -92,7 +106,11 @@ class Pimcore_Controller_Plugin_CssCombine extends Zend_Controller_Plugin_Abstra
         }
     }
 
-
+    /**
+     * @param $base
+     * @param $content
+     * @return mixed
+     */
     protected function correctReferences ($base, $content) {
 
         // check for url references
@@ -131,7 +149,11 @@ class Pimcore_Controller_Plugin_CssCombine extends Zend_Controller_Plugin_Abstra
         return $content;
     }
 
-
+    /**
+     * @param $rel
+     * @param $base
+     * @return mixed|string
+     */
     protected function correctUrl ($rel, $base) {
         /* return if already absolute URL */
         if (parse_url($rel, PHP_URL_SCHEME) != '') return $rel;

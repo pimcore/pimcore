@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Document_PageSnippet_Resource extends Document_Resource {
+namespace Pimcore\Model\Document\PageSnippet;
+
+use Pimcore\Model;
+use Pimcore\Model\Version;
+use Pimcore\Model\Document;
+
+abstract class Resource extends Model\Document\Resource {
 
     /**
      * Delete all elements containing the content (tags) from the database
@@ -37,11 +43,21 @@ abstract class Document_PageSnippet_Resource extends Document_Resource {
         $elements = array();
 
         foreach ($elementsRaw as $elementRaw) {
-            $class = "Document_Tag_" . ucfirst($elementRaw["type"]);
+            $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($elementRaw["type"]);
+
+            // this is the fallback for custom document tags using prefixes
+            // so we need to check if the class exists first
+            if(!\Pimcore\Tool::classExists($class)) {
+                $oldStyleClass = "\\Document_Tag_" . ucfirst($elementRaw["type"]);
+                if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                    $class = $oldStyleClass;
+                }
+            }
+
             $element = new $class();
-            $element->setDataFromResource($elementRaw["data"]);
             $element->setName($elementRaw["name"]);
             $element->setDocumentId($this->model->getId());
+            $element->setDataFromResource($elementRaw["data"]);
 
             $elements[$elementRaw["name"]] = $element;
             $this->model->setElement($elementRaw["name"], $element);
@@ -87,14 +103,14 @@ abstract class Document_PageSnippet_Resource extends Document_Resource {
     /**
      * Delete the object from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete() {
         try {
             parent::delete();
             $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId() ));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
     }

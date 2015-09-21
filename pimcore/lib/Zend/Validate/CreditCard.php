@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -27,7 +27,7 @@
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_CreditCard extends Zend_Validate_Abstract
@@ -136,7 +136,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
     /**
      * Constructor
      *
-     * @param string|array $type OPTIONAL Type of CCI to allow
+     * @param string|array|Zend_Config $options OPTIONAL Type of CCI to allow
      */
     public function __construct($options = array())
     {
@@ -176,7 +176,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
      * Sets CCIs which are accepted by validation
      *
      * @param string|array $type Type to allow for validation
-     * @return Zend_Validate_CreditCard Provides a fluid interface
+     * @return Zend_Validate_CreditCard Provides a fluent interface
      */
     public function setType($type)
     {
@@ -188,7 +188,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
      * Adds a CCI to be accepted by validation
      *
      * @param string|array $type Type to allow for validation
-     * @return Zend_Validate_CreditCard Provides a fluid interface
+     * @return Zend_Validate_CreditCard Provides a fluent interface
      */
     public function addType($type)
     {
@@ -222,7 +222,9 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
     /**
      * Sets a new callback for service validation
      *
-     * @param unknown_type $service
+     * @param mixed $service
+     * @throws Zend_Validate_Exception
+     * @return $this
      */
     public function setService($service)
     {

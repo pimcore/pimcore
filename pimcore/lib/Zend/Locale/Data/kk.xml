@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="kk"/>
 	</identity>
 	<localeDisplayNames>
@@ -27,7 +27,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">әзірбайжан</language>
 			<language type="be">беларус</language>
 			<language type="bg">болгар</language>
-			<language type="bh" draft="unconfirmed">бихари</language>
 			<language type="bn">бенгал</language>
 			<language type="bo">тибет тілі</language>
 			<language type="br" draft="unconfirmed">брит</language>
@@ -880,8 +879,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<day type="sat">С</day>
 						</dayWidth>
 						<dayWidth type="wide">
-							<day type="sun">жексені</day>
-							<day type="mon">дуйсенбі</day>
+							<day type="sun">жексенбі</day>
+							<day type="mon">дүйсенбі</day>
 							<day type="tue">сейсенбі</day>
 							<day type="wed">сәрсенбі</day>
 							<day type="thu">бейсенбі</day>
@@ -1339,9 +1338,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Палмер</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Оңтүстік полюс</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Сева</exemplarCity>
 			</zone>
@@ -1614,9 +1610,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Торонто</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Монреаль</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Икалуит</exemplarCity>
@@ -2460,9 +2453,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Финикс</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Шипрок</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Денвер</exemplarCity>
@@ -4307,8 +4297,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} гектар</unitPattern>
 			</unit>
 			<unit type="area-square-foot">
-				<unitPattern count="one">{0} фут²</unitPattern>
-				<unitPattern count="other">{0} фут²</unitPattern>
+				<unitPattern count="one">{0} шаршы фут</unitPattern>
+				<unitPattern count="other">{0} шаршы фут</unitPattern>
 			</unit>
 			<unit type="area-square-kilometer">
 				<unitPattern count="one">{0} шаршы километр</unitPattern>
@@ -4319,8 +4309,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} шаршы метр</unitPattern>
 			</unit>
 			<unit type="area-square-mile">
-				<unitPattern count="one">{0} миля²</unitPattern>
-				<unitPattern count="other">{0} миля²</unitPattern>
+				<unitPattern count="one">{0} шаршы миля</unitPattern>
+				<unitPattern count="other">{0} шаршы миля</unitPattern>
 			</unit>
 			<unit type="duration-day">
 				<unitPattern count="one">{0} тәулік</unitPattern>
@@ -4451,8 +4441,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0}Цельсий градусы</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
-				<unitPattern count="one">{0}° Фаренгейт бойынша градус</unitPattern>
-				<unitPattern count="other">{0}° Фаренгейт бойынша градус</unitPattern>
+				<unitPattern count="one">{0} Фаренгейт бойынша градус</unitPattern>
+				<unitPattern count="other">{0} Фаренгейт бойынша градус</unitPattern>
 			</unit>
 			<unit type="volume-cubic-kilometer">
 				<unitPattern count="one">{0} текше километр</unitPattern>

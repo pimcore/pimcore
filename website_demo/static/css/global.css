@@ -79,40 +79,44 @@ footer .links a {
 -------------------------------------------------- */
 
 /* Carousel base class */
-.carousel.header {
+#portalHeader {
     margin-bottom: 20px;
 
     /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
-    margin-top: -90px;
-    height: 400px;
+    margin-top: -91px;
+    min-height: 300px;
 }
 
-.carousel.header .carousel-inner {
+#portalHeader .carousel-inner {
     position: absolute !important;
     top:0;
     left: 0;
 }
 
 /* Since positioning the image, we need to help out the caption */
-.carousel.header .carousel-caption {
+#portalHeader .carousel-caption {
     z-index: 10;
+    text-shadow: 0 0 30px #000;
 }
 
 /* Declare heights because of positioning of img element */
-.carousel.header .item {
-    height: 400px;
+#portalHeader .item {
     background-color: #777;
+    width: 100%;
+    overflow: hidden;
 }
 
-.carousel.header .carousel-inner > .item > img {
-    position: absolute;
-    top: 0;
-    left: 0;
+#portalHeader .carousel-inner > .item > img {
+    width: auto;
     min-width: 100%;
-    height: 400px;
+    max-width: none;
+
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -o-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
 }
-
-
 
 /* CONTENTS */
 
@@ -479,9 +483,17 @@ section img {
     }
 
     /* Bump up size of carousel content */
+    #portalHeader {
+        min-height: 600px;
+    }
+
+    #portalHeader .carousel-caption h1 {
+        font-size: 75px;
+    }
+
     .carousel-caption .caption {
         margin-bottom: 20px;
-        font-size: 21px;
+        font-size: 45px;
         line-height: 1.4;
     }
 

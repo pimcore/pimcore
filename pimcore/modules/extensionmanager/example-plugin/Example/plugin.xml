@@ -17,7 +17,7 @@
             <pluginIframeSrc></pluginIframeSrc>
 
             <!-- className of the plugin which extends Pimcore_API_Plugin_Abstract-->
-			<pluginClassName>Example_Plugin</pluginClassName>
+			<pluginClassName>\Example\Plugin</pluginClassName>
 
             <!-- include paths relative to plugin-directory -->
 			<pluginIncludePaths>

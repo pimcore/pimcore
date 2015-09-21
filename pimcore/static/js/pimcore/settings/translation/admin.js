@@ -15,9 +15,11 @@
 pimcore.registerNS("pimcore.settings.translation.admin");
 pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,{
 
+    translationType: 'admin',
     dataUrl: '/admin/translation/translations?admin=1',
     exportUrl: '/admin/translation/export/?admin=1',
     importUrl:'/admin/translation/import/?admin=1&pimcore_admin_sid=' + pimcore.settings.sessionId,
+    mergeUrl:'/admin/translation/import/?admin=1&merge=1&pimcore_admin_sid=' + pimcore.settings.sessionId,
     cleanupUrl: "/admin/translation/cleanup/type/admin",
 
     activate: function (filter) {
@@ -48,8 +50,8 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
                 }
                 catch (e) {
                     Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
-                        + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">'
-                        + t("read_more_here") + '</a>');
+                    + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">'
+                    + t("read_more_here") + '</a>');
                 }
             }.bind(this)
         });
@@ -86,4 +88,3 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
 
 
 });
-

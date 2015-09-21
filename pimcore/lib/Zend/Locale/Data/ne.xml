@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9876 $"/>
+		<generation date="$Date: 2014-03-05 23:14:25 -0600 (Wed, 05 Mar 2014) $"/>
 		<language type="ne"/>
 	</identity>
 	<localeDisplayNames>
@@ -26,7 +26,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">अजरबैजानी</language>
 			<language type="be">वेलारूसी</language>
 			<language type="bg">बुल्गेरियाली</language>
-			<language type="bh" draft="unconfirmed">बिहारी</language>
 			<language type="bn">बंगाली</language>
 			<language type="bo">तिब्बती</language>
 			<language type="bs">बोस्नियाली</language>
@@ -1426,9 +1425,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>पाल्मेर</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>दक्षिण पोल</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>सिओआ</exemplarCity>
 			</zone>
@@ -1701,9 +1697,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>टोरोण्टो</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>मोन्ट्रिल</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>इक्वालुइट</exemplarCity>
@@ -2547,9 +2540,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>फोनिक्स</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>शिपरक</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>डेन्भर</exemplarCity>
@@ -4573,8 +4563,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} ग्राम</unitPattern>
 			</unit>
 			<unit type="mass-kilogram">
-				<unitPattern count="one">{0} किलो</unitPattern>
-				<unitPattern count="other">{0} किलो</unitPattern>
+				<unitPattern count="one">{0} किलोग्राम</unitPattern>
+				<unitPattern count="other">{0} किलोग्राम</unitPattern>
 			</unit>
 			<unit type="mass-ounce">
 				<unitPattern count="one">{0} आऊन्स</unitPattern>
@@ -4617,8 +4607,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} मिटर प्रति सेकेण्ड</unitPattern>
 			</unit>
 			<unit type="speed-mile-per-hour">
-				<unitPattern count="one">{0} माईल प्रति सेकेण्ड</unitPattern>
-				<unitPattern count="other">{0} माईल प्रति सेकेण्ड</unitPattern>
+				<unitPattern count="one">{0} माईल प्रति घण्टा</unitPattern>
+				<unitPattern count="other">{0} माईल प्रति घण्टा</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
 				<unitPattern count="one">{0} डिग्री सेल्सियस्</unitPattern>
@@ -4806,8 +4796,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} मि. प्रति सेकेण्ड</unitPattern>
 			</unit>
 			<unit type="speed-mile-per-hour">
-				<unitPattern count="one">{0} माईल प्रति सेकेण्ड</unitPattern>
-				<unitPattern count="other">{0} माईल प्रति सेकेण्ड</unitPattern>
+				<unitPattern count="one">{0} माईल प्रति घण्टा</unitPattern>
+				<unitPattern count="other">{0} माईल प्रति घण्टा</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
 				<unitPattern count="one">{0}°से</unitPattern>
@@ -4999,8 +4989,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<unitPattern count="other">{0} mi/h</unitPattern>
 			</unit>
 			<unit type="temperature-celsius">
-				<unitPattern count="one">{0}°से</unitPattern>
-				<unitPattern count="other">{0}°से</unitPattern>
+				<unitPattern count="one">{0}°</unitPattern>
+				<unitPattern count="other">{0}°</unitPattern>
 			</unit>
 			<unit type="temperature-fahrenheit">
 				<unitPattern count="one">{0}°फ</unitPattern>

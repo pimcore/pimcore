@@ -15,7 +15,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Areablock extends Document_Tag {
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\ExtensionManager;
+use Pimcore\Tool;
+use Pimcore\Model\Document;
+
+class Areablock extends Model\Document\Tag {
 
     /**
      * Contains an array of indices, which represent the order of the elements in the block
@@ -38,7 +45,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
 
     /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -46,7 +53,7 @@ class Document_Tag_Areablock extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -54,14 +61,14 @@ class Document_Tag_Areablock extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::admin
+     * @see Document\Tag\TagInterface::admin
      */
     public function admin() {
         $this->frontend();
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      */
     public function frontend() {
         if (!is_array($this->indices)) {
@@ -159,17 +166,19 @@ class Document_Tag_Areablock extends Document_Tag {
         // create info object and assign it to the view
         $info = null;
         try {
-            $info = new Document_Tag_Area_Info();
+            $info = new Area\Info();
+            $info->setTag($this);
             $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
             $info->setIndex($this->current);
             $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
             $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
+            \Logger::err($e);
             $info = null;
         }
 
-        if($this->getView() instanceof Zend_View) {
+        if($this->getView() instanceof \Zend_View) {
 
             $this->getView()->brick = $info;
             $areas = $this->getAreaDirs();
@@ -194,14 +203,24 @@ class Document_Tag_Areablock extends Document_Tag {
             if(is_file($action)) {
                 include_once($action);
 
-                $actionClassname = "Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);
-                if(Pimcore_Tool::classExists($actionClassname)) {
+                $actionClassFound = true;
+
+                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . ucfirst($this->currentIndex["type"]);
+                if(!class_exists($actionClassname, false)) {
+                    // also check the legacy prefixed class name, as this is used by some plugins
+                    $actionClassname = "\\Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);
+                    if(!class_exists($actionClassname, false)) {
+                        $actionClassFound = false;
+                    }
+                }
+
+                if($actionClassFound) {
                     $actionObject = new $actionClassname();
 
-                    if($actionObject instanceof Document_Tag_Area_Abstract) {
+                    if($actionObject instanceof Area\AbstractArea) {
                         $actionObject->setView($this->getView());
 
-                        $areaConfig = new Zend_Config_Xml($areas[$this->currentIndex["type"]] . "/area.xml");
+                        $areaConfig = new \Zend_Config_Xml($areas[$this->currentIndex["type"]] . "/area.xml");
                         $actionObject->setConfig($areaConfig);
 
                         // params
@@ -229,7 +248,18 @@ class Document_Tag_Areablock extends Document_Tag {
                 if(method_exists($actionObject,"getBrickHtmlTagOpen")) {
                     echo $actionObject->getBrickHtmlTagOpen($this);
                 }else{
-                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
+                    $dataComponentAttribute = "";
+                    if(\Pimcore\View::addComponentIds()) {
+                        $dataComponentId = 'document:' . $this->getDocumentId() . '.type:tag-areablock.name:' . $this->getName() . "--" . ($this->getCurrentIndex() ? $this->getCurrentIndex() : "0") . "--" . $this->currentIndex["type"];
+                        $crc = \Pimcore\Tool\Frontend::getCurrentRequestUrlCrc32();
+                        if ($crc) {
+                            $dataComponentId = "uri:" . $crc . "." . $dataComponentId;
+                        }
+
+                        $dataComponentAttribute = 'data-component-id="' . $dataComponentId . '"';
+                    }
+
+                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content" ' . $dataComponentAttribute . '>';
                 }
 
                 if(is_file($edit) && $editmode) {
@@ -246,7 +276,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 if(is_file($edit) && $editmode) {
                     $this->getView()->editmode = true;
 
-                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode">';
+                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode pimcore_area_editmode_hidden">';
                     $this->getView()->template($edit);
                     echo '</div>';
                 }
@@ -267,12 +297,12 @@ class Document_Tag_Areablock extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->indices = Pimcore_Tool_Serialize::unserialize($data);
+        $this->indices = Tool\Serialize::unserialize($data);
         if (!is_array($this->indices)) {
             $this->indices = array();
         }
@@ -280,7 +310,7 @@ class Document_Tag_Areablock extends Document_Tag {
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -294,21 +324,29 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public function blockConstruct() {
         // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
         $suffixes[] = $this->indices[$this->current]["key"];
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
     /**
      *
      */
     public function blockDestruct() {
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
         array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
     protected function getToolBarDefaultConfig () {
+
+        $buttonWidth = 168;
+
+        // @extjs6
+        if(!\Pimcore\Tool\Admin::isExtJS6()) {
+            $buttonWidth = 154;
+        }
+
         return array(
             "areablock_toolbar" => array(
                 "title" => "",
@@ -316,7 +354,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 "x" => 20,
                 "y" => 50,
                 "xAlign" => "left",
-                "buttonWidth" => 154,
+                "buttonWidth" => $buttonWidth,
                 "buttonMaxCharacters" => 20
             )
         );
@@ -350,7 +388,7 @@ class Document_Tag_Areablock extends Document_Tag {
             "type" => $this->getType(),
             "inherited" => $this->getInherited()
         );
-        $options = @Zend_Json::encode($options);
+        $options = @\Zend_Json::encode($options);
         //$options = base64_encode($options);
 
         $this->outputEditmode('
@@ -360,9 +398,9 @@ class Document_Tag_Areablock extends Document_Tag {
         ');
 
         // set name suffix for the whole block element, this will be addet to all child elements of the block
-        $suffixes = Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         $suffixes[] = $this->getName();
-        Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . '" type="' . $this->getType() . '">');
 
@@ -379,9 +417,9 @@ class Document_Tag_Areablock extends Document_Tag {
         $this->current = 0;
 
         // remove the suffix which was set by self::start()
-        $suffixes = Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode("</div>");
     }
@@ -433,8 +471,8 @@ class Document_Tag_Areablock extends Document_Tag {
     public function setupStaticEnvironment() {
 
         // setup static environment for blocks
-        if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $current = Zend_Registry::get("pimcore_tag_block_current");
+        if(\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
+            $current = \Zend_Registry::get("pimcore_tag_block_current");
             if (!is_array($current)) {
                 $current = array();
             }
@@ -442,8 +480,8 @@ class Document_Tag_Areablock extends Document_Tag {
             $current = array();
         }
 
-        if(Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
+        if(\Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
+            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
             if (!is_array($numeration)) {
                 $numeration = array();
             }
@@ -451,8 +489,8 @@ class Document_Tag_Areablock extends Document_Tag {
             $numeration = array();
         }
 
-        Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
-        Zend_Registry::set("pimcore_tag_block_current", $current);
+        \Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
+        \Zend_Registry::set("pimcore_tag_block_current", $current);
 
     }
 
@@ -467,8 +505,8 @@ class Document_Tag_Areablock extends Document_Tag {
 
         // read available types
         $areaConfigs = $this->getBrickConfigs();
-        $availableAreas = array();
-        $availableAreasSort = array();
+        $availableAreas = ["name" => [], "index" => []];
+        $availableAreasSort = is_array($options["sorting"]) && count($options["sorting"]) ? $options["sorting"] : (is_array($options["allowed"]) && count($options["allowed"]) ? $options["allowed"] : FALSE);
 
         if(!isset($options["allowed"]) || !is_array($options["allowed"])) {
             $options["allowed"] = array();
@@ -484,7 +522,7 @@ class Document_Tag_Areablock extends Document_Tag {
             }
 
 
-            if(empty($options["allowed"]) || in_array($areaName,$options["allowed"])) {
+            if (empty($options["allowed"]) || in_array($areaName, $options["allowed"])) {
 
                 $n = (string) $areaConfig->name;
                 $d = (string) $areaConfig->description;
@@ -505,23 +543,42 @@ class Document_Tag_Areablock extends Document_Tag {
                     }
                 }
 
-                $availableAreas[] = array(
+                $sortIndex = FALSE;
+                $sortKey = "name"; //allowed and sorting is not set || areaName is not in allowed
+                if ($availableAreasSort) {
+                    $sortIndex = array_search($areaName, $availableAreasSort);
+                    $sortKey   = $sortIndex === FALSE ? $sortKey : "index";
+                }
+
+                $availableAreas[$sortKey][] = array(
                     "name" => $n,
                     "description" => $d,
                     "type" => $areaName,
-                    "icon" => $icon
+                    "icon" => $icon,
+                    "sortIndex" => $sortIndex
                 );
             }
         }
 
-        // sort with translated names
-        usort($availableAreas,function($a, $b) {
-            if ($a["name"] == $b["name"]) {
-                return 0;
-            }
-            return ($a["name"] < $b["name"]) ? -1 : 1;
-        });
+        if (count($availableAreas["name"])) {
+            // sort with translated names
+            usort($availableAreas["name"], function ($a, $b) {
+                if ($a["name"] == $b["name"]) {
+                    return 0;
+                }
 
+                return ($a["name"] < $b["name"]) ? -1 : 1;
+            });
+        }
+
+        if (count($availableAreas["index"])) {
+            // sort by allowed brick config order
+            usort($availableAreas["index"], function ($a, $b) {
+                return $a["sortIndex"] - $b["sortIndex"];
+            });
+        }
+
+        $availableAreas = array_merge($availableAreas["index"], $availableAreas["name"]);
         $options["types"] = $availableAreas;
 
         if(isset($options["group"]) && is_array($options["group"])) {
@@ -614,18 +671,16 @@ class Document_Tag_Areablock extends Document_Tag {
 
 
     /**
-     * Receives a Webservice_Data_Document_Element from webservice import and fill the current tag's data
-     *
-     * @abstract
-     * @param  Webservice_Data_Document_Element $data
-     * @return void
+     * @param Model\Document\Webservice\Data\Document\Element $wsElement
+     * @param null $idMapper
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $idMapper = null){
         $data = $wsElement->value;
         if(($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current))
-                    and ($data->currentIndex==null or is_numeric($data->currentIndex))) {
+            and ($data->currentIndex==null or is_numeric($data->currentIndex))) {
             $indices = $data["indices"];
-            if ($indices instanceof stdclass) {
+            if ($indices instanceof \stdclass) {
                 $indices = (array) $indices;
             }
 
@@ -633,45 +688,61 @@ class Document_Tag_Areablock extends Document_Tag {
             $this->current = $data->current;
             $this->currentIndex = $data->currentIndex;
         } else  {
-            throw new Exception("cannot get  values from web service import - invalid data");
+            throw new \Exception("cannot get  values from web service import - invalid data");
         }
     }
 
-
-
+    /**
+     * @return bool
+     */
     public function isCustomAreaPath(){
         $options = $this->getOptions();
         return array_key_exists("areaDir", $options);
     }
 
+    /**
+     * @param $name
+     * @return bool
+     */
     public function isBrickEnabled($name) {
         if($this->isCustomAreaPath()) {
             return true;
         }
 
-        return Pimcore_ExtensionManager::isEnabled("brick", $name);
+        return ExtensionManager::isEnabled("brick", $name);
     }
 
+    /**
+     * @return string
+     */
     public function getAreaDirectory() {
         $options = $this->getOptions();
         return PIMCORE_DOCUMENT_ROOT . "/" . trim($options["areaDir"], "/");
     }
 
+    /**
+     * @param $name
+     * @return string
+     */
     public function getPathForBrick($name) {
         if($this->isCustomAreaPath()) {
             return $this->getAreaDirectory() . "/" . $name;
         }
 
-        return Pimcore_ExtensionManager::getPathForExtension($name,"brick");
+        return ExtensionManager::getPathForExtension($name,"brick");
     }
 
+    /**
+     * @param $name
+     * @throws \Exception
+     */
     public function getBrickConfig($name) {
         if($this->isCustomAreaPath()) {
-            $path = $this->getPathForBrick($name);
-            Pimcore_ExtensionManager::getBrickConfig($name, $path);
+            $path = $this->getAreaDirectory();
+            return ExtensionManager::getBrickConfig($name, $path);
         }
 
-        return Pimcore_ExtensionManager::getBrickConfig($name);
+        return ExtensionManager::getBrickConfig($name);
     }
 
     /**
@@ -680,37 +751,40 @@ class Document_Tag_Areablock extends Document_Tag {
     public function getAreaDirs () {
 
         if($this->isCustomAreaPath()) {
-            return Pimcore_ExtensionManager::getBrickDirectories($this->getAreaDirectory());
+            return ExtensionManager::getBrickDirectories($this->getAreaDirectory());
         }
 
-        return Pimcore_ExtensionManager::getBrickDirectories();
+        return ExtensionManager::getBrickDirectories();
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getBrickConfigs() {
 
         if($this->isCustomAreaPath()) {
-            return Pimcore_ExtensionManager::getBrickConfigs($this->getAreaDirectory());
+            return ExtensionManager::getBrickConfigs($this->getAreaDirectory());
         }
 
-        return Pimcore_ExtensionManager::getBrickConfigs();
+        return ExtensionManager::getBrickConfigs();
     }
 
     /**
      * @param $name
      *
-     * @return Document_Tag_Areablock_Item[]
+     * @return Areablock\Item[]
      */
     public function getElement($name)
     {
         // init
-        $doc = Document_Page::getById( $this->getDocumentId() );
+        $doc = Model\Document\Page::getById( $this->getDocumentId() );
 
         $list = array();
-        foreach($this->getData() as $item)
+        foreach($this->getData() as $index => $item)
         {
             if($item['type'] == $name)
             {
-                $list[] = new Document_Tag_Areablock_Item($doc, $this->getName(), $item['key']);
+                $list[ $index ] = new Areablock\Item($doc, $this->getName(), $item['key']);
             }
         }
 

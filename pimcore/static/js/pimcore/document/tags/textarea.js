@@ -29,27 +29,60 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
         this.element = Ext.get(id);
         this.element.dom.setAttribute("contenteditable", true);
+
+        // set min height for IE, as he isn't able to update :after css selector
+        this.element.update("|"); // dummy content to get appropriate height
+        this.element.applyStyles({
+            "min-height": this.element.getHeight() + "px"
+        });
+
         this.element.update(data);
+
         this.checkValue();
 
         this.element.on("keyup", this.checkValue.bind(this));
         this.element.on("keydown", function (e, t, o) {
 
             if(e.getCharCode() == 13) {
-                var selection = window.getSelection(),
-                    range = selection.getRangeAt(0),
-                    br = document.createElement("br");
-                range.deleteContents();
-                range.insertNode(br);
-                range.setStartAfter(br);
-                range.setEndAfter(br);
-                range.collapse(false);
-                selection.removeAllRanges();
-                selection.addRange(range);
+
+                if (window.getSelection) {
+                    var selection = window.getSelection(),
+                        range = selection.getRangeAt(0),
+                        br = document.createElement("br"),
+                        textNode = document.createTextNode("\u00a0"); //Passing " " directly will not end up being shown correctly
+                    range.deleteContents();//required or not?
+                    range.insertNode(br);
+                    range.collapse(false);
+                    range.insertNode(textNode);
+                    range.selectNodeContents(textNode);
+
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
 
                 e.stopEvent();
             }
         });
+
+        this.element.dom.addEventListener("paste", function(e) {
+            e.preventDefault();
+
+            var text = "";
+            if(e.clipboardData) {
+                text = e.clipboardData.getData("text/plain");
+            } else if (window.clipboardData) {
+                text = window.clipboardData.getData("Text");
+            }
+
+            text = htmlentities(text, 'ENT_NOQUOTES', null, false);
+
+            try {
+                document.execCommand("insertHTML", false, text);
+            } catch (e) {
+                // IE <= 10
+                document.selection.createRange().pasteHTML(text);
+            }
+        }.bind(this));
 
         if(options["width"] || options["height"]) {
             this.element.applyStyles({
@@ -67,22 +100,18 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
                 height: options["height"] + "px"
             })
         }
+
+        if(options["class"]) {
+            this.element.addClass(options["class"]);
+        }
+
+        if (options["placeholder"]) {
+            this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
+        }
     },
 
     checkValue: function () {
-
-        // ensure that the last node is always an <br>
-        if (!this.element.dom.lastChild || this.element.dom.lastChild.nodeName.toLowerCase() != "br") {
-            this.element.dom.appendChild(document.createElement("br"));
-        }
-
         var value = this.element.dom.innerHTML;
-        var origValue = value;
-        value = strip_tags(value, "<br>");
-
-        if(value != origValue) {
-            this.element.update(value);
-        }
 
         if(trim(strip_tags(value)).length < 1) {
             this.element.addClass("empty");
@@ -100,5 +129,16 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
     getType: function () {
         return "textarea";
+    },
+
+    setInherited: function($super, inherited, el) {
+
+        $super(inherited, el);
+
+        if(this.inherited) {
+            this.element.dom.setAttribute("contenteditable", false);
+        } else {
+            this.element.dom.setAttribute("contenteditable", true);
+        }
     }
 });

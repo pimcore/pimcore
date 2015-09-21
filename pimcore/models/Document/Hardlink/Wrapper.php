@@ -15,12 +15,22 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-trait Document_Hardlink_Wrapper {
+namespace Pimcore\Model\Document\Hardlink;
+
+use Pimcore\Model;
+use Pimcore\Model\Document;
+
+trait Wrapper {
 
     /**
-     * @var Document_Hardlink
+     * @var Document\Hardlink
      */
     protected $hardLinkSource;
+
+    /**
+     * @var Document
+     */
+    protected $sourceDocument;
 
     // OVERWRITTEN METHODS
     public function save() {
@@ -43,6 +53,14 @@ trait Document_Hardlink_Wrapper {
                 $sourceProperties = $this->getResource()->getProperties();
             } else {
                 $sourceProperties = array();
+            }
+
+            if($this->getSourceDocument()) {
+                // if we have a source document, that means that this document is not directly linked, it's a
+                // child of a hardlink that uses "childFromSource", so in this case we use the source properties
+                // this is especially important for the navigation, otherwise all children will have the same
+                // navigation_name as the source hardlink, which doesn't make sense at all
+                $sourceProperties = $this->getSourceDocument()->getProperties();
             }
 
             $hardLinkProperties = array();
@@ -76,12 +94,18 @@ trait Document_Hardlink_Wrapper {
             $hardLink = $this->getHardLinkSource();
             $childs = array();
 
-            if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
-                $childs = parent::getChilds();
-                foreach($childs as &$c) {
-                    $c = Document_Hardlink_Service::wrap($c);
-                    $c->setHardLinkSource($hardLink);
-                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
+            if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
+                foreach(parent::getChilds() as $c) {
+                    $sourceDocument = $c;
+                    $c = Service::wrap($c);
+
+                    if($c) {
+                        $c->setHardLinkSource($hardLink);
+                        $c->setSourceDocument($sourceDocument);
+                        $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
+
+                        $childs[] = $c;
+                    }
                 }
             }
 
@@ -94,7 +118,7 @@ trait Document_Hardlink_Wrapper {
     public function hasChilds() {
         $hardLink = $this->getHardLinkSource();
 
-        if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+        if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
             return parent::hasChilds();
         }
 
@@ -102,15 +126,16 @@ trait Document_Hardlink_Wrapper {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      * @return void
      */
     protected function raiseHardlinkError () {
-        throw new Exception("Method no supported by hardlinked documents");
+        throw new \Exception("Method no supported by hardlinked documents");
     }
 
     /**
-     * @param \Document_Hardlink $hardLinkSource
+     * @param Document\Hardlink $hardLinkSource
+     * @return $this
      */
     public function setHardLinkSource($hardLinkSource)
     {
@@ -119,10 +144,26 @@ trait Document_Hardlink_Wrapper {
     }
 
     /**
-     * @return \Document_Hardlink
+     * @return Document\Hardlink
      */
     public function getHardLinkSource()
     {
         return $this->hardLinkSource;
+    }
+
+    /**
+     * @return Document
+     */
+    public function getSourceDocument()
+    {
+        return $this->sourceDocument;
+    }
+
+    /**
+     * @param Document $sourceDocument
+     */
+    public function setSourceDocument($sourceDocument)
+    {
+        $this->sourceDocument = $sourceDocument;
     }
 }

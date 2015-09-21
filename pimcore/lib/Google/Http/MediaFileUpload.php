@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 
-require_once 'Google/Client.php';
-require_once 'Google/Exception.php';
-require_once 'Google/Http/Request.php';
-require_once 'Google/Http/REST.php';
-require_once 'Google/Utils.php';
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 /**
- * @author Chirag Shah <chirags@google.com>
- *
+ * Manage large file uploads, which may be media but can be any type
+ * of sizable data.
  */
 class Google_Http_MediaFileUpload
 {
@@ -182,7 +180,7 @@ class Google_Http_MediaFileUpload
       // No problems, but upload not complete.
       return false;
     } else {
-      return Google_Http_REST::decodeHttpResponse($response);
+      return Google_Http_REST::decodeHttpResponse($response, $this->client);
     }
   }
 
@@ -287,6 +285,18 @@ class Google_Http_MediaFileUpload
     if (200 == $code && true == $location) {
       return $location;
     }
-    throw new Google_Exception("Failed to start the resumable upload");
+    $message = $code;
+    $body = @json_decode($response->getResponseBody());
+    if (!empty($body->error->errors) ) {
+      $message .= ': ';
+      foreach ($body->error->errors as $error) {
+        $message .= "{$error->domain}, {$error->message};";
+      }
+      $message = rtrim($message, ';');
+    }
+
+    $error = "Failed to start the resumable upload (HTTP {$message})";
+    $this->client->getLogger()->error($error);
+    throw new Google_Exception($error);
   }
 }

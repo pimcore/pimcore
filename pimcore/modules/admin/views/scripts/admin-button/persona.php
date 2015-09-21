@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/admin/iframe.css" />
+    <link rel="stylesheet" type="text/css" href="/pimcore/static6/js/frontend/admin/iframe.css" />
 
     <style type="text/css">
         li {
@@ -57,7 +57,7 @@
 
     <div>
         <h1>
-            <?php echo $this->translate("change_persona_to"); ?>:
+            <?= $this->translate("change_persona_to"); ?>:
         </h1>
 
         <ul>
@@ -67,7 +67,7 @@
         </ul>
 
         <h1>
-            <?php echo $this->translate("change_persona_to"); ?>:
+            <?= $this->translate("change_persona_to"); ?>:
         </h1>
 
         <pre id="json" class="source"></pre>

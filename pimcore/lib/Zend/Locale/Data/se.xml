@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="se"/>
 	</identity>
 	<localeDisplayNames>
@@ -16,7 +16,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="af" draft="unconfirmed">afrikánsagiella</language>
 			<language type="an" draft="unconfirmed">aragoniagiella</language>
 			<language type="ang" draft="unconfirmed">boares eaŋgalasgiella</language>
-			<language type="apa" draft="unconfirmed">apacheš giella</language>
 			<language type="ar" draft="unconfirmed">arábagiella</language>
 			<language type="ast" draft="unconfirmed">asturiagiella</language>
 			<language type="be" draft="unconfirmed">vilges-ruoššagiella</language>
@@ -26,7 +25,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="br" draft="unconfirmed">bretonagiella</language>
 			<language type="bs" draft="unconfirmed">bosniagiella</language>
 			<language type="ca" draft="unconfirmed">katalánagiella</language>
-			<language type="cel" draft="unconfirmed">kelttalaš gielat</language>
 			<language type="chm" draft="unconfirmed">marigiella</language>
 			<language type="co" draft="unconfirmed">corsicagiella</language>
 			<language type="cs" draft="unconfirmed">čeahkagiella</language>
@@ -42,13 +40,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="fa" draft="unconfirmed">persijagiella</language>
 			<language type="fi" draft="unconfirmed">suomagiella</language>
 			<language type="fil" draft="unconfirmed">filippiinnagiella</language>
-			<language type="fiu" draft="unconfirmed">fenno-ugrálaš giella</language>
 			<language type="fj" draft="unconfirmed">fidjigiella</language>
 			<language type="fo" draft="unconfirmed">fearagiella</language>
 			<language type="fr" draft="unconfirmed">fránskkagiella</language>
 			<language type="fy" draft="unconfirmed">oarjifriisagiella</language>
 			<language type="ga" draft="unconfirmed">iirragiella</language>
-			<language type="gem" draft="unconfirmed">germánalaš gielat</language>
 			<language type="gu" draft="unconfirmed">gujaratagiella</language>
 			<language type="gv" draft="unconfirmed">manksgiella</language>
 			<language type="ha" draft="unconfirmed">haussagiella</language>
@@ -94,7 +90,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="pt" draft="unconfirmed">portugálagiella</language>
 			<language type="rm" draft="unconfirmed">romanšgiella</language>
 			<language type="ro" draft="unconfirmed">romániagiella</language>
-			<language type="roa" draft="unconfirmed">románalaš gielat</language>
 			<language type="ru" draft="unconfirmed">ruoššagiella</language>
 			<language type="sc" draft="unconfirmed">sardigiella</language>
 			<language type="scn" draft="unconfirmed">sisiliagiella</language>
@@ -105,7 +100,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sl" draft="unconfirmed">slovenagiella</language>
 			<language type="sm" draft="unconfirmed">samoagiella</language>
 			<language type="sma" draft="unconfirmed">lullisámegiella</language>
-			<language type="smi" draft="unconfirmed">sámegielat</language>
 			<language type="smj" draft="unconfirmed">julevsámegiella</language>
 			<language type="smn" draft="unconfirmed">anárašgiella</language>
 			<language type="sms" draft="unconfirmed">nuortalašgiella</language>
@@ -122,7 +116,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ur" draft="unconfirmed">urdugiella</language>
 			<language type="vi" draft="unconfirmed">vietnamgiella</language>
 			<language type="wa" draft="unconfirmed">vallonagiella</language>
-			<language type="wen" draft="unconfirmed">sorbi gielat</language>
 			<language type="yue" draft="unconfirmed">kantongiella</language>
 			<language type="zh" draft="unconfirmed">kiinnágiella</language>
 			<language type="zh_Hans" draft="unconfirmed">álki kiinágiella</language>

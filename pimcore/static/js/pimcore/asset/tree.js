@@ -130,6 +130,8 @@ pimcore.asset.tree = Class.create({
                     e.stopPropagation();
                     e.preventDefault();
 
+                    pimcore.helpers.treeNodeThumbnailPreviewHide();
+
                     try {
                         if(!this.tree.getSelectionModel().getSelectedNode()) {
                             return true;
@@ -141,107 +143,15 @@ pimcore.asset.tree = Class.create({
                     var node = this.tree.getSelectionModel().getSelectedNode();
 
                     var dt = e.dataTransfer;
+
                     var files = dt.files;
-                    var file;
-                    this.activeUploads = 0;
 
-                    if(files.length < 1) {
-                        return;
-                    }
-
-                    var pbar = new Ext.ProgressBar({
-                        id:'pbar3',
-                        width:500
-                    });
-                    var win = new Ext.Window({
-                        items: [pbar],
-                        modal: true,
-                        closable: false,
-                        bodyStyle: "padding:10px;"
-                    });
-                    pbar.wait({
-                        interval:2000,
-                        duration:3600000,
-                        increment:5
-                    });
-                    win.show();
-
-
-                    // this is for browser that support folders (currently: Chrome)
+                    // if a folder is dropped (currently only Chrome) pass the dataTransfer object instead of the FileList object
                     if(dt["items"]) {
-                        files = [];
-                        var traverseFileTree = function (item, path) {
-                            path = path || "";
-                            if (item.isFile) {
-                                // Get file
-                                item.file(function(file) {
-                                    this.activeUploads++;
-                                    pimcore.helpers.uploadAssetFromFileObject(file,
-                                        "/admin/asset/add-asset/?pimcore_admin_sid="
-                                            + pimcore.settings.sessionId + "&parentId=" + node.id + "&dir=" + path,
-                                        function () {
-                                            this.activeUploads--;
-                                            if(this.activeUploads < 1) {
-                                                win.close();
-                                                node.reload();
-                                            }
-                                        }.bind(this)
-                                    );
-                                }.bind(this));
-                            } else if (item.isDirectory) {
-                                // Get folder contents
-                                var dirReader = item.createReader();
-                                dirReader.readEntries(function(entries) {
-                                    for (var i=0; i<entries.length; i++) {
-                                        traverseFileTree(entries[i], path + item.name + "/");
-                                    }
-                                });
-                            }
-                        }.bind(this);
-
-                        for (var i=0; i<dt.items.length; i++) {
-                            // webkitGetAsEntry is where the magic happens
-                            var item = dt.items[i].webkitGetAsEntry();
-                            if (item) {
-                                traverseFileTree(item);
-                            }
-                        }
-                    } else {
-                        // default filelist upload
-                        for (var i=0; i<files.length; i++) {
-                            file = files[i];
-
-                            if (window.FileList && file.name && file.type) { // check for type (folder has no type)
-                                this.activeUploads++;
-                                pimcore.helpers.uploadAssetFromFileObject(file,
-                                    "/admin/asset/add-asset/?pimcore_admin_sid="
-                                        + pimcore.settings.sessionId + "&parentId=" + node.id,
-                                    function () {
-                                        this.activeUploads--;
-                                        if(this.activeUploads < 1) {
-                                            win.close();
-                                            node.reload();
-                                        }
-                                    }.bind(this)
-                                );
-                            }
-                        }
-
-                        // if no files are uploaded (doesn't match criteria, ...) close the progress win immediately
-                        if(!this.activeUploads) {
-                            win.close();
-                        }
+                        files = dt;
                     }
 
-                    // check in 5 sec. if there're active uploads
-                    // if not, close the progressbar
-                    // this is necessary since the folder upload is async, so we don't know if the progress is
-                    // necessary or not, not really perfect solution, but works as it should
-                    window.setTimeout(function () {
-                        if(!this.activeUploads) {
-                            win.close();
-                        }
-                    }.bind(this), 5000);
+                    this.uploadFileList(files, node);
 
                 }.bind(this), true);
             }
@@ -253,7 +163,176 @@ pimcore.asset.tree = Class.create({
         this.config.parentPanel.doLayout();
         
     },
-    
+
+    uploadFileList: function (files, parentNode) {
+
+        var file, pbar;
+        this.activeUploads = 0;
+        this.activeQueue = [];
+        this.uploadErros = [];
+
+        if(files.length < 1) {
+            return;
+        }
+
+        var win = new Ext.Window({
+            items: [],
+            modal: true,
+            closable: false,
+            bodyStyle: "padding:10px;",
+            width: 500,
+            autoHeight: true,
+            autoScroll: true
+        });
+        win.show();
+
+
+        var doFileUpload = function (file, path) {
+
+            var pbar;
+
+            if(typeof path == "undefined") {
+                path = "";
+            }
+
+            this.activeUploads++;
+
+            var finishedErrorHandler = function () {
+                // success
+                this.activeUploads--;
+
+                win.remove(pbar);
+
+                if(this.activeQueue.length > 0) {
+                    var nextFile = this.activeQueue.shift();
+                    startUpload(nextFile.file, nextFile.path);
+                }
+
+                if(this.activeUploads < 1) {
+                    win.close();
+                    parentNode.reload();
+
+                    if(this.uploadErros.length) {
+                        var text = t("upload_failed_files") + ": \n\n";
+
+                        for(var i=0; i<this.uploadErros.length; i++) {
+                            text += "\n";
+                            text += this.uploadErros[i];
+                        }
+
+                        pimcore.helpers.showNotification(t("error"), t("error_general"), "error", text);
+                    }
+                }
+            }.bind(this);
+
+            var uploadErrorHandler = function (transport) {
+                finishedErrorHandler();
+                this.uploadErros.push(file.name);
+            }.bind(this);
+
+            var startUpload = function (file, path) {
+
+                pbar = new Ext.ProgressBar({
+                    width:465,
+                    text: file.name,
+                    style: "margin-bottom: 5px"
+                });
+
+                win.add(pbar);
+                win.doLayout();
+
+                pimcore.helpers.uploadAssetFromFileObject(file,
+                    "/admin/asset/add-asset/?pimcore_admin_sid="
+                    + pimcore.settings.sessionId + "&parentId=" + parentNode.id + "&dir=" + path,
+                    finishedErrorHandler,
+                    function (evt) {
+                        //progress
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            var progressText = file.name + " ( " + Math.floor(percentComplete * 100) + "% )";
+                            if (percentComplete == 1) {
+                                progressText = file.name + " " + t("converting") + "... ";
+                            }
+
+                            pbar.updateProgress(percentComplete, progressText);
+                        }
+                    },
+                    uploadErrorHandler
+                );
+            };
+
+            if(this.activeUploads < 5) {
+                startUpload(file, path);
+            } else {
+                this.activeQueue.push({
+                    file: file,
+                    path: path
+                });
+            }
+        }.bind(this);
+
+
+
+        // this is for browser that support folders (currently: Chrome)
+        // in this case not a FileList object is given but a dataTransfer object (from DnD Event)
+        if(files["items"]) {
+            var traverseFileTree = function (item, path) {
+                path = path || "";
+                if (item.isFile) {
+                    // Get file
+                    item.file(function(file) {
+                        doFileUpload(file, path);
+                    }.bind(this), function (e) {
+                        console.log("Unable to upload file: " + path + item.name);
+                        console.log(e);
+
+                        this.uploadErros.push(path + item.name);
+                    }.bind(this));
+                } else if (item.isDirectory) {
+                    // Get folder contents
+                    var dirReader = item.createReader();
+                    dirReader.readEntries(function(entries) {
+                        for (var i=0; i<entries.length; i++) {
+                            traverseFileTree(entries[i], path + item.name + "/");
+                        }
+                    });
+                }
+            }.bind(this);
+
+            for (var i=0; i<files.items.length; i++) {
+                // webkitGetAsEntry is where the magic happens
+                var item = files.items[i].webkitGetAsEntry();
+                if (item) {
+                    traverseFileTree(item);
+                }
+            }
+        } else {
+            // default filelist upload
+            for (var i=0; i<files.length; i++) {
+                file = files[i];
+
+                if (window.FileList && file.name && file.type) { // check for type (folder has no type)
+                    doFileUpload(file);
+                }
+            }
+
+            // if no files are uploaded (doesn't match criteria, ...) close the progress win immediately
+            if(!this.activeUploads) {
+                win.close();
+            }
+        }
+
+        // check in 5 sec. if there're active uploads
+        // if not, close the progressbar
+        // this is necessary since the folder upload is async, so we don't know if the progress is
+        // necessary or not, not really perfect solution, but works as it should
+        window.setTimeout(function () {
+            if(!this.activeUploads) {
+                win.close();
+            }
+        }.bind(this), 5000);
+    },
+
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'click' : this.onTreeNodeClick,
@@ -735,40 +814,21 @@ pimcore.asset.tree = Class.create({
     },
 
     addAssets : function () {
+        // check if multiupload fields exists in dom
+        if(!Ext.get("multiUploadField")) {
+            // we have to do the following in jQuery :(
+            jQuery("body").append('<input type="file" name="multiUploadField" id="multiUploadField" multiple>');
+        }
 
-        this.uploadWindow = new Ext.Window({
-            layout: 'fit',
-            title: t('add_assets'),
-            closeAction: 'close',
-            width:400,
-            height:400,
-            modal: true
-        });
-
-        var uploadPanel = new Ext.ux.SwfUploadPanel({
-            title: t('upload_your_files_press_shift_to_select_multiple_files'),
-            border: false,
-            upload_url: '/admin/asset/add-asset/?pimcore_admin_sid=' + pimcore.settings.sessionId,
-            post_params: { parentId: this.id },
-            debug: pimcore.settings.devmode,
-            file_size_limit: (pimcore.settings.upload_max_filesize/1000),
-            flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
-            confirm_delete: false,
-            remove_completed: true,
-            listeners: {
-                "fileUploadComplete": function (win) {
-                    win.hide();
-
-                    var f = this.attributes.reference.addAssetComplete.bind(this);
-                    f();
-                }.bind(this, this.uploadWindow)
+        // this is the tree node
+        jQuery("#multiUploadField").unbind("change");
+        jQuery("#multiUploadField").on("change", function (e) {
+            if(e.target.files.length) {
+                this.attributes.reference.uploadFileList(e.target.files, this);
             }
-        });
+        }.bind(this));
 
-        this.uploadWindow.add(uploadPanel);
-        this.uploadWindow.show();
-        this.uploadWindow.setWidth(401);
-        this.uploadWindow.doLayout();
+        jQuery("#multiUploadField").trigger("click");
     },
 
     uploadZip: function () {

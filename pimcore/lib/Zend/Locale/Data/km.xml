@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="km"/>
 	</identity>
 	<localeDisplayNames>
@@ -30,7 +30,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">អាហ៊្សែរបែហ្សង់</language>
 			<language type="be">បេឡារុស្ស</language>
 			<language type="bg">ប៊ុលហ្ការី</language>
-			<language type="bh">ភាសាបិហារ</language>
 			<language type="bm">ភាសាបាម្បារា</language>
 			<language type="bn">បង់ក្លាដែស</language>
 			<language type="bo">ទីបេ</language>
@@ -105,7 +104,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mk">ម៉ាសេដូនី</language>
 			<language type="ml">មលយាល័ម</language>
 			<language type="mn">ភាសាម៉ុងហ្គោលី</language>
-			<language type="mo">ភាសាម៉ុលដាវី</language>
 			<language type="mr">មរាធិ</language>
 			<language type="ms">ម៉ាឡេស៊ី</language>
 			<language type="mt">ម៉ាល់តា</language>
@@ -128,6 +126,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">រ៉ូម៉ង់</language>
 			<language type="rn">ភាសារូន្ឌី</language>
 			<language type="ro">រូម៉ានី</language>
+			<language type="ro_MD">ភាសាម៉ុលដាវី</language>
 			<language type="ru">រុស្ស៊ី</language>
 			<language type="sa">សំស្ក្រឹត</language>
 			<language type="sd">​​ស៊ីន្តី</language>
@@ -1373,9 +1372,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>ផាល់ម័រ</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>ប៉ូល​ខាង​ត្បូង</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>ស៊ីយ៉ូវ៉ា</exemplarCity>
 			</zone>
@@ -1648,9 +1644,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>តូរ៉ុនតូ</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>ម៉ុងទ្រីអាល់</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>អ៊ីកាឡូអ៊ីត</exemplarCity>
@@ -2494,9 +2487,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>ផូនីក</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>ស្ស៊ីបរ៉ុក</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ដែនវើ</exemplarCity>

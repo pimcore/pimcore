@@ -15,22 +15,43 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Schedule_Manager_Procedural {
+namespace Pimcore\Model\Schedule\Manager;
 
+use Pimcore\Model;
 
+class Procedural {
+
+    /**
+     * @var array
+     */
     public $jobs = array();
 
+    /**
+     * @var array
+     */
     protected $validJobs = array();
 
+    /**
+     * @var
+     */
     protected $_pidFileName;
 
+    /**
+     * @var bool
+     */
     protected $force = false;
 
+    /**
+     * @param $pidFileName
+     */
     public function __construct($pidFileName){
         $this->_pidFileName = $pidFileName;
     }
 
-
+    /**
+     * @param $validJobs
+     * @return $this
+     */
     public function setValidJobs ($validJobs) {
         if(is_array($validJobs)) {
             $this->validJobs = $validJobs;
@@ -38,50 +59,64 @@ class Schedule_Manager_Procedural {
         return $this;
     }
 
-    public function registerJob(Schedule_Maintenance_Job $job, $force = false) {
+    /**
+     * @param Model\Schedule\Maintenance\Job $job
+     * @param bool $force
+     * @return bool
+     */
+    public function registerJob(Model\Schedule\Maintenance\Job $job, $force = false) {
 
         if(!empty($this->validJobs) and !in_array($job->getId(),$this->validJobs)) {
-            Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
+            \Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
             return false;
         }
 
         if (!$job->isLocked() || $force || $this->getForce()) {
             $this->jobs[] = $job;
-            $job->lock();
 
-            Logger::info("Registered job with ID: " . $job->getId());
+            \Logger::info("Registered job with ID: " . $job->getId());
 
             return true;
         } else {
-            Logger::info("Skipped job with ID: " . $job->getId() . " because it is still locked.");
+            \Logger::info("Skipped job with ID: " . $job->getId() . " because it is still locked.");
         }
         
         return false;
     }
 
+    /**
+     *
+     */
     public function run() {
         $this->setLastExecution();
 
         foreach ($this->jobs as $job) {
-            Logger::info("Executing job with ID: " . $job->getId());
+            $job->lock();
+            \Logger::info("Executing job with ID: " . $job->getId());
             try {
                 $job->execute();
-                Logger::info("Finished job with ID: " . $job->getId());
+                \Logger::info("Finished job with ID: " . $job->getId());
             }
-            catch (Exception $e) {
-                Logger::error("Failed to execute job with id: " . $job->getId());
-                Logger::error($e);
+            catch (\Exception $e) {
+                \Logger::error("Failed to execute job with id: " . $job->getId());
+                \Logger::error($e);
             }
             $job->unlock();
         }
     }
 
+    /**
+     *
+     */
     public function setLastExecution() {
-        Tool_Lock::lock($this->_pidFileName);
+        Model\Tool\Lock::lock($this->_pidFileName);
     }
 
+    /**
+     * @return mixed
+     */
     public function getLastExecution() {
-        $lock = Tool_Lock::get($this->_pidFileName);
+        $lock = Model\Tool\Lock::get($this->_pidFileName);
         if($date = $lock->getDate()) {
             return $date;
         }

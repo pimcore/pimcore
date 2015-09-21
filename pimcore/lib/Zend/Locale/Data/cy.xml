@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9307 $"/>
-		<generation date="$Date: 2013-09-04 12:38:21 -0500 (Wed, 04 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="cy"/>
 	</identity>
 	<localeDisplayNames>
@@ -24,62 +24,47 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady" draft="unconfirmed">Circaseg Gorllewinol</language>
 			<language type="ae" draft="unconfirmed">Afestaneg</language>
 			<language type="af">Affricâneg</language>
-			<language type="afa">Iaith Affro-Asiaidd</language>
 			<language type="afh" draft="unconfirmed">Affrihili</language>
 			<language type="ain" draft="unconfirmed">Ainŵeg</language>
 			<language type="ak" draft="unconfirmed">Acaneg</language>
 			<language type="akk" draft="unconfirmed">Acadeg</language>
 			<language type="ale" draft="unconfirmed">Alewteg</language>
-			<language type="alg" draft="unconfirmed">Algonceg</language>
 			<language type="alt" draft="unconfirmed">Altäeg Deheuol</language>
 			<language type="am">Amhareg</language>
 			<language type="an" draft="unconfirmed">Aragoneg</language>
 			<language type="ang">Hen Saesneg</language>
-			<language type="apa" draft="unconfirmed">iaith Athabascaidd Deheuol</language>
 			<language type="ar">Arabeg</language>
 			<language type="ar_001">Arabeg Modern Safonol</language>
 			<language type="arc">Aramaeg</language>
 			<language type="arn" draft="unconfirmed">Arawcaneg</language>
-			<language type="art">Iaith Artiffisial</language>
 			<language type="arw" draft="unconfirmed">Arawaceg</language>
 			<language type="as">Asameg</language>
-			<language type="ath">Iaith Athabasgaidd</language>
-			<language type="aus">Iaith Awstralaidd</language>
 			<language type="av" draft="unconfirmed">Afareg</language>
 			<language type="az">Aserbaijaneg</language>
 			<language type="ba" draft="unconfirmed">Bashcorteg</language>
-			<language type="bai" draft="unconfirmed">iaith Bamilecig</language>
 			<language type="bal" draft="unconfirmed">Balwtsi</language>
 			<language type="ban" draft="unconfirmed">Balïeg</language>
 			<language type="bas" draft="unconfirmed">Basâeg</language>
-			<language type="bat" draft="unconfirmed">iaith Baltig</language>
 			<language type="bax" draft="unconfirmed">Bamwmeg</language>
 			<language type="be">Belarwseg</language>
 			<language type="bej" draft="unconfirmed">Bejäeg</language>
 			<language type="bem" draft="unconfirmed">Bembeg</language>
-			<language type="ber" draft="unconfirmed">Berbereg</language>
 			<language type="bez" draft="unconfirmed">Bena</language>
 			<language type="bg">Bwlgareg</language>
-			<language type="bh" draft="contributed">Bihari</language>
 			<language type="bi" draft="unconfirmed">Bislama</language>
 			<language type="bkm" draft="unconfirmed">Comeg</language>
 			<language type="bm" draft="unconfirmed">Bambareg</language>
 			<language type="bn">Bengaleg</language>
-			<language type="bnt" draft="unconfirmed">iaith Bantw</language>
 			<language type="bo">Tibeteg</language>
 			<language type="br">Llydaweg</language>
 			<language type="bs">Bosnieg</language>
-			<language type="btk" draft="unconfirmed">Bataceg</language>
 			<language type="bua" draft="unconfirmed">Bwriateg</language>
 			<language type="bum" draft="unconfirmed">Bwlw</language>
 			<language type="ca">Catalaneg</language>
 			<language type="cad" draft="unconfirmed">Cado</language>
-			<language type="cai" draft="unconfirmed">iaith frodorol yng Nghanolbarth America</language>
 			<language type="car" draft="unconfirmed">Caribeg</language>
-			<language type="cau" draft="unconfirmed">iaith Cawcasaidd</language>
 			<language type="cch" draft="unconfirmed">Atsameg</language>
 			<language type="ce" draft="unconfirmed">Tsietsieneg</language>
-			<language type="cel">Iaith Geltaidd</language>
 			<language type="ch" draft="unconfirmed">Tsiamorro</language>
 			<language type="chm" draft="unconfirmed">Marieg</language>
 			<language type="cho" draft="unconfirmed">Siocto</language>
@@ -88,7 +73,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ckb" draft="unconfirmed">Cwrdeg Sorani</language>
 			<language type="co" draft="unconfirmed">Corseg</language>
 			<language type="cop" draft="unconfirmed">Copteg</language>
-			<language type="cpe" draft="unconfirmed">Creoliaith Seisnig</language>
 			<language type="cr" draft="unconfirmed">Cri</language>
 			<language type="crh" draft="unconfirmed">Tyrceg y Crimea</language>
 			<language type="cs">Tsieceg</language>
@@ -97,14 +81,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="da">Daneg</language>
 			<language type="dak" draft="unconfirmed">Dacotaeg</language>
 			<language type="dar" draft="unconfirmed">Dargwa</language>
-			<language type="day" draft="unconfirmed">Daiaceg</language>
 			<language type="de">Almaeneg</language>
 			<language type="de_AT">Almaeneg Awstria</language>
 			<language type="de_CH">Almaeneg Safonol y Swistir</language>
 			<language type="din" draft="unconfirmed">Dinca</language>
 			<language type="dje" draft="unconfirmed">Zarmaeg</language>
 			<language type="doi" draft="unconfirmed">Dogri</language>
-			<language type="dra" draft="unconfirmed">Drafideg</language>
 			<language type="dsb" draft="unconfirmed">Sorbeg Isaf</language>
 			<language type="dum">Iseldireg Canol</language>
 			<language type="dv" draft="unconfirmed">Difehi</language>
@@ -134,7 +116,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff" draft="unconfirmed">Ffwla</language>
 			<language type="fi">Ffinneg</language>
 			<language type="fil">Ffilipineg</language>
-			<language type="fiu">Iaith Ffinno-Wgrig</language>
 			<language type="fj">Ffijïeg</language>
 			<language type="fo">Ffaröeg</language>
 			<language type="fr">Ffrangeg</language>
@@ -150,7 +131,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay" draft="unconfirmed">Gaio</language>
 			<language type="gba" draft="unconfirmed">Gbaia</language>
 			<language type="gd">Gaeleg yr Alban</language>
-			<language type="gem">Iaith Germanaidd</language>
 			<language type="gil" draft="unconfirmed">Gilberteg</language>
 			<language type="gl">Galisieg</language>
 			<language type="gn">Guaraní</language>
@@ -180,10 +160,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ii" draft="unconfirmed">Nwosw</language>
 			<language type="ik" draft="unconfirmed">Inwpiaceg</language>
 			<language type="ilo" draft="unconfirmed">Ilocaneg</language>
-			<language type="inc" draft="unconfirmed">iaith Indo-Ariaidd</language>
-			<language type="ine">Iaith Indo-Ewropeaidd</language>
 			<language type="inh" draft="unconfirmed">Ingwsieg</language>
-			<language type="ira" draft="unconfirmed">iaith Iranaidd</language>
 			<language type="is">Islandeg</language>
 			<language type="it">Eidaleg</language>
 			<language type="iu" draft="unconfirmed">Inwctitwt</language>
@@ -250,13 +227,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mh" draft="unconfirmed">Marsialeg</language>
 			<language type="mi">Maori</language>
 			<language type="mic">Micmaceg</language>
-			<language type="mis">Iaith Amrywiol</language>
 			<language type="mk">Macedoneg</language>
 			<language type="ml">Malayalam</language>
 			<language type="mn" draft="contributed">Mongoleg</language>
 			<language type="mnc" draft="unconfirmed">Manshw</language>
 			<language type="mni" draft="unconfirmed">Manipwri</language>
-			<language type="mo">Moldofeg</language>
 			<language type="moh" draft="unconfirmed">Mohoceg</language>
 			<language type="mos" draft="unconfirmed">Mosi</language>
 			<language type="mr">Marathi</language>
@@ -264,14 +239,10 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">Malteg</language>
 			<language type="mua" draft="unconfirmed">Mas</language>
 			<language type="mul" draft="unconfirmed">mwy nag un iaith</language>
-			<language type="mun" draft="unconfirmed">iaith Mwndig</language>
 			<language type="mwl" draft="unconfirmed">Mirandeg</language>
 			<language type="mwr" draft="unconfirmed">Marwari</language>
 			<language type="my">Byrmaneg</language>
-			<language type="myn" draft="unconfirmed">iaith Maiaidd</language>
 			<language type="na" draft="unconfirmed">Nawrŵeg</language>
-			<language type="nah" draft="unconfirmed">Nahwatl</language>
-			<language type="nai" draft="unconfirmed">iaith frodorol yng Ngogledd America</language>
 			<language type="nap" draft="unconfirmed">Naplieg</language>
 			<language type="nb">Norwyeg Bokmål</language>
 			<language type="nd" draft="unconfirmed">Ndebele Gogleddol</language>
@@ -284,7 +255,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="no">Norwyeg</language>
 			<language type="non">Hen Norseg</language>
 			<language type="nr" draft="unconfirmed">Ndebele Deheuol</language>
-			<language type="nub" draft="unconfirmed">iaith Nwbiaidd</language>
 			<language type="nus" draft="unconfirmed">Nŵereg</language>
 			<language type="nv" draft="unconfirmed">Nafaho</language>
 			<language type="nwc" draft="unconfirmed">Hen Newari</language>
@@ -299,17 +269,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="or">Oriya</language>
 			<language type="os" draft="unconfirmed">Oseteg</language>
 			<language type="ota" draft="unconfirmed">Tyrceg Otoman</language>
-			<language type="oto" draft="unconfirmed">iaith Otomig</language>
 			<language type="pa">Pwnjabeg</language>
-			<language type="paa" draft="unconfirmed">iaith Papŵaidd</language>
 			<language type="pal" draft="unconfirmed">Pahlafi</language>
 			<language type="pam" draft="unconfirmed">Pampanga</language>
 			<language type="peo">Hen Bersieg</language>
-			<language type="phi" draft="unconfirmed">iaith y Philipinau</language>
 			<language type="phn" draft="unconfirmed">Phoeniceg</language>
 			<language type="pi" draft="unconfirmed">Pali</language>
 			<language type="pl">Pwyleg</language>
-			<language type="pra" draft="unconfirmed">iaith Pracritaidd</language>
 			<language type="pro">Hen Brofensaleg</language>
 			<language type="ps">Pashto</language>
 			<language type="pt">Portiwgeeg</language>
@@ -320,7 +286,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">Romaunsch</language>
 			<language type="rn" draft="unconfirmed">Rwndi</language>
 			<language type="ro">Rwmaneg</language>
-			<language type="roa" draft="unconfirmed">iaith Romáwns</language>
+			<language type="ro_MD">Moldofeg</language>
 			<language type="rof" draft="unconfirmed">Rombo</language>
 			<language type="rom" draft="unconfirmed">Romani</language>
 			<language type="root" draft="unconfirmed">y Gwraidd</language>
@@ -330,8 +296,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">Sansgrit</language>
 			<language type="sad" draft="unconfirmed">Sandäweg</language>
 			<language type="sah" draft="unconfirmed">Iacwteg</language>
-			<language type="sai" draft="unconfirmed">iaith frodorol yn Ne America</language>
-			<language type="sal" draft="unconfirmed">iaith Salisiaidd</language>
 			<language type="sam" draft="unconfirmed">Aramaeg Samaria</language>
 			<language type="saq" draft="unconfirmed">Sambŵrw</language>
 			<language type="sas" draft="unconfirmed">Sasaceg</language>
@@ -343,22 +307,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sd">Sindhi</language>
 			<language type="se" draft="unconfirmed">Sami Gogleddol</language>
 			<language type="sel" draft="unconfirmed">Selcypeg</language>
-			<language type="sem" draft="unconfirmed">iaith Semitaidd</language>
 			<language type="sg" draft="unconfirmed">Sango</language>
 			<language type="sga">Hen Wyddeleg</language>
-			<language type="sgn" draft="unconfirmed">iaith Arwyddion</language>
 			<language type="sh" draft="contributed">Serbo-Croateg</language>
 			<language type="shu" draft="unconfirmed">Arabeg Chad</language>
 			<language type="si">Sinhaleg</language>
 			<language type="sid" draft="unconfirmed">Sidamo</language>
-			<language type="sio" draft="unconfirmed">iaith Siŵaidd</language>
-			<language type="sit" draft="unconfirmed">iaith Sino-Tibetaidd</language>
 			<language type="sk">Slofaceg</language>
 			<language type="sl">Slofeneg</language>
-			<language type="sla">Iaith Slafig</language>
 			<language type="sm" draft="unconfirmed">Samöeg</language>
 			<language type="sma" draft="unconfirmed">Sami Deheuol</language>
-			<language type="smi" draft="unconfirmed">Iaith Samig</language>
 			<language type="smj" draft="unconfirmed">Sami Lwle</language>
 			<language type="smn" draft="unconfirmed">Sami Inari</language>
 			<language type="sms" draft="unconfirmed">Sami Scolt</language>
@@ -367,7 +325,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sog" draft="unconfirmed">Sogdeg</language>
 			<language type="sq">Albaneg</language>
 			<language type="sr">Serbeg</language>
-			<language type="ssa" draft="unconfirmed">iaith Nilo-Saharaidd</language>
 			<language type="st" draft="contributed">Sesotheg</language>
 			<language type="su">Swndaneg</language>
 			<language type="suk" draft="unconfirmed">Swcwma</language>
@@ -380,7 +337,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc" draft="unconfirmed">Hen Syrieg</language>
 			<language type="syr" draft="unconfirmed">Syrieg</language>
 			<language type="ta">Tamileg</language>
-			<language type="tai" draft="unconfirmed">iaith Siamaidd</language>
 			<language type="te">Telugu</language>
 			<language type="tg">Tajiceg</language>
 			<language type="th">Thai</language>
@@ -393,8 +349,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tr">Tyrceg</language>
 			<language type="ts" draft="unconfirmed">Tsongaeg</language>
 			<language type="tt">Tatareg</language>
-			<language type="tup" draft="unconfirmed">iaith Twpïaidd</language>
-			<language type="tut" draft="unconfirmed">iaith Altäig</language>
 			<language type="tvl" draft="unconfirmed">Twfalweg</language>
 			<language type="tw" draft="unconfirmed">Twi</language>
 			<language type="ty" draft="unconfirmed">Tahitïeg</language>
@@ -409,16 +363,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ve" draft="unconfirmed">Fendeg</language>
 			<language type="vi">Fietnameg</language>
 			<language type="wa" draft="unconfirmed">Walwneg</language>
-			<language type="wak" draft="unconfirmed">iaith Wacasiaidd</language>
 			<language type="wal" draft="unconfirmed">Walamo</language>
-			<language type="wen" draft="unconfirmed">iaith Sorbaidd</language>
 			<language type="wo">Woloff</language>
 			<language type="xal" draft="unconfirmed">Calmyceg</language>
 			<language type="xh">Xhosa</language>
 			<language type="ybb" draft="unconfirmed">Iembaeg</language>
 			<language type="yi" draft="unconfirmed">Iddew-Almaeneg</language>
 			<language type="yo">Iorwba</language>
-			<language type="ypk" draft="unconfirmed">iaith Iwpicaidd</language>
 			<language type="yue">Cantoneeg</language>
 			<language type="zap" draft="unconfirmed">Zapoteceg</language>
 			<language type="zbl" draft="unconfirmed">Blisssymbols</language>
@@ -426,7 +377,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">Tsieineeg</language>
 			<language type="zh_Hans">Tsieineeg Symledig</language>
 			<language type="zh_Hant">Tsieineeg Traddodiadol</language>
-			<language type="znd" draft="unconfirmed">Zandeg</language>
 			<language type="zu">Swlw</language>
 			<language type="zxx">Dim cynnwys ieithyddol</language>
 			<language type="zza" draft="unconfirmed">Zazäeg</language>
@@ -1708,9 +1658,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Europe/Tirane">
 				<exemplarCity>Tiranë</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Pegwn y De</exemplarCity>
-			</zone>
 			<zone type="Antarctica/DumontDUrville">
 				<exemplarCity>Dumont d’Urville</exemplarCity>
 			</zone>
@@ -1758,9 +1705,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Coral_Harbour">
 				<exemplarCity>Atikokan</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Montréal</exemplarCity>
 			</zone>
 			<zone type="America/St_Johns">
 				<exemplarCity>St. John’s</exemplarCity>
@@ -1977,9 +1921,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Europe/Zaporozhye">
 				<exemplarCity>Zaporizhzhya</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Shiprock/Naatʼáanii Nééz</exemplarCity>
 			</zone>
 			<zone type="America/North_Dakota/Beulah">
 				<exemplarCity>Beulah, Gogledd Dakota</exemplarCity>

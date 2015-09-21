@@ -13,7 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_Helper_ViewRenderer {
+namespace Pimcore\Controller\Action\Helper;
+
+use Pimcore\Controller\Action\Frontend as FrontendController;
+use Pimcore\Tool;
+use Pimcore\View;
+
+class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer {
 
     /**
      * @var bool
@@ -36,9 +42,9 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
         parent::postDispatch();
 
         // append custom styles to response body
-        if($this->getActionController() instanceof Pimcore_Controller_Action_Frontend) {
+        if($this->getActionController() instanceof FrontendController) {
             $doc = $this->getActionController()->getDocument();
-            if(Pimcore_Tool::isHtmlResponse($this->getResponse())
+            if(Tool::isHtmlResponse($this->getResponse())
                 && $doc && method_exists($doc, "getCss") && $doc->getCss()
                 && !$this->getRequest()->getParam("pimcore_editmode")) {
 
@@ -63,9 +69,9 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
     public function initView($path = null, $prefix = null, array $options = array())
     {
         if (null === $this->view) {
-            $view = new Pimcore_View();
+            $view = new View();
             $view->setRequest($this->getRequest());
-            $view->addHelperPath(PIMCORE_PATH . "/lib/Pimcore/View/Helper", "Pimcore_View_Helper_");
+            $view->addHelperPath(PIMCORE_PATH . "/lib/Pimcore/View/Helper", "\\Pimcore\\View\\Helper\\");
 
             $this->setView($view);
         }
@@ -73,7 +79,7 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
         parent::initView($path, $prefix, $options);
 
 
-        $this->setViewSuffix(Pimcore_View::getViewScriptSuffix());
+        $this->setViewSuffix(View::getViewScriptSuffix());
 
         // this is very important, the initView could be called multiple times.
         // if we add the path on every call, we have big performance issues.
@@ -100,7 +106,8 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
     }
 
     /**
-     * @param boolean $isInitialized
+     * @param $isInitialized
+     * @return $this
      */
     public function setIsInitialized($isInitialized)
     {
@@ -116,3 +123,6 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
         return $this->isInitialized;
     }
 }
+
+// unfortunately we need this alias here, since ZF plugin loader isn't able to handle namespaces correctly
+class_alias("Pimcore\\Controller\\Action\\Helper\\ViewRenderer", "Pimcore_Controller_Action_Helper_ViewRenderer");

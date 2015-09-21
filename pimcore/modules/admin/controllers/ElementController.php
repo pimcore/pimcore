@@ -12,18 +12,24 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Admin_ElementController extends Pimcore_Controller_Action_Admin {
+
+use Pimcore\Model\Element;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
+use Pimcore\Model;
+
+class Admin_ElementController extends \Pimcore\Controller\Action\Admin {
     
     public function lockElementAction()
     {
-        Element_Editlock::lock($this->getParam("id"), $this->getParam("type"));
+        Element\Editlock::lock($this->getParam("id"), $this->getParam("type"));
         exit;
     }
 
     public function unlockElementAction()
     {
-        Element_Editlock::unlock($this->getParam("id"), $this->getParam("type"));
+        Element\Editlock::unlock($this->getParam("id"), $this->getParam("type"));
         exit;
     }
 
@@ -33,8 +39,8 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
         $response = array("success" => true);
 
-        if($element = Element_Service::getElementById($type, $id)) {
-            $response["idPath"] = Element_Service::getIdPath($element);
+        if($element = Element\Service::getElementById($type, $id)) {
+            $response["idPath"] = Element\Service::getIdPath($element);
         }
 
         $this->_helper->json($response);
@@ -48,21 +54,21 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         $idOrPath = trim($this->getParam("id"));
         $type = $this->getParam("type");
         if (is_numeric($idOrPath)) {
-            $el = Element_Service::getElementById($type, (int) $idOrPath);
+            $el = Element\Service::getElementById($type, (int) $idOrPath);
         } else {
             if ($type == "document") {
-                $el = Document_Service::getByUrl($idOrPath);
+                $el = Document\Service::getByUrl($idOrPath);
             } else {
-                $el = Element_Service::getElementByPath($type, $idOrPath);
+                $el = Element\Service::getElementByPath($type, $idOrPath);
             }
         }
 
         if($el) {
             if($el instanceof Asset || $el instanceof Document) {
                 $subtype = $el->getType();
-            } else if($el instanceof Object_Concrete) {
+            } else if($el instanceof Object\Concrete) {
                 $subtype = $el->getClassName();
-            } else if ($el instanceof Object_Folder) {
+            } else if ($el instanceof Object\Folder) {
                 $subtype = "folder";
             }
 
@@ -83,17 +89,18 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("notes_events");
 
-        $list = new Element_Note_List();
+        $list = new Element\Note\Listing();
 
         $list->setLimit($this->getParam("limit"));
         $list->setOffset($this->getParam("start"));
 
-        if($this->getParam("sort")) {
-            $list->setOrderKey($this->getParam("sort"));
-            $list->setOrder($this->getParam("dir"));
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if($sortingSettings['orderKey'] && $sortingSettings['order']) {
+            $list->setOrderKey($sortingSettings['orderKey']);
+            $list->setOrder($sortingSettings['order']);
         } else {
-            $list->setOrderKey("date");
-            $list->setOrder("DESC");
+            $list->setOrderKey(array("date", "id"));
+            $list->setOrder(array("DESC", "DESC"));
         }
 
         $conditions = array();
@@ -117,7 +124,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
             $cpath = "";
             if($note->getCid() && $note->getCtype()) {
-                if($element = Element_Service::getElementById($note->getCtype(), $note->getCid())) {
+                if($element = Element\Service::getElementById($note->getCtype(), $note->getCid())) {
                     $cpath = $element->getFullpath();
                 }
             }
@@ -142,7 +149,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
                     $data = $d["data"];
 
                     if($type == "document" || $type == "object" || $type == "asset") {
-                        if($d["data"] instanceof Element_Interface) {
+                        if($d["data"] instanceof Element\ElementInterface) {
                             $data = array(
                                 "id" => $d["data"]->getId(),
                                 "path" => $d["data"]->getFullpath(),
@@ -150,7 +157,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
                             );
                         }
                     } else if ($type == "date") {
-                        if($d["data"] instanceof Zend_Date) {
+                        if($d["data"] instanceof \Zend_Date) {
                             $data = $d["data"]->getTimestamp();
                         }
                     }
@@ -170,7 +177,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
             // prepare user data
             if($note->getUser()) {
-                $user = User::getById($note->getUser());
+                $user = Model\User::getById($note->getUser());
                 if($user) {
                     $e["user"] = array(
                         "id" => $user->getId(),
@@ -195,7 +202,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("notes_events");
 
-        $note = new Element_Note();
+        $note = new Element\Note();
         $note->setCid((int) $this->getParam("cid"));
         $note->setCtype($this->getParam("ctype"));
         $note->setDate(time());
@@ -212,9 +219,9 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
     public function findUsagesAction() {
 
         if($this->getParam("id")) {
-            $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
+            $element = Element\Service::getElementById($this->getParam("type"), $this->getParam("id"));
         } else if ($this->getParam("path")) {
-            $element = Element_Service::getElementByPath($this->getParam("type"), $this->getParam("path"));
+            $element = Element\Service::getElementByPath($this->getParam("type"), $this->getParam("path"));
         }
 
         $results = array();
@@ -223,8 +230,8 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         if($element) {
             $elements = $element->getDependencies()->getRequiredBy();
             foreach ($elements as $el) {
-                $item = Element_Service::getElementById($el["type"], $el["id"]);
-                if($item instanceof Element_Interface) {
+                $item = Element\Service::getElementById($el["type"], $el["id"]);
+                if($item instanceof Element\ElementInterface) {
                     $el["path"] = $item->getFullpath();
                     $results[] = $el;
                 }
@@ -242,9 +249,9 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
         $success = false;
         $message = "";
-        $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
-        $sourceEl = Element_Service::getElementById($this->getParam("sourceType"), $this->getParam("sourceId"));
-        $targetEl = Element_Service::getElementById($this->getParam("targetType"), $this->getParam("targetId"));
+        $element = Element\Service::getElementById($this->getParam("type"), $this->getParam("id"));
+        $sourceEl = Element\Service::getElementById($this->getParam("sourceType"), $this->getParam("sourceId"));
+        $targetEl = Element\Service::getElementById($this->getParam("targetType"), $this->getParam("targetId"));
 
         if($element && $sourceEl && $targetEl
             && $this->getParam("sourceType") == $this->getParam("targetType")
@@ -258,11 +265,11 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
             );
 
             if($element instanceof Document) {
-                $element = Document_Service::rewriteIds($element, $rewriteConfig);
-            } else if ($element instanceof Object_Abstract) {
-                $element = Object_Service::rewriteIds($element, $rewriteConfig);
+                $element = Document\Service::rewriteIds($element, $rewriteConfig);
+            } else if ($element instanceof Object\AbstractObject) {
+                $element = Object\Service::rewriteIds($element, $rewriteConfig);
             } else if ($element instanceof Asset) {
-                $element = Asset_Service::rewriteIds($element, $rewriteConfig);
+                $element = Asset\Service::rewriteIds($element, $rewriteConfig);
             }
 
             $element->setUserModification($this->getUser()->getId());
@@ -283,7 +290,7 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
         $success = false;
 
-        $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
+        $element = Element\Service::getElementById($this->getParam("type"), $this->getParam("id"));
         if($element) {
             $element->unlockPropagate();
             $success = true;

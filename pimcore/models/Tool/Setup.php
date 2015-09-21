@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_Setup extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Tool;
+
+use Pimcore\Model;
+
+class Setup extends Model\AbstractModel {
 
     /**
      * @param array $config
@@ -29,9 +33,13 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 		$configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.xml.template";
 		if(file_exists($configTemplatePath)) {
 			try {
-				$configTemplate = new Zend_Config_Xml($configTemplatePath);
+				$configTemplate = new \Zend_Config_Xml($configTemplatePath);
 				if($configTemplate->general) { // check if the template contains a valid configuration
 					$settings = $configTemplate->toArray();
+
+					// unset database configuration
+					unset($settings["database"]["params"]["host"]);
+					unset($settings["database"]["params"]["port"]);
 				}
 			} catch (\Exception $e) {
 				
@@ -53,11 +61,9 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 				"database" => array(
 					"adapter" => "Mysqli",
 					"params" => array(
-						"host" => "localhost",
 						"username" => "root",
 						"password" => "",
 						"dbname" => "",
-						"port" => "3306",
 					)
 				),
 				"documents" => array(
@@ -94,17 +100,20 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 			);
 		}
 
-        $settings = array_replace_recursive($settings, $config);		
+        $settings = array_replace_recursive($settings, $config);
+
+        // convert all special characters to their entities so the xml writer can put it into the file
+        $settings = array_htmlspecialchars($settings);
 
         // create initial /website/var folder structure
         // @TODO: should use values out of startup.php (Constants)
         $varFolders = array("areas","assets","backup","cache","classes","config","email","log","plugins","recyclebin","search","system","tmp","versions","webdav");
         foreach($varFolders as $folder) {
-            Pimcore_File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
+            \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
         }
 		
-        $config = new Zend_Config($settings, true);		
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($settings, true);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => PIMCORE_CONFIGURATION_SYSTEM
         ));
@@ -131,14 +140,14 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 		
 		$settings = array_replace_recursive($defaultConfig, $config);
 		
-		if($user = User::getByName($settings["username"])) {
+		if($user = Model\User::getByName($settings["username"])) {
 			$user->delete();
 		}
 		
-		$user = User::create(array(
+		$user = Model\User::create(array(
             "parentId" => 0,
             "username" => $settings["username"],
-            "password" => Pimcore_Tool_Authentication::getPasswordHash($settings["username"], $settings["password"]),
+            "password" => \Pimcore\Tool\Authentication::getPasswordHash($settings["username"], $settings["password"]),
             "active" => true
         ));
         $user->setAdmin(true);

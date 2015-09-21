@@ -27,6 +27,7 @@ class TestSuite_Rest_DataTypeTestIn extends Test_BaseRest {
         self::$seed = 1;
 
         $tmpObject = Test_Tool::createFullyFledgedObject("local", false, self::$seed);
+
         $response = self::getRestClient()->createObjectConcrete($tmpObject);
         if (!$response->success) {
             var_dump($response);

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ksh"/>
 	</identity>
 	<localeDisplayNames>
@@ -1148,9 +1148,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Asia/Yerevan">
 				<exemplarCity draft="unconfirmed">Eriwan</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity draft="unconfirmed">Södpol</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity draft="unconfirmed">Schoowa-Schtazjohn op dä Ensel Onjul</exemplarCity>

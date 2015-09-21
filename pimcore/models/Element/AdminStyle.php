@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_AdminStyle {
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model;
+
+class AdminStyle {
 
     protected $elementCssClass;
     protected $elementIcon;

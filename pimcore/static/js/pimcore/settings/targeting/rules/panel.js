@@ -128,7 +128,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+            Ext.Msg.alert(t('add_target'), t('naming_requirements_3chars'));
         }
     },
 

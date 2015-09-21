@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -27,7 +27,7 @@
 /**
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub_HttpResponse
@@ -172,6 +172,7 @@ class Zend_Feed_Pubsubhubbub_HttpResponse
      * Set HTTP response code to use with headers
      *
      * @param  int $code
+     * @throws Zend_Feed_Pubsubhubbub_Exception
      * @return Zend_Feed_Pubsubhubbub_HttpResponse
      */
     public function setHttpResponseCode($code)

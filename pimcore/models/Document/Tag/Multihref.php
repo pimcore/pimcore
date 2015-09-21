@@ -15,7 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Multihref extends Document_Tag implements Iterator{
+namespace Pimcore\Model\Document\Tag;
+
+use Pimcore\Model;
+use Pimcore\Model\Element;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
+
+class Multihref extends Model\Document\Tag implements \Iterator {
 
     /**
      * @var array
@@ -28,7 +36,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     public $elementIds = array();
 
      /**
-     * @see Document_Tag_Interface::getType
+     * @see Document\Tag\TagInterface::getType
      * @return string
      */
     public function getType() {
@@ -42,8 +50,8 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
         if(empty($this->elements)) {
             $this->elements = array();
             foreach ($this->elementIds as $elementId) {
-                $el = Element_Service::getElementById($elementId["type"], $elementId["id"]);
-                if($el instanceof Element_Interface) {
+                $el = Element\Service::getElementById($elementId["type"], $elementId["id"]);
+                if($el instanceof Element\ElementInterface) {
                     $this->elements[] = $el;
                 }
             }
@@ -52,7 +60,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     }
 
     /**
-     * @see Document_Tag_Interface::getData
+     * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
     public function getData() {
@@ -61,7 +69,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     }
 
     /**
-     * @see Document_Tag_Interface::getDataForResource
+     * @see Document\Tag\TagInterface::getDataForResource
      * @return void
      */
     public function getDataForResource() {
@@ -79,10 +87,10 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
 
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
-                if ($element instanceof Object_Concrete) {
+                if ($element instanceof Object\Concrete) {
                     $return[] = array($element->getId(), $element->getFullPath(), "object", $element->getClassName());
                 }
-                else if ($element instanceof Object_Abstract) {
+                else if ($element instanceof Object\AbstractObject) {
                     $return[] = array($element->getId(), $element->getFullPath(), "object", "folder");
                 }
                 else if ($element instanceof Asset) {
@@ -98,7 +106,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     }
 
     /**
-     * @see Document_Tag_Interface::frontend
+     * @see Document\Tag\TagInterface::frontend
      * @return void
      */
     public function frontend() {
@@ -108,7 +116,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
 
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
-                $return .= Element_Service::getElementType($element) . ": " . $element->getFullPath() . "<br />";
+                $return .= Element\Service::getElementType($element) . ": " . $element->getFullPath() . "<br />";
             }
         }
 
@@ -116,19 +124,19 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromResource
+     * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
      * @return void
      */
     public function setDataFromResource($data) {
-        if($data = Pimcore_Tool_Serialize::unserialize($data)) {
+        if($data = \Pimcore\Tool\Serialize::unserialize($data)) {
             $this->setDataFromEditmode($data);
         }
         return $this;
     }
 
     /**
-     * @see Document_Tag_Interface::setDataFromEditmode
+     * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return void
      */
@@ -140,7 +148,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     }
 
     /**
-     * @return Element_Interface[]
+     * @return Element\ElementInterface[]
      */
     public function getElements() {
         $this->setElements();
@@ -165,9 +173,9 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
 
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
-                if ($element instanceof Element_Interface) {
+                if ($element instanceof Element\ElementInterface) {
 
-                    $elementType = Element_Service::getElementType($element);
+                    $elementType = Element\Service::getElementType($element);
                     $key = $elementType . "_" . $element->getId();
 
                     $dependencies[$key] = array(

@@ -12,7 +12,7 @@
  * through the world-wide-web, please send a note to license@zend.com
  * so we can mail you a copy immediately.
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -21,11 +21,16 @@
 /**
  * Pimcore_Image_Matrixcode_Renderer_Image
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Image_Matrixcode_Renderer_Image extends Pimcore_Image_Matrixcode_Renderer_Abstract
+
+namespace Pimcore\Image\Matrixcode\Renderer;
+
+use Pimcore\Image\Matrixcode\Qrcode\Exception;
+
+class Image extends AbstractRenderer
 {
 	/**
      * List of authorized output format
@@ -64,7 +69,7 @@ class Pimcore_Image_Matrixcode_Renderer_Image extends Pimcore_Image_Matrixcode_R
         }
 
         if (!in_array($value, $this->_allowedImageType)) {
-            throw new Pimcore_Image_Matrixcode_Renderer_Exception(sprintf(
+            throw new Exception(sprintf(
                 'Invalid type "%s" provided to setImageType()',
                 $value
             ));
@@ -112,7 +117,7 @@ class Pimcore_Image_Matrixcode_Renderer_Image extends Pimcore_Image_Matrixcode_R
 	public function getScale() {
 		$module_size = $this->_matrixcode->getModuleSize();
 		if($module_size[0] != $module_size[1]) {
-            throw new Pimcore_Image_Matrixcode_Renderer_Exception(
+            throw new Exception(
                 'So far only square modules are supported. The current module size settings of '.$module_size[0].'x'.$module_size[1].' indicate a different rectangular shape.'
             );
 		}
@@ -172,7 +177,7 @@ class Pimcore_Image_Matrixcode_Renderer_Image extends Pimcore_Image_Matrixcode_R
 		$output_size_height = $matrix_dim_with_padding_y * $this->getScale();
 		
 		if (is_numeric($this->_size_limit) && ($output_size_width > $this->_size_limit || $output_size_height > $this->_size_limit)) {
-            throw new Pimcore_Image_Matrixcode_Renderer_Exception(
+            throw new Exception(
                 'Image result too large'
             );
 		}

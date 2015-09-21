@@ -49,7 +49,7 @@ pimcore.asset.metadata = Class.create({
 
             var customKey = new Ext.form.TextField({
                 name: 'key',
-                emptyText: t('key')
+                emptyText: t('name')
             });
 
             var customType = new Ext.form.ComboBox({
@@ -63,7 +63,8 @@ pimcore.asset.metadata = Class.create({
                     ["document", "Document"],
                     ["asset", "Asset"],
                     ["object", "Object"],
-                    ["date", "Date"]
+                    ["date", "Date"],
+                    ["checkbox", "checkbox"]
                 ],
                 editable: false,
                 triggerAction: 'all',
@@ -75,8 +76,11 @@ pimcore.asset.metadata = Class.create({
             });
 
             var languagestore = [["",t("none")]];
-            for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-                languagestore.push([pimcore.settings.websiteLanguages[i],pimcore.settings.websiteLanguages[i]]);
+            var websiteLanguages = pimcore.settings.websiteLanguages;
+            var selectContent = "";
+            for (var i=0; i<websiteLanguages.length; i++) {
+                selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
+                languagestore.push([websiteLanguages[i], selectContent]);
             }
 
             var customLanguage = new Ext.form.ComboBox({
@@ -101,7 +105,7 @@ pimcore.asset.metadata = Class.create({
                         }
                         return v;
                     }
-                }, "language"],
+                }, "language", "config"],
                 data: this.asset.data.metadata
             });
 
@@ -184,7 +188,10 @@ pimcore.asset.metadata = Class.create({
                         dataIndex: 'data',
                         getCellEditor: this.getCellEditor.bind(this),
                         editable: true,
-                        renderer: this.getCellRenderer.bind(this)
+                        renderer: this.getCellRenderer.bind(this),
+                        listeners: {
+                            "mousedown": this.cellMousedown.bind(this)
+                        }
                     },
                     {
                         xtype: 'actioncolumn',
@@ -312,6 +319,10 @@ pimcore.asset.metadata = Class.create({
             if (value) {
                 return value.format("Y-m-d");
             }
+        } else if (type == "checkbox") {
+            metaData.css += ' x-grid3-check-col-td';
+            return String.format('<div class="x-grid3-check-col{0}" '
+            + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
         }
 
         return value;
@@ -370,6 +381,20 @@ pimcore.asset.metadata = Class.create({
         this.grid.getView().refresh();
     },
 
+    cellMousedown: function (col, grid, rowIndex, event) {
+
+        // this is used for the boolean field type
+
+        var store = grid.getStore();
+        var record = store.getAt(rowIndex);
+        var data = record.data;
+        var type = data.type;
+
+        if (type == "checkbox") {
+            record.set("data", !record.data.data);
+        }
+    },
+
     getCellEditor: function (rowIndex) {
 
         var store = this.grid.getStore();
@@ -394,6 +419,16 @@ pimcore.asset.metadata = Class.create({
             });
         } else if (type == "date") {
             property = new Ext.form.DateField();
+        } else if (type == "checkbox") {
+            property = new Ext.form.Checkbox();
+            return false;
+        } else if (type == "select") {
+            var config = data.config;
+            property = new Ext.form.ComboBox({
+                triggerAction: 'all',
+                editable: false,
+                store: config.split(",")
+            });
         }
 
         return new Ext.grid.GridEditor(property);
@@ -415,9 +450,9 @@ pimcore.asset.metadata = Class.create({
             var currentData = records[i];
             if (currentData) {
                 var data = currentData.data.data;
-                if (currentData.data.type == "date") {
+                if (data && currentData.data.type == "date") {
                     data = data.valueOf() / 1000;
-                };
+                }
                 values.push({
                     data: data,
                     type: currentData.data.type,
@@ -486,6 +521,7 @@ pimcore.asset.metadata = Class.create({
                     name: key,
                     data: value,
                     type: item.type,
+                    config: item.config,
                     language: language
                 });
 

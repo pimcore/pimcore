@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9061 $"/>
-		<generation date="$Date: 2013-07-20 12:27:45 -0500 (Sat, 20 Jul 2013) $"/>
+		<version number="$Revision: 9625 $"/>
+		<generation date="$Date: 2014-01-08 23:53:23 -0600 (Wed, 08 Jan 2014) $"/>
 		<language type="kkj"/>
 	</identity>
 	<localeDisplayNames>
@@ -78,6 +78,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<pattern>{1} {0}</pattern>
 						</dateTimeFormat>
 					</dateTimeFormatLength>
+					<availableFormats>
+						<dateFormatItem id="Ed">E d</dateFormatItem>
+						<dateFormatItem id="Gy">y G</dateFormatItem>
+						<dateFormatItem id="GyMMM">MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMd">d MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMEd">E d MMM y G</dateFormatItem>
+						<dateFormatItem id="Md">dd/MM</dateFormatItem>
+						<dateFormatItem id="MEd">E dd/MM</dateFormatItem>
+						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
+						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
+						<dateFormatItem id="yyyyM">MM y GGGGG</dateFormatItem>
+						<dateFormatItem id="yyyyMd">dd/MM y GGGGG</dateFormatItem>
+						<dateFormatItem id="yyyyMEd">E dd/MM y GGGGG</dateFormatItem>
+						<dateFormatItem id="yyyyMMM">MMM y G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMd">d MMM y G</dateFormatItem>
+						<dateFormatItem id="yyyyMMMEd">E d MMM y G</dateFormatItem>
+					</availableFormats>
 				</dateTimeFormats>
 			</calendar>
 			<calendar type="gregorian">
@@ -248,6 +265,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<pattern>{1} {0}</pattern>
 						</dateTimeFormat>
 					</dateTimeFormatLength>
+					<availableFormats>
+						<dateFormatItem id="Ed">E d</dateFormatItem>
+						<dateFormatItem id="Gy">y G</dateFormatItem>
+						<dateFormatItem id="GyMMM">MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMd">d MMM y G</dateFormatItem>
+						<dateFormatItem id="GyMMMEd">E d MMM y G</dateFormatItem>
+						<dateFormatItem id="Md">dd/MM</dateFormatItem>
+						<dateFormatItem id="MEd">E dd/MM</dateFormatItem>
+						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
+						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
+						<dateFormatItem id="yM">MM y</dateFormatItem>
+						<dateFormatItem id="yMd">dd/MM y</dateFormatItem>
+						<dateFormatItem id="yMEd">E dd/MM y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMd">d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E d MMM y</dateFormatItem>
+					</availableFormats>
 				</dateTimeFormats>
 			</calendar>
 		</calendars>

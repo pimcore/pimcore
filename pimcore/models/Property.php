@@ -15,7 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Property extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
+
+class Property extends AbstractModel {
 
     /**
      * @var string
@@ -58,11 +63,6 @@ class Property extends Pimcore_Model_Abstract {
     public $inherited = false;
 
     /**
-     * @var string
-     */
-    public $config;
-
-    /**
      * Takes data from editmode and convert it to internal objects
      *
      * @param mixed $data
@@ -72,13 +72,13 @@ class Property extends Pimcore_Model_Abstract {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
 
         if(in_array($this->getType(), array("document","asset","object"))) {
-            $el = Element_Service::getElementByPath($this->getType(), $data);
+            $el = Element\Service::getElementByPath($this->getType(), $data);
             $this->data = null;
             if($el) {
                 $this->data = $el->getId();
             }
         } else if ($this->type == "date") {
-            $this->data = new Zend_Date($data);
+            $this->data = new \Zend_Date($data);
         }
         else if ($this->type == "bool") {
             $this->data = false;
@@ -97,13 +97,13 @@ class Property extends Pimcore_Model_Abstract {
      * Takes data from resource and convert it to internal objects
      *
      * @param mixed $data
-     * @return void
+     * @return static
      */
     public function setDataFromResource($data) {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
         // do not set data for object, asset and document here, this is loaded dynamically when calling $this->getData();
         if ($this->type == "date") {
-            $this->data = Pimcore_Tool_Serialize::unserialize($data);
+            $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         }
         else if ($this->type == "bool") {
             $this->data = false;
@@ -114,22 +114,6 @@ class Property extends Pimcore_Model_Abstract {
         else {
             // plain text
             $this->data = $data;
-        }
-        return $this;
-    }
-
-    /**
-     * get the config from an predefined property-set (eg. select)
-     *
-     * @return void
-     */
-    public function setConfigFromPredefined() {
-        if ($this->getName() && $this->getType()) {
-            $predefined = Property_Predefined::getByKey($this->getName());
-
-            if ($predefined && $predefined->getType() == $this->getType()) {
-                $this->config = $predefined->getConfig();
-            }
         }
         return $this;
     }
@@ -154,8 +138,8 @@ class Property extends Pimcore_Model_Abstract {
     public function getData() {
 
         // lazy-load data of type asset, document, object
-        if(in_array($this->getType(), array("document","asset","object")) && !$this->data instanceof Element_Interface && is_numeric($this->data)) {
-            return Element_Service::getElementById($this->getType(), $this->data);
+        if(in_array($this->getType(), array("document","asset","object")) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
+            return Element\Service::getElementById($this->getType(), $this->data);
         }
 
         return $this->data;
@@ -177,7 +161,7 @@ class Property extends Pimcore_Model_Abstract {
 
     /**
      * @param integer $cid
-     * @return void
+     * @return static
      */
     public function setCid($cid) {
         $this->cid = (int) $cid;
@@ -186,7 +170,7 @@ class Property extends Pimcore_Model_Abstract {
 
     /**
      * @param string $ctype
-     * @return void
+     * @return static
      */
     public function setCtype($ctype) {
         $this->ctype = $ctype;
@@ -195,30 +179,34 @@ class Property extends Pimcore_Model_Abstract {
 
     /**
      * @param mixed $data
-     * @return void
+     * @return static
      */
     public function setData($data) {
+
+        if($data instanceof ElementInterface) {
+            $this->setType(Service::getElementType($data));
+            $data = $data->getId();
+        }
+
         $this->data = $data;
         return $this;
     }
 
     /**
      * @param string $name
-     * @return void
+     * @return static
      */
     public function setName($name) {
         $this->name = $name;
-        $this->setConfigFromPredefined();
         return $this;
     }
 
     /**
      * @param string $type
-     * @return void
+     * @return static
      */
     public function setType($type) {
         $this->type = $type;
-        $this->setConfigFromPredefined();
         return $this;
     }
 
@@ -247,7 +235,7 @@ class Property extends Pimcore_Model_Abstract {
 
     /**
      * @param string $cpath
-     * @return void
+     * @return static
      */
     public function setCpath($cpath) {
         $this->cpath = $cpath;
@@ -256,7 +244,7 @@ class Property extends Pimcore_Model_Abstract {
 
     /**
      * @param boolean $inherited
-     * @return void
+     * @return static
      */
     public function setInherited($inherited) {
         $this->inherited = (bool) $inherited;
@@ -272,7 +260,7 @@ class Property extends Pimcore_Model_Abstract {
 
     /**
      * @param boolean $inheritable
-     * @return void
+     * @return static
      */
     public function setInheritable($inheritable) {
         $this->inheritable = (bool) $inheritable;
@@ -286,8 +274,8 @@ class Property extends Pimcore_Model_Abstract {
         
         $dependencies = array();
         
-        if ($this->getData() instanceof Element_Interface) {
-            $elementType = Element_Service::getElementType($this->getData());
+        if ($this->getData() instanceof ElementInterface) {
+            $elementType = Element\Service::getElementType($this->getData());
             $key = $elementType . "_" . $this->getData()->getId();
             $dependencies[$key] = array(
                 "id" => $this->getData()->getId(),
@@ -313,9 +301,9 @@ class Property extends Pimcore_Model_Abstract {
     public function rewriteIds($idMapping) {
         if(!$this->isInherited()) {
             if(array_key_exists($this->getType(), $idMapping)) {
-                if($this->getData() instanceof Element_Interface) {
+                if($this->getData() instanceof ElementInterface) {
                     if(array_key_exists((int) $this->getData()->getId(), $idMapping[$this->getType()])) {
-                        $this->setData(Element_Service::getElementById($this->getType(), $idMapping[$this->getType()][$this->getData()->getId()]));
+                        $this->setData(Element\Service::getElementById($this->getType(), $idMapping[$this->getType()][$this->getData()->getId()]));
                     }
                 }
             }

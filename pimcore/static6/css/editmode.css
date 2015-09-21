@@ -1,0 +1,390 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+@import '/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css';
+@import 'ext-modifications.css';
+
+.cke * {
+    box-sizing: content-box !important;
+    -moz-box-sizing: content-box !important;
+    -ms-box-sizing: content-box !important;
+    -webkit-box-sizing: content-box !important;
+}
+
+.cke-code-editor textarea {
+    font-family: "courier new", courier !important;
+}
+
+/* pimcore editables */
+
+.pimcore_tag_image .x-panel-body {
+    overflow: hidden;
+}
+
+.pimcore_tag_image .x-panel-body img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.pimcore_tag_image_alt {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}
+
+.pimcore_block_buttons {
+	padding: 10px 0 5px 0;
+}
+
+.pimcore_block_buttons .x-form-trigger-default {
+    line-height: 24px;
+    width:22px;
+}
+
+.pimcore_block_buttons .x-form-field {
+    padding: 1px 4px;
+    min-height: 24px;
+}
+
+.pimcore_block_buttons .x-btn {
+    padding: 4px;
+}
+
+.pimcore_block_plus,
+.pimcore_block_minus,
+.pimcore_block_up,
+.pimcore_block_down,
+.pimcore_block_amount,
+.pimcore_block_type,
+.pimcore_block_options {
+    float: left;
+    padding: 0 2px 0 0;
+}
+
+.pimcore_block_clear {
+	clear: both;
+}
+
+.pimcore_block_button_plus,
+.pimcore_block_button_minus,
+.pimcore_block_button_up,
+.pimcore_block_button_down,
+.pimcore_block_button_type {
+	display: inline-block !important;
+	margin: 0 3px 0 0;
+}
+
+.pimcore_block_button_plus button,
+.pimcore_block_button_minus button,
+.pimcore_block_button_up button,
+.pimcore_block_button_down button {
+	width: 16px;
+}
+
+.pimcore_block_entry {
+	clear:both;
+}
+
+.pimcore_block_amount {
+    /*width: 40px;*/
+}
+
+.pimcore_block_type,
+.pimcore_block_type button {
+    cursor:default !important;
+}
+
+.pimcore_block_button_type,
+.pimcore_block_button_type button {
+    cursor: move !important;
+}
+
+.pimcore_icon_plus {
+	background: url(/pimcore/static6/img/icon/add.png) !important;
+}
+
+.pimcore_icon_minus {
+	background: url(/pimcore/static6/img/icon/delete.png) !important;
+}
+
+.pimcore_icon_up {
+	background: url(/pimcore/static6/img/icon/arrow_up.png) !important;
+}
+
+.pimcore_icon_down {
+	background: url(/pimcore/static6/img/icon/arrow_down.png) !important;
+}
+
+.pimcore_icon_edit {
+	background: url(/pimcore/static6/img/icon/pencil_go.png) !important;
+}
+
+
+
+.pimcore_area_dropzone {
+    height: 20px;
+    background: #a3bae9;
+    border:2px dashed #fff;
+    clear:both;
+}
+
+.pimcore_area_dropzone_hover {
+    background: #6ec563;
+}
+
+.pimcore_wysiwyg_mask {
+	position: absolute;
+	z-index: 9997;
+	background: #ff6600;
+	/* beacause of IE */
+	-moz-opacity: 0;
+    -webkit-opacity: 0;
+	opacity: 0;
+	filter: Alpha(opacity=0);
+}
+
+/* default styles for wysiwyg (overwrite ExtJS reset CSS) */
+.pimcore_tag_wysiwyg {
+    position:relative;
+}
+
+.pimcore_iframe_mask {
+	position: absolute;
+	z-index: 9996;
+}
+
+.pimcore_tag_link {
+	position: relative;
+	padding: 0 30px 0 0;
+}
+
+.pimcore_tag_link .pimcore_edit_link_button {
+	position: absolute;
+	right: 0;
+	top: -3px;
+}
+
+.pimcore_tag_link .x-btn-default-small {
+    padding: 3px;
+}
+
+.pimcore_tag_snippet_empty {
+	border: 1px solid #d0d0d0 !important;
+	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+}
+
+.pimcore_tag_image_empty {
+	border: 1px solid #d0d0d0 !important;
+	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+    height: 100px;
+}
+
+.pimcore_tag_video_empty {
+	border: 1px solid #d0d0d0 !important;
+	/*background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
+    background:url(/pimcore/static6/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
+    cursor: pointer;
+}
+
+.pimcore_tag_href input{
+	background: url(/pimcore/static6/img/icon/drop-16.png) right center no-repeat #fff;
+	cursor: default;
+}
+
+.pimcore_tag_droptarget {
+    background: url(/pimcore/static6/img/icon/drop-16.png) center center no-repeat;
+    position:absolute;
+    width:20px;
+    height:20px;
+    right:5px;
+    top:5px;
+}
+
+
+.pimcore_tag_block .x5-btn {
+    width: auto;
+    clear: none;
+    border-collapse: separate;
+    margin: 0;
+    table-layout: auto;
+}
+
+.pimcore_tag_renderlet {
+    position: relative;
+}
+
+.pimcore_tag_snippet {
+    position: relative;
+}
+
+.pimcore_tag_snippet .x5-panel-body {
+	background:none;
+	overflow:hidden !important;
+}
+
+.pimcore_tag_renderlet .x5-panel-body {
+	overflow:hidden !important;
+	background:none;
+}
+
+.pimcore_tag_table {
+    color: black !important;
+}
+
+.pimcore_droptarget_input  {
+	background: url(/pimcore/static6/img/icon/drop-16.png) right 2px no-repeat #fff !important;
+	cursor: default;
+}
+
+.pimcore_area_content {
+    position:relative;
+}
+
+.pimcore_area_editmode.pimcore_area_editmode_hidden {
+    position: absolute;
+    top:-2000px;
+    left:-10000px;
+}
+
+.pimcore_area_entry .pimcore_area_edit_button,
+.pimcore_tag_area .pimcore_area_edit_button {
+    position:absolute;
+    width:25px;
+    height:25px;
+    right:5px;
+    top:5px;
+}
+
+.pimcore_areablock_toolbar {
+    opacity: .3;
+}
+
+.pimcore_areablock_toolbar.x-layer {
+    position: fixed !important;
+}
+
+.pimcore_areablock_toolbar:hover {
+    opacity: .9;
+    transition: all .2s ease-in 0; /* explorer 10 */
+    -webkit-transition: all .2s ease-in 0; /* chrome & safari */
+    -moz-transition: all .2s ease-in 0; /* firefox */
+    -o-transition: all .2s ease-in 0; /* opera */
+}
+
+.pimcore_areablock_toolbar .x-window-header-default-top {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.pimcore_areablock_toolbar .x-btn-default-small {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.pimcore_areablock_toolbar .x-btn-button-center {
+    text-align: left;
+    -webkit-box-pack: left;
+    -ms-flex-pack: left;
+    justify-content: left;
+}
+
+
+.pimcore_tag_video {
+    position: relative;
+}
+.pimcore_tag_video.x5-masked {
+    min-height: 50px;
+}
+
+.pimcore_video_edit_button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 22px;
+    height: 22px;
+    z-index: 10001;
+}
+
+.pimcore_image_marker {
+    background: url(/pimcore/static6/img/icon/marker.png);
+    width: 20px;
+    height: 35px;
+    cursor: pointer;
+    position: absolute;
+}
+
+.pimcore_image_hotspot {
+    cursor: pointer;
+    position: absolute;
+    background: rgba(0, 255, 0, 0.5);
+}
+
+.pimcore_pdf_hotspot {
+    background: rgba(0, 255, 0, 0.5);
+}
+
+.hasMetadata {
+    color: #db1d09;
+}
+
+.pimcore_tag_multihref .x5-panel, .pimcore_tag_table .x5-panel  {
+    border:1px solid #000;
+}
+
+.pimcore_tag_select, .pimcore_tag_checkbox {
+    display: inline-block;
+}
+
+/* text fields: hover, focus, ... states */
+.pimcore_tag_input, .pimcore_tag_wysiwyg, .pimcore_tag_textarea, .pimcore_tag_textarea:focus .pimcore_wysiwyg:focus {
+    outline:0 auto;
+    overflow-y: visible;
+}
+
+.pimcore_tag_input.empty, .pimcore_wysiwyg.empty, .pimcore_tag_textarea.empty {
+    box-shadow: 0 0 5px 2px #E8E8E8;
+}
+
+.pimcore_wysiwyg.empty:after {
+    /* this is a firefox fix, to set the hight automatically to the font height, otherwise the height of the input can be 0px */
+    content: "\0000a0";
+}
+
+.pimcore_tag_input:hover, .pimcore_wysiwyg:hover, .pimcore_tag_textarea:hover {
+    box-shadow: 0 0 5px 2px #BABABA;
+}
+
+.pimcore_tag_input:focus, .pimcore_wysiwyg:focus, .pimcore_tag_textarea:focus {
+    box-shadow: none;
+}
+
+.pimcore_tag_textarea {
+    white-space: pre-line;
+    width: 100%;
+}
+
+
+.pimcore_tag_date input {
+    min-width: 80px;
+    line-height: 24px;
+}
+
+/* ExtJS specific overrides */
+
+.x-btn {
+    text-decoration: none !important;
+}
+
+

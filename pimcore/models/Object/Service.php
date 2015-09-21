@@ -15,7 +15,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Service extends Element_Service {
+namespace Pimcore\Model\Object;
+
+use Pimcore\Model;
+use Pimcore\Model\Element;
+use Pimcore\Tool\Admin as AdminTool;
+
+class Service extends Model\Element\Service {
 
     /**
      * @var array
@@ -23,29 +29,27 @@ class Object_Service extends Element_Service {
     protected $_copyRecursiveIds;
 
     /**
-     * @var User
+     * @var Model\User
      */
     protected $_user;
 
     /**
-     * @param  User $user
-     * @return void
+     * @param  Model\User $user
      */
     public function __construct($user = null) {
         $this->_user = $user;
     }
-
 
     /**
      * finds all objects which hold a reference to a specific user
      *
      * @static
      * @param  integer $userId
-     * @return Object_Concrete[]
+     * @return Concrete[]
      */
     public static function getObjectsReferencingUser($userId) {
         $userObjects = array();
-        $classesList = new Object_Class_List();
+        $classesList = new ClassDefinition\Listing();
         $classesList->setOrderKey("name");
         $classesList->setOrder("asc");
         $classes = $classesList->load();
@@ -57,7 +61,7 @@ class Object_Service extends Element_Service {
                 $dataKeys = array();
                 if (is_array($fieldDefinitions)) {
                     foreach ($fieldDefinitions as $tag) {
-                        if ($tag instanceof Object_Class_Data_User) {
+                        if ($tag instanceof ClassDefinition\Data\User) {
                             $dataKeys[] = $tag->getName();
                         }
                     }
@@ -69,7 +73,7 @@ class Object_Service extends Element_Service {
         }
 
         foreach ($classesToCheck as $classname => $fields) {
-            $listName = "Object_" . ucfirst($classname) . "_List";
+            $listName = "\\Pimcore\\Model\\Object\\" . ucfirst($classname) . "\\Listing";
             $list = new $listName();
             $conditionParts = array();
             foreach ($fields as $field) {
@@ -83,9 +87,9 @@ class Object_Service extends Element_Service {
     }
 
     /**
-     * @param  Object_Abstract $target
-     * @param  Object_Abstract $source
-     * @return
+     * @param $target
+     * @param $source
+     * @return mixed
      */
     public function copyRecursive($target, $source) {
 
@@ -104,7 +108,7 @@ class Object_Service extends Element_Service {
         $new = clone $source;
         $new->o_id = null;
         $new->setChilds(null);
-        $new->setKey(Element_Service::getSaveCopyName("object", $new->getKey(), $target));
+        $new->setKey(Element\Service::getSaveCopyName("object", $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -127,9 +131,9 @@ class Object_Service extends Element_Service {
 
 
     /**
-     * @param  Object_Abstract $target
-     * @param  Object_Abstract $source
-     * @return Object_Abstract copied object
+     * @param  AbstractObject $target
+     * @param  AbstractObject $source
+     * @return AbstractObject copied object
      */
     public function copyAsChild($target, $source) {
 
@@ -143,7 +147,7 @@ class Object_Service extends Element_Service {
         $new->o_id = null;
 
         $new->setChilds(null);
-        $new->setKey(Element_Service::getSaveCopyName("object", $new->getKey(), $target));
+        $new->setKey(Element\Service::getSaveCopyName("object", $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -158,15 +162,16 @@ class Object_Service extends Element_Service {
     }
 
     /**
-     * @param  Object_Abstract $target
-     * @param  Object_Abstract $source
-     * @return return $target
+     * @param $target
+     * @param $source
+     * @return AbstractObject
+     * @throws \Exception
      */
     public function copyContents($target, $source) {
 
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
-            throw new Exception("Source and target have to be the same type");
+            throw new \Exception("Source and target have to be the same type");
         }
 
         //load all in case of lazy loading fields
@@ -184,26 +189,26 @@ class Object_Service extends Element_Service {
 
         $new->save();
 
-        $target = Object_Abstract::getById($new->getId());
+        $target = AbstractObject::getById($new->getId());
         return $target;
     }
 
 
     /**
-     * @param  Object_Abstract $object
+     * @param  AbstractObject $object
      * @return array
      */
     public static function gridObjectData($object, $fields = null) {
 
         $localizedPermissionsResolved = false;
-        $data = Element_Service::gridElementData($object);
+        $data = Element\Service::gridElementData($object);
 
-        if ($object instanceof Object_Concrete) {
+        if ($object instanceof Concrete) {
             $data["classname"] = $object->getClassName();
-            $data["idPath"] = Element_Service::getIdPath($object);
+            $data["idPath"] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = array();
 
-            $user = Pimcore_Tool_Admin::getCurrentUser();
+            $user = AdminTool::getCurrentUser();
 
 //TODO keep this for later!
 //            if (!$user->isAdmin()) {
@@ -279,7 +284,7 @@ class Object_Service extends Element_Service {
                     $brickKey = $keyParts[1];
                     $key = self::getFieldForBrickType($object->getclass(), $brickType);
 
-                    $brickClass = Object_Objectbrick_Definition::getByKey($brickType);
+                    $brickClass = Objectbrick\Definition::getByKey($brickType);
                     $def = $brickClass->getFieldDefinition($brickKey);
                 }
 
@@ -309,17 +314,17 @@ class Object_Service extends Element_Service {
                     if(method_exists($object,$getter)) {
 
                         //system columns must not be inherited
-                        if(in_array($key, Object_Concrete::$systemColumnNames)) {
+                        if(in_array($key, Concrete::$systemColumnNames)) {
                             $data[$dataKey] = $object->$getter();
                         } else {
 
-                            $valueObject = self::getValueForObject($object, $getter, $brickType, $brickGetter);
+                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def);
                             $data['inheritedFields'][$dataKey] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
 
                             if(method_exists($def, "getDataForGrid")) {
                                 $tempData = $def->getDataForGrid($valueObject->value, $object);
 
-                                if($def instanceof Object_Class_Data_Localizedfields) {
+                                if($def instanceof ClassDefinition\Data\Localizedfields) {
                                     $needLocalizedPermissions = true;
                                     foreach($tempData as $tempKey => $tempValue) {
                                         $data[$tempKey] = $tempValue;
@@ -335,8 +340,8 @@ class Object_Service extends Element_Service {
 
                     if ($needLocalizedPermissions) {
                         if (!$user->isAdmin()) {
-                            /** @var  $locale Zend_Locale */
-                            $locale = (string) Zend_Registry::get("Zend_Locale");
+                            /** @var  $locale \Zend_Locale */
+                            $locale = (string) \Zend_Registry::get("Zend_Locale");
 
                             $permissionTypes = array("View", "Edit");
                             foreach ($permissionTypes as $permissionType) {
@@ -363,6 +368,12 @@ class Object_Service extends Element_Service {
         return $data;
     }
 
+    /**
+     * @param $object
+     * @param $user
+     * @param $type
+     * @return array|null
+     */
     public static function getLanguagePermissions($object, $user, $type) {
         $languageAllowed = null;
 
@@ -388,7 +399,11 @@ class Object_Service extends Element_Service {
         return $languageAllowed;
     }
 
-
+    /**
+     * @param $classId
+     * @param $permissionSet
+     * @return array|null
+     */
     public static function getLayoutPermissions($classId, $permissionSet) {
         $layoutPermissions = null;
 
@@ -423,12 +438,15 @@ class Object_Service extends Element_Service {
         return $layoutPermissions;
     }
 
-
-
-    public static function getFieldForBrickType(Object_Class $class, $bricktype) {
+    /**
+     * @param ClassDefinition $class
+     * @param $bricktype
+     * @return int|null|string
+     */
+    public static function getFieldForBrickType(ClassDefinition $class, $bricktype) {
         $fieldDefinitions = $class->getFieldDefinitions();
         foreach($fieldDefinitions as $key => $fd) {
-            if($fd instanceof Object_Class_Data_Objectbricks) {
+            if($fd instanceof ClassDefinition\Data\Objectbricks) {
                 if(in_array($bricktype, $fd->getAllowedTypes())) {
                     return $key;
                 }
@@ -441,35 +459,49 @@ class Object_Service extends Element_Service {
      * gets value for given object and getter, including inherited values
      *
      * @static
-     * @return stdclass, value and objectid where the value comes from
+     * @return \stdclass, value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $getter, $brickType = null, $brickGetter = null) {
+    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null) {
+        $getter = "get".ucfirst($key);
         $value = $object->$getter();
         if(!empty($value) && !empty($brickType)) {
             $getBrickType = "get" . ucfirst($brickType);
             $value = $value->$getBrickType();
-            if(!empty($value) && !empty($brickGetter)) {
+            if(!empty($value) && !empty($brickKey)) {
+                $brickGetter = "get".ucfirst($brickKey);
                 $value = $value->$brickGetter();
             }
         }
 
+        if(!$fieldDefinition) {
+            $fieldDefinition = $object->getClass()->getFieldDefinition($key);
+        }
 
-        if(empty($value) || (is_object($value) && method_exists($value, "isEmpty") && $value->isEmpty())) {
+        if(!empty($brickType) && !empty($brickKey)) {
+            $brickClass = Objectbrick\Definition::getByKey($brickType);
+            $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
+        }
+
+        if($fieldDefinition->isEmpty($value)) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
-                return self::getValueForObject($parent, $getter, $brickType, $brickGetter);
+                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition);
             }
         }
 
-        $result = new stdClass();
+        $result = new \stdClass();
         $result->value = $value;
         $result->objectid = $object->getId();
         return $result;
     }
 
-    public static function hasInheritableParentObject(Object_Concrete $object) {
+    /**
+     * @param Concrete $object
+     * @return AbstractObject
+     */
+    public static function hasInheritableParentObject(Concrete $object) {
         if($object->getClass()->getAllowInherit()) {
-            if ($object->getParent() instanceof Object_Abstract) {
+            if ($object->getParent() instanceof AbstractObject) {
                 $parent = $object->getParent();
                 while($parent && $parent->getType() == "folder") {
                     $parent = $parent->getParent();
@@ -488,14 +520,14 @@ class Object_Service extends Element_Service {
      * call the getters of each object field, in case some of the are lazy loading and we need the data to be loaded
      *
      * @static
-     * @param  Object_Concrete $object
+     * @param  Concrete $object
      * @return void
      */
     public static function loadAllObjectFields($object) {
 
         $object->getProperties();
 
-        if ($object instanceof Object_Concrete) {
+        if ($object instanceof Concrete) {
             //load all in case of lazy loading fields
             $fd = $object->getClass()->getFieldDefinitions();
             foreach ($fd as $def) {
@@ -510,38 +542,49 @@ class Object_Service extends Element_Service {
     /**
      *
      * @param string $filterJson
-     * @param Object_Class $class
+     * @param ClassDefinition $class
      * @return string
      */
     public static function getFilterCondition($filterJson, $class) {
 
-        $systemFields = array("o_path", "o_key", "o_id", "o_published","o_creationDate","o_modificationDate");
+        $systemFields = array("o_path", "o_key", "o_id", "o_published","o_creationDate","o_modificationDate", "o_fullpath");
 
         // create filter condition
         $conditionPartsFilters = array();
 
         if ($filterJson) {
-            $filters = Zend_Json::decode($filterJson);
+            $db = \Pimcore\Resource::get();
+            $filters = \Zend_Json::decode($filterJson);
             foreach ($filters as $filter) {
 
                 $operator = "=";
 
+                /**
+                 * @extjs
+                 */
+                $filterField = $filter["field"];
+                $filterOperator = $filter["comparison"];
+                if(\Pimcore\Tool\Admin::isExtJS6()) {
+                    $filterField = $filter["property"];
+                    $filterOperator = $filter["operator"];
+                }
+
                 if($filter["type"] == "string") {
                     $operator = "LIKE";
                 } else if ($filter["type"] == "numeric") {
-                    if($filter["comparison"] == "lt") {
+                    if($filterOperator == "lt") {
                         $operator = "<";
-                    } else if($filter["comparison"] == "gt") {
+                    } else if($filterOperator == "gt") {
                         $operator = ">";
-                    } else if($filter["comparison"] == "eq") {
+                    } else if($filterOperator == "eq") {
                         $operator = "=";
                     }
                 } else if ($filter["type"] == "date") {
-                    if($filter["comparison"] == "lt") {
+                    if($filterOperator == "lt") {
                         $operator = "<";
-                    } else if($filter["comparison"] == "gt") {
+                    } else if($filterOperator == "gt") {
                         $operator = ">";
-                    } else if($filter["comparison"] == "eq") {
+                    } else if($filterOperator == "eq") {
                         $operator = "=";
                     }
                     $filter["value"] = strtotime($filter["value"]);
@@ -552,22 +595,22 @@ class Object_Service extends Element_Service {
                     $filter["value"] = (int) $filter["value"];
                 }
 
-                $field = $class->getFieldDefinition($filter["field"]);
+                $field = $class->getFieldDefinition($filterField);
                 $brickField = null;
                 $brickType = null;
                 if(!$field) {
 
                     // if the definition doesn't exist check for a localized field
                     $localized = $class->getFieldDefinition("localizedfields");
-                    if($localized instanceof Object_Class_Data_Localizedfields) {
-                        $field = $localized->getFieldDefinition($filter["field"]);
+                    if($localized instanceof ClassDefinition\Data\Localizedfields) {
+                        $field = $localized->getFieldDefinition($filterField);
                     }
 
 
                     //if the definition doesn't exist check for object brick
-                    $keyParts = explode("~", $filter["field"]);
+                    $keyParts = explode("~", $filterField);
 
-                    if (substr($filter["field"], 0, 1) == "~") {
+                    if (substr($filterField, 0, 1) == "~") {
                         // not needed for now
 //                            $type = $keyParts[1];
 //                            $field = $keyParts[2];
@@ -579,14 +622,14 @@ class Object_Service extends Element_Service {
                         $key = self::getFieldForBrickType($class, $brickType);
                         $field = $class->getFieldDefinition($key);
 
-                        $brickClass = Object_Objectbrick_Definition::getByKey($brickType);
+                        $brickClass = Objectbrick\Definition::getByKey($brickType);
                         $brickField = $brickClass->getFieldDefinition($brickKey);
 
                     }
                 }
-                if($field instanceof Object_Class_Data_Objectbricks) {
+                if($field instanceof ClassDefinition\Data\Objectbricks) {
                     // custom field
-                    $db = Pimcore_Resource::get();
+                    $db = \Pimcore\Resource::get();
                     if(is_array($filter["value"])) {
                         $fieldConditions = array();
                         foreach ($filter["value"] as $filterValue) {
@@ -596,7 +639,7 @@ class Object_Service extends Element_Service {
                     } else {
                         $conditionPartsFilters[] = $db->getQuoteIdentifierSymbol() . $brickType . $db->getQuoteIdentifierSymbol() . "." . $brickField->getFilterCondition($filter["value"], $operator);
                     }
-                } else if($field instanceof Object_Class_Data) {
+                } else if($field instanceof ClassDefinition\Data) {
                     // custom field
                     if(is_array($filter["value"])) {
                         $fieldConditions = array();
@@ -608,9 +651,13 @@ class Object_Service extends Element_Service {
                         $conditionPartsFilters[] = $field->getFilterCondition($filter["value"], $operator);
                     }
 
-                } else if (in_array("o_".$filter["field"], $systemFields)) {
+                } else if (in_array("o_".$filterField, $systemFields)) {
                     // system field
-                    $conditionPartsFilters[] = "`o_" . $filter["field"] . "` " . $operator . " '" . $filter["value"] . "' ";
+                    if ($filterField == "fullpath") {
+                        $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " " . $db->quote("%" . $filter["value"] . "%");
+                    } else {
+                        $conditionPartsFilters[] = "`o_" . $filterField . "` " . $operator . " " . $db->quote($filter["value"]);
+                    }
                 }
             }
         }
@@ -619,7 +666,7 @@ class Object_Service extends Element_Service {
         if (count($conditionPartsFilters) > 0) {
             $conditionFilters = "(" . implode(" AND ", $conditionPartsFilters) . ")";
         }
-        Logger::log("ObjectController filter condition:" . $conditionFilters);
+        \Logger::log("ObjectController filter condition:" . $conditionFilters);
         return $conditionFilters;
     }
 
@@ -636,16 +683,17 @@ class Object_Service extends Element_Service {
         if(is_object($object) && method_exists($object, "getClass")) {
             $class = $object->getClass();
         } else if(is_string($object)) {
+            $object = "\\" . ltrim($object, "\\");
             $object = new $object();
             $class = $object->getClass();
         }
 
         if($class) {
             /**
-             * @var Object_Class_Data_Select $definition
+             * @var ClassDefinition\Data\Select $definition
              */
             $definition = $class->getFielddefinition($fieldname);
-            if($definition instanceof Object_Class_Data_Select) {
+            if($definition instanceof ClassDefinition\Data\Select || $definition instanceof ClassDefinition\Data\Multiselect) {
                 $_options = $definition->getOptions();
 
                 foreach($_options as $option) {
@@ -658,23 +706,33 @@ class Object_Service extends Element_Service {
     }
 
     /**
+     * alias of getOptionsForMultiSelectField
+     * @param $object
+     * @param $fieldname
+     * @return array
+     */
+    public static function getOptionsForMultiSelectField($object, $fieldname) {
+        return self::getOptionsForSelectField($object, $fieldname);
+    }
+
+    /**
      * @static
      * @param $path
      * @return bool
      */
     public static function pathExists ($path, $type = null) {
 
-        $path = Element_Service::correctPath($path);
+        $path = Element\Service::correctPath($path);
 
         try {
-            $object = new Object_Abstract();
+            $object = new AbstractObject();
 
-            if (Pimcore_Tool::isValidPath($path)) {
+            if (\Pimcore\Tool::isValidPath($path)) {
                 $object->getResource()->getByPath($path);
                 return true;
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
 
         }
 
@@ -694,11 +752,11 @@ class Object_Service extends Element_Service {
      * )
      * @param $object
      * @param $rewriteConfig
-     * @return Object_Abstract
+     * @return AbstractObject
      */
     public static function rewriteIds($object, $rewriteConfig) {
         // rewriting elements only for snippets and pages
-        if($object instanceof Object_Concrete) {
+        if($object instanceof Concrete) {
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach($fields as $field) {
@@ -721,8 +779,12 @@ class Object_Service extends Element_Service {
         return $object;
     }
 
-    public static function getValidLayouts(Object_Concrete $object) {
-        $user = Pimcore_Tool_Admin::getCurrentUser();
+    /**
+     * @param Concrete $object
+     * @return array
+     */
+    public static function getValidLayouts(Concrete $object) {
+        $user = AdminTool::getCurrentUser();
 
         $resultList = array();
         $isMasterAllowed = $user->getAdmin();
@@ -734,21 +796,21 @@ class Object_Service extends Element_Service {
         }
 
         if ($user->getAdmin()) {
-            $superLayout = new Object_Class_CustomLayout();
+            $superLayout = new ClassDefinition\CustomLayout();
             $superLayout->setId(-1);
             $superLayout->setName("Master (Admin Mode)");
             $resultList[-1] = $superLayout;
         }
 
         if ($isMasterAllowed) {
-            $master = new Object_Class_CustomLayout();
+            $master = new ClassDefinition\CustomLayout();
             $master->setId(0);
             $master->setName("Master");
             $resultList[0] = $master;
         }
 
         $classId = $object->getClassId();
-        $list = new Object_Class_CustomLayout_List();
+        $list = new ClassDefinition\CustomLayout\Listing();
         $list->setOrderKey("name");
         $condition = "classId = " . $list->quote($classId);
         if (count($layoutPermissions) && !$isMasterAllowed) {
@@ -769,16 +831,20 @@ class Object_Service extends Element_Service {
         return $resultList;
     }
 
-
-
+    /**
+     * @param $layout
+     * @param $targetList
+     * @param $insideLocalizedField
+     * @return mixed
+     */
     public static function extractLocalizedFieldDefinitions($layout, $targetList, $insideLocalizedField) {
-        if ($insideLocalizedField && $layout instanceof Object_Class_Data and !$layout instanceof Object_Class_Data_Localizedfields) {
+        if ($insideLocalizedField && $layout instanceof ClassDefinition\Data and !$layout instanceof ClassDefinition\Data\Localizedfields) {
             $targetList[$layout->getName()] = $layout;
         }
 
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();
-            $insideLocalizedField |= ($layout instanceof Object_Class_Data_Localizedfields);
+            $insideLocalizedField |= ($layout instanceof ClassDefinition\Data\Localizedfields);
             if (is_array($children)) {
                 foreach ($children as $child) {
                     $targetList = self::extractLocalizedFieldDefinitions($child, $targetList, $insideLocalizedField);
@@ -790,10 +856,10 @@ class Object_Service extends Element_Service {
 
 
     /** Calculates the super layout definition for the given object.
-     * @param Object_Concrete $object
+     * @param Concrete $object
      * @return mixed
      */
-    public static function getSuperLayoutDefinition(Object_Concrete $object) {
+    public static function getSuperLayoutDefinition(Concrete $object) {
         $masterLayout = $object->getClass()->getLayoutDefinitions() ;
         $superLayout = unserialize(serialize($masterLayout));
 
@@ -804,7 +870,7 @@ class Object_Service extends Element_Service {
 
 
     private static function createSuperLayout(&$layout) {
-        if ($layout instanceof Object_Class_Data) {
+        if ($layout instanceof ClassDefinition\Data) {
             $layout->setInvisible(false);
             $layout->setNoteditable(false);
         }
@@ -819,10 +885,14 @@ class Object_Service extends Element_Service {
         }
     }
 
-
+    /**
+     * @param $masterDefinition
+     * @param $layout
+     * @return bool
+     */
     private static function synchronizeCustomLayoutFieldWithMaster($masterDefinition, &$layout) {
 
-        if ($layout instanceof Object_Class_Data) {
+        if ($layout instanceof ClassDefinition\Data) {
             $fieldname = $layout->name;
             if (!$masterDefinition[$fieldname]) {
                 return false;
@@ -852,11 +922,11 @@ class Object_Service extends Element_Service {
     }
 
     /** Synchronizes a custom layout with its master layout
-     * @param Object_Class_CustomLayout $customLayout
+     * @param ClassDefinition\CustomLayout $customLayout
      */
-    public static function synchronizeCustomLayout(Object_Class_CustomLayout $customLayout) {
+    public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout) {
         $classId = $customLayout->getClassId();
-        $class = Object_Class::getById($classId);
+        $class = ClassDefinition::getById($classId);
         if ($class && ($class->getModificationDate() > $customLayout->getModificationDate())) {
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
@@ -869,16 +939,16 @@ class Object_Service extends Element_Service {
     }
 
     public static function getCustomGridFieldDefinitions($classId, $objectId) {
-        $object = Object_Abstract::getById($objectId);
+        $object = AbstractObject::getById($objectId);
 
-        $class = Object_Class::getById($classId);
+        $class = ClassDefinition::getById($classId);
         $masterFieldDefinition = $class->getFieldDefinitions();
 
         if (!$object) {
             return null;
         }
 
-        $user = Pimcore_Tool_Admin::getCurrentUser();
+        $user = AdminTool::getCurrentUser();
         if ($user->isAdmin()) {
             return null;
         }
@@ -902,7 +972,7 @@ class Object_Service extends Element_Service {
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
                     if ($allowedLayoutId) {
                         if (!$layoutDefinitions[$allowedLayoutId]) {
-                            $customLayout = Object_Class_CustomLayout::getById($allowedLayoutId);
+                            $customLayout = ClassDefinition\CustomLayout::getById($allowedLayoutId);
                             if (!$customLayout) {
                                 continue;
                             }
@@ -917,7 +987,7 @@ class Object_Service extends Element_Service {
 
         if (count($layoutDefinitions)) {
             foreach ($mergedFieldDefinition as $key => $def) {
-                if ($def instanceof Object_Class_Data_Localizedfields) {
+                if ($def instanceof ClassDefinition\Data\Localizedfields) {
                     $mergedLocalizedFieldDefinitions = $mergedFieldDefinition[$key]->getFieldDefinitions();
 
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
@@ -938,7 +1008,7 @@ class Object_Service extends Element_Service {
             $layoutName = $customLayoutDefinition->getName();
 
             $layoutDefinitions = $customLayoutDefinition->getLayoutDefinitions();
-            $dummyClass = new Object_Class();
+            $dummyClass = new ClassDefinition();
             $dummyClass->setLayoutDefinitions($layoutDefinitions);
             $customFieldDefinitions = $dummyClass->getFieldDefinitions();
 
@@ -949,7 +1019,7 @@ class Object_Service extends Element_Service {
             }
 
             foreach ($customFieldDefinitions as $key => $def) {
-                if ($def instanceof Object_Class_Data_Localizedfields) {
+                if ($def instanceof ClassDefinition\Data\Localizedfields) {
                     if (!$mergedFieldDefinition[$key]) {
                         continue;
                     }
@@ -970,6 +1040,11 @@ class Object_Service extends Element_Service {
         return $mergedFieldDefinition;
     }
 
+    /**
+     * @param $mergedFieldDefinition
+     * @param $customFieldDefinitions
+     * @param $key
+     */
     private static function mergeFieldDefinition(&$mergedFieldDefinition, &$customFieldDefinitions, $key) {
         if (!$customFieldDefinitions[$key]) {
             unset($mergedFieldDefinition[$key]);
@@ -979,7 +1054,7 @@ class Object_Service extends Element_Service {
                 $mergedFieldDefinition[$key]->setNotEditable(true);
             }
             if ($def->getInvisible()) {
-                if ($mergedFieldDefinition[$key] instanceof Object_Class_Data_Objectbricks) {
+                if ($mergedFieldDefinition[$key] instanceof ClassDefinition\Data\Objectbricks) {
                     unset($mergedFieldDefinition[$key]);
                     return;
                 } else {
@@ -993,8 +1068,13 @@ class Object_Service extends Element_Service {
         }
     }
 
+    /**
+     * @param $layout
+     * @param $fieldDefinitions
+     * @return bool
+     */
     private static function doFilterCustomGridFieldDefinitions(&$layout, $fieldDefinitions) {
-        if ($layout instanceof Object_Class_Data) {
+        if ($layout instanceof ClassDefinition\Data) {
             $name = $layout->getName();
             if (!$fieldDefinitions[$name] || $fieldDefinitions[$name]->getInvisible()) {
                 return false;
@@ -1023,11 +1103,11 @@ class Object_Service extends Element_Service {
 
 
     /**  Determines the custom layout definition (if necessary) for the given class
-     * @param Object_Class $class
+     * @param ClassDefinition $class
      * @param int $objectId
      * @return array layout
      */
-    public static function getCustomLayoutDefinitionForGridColumnConfig(Object_Class $class, $objectId) {
+    public static function getCustomLayoutDefinitionForGridColumnConfig(ClassDefinition $class, $objectId) {
 
         $layoutDefinitions = $class->getLayoutDefinitions();
 
@@ -1039,7 +1119,7 @@ class Object_Service extends Element_Service {
             return $result;
         }
 
-        $user = Pimcore_Tool_Admin::getCurrentUser();
+        $user = AdminTool::getCurrentUser();
 
         if ($user->isAdmin()) {
             return $result;
@@ -1068,11 +1148,11 @@ class Object_Service extends Element_Service {
     }
 
     public static function getUniqueKey($item,$nr = 0){
-        $list = new Object_List();
+        $list = new Listing();
         $list->setUnpublished(true);
-        $key = Pimcore_File::getValidFilename($item->getKey());
+        $key = \Pimcore\File::getValidFilename($item->getKey());
         if(!$key){
-            throw new Exception("No item key set.");
+            throw new \Exception("No item key set.");
         }
         if($nr){
             $key = $key . '_' . $nr;
@@ -1080,7 +1160,7 @@ class Object_Service extends Element_Service {
 
         $parent = $item->getParent();
         if(!$parent){
-            throw new Exception("You have to set a parent Object to determine a unique Key");
+            throw new \Exception("You have to set a parent Object to determine a unique Key");
         }
 
         if(!$item->getId()){
@@ -1100,19 +1180,18 @@ class Object_Service extends Element_Service {
     /** Enriches the layout definition before it is returned to the admin interface.
      * @param $layout
      */
-    public static function enrichLayoutDefinition(&$layout) {
+    public static function enrichLayoutDefinition(&$layout, $object = null) {
         if (method_exists($layout, "enrichLayoutDefinition")) {
-            $layout->enrichLayoutDefinition();
+            $layout->enrichLayoutDefinition($object);
         }
 
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    self::enrichLayoutDefinition($child);
+                    self::enrichLayoutDefinition($child, $object);
                 }
             }
         }
     }
-
 }

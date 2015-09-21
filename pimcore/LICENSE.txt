@@ -1,4 +1,4 @@
-Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
 All rights reserved.
 
 For details please see: http://www.pimcore.org/license

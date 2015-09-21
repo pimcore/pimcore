@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Json
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -27,7 +27,7 @@
 /**
  * @category   Zend
  * @package    Zend_Json
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Json_Server extends Zend_Server_Abstract
@@ -550,7 +550,7 @@ class Zend_Json_Server extends Zend_Server_Abstract
                     $orderedParams[ $refParam->getName() ] = $refParam->getDefaultValue();
                 } else {
                     throw new Zend_Server_Exception(
-                        'Missing required parameter: ' . $refParam->getName()
+                        'Method ' . $request->getMethod() .  ' is missing required parameter: ' . $refParam->getName()
                     );
                 }
             }

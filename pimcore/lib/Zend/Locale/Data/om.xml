@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="om"/>
 	</identity>
 	<localeDisplayNames>
@@ -18,7 +18,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">Afaan Azerbaijani</language>
 			<language type="be">Afaan Belarusia</language>
 			<language type="bg">Afaan Bulgariya</language>
-			<language type="bh">Afaan Bihari</language>
 			<language type="bn">Afaan Baangladeshi</language>
 			<language type="bs">Afaan Bosniyaa</language>
 			<language type="ca">Afaan Katalaa</language>

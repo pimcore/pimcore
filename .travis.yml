@@ -1,0 +1,46 @@
+language: php
+
+notifications:
+  email:
+    - travis-ci@pimcore.org
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+  - 7
+  - hhvm-nightly
+
+matrix:
+  allow_failures:
+    - php: 7
+    - php: hhvm-nightly
+
+before_script:
+  # install apache
+  - sudo apt-get update
+  - sudo apt-get install apache2 libapache2-mod-fastcgi
+  - sudo a2enmod rewrite actions fastcgi alias
+  # customize php settings
+  - sudo chmod 0755 build/travis/setup-fpm.sh build/travis/setup-hhvm.sh
+  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then build/travis/setup-fpm.sh; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then build/travis/setup-hhvm.sh; fi
+  # configure apache virtual hosts - config was copied in the individual setup scripts above (FPM/HHVM)
+  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
+  - sudo service apache2 restart
+  # make tests executable
+  - cd tests
+  - sudo chmod 0755 alltests.sh hhvm-all.sh
+
+script:
+  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then ./hhvm-all.sh; fi
+
+after_script:
+  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
+  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log
+  - cat $TRAVIS_BUILD_DIR/apache-error.log
+  - cat $TRAVIS_BUILD_DIR/apache-access.log
+  - cat /tmp/hhvm.log
+

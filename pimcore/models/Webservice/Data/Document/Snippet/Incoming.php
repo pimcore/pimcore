@@ -15,6 +15,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Snippet_Incoming extends Webservice_Data_Document_Snippet {
+namespace Pimcore\Model\Webservice\Data\Document\Snippet;
+
+use Pimcore\Model;
+
+class Incoming extends Model\Webservice\Data\Document\Snippet {
 
 }

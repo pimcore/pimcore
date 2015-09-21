@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_Mime {
+namespace Pimcore\Tool;
+
+class Mime {
 
     public static $extensionMapping = array (
         'ez'        => 'application/andrew-inset',
@@ -89,6 +91,7 @@ class Pimcore_Tool_Mime {
         'dcr'       => 'application/x-director',
         'dir'       => 'application/x-director',
         'dxr'       => 'application/x-director',
+	'dxf'       => 'application/x-autocad',
         'dvi'       => 'application/x-dvi',
         'spl'       => 'application/x-futuresplash',
         'tgz'       => 'application/x-gtar',
@@ -217,7 +220,12 @@ class Pimcore_Tool_Mime {
         'ice'       => 'x-conference/x-cooltalk',
     );
 
-
+    /**
+     * @param $file
+     * @param null $filename
+     * @return mixed|string
+     * @throws \Exception
+     */
     public static function detect($file, $filename = null) {
         if(!file_exists($file)) {
             throw new \Exception("File " . $file . " doesn't exist");
@@ -229,7 +237,7 @@ class Pimcore_Tool_Mime {
 
         // check for an extension mapping first
         if($filename) {
-            $extension = Pimcore_File::getFileExtension($filename);
+            $extension = \Pimcore\File::getFileExtension($filename);
             if(array_key_exists($extension, self::$extensionMapping)) {
                 return self::$extensionMapping[$extension];
             }

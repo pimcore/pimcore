@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Tool_Qrcode_Config {
+
+namespace Pimcore\Model\Tool\Qrcode;
+
+use Pimcore\Model;
+
+class Config {
 
     /**
      * @var string
@@ -48,15 +52,15 @@ class Tool_Qrcode_Config {
     public $googleAnalytics = true;
 
     /**
-     * @static
-     * @param  $name
-     * @return Tool_Qrcode_Config
+     * @param $name
+     * @return Config
+     * @throws \Exception
      */
     public static function getByName ($name) {
         $code = new self();
         $code->setName($name);
         if(!$code->load()) {
-            throw new Exception("qr-code definition : " . $name . " does not exist");
+            throw new \Exception("qr-code definition : " . $name . " does not exist");
         }
 
         return $code;
@@ -69,7 +73,7 @@ class Tool_Qrcode_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/qrcodes";
         if(!is_dir($dir)) {
-            Pimcore_File::mkdir($dir);
+            \Pimcore\File::mkdir($dir);
         }
 
         return $dir;
@@ -83,8 +87,8 @@ class Tool_Qrcode_Config {
 
         $arrayConfig = object2array($this);
 
-        $config = new Zend_Config($arrayConfig);
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($arrayConfig);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => $this->getConfigFile()
         ));
@@ -98,7 +102,7 @@ class Tool_Qrcode_Config {
      */
     public function load () {
 
-        $configXml = new Zend_Config_Xml($this->getConfigFile());
+        $configXml = new \Zend_Config_Xml($this->getConfigFile());
         $configArray = $configXml->toArray();
 
         foreach ($configArray as $key => $value) {
@@ -128,7 +132,8 @@ class Tool_Qrcode_Config {
     }
 
     /**
-     * @param string $description
+     * @param $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -145,7 +150,8 @@ class Tool_Qrcode_Config {
     }
 
     /**
-     * @param string $name
+     * @param $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -162,7 +168,8 @@ class Tool_Qrcode_Config {
     }
 
     /**
-     * @param string $url
+     * @param $url
+     * @return $this
      */
     public function setUrl($url)
     {
@@ -179,7 +186,8 @@ class Tool_Qrcode_Config {
     }
 
     /**
-     * @param string $backgroundColor
+     * @param $backgroundColor
+     * @return $this
      */
     public function setBackgroundColor($backgroundColor)
     {
@@ -196,7 +204,8 @@ class Tool_Qrcode_Config {
     }
 
     /**
-     * @param  $foreColor
+     * @param $foreColor
+     * @return $this
      */
     public function setForeColor($foreColor)
     {
@@ -205,7 +214,7 @@ class Tool_Qrcode_Config {
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getForeColor()
     {
@@ -213,7 +222,8 @@ class Tool_Qrcode_Config {
     }
 
     /**
-     * @param boolean $googleAnalytics
+     * @param $googleAnalytics
+     * @return $this
      */
     public function setGoogleAnalytics($googleAnalytics)
     {

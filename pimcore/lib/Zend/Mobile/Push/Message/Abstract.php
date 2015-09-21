@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push_Message
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -48,7 +48,7 @@ abstract class Zend_Mobile_Push_Message_Abstract implements Zend_Mobile_Push_Mes
     /**
      * Id
      *
-     * @var scalar
+     * @var int|string|float|bool Scalar
      */
     protected $_id;
 
@@ -66,6 +66,7 @@ abstract class Zend_Mobile_Push_Message_Abstract implements Zend_Mobile_Push_Mes
      * Set Token
      *
      * @param  string $token
+     * @throws Zend_Mobile_Push_Message_Exception
      * @return Zend_Mobile_Push_Message_Abstract
      */
     public function setToken($token)
@@ -80,7 +81,7 @@ abstract class Zend_Mobile_Push_Message_Abstract implements Zend_Mobile_Push_Mes
     /**
      * Get Message ID
      * 
-     * @return scalar
+     * @return int|string|float|bool Scalar
      */
     public function getId()
     {
@@ -90,7 +91,7 @@ abstract class Zend_Mobile_Push_Message_Abstract implements Zend_Mobile_Push_Mes
     /**
      * Set Message ID
      *
-     * @param scalar $id
+     * @param  int|string|float|bool $id Scalar
      * @return Zend_Mobile_Push_Message_Abstract
      * @throws Exception
      */

@@ -1,1 +1,1 @@
-pimcore.transliteration = <?php echo Zend_Json::encode($this->transliteration) ?>;
+pimcore.transliteration = <?= \Zend_Json::encode($this->transliteration) ?>;

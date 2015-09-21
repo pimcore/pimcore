@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9308 $"/>
-		<generation date="$Date: 2013-09-04 14:41:52 -0500 (Wed, 04 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ee"/>
 	</identity>
 	<localeDisplayNames>
@@ -2001,55 +2001,99 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</field>
 			<field type="year">
 				<displayName>ƒe</displayName>
+				<relative type="-1">ƒe si va yi</relative>
+				<relative type="0">ƒe sia</relative>
+				<relative type="1">ƒe si gbɔ na</relative>
 				<relativeTime type="future">
-					<relativeTimePattern count="one">le ƒe {0} wo me</relativeTimePattern>
+					<relativeTimePattern count="one">le ƒe {0} me</relativeTimePattern>
 					<relativeTimePattern count="other">le ƒe {0} wo me</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
-					<relativeTimePattern count="one">ƒe {0} si wo va yi</relativeTimePattern>
+					<relativeTimePattern count="one">ƒe {0} si va yi</relativeTimePattern>
 					<relativeTimePattern count="other">ƒe {0} si wo va yi</relativeTimePattern>
 				</relativeTime>
 			</field>
 			<field type="month">
-				<displayName>Xleti</displayName>
+				<displayName>ɣleti</displayName>
+				<relative type="-1">ɣleti si va yi</relative>
+				<relative type="0">ɣleti sia</relative>
+				<relative type="1">ɣleti si gbɔ na</relative>
 				<relativeTime type="future">
-					<relativeTimePattern count="one">le ɣleti {0} wo me</relativeTimePattern>
+					<relativeTimePattern count="one">le ɣleti {0} me</relativeTimePattern>
 					<relativeTimePattern count="other">le ɣleti {0} wo me</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
-					<relativeTimePattern count="one">ɣleti {0} si wo va yi</relativeTimePattern>
+					<relativeTimePattern count="one">ɣleti {0} si va yi</relativeTimePattern>
 					<relativeTimePattern count="other">ɣleti {0} si wo va yi</relativeTimePattern>
 				</relativeTime>
 			</field>
 			<field type="week">
 				<displayName>kɔsiɖa ɖeka</displayName>
+				<relative type="-1">kɔsiɖa si va yi</relative>
+				<relative type="0">kɔsiɖa sia</relative>
+				<relative type="1">kɔsiɖa si gbɔ na</relative>
 				<relativeTime type="future">
-					<relativeTimePattern count="one">le kɔsiɖa {0} wo me</relativeTimePattern>
+					<relativeTimePattern count="one">le kɔsiɖa {0} me</relativeTimePattern>
 					<relativeTimePattern count="other">le kɔsiɖa {0} wo me</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
-					<relativeTimePattern count="one">kɔsiɖa {0} si wo va yi</relativeTimePattern>
+					<relativeTimePattern count="one">kɔsiɖa {0} si va yi</relativeTimePattern>
 					<relativeTimePattern count="other">kɔsiɖa {0} si wo va yi</relativeTimePattern>
 				</relativeTime>
 			</field>
 			<field type="day">
 				<displayName>ŋkeke</displayName>
-				<relative type="-2">nyitsɔ</relative>
+				<relative type="-2">nyitsɔ si va yi</relative>
 				<relative type="-1">etsɔ si va yi</relative>
 				<relative type="0">egbe</relative>
 				<relative type="1">etsɔ si gbɔna</relative>
 				<relative type="2">nyitsɔ si gbɔna</relative>
 				<relativeTime type="future">
-					<relativeTimePattern count="one">le ŋkeke {0} wo me</relativeTimePattern>
+					<relativeTimePattern count="one">le ŋkeke {0} me</relativeTimePattern>
 					<relativeTimePattern count="other">le ŋkeke {0} wo me</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
-					<relativeTimePattern count="one">ŋkeke {0} si wo va yi</relativeTimePattern>
+					<relativeTimePattern count="one">ŋkeke {0} si va yi</relativeTimePattern>
 					<relativeTimePattern count="other">ŋkeke {0} si wo va yi</relativeTimePattern>
 				</relativeTime>
 			</field>
 			<field type="weekday">
 				<displayName>kɔsiɖa me ŋkeke</displayName>
+			</field>
+			<field type="sun">
+				<relative type="-1">kɔsiɖa si va yi</relative>
+				<relative type="0">kɔsiɖa sia</relative>
+				<relative type="1">kɔsiɖa si gbɔ na</relative>
+			</field>
+			<field type="mon">
+				<relative type="-1">dzoɖa si va yi</relative>
+				<relative type="0">dzoɖa sia</relative>
+				<relative type="1">dzoɖa si gbɔ na</relative>
+			</field>
+			<field type="tue">
+				<relative type="-1">blaɖa si va yi</relative>
+				<relative type="0">blaɖa sia</relative>
+				<relative type="1">blaɖa si gbɔ na</relative>
+			</field>
+			<field type="wed">
+				<relative type="-1">kuɖa si va yi</relative>
+				<relative type="0">kuɖa sia</relative>
+				<relative type="1">kuɖa si gbɔ na</relative>
+			</field>
+			<field type="thu">
+				<relative type="-1">yawoɖa si va yi</relative>
+				<relative type="0">yawoɖa sia</relative>
+				<relative type="1">yawoɖa si gbɔ na</relative>
+			</field>
+			<field type="fri">
+				<relative type="-1">fiɖa si va yi</relative>
+				<relative type="0">fiɖa sia</relative>
+				<relative type="1">fiɖa si gbɔ na</relative>
+			</field>
+			<field type="sat">
+				<relative type="-1">memleɖa si va yi</relative>
+				<relative type="0">memleɖa sia</relative>
+				<relative type="1">memleɖa si gbɔ na</relative>
 			</field>
 			<field type="dayperiod">
 				<displayName>ŋkekea me</displayName>
@@ -2057,38 +2101,39 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<field type="hour">
 				<displayName>gaƒoƒo</displayName>
 				<relativeTime type="future">
-					<relativeTimePattern count="one">le gaƒoƒo {0} wo me</relativeTimePattern>
+					<relativeTimePattern count="one">le gaƒoƒo {0} me</relativeTimePattern>
 					<relativeTimePattern count="other">le gaƒoƒo {0} wo me</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
-					<relativeTimePattern count="one">gaƒoƒo {0} si wo va yi</relativeTimePattern>
+					<relativeTimePattern count="one">gaƒoƒo {0} si va yi</relativeTimePattern>
 					<relativeTimePattern count="other">gaƒoƒo {0} si wo va yi</relativeTimePattern>
 				</relativeTime>
 			</field>
 			<field type="minute">
-				<displayName>Mintigaƒoƒo</displayName>
+				<displayName>aɖabaƒoƒo</displayName>
 				<relativeTime type="future">
-					<relativeTimePattern count="one">le aɖabaƒoƒo {0} wo me</relativeTimePattern>
+					<relativeTimePattern count="one">le aɖabaƒoƒo {0} me</relativeTimePattern>
 					<relativeTimePattern count="other">le aɖabaƒoƒo {0} wo me</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
-					<relativeTimePattern count="one">aɖabaƒoƒo {0} si wo va yi</relativeTimePattern>
+					<relativeTimePattern count="one">aɖabaƒoƒo {0} si va yi</relativeTimePattern>
 					<relativeTimePattern count="other">aɖabaƒoƒo {0} si wo va yi</relativeTimePattern>
 				</relativeTime>
 			</field>
 			<field type="second">
 				<displayName>sekend</displayName>
+				<relative type="0">fifi</relative>
 				<relativeTime type="future">
-					<relativeTimePattern count="one">le sekend {0} wo me</relativeTimePattern>
+					<relativeTimePattern count="one">le sekend {0} me</relativeTimePattern>
 					<relativeTimePattern count="other">le sekend {0} wo me</relativeTimePattern>
 				</relativeTime>
 				<relativeTime type="past">
-					<relativeTimePattern count="one">sekend {0} si wo va yi</relativeTimePattern>
+					<relativeTimePattern count="one">sekend {0} si va yi</relativeTimePattern>
 					<relativeTimePattern count="other">sekend {0} si wo va yi</relativeTimePattern>
 				</relativeTime>
 			</field>
 			<field type="zone">
-				<displayName>nutomegaƒoƒome</displayName>
+				<displayName>nutomegaƒoƒo</displayName>
 			</field>
 		</fields>
 		<timeZoneNames>
@@ -2126,9 +2171,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Palmer nutomegaƒoƒome</exemplarCity>
-			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>South Pole nutomegaƒoƒome</exemplarCity>
 			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Syowa nutomegaƒoƒome</exemplarCity>
@@ -2393,9 +2435,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Toronto nutomegaƒoƒome</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Montreal nutomegaƒoƒome</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Ikaluit nutomegaƒoƒome</exemplarCity>
@@ -3194,9 +3233,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Foenix nutomegaƒoƒome</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Tsiprɔk nutomegaƒoƒome</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Denva nutomegaƒoƒome</exemplarCity>

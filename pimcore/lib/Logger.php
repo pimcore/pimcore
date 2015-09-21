@@ -45,7 +45,16 @@ Logger {
 	public static function setPriorities ($prios) {
 		self::$priorities = $prios;
 	}
-	
+
+    /**
+     * return priorities, an array of log levels that will be logged by this logger
+     *
+     * @return array
+     */
+    public static function getPriorities () {
+        return self::$priorities;
+    }
+
 	public static function initDummy() {
 		self::$enabled = false;
 	}

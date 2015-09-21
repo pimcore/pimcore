@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage Router
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,7 +23,7 @@
 /**
  * @package    Zend_Controller
  * @subpackage Router
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 interface Zend_Controller_Router_Interface
@@ -54,9 +54,9 @@ interface Zend_Controller_Router_Interface
      * Encode tells to url encode resulting path parts.
      *
      * @param  array $userParams Options passed by a user used to override parameters
-     * @param  mixed $name The name of a Route to use
-     * @param  bool $reset Whether to reset to the route defaults ignoring URL params
-     * @param  bool $encode Tells to encode URL parts on output
+     * @param  mixed $name       The name of a Route to use
+     * @param  bool  $reset      Whether to reset to the route defaults ignoring URL params
+     * @param  bool  $encode     Tells to encode URL parts on output
      * @throws Zend_Controller_Router_Exception
      * @return string Resulting URL path
      */
@@ -81,7 +81,7 @@ interface Zend_Controller_Router_Interface
      * Add or modify a parameter with which to instantiate any helper objects
      *
      * @param string $name
-     * @param mixed $param
+     * @param mixed  $value
      * @return Zend_Controller_Router_Interface
      */
     public function setParam($name, $value);
@@ -120,5 +120,4 @@ interface Zend_Controller_Router_Interface
      * @return Zend_Controller_Router_Interface
      */
     public function clearParams($name = null);
-
 }

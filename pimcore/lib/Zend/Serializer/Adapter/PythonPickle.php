@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Serializer
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,7 +31,7 @@
  * @category   Zend
  * @package    Zend_Serializer
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_AdapterAbstract
@@ -100,11 +100,6 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
     const OP_SHORT_BINBYTES  = 'C';     //  "     "   ;    "      "       "      " < 256 bytes
 
     /**
-     * @var bool Whether or not this is a PHP 6 binary
-     */
-    protected static $_isPhp6 = null;
-
-    /**
      * @var bool Whether or not the system is little-endian
      */
     protected static $_isLittleEndian = null;
@@ -154,9 +149,6 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         // init
         if (self::$_isLittleEndian === null) {
             self::$_isLittleEndian = (pack('l', 1) === "\x01\x00\x00\x00");
-        }
-        if (self::$_isPhp6 === null) {
-            self::$_isPhp6 = !version_compare(PHP_VERSION, '6.0.0', '<');
         }
 
         $this->_marker = new stdClass();
@@ -1103,10 +1095,6 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         $pattern = '/\\\\u([a-fA-F0-9]{4})/u'; // \uXXXX
         $data    = preg_replace_callback($pattern, array($this, '_convertMatchingUnicodeSequence2Utf8'), $data);
 
-        if (self::$_isPhp6) {
-            $data = unicode_decode($data, 'UTF-8');
-        }
-
         $this->_stack[] = $data;
     }
 
@@ -1171,10 +1159,6 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         }
         list(, $n) = unpack('l', $n);
         $data      = $this->_read($n);
-
-        if (self::$_isPhp6) {
-            $data = unicode_decode($data, 'UTF-8');
-        }
 
         $this->_stack[] = $data;
     }

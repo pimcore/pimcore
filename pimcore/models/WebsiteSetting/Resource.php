@@ -13,29 +13,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class WebsiteSetting_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\WebsiteSetting;
+
+use Pimcore\Model;
+
+class Resource extends Model\Resource\AbstractResource {
 
     /**
-     * Contains all valid columns in the database table
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init() {
-        $this->validColumns = $this->getValidTableColumns("website_settings");
-    }
-
-    /**
-     * Get the data for the object from database for the given id, or from the ID which is set in the object
-     *
-     * @param integer $id
-     * @return void
+     * @param null $id
+     * @throws \Exception
      */
     public function getById($id = null) {
 
@@ -49,27 +35,26 @@ class WebsiteSetting_Resource extends Pimcore_Model_Resource_Abstract {
         if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Website Setting with id: " . $this->model->getId() . " does not exist");
+            throw new \Exception("Website Setting with id: " . $this->model->getId() . " does not exist");
         }
     }
-    
-    /**
-     * Get the data for the object from database for the given name, or from the Name which is set in the object
-     *
-     * @param integer $id
-     * @return void
-     */
-    public function getByName($name = null, $siteId = null) {
 
+    /**
+     * @param null $name
+     * @param null $siteId
+     * @throws \Exception
+     */
+    public function getByName($name = null, $siteId = null)
+    {
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT id, data FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
+        $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
         
-        if($data["id"]) {
+        if(!empty($data["id"])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Website Setting with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception("Website Setting with name: " . $this->model->getName() . " does not exist");
         }
     }
 
@@ -97,9 +82,7 @@ class WebsiteSetting_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
+     * @throws \Exception
      */
     public function update() {
         try {
@@ -109,7 +92,7 @@ class WebsiteSetting_Resource extends Pimcore_Model_Resource_Abstract {
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->validColumns)) {
+                if (in_array($key, $this->getValidTableColumns("website_settings"))) {
                     $data[$key] = $value;
                 }
             }
@@ -117,7 +100,7 @@ class WebsiteSetting_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("website_settings", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw $e;
         }
         

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9792 $"/>
+		<generation date="$Date: 2014-02-25 16:17:53 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="be"/>
 	</identity>
 	<localeDisplayNames>
@@ -19,7 +19,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ab">абхазская</language>
 			<language type="ady" draft="contributed">адыгейская</language>
 			<language type="af">афрыкаанс</language>
-			<language type="afa" draft="contributed">афра-азіяцкая мова</language>
 			<language type="akk" draft="contributed">акадзкая</language>
 			<language type="ale" draft="contributed">алеуцкая</language>
 			<language type="am">амхарская</language>
@@ -27,30 +26,23 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ang">стараанглійская</language>
 			<language type="ar">арабская</language>
 			<language type="arc" draft="contributed">арамейская</language>
-			<language type="art" draft="contributed">штучная мова</language>
 			<language type="as">асамская</language>
 			<language type="ast" draft="contributed">астурыйская</language>
-			<language type="aus" draft="contributed">аўстралійская</language>
 			<language type="av" draft="contributed">аварская</language>
 			<language type="ay" draft="contributed">аймара</language>
 			<language type="az">азербайджанская</language>
 			<language type="ba">башкірская</language>
 			<language type="be">беларуская</language>
 			<language type="bg">балгарская</language>
-			<language type="bh">біхары</language>
 			<language type="bn">бенгальская</language>
 			<language type="br">брэтонская</language>
 			<language type="bs">баснійская</language>
 			<language type="bua" draft="contributed">бурацкая</language>
 			<language type="ca">каталонская</language>
-			<language type="cai" draft="contributed">мова індзейцаў Цэнтральнай Амерыкі</language>
-			<language type="cau" draft="contributed">каўказская мова</language>
 			<language type="ce">чачэнская</language>
-			<language type="cel" draft="contributed">кельцкая мова</language>
 			<language type="chb" draft="unconfirmed">чыбча</language>
 			<language type="cop">копцкая</language>
 			<language type="cs">чэшская</language>
-			<language type="cus" draft="unconfirmed">кушыцкая мова</language>
 			<language type="cv" draft="contributed">чувашская</language>
 			<language type="cy">валійская</language>
 			<language type="da">дацкая</language>
@@ -108,19 +100,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="luo" draft="unconfirmed">луо</language>
 			<language type="lv">латышская</language>
 			<language type="man" draft="unconfirmed">мандынга</language>
-			<language type="map" draft="contributed">аўстранезійская</language>
 			<language type="mas" draft="unconfirmed">масаі</language>
 			<language type="men" draft="unconfirmed">мендэ</language>
 			<language type="mg" draft="unconfirmed">мальгашская</language>
 			<language type="mk">македонская</language>
 			<language type="ml">малаяламская</language>
 			<language type="mn">мангольская</language>
-			<language type="mo">малдаўская</language>
 			<language type="mos" draft="unconfirmed">мосі</language>
 			<language type="mr">маратхі</language>
 			<language type="ms">малайская</language>
 			<language type="mt">мальтыйская</language>
-			<language type="nai" draft="unconfirmed">мова індзейцаў Паўночнай Амерыкі</language>
 			<language type="nb" draft="contributed">нарвэская букмал</language>
 			<language type="ne">непальская</language>
 			<language type="nl">галандская</language>
@@ -129,7 +118,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="no">нарвежская</language>
 			<language type="nog" draft="unconfirmed">нагайская</language>
 			<language type="non" draft="unconfirmed">старанарвежская</language>
-			<language type="nub" draft="unconfirmed">нубійская мова</language>
 			<language type="oc">правансальская</language>
 			<language type="oj" draft="unconfirmed">аджыбве</language>
 			<language type="or" draft="unconfirmed">орыя</language>
@@ -146,20 +134,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="raj" draft="unconfirmed">раджастханская</language>
 			<language type="rm" draft="unconfirmed">рэта-раманская</language>
 			<language type="ro">румынская</language>
+			<language type="ro_MD">малдаўская</language>
 			<language type="ru">руская</language>
 			<language type="sa">санскрыт</language>
 			<language type="sah">якуцкая</language>
-			<language type="sai" draft="unconfirmed">мова індзейцаў Паўднёвай Амерыкі</language>
 			<language type="sd">сіндхі</language>
-			<language type="sem" draft="unconfirmed">семіцкая мова</language>
 			<language type="sga" draft="unconfirmed">стараірландская</language>
-			<language type="sgn" draft="contributed">знакавая мова</language>
 			<language type="sh">сербска-харвацкая</language>
 			<language type="si">сінгальская</language>
-			<language type="sit" draft="unconfirmed">кітайска-тыбецкая мова</language>
 			<language type="sk">славацкая</language>
 			<language type="sl">славенская</language>
-			<language type="sla" draft="contributed">славянская мова</language>
 			<language type="so">самалійская</language>
 			<language type="sq">албанская</language>
 			<language type="sr">сербская</language>
@@ -168,7 +152,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sv">шведская</language>
 			<language type="sw">суахілі</language>
 			<language type="ta">тамільская</language>
-			<language type="tai" draft="unconfirmed">мова таі</language>
 			<language type="te">тэлугу</language>
 			<language type="tg" draft="unconfirmed">таджыкская</language>
 			<language type="th">тайская</language>
@@ -177,8 +160,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tlh">клінгон</language>
 			<language type="tr">турэцкая</language>
 			<language type="tt">татарская</language>
-			<language type="tup" draft="unconfirmed">мова тупі</language>
-			<language type="tut" draft="contributed">алтайская мова</language>
 			<language type="tyv" draft="unconfirmed">тувінская</language>
 			<language type="ug">уйгурская</language>
 			<language type="uk">украінская</language>

@@ -16,7 +16,7 @@
  * @package    Zend_Service_WindowsAzure
  * @subpackage RetryPolicy
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -34,7 +34,7 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage RetryPolicy
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Service_WindowsAzure_RetryPolicy_RetryPolicyAbstract

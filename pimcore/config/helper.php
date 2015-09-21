@@ -24,18 +24,26 @@ function gzcompressfile($source,$level=null, $target = null){
 
     $mode='wb'.$level;
     $error=false;
-    if($fp_out=gzopen($dest,$mode)){
-        if($fp_in=fopen($source,'rb')){
-            while(!feof($fp_in))
-                gzwrite($fp_out,fread($fp_in,1024*512));
-            fclose($fp_in);
+
+    $fp_out = gzopen($dest,$mode);
+    $fp_in = fopen($source,'rb');
+
+    if($fp_out && $fp_in) {
+        while(!feof($fp_in)) {
+            gzwrite($fp_out, fread($fp_in,1024*512));
         }
-        else $error=true;
+
+        fclose($fp_in);
         gzclose($fp_out);
+    } else {
+        $error=true;
     }
-    else $error=true;
-    if($error) return false;
-    else return $dest;
+
+    if ($error) {
+        return false;
+    } else {
+        return $dest;
+    }
 }
 
 function is_json($string) {
@@ -122,14 +130,13 @@ function array_urlencode ($args) {
   $out = '';
   foreach($args as $name => $value)
   {
-    if(is_array($value))
-    {
+    if(is_array($value))  {
         foreach($value as $key => $val) {
             $out .= urlencode($name).'['.urlencode($key).']'.'=';
             $out .= urlencode($val).'&';
 
         }
-    }else{
+    } else {
         $out .= urlencode($name).'=';
         $out .= urlencode($value).'&';
     }
@@ -177,12 +184,12 @@ function urlencode_ignore_slash($var) {
 }
 
 /**
- * @depricated
+ * @deprecated
  * @param  $filename
  * @return bool
  */
 function is_includeable($filename) {
-    return Pimcore_File::isIncludeable($filename);
+    return \Pimcore\File::isIncludeable($filename);
 }
 
 /**
@@ -388,3 +395,48 @@ function isAssocArray(array $arr)
 {
     return array_keys($arr) !== range(0, count($arr) - 1);
 }
+
+/**
+ * this is an alternative for realpath() which isn't able to handle symlinks correctly
+ * @param $filename
+ * @return string
+ */
+function resolvePath($filename)
+{
+    $filename = str_replace('//', '/', $filename);
+    $parts = explode('/', $filename);
+    $out = array();
+    foreach ($parts as $part){
+        if ($part == '.') continue;
+        if ($part == '..') {
+            array_pop($out);
+            continue;
+        }
+        $out[] = $part;
+    }
+    return implode('/', $out);
+}
+
+/**
+ * @param Closure $closure
+ * @return string
+ */
+function closureHash (Closure $closure)
+{
+    $ref  = new ReflectionFunction($closure);
+    $file = new SplFileObject($ref->getFileName());
+    $file->seek($ref->getStartLine()-1);
+    $content = '';
+    while ($file->key() < $ref->getEndLine()) {
+        $content .= $file->current();
+        $file->next();
+    }
+
+    $hash = md5(json_encode(array(
+        $content,
+        $ref->getStaticVariables()
+    )));
+
+    return $hash;
+}
+

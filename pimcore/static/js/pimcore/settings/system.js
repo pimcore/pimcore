@@ -205,6 +205,19 @@ pimcore.settings.system = Class.create({
                                 width: 300
                             },
                             {
+                                fieldLabel: t("extjs_version"),
+                                //xtype: "combo",
+                                xtype: "hidden",
+                                name: "general.extjs6",
+                                value: this.getValue("general.extjs6"),
+                                store: [
+                                    ["0",t("extjs_34")],
+                                    ["1",t("extjs_6")]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
+                            },
+                            {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
                                 name: "general.loginscreencustomimage",
@@ -241,7 +254,7 @@ pimcore.settings.system = Class.create({
                     },
                     {
                         xtype:'fieldset',
-                        title: t('localization_and_internationalization') + " (i18n/i10n)",
+                        title: t('localization_and_internationalization') + " (i18n/l10n)",
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,
@@ -284,10 +297,15 @@ pimcore.settings.system = Class.create({
                                 name: 'general.validLanguages',
                                 value: this.getValue("general.validLanguages")
                             }, {
+                                xtype: "hidden",
+                                id: "system.settings.general.defaultLanguage",
+                                name: "general.defaultLanguage",
+                                value: this.getValue("general.defaultLanguage")
+                            }, {
                                 xtype: "container",
                                 width: 450,
                                 style: "margin-top: 20px;",
-                                id: "system.settings.general.languageConainer",
+                                id: "system.settings.general.languageContainer",
                                 items: [],
                                 listeners: {
                                     beforerender: function () {
@@ -311,9 +329,38 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 150},
                         items :[
                             {
+                                fieldLabel: t("environment"),
+                                xtype: "combo",
+                                name: "general.environment",
+                                value: this.getValue("general.environment"),
+                                store: [
+                                    ["production", t("production")],
+                                    ["stage", t("stage")],
+                                    ["test", t("test")],
+                                    ["development", t("development")],
+                                    ["local", t("local")]
+                                ],
+                                mode: "local",
+                                triggerAction: "all",
+                                listeners: {
+                                    "select": function (el) {
+                                        if(el.getValue() == "production") {
+                                            var ipField = Ext.getCmp("system.settings.general.debug_ip");
+                                            if(empty(ipField.getValue())) {
+                                                Ext.getCmp("system.settings.general.debug").setValue(false);
+                                            }
+
+                                            Ext.getCmp("system.settings.general.debugloglevel").setValue("error");
+                                            Ext.getCmp("system.settings.general.devmode").setValue(false);
+                                        }
+                                    }
+                                }
+                            },
+                            {
                                 fieldLabel: "DEBUG",
                                 xtype: "checkbox",
                                 name: "general.debug",
+                                id: "system.settings.general.debug",
                                 checked: this.getValue("general.debug"),
                                 listeners: {
                                     check: function (el, checked) {
@@ -379,6 +426,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: "debug.log Log-Level",
                                 xtype: "combo",
                                 name: "general.debugloglevel",
+                                id: "system.settings.general.debugloglevel",
                                 value: this.getValue("general.debugloglevel"),
                                 store: [
                                     ["debug", "DEBUG"],
@@ -412,7 +460,69 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('log_messages_user_mail_description'),
                                 cls: "pimcore_extra_label_bottom"
-                            },{
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: "<b>" + t("log_applicationlog") + "</b>"
+                            },
+                            {
+                                fieldLabel: t("log_config_send_summary_per_mail"),
+                                xtype: "checkbox",
+                                name: "applicationlog.mail_notification.send_log_summary",
+                                checked: this.getValue("applicationlog.mail_notification.send_log_summary")
+                            },
+                            {
+                                fieldLabel: t("log_config_filter_priority"),
+                                xtype: "combo",
+                                name: "applicationlog.mail_notification.filter_priority",
+                                value: this.getValue("applicationlog.mail_notification.filter_priority"),
+                                store: [
+                                    [7, "DEBUG"],
+                                    [6, "INFO"],
+                                    [5, "NOTICE"],
+                                    [4, "WARNING"],
+                                    [3, "ERROR"],
+                                    [2, "CRITICAL"],
+                                    [1, "ALERT"],
+                                    [0, "EMERG"]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
+                            },
+                            {
+                                fieldLabel: t('log_config_mail_receiver'),
+                                name: 'applicationlog.mail_notification.mail_receiver',
+                                width: 400,
+                                value: this.getValue("applicationlog.mail_notification.mail_receiver")
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t('log_config_mail_receiver_description'),
+                                cls: "pimcore_extra_label_bottom"
+                            },
+                            {
+                                fieldLabel: t('log_config_archive_treshold'),
+                                name: 'applicationlog.archive_treshold',
+                                value: this.getValue("applicationlog.archive_treshold") ? this.getValue("applicationlog.archive_treshold") : '30'
+                            },
+                            {
+                                fieldLabel: t('log_config_archive_alternative_database'),
+                                name: 'applicationlog.archive_alternative_database',
+                                width: 400,
+                                value: this.getValue("applicationlog.archive_alternative_database")
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t('log_config_archive_description'),
+                                cls: "pimcore_extra_label_bottom"
+                            },
+                            {
                                 fieldLabel: t("disable_whoops_error_handler"),
                                 xtype: "checkbox",
                                 name: "general.disable_whoops",
@@ -429,6 +539,7 @@ pimcore.settings.system = Class.create({
                                     + 'DON`T ACTIVATE IT!</span>)',
                                 xtype: "checkbox",
                                 name: "general.devmode",
+                                id: "system.settings.general.devmode",
                                 checked: this.getValue("general.devmode")
                             }
                         ]
@@ -517,7 +628,7 @@ pimcore.settings.system = Class.create({
                                                 ["", t('no_authentication')],
                                                 ["login","LOGIN"],
                                                 ["plain","PLAIN"],
-                                                ["cram-md5", "CRAM-MD5"]
+                                                ["crammd5", "CRAM-MD5"]
                                             ],
                                             mode: "local",
                                             triggerAction: "all",
@@ -705,6 +816,11 @@ pimcore.settings.system = Class.create({
                                         });
                                     }
                                 }
+                            },{
+                                xtype: "checkbox",
+                                fieldLabel: t("show_cookie_notice"),
+                                name: "general.show_cookie_notice",
+                                checked: this.getValue("general.show_cookie_notice")
                             }
                         ]
                     },
@@ -979,6 +1095,12 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.icc_cmyk_profile',
                                 value: this.getValue("assets.icc_cmyk_profile"),
                                 width: 300
+                            },
+                            {
+                                fieldLabel: t("hide_edit_image_tab"),
+                                xtype: "checkbox",
+                                name: "assets.hide_edit_image",
+                                checked: this.getValue("assets.hide_edit_image")
                             }
                         ]
                     },
@@ -1549,7 +1671,7 @@ pimcore.settings.system = Class.create({
             }
 
             // add the language to the container, so that further settings for the language can be set (eg. fallback, ...)
-            var container = Ext.getCmp("system.settings.general.languageConainer");
+            var container = Ext.getCmp("system.settings.general.languageContainer");
             var lang = container.getComponent(language);
             if(lang) {
                 return;
@@ -1568,6 +1690,19 @@ pimcore.settings.system = Class.create({
                     fieldLabel: t("fallback_languages"),
                     name: "general.fallbackLanguages." + language,
                     value: this.getValue("general.fallbackLanguages." + language)
+                },{
+                    xtype: "radio",
+                    name: "general.defaultLanguageRadio",
+                    fieldLabel: t("default_language"),
+                    checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
+                    listeners: {
+                        check: function (el, checked) {
+                            if (checked) {
+                                var defaultLanguageField = Ext.getCmp("system.settings.general.defaultLanguage");
+                                defaultLanguageField.setValue(language);
+                            }
+                        }.bind(this)
+                    }
                 },{
                     xtype: "button",
                     title: t("delete"),
@@ -1590,8 +1725,14 @@ pimcore.settings.system = Class.create({
             languageField.setValue(addedLanguages.join(","));
         }
 
+        // remove the default language from hidden field
+        var defaultLanguageField = Ext.getCmp("system.settings.general.defaultLanguage");
+        if (defaultLanguageField.getValue() == language) {
+            defaultLanguageField.setValue("");
+        }
+
         // remove the language from the container
-        var container = Ext.getCmp("system.settings.general.languageConainer");
+        var container = Ext.getCmp("system.settings.general.languageContainer");
         var lang = container.getComponent(language);
         if(lang) {
             container.remove(lang);

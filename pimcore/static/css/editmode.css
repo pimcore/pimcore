@@ -12,43 +12,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-
-/* all ext windows have to be above the dnd masks (wysiwyg, iframe) */
-.x-window {
-    z-index: 10003 !important;
-}
-
-.x-combo-list {
-    z-index: 10004 !important;
-}
-
-/* because this causes problems with the fixed z-index of combo and window above */
-.x-shadow, .x-ie-shadow {
-    display: none !important;
-}
-
-.x-list-body dt em {
-    color:black;
-}
-
-/* FF >= 10 fix for menu seperator in ExtJS */
-.x-menu-sep {
-    height: 1px;
-}
-
-/*
-    this fixes problem when the default background of the browser is not white
-    http://www.pimcore.org/issues/browse/PIMCORE-1208
-*/
-.x-form-field {
-    color: #000000;
-}
-
 .cke-code-editor textarea {
     font-family: "courier new", courier !important;
 }
 
 /* pimcore editables */
+
+.pimcore_tag_image .x-panel-body {
+    overflow: hidden;
+}
+
+.pimcore_tag_image .x-panel-body img {
+    max-width: 100%;
+    max-height: 100%;
+}
 
 .pimcore_tag_image_alt {
 	position: absolute;
@@ -145,7 +122,7 @@
 
 .pimcore_wysiwyg_mask {
 	position: absolute;
-	z-index: 10001;
+	z-index: 9997;
 	background: #ff6600;
 	/* beacause of IE */
 	-moz-opacity: 0;
@@ -161,7 +138,7 @@
 
 .pimcore_iframe_mask {
 	position: absolute;
-	z-index: 10000;
+	z-index: 9996;
 }
 
 .pimcore_tag_link {
@@ -181,6 +158,7 @@
 }
 
 .pimcore_tag_image_empty {
+    min-height: 80px;
 	border: 1px solid #d0d0d0 !important;
 	background:url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
 }
@@ -246,8 +224,10 @@
     position:relative;
 }
 
-.pimcore_area_editmode {
-    display:none;
+.pimcore_area_editmode.pimcore_area_editmode_hidden {
+    position: absolute;
+    top:-2000px;
+    left:-10000px;
 }
 
 .pimcore_area_entry .pimcore_area_edit_button,
@@ -257,10 +237,6 @@
     height:25px;
     right:5px;
     top:5px;
-}
-
-.pimcore_areablock_toolbar .x-btn-mc {
-    text-align: left;
 }
 
 .pimcore_areablock_toolbar {
@@ -273,6 +249,18 @@
     -webkit-transition: all .2s ease-in 0; /* chrome & safari */
     -moz-transition: all .2s ease-in 0; /* firefox */
     -o-transition: all .2s ease-in 0; /* opera */
+}
+
+.pimcore_areablock_toolbar .x-window-body {
+    background-color: transparent;
+}
+
+.pimcore_areablock_toolbar .x-btn-mc {
+    text-align: left;
+}
+
+.pimcore_areablock_toolbar .x-window-header {
+    height: 15px;
 }
 
 .pimcore_tag_video {
@@ -331,6 +319,11 @@
     box-shadow: 0 0 5px 2px #E8E8E8;
 }
 
+.pimcore_wysiwyg.empty:after {
+    /* this is a firefox fix, to set the hight automatically to the font height, otherwise the height of the input can be 0px */
+    content: "\0000a0";
+}
+
 .pimcore_tag_input:hover, .pimcore_wysiwyg:hover, .pimcore_tag_textarea:hover {
     box-shadow: 0 0 5px 2px #BABABA;
 }
@@ -339,8 +332,22 @@
     box-shadow: none;
 }
 
+.pimcore_tag_input[contenteditable=true]:empty:before, .pimcore_tag_textarea[contenteditable=true]:empty:before{
+    cursor: text; /* For chrome */
+    content: attr(data-placeholder);
+    display: block; /* For Firefox */
+    color:#BABABA;
+}
+
+.pimcore_tag_input[contenteditable=true]:empty:focus:before, .pimcore_tag_textarea[contenteditable=true]:empty:focus:before{
+    display: none; /* For Firefox */
+}
 
 
+.pimcore_tag_textarea {
+    white-space: pre-line;
+    width: 100%;
+}
 
 
 
@@ -366,6 +373,65 @@
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
 }
+
+
+
+/* all ext windows have to be above the dnd masks (wysiwyg, iframe) */
+.x-window {
+    z-index: 9998 !important;
+    background: #000;
+    padding: 5px;
+    border-radius: 2px;
+    border:1px solid #363636;
+    box-shadow: 0px 0px 70px 0px #000;
+}
+
+.x-window-header {
+    height: 20px;
+    color: #fff;
+}
+
+
+.x-window-body {
+    background-color: #fff;
+    width: 100%;
+}
+
+.x-window-footer {
+    max-width: 100%;
+    padding-top: 10px;
+}
+
+.x-window-draggable {
+    cursor: move;
+}
+
+.x-combo-list {
+    z-index: 10004 !important;
+}
+
+/* because this causes problems with the fixed z-index of combo and window above */
+.x-shadow, .x-ie-shadow {
+    display: none !important;
+}
+
+.x-list-body dt em {
+    color:black;
+}
+
+/* FF >= 10 fix for menu seperator in ExtJS */
+.x-menu-sep {
+    height: 1px;
+}
+
+/*
+    this fixes problem when the default background of the browser is not white
+    http://www.pimcore.org/issues/browse/PIMCORE-1208
+*/
+.x-form-field {
+    color: #000000;
+}
+
 
 .x-btn {
     cursor: pointer;
@@ -511,6 +577,14 @@
     margin-right: 5px;
 }
 
+.x-dd-drag-proxy .x-menu-item-active {
+    background: #363636;
+}
+
+.x-dd-drag-proxy .x-menu-item {
+    color: #fff;
+}
+
 .x-tip {
     background: #000;
     color: #fff;
@@ -560,22 +634,6 @@
     top: 5px;
     border-width: 6px 6px 6px 0;
     border-color: transparent #000 transparent transparent;
-}
-
-.x-window {
-    background: #000;
-    padding: 5px;
-    border-radius: 2px;
-    border:1px solid #363636;
-    box-shadow: 0px 0px 70px 0px #000;
-}
-
-.x-window-header {
-    height: 15px;
-}
-
-.x-window-draggable {
-    cursor: move;
 }
 
 .x-tool-toggle {
@@ -723,6 +781,14 @@
 .x-toolbar .x-btn {
     margin-left: 3px;
     vertical-align: middle;
+}
+
+.x-grid3-row-table, .x-grid3-header-offset table {
+    table-layout: fixed;
+}
+
+.x-grid3-resize-marker, .x-grid3-resize-proxy {
+    display: none !important;
 }
 
 .x-grid3-row {
@@ -950,4 +1016,21 @@
     left: 0;
     z-index: 100;
     zoom: 1;
+}
+
+.x-menu-focus {
+    position:absolute;
+    left:-1px;
+    top:-1px;
+    width:1px;
+    height:1px;
+    line-height:1px;
+    font-size:1px;
+    -moz-outline:0 none;
+    outline:0 none;
+    -moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+    overflow:hidden;
+    display:block;
 }

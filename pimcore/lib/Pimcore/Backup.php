@@ -13,84 +13,166 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Backup {
+namespace Pimcore;
 
+use Pimcore\Resource; 
+
+class Backup {
+
+    /**
+     * @var array
+     */
     public $additionalExcludePatterns = array();
 
+    /**
+     * @var
+     */
     public $filesToBackup;
+
+    /**
+     * @var
+     */
     public $fileAmount;
+
+    /**
+     * @var
+     */
     public $backupFile;
+
+    /**
+     * @var array
+     */
     protected $options = array();
 
+    /**
+     * @var \ZipArchive
+     */
+    protected $zipArchive;
+
+    /**
+     * @param $backupFile
+     */
     public function __construct ($backupFile) {
         $this->backupFile = $backupFile;
     }
 
+    /**
+     * @param $options
+     */
     public function setOptions($options){
         $this->options = $options;
     }
 
+    /**
+     * @return array
+     */
     public function getOptions(){
         return $this->options;
     }
 
+    /**
+     * @return mixed
+     */
     public function getFilesToBackup () {
         return $this->filesToBackup;
     }
 
+    /**
+     * @param $files
+     * @return $this
+     */
     protected function setFilesToBackup ($files) {
         $this->filesToBackup = $files;
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getFileAmount () {
         return $this->fileAmount;
     }
 
+    /**
+     * @param $fileAmount
+     * @return $this
+     */
     protected function setFileAmount ($fileAmount) {
         $this->fileAmount = $fileAmount;
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getBackupFile () {
         return $this->backupFile;
     }
 
+    /**
+     * @return array
+     */
     public function getAdditionalExcludeFiles () {
         return $this->additionalExcludePatterns;
     }
 
+    /**
+     * @param $additionalExcludePatterns
+     * @return $this
+     */
     public function setAdditionalExcludePatterns ($additionalExcludePatterns) {
         $this->additionalExcludePatterns = $additionalExcludePatterns;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     protected function getFormattedFilesize () {
+
+        if($this->zipArchive) {
+            $this->zipArchive->close();
+            $this->zipArchive = null;
+        }
+
         return formatBytes(filesize($this->getBackupFile()));
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function getArchive () {
-        $obj = new Archive_Tar($this->getBackupFile());
 
-        if (!is_file($this->getBackupFile())) {
-
-            $files = array();
-
-            if (!$obj->create($files)) {
-                echo "can't create archive";
-            }
+        // if already initialized, just return the handler
+        if($this->zipArchive) {
+            return $this->zipArchive;
         }
 
-        return $obj;
+        $this->zipArchive = new \ZipArchive();
+        if (!is_file($this->getBackupFile())) {
+            $zipState = $this->zipArchive->open($this->getBackupFile(), \ZipArchive::CREATE);
+        } else {
+            $zipState = $this->zipArchive->open($this->getBackupFile());
+        }
+
+        if ($zipState === TRUE) {
+            return $this->zipArchive;
+        } else {
+            throw new \Exception("unable to create zip archive");
+        }
     }
 
+    /**
+     * @param array $options
+     * @return array
+     */
     public function init ($options = array()) {
         $this->setOptions($options);
 
         // create backup directory if not exists
         if (!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
-            if (!Pimcore_File::mkdir(PIMCORE_BACKUP_DIRECTORY)) {
-                Logger::err("Directory " . PIMCORE_BACKUP_DIRECTORY . " does not exists and cannot be created.");
+            if (!\Pimcore\File::mkdir(PIMCORE_BACKUP_DIRECTORY)) {
+                \Logger::err("Directory " . PIMCORE_BACKUP_DIRECTORY . " does not exists and cannot be created.");
                 exit;
             }
         }
@@ -108,7 +190,7 @@ class Pimcore_Backup {
         $steps = array();
 
         // get available tables
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
         $tables = $this->getTables();
 
 
@@ -206,6 +288,11 @@ class Pimcore_Backup {
         );
     }
 
+    /**
+     * @param $step
+     * @return array
+     * @throws \Exception
+     */
     public function fileStep ($step) {
 
         $filesContainer = $this->getFilesToBackup();
@@ -235,7 +322,7 @@ class Pimcore_Backup {
                 if (file_exists($file) && is_readable($file)) {
 
                     $exclude = false;
-                    $relPath = str_replace(PIMCORE_DOCUMENT_ROOT . DIRECTORY_SEPARATOR, "", $file);
+                    $relPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $file);
                     $relPath = str_replace(DIRECTORY_SEPARATOR, "/", $relPath); // windows compatibility
 
                     foreach ($excludePatterns as $pattern) {
@@ -245,14 +332,14 @@ class Pimcore_Backup {
                     }
 
                     if (!$exclude && is_file($file)) {
-                        $this->getArchive()->addString($relPath, file_get_contents($file));
+                        $this->getArchive()->addFile($file, ltrim($relPath,"/"));
                     }
                     else {
-                        Logger::info("Backup: Excluded: " . $file);
+                        \Logger::info("Backup: Excluded: " . $file);
                     }
                 }
                 else {
-                    Logger::err("Backup: Can't read file: " . $file);
+                    \Logger::err("Backup: Can't read file: " . $file);
                 }
             }
         }
@@ -266,12 +353,15 @@ class Pimcore_Backup {
         );
     }
 
+    /**
+     * @return array
+     */
     protected function getTables(){
-        $db = Pimcore_Resource::get();
+        $db = Resource::get();
 
         if($mysqlTables = $this->options['mysql-tables']){
             $specificTables = explode(',',$mysqlTables);
-            $databaseName = (string)Pimcore_Config::getSystemConfig()->database->params->dbname;
+            $databaseName = (string) \Pimcore\Config::getSystemConfig()->database->params->dbname;
             $query = "SHOW FULL TABLES where `Tables_in_". $databaseName . "` IN(" . implode(',',wrapArrayElements($specificTables)) . ')';
         }else{
             $query = "SHOW FULL TABLES";
@@ -281,8 +371,12 @@ class Pimcore_Backup {
         return $tables;
     }
 
-    public function mysqlTables () {
-        $db = Pimcore_Resource::get();
+    /**
+     * @param array $exclude
+     * @return array
+     */
+    public function mysqlTables ($exclude = []) {
+        $db = Resource::get();
 
         $tables = $this->getTables();
 
@@ -293,6 +387,10 @@ class Pimcore_Backup {
 
             $name = current($table);
             $type = next($table);
+
+            if(in_array($name, $exclude)) {
+                continue;
+            }
 
             if ($type != "VIEW") {
                 $dumpData .= "\n\n";
@@ -320,10 +418,17 @@ class Pimcore_Backup {
         );
     }
 
+    /**
+     * @param $name
+     * @param $type
+     * @return array
+     */
     public function mysqlData ($name, $type) {
-        $db = Pimcore_Resource::reset();
+        $db = Resource::reset();
 
         $dumpData = "\n\n";
+
+        $name = $db->quoteTableAs($name);
 
         if ($type != "VIEW") {
             // backup tables
@@ -342,7 +447,7 @@ class Pimcore_Backup {
                     $cells[] = $cell;
                 }
 
-                $dumpData .= "INSERT INTO `" . $name . "` VALUES (" . implode(",", $cells) . ");";
+                $dumpData .= "INSERT INTO " . $name . " VALUES (" . implode(",", $cells) . ");";
                 $dumpData .= "\n";
 
             }
@@ -350,14 +455,14 @@ class Pimcore_Backup {
         else {
             // dump view structure
             $dumpData .= "\n\n";
-            $dumpData .= "DROP VIEW IF EXISTS `" . $name . "`;";
+            $dumpData .= "DROP VIEW IF EXISTS " . $name . ";";
             $dumpData .= "\n";
 
             try {
                 $viewData = $db->fetchRow("SHOW CREATE VIEW " . $name);
                 $dumpData .= $viewData["Create View"] . ";";
-            } catch (Exception $e) {
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error($e);
             }
         }
 
@@ -372,11 +477,14 @@ class Pimcore_Backup {
         );
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function mysqlComplete() {
-        $this->getArchive()->addString("dump.sql", file_get_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql"));
-
+        $this->getArchive()->addFile(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql", "dump.sql");
         // cleanup
-        unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql");
+        //unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql");
 
         return array(
             "success" => true,
@@ -384,13 +492,22 @@ class Pimcore_Backup {
         );
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function complete () {
-        $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/cache/.dummy", "dummy");
-        $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/tmp/.dummy", "dummy");
-        $this->getArchive()->addString(PIMCORE_FRONTEND_MODULE . "/var/log/debug.log", "dummy");
-        $this->getArchive()->addString("index.php", file_get_contents(PIMCORE_DOCUMENT_ROOT . "/index.php"));
-        $this->getArchive()->addString(".htaccess", file_get_contents(PIMCORE_DOCUMENT_ROOT . "/.htaccess"));
 
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/cache/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/tmp/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/backup/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/log/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/system/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/webdav/.dummy", "dummy");
+        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/log/debug.log", "dummy");
+
+        $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/index.php", "index.php");
+        $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/.htaccess", ".htaccess");
 
         return array(
             "success" => true,
@@ -399,35 +516,20 @@ class Pimcore_Backup {
         );
     }
 
-    public function restore(){
-        $archive = $this->getArchive();
-        $tmpRestoreDirectory = PIMCORE_TEMPORARY_DIRECTORY .'/backup-restore';
-        recursiveDelete($tmpRestoreDirectory);
-        Pimcore_File::mkdir($tmpRestoreDirectory);
-        $archive->extract($tmpRestoreDirectory);
-        $dumpFile = $tmpRestoreDirectory.'/dump.sql';
-        if(is_readable($dumpFile)){
-            $dbSettings = Pimcore_Config::getSystemConfig()->database->toArray();
+    /**
+     *
+     */
+    public function __wakeup() {
+        $this->zipArchive = null;
+    }
 
-            if(!in_array($dbSettings['adapter'],array('Mysqli','Mysql'))){
-                throw new Exception("Database restore is only supporter for Mysql/Mysqli.");
-            }
-
-            $cmd = "mysql --user=" . escapeshellarg($dbSettings['params']['username']);
-            $cmd .= " --password=" . escapeshellarg($dbSettings['params']['password']);
-            $cmd .= " --host=" . escapeshellarg($dbSettings['params']['host']);
-            $cmd .= " --database=" . escapeshellarg($dbSettings['params']['dbname']);
-            $cmd .= " < " . escapeshellarg($dumpFile);
-
-            exec($cmd,$output,$resultCode);
-            if($resultCode === 0){
-                verboseMessage("Successfully imported sql data.");
-            }else{
-                throw new Exception("Could not import sql data.");
-            }
+    /**
+     *
+     */
+    public function __destruct() {
+        if($this->zipArchive) {
+            @$this->zipArchive->close();
         }
-
-        recursiveDelete($tmpRestoreDirectory);
     }
 }
 

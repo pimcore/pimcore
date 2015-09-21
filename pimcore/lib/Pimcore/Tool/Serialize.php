@@ -13,7 +13,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_Serialize {
+namespace Pimcore\Tool;
+
+class Serialize {
 
 
     /**
@@ -37,4 +39,53 @@ class Pimcore_Tool_Serialize {
         return $data;
     }
 
+
+    /**
+     * @var array
+     */
+    protected static $loopFilterProcessedObjects = [];
+
+    /**
+     * this is a special json encoder that avoids recursion errors
+     * especially for pimcore models that contain massive self referencing objects
+     * @param $data
+     * @return string
+     */
+    public static function removeReferenceLoops($data) {
+        self::$loopFilterProcessedObjects = []; // reset
+        return self::loopFilterCycles($data);
+    }
+
+    /**
+     * @param $element
+     * @return mixed
+     */
+    protected static function loopFilterCycles ($element) {
+        if(is_array($element)) {
+            foreach ($element as &$value) {
+                $value = self::loopFilterCycles($value);
+            }
+        } else if (is_object($element)) {
+
+            $clone = clone $element; // do not modify the original object
+
+            if(in_array($element, self::$loopFilterProcessedObjects, true)) {
+                return '"* RECURSION (' . get_class($element) . ') *"';
+            }
+
+            self::$loopFilterProcessedObjects[] = $element;
+
+            $propCollection = get_object_vars($clone);
+
+            foreach ($propCollection as $name => $propValue) {
+                $clone->$name = self::loopFilterCycles($propValue);
+            }
+
+            array_splice(self::$loopFilterProcessedObjects, array_search($element, self::$loopFilterProcessedObjects, true), 1);
+
+            return $clone;
+        }
+
+        return $element;
+    }
 }

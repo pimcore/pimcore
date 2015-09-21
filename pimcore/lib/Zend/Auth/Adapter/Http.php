@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage Zend_Auth_Adapter_Http
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -35,7 +35,7 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage Zend_Auth_Adapter_Http
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @todo       Support auth-int
  * @todo       Track nonces, nonce-count, opaque for replay protection and stale support
@@ -163,7 +163,6 @@ class Zend_Auth_Adapter_Http implements Zend_Auth_Adapter_Interface
      *    'alogrithm' => <string> See $_supportedAlgos. Default: MD5
      *    'proxy_auth' => <bool> Whether to do authentication as a Proxy
      * @throws Zend_Auth_Adapter_Exception
-     * @return void
      */
     public function __construct(array $config)
     {

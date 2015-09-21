@@ -136,7 +136,8 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-update",
                 params: {
-                    key: value
+                    key: value,
+                    task: "add"
                 },
                 success: function (response) {
                     this.tree.getRootNode().reload();
@@ -144,6 +145,8 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                     var data = Ext.decode(response.responseText);
                     if(data && data.success) {
                         this.openBrick(data.id);
+                    } else {
+                        pimcore.helpers.showNotification(t("error"), data["message"], "error");
                     }
                 }.bind(this)
             });
@@ -156,20 +159,26 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         }
     },
 
-    deleteField: function () {
-        Ext.Ajax.request({
-            url: "/admin/class/objectbrick-delete",
-            params: {
-                id: this.id
-            }
-        });
-
-        this.attributes.reference.getEditPanel().removeAll();
-        this.remove();
-    },
-
     activate: function () {
         Ext.getCmp("pimcore_panel_tabs").activate("pimcore_objectbricks");
+    },
+
+    deleteField: function () {
+
+        Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
+            if (btn == 'yes'){
+                Ext.Ajax.request({
+                    url: "/admin/class/objectbrick-delete",
+                    params: {
+                        id: this.id
+                    }
+                });
+
+                this.attributes.reference.getEditPanel().removeAll();
+                this.remove();
+            }
+        }.bind(this));
     }
+
 
 });

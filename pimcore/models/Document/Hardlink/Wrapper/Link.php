@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_Hardlink_Wrapper_Interface {
+namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
-    use Document_Hardlink_Wrapper;
+use Pimcore\Model;
+
+class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrapper\WrapperInterface {
+
+    use Model\Document\Hardlink\Wrapper;
 }

@@ -235,7 +235,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             this.batchParameters = {
                 name: fieldInfo.dataIndex,
                 value: newValue,
-                valueType: valueType
+                valueType: valueType,
+                language: this.gridLanguage
             };
 
 
@@ -330,10 +331,17 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         }
 
+        var objectId;
+        if(this["object"] && this.object["id"]) {
+            objectId = this.object.id;
+        } else if (this["element"] && this.element["id"]) {
+            objectId = this.element.id;
+        }
+
         var columnConfig = {
             language: this.gridLanguage,
             classid: this.classId,
-            objectId: this.object.id,
+            objectId: objectId,
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {

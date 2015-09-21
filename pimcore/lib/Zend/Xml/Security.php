@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Xml
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,7 +23,7 @@
 /**
  * @category   Zend
  * @package    Zend_Xml_SecurityScan
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Xml_Security
@@ -93,12 +93,13 @@ class Zend_Xml_Security
         $result = $dom->loadXml($xml, LIBXML_NONET);
         restore_error_handler();
 
+        // Entity load to previous setting
+        if (!self::isPhpFpm()) {
+            libxml_disable_entity_loader($loadEntities);
+            libxml_use_internal_errors($useInternalXmlErrors);
+        }
+
         if (!$result) {
-            // Entity load to previous setting
-            if (!self::isPhpFpm()) {
-                libxml_disable_entity_loader($loadEntities);
-                libxml_use_internal_errors($useInternalXmlErrors);
-            }
             return false;
         }
 
@@ -112,12 +113,6 @@ class Zend_Xml_Security
                     }
                 }
             }
-        }
-
-        // Entity load to previous setting
-        if (!self::isPhpFpm()) {
-            libxml_disable_entity_loader($loadEntities);
-            libxml_use_internal_errors($useInternalXmlErrors);
         }
 
         if (isset($simpleXml)) {

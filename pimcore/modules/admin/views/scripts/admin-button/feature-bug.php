@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/admin/iframe.css" />
+    <link rel="stylesheet" type="text/css" href="/pimcore/static6/js/frontend/admin/iframe.css" />
 </head>
 
 
@@ -11,12 +11,12 @@
     <div>
         <h1>
             <?php if($this->type == "bug") { ?>
-                <?php echo $this->translate("bug_report_for"); ?>:
+                <?= $this->translate("bug_report_for"); ?>:
             <?php } else { ?>
-                <?php echo $this->translate("feature_request_for"); ?>:
+                <?= $this->translate("feature_request_for"); ?>:
             <?php } ?>
             <br />
-            <small><?php echo $this->getParam("url"); ?></small>
+            <small><?= $this->getParam("url"); ?></small>
 
         </h1>
 
@@ -24,27 +24,27 @@
             <b style="color: red;">Please enter a contact address in: <i>Settings -> System -> General -> Contact E-Mail</i> in order to use this feature.</b>
         <?php } else if(!$this->getParam("submit")) { ?>
             <form action="" method="post">
-                <label><?php echo $this->translate("description"); ?></label>
+                <label><?= $this->translate("description"); ?></label>
                 <textarea name="description"></textarea>
 
                 <?php if($this->image) { ?>
                     <br />
                     <br />
 
-                    <label><?php echo $this->translate("notes_screenshot"); ?></label>
+                    <label><?= $this->translate("notes_screenshot"); ?></label>
                     <div class="screenshot">
-                        <img src="<?php echo $this->image; ?>" />
+                        <img src="<?= $this->image; ?>" />
                     </div>
                 <?php } ?>
 
 
                 <input type="hidden" name="markers" />
-                <input type="hidden" name="screenshot" value="<?php echo $this->image; ?>" />
+                <input type="hidden" name="screenshot" value="<?= $this->image; ?>" />
 
-                <input type="submit" name="submit" value="<?php echo $this->translate("submit"); ?>" />
+                <input type="submit" name="submit" value="<?= $this->translate("submit"); ?>" />
             </form>
 
-            <script type="text/javascript" src="/pimcore/static/js/lib/jquery.min.js"></script>
+            <script type="text/javascript" src="/pimcore/static6/js/lib/jquery.min.js"></script>
             <script type="text/javascript">
                 $(document).ready(function () {
                     $(".screenshot img").click(function(ev) {
@@ -93,11 +93,11 @@
             <br />
             <strong>
                 <?php if($this->type == "bug") { ?>
-                    <?php echo $this->translate("bug_report_sent_success"); ?>
+                    <?= $this->translate("bug_report_sent_success"); ?>
                 <?php } else { ?>
-                    <?php echo $this->translate("feature_request_sent_success"); ?>
+                    <?= $this->translate("feature_request_sent_success"); ?>
                 <?php } ?>
-                (<?php echo $this->contactEmail; ?>).
+                (<?= $this->contactEmail; ?>).
             </strong>
 
 

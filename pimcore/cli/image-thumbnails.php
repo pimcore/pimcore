@@ -13,10 +13,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+chdir(__DIR__);
+
 include_once("startup.php");
 
+use Pimcore\Model\Asset;
+
 try {
-    $opts = new Zend_Console_Getopt(array(
+    $opts = new \Zend_Console_Getopt(array(
         'verbose|v' => 'show detailed information (for debug, ...)',
         'help|h' => 'display this help',
         "parent|p=i" => "only create thumbnails of images in this folder (ID)",
@@ -30,7 +34,7 @@ try {
 
 try {
     $opts->parse();
-} catch (Zend_Console_Getopt_Exception $e) {
+} catch (\Zend_Console_Getopt_Exception $e) {
     echo $e->getMessage();
 }
 
@@ -42,16 +46,16 @@ if($opts->getOption("help")) {
 }
 
 if($opts->getOption("verbose")) {
-    $writer = new Zend_Log_Writer_Stream('php://output');
-    $logger = new Zend_Log($writer);
-    Logger::addLogger($logger);
+    $writer = new \Zend_Log_Writer_Stream('php://output');
+    $logger = new \Zend_Log($writer);
+    \Logger::addLogger($logger);
 
     // set all priorities
-    Logger::setVerbosePriorities();
+    \Logger::setVerbosePriorities();
 }
 
 // get all thumbnails
-$dir = Asset_Image_Thumbnail_Config::getWorkingDir();
+$dir = Asset\Image\Thumbnail\Config::getWorkingDir();
 $thumbnails = array();
 $files = scandir($dir);
 foreach ($files as $file) {
@@ -71,7 +75,7 @@ $conditions = array("type = 'image'");
 
 if($opts->getOption("parent")) {
     $parent = Asset::getById($opts->getOption("parent"));
-    if($parent instanceof Asset_Folder) {
+    if($parent instanceof Asset\Folder) {
         $conditions[] = "path LIKE '" . $parent->getFullPath() . "/%'";
     } else {
         echo $opts->getOption("parent") . " is not a valid asset folder ID!\n";
@@ -79,7 +83,7 @@ if($opts->getOption("parent")) {
     }
 }
 
-$list = new Asset_List();
+$list = new Asset\Listing();
 $list->setCondition(implode(" AND ", $conditions));
 $total = $list->getTotalCount();
 $perLoop = 10;
@@ -103,7 +107,7 @@ for($i=0; $i<(ceil($total/$perLoop)); $i++) {
 
         if($opts->getOption("system")) {
 
-            $thumbnail = Asset_Image_Thumbnail_Config::getPreviewConfig();
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
             if($opts->getOption("force")) {
                 $image->clearThumbnail($thumbnail->getName());
             }
@@ -112,7 +116,7 @@ for($i=0; $i<(ceil($total/$perLoop)); $i++) {
             echo "generated thumbnail: " . $image->getThumbnail($thumbnail) . "\n";
         }
     }
-    Pimcore::collectGarbage();
+    \Pimcore::collectGarbage();
 }
 
 

@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Hardlink_In extends Webservice_Data_Document_Link {
+namespace Pimcore\Model\Webservice\Data\Document\Hardlink;
+
+use Pimcore\Model;
+
+class In extends Model\Webservice\Data\Document\Link {
 
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
 

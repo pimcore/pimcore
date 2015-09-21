@@ -15,10 +15,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Data_ObjectMetadata_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Object\Data\ObjectMetadata;
 
+use Pimcore\Model;
+use Pimcore\Model\Object;
 
-    public function save(Object_Concrete $object, $ownertype, $ownername, $position) {
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     * @param Object\Concrete $object
+     * @param $ownertype
+     * @param $ownername
+     * @param $position
+     * @throws \Zend_Db_Adapter_Exception
+     */
+    public function save(Object\Concrete $object, $ownertype, $ownername, $position) {
         $table = $this->getTablename($object);
 
         $dataTemplate = array("o_id" => $object->getId(),
@@ -38,13 +49,24 @@ class Object_Data_ObjectMetadata_Resource extends Pimcore_Model_Resource_Abstrac
 
     }
 
-
+    /**
+     * @param $object
+     * @return string
+     */
     private function getTablename($object) {
         return "object_metadata_" . $object->getClassId();
     }
 
-
-    public function load(Object_Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position) {
+    /**
+     * @param Object\Concrete $source
+     * @param $destination
+     * @param $fieldname
+     * @param $ownertype
+     * @param $ownername
+     * @param $position
+     * @return null|Model\Resource\Pimcore_Model_Abstract
+     */
+    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position) {
         $dataRaw = $this->db->fetchAll("SELECT * FROM " . $this->getTablename($source) . " WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ?", array($source->getId(), $destination->getId(), $fieldname, $ownertype, $ownername, $position));
         if(!empty($dataRaw)) {
             $this->model->setObject($destination);
@@ -62,9 +84,6 @@ class Object_Data_ObjectMetadata_Resource extends Pimcore_Model_Resource_Abstrac
             return null;
         }
     }
-
-
-
 
     /**
      * @return void

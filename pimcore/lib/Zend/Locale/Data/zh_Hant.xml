@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
-<!-- Copyright © 1991-2013 Unicode, Inc.
+<!-- Copyright © 1991-2014Unicode, Inc.
 CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
 For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9308 $"/>
-		<generation date="$Date: 2013-09-04 14:41:52 -0500 (Wed, 04 Sep 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="zh"/>
 		<script type="Hant"/>
 	</identity>
@@ -26,54 +26,43 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">阿迪各文</language>
 			<language type="ae">阿緯斯陀文</language>
 			<language type="af">南非荷蘭文</language>
-			<language type="afa">亞非諸語言</language>
 			<language type="afh">阿弗里希利文</language>
 			<language type="agq" draft="contributed">亞罕文</language>
 			<language type="ain" draft="contributed">愛努文</language>
 			<language type="ak">阿坎文</language>
 			<language type="akk">阿卡德文</language>
 			<language type="ale">阿留申文</language>
-			<language type="alg">阿爾岡昆諸語言</language>
 			<language type="alt">南阿爾泰文</language>
 			<language type="am">阿姆哈拉文</language>
 			<language type="an">阿拉貢文</language>
 			<language type="ang">古英文</language>
 			<language type="anp">昂加文</language>
-			<language type="apa">阿帕切諸語言</language>
 			<language type="ar">阿拉伯文</language>
 			<language type="ar_001">現代標準阿拉伯文</language>
 			<language type="arc">阿拉米文</language>
 			<language type="arn">阿勞坎文</language>
 			<language type="arp">阿拉帕霍文</language>
-			<language type="art">人工語言</language>
 			<language type="arw">阿拉瓦克文</language>
 			<language type="as">阿薩姆文</language>
 			<language type="asa" draft="contributed">阿蘇文</language>
 			<language type="ast">阿斯圖里亞文</language>
-			<language type="ath">阿薩帕斯坎諸語言</language>
-			<language type="aus">澳洲諸語言</language>
 			<language type="av">阿瓦爾文</language>
 			<language type="awa">阿瓦文</language>
 			<language type="ay">艾馬拉文</language>
 			<language type="az">亞塞拜然文</language>
 			<language type="az" alt="short">亞塞拜然文</language>
 			<language type="ba">巴什客爾文</language>
-			<language type="bad">班達文</language>
-			<language type="bai">巴米累克諸語言</language>
 			<language type="bal">俾路支文</language>
 			<language type="ban">峇里文</language>
 			<language type="bas">巴薩文</language>
-			<language type="bat">波羅的海諸語言</language>
 			<language type="bax" draft="contributed">巴姆穆文</language>
 			<language type="bbj" draft="contributed">戈馬拉文</language>
 			<language type="be">白俄羅斯文</language>
 			<language type="bej">貝扎文</language>
 			<language type="bem">別姆巴文</language>
-			<language type="ber">柏柏爾文</language>
 			<language type="bez" draft="contributed">貝納文</language>
 			<language type="bfd" draft="contributed">富特文</language>
 			<language type="bg">保加利亞文</language>
-			<language type="bh">比哈爾文</language>
 			<language type="bho">博傑普爾文</language>
 			<language type="bi">比斯拉馬文</language>
 			<language type="bik">比科爾文</language>
@@ -82,14 +71,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">錫克錫卡文</language>
 			<language type="bm">班巴拉文</language>
 			<language type="bn">孟加拉文</language>
-			<language type="bnt">班圖諸語言</language>
 			<language type="bo">藏文</language>
 			<language type="br">布里多尼文</language>
 			<language type="bra">布拉杰文</language>
 			<language type="brx" draft="contributed">博多文</language>
 			<language type="bs">波士尼亞文</language>
 			<language type="bss" draft="contributed">阿庫色文</language>
-			<language type="btk">巴塔克文</language>
 			<language type="bua">布里阿特文</language>
 			<language type="bug">布吉斯文</language>
 			<language type="bum" draft="contributed">布魯文</language>
@@ -97,14 +84,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv" draft="contributed">梅敦巴文</language>
 			<language type="ca">加泰羅尼亞文</language>
 			<language type="cad">卡多文</language>
-			<language type="cai">中美印第安諸語言</language>
 			<language type="car" draft="contributed">加勒比文</language>
-			<language type="cau">高加索諸語言</language>
 			<language type="cay" draft="contributed">卡尤加文</language>
 			<language type="cch">阿燦文</language>
 			<language type="ce">車臣文</language>
 			<language type="ceb">宿霧文</language>
-			<language type="cel">凱爾特諸語言</language>
 			<language type="cgg" draft="contributed">奇加文</language>
 			<language type="ch">查莫洛文</language>
 			<language type="chb">奇布查文</language>
@@ -117,26 +101,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">柴羅基文</language>
 			<language type="chy">沙伊安文</language>
 			<language type="ckb">索拉尼庫爾德文</language>
-			<language type="cmc" draft="contributed">佔語諸語言</language>
 			<language type="co">科西嘉文</language>
 			<language type="cop">科普特文</language>
-			<language type="cpe">源自英文的克里奧爾文和皮欽文</language>
-			<language type="cpf">源自法文的克里奧爾文和皮欽文</language>
-			<language type="cpp">源自葡萄牙文的克里奧爾文和皮欽文</language>
 			<language type="cr">克裡文</language>
 			<language type="crh">克里米亞半島的土耳其文；克里米亞半島的塔塔爾文</language>
-			<language type="crp" draft="contributed">克里奧爾文和皮欽文</language>
 			<language type="cs">捷克文</language>
 			<language type="csb">卡舒布文</language>
 			<language type="cu">宗教斯拉夫文</language>
-			<language type="cus">庫施特諸語言</language>
 			<language type="cv">楚瓦什文</language>
 			<language type="cy">威爾斯文</language>
 			<language type="da">丹麥文</language>
 			<language type="dak">達科他文</language>
 			<language type="dar">達爾格瓦文</language>
 			<language type="dav" draft="contributed">台塔文</language>
-			<language type="day">迪雅克文</language>
 			<language type="de">德文</language>
 			<language type="de_AT" draft="provisional">德文 (奧地利)</language>
 			<language type="de_CH">高地德文 (瑞士)</language>
@@ -146,7 +123,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">丁卡文</language>
 			<language type="dje" draft="contributed">扎爾馬文</language>
 			<language type="doi">多格來文</language>
-			<language type="dra">德拉威諸語言</language>
 			<language type="dsb">下索布文</language>
 			<language type="dua">杜亞拉文</language>
 			<language type="dum" draft="contributed">中古荷蘭文</language>
@@ -184,7 +160,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">富拉文</language>
 			<language type="fi">芬蘭文</language>
 			<language type="fil">菲律賓文</language>
-			<language type="fiu">芬烏諸語言</language>
 			<language type="fj">斐濟文</language>
 			<language type="fo">法羅文</language>
 			<language type="fon">豐文</language>
@@ -201,7 +176,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">加約文</language>
 			<language type="gba">葛巴亞文</language>
 			<language type="gd">蘇格蘭蓋爾文</language>
-			<language type="gem" draft="contributed">日耳曼諸語言</language>
 			<language type="gez">吉茲文</language>
 			<language type="gil">吉爾伯特群島文</language>
 			<language type="gl">加里西亞文</language>
@@ -224,7 +198,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">希伯來文</language>
 			<language type="hi">北印度文</language>
 			<language type="hil">希利蓋農文</language>
-			<language type="him">赫馬查利文</language>
 			<language type="hit">赫梯文</language>
 			<language type="hmn">孟文</language>
 			<language type="ho">西里莫圖土文</language>
@@ -242,20 +215,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">國際文（E）</language>
 			<language type="ig">伊布文</language>
 			<language type="ii">四川彝文</language>
-			<language type="ijo">伊喬文</language>
 			<language type="ik">依奴皮維克文</language>
 			<language type="ilo">伊洛闊文</language>
-			<language type="inc">印度諸語言</language>
-			<language type="ine">印歐諸語言</language>
 			<language type="inh">印古什文</language>
 			<language type="io">伊多文</language>
-			<language type="ira">伊朗諸語言</language>
-			<language type="iro">易洛魁文</language>
 			<language type="is">冰島文</language>
 			<language type="it">義大利文</language>
 			<language type="iu">因紐特文</language>
 			<language type="ja">日文</language>
 			<language type="jbo">邏輯文</language>
+			<language type="jgo" draft="contributed">恩格姆巴文</language>
 			<language type="jmc" draft="contributed">馬恰美文</language>
 			<language type="jpr">猶太教-波斯文</language>
 			<language type="jrb">猶太阿拉伯文</language>
@@ -266,7 +235,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">卡琴文</language>
 			<language type="kaj" draft="contributed">卡捷文</language>
 			<language type="kam">卡姆巴文</language>
-			<language type="kar">克倫文</language>
 			<language type="kaw">卡威文</language>
 			<language type="kbd">卡巴爾達文</language>
 			<language type="kbl" draft="contributed">卡念布文</language>
@@ -276,7 +244,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">科羅文</language>
 			<language type="kg">剛果文</language>
 			<language type="kha">卡西文</language>
-			<language type="khi">科依桑諸語言</language>
 			<language type="kho">和闐文</language>
 			<language type="khq" draft="contributed">西桑海文</language>
 			<language type="ki">吉庫尤文</language>
@@ -295,7 +262,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">卡努裡文</language>
 			<language type="krc">卡拉柴-包爾卡爾文</language>
 			<language type="krl">卡累利阿文</language>
-			<language type="kro">克魯文</language>
 			<language type="kru">庫魯科文</language>
 			<language type="ks">喀什米爾文</language>
 			<language type="ksb" draft="contributed">尚巴拉文</language>
@@ -335,7 +301,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">邁蒂利文</language>
 			<language type="mak">望加錫文</language>
 			<language type="man">曼丁哥文</language>
-			<language type="map">南島諸語言</language>
 			<language type="mas">馬賽文</language>
 			<language type="mde" draft="contributed">馬巴文</language>
 			<language type="mdf">莫克沙文</language>
@@ -346,19 +311,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mg">馬爾加什文</language>
 			<language type="mga" draft="contributed">中古愛爾蘭文</language>
 			<language type="mgh" draft="contributed">馬夸文</language>
+			<language type="mgo" draft="contributed">美塔文</language>
 			<language type="mh">馬紹爾文</language>
 			<language type="mi">毛利文</language>
 			<language type="mic">米克馬克文</language>
 			<language type="min">米南卡堡文</language>
-			<language type="mis">混雜語諸語言</language>
 			<language type="mk">馬其頓文</language>
-			<language type="mkh">孟高棉諸語言</language>
 			<language type="ml">馬來亞拉姆文</language>
 			<language type="mn">蒙古文</language>
 			<language type="mnc">滿族文</language>
 			<language type="mni">曼尼普裡文</language>
-			<language type="mno">馬諾博諸語言</language>
-			<language type="mo">摩爾多瓦文</language>
 			<language type="moh">莫霍克文</language>
 			<language type="mos">莫西文</language>
 			<language type="mr">馬拉地文</language>
@@ -366,17 +328,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">馬爾他文</language>
 			<language type="mua" draft="contributed">蒙當文</language>
 			<language type="mul">多種語言</language>
-			<language type="mun">蒙達諸語言</language>
 			<language type="mus">克里克文</language>
 			<language type="mwl" draft="contributed">米蘭德斯文</language>
 			<language type="mwr">馬爾尼裡文</language>
 			<language type="my">緬甸文</language>
 			<language type="mye" draft="contributed">姆耶內文</language>
-			<language type="myn">馬雅諸語言</language>
 			<language type="myv">厄爾茲亞文</language>
 			<language type="na">諾魯文</language>
-			<language type="nah">納瓦特文</language>
-			<language type="nai">北美印第安諸語言</language>
 			<language type="nap">拿波里文</language>
 			<language type="naq" draft="contributed">納馬文</language>
 			<language type="nb">巴克摩挪威文</language>
@@ -386,7 +344,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">尼瓦爾文</language>
 			<language type="ng">恩東加文</language>
 			<language type="nia">尼亞斯文</language>
-			<language type="nic">尼日爾科爾多凡諸語言</language>
 			<language type="niu">紐埃文</language>
 			<language type="nl">荷蘭文</language>
 			<language type="nl_BE">佛蘭芒文</language>
@@ -399,7 +356,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">西非書面語言（N'ko）</language>
 			<language type="nr">南地畢列文</language>
 			<language type="nso">北索托文</language>
-			<language type="nub">努比亞諸語言</language>
 			<language type="nus" draft="contributed">努埃爾文</language>
 			<language type="nv">納瓦霍文</language>
 			<language type="nwc">古尼瓦爾文</language>
@@ -415,21 +371,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">奧塞提文</language>
 			<language type="osa">歐塞奇文</language>
 			<language type="ota">鄂圖曼土耳其文</language>
-			<language type="oto">奧托米諸語言</language>
 			<language type="pa">旁遮普文</language>
-			<language type="paa">巴布亞諸語言</language>
 			<language type="pag">潘加辛文</language>
 			<language type="pal">巴列維文</language>
 			<language type="pam">潘帕嘉文</language>
 			<language type="pap">帕皮阿門托文</language>
 			<language type="pau">帛琉文</language>
 			<language type="peo">古波斯文</language>
-			<language type="phi">菲律賓諸語言</language>
 			<language type="phn">腓尼基文</language>
 			<language type="pi">巴利文</language>
 			<language type="pl">波蘭文</language>
 			<language type="pon">波那貝文</language>
-			<language type="pra">普拉克里特諸語言</language>
 			<language type="pro" draft="contributed">古普羅旺斯文</language>
 			<language type="ps">普什圖文</language>
 			<language type="pt">葡萄牙文</language>
@@ -441,7 +393,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">羅曼斯文</language>
 			<language type="rn" draft="contributed">隆迪文</language>
 			<language type="ro">羅馬尼亞文</language>
-			<language type="roa">羅曼諸語言</language>
+			<language type="ro_MD">摩爾多瓦文</language>
 			<language type="rof" draft="contributed">蘭博文</language>
 			<language type="rom">吉普賽文</language>
 			<language type="root">根語言</language>
@@ -452,8 +404,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">梵文</language>
 			<language type="sad">桑達韋文</language>
 			<language type="sah">雅庫特文</language>
-			<language type="sai" draft="contributed">南美印第安諸語言</language>
-			<language type="sal">薩利什諸語言</language>
 			<language type="sam">薩瑪利亞阿拉姆文</language>
 			<language type="saq" draft="contributed">薩布魯文</language>
 			<language type="sas">撒撒克文</language>
@@ -468,25 +418,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see" draft="contributed">塞訥卡文</language>
 			<language type="seh" draft="contributed">賽納文</language>
 			<language type="sel">瑟爾卡普文</language>
-			<language type="sem">閃語諸語言</language>
 			<language type="ses" draft="contributed">東桑海文</language>
 			<language type="sg">桑戈文</language>
 			<language type="sga">古愛爾蘭文</language>
-			<language type="sgn">手語</language>
 			<language type="sh">塞爾維亞克羅埃西亞文</language>
 			<language type="shi" draft="contributed">希爾哈文</language>
 			<language type="shn">撣文</language>
 			<language type="shu" draft="contributed">阿拉伯文（查德）</language>
 			<language type="si">僧伽羅文</language>
 			<language type="sid">希達摩文</language>
-			<language type="sio">蘇語諸語言</language>
-			<language type="sit">漢藏諸語言</language>
 			<language type="sk">斯洛伐克文</language>
 			<language type="sl">斯洛維尼亞文</language>
-			<language type="sla">斯拉夫諸語言</language>
 			<language type="sm">薩摩亞文</language>
 			<language type="sma">南薩米文</language>
-			<language type="smi">薩米諸語言</language>
 			<language type="smj">魯勒薩米文</language>
 			<language type="smn">伊納裡薩米文</language>
 			<language type="sms">斯科特薩米文</language>
@@ -494,13 +438,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">索尼基文</language>
 			<language type="so">索馬利文</language>
 			<language type="sog">索格底亞納文</language>
-			<language type="son">桑海文</language>
 			<language type="sq">阿爾巴尼亞文</language>
 			<language type="sr">塞爾維亞文</language>
 			<language type="srn" draft="contributed">蘇拉南東墎文</language>
 			<language type="srr">塞雷爾文</language>
 			<language type="ss">斯瓦特文</language>
-			<language type="ssa">尼羅撒哈拉諸語言</language>
 			<language type="ssy" draft="contributed">薩霍文</language>
 			<language type="st">塞索托文</language>
 			<language type="su">巽他文</language>
@@ -514,7 +456,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">古敘利亞文</language>
 			<language type="syr">敘利亞文</language>
 			<language type="ta">坦米爾文</language>
-			<language type="tai">傣語諸語言</language>
 			<language type="te">泰盧固文</language>
 			<language type="tem">提姆文</language>
 			<language type="teo" draft="contributed">特索文</language>
@@ -541,8 +482,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">欽西安文</language>
 			<language type="tt">韃靼文</language>
 			<language type="tum">圖姆布卡文</language>
-			<language type="tup">圖皮諸語言</language>
-			<language type="tut">阿爾泰諸語言（其他）</language>
 			<language type="tvl">吐瓦魯文</language>
 			<language type="tw">特威文</language>
 			<language type="twq" draft="contributed">北桑海文</language>
@@ -565,11 +504,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun" draft="contributed">溫舊文</language>
 			<language type="wa">瓦隆文</language>
 			<language type="wae" draft="contributed">瓦瑟文</language>
-			<language type="wak">瓦卡什諸語言</language>
 			<language type="wal">瓦拉莫文</language>
 			<language type="war">瓦瑞文</language>
 			<language type="was">瓦紹文</language>
-			<language type="wen">索布諸語言</language>
 			<language type="wo">沃洛夫文</language>
 			<language type="xal">卡爾梅克文</language>
 			<language type="xh">科薩文</language>
@@ -580,7 +517,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb" draft="contributed">耶姆巴文</language>
 			<language type="yi">意第緒文</language>
 			<language type="yo">約魯巴文</language>
-			<language type="ypk">尤皮克諸語言</language>
 			<language type="yue">粵語</language>
 			<language type="za">壯文</language>
 			<language type="zap">薩波特克文</language>
@@ -590,7 +526,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">中文</language>
 			<language type="zh_Hans">簡體中文</language>
 			<language type="zh_Hant">繁體中文</language>
-			<language type="znd">贊德文</language>
 			<language type="zu">祖魯文</language>
 			<language type="zun">祖尼文</language>
 			<language type="zxx">無語言內容</language>
@@ -1367,8 +1302,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="8">八月</month>
 							<month type="9">九月</month>
 							<month type="10">十月</month>
-							<month type="11">十一月</month>
-							<month type="12">十二月</month>
+							<month type="11">冬月</month>
+							<month type="12">臘月</month>
 						</monthWidth>
 						<monthWidth type="narrow">
 							<month type="1">正</month>
@@ -1381,8 +1316,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="8">八</month>
 							<month type="9">九</month>
 							<month type="10">十</month>
-							<month type="11">十一</month>
-							<month type="12">十二</month>
+							<month type="11">冬</month>
+							<month type="12">臘</month>
 						</monthWidth>
 						<monthWidth type="wide">
 							<month type="1">正月</month>
@@ -1395,8 +1330,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="8">八月</month>
 							<month type="9">九月</month>
 							<month type="10">十月</month>
-							<month type="11">十一月</month>
-							<month type="12">十二月</month>
+							<month type="11">冬月</month>
+							<month type="12">臘月</month>
 						</monthWidth>
 					</monthContext>
 					<monthContext type="stand-alone">
@@ -1411,8 +1346,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="8">八月</month>
 							<month type="9">九月</month>
 							<month type="10">十月</month>
-							<month type="11">十一月</month>
-							<month type="12">十二月</month>
+							<month type="11">冬月</month>
+							<month type="12">臘月</month>
 						</monthWidth>
 						<monthWidth type="narrow">
 							<month type="1">正</month>
@@ -1425,8 +1360,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="8">八</month>
 							<month type="9">九</month>
 							<month type="10">十</month>
-							<month type="11">十一</month>
-							<month type="12">十二</month>
+							<month type="11">冬</month>
+							<month type="12">臘</month>
 						</monthWidth>
 						<monthWidth type="wide">
 							<month type="1">正月</month>
@@ -1439,8 +1374,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<month type="8">八月</month>
 							<month type="9">九月</month>
 							<month type="10">十月</month>
-							<month type="11">十一月</month>
-							<month type="12">十二月</month>
+							<month type="11">冬月</month>
+							<month type="12">臘月</month>
 						</monthWidth>
 					</monthContext>
 				</months>
@@ -1568,17 +1503,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 				<dateFormats>
 					<dateFormatLength type="full">
 						<dateFormat>
-							<pattern numbers="hanidec">U年MMMd日EEEE</pattern>
+							<pattern numbers="d=hanidays">U年MMMdEEEE</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="long">
 						<dateFormat>
-							<pattern numbers="hanidec">U年MMMd日</pattern>
+							<pattern numbers="d=hanidays">U年MMMd</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="medium">
 						<dateFormat>
-							<pattern numbers="hanidec">U年MMMd日</pattern>
+							<pattern numbers="d=hanidays">U年MMMd</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="short">
@@ -1601,11 +1536,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd">MMMd日</dateFormatItem>
 						<dateFormatItem id="MMMEd">MMMd日E</dateFormatItem>
 						<dateFormatItem id="y">U年</dateFormatItem>
-						<dateFormatItem id="yMd">U年M月d日</dateFormatItem>
+						<dateFormatItem id="yMd">U年MMMd日</dateFormatItem>
 						<dateFormatItem id="yyyy">U年</dateFormatItem>
-						<dateFormatItem id="yyyyM">U年M月</dateFormatItem>
-						<dateFormatItem id="yyyyMd">U年M月d日</dateFormatItem>
-						<dateFormatItem id="yyyyMEd">U年M月d日，E</dateFormatItem>
+						<dateFormatItem id="yyyyM">U年MMM</dateFormatItem>
+						<dateFormatItem id="yyyyMd">U年MMMd日</dateFormatItem>
+						<dateFormatItem id="yyyyMEd">U年MMMd日，E</dateFormatItem>
 						<dateFormatItem id="yyyyMMM">U年MMM</dateFormatItem>
 						<dateFormatItem id="yyyyMMMd">U年MMMd日</dateFormatItem>
 						<dateFormatItem id="yyyyMMMEd">U年MMMd日E</dateFormatItem>
@@ -1643,7 +1578,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 							<greatestDifference id="H">HH–HH [v]</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="M">
-							<greatestDifference id="M">M月至M月</greatestDifference>
+							<greatestDifference id="M">MMM至MMM</greatestDifference>
 						</intervalFormatItem>
 						<intervalFormatItem id="Md">
 							<greatestDifference id="d">M/d至M/d</greatestDifference>
@@ -3739,9 +3674,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>帕麥</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>南極</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>昭和</exemplarCity>
 			</zone>
@@ -4014,9 +3946,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>多倫多</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>蒙特婁</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>伊魁特</exemplarCity>
@@ -4861,9 +4790,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="America/Phoenix">
 				<exemplarCity>鳳凰城</exemplarCity>
 			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>船岩峰</exemplarCity>
-			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>丹佛</exemplarCity>
 			</zone>
@@ -5571,6 +5497,20 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<metazone type="Mawson">
 				<long>
 					<standard>莫森時間</standard>
+				</long>
+			</metazone>
+			<metazone type="Mexico_Northwest">
+				<long>
+					<generic>墨西哥西北部時間</generic>
+					<standard>墨西哥西北部標準時間</standard>
+					<daylight>墨西哥西北部夏令時間</daylight>
+				</long>
+			</metazone>
+			<metazone type="Mexico_Pacific">
+				<long>
+					<generic>墨西哥太平洋時間</generic>
+					<standard>墨西哥太平洋標準時間</standard>
+					<daylight>墨西哥太平洋夏令時間</daylight>
 				</long>
 			</metazone>
 			<metazone type="Mongolia">

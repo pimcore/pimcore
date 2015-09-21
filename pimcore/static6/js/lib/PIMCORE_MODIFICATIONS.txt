@@ -1,0 +1,42 @@
+
+
+# CKEDITOR (use builder: http://ckeditor.com/builder);
+
++ select "full" distribution
+
+Add plugins:
++ plugin sourcedialog
++ plugin tableresize
+
+Remove plugins:
+- About CKEditor
+- Content Templates
+- File Browser
+- Flash Dialog
+- Form Elements
+- Insert Smiley
+- Magic Line
+- Maximize
+- New Page
+- Preview
+- Print
+- Save
+- SpellCheckAsYouType (SCAYT)
+
+
+# EXT JS
+needed components:
+\build\ext-all.js
+\build\ext-all-debug.js
+\build\classic\theme-triton
+\build\classic\locale
+\packages\ux\classic\src => ux
+\packages\build\charts\classic\ => packages\charts\classic (only JS)
+\packages\build\charts\classic\triton\ copy over ext\classic\theme-triton
+
+
+# styling
+
+#5fa2dd => #3c3f41
+#eaeff4 => #e4e4e4
+#7fb5e4 => #3c3f41

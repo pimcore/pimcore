@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_EventManager
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -29,7 +29,7 @@
  *
  * @category   Zend
  * @package    Zend_EventManager
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_EventManager_Filter_FilterIterator extends Zend_Stdlib_SplPriorityQueue
@@ -90,11 +90,11 @@ class Zend_EventManager_Filter_FilterIterator extends Zend_Stdlib_SplPriorityQue
      * Iterate the next filter in the chain
      *
      * Iterates and calls the next filter in the chain.
-     * 
-     * @param  mixed $context 
-     * @param  array $params 
-     * @param  Zend_EventManager_Filter_FilterIterator $chain 
-     * @return void
+     *
+     * @param  mixed                                   $context
+     * @param  array                                   $params
+     * @param  Zend_EventManager_Filter_FilterIterator $chain
+     * @return mixed
      */
     public function next($context = null, array $params = array(), $chain = null)
     {

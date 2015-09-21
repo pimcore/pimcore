@@ -96,18 +96,19 @@ pimcore.report.qrcode.item = Class.create({
                             color: 0x15428B
                         }
                     }
-                ]
-            }],
-            buttons: [{
-                text: t("show_in_google_anaytics"),
-                iconCls: "pimcore_icon_analytics",
-                handler: function () {
-                    var analyticsUrl = "#report/trafficsources-campaigns/a{accountId}w{internalWebPropertyId}p{id}/"
-                        + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name
-                                                                    + "%2Canalytics.sourceMedium%3AQR-Code/";
-                    window.open("/admin/reports/analytics/deeplink?url=" + encodeURIComponent(analyticsUrl));
-                }.bind(this)
-            }]
+                ],
+                buttons: [{
+                    text: t("show_in_google_anaytics"),
+                    iconCls: "pimcore_icon_analytics",
+                    handler: function () {
+                        var analyticsUrl = "#report/trafficsources-campaigns/a{accountId}w{internalWebPropertyId}p{id}/"
+                            + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name
+                            + "%2Canalytics.sourceMedium%3AQR-Code/";
+                        window.open("/admin/reports/analytics/deeplink?url=" + encodeURIComponent(analyticsUrl));
+                    }.bind(this)
+                }]
+            }
+            ]
         });
 
         this.form = new Ext.form.FormPanel({

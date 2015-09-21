@@ -15,32 +15,16 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Resource extends Element_Resource
+namespace Pimcore\Model\Asset;
+
+use Pimcore\Model;
+
+class Resource extends Model\Element\Resource
 {
-
-    /**
-     * List of valid columns in database table
-     * This is used for automatic matching the objects properties to the database
-     *
-     * @var array
-     */
-    protected $validColumns = array();
-
-    /**
-     * Get the valid columns from the database
-     *
-     * @return void
-     */
-    public function init()
-    {
-        $this->validColumns = $this->getValidTableColumns("assets");
-    }
-
     /**
      * Get the data for the object by id from database and assign it to the object (model)
-     *
-     * @param integer $id
-     * @return void
+     * @param $id
+     * @throws \Exception
      */
     public function getById($id)
     {
@@ -51,15 +35,17 @@ class Asset_Resource extends Element_Resource
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
 
-            $metadataRaw = $this->db->fetchAll("SELECT * FROM assets_metadata WHERE cid = ?", array($data["id"]));
-            $metadata = array();
-            foreach ($metadataRaw as $md) {
-                unset($md["cid"]);
-                $metadata[] = $md;
+            if($data["hasMetaData"]) {
+                $metadataRaw = $this->db->fetchAll("SELECT * FROM assets_metadata WHERE cid = ?", array($data["id"]));
+                $metadata = array();
+                foreach ($metadataRaw as $md) {
+                    unset($md["cid"]);
+                    $metadata[] = $md;
+                }
+                $this->model->setMetadata($metadata);
             }
-            $this->model->setMetadata($metadata);
         } else {
-            throw new Exception("Asset with ID " . $id . " doesn't exists");
+            throw new \Exception("Asset with ID " . $id . " doesn't exists");
         }
     }
 
@@ -67,7 +53,7 @@ class Asset_Resource extends Element_Resource
      * Get the data for the asset from database for the given path
      *
      * @param string $path
-     * @return void
+     * @throws \Exception
      */
     public function getByPath($path)
     {
@@ -83,14 +69,14 @@ class Asset_Resource extends Element_Resource
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("asset with path: " . $path . " doesn't exist");
+            throw new \Exception("asset with path: " . $path . " doesn't exist");
         }
     }
 
     /**
      * Create a the new object in database, an get the new assigned ID
      *
-     * @return void
+     * @throws \Exception
      */
     public function create()
     {
@@ -103,7 +89,7 @@ class Asset_Resource extends Element_Resource
 
             $date = time();
             $this->model->setId($this->db->lastInsertId());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
@@ -112,7 +98,7 @@ class Asset_Resource extends Element_Resource
     /**
      * Update data from object to the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function update()
     {
@@ -123,27 +109,36 @@ class Asset_Resource extends Element_Resource
             $asset = get_object_vars($this->model);
 
             foreach ($asset as $key => $value) {
-                if (in_array($key, $this->validColumns)) {
+                if (in_array($key, $this->getValidTableColumns("assets"))) {
 
                     if (is_array($value)) {
-                        $value = Pimcore_Tool_Serialize::serialize($value);
+                        $value = \Pimcore\Tool\Serialize::serialize($value);
                     }
                     $data[$key] = $value;
                 }
             }
 
-            // first try to insert a new record, this is because of the recyclebin restore
-            $this->db->insertOrUpdate("assets", $data);
-
             // metadata
             $this->db->delete("assets_metadata", "cid = " . $this->model->getId());
             $metadata = $this->model->getMetadata();
+            $data["hasMetaData"] = 0;
             if(!empty($metadata)) {
-                foreach ($metadata as $metadata) {
-                    $metadata["cid"] = $this->model->getId();
-                    $this->db->insert("assets_metadata", $metadata);
+                foreach ($metadata as $metadataItem) {
+                    $metadataItem["cid"] = $this->model->getId();
+                    unset($metadataItem['config']);
+
+                    if($metadataItem["data"] instanceof Model\Element\ElementInterface) {
+                        $metadataItem["data"] = $metadataItem["data"]->getId();
+                    }
+
+                    if(strlen($metadataItem["data"]) > 0) {
+                        $this->db->insert("assets_metadata", $metadataItem);
+                        $data["hasMetaData"] = 1;
+                    }
                 }
             }
+
+            $this->db->insertOrUpdate("assets", $data);
 
             // tree_locks
             $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'asset'");
@@ -154,7 +149,7 @@ class Asset_Resource extends Element_Resource
                     "locked" => $this->model->getLocked()
                 ));
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -162,13 +157,13 @@ class Asset_Resource extends Element_Resource
     /**
      * Remove the object from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete()
     {
         try {
             $this->db->delete("assets", $this->db->quoteInto("id = ?", $this->model->getId()));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -185,7 +180,7 @@ class Asset_Resource extends Element_Resource
         $assets = $this->db->fetchCol("SELECT id FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
 
         $userId = "0";
-        if ($user = Pimcore_Tool_Admin::getCurrentUser()) {
+        if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
             $userId = $user->getId();
         }
 
@@ -224,7 +219,7 @@ class Asset_Resource extends Element_Resource
         foreach ($propertiesRaw as $propertyRaw) {
 
             try {
-                $property = new Property();
+                $property = new Model\Property();
                 $property->setType($propertyRaw["type"]);
                 $property->setCid($this->model->getId());
                 $property->setName($propertyRaw["name"]);
@@ -244,8 +239,8 @@ class Asset_Resource extends Element_Resource
                 }
 
                 $properties[$propertyRaw["name"]] = $property;
-            } catch (Exception $e) {
-                Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getFullPath());
+            } catch (\Exception $e) {
+                \Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getFullPath());
             }
         }
 
@@ -270,6 +265,16 @@ class Asset_Resource extends Element_Resource
     }
 
     /**
+     * deletes all metadata for the object from database
+     *
+     * @return void
+     */
+    public function deleteAllMetadata()
+    {
+        $this->db->delete("assets_metadata", $this->db->quoteInto("cid = ?", $this->model->getId()));
+    }
+
+    /**
      * get versions from database, and assign it to object
      *
      * @return array
@@ -280,7 +285,7 @@ class Asset_Resource extends Element_Resource
 
         $versions = array();
         foreach ($versionIds as $versionId) {
-            $versions[] = Version::getById($versionId["id"]);
+            $versions[] = Model\Version::getById($versionId["id"]);
         }
 
         $this->model->setVersions($versions);
@@ -312,8 +317,8 @@ class Asset_Resource extends Element_Resource
     {
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?", $this->model->getId());
-        } catch (Exception $e) {
-            Logger::error("could not get  current asset path from DB");
+        } catch (\Exception $e) {
+            \Logger::error("could not get  current asset path from DB");
         }
 
         return $path;
@@ -331,6 +336,16 @@ class Asset_Resource extends Element_Resource
         return (bool)$c;
     }
 
+	/**
+	 * Quick test if there are siblings
+	 *
+	 * @return boolean
+	 */
+	public function hasSiblings() {
+		$c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+		return (bool)$c;
+	}
+
     /**
      * returns the amount of directly childs (not recursivly)
      *
@@ -340,16 +355,16 @@ class Asset_Resource extends Element_Resource
     public function getChildAmount($user = null)
     {
         if ($user and !$user->isAdmin()) {
-                    $userIds = $user->getRoles();
-                    $userIds[] = $user->getId();
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
 
-                    $query = "select count(*) from assets a where parentId = ?
-                                    and (select list as locate from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;";
+            $query = "select count(*) from assets a where parentId = ?
+                            and (select list as locate from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;";
 
 
-                } else {
-                    $query = "SELECT COUNT(*) AS count FROM assets WHERE parentId = ?";
-                }
+        } else {
+            $query = "SELECT COUNT(*) AS count FROM assets WHERE parentId = ?";
+        }
 
 
 
@@ -400,7 +415,7 @@ class Asset_Resource extends Element_Resource
             $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
             if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
-                $version = Version::getById($versionData["id"]);
+                $version = Model\Version::getById($versionData["id"]);
                 return $version;
             }
         }
@@ -426,7 +441,7 @@ class Asset_Resource extends Element_Resource
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_asset WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC, ABS(userId-" . $user->getId() . ") ASC LIMIT 1");
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_asset WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") AND `" . $type . "` = 1 ORDER BY LENGTH(cpath) DESC, ABS(userId-" . $user->getId() . ") ASC LIMIT 1");
 
             if ($permissionsParent) {
                 return true;
@@ -445,8 +460,8 @@ class Asset_Resource extends Element_Resource
                     return true;
                 }
             }
-        } catch (Exception $e) {
-            Logger::warn("Unable to get permission " . $type . " for asset " . $this->model->getId());
+        } catch (\Exception $e) {
+            \Logger::warn("Unable to get permission " . $type . " for asset " . $this->model->getId());
         }
 
         return false;

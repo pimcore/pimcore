@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="ur"/>
 	</identity>
 	<localeDisplayNames>
@@ -31,7 +31,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="be">بیلاروسی</language>
 			<language type="bem">بیمبا</language>
 			<language type="bg">بلغاری</language>
-			<language type="bh">بہاری</language>
 			<language type="bn">بنگالی</language>
 			<language type="bo">تبتی</language>
 			<language type="br">بریٹن</language>
@@ -1501,9 +1500,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>پلمیر</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>قطب جنوبی</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>سیووا</exemplarCity>
 			</zone>
@@ -1776,9 +1772,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>ٹورنٹو</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>مونٹریال</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>ایکالوئٹ</exemplarCity>
@@ -2622,9 +2615,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>فینکس</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>شپراک</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>ڈینور</exemplarCity>

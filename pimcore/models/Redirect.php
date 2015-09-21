@@ -15,7 +15,9 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Redirect extends Pimcore_Model_Abstract {
+namespace Pimcore\Model;
+
+class Redirect extends AbstractModel {
 
     /**
      * @var integer
@@ -213,17 +215,18 @@ class Redirect extends Pimcore_Model_Abstract {
      */
     public function clearDependentCache() {
         
-        // this is mostly called in Redirect_Resource not here
+        // this is mostly called in Redirect\Resource not here
         try {
-            Pimcore_Model_Cache::clearTag("redirect");
+            \Pimcore\Model\Cache::clearTag("redirect");
         }
-        catch (Exception $e) {
-            Logger::crit($e);
+        catch (\Exception $e) {
+            \Logger::crit($e);
         }
     }
 
     /**
-     * @param int $expiry
+     * @param $expiry
+     * @return $this
      */
     public function setExpiry($expiry)
     {
@@ -246,18 +249,18 @@ class Redirect extends Pimcore_Model_Abstract {
      *
      */
     public static function maintenanceCleanUp() {
-        $list = new Redirect_List();
+        $list = new Redirect\Listing();
         $list->setCondition("expiry < " . time() . " AND expiry IS NOT NULL AND expiry != ''");
         $list->load();
 
         foreach ($list->getRedirects() as $redirect) {
-            echo $redirect->getSource() . "\n";
             $redirect->delete();
         }
     }
 
     /**
-     * @param boolean $sourceEntireUrl
+     * @param $sourceEntireUrl
+     * @return $this
      */
     public function setSourceEntireUrl($sourceEntireUrl)
     {
@@ -278,7 +281,8 @@ class Redirect extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $sourceSite
+     * @param $sourceSite
+     * @return $this
      */
     public function setSourceSite($sourceSite)
     {
@@ -299,7 +303,8 @@ class Redirect extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $targetSite
+     * @param $targetSite
+     * @return $this
      */
     public function setTargetSite($targetSite)
     {
@@ -343,7 +348,8 @@ class Redirect extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -360,7 +366,8 @@ class Redirect extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -375,6 +382,4 @@ class Redirect extends Pimcore_Model_Abstract {
     {
         return $this->creationDate;
     }
-
-
 }

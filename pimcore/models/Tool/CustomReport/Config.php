@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Tool_CustomReport_Config {
+
+namespace Pimcore\Model\Tool\CustomReport;
+
+use Pimcore\Model;
+
+class Config {
 
     /**
      * @var string
@@ -89,14 +93,14 @@ class Tool_CustomReport_Config {
 
     /**
      * @param $name
-     * @return Tool_CustomReport_Config
-     * @throws Exception
+     * @return Model\Tool\CustomReport\Config
+     * @throws \Exception
      */
     public static function getByName ($name) {
         $code = new self();
         $code->setName($name);
         if(!$code->load()) {
-            throw new Exception("sql report definition : " . $name . " does not exist");
+            throw new \Exception("sql report definition : " . $name . " does not exist");
         }
 
         return $code;
@@ -109,7 +113,7 @@ class Tool_CustomReport_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/sqlreport";
         if(!is_dir($dir)) {
-            Pimcore_File::mkdir($dir);
+            \Pimcore\File::mkdir($dir);
         }
 
         return $dir;
@@ -138,8 +142,8 @@ class Tool_CustomReport_Config {
         $items = $arrayConfig["yAxis"];
         $arrayConfig["yAxis"] = array("yAxis" => $items);
 
-        $config = new Zend_Config($arrayConfig);
-        $writer = new Zend_Config_Writer_Xml(array(
+        $config = new \Zend_Config($arrayConfig);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => $this->getConfigFile()
         ));
@@ -153,7 +157,7 @@ class Tool_CustomReport_Config {
      */
     public function load () {
 
-        $configXml = new Zend_Config_Xml($this->getConfigFile());
+        $configXml = new \Zend_Config_Xml($this->getConfigFile());
         $configArray = $configXml->toArray();
 
         if(array_key_exists("columnConfiguration",$configArray) && is_array($configArray["columnConfiguration"]["columnConfiguration"])) {
@@ -189,7 +193,7 @@ class Tool_CustomReport_Config {
 
         // to preserve compatibility to older sql reports
         if($configArray["sql"] && empty($configArray["dataSourceConfig"])) {
-            $legacy = new stdClass();
+            $legacy = new \stdClass();
             $legacy->type = "sql";
             $legacy->sql = $configArray["sql"];
             $configArray["dataSourceConfig"][] = $legacy;
@@ -208,8 +212,8 @@ class Tool_CustomReport_Config {
     /**
      * @return array
      */
-    public function getReportsList () {
-        $dir = Tool_CustomReport_Config::getWorkingDir();
+    public static function getReportsList () {
+        $dir = Model\Tool\CustomReport\Config::getWorkingDir();
 
         $reports = array();
         $files = scandir($dir);
@@ -227,10 +231,15 @@ class Tool_CustomReport_Config {
 
     }
 
-    public function getAdapter($configuration, $fullConfig = null) {
+    /**
+     * @param $configuration
+     * @param null $fullConfig
+     * @return mixed
+     */
+    public static function getAdapter($configuration, $fullConfig = null) {
 
         $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
-        $adapter = "Tool_CustomReport_Adapter_{$type}";
+        $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
         return new $adapter($configuration, $fullConfig);
     }
 

@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Text extends Asset {
+namespace Pimcore\Model\Asset;
+
+use Pimcore\Model;
+
+class Text extends Model\Asset {
 
     /**
      * @var string

@@ -46,6 +46,7 @@ if (!defined("PIMCORE_VERSION_DIRECTORY"))  define("PIMCORE_VERSION_DIRECTORY", 
 if (!defined("PIMCORE_WEBDAV_TEMP"))  define("PIMCORE_WEBDAV_TEMP", PIMCORE_WEBSITE_VAR . "/webdav");
 if (!defined("PIMCORE_LOG_DIRECTORY"))  define("PIMCORE_LOG_DIRECTORY", PIMCORE_WEBSITE_VAR . "/log");
 if (!defined("PIMCORE_LOG_DEBUG"))  define("PIMCORE_LOG_DEBUG", PIMCORE_LOG_DIRECTORY . "/debug.log");
+if (!defined("PIMCORE_LOG_FILEOBJECT_DIRECTORY"))  define("PIMCORE_LOG_FILEOBJECT_DIRECTORY", PIMCORE_LOG_DIRECTORY . "/fileobjects");
 if (!defined("PIMCORE_LOG_MAIL_TEMP"))  define("PIMCORE_LOG_MAIL_TEMP", PIMCORE_LOG_DIRECTORY . "/mail");
 if (!defined("PIMCORE_TEMPORARY_DIRECTORY"))  define("PIMCORE_TEMPORARY_DIRECTORY", PIMCORE_WEBSITE_VAR . "/tmp");
 if (!defined("PIMCORE_CACHE_DIRECTORY"))  define("PIMCORE_CACHE_DIRECTORY", PIMCORE_WEBSITE_VAR . "/cache");
@@ -65,7 +66,6 @@ $includePaths = array(
     PIMCORE_PATH . "/models",
     PIMCORE_WEBSITE_PATH . "/lib",
     PIMCORE_WEBSITE_PATH . "/models",
-    PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
@@ -74,10 +74,10 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 include(dirname(__FILE__) . "/helper.php");
 
 // setup zend framework and pimcore
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Pimcore.php";
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Logger.php";
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Zend/Loader.php";
-require_once PIMCORE_DOCUMENT_ROOT . "/pimcore/lib/Zend/Loader/Autoloader.php";
+require_once PIMCORE_PATH . "/lib/Pimcore.php";
+require_once PIMCORE_PATH . "/lib/Logger.php";
+require_once PIMCORE_PATH . "/lib/Zend/Loader.php";
+require_once PIMCORE_PATH . "/lib/Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->suppressNotFoundWarnings(false);
@@ -92,16 +92,9 @@ $autoloaderClassMapFiles = array(
 
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     if(file_exists($autoloaderClassMapFile)) {
-        $classMapAutoLoader = new Zend_Loader_ClassMapAutoloader(array($autoloaderClassMapFile));
+        $classMapAutoLoader = new \Pimcore\Loader\ClassMapAutoloader(array($autoloaderClassMapFile));
         $classMapAutoLoader->register();
     }
-}
-
-
-// do some general stuff
-$websiteStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/startup.php";
-if(@is_file($websiteStartup)) {
-    include_once($websiteStartup);
 }
 
 $composerStartup = PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php";
@@ -109,9 +102,15 @@ if(@is_file($composerStartup)) {
     include_once($composerStartup);
 }
 
+// do some general stuff
+$websiteStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/startup.php";
+if(@is_file($websiteStartup)) {
+    include_once($websiteStartup);
+}
+
 // on pimcore shutdown
 register_shutdown_function(function () {
-    Pimcore::getEventManager()->trigger("system.shutdown");
+    \Pimcore::getEventManager()->trigger("system.shutdown");
 });
 
 // attach global shutdown event

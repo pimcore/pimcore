@@ -12,15 +12,17 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Report {
+
+namespace Pimcore;
+
+class Report {
 
     /**
      * @static
      * @depricated
-     * @return Zend_Config
+     * @return \Zend_Config
      */
     public static function getConfig() {
-        return Pimcore_Config::getReportConfig();
+        return Config::getReportConfig();
     }
 }

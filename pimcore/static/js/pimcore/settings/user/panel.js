@@ -167,6 +167,12 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
 
     onTreeNodeClick: function (node) {
 
+        var user = pimcore.globalmanager.get("user");
+        if(node.attributes["admin"] && !user.admin) {
+            Ext.MessageBox.alert(t("error"), t("you_are_not_allowed_to_manage_admin_users"));
+            return;
+        }
+
         if(!node.attributes.allowChildren && node.id > 0) {
             this.openUser(node.id);
         }
@@ -175,52 +181,55 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
     onTreeNodeContextmenu: function () {
 
         var user = pimcore.globalmanager.get("user");
-        if (user.admin) {
 
-            this.select();
-            var menu = new Ext.menu.Menu();
-
-            if (this.allowChildren) {
-                menu.add(new Ext.menu.Item({
-                    text: t('add_folder'),
-                    iconCls: "pimcore_icon_folder_add",
-                    listeners: {
-                        "click": this.attributes.reference.add.bind(this, "userfolder", 0)
-                    }
-                }));
-                menu.add(new Ext.menu.Item({
-                    text: t('add_user'),
-                    iconCls: "pimcore_icon_user_add",
-                    listeners: {
-                        "click": this.attributes.reference.add.bind(this, "user", 0)
-                    }
-                }));
-            } else if (this.attributes.elementType == "user") {
-                menu.add(new Ext.menu.Item({
-                    text: t('clone_user'),
-                    iconCls: "pimcore_icon_user_add",
-                    listeners: {
-                        "click": this.attributes.reference.add.bind(this, "user", this.attributes.id)
-                    }
-                }));
-            }
-
-
-            if (this.id != user.id) {
-                menu.add(new Ext.menu.Item({
-                    text: t('delete'),
-                    iconCls: "pimcore_icon_delete",
-                    listeners: {
-                        "click": this.attributes.reference.remove.bind(this)
-                    }
-                }));
-            }
-
-            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined"
-                && menu.items.items.length > 0) {
-                menu.show(this.ui.getAnchor());
-            }
+        if(this.attributes.admin && !user.admin) {
+            // only admin users are allowed to manage admin users
+            return;
         }
+
+        this.select();
+        var menu = new Ext.menu.Menu();
+
+        if (this.allowChildren) {
+            menu.add(new Ext.menu.Item({
+                text: t('add_folder'),
+                iconCls: "pimcore_icon_folder_add",
+                listeners: {
+                    "click": this.attributes.reference.add.bind(this, "userfolder", 0)
+                }
+            }));
+            menu.add(new Ext.menu.Item({
+                text: t('add_user'),
+                iconCls: "pimcore_icon_user_add",
+                listeners: {
+                    "click": this.attributes.reference.add.bind(this, "user", 0)
+                }
+            }));
+        } else if (this.attributes.elementType == "user") {
+            menu.add(new Ext.menu.Item({
+                text: t('clone_user'),
+                iconCls: "pimcore_icon_user_add",
+                listeners: {
+                    "click": this.attributes.reference.add.bind(this, "user", this.attributes.id)
+                }
+            }));
+        }
+
+        if (this.id != user.id && (this.attributes.type != "userfolder" || user.admin)) {
+            menu.add(new Ext.menu.Item({
+                text: t('delete'),
+                iconCls: "pimcore_icon_delete",
+                listeners: {
+                    "click": this.attributes.reference.remove.bind(this)
+                }
+            }));
+        }
+
+        if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined"
+            && menu.items.items.length > 0) {
+            menu.show(this.ui.getAnchor());
+        }
+
     },
 
     addComplete: function (parentId, transport) {

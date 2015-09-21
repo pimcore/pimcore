@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9280 $"/>
-		<generation date="$Date: 2013-08-27 13:07:13 -0500 (Tue, 27 Aug 2013) $"/>
+		<version number="$Revision: 9625 $"/>
+		<generation date="$Date: 2014-01-08 23:53:23 -0600 (Wed, 08 Jan 2014) $"/>
 		<language type="en"/>
 		<territory type="BW"/>
 	</identity>
@@ -23,6 +23,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<dateFormatLength type="long">
 						<dateFormat>
 							<pattern>dd MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>dd MMM y G</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="short">
@@ -136,6 +141,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 					<dateFormatLength type="long">
 						<dateFormat>
 							<pattern>dd MMMM y</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>dd MMM y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 					<dateFormatLength type="short">

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage Renderer
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -37,7 +37,7 @@
  *
  * @category   Zend
  * @package    Zend_Barcode
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Barcode_Renderer_Pdf extends Zend_Barcode_Renderer_RendererAbstract
@@ -62,9 +62,11 @@ class Zend_Barcode_Renderer_Pdf extends Zend_Barcode_Renderer_RendererAbstract
 
     /**
      * Set an image resource to draw the barcode inside
-     * @param resource $value
+     *
+     * @param Zend_Pdf $pdf
+     * @param int      $page
      * @return Zend_Barcode_Renderer
-     * @throw Zend_Barcode_Renderer_Exception
+     * @throws Zend_Barcode_Renderer_Exception
      */
     public function setResource($pdf, $page = 0)
     {
@@ -167,13 +169,14 @@ class Zend_Barcode_Renderer_Pdf extends Zend_Barcode_Renderer_RendererAbstract
 
     /**
      * Draw a text in the rendering resource
-     * @param string $text
-     * @param float $size
-     * @param array $position
-     * @param string $font
-     * @param integer $color
-     * @param string $alignment
-     * @param float $orientation
+     *
+     * @param string    $text
+     * @param float     $size
+     * @param array     $position
+     * @param string    $font
+     * @param integer   $color
+     * @param string    $alignment
+     * @param float|int $orientation
      */
     protected function _drawText(
         $text,

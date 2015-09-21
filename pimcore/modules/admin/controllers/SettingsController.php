@@ -13,7 +13,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
+use Pimcore\Model\Cache; 
+use Pimcore\Tool;
+use Pimcore\Config;
+use Pimcore\Model\Metadata;
+use Pimcore\Model\Property;
+use Pimcore\Model\Asset;
+use Pimcore\Model\WebsiteSetting;
+use Pimcore\Model\Document;
+use Pimcore\Model\Glossary;
+use Pimcore\Model\Staticroute;
+use Pimcore\Model\Redirect;
+use Pimcore\Model\Element;
+use Pimcore\Model;
+
+class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
 
     public function metadataAction() {
@@ -23,23 +37,28 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             if ($this->getParam("xaction") == "destroy") {
 
-                $id = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
-                $metadata = Metadata_Predefined::getById($id);
+                $metadata = Metadata\Predefined::getById($id);
                 $metadata->delete();
 
                 $this->_helper->json(array("success" => true, "data" => array()));
             }
             else if ($this->getParam("xaction") == "update") {
 
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
 
                 // save type
-                $metadata = Metadata_Predefined::getById($data["id"]);
+                $metadata = Metadata\Predefined::getById($data["id"]);
 
                 $metadata->setValues($data);
 
-                $existingItem = Metadata_Predefined_List::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage());
+                $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem && $existingItem->getId() != $metadata->getId()) {
                     $this->_helper->json(array("message" => "rule_violation", "success" => false));
                 }
@@ -51,15 +70,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $this->_helper->json(array("data" => $metadata, "success" => true));
             }
             else if ($this->getParam("xaction") == "create") {
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
                 unset($data["id"]);
 
                 // save type
-                $metadata = Metadata_Predefined::create();
+                $metadata = Metadata\Predefined::create();
 
                 $metadata->setValues($data);
 
-                $existingItem = Metadata_Predefined_List::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage());
+                $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem) {
                     $this->_helper->json(array("message" => "rule_violation", "success" => false));
                 }
@@ -72,13 +91,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of types
 
-            $list = new Metadata_Predefined_List();
+            $list = new Metadata\Predefined\Listing();
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
+            } else {
+                $list->setOrderKey("name");
             }
 
             if($this->getParam("filter")) {
@@ -102,10 +124,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function getPredefinedMetadataAction() {
         $type = $this->getParam("type");
         $subType = $this->getParam("subType");
-        $list = Metadata_Predefined_List::getByTargetType($type, array($subType));
+        $list = Metadata\Predefined\Listing::getByTargetType($type, array($subType));
         $result = array();
         foreach ($list as $item) {
-            /** @var $item Metadata_Predefined */
+            /** @var $item Metadata\Predefined */
             $item->expand();
             $result[] = $item;
         }
@@ -122,19 +144,24 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             if ($this->getParam("xaction") == "destroy") {
 
-                $id = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
-                $property = Property_Predefined::getById($id);
+                $property = Property\Predefined::getById($id);
                 $property->delete();
 
                 $this->_helper->json(array("success" => true, "data" => array()));
             }
             else if ($this->getParam("xaction") == "update") {
 
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
 
                 // save type
-                $property = Property_Predefined::getById($data["id"]);
+                $property = Property\Predefined::getById($data["id"]);
                 $property->setValues($data);
 
                 $property->save();
@@ -142,11 +169,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $this->_helper->json(array("data" => $property, "success" => true));
             }
             else if ($this->getParam("xaction") == "create") {
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
                 unset($data["id"]);
 
                 // save type
-                $property = Property_Predefined::create();
+                $property = Property\Predefined::create();
                 $property->setValues($data);
 
                 $property->save();
@@ -157,13 +184,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of types
 
-            $list = new Property_Predefined_List();
+            $list = new Property\Predefined\Listing();
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
+            } else {
+                $list->setOrderKey('name');
             }
 
             if($this->getParam("filter")) {
@@ -189,7 +219,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         function delete ($dir, $thumbnail, &$matches = array()) {
             $dirs = glob($dir . '/*', GLOB_ONLYDIR);
             foreach ($dirs as $dir) {
-                if(preg_match("@/thumb__" . $thumbnail . "$@", $dir) || preg_match("@/thumb__" . $thumbnail . "_auto", $dir)) {
+                if(preg_match('@/thumb__' . $thumbnail . '$@', $dir) || preg_match('@/thumb__' . $thumbnail . '_auto@', $dir)) {
                     recursiveDelete($dir);
                 }
                 delete($dir, $thumbnail, $matches);
@@ -200,11 +230,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         delete($root, $thumbnailName);
     }
 
-    private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail_Config $thumbnail) {
+    private function deleteThumbnailTmpFiles(Asset\Image\Thumbnail\Config $thumbnail) {
         $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails", $thumbnail->getName());
     }
 
-    private function deleteVideoThumbnailTmpFiles(Asset_Video_Thumbnail_Config $thumbnail) {
+    private function deleteVideoThumbnailTmpFiles(Asset\Video\Thumbnail\Config $thumbnail) {
         $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails", $thumbnail->getName());
     }
 
@@ -212,7 +242,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("system_settings");
 
-        $values = Pimcore_Config::getSystemConfig();
+        $values = Config::getSystemConfig();
 
         if (($handle = fopen(PIMCORE_PATH . "/config/timezones.csv", "r")) !== FALSE) {
             while (($rowData = fgetcsv($handle, 10000, ",", '"')) !== false) {
@@ -221,7 +251,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             fclose($handle);
         }
 
-        $locales = Pimcore_Tool::getSupportedLocales();
+        $locales = Tool::getSupportedLocales();
         $languageOptions = array();
         foreach ($locales as $short => $translation) {
             if(!empty($short)) {
@@ -263,7 +293,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         //admin users as array
         $adminUsers = array();
-        $userList = new User_List();
+        $userList = new Model\User\Listing();
         $userList->setCondition("admin = 1 and email is not null and email != ''");
         $users = $userList->load();
         if (is_array($users)) {
@@ -279,28 +309,23 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             "config" => array(
                 "timezones" => $timezones,
                 "languages" => $languageOptions,
-                "client_ip" => Pimcore_Tool::getClientIp(),
-                "google_private_key_exists" => file_exists(Pimcore_Google_Api::getPrivateKeyPath()),
-                "google_private_key_path" => Pimcore_Google_Api::getPrivateKeyPath()
+                "client_ip" => Tool::getClientIp(),
+                "google_private_key_exists" => file_exists(\Pimcore\Google\Api::getPrivateKeyPath()),
+                "google_private_key_path" => \Pimcore\Google\Api::getPrivateKeyPath()
             )
         );
 
         $this->_helper->json($response);
-
-        $this->_helper->json(false);
     }
 
     public function setSystemAction() {
 
         $this->checkPermission("system_settings");
 
-        $values = Zend_Json::decode($this->getParam("data"));
-
-        // convert all special characters to their entities so the xml writer can put it into the file
-        $values = array_htmlspecialchars($values);
+        $values = \Zend_Json::decode($this->getParam("data"));
 
         // email settings
-        $oldConfig = Pimcore_Config::getSystemConfig();
+        $oldConfig = Config::getSystemConfig();
         $oldValues = $oldConfig->toArray();
 
         // fallback languages
@@ -312,9 +337,23 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $fallbackLanguages[$language] = str_replace(" ", "", $values["general.fallbackLanguages." . $language]);
             }
 
-            if(Zend_Locale::isLocale($language)) {
+            if(\Zend_Locale::isLocale($language)) {
                 $filteredLanguages[] = $language;
             }
+        }
+
+
+        // delete views if fallback languages has changed or the language is no more available
+        $fallbackLanguagesChanged = array_diff_assoc ($oldValues['general']['fallbackLanguages'], $fallbackLanguages);
+        $dbName = $oldConfig->get("database")->toArray()["params"]["dbname"];
+        foreach($fallbackLanguagesChanged as $language => $dummy)
+        {
+            $this->deleteViews($language, $dbName);
+        }
+
+        $cacheExcludePatterns = $values["cache.excludePatterns"];
+        if (is_array($cacheExcludePatterns)) {
+            $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
 
         $settings = array(
@@ -326,8 +365,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "language" => $values["general.language"],
                 "validLanguages" => implode(",", $filteredLanguages),
                 "fallbackLanguages" => $fallbackLanguages,
+                "defaultLanguage" => $values["general.defaultLanguage"],
                 "theme" => $values["general.theme"],
                 "contactemail" => $values["general.contactemail"],
+                "extjs6" => $values["general.extjs6"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
                 "debug" => $values["general.debug"],
@@ -337,6 +378,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "password" => $values["general.http_auth.password"]
                 ),
                 "custom_php_logfile" => $values["general.custom_php_logfile"],
+                "environment" => $values["general.environment"],
                 "debugloglevel" => $values["general.debugloglevel"],
                 "disable_whoops" => $values["general.disable_whoops"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
@@ -344,6 +386,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "logrecipient" => $values["general.logrecipient"],
                 "viewSuffix" => $values["general.viewSuffix"],
                 "instanceIdentifier" => $values["general.instanceIdentifier"],
+                "show_cookie_notice" => $values["general.show_cookie_notice"],
             ),
             "database" => $oldValues["database"], // db cannot be changed here
             "documents" => array(
@@ -385,7 +428,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "jpegoptim" => $values["assets.jpegoptim"],
                 "pdftotext" => $values["assets.pdftotext"],
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
-                "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
+                "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"],
+                "hide_edit_image" => $values["assets.hide_edit_image"]
             ),
             "services" => array(
                 "translate" => array(
@@ -401,7 +445,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             "cache" => array(
                 "enabled" => $values["cache.enabled"],
                 "lifetime" => $values["cache.lifetime"],
-                "excludePatterns" => $values["cache.excludePatterns"],
+                "excludePatterns" => $cacheExcludePatterns,
                 "excludeCookie" => $values["cache.excludeCookie"]
             ),
             "outputfilters" => array(
@@ -417,6 +461,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "proxy_port" => $values["httpclient.proxy_port"],
                 "proxy_user" => $values["httpclient.proxy_user"],
                 "proxy_pass" => $values["httpclient.proxy_pass"],
+            ),
+            "applicationlog" => array(
+                "mail_notification" => array(
+                    "send_log_summary" => $values['applicationlog.mail_notification.send_log_summary'],
+                    "filter_priority" => $values['applicationlog.mail_notification.filter_priority'],
+                    "mail_receiver" => $values['applicationlog.mail_notification.mail_receiver'],
+                ),
+                "archive_treshold" => $values['applicationlog.archive_treshold'],
+                "archive_alternative_database" => $values['applicationlog.archive_alternative_database'],
             )
         );
 
@@ -469,8 +522,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
         $settings["newsletter"]["usespecific"] = $values["newsletter.usespecific"];
 
-        $config = new Zend_Config($settings, true);
-        $writer = new Zend_Config_Writer_Xml(array(
+        // convert all special characters to their entities so the xml writer can put it into the file
+        $settings = array_htmlspecialchars($settings);
+
+        $config = new \Zend_Config($settings, true);
+        $writer = new \Zend_Config_Writer_Xml(array(
             "config" => $config,
             "filename" => PIMCORE_CONFIGURATION_SYSTEM
         ));
@@ -485,24 +541,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->checkPermission("clear_cache");
 
         // empty document cache
-        Pimcore_Model_Cache::clearAll();
+        Cache::clearAll();
 
-        $db = Pimcore_Resource::get();
+        $db = \Pimcore\Resource::get();
         $db->query("truncate table cache_tags");
         $db->query("truncate table cache");
 
         // empty cache directory
-        $files = scandir(PIMCORE_CACHE_DIRECTORY);
-        foreach ($files as $file) {
-            if ($file == ".dummy") {
-                // PIMCORE-1854 Deleting cache cleans whole folder inclusive .dummy
-                continue;
-            }
-            $filename = PIMCORE_CACHE_DIRECTORY . "/" . $file;
-            if (is_file($filename)) {
-                unlink($filename);
-            }
-        }
+        recursiveDelete(PIMCORE_CACHE_DIRECTORY, false);
+        // PIMCORE-1854 - recreate .dummy file => should remain
+        \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . "/.dummy", "");
 
         $this->_helper->json(array("success" => true));
 
@@ -513,10 +561,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->checkPermission("clear_cache");
 
         // remove "output" out of the ignored tags, if a cache lifetime is specified
-        Pimcore_Model_Cache::removeIgnoredTagOnClear("output");
+        Cache::removeIgnoredTagOnClear("output");
 
         // empty document cache
-        Pimcore_Model_Cache::clearTag("output");
+        Cache::clearTag("output");
 
         $this->_helper->json(array("success" => true));
     }
@@ -531,6 +579,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         // system files
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
 
+        // recreate .dummy files # PIMCORE-2629
+        \Pimcore\File::put(PIMCORE_TEMPORARY_DIRECTORY . "/.dummy", "");
+        \Pimcore\File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/.dummy", "");
+
         $this->_helper->json(array("success" => true));
     }
 
@@ -541,16 +593,25 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             $this->checkPermission("routes");
 
-            $data = Zend_Json::decode($this->getParam("data"));
+            $data = \Zend_Json::decode($this->getParam("data"));
 
             if(is_array($data)) {
                 foreach ($data as &$value) {
-                    $value = trim($value);
+                    if(is_string($value)) {
+                        $value = trim($value);
+                    }
                 }
             }
 
             if ($this->getParam("xaction") == "destroy") {
-                $route = Staticroute::getById($data);
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
+
+                $route = Staticroute::getById($id);
                 $route->delete();
 
                 $this->_helper->json(array("success" => true, "data" => array()));
@@ -580,16 +641,17 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of routes
 
-            $list = new Staticroute_List();
+            $list = new Staticroute\Listing();
 
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
             }
-
+            
             if($this->getParam("filter")) {
                 $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
@@ -609,19 +671,19 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function getAvailableLanguagesAction() {
 
-        if ($languages = Pimcore_Tool::getValidLanguages()) {
+        if ($languages = Tool::getValidLanguages()) {
             $this->_helper->json($languages);
         }
 
-        $t = new Translation_Website();
+        $t = new Model\Translation\Website();
         $this->_helper->json($t->getAvailableLanguages());
     }
 
     public function getAvailableAdminLanguagesAction() {
 
         $langs = array();
-        $availableLanguages = Pimcore_Tool_Admin::getLanguages();
-        $locales = Pimcore_Tool::getSupportedLocales();
+        $availableLanguages = Tool\Admin::getLanguages();
+        $locales = Tool::getSupportedLocales();
 
         foreach ($availableLanguages as $lang) {
             if(array_key_exists($lang, $locales)) {
@@ -642,8 +704,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $this->checkPermission("redirects");
 
             if ($this->getParam("xaction") == "destroy") {
-
-                $id = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
                 $redirect = Redirect::getById($id);
                 $redirect->delete();
@@ -652,7 +718,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
             else if ($this->getParam("xaction") == "update") {
 
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
 
                 // save redirect
                 $redirect = Redirect::getById($data["id"]);
@@ -676,7 +742,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $this->_helper->json(array("data" => $redirect, "success" => true));
             }
             else if ($this->getParam("xaction") == "create") {
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
                 unset($data["id"]);
 
                 // save route
@@ -704,13 +770,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of routes
 
-            $list = new Redirect_List();
+            $list = new Redirect\Listing();
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
             }
 
             if($this->getParam("filter")) {
@@ -746,11 +813,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         if ($this->getParam("data")) {
             $this->checkPermission("glossary");
 
-            Pimcore_Model_Cache::clearTag("glossary");
+            Cache::clearTag("glossary");
 
             if ($this->getParam("xaction") == "destroy") {
 
-                $id = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
@@ -759,7 +831,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
             else if ($this->getParam("xaction") == "update") {
 
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
 
                 // save glossary
                 $glossary = Glossary::getById($data["id"]);
@@ -787,7 +859,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $this->_helper->json(array("data" => $glossary, "success" => true));
             }
             else if ($this->getParam("xaction") == "create") {
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
                 unset($data["id"]);
 
                 // save glossary
@@ -818,13 +890,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of glossaries
 
-            $list = new Glossary_List();
+            $list = new Glossary\Listing();
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            if($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
             }
 
             if($this->getParam("filter")) {
@@ -853,46 +926,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(false);
     }
 
-    public function systemlogAction() {
-
-        $this->checkPermission("systemlog");
-
-        $file = PIMCORE_LOG_DEBUG;
-        $lines = 400;
-
-        $handle = fopen($file, "r");
-        $linecounter = $lines;
-        $pos = -2;
-        $beginning = false;
-        $text = array();
-        while ($linecounter > 0) {
-            $t = " ";
-            while ($t != "\n") {
-                if (fseek($handle, $pos, SEEK_END) == -1) {
-                    $beginning = true;
-                    break;
-                }
-                $t = fgetc($handle);
-                $pos--;
-            }
-            $linecounter--;
-            if ($beginning) {
-                rewind($handle);
-            }
-            $text[$lines - $linecounter - 1] = fgets($handle);
-            if ($beginning) break;
-        }
-        fclose($handle);
-
-        //$lines = array_reverse($text);
-        $lines = $text;
-
-        $this->view->lines = $lines;
-    }
-
     public function getAvailableSitesAction() {
 
-        $sitesList = new Site_List();
+        $sitesList = new Model\Site\Listing();
         $sitesObjects = $sitesList->load();
         $sites = array(array(
             "id" => "",
@@ -925,7 +961,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getAvailableCountriesAction() {
-        $countries = Zend_Locale::getTranslationList('territory');
+        $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
 
         $options = array();
@@ -946,8 +982,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
 
     public function thumbnailAdapterCheckAction () {
-        $instance = Pimcore_Image::getInstance();
-        if($instance instanceof Pimcore_Image_Adapter_GD) {
+        $instance = \Pimcore\Image::getInstance();
+        if($instance instanceof \Pimcore\Image\Adapter\GD) {
             echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
                 $this->view->translate("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
                 '</span>';
@@ -961,7 +997,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $dir = Asset_Image_Thumbnail_Config::getWorkingDir();
+        $dir = Asset\Image\Thumbnail\Config::getWorkingDir();
 
         $pipelines = array();
         $files = scandir($dir);
@@ -985,14 +1021,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $alreadyExist = false;
 
         try {
-            Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
+            Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
             $alreadyExist = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $pipe = new Asset_Image_Thumbnail_Config();
+            $pipe = new Asset\Image\Thumbnail\Config();
             $pipe->setName($this->getParam("name"));
             $pipe->save();
         }
@@ -1004,7 +1040,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
+        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
         $pipe->delete();
 
         $this->_helper->json(array("success" => true));
@@ -1015,7 +1051,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
+        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
         //$pipe->delete();
 
         $this->_helper->json($pipe);
@@ -1026,9 +1062,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
-        $settingsData = Zend_Json::decode($this->getParam("settings"));
-        $mediaData = Zend_Json::decode($this->getParam("medias"));
+        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
+        $settingsData = \Zend_Json::decode($this->getParam("settings"));
+        $mediaData = \Zend_Json::decode($this->getParam("medias"));
 
         foreach ($settingsData as $key => $value) {
             $setter = "set" . ucfirst($key);
@@ -1058,7 +1094,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function videoThumbnailAdapterCheckAction () {
 
-        if(!Pimcore_Video::isAvailable()) {
+        if(!\Pimcore\Video::isAvailable()) {
             echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
                 $this->view->translate("php_cli_binary_and_or_ffmpeg_binary_setting_is_missing") .
                 '</span>';
@@ -1072,7 +1108,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $dir = Asset_Video_Thumbnail_Config::getWorkingDir();
+        $dir = Asset\Video\Thumbnail\Config::getWorkingDir();
 
         $pipelines = array();
         $files = scandir($dir);
@@ -1096,14 +1132,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $alreadyExist = false;
 
         try {
-            Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
+            Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
             $alreadyExist = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $pipe = new Asset_Video_Thumbnail_Config();
+            $pipe = new Asset\Video\Thumbnail\Config();
             $pipe->setName($this->getParam("name"));
             $pipe->save();
         }
@@ -1115,7 +1151,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
+        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
         $pipe->delete();
 
         $this->_helper->json(array("success" => true));
@@ -1126,7 +1162,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
+        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
         $this->_helper->json($pipe);
     }
 
@@ -1135,8 +1171,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
-        $data = Zend_Json::decode($this->getParam("configuration"));
+        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
+        $data = \Zend_Json::decode($this->getParam("configuration"));
 
         $items = array();
         foreach ($data as $key => $value) {
@@ -1180,7 +1216,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if($this->getParam("data") !== null) {
             // save data
-            Pimcore_File::put($robotsPath, $this->getParam("data"));
+            \Pimcore\File::put($robotsPath, $this->getParam("data"));
 
             $this->_helper->json(array(
                 "success" => true
@@ -1206,7 +1242,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        $dir = Tool_Tag_Config::getWorkingDir();
+        $dir = Model\Tool\Tag\Config::getWorkingDir();
 
         $tags = array();
         $files = scandir($dir);
@@ -1228,14 +1264,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->checkPermission("tag_snippet_management");
 
         try {
-            Tool_Tag_Config::getByName($this->getParam("name"));
+            Model\Tool\Tag\Config::getByName($this->getParam("name"));
             $alreadyExist = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $tag = new Tool_Tag_Config();
+            $tag = new Model\Tool\Tag\Config();
             $tag->setName($this->getParam("name"));
             $tag->save();
         }
@@ -1247,7 +1283,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        $tag = Tool_Tag_Config::getByName($this->getParam("name"));
+        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
         $tag->delete();
 
         $this->_helper->json(array("success" => true));
@@ -1258,7 +1294,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        $tag = Tool_Tag_Config::getByName($this->getParam("name"));
+        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
         $this->_helper->json($tag);
     }
 
@@ -1267,8 +1303,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        $tag = Tool_Tag_Config::getByName($this->getParam("name"));
-        $data = Zend_Json::decode($this->getParam("configuration"));
+        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
+        $data = \Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
 
         $items = array();
@@ -1299,6 +1335,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
         $tag->setParams($params);
 
+        if($this->getParam("name") != $data["name"]) {
+            $tag->setName($this->getParam("name")); // set the old name again, so that the old file get's deleted
+            $tag->delete(); // delete the old config / file
+            $tag->setName($data["name"]);
+        }
+
         $tag->save();
 
         $this->_helper->json(array("success" => true));
@@ -1311,7 +1353,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                 $this->checkPermission("website_settings");
 
-                $data = Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
 
                 if(is_array($data)) {
                     foreach ($data as &$value) {
@@ -1320,7 +1362,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
 
                 if ($this->getParam("xaction") == "destroy") {
-                    $setting = WebsiteSetting::getById($data);
+                    if (\Pimcore\Tool\Admin::isExtJS6()) {
+                        $id = $data["id"];
+                    } else {
+                        $id = $data;
+                    }
+
+                    $setting = WebsiteSetting::getById($id);
                     $setting->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
@@ -1335,7 +1383,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         case "object":
                             if (isset($data["data"])) {
                                 $path = $data["data"];
-                                $element = Element_Service::getElementByPath($setting->getType(), $path);
+                                $element = Element\Service::getElementByPath($setting->getType(), $path);
                                 $data["data"] = $element ? $element->getId() : null;
                             }
                             break;
@@ -1365,14 +1413,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             else {
                 // get list of routes
 
-                $list = new WebsiteSetting_List();
+                $list = new WebsiteSetting\Listing();
 
                 $list->setLimit($this->getParam("limit"));
                 $list->setOffset($this->getParam("start"));
 
-                if($this->getParam("sort")) {
-                    $list->setOrderKey($this->getParam("sort"));
-                    $list->setOrder($this->getParam("dir"));
+                $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+                if($sortingSettings['orderKey']) {
+                    $list->setOrderKey($sortingSettings['orderKey']);
+                    $list->setOrder($sortingSettings['order']);
                 } else {
                     $list->setOrderKey("name");
                     $list->setOrder("asc");
@@ -1393,7 +1442,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                 $this->_helper->json(array("data" => $settings, "success" => true, "total" => $totalCount));
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
             $this->_helper->json(false);
         }
@@ -1406,6 +1455,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             "id" => $item->getId(),
             "name" => $item->getName(),
             "type" => $item->getType(),
+            "data" => null,
             "siteId" => $item->getSiteId(),
             "creationDate" => $item->getCreationDate(),
             "modificationDate" => $item->getModificationDate()
@@ -1416,7 +1466,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             case "document":
             case "asset":
             case "object":
-                $element = Element_Service::getElementById($item->getType(), $item->getData());
+                $element = Element\Service::getElementById($item->getType(), $item->getData());
                 if ($element) {
                     $resultItem["data"] = $element->getFullPath();
                 }
@@ -1448,4 +1498,23 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     }
 
+    /**
+     * deleteViews
+     * delete views for localized fields when languages are removed to
+     * prevent mysql errors
+     * @param $language
+     * @param $dbName
+     */
+    protected function deleteViews ($language, $dbName) {
+
+        $db = \Pimcore\Resource::get();
+        $views = $db->fetchAll("SHOW FULL TABLES IN " . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
+
+        foreach($views as $view) {
+            if (preg_match("/^object_localized_[0-9]+_" . $language . "$/", $view["Tables_in_" . $dbName])){
+                $sql = "DROP VIEW " . $db->quoteIdentifier($view["Tables_in_" . $dbName]);
+                $db->query($sql);
+            }
+        }
+    }
 }

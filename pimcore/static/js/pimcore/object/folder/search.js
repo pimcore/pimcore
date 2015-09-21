@@ -49,6 +49,10 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
                 var classStore = new Ext.data.ArrayStore({
                     data: data,
+                    sortInfo: {
+                        field: 'translatedText',
+                        direction: 'ASC'
+                    },
                     fields: [
                         {name: 'id', type: 'number'},
                         {name: 'name', type: 'string'},
@@ -126,6 +130,11 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var fields = [];
         if(response.responseText) {
             response = Ext.decode(response.responseText);
+
+            if (response.pageSize) {
+                itemsPerPage = response.pageSize;
+            }
+
             fields = response.availableFields;
             this.gridLanguage = response.language;
             this.sortinfo = response.sortinfo;
@@ -151,7 +160,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             klass.data.text,
             fields,
             "/admin/object/grid-proxy/classId/" + this.classId + "/folderId/" + this.object.id,
-            {language: this.gridLanguage},
+            {language: this.gridLanguage,
+             limit: itemsPerPage
+            },
             false
         );
 
@@ -282,6 +293,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             emptyMsg: t("no_objects_found")
         });
 
+
         // add per-page selection
         this.pagingtoolbar.add("-");
 
@@ -300,7 +312,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             ],
             mode: "local",
             width: 50,
-            value: 20,
+            value: itemsPerPage,
             triggerAction: "all",
             listeners: {
                 select: function (box, rec, index) {
@@ -331,6 +343,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     getGridConfig: function($super) {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;
+        config.pageSize = this.pagingtoolbar.pageSize;
         return config;
     },
 

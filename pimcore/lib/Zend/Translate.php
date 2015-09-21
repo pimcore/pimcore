@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@
 /**
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Translate {
@@ -63,7 +63,9 @@ class Zend_Translate {
     /**
      * Generates the standard translation object
      *
-     * @param  array|Zend_Config $options Options to use
+     * @param  array|Zend_Config|Zend_Translate_Adapter $options Options to use
+     * @param  string|array [$content] Path to content, or content itself
+     * @param  string|Zend_Locale [$locale]
      * @throws Zend_Translate_Exception
      */
     public function __construct($options = array())
@@ -96,7 +98,9 @@ class Zend_Translate {
     /**
      * Sets a new adapter
      *
-     * @param  array|Zend_Config $options Options to use
+     * @param  array|Zend_Config|Zend_Translate_Adapter $options Options to use
+     * @param  string|array [$content] Path to content, or content itself
+     * @param  string|Zend_Locale [$locale]
      * @throws Zend_Translate_Exception
      */
     public function setAdapter($options = array())

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9061 $"/>
-		<generation date="$Date: 2013-07-20 12:27:45 -0500 (Sat, 20 Jul 2013) $"/>
+		<version number="$Revision: 9791 $"/>
+		<generation date="$Date: 2014-02-25 15:16:49 -0600 (Tue, 25 Feb 2014) $"/>
 		<language type="rw"/>
 	</identity>
 	<localeDisplayNames>
@@ -19,7 +19,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="az">Inyazeribayijani</language>
 			<language type="be">Ikibelarusiya</language>
 			<language type="bg">Urunyabuligariya</language>
-			<language type="bh">Inyebihari</language>
 			<language type="bn">Ikibengali</language>
 			<language type="br">Inyebiritoni</language>
 			<language type="bs">Inyebosiniya</language>
@@ -294,3 +293,4 @@ For terms of use, see http://www.unicode.org/copyright.html
 		</currencies>
 	</numbers>
 </ldml>
+

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -29,7 +29,7 @@
  *
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Dojo_View_Helper_Dojo_Container
@@ -430,7 +430,7 @@ class Zend_Dojo_View_Helper_Dojo_Container
     public function setCdnVersion($version = null)
     {
         $this->enable();
-        if (preg_match('/^[1-9]\.[0-9](\.[0-9])?$/', $version)) {
+        if (preg_match('/^[1-9]\.[0-9]{1,2}(\.[0-9]{1,2})?$/', $version)) {
             $this->_cdnVersion = $version;
         }
         return $this;
@@ -1026,7 +1026,7 @@ EOJ;
             return '';
         }
 
-        array_reverse($stylesheets);
+        $stylesheets = array_reverse($stylesheets);
         $style = '<style type="text/css">' . PHP_EOL
                . (($this->_isXhtml) ? '<!--' : '<!--') . PHP_EOL;
         foreach ($stylesheets as $stylesheet) {

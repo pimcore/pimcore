@@ -13,23 +13,36 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Tool_UUID_Module extends Pimcore_API_Module_Abstract{
+namespace Pimcore\Model\Tool\UUID;
 
+use Pimcore\Model\Tool\UUID;
+
+class Module extends \Pimcore\API\Module\AbstractModule {
+
+    /**
+     * @throws \Zend_EventManager_Exception_InvalidArgumentException
+     */
     public function init() {
         // attach event-listener
         foreach (["asset","object","document","object.class"] as $type) {
-            Pimcore::getEventManager()->attach($type . ".postAdd", array($this, "createUuid"));
-            Pimcore::getEventManager()->attach($type . ".postDelete", array($this, "deleteUuid"));
+            \Pimcore::getEventManager()->attach($type . ".postAdd", array($this, "createUuid"));
+            \Pimcore::getEventManager()->attach($type . ".postDelete", array($this, "deleteUuid"));
         }
     }
 
+    /**
+     * @param $e
+     */
     public function createUuid($e){
-        Tool_UUID::create($e->getTarget());
+        UUID::create($e->getTarget());
     }
 
+    /**
+     * @param $e
+     */
     public function deleteUuid($e){
-        $uuidObject = Tool_UUID::getByItem($e->getTarget());
-        if($uuidObject instanceof Tool_UUID){
+        $uuidObject = UUID::getByItem($e->getTarget());
+        if($uuidObject instanceof UUID){
             $uuidObject->delete();
         }
     }

@@ -6,8 +6,8 @@ For terms of use, see http://www.unicode.org/copyright.html
 -->
 <ldml>
 	<identity>
-		<version number="$Revision: 9287 $"/>
-		<generation date="$Date: 2013-08-28 21:32:04 -0500 (Wed, 28 Aug 2013) $"/>
+		<version number="$Revision: 9852 $"/>
+		<generation date="$Date: 2014-02-28 23:57:43 -0600 (Fri, 28 Feb 2014) $"/>
 		<language type="mk"/>
 	</identity>
 	<localeDisplayNames>
@@ -25,53 +25,42 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ady">адиге</language>
 			<language type="ae">авестан</language>
 			<language type="af">африканс</language>
-			<language type="afa">афроазијатски</language>
 			<language type="afh">африхили</language>
 			<language type="agq">агемски</language>
 			<language type="ain">аину</language>
 			<language type="ak">акан</language>
 			<language type="akk">акадијски</language>
 			<language type="ale">алеут</language>
-			<language type="alg">алгонквијански</language>
 			<language type="alt">јужен алтај</language>
 			<language type="am">амхарски</language>
 			<language type="an">арагонески</language>
 			<language type="ang">стар англиски</language>
 			<language type="anp">ангика</language>
-			<language type="apa">апачи</language>
 			<language type="ar">арапски</language>
 			<language type="ar_001">литературен арапски</language>
 			<language type="arc">арамејски</language>
 			<language type="arn">арокенски</language>
 			<language type="arp">арапахо</language>
-			<language type="art">вештачки</language>
 			<language type="arw">аравак</language>
 			<language type="as">асамски</language>
 			<language type="asa">асу</language>
 			<language type="ast">астуриски</language>
-			<language type="ath">атапаски</language>
-			<language type="aus">австралиски</language>
 			<language type="av">аварски</language>
 			<language type="awa">авади</language>
 			<language type="ay">ајмара</language>
 			<language type="az">азербејџански</language>
 			<language type="ba">башкирски</language>
-			<language type="bad">банда</language>
-			<language type="bai">бамилеке</language>
 			<language type="bal">балучи</language>
 			<language type="ban">балинезе</language>
 			<language type="bas">баса</language>
-			<language type="bat">балтички</language>
 			<language type="bax">бамунски</language>
 			<language type="bbj">гомала</language>
 			<language type="be">белоруски</language>
 			<language type="bej">беха</language>
 			<language type="bem">бемба</language>
-			<language type="ber">бербер</language>
 			<language type="bez">бена</language>
 			<language type="bfd">бафут</language>
 			<language type="bg">бугарски</language>
-			<language type="bh">бихари</language>
 			<language type="bho">бојпури</language>
 			<language type="bi">бислама</language>
 			<language type="bik">бикол</language>
@@ -80,14 +69,12 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="bla">сиксика</language>
 			<language type="bm">бамбара</language>
 			<language type="bn">бенгалски</language>
-			<language type="bnt">банту</language>
 			<language type="bo">тибетски</language>
 			<language type="br">бретонски</language>
 			<language type="bra">брај</language>
 			<language type="brx">бодо</language>
 			<language type="bs">босански</language>
 			<language type="bss">акосе</language>
-			<language type="btk">батак</language>
 			<language type="bua">буријат</language>
 			<language type="bug">буџински</language>
 			<language type="bum">булу</language>
@@ -95,14 +82,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="byv">медумба</language>
 			<language type="ca">каталонски</language>
 			<language type="cad">кадо</language>
-			<language type="cai">централноамерикански индијански</language>
 			<language type="car">кариб</language>
-			<language type="cau">кавкаски</language>
 			<language type="cay">кајуга</language>
 			<language type="cch">ацам</language>
 			<language type="ce">чеченски</language>
 			<language type="ceb">себуано</language>
-			<language type="cel">селтички</language>
 			<language type="cgg">чига</language>
 			<language type="ch">чаморо</language>
 			<language type="chb">чибча</language>
@@ -115,26 +99,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="chr">чироки</language>
 			<language type="chy">чејенски</language>
 			<language type="ckb">сорански курдски</language>
-			<language type="cmc">чамски</language>
 			<language type="co">корзикански</language>
 			<language type="cop">коптски</language>
-			<language type="cpe">англиски креолски</language>
-			<language type="cpf">француски креолски</language>
-			<language type="cpp">португалски креолски</language>
 			<language type="cr">кри</language>
 			<language type="crh">кримско турски</language>
-			<language type="crp">креолски</language>
 			<language type="cs">чешки</language>
 			<language type="csb">кашубиски</language>
 			<language type="cu">црковнословенски</language>
-			<language type="cus">кушитски</language>
 			<language type="cv">чувашки</language>
 			<language type="cy">велшки</language>
 			<language type="da">дански</language>
 			<language type="dak">дакота</language>
 			<language type="dar">даргва</language>
 			<language type="dav">таита</language>
-			<language type="day">дајак</language>
 			<language type="de">германски</language>
 			<language type="de_AT">германски (во Австрија)</language>
 			<language type="de_CH">германски (во Швајцарија)</language>
@@ -144,7 +121,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="din">динка</language>
 			<language type="dje">зарма</language>
 			<language type="doi">догри</language>
-			<language type="dra">дравидијски</language>
 			<language type="dsb">долносорбиски</language>
 			<language type="dua">дуала</language>
 			<language type="dum">среднохоландски</language>
@@ -182,7 +158,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ff">фула</language>
 			<language type="fi">фински</language>
 			<language type="fil">филипински</language>
-			<language type="fiu">финоугриски</language>
 			<language type="fj">фиџиски</language>
 			<language type="fo">фарски</language>
 			<language type="fon">фон</language>
@@ -200,7 +175,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="gay">гајо</language>
 			<language type="gba">гбаја</language>
 			<language type="gd">шкотско галски</language>
-			<language type="gem">германски јазици</language>
 			<language type="gez">гиз</language>
 			<language type="gil">гилбертански</language>
 			<language type="gl">галициски</language>
@@ -223,7 +197,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="he">хебрејски</language>
 			<language type="hi">хинди</language>
 			<language type="hil">хилигајнон</language>
-			<language type="him">химашали</language>
 			<language type="hit">хитите</language>
 			<language type="hmn">хмонг</language>
 			<language type="ho">хири моту</language>
@@ -241,20 +214,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ie">интерлинг</language>
 			<language type="ig">игбо</language>
 			<language type="ii">сичуан ји</language>
-			<language type="ijo">ихо</language>
 			<language type="ik">инупијак</language>
 			<language type="ilo">илоко</language>
-			<language type="inc">индиски јазици</language>
-			<language type="ine">индоевропски</language>
 			<language type="inh">ингуш</language>
 			<language type="io">идо</language>
-			<language type="ira">ирански</language>
-			<language type="iro">ироквијански јазици</language>
 			<language type="is">исландски</language>
 			<language type="it">италијански</language>
 			<language type="iu">инуктитут</language>
 			<language type="ja">јапонски</language>
 			<language type="jbo">лојбански</language>
+			<language type="jgo" draft="contributed">нгомба</language>
 			<language type="jmc">мачаме</language>
 			<language type="jpr">еврејско персиски</language>
 			<language type="jrb">еврејско арапски</language>
@@ -265,7 +234,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kac">кашин</language>
 			<language type="kaj">жжи</language>
 			<language type="kam">камба</language>
-			<language type="kar">карен</language>
 			<language type="kaw">кави</language>
 			<language type="kbd">кабардиски</language>
 			<language type="kbl">канембу</language>
@@ -275,7 +243,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kfo">коро</language>
 			<language type="kg">конго</language>
 			<language type="kha">каси</language>
-			<language type="khi">којсански јазици</language>
 			<language type="kho">котанески</language>
 			<language type="khq">којра чиини</language>
 			<language type="ki">кикују</language>
@@ -294,7 +261,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="kr">канури</language>
 			<language type="krc">карашај-балкар</language>
 			<language type="krl">карелијски</language>
-			<language type="kro">кру</language>
 			<language type="kru">курук</language>
 			<language type="ks">кашмирски</language>
 			<language type="ksb">шамбала</language>
@@ -334,7 +300,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mai">маитхили</language>
 			<language type="mak">макасарски</language>
 			<language type="man">мандинго</language>
-			<language type="map">австронезиски</language>
 			<language type="mas">масаи</language>
 			<language type="mde">маба</language>
 			<language type="mdf">мокша</language>
@@ -345,19 +310,16 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mg">малгашки</language>
 			<language type="mga">средноирски</language>
 			<language type="mgh">макува-мито</language>
+			<language type="mgo" draft="contributed">мета</language>
 			<language type="mh">маршалски</language>
 			<language type="mi">маорски</language>
 			<language type="mic">микмек</language>
 			<language type="min">минанкабау</language>
-			<language type="mis">други јазици</language>
 			<language type="mk">македонски</language>
-			<language type="mkh">мон-кмерски јазици</language>
 			<language type="ml">малајалам</language>
 			<language type="mn">монголски</language>
 			<language type="mnc">манчу</language>
 			<language type="mni">манипури</language>
-			<language type="mno">манобо</language>
-			<language type="mo">молдавски</language>
 			<language type="moh">мохак</language>
 			<language type="mos">моси</language>
 			<language type="mr">марати</language>
@@ -365,17 +327,13 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="mt">малтешки</language>
 			<language type="mua">мунданг</language>
 			<language type="mul">повеќе јазици</language>
-			<language type="mun">мунда јазици</language>
 			<language type="mus">крик</language>
 			<language type="mwl">мирандески</language>
 			<language type="mwr">марвари</language>
 			<language type="my">бурмански</language>
 			<language type="mye">мјене</language>
-			<language type="myn">мајански јазици</language>
 			<language type="myv">ержа</language>
 			<language type="na">науру</language>
-			<language type="nah">нахуатл</language>
-			<language type="nai">северноамерикански индијански јазици</language>
 			<language type="nap">неаполски</language>
 			<language type="naq">нама</language>
 			<language type="nb">норвешки букмол</language>
@@ -385,7 +343,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="new">невари</language>
 			<language type="ng">ндонга</language>
 			<language type="nia">нијас</language>
-			<language type="nic">нигер-кордофаниски јазици</language>
 			<language type="niu">најуан</language>
 			<language type="nl">холандски</language>
 			<language type="nl_BE">холандски (во Белгија)</language>
@@ -398,7 +355,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="nqo">нко</language>
 			<language type="nr">јужен ндебелески</language>
 			<language type="nso">северен сото</language>
-			<language type="nub">нубијски јазици</language>
 			<language type="nus">нуер</language>
 			<language type="nv">навахо</language>
 			<language type="nwc">класичен невари</language>
@@ -414,21 +370,17 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="os">осетиски</language>
 			<language type="osa">осаж</language>
 			<language type="ota">отомански турски</language>
-			<language type="oto">отомиски јазици</language>
 			<language type="pa">панџаби</language>
-			<language type="paa">папуански</language>
 			<language type="pag">пангасинан</language>
 			<language type="pal">палависки</language>
 			<language type="pam">пампанга</language>
 			<language type="pap">папиаменто</language>
 			<language type="pau">палауански</language>
 			<language type="peo">стар персиски</language>
-			<language type="phi">филипински јазик</language>
 			<language type="phn">феникиски</language>
 			<language type="pi">пали</language>
 			<language type="pl">полски</language>
 			<language type="pon">понпејански</language>
-			<language type="pra">пракритски јазици</language>
 			<language type="pro">стар провенчал</language>
 			<language type="ps">паштунски</language>
 			<language type="pt">португалски</language>
@@ -441,7 +393,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="rm">реторомански</language>
 			<language type="rn">рундиски</language>
 			<language type="ro">романски</language>
-			<language type="roa">романски јазици</language>
+			<language type="ro_MD">молдавски</language>
 			<language type="rof">ромбо</language>
 			<language type="rom">ромски</language>
 			<language type="root">рутски</language>
@@ -452,8 +404,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="sa">санскрит</language>
 			<language type="sad">сандаве</language>
 			<language type="sah">јакутски</language>
-			<language type="sai">јужноамерикански индијански</language>
-			<language type="sal">салишански јазици</language>
 			<language type="sam">самариќански арамејски</language>
 			<language type="saq">самбуру</language>
 			<language type="sas">сасак</language>
@@ -468,25 +418,19 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="see">сенека</language>
 			<language type="seh">сена</language>
 			<language type="sel">селкап</language>
-			<language type="sem">семитски</language>
 			<language type="ses">којраборо сени</language>
 			<language type="sg">санго</language>
 			<language type="sga">стар ирски</language>
-			<language type="sgn">знаковни јазици</language>
 			<language type="sh">српско-хрватски</language>
 			<language type="shi">тачелхит</language>
 			<language type="shn">шан</language>
 			<language type="shu">чадски арапски</language>
 			<language type="si">синхалски</language>
 			<language type="sid">сидамо</language>
-			<language type="sio">сијуски јазици</language>
-			<language type="sit">синотибетански</language>
 			<language type="sk">словачки</language>
 			<language type="sl">словенечки</language>
-			<language type="sla">словенски јазици</language>
 			<language type="sm">самоански</language>
 			<language type="sma">јужен сами</language>
-			<language type="smi">самиски јазици</language>
 			<language type="smj">луле сами</language>
 			<language type="smn">инари сами</language>
 			<language type="sms">сколт сами</language>
@@ -494,13 +438,11 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="snk">сонинке</language>
 			<language type="so">сомалиски</language>
 			<language type="sog">согдијен</language>
-			<language type="son">сонгај</language>
 			<language type="sq">албански</language>
 			<language type="sr">српски</language>
 			<language type="srn">срански тонго</language>
 			<language type="srr">серер</language>
 			<language type="ss">свати</language>
-			<language type="ssa">нилско-сахарски јазици</language>
 			<language type="ssy">сахо</language>
 			<language type="st">сесото</language>
 			<language type="su">сундски</language>
@@ -514,7 +456,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="syc">класичен сиријак</language>
 			<language type="syr">сиријак</language>
 			<language type="ta">тамилски</language>
-			<language type="tai">таи</language>
 			<language type="te">телугу</language>
 			<language type="tem">тимне</language>
 			<language type="teo">тесо</language>
@@ -541,8 +482,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="tsi">цимшијански</language>
 			<language type="tt">татарски</language>
 			<language type="tum">тумбука</language>
-			<language type="tup">туписки јазици</language>
-			<language type="tut">алтајски</language>
 			<language type="tvl">тувалу</language>
 			<language type="tw">тви</language>
 			<language type="twq">тазавак</language>
@@ -565,11 +504,9 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="vun">вунџо</language>
 			<language type="wa">валунски</language>
 			<language type="wae">валсер</language>
-			<language type="wak">вакашански</language>
 			<language type="wal">валамо</language>
 			<language type="war">вареј</language>
 			<language type="was">вашо</language>
-			<language type="wen">сорбиски</language>
 			<language type="wo">волофски</language>
 			<language type="xal">калмик</language>
 			<language type="xh">коса</language>
@@ -580,7 +517,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="ybb">јемба</language>
 			<language type="yi">јидски</language>
 			<language type="yo">јорупски</language>
-			<language type="ypk">јуписки јазици</language>
 			<language type="yue">кантонски</language>
 			<language type="za">жуанг</language>
 			<language type="zap">запотек</language>
@@ -590,7 +526,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<language type="zh">кинески</language>
 			<language type="zh_Hans">поедноставен кинески</language>
 			<language type="zh_Hant">традиционален кинески</language>
-			<language type="znd">зандиски</language>
 			<language type="zu">зулу</language>
 			<language type="zun">зуни</language>
 			<language type="zxx">без лингвистичка содржина</language>
@@ -1535,7 +1470,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMdd">dd MMMM</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E d MMMM</dateFormatItem>
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y 'г'.</dateFormatItem>
@@ -1835,9 +1769,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<zone type="Antarctica/Palmer">
 				<exemplarCity>Палмер</exemplarCity>
 			</zone>
-			<zone type="Antarctica/South_Pole">
-				<exemplarCity>Јужен пол</exemplarCity>
-			</zone>
 			<zone type="Antarctica/Syowa">
 				<exemplarCity>Сајова</exemplarCity>
 			</zone>
@@ -2110,9 +2041,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Toronto">
 				<exemplarCity>Торонто</exemplarCity>
-			</zone>
-			<zone type="America/Montreal">
-				<exemplarCity>Монтреал</exemplarCity>
 			</zone>
 			<zone type="America/Iqaluit">
 				<exemplarCity>Икалуит</exemplarCity>
@@ -2956,9 +2884,6 @@ For terms of use, see http://www.unicode.org/copyright.html
 			</zone>
 			<zone type="America/Phoenix">
 				<exemplarCity>Феникс</exemplarCity>
-			</zone>
-			<zone type="America/Shiprock">
-				<exemplarCity>Шипрок</exemplarCity>
 			</zone>
 			<zone type="America/Denver">
 				<exemplarCity>Денвер</exemplarCity>

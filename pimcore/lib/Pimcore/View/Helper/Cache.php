@@ -13,33 +13,70 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_View_Helper_Cache extends Zend_View_Helper_Abstract {
+namespace Pimcore\View\Helper;
 
+use Pimcore\Model\Cache as CacheManager;
+
+class Cache extends \Zend_View_Helper_Abstract {
+
+    /**
+     * @var CacheController
+     */
     public static $_caches;
 
+    /**
+     * @param $name
+     * @param null $lifetime
+     * @param bool $force
+     * @return mixed
+     */
     public function cache($name, $lifetime = null, $force = false) {
 
         if (self::$_caches[$name]) {
             return self::$_caches[$name];
         }
 
-        $cache = new Pimcore_View_Helper_Cache_Controller($name, $lifetime, $this->view->editmode);
+        $cache = new CacheController($name, $lifetime, $this->view->editmode, $force);
         self::$_caches[$name] = $cache;
 
         return self::$_caches[$name];
     }
-
 }
 
 
-class Pimcore_View_Helper_Cache_Controller {
+class CacheController {
 
+    /**
+     * @var
+     */
     public $cache;
+
+    /**
+     * @var string
+     */
     public $key;
+
+    /**
+     * @var bool
+     */
     public $editmode;
+
+    /**
+     * @var bool
+     */
     public $captureEnabled = false;
+
+    /**
+     * @var bool
+     */
     public $force = false;
 
+    /**
+     * @param $name
+     * @param $lifetime
+     * @param bool $editmode
+     * @param bool $force
+     */
     public function __construct($name, $lifetime, $editmode = true, $force = false) {
         
         $this->key = "pimcore_viewcache_" . $name;
@@ -53,13 +90,16 @@ class Pimcore_View_Helper_Cache_Controller {
         $this->lifetime = $lifetime;
     }
 
+    /**
+     * @return bool
+     */
     public function start() {
                 
-        if(Pimcore_Tool::isFrontentRequestByAdmin() && !$this->force) {
+        if(\Pimcore\Tool::isFrontentRequestByAdmin() && !$this->force) {
             return false;
         }
         
-        if ($content = Pimcore_Model_Cache::load($this->key)) {
+        if ($content = CacheManager::load($this->key)) {
             echo $content;
             return true;
         }
@@ -69,7 +109,10 @@ class Pimcore_View_Helper_Cache_Controller {
         
         return false;
     }
- 
+
+    /**
+     *
+     */
     public function end() {
         
         if($this->captureEnabled) {
@@ -82,11 +125,14 @@ class Pimcore_View_Helper_Cache_Controller {
             }
     
             $content = ob_get_clean();
-            Pimcore_Model_Cache::save($content, $this->key, $tags, $this->lifetime, 996, true);
+            CacheManager::save($content, $this->key, $tags, $this->lifetime, 996, true);
             echo $content;
         }
     }
 
+    /**
+     *
+     */
     public function stop() {
         $this->end();
     }

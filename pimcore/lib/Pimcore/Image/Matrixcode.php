@@ -12,7 +12,7 @@
  * obtain it through the world-wide-web, please send an email
  * to license@zend.com so we can send you a copy immediately.
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -21,11 +21,16 @@
 /**
  * Class for generating matrix codes (2 dimensional scan codes)
  *
- * Renamed from Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
+ * Renamed from \Zend_Matrixcode to Pimcore_Image_Matrixcode for compatibility reasons
  * @copyright  Copyright (c) 2009-2011 Peter Minne <peter@inthepocket.mobi>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Image_Matrixcode
+
+namespace Pimcore\Image;
+
+use Pimcore\Image\Matrixcode\Exception; 
+
+class Matrixcode
 {
     
     /**
@@ -35,25 +40,25 @@ class Pimcore_Image_Matrixcode
      * name, e.g. 'qrcode' corresponds to class Pimcore_Image_Matrixcode_Qrcode.  This
      * is case-insensitive.
      *
-     * First argument may alternatively be an object of type Zend_Config.
+     * First argument may alternatively be an object of type \Zend_Config.
      * The matrixcode class base name is read from the 'matrixcode' property.
      * The matrixcode config parameters are read from the 'params' property.
      *
      * Second argument is optional and may be an associative array of key-value
      * pairs.  This is used as the argument to the matrixcode constructor.
      *
-     * If the first argument is of type Zend_Config and contains a 'params' key, it is assumed to contain
+     * If the first argument is of type \Zend_Config and contains a 'params' key, it is assumed to contain
      * all parameters, and the second argument is ignored.
      * 
      * The third parameter specifies the type of renderer, where the fourth parameter is an array or 
-     * Zend_Config object containing the renderer parameters
+     * \Zend_Config object containing the renderer parameters
      *
-     * @param string | array | Zend_Config $matrixcode
-     * @param array | Zend_Config $matrixcodeConfig
+     * @param string | array | \Zend_Config $matrixcode
+     * @param array | \Zend_Config $matrixcodeConfig
      * @param string $renderer OPTIONAL
-     * @param array | Zend_Config $rendererConfig OPTIONAL
+     * @param array | \Zend_Config $rendererConfig OPTIONAL
      * @return Pimcore_Image_Matrixcode_Abstract
-     * @throws Pimcore_Image_Matrixcode_Exception
+     * @throws Exception
      */
     public static function factory (
     	$matrixcode,
@@ -62,10 +67,10 @@ class Pimcore_Image_Matrixcode
     	$rendererConfig = array()
     ) {
         /*
-         * Convert Zend_Config argument to plain string
+         * Convert \Zend_Config argument to plain string
          * matrixcode name and separate config object.
          */
-        if ($matrixcode instanceof Zend_Config) {
+        if ($matrixcode instanceof \Zend_Config) {
             if (isset($matrixcode->rendererParams)) {
                 $rendererConfig = $matrixcode->rendererParams->toArray();
             }
@@ -85,7 +90,7 @@ class Pimcore_Image_Matrixcode
         try {
             $matrixcode = self::getMatrixcode($matrixcode, $matrixcodeConfig);
             $renderer = self::getRenderer($renderer, $rendererConfig);
-        } catch (Zend_Exception $e) {
+        } catch (\Zend_Exception $e) {
             throw $e;
         }
 
@@ -98,18 +103,18 @@ class Pimcore_Image_Matrixcode
 	/**
      * Matrixcode Constructor
      *
-     * @param mixed $matrixcode        String name of matrixcode class, or Zend_Config object.
-     * @param mixed $matrixcodeConfig  OPTIONAL; an array or Zend_Config object with matrixcode parameters
+     * @param mixed $matrixcode        String name of matrixcode class, or \Zend_Config object.
+     * @param mixed $matrixcodeConfig  OPTIONAL; an array or \Zend_Config object with matrixcode parameters
      * @return Pimcore_Image_Matrixcode_Abstract
      */
     public static function getMatrixcode($matrixcode, $matrixcodeConfig = array())
     {
         /*
-         * Convert Zend_Config argument to plain string
+         * Convert \Zend_Config argument to plain string
          * matrixcode name and separate config object.
          */
-        if ($matrixcode instanceof Zend_Config) {
-            if (isset($matrixcode->matrixcodeParams) && $matrixcode->matrixcodeParams instanceof Zend_Config) {
+        if ($matrixcode instanceof \Zend_Config) {
+            if (isset($matrixcode->matrixcodeParams) && $matrixcode->matrixcodeParams instanceof \Zend_Config) {
                 $matrixcodeConfig = $matrixcode->matrixcodeParams->toArray();
             }
             if (isset($matrixcode->matrixcode)) {
@@ -118,7 +123,7 @@ class Pimcore_Image_Matrixcode
                 $matrixcode = null;
             }
         }
-        if ($matrixcodeConfig instanceof Zend_Config) {
+        if ($matrixcodeConfig instanceof \Zend_Config) {
             $matrixcodeConfig = $matrixcodeConfig->toArray();
         }
 
@@ -126,8 +131,8 @@ class Pimcore_Image_Matrixcode
          * Verify that matrixcode parameters are in an array.
          */
         if (!is_array($matrixcodeConfig)) {
-            throw new Pimcore_Image_Matrixcode_Exception(
-                'Matrixcode parameters must be in an array or a Zend_Config object'
+            throw new Exception(
+                'Matrixcode parameters must be in an array or a \Zend_Config object'
             );
         }
 
@@ -135,7 +140,7 @@ class Pimcore_Image_Matrixcode
          * Verify that a matrixcode name has been specified.
          */
         if (!is_string($matrixcode) || empty($matrixcode)) {
-            throw new Pimcore_Image_Matrixcode_Exception(
+            throw new Exception(
                 'Matrixcode name must be specified in a string'
             );
         }
@@ -143,18 +148,18 @@ class Pimcore_Image_Matrixcode
         /*
          * Form full matrixcode class name
          */
-        $matrixcodeNamespace = 'Pimcore_Image_Matrixcode';
+        $matrixcodeNamespace = "Pimcore\\Image\\Matrixcode";
         if (isset($matrixcodeConfig['matrixcodeNamespace'])) {
             $matrixcodeNamespace = $matrixcodeConfig['matrixcodeNamespace'];
         }
-        $matrixcodeName = strtolower($matrixcodeNamespace . '_' . $matrixcode);
+        $matrixcodeName = $matrixcodeNamespace . '\\' . ucfirst($matrixcode);
         $matrixcodeName = str_replace(' ', '_', ucwords(str_replace('_', ' ', $matrixcodeName)));
 
         /*
          * Load the matrixcode class.
          */
         if (!class_exists($matrixcodeName)) {
-            Zend_Loader::loadClass($matrixcodeName);
+            \Zend_Loader::loadClass($matrixcodeName);
         }
 
         /*
@@ -165,8 +170,8 @@ class Pimcore_Image_Matrixcode
         /*
          * Verify that the object created is a descendent of the abstract matrixcode type.
          */
-        if (!$mcAdapter instanceof Pimcore_Image_Matrixcode_Abstract) {
-            throw new Pimcore_Image_Matrixcode_Exception(
+        if (!$mcAdapter instanceof \Pimcore\Image\Matrixcode\AbstractMatrixcode) {
+            throw new Exception(
                 "Matrixcode class '$matrixcodeName' does not extend Pimcore_Image_Matrixcode_Abstract"
             );
         }
@@ -178,17 +183,17 @@ class Pimcore_Image_Matrixcode
 	/**
      * Renderer Constructor
      *
-     * @param mixed $renderer           String name of renderer class, or Zend_Config object.
-     * @param mixed $rendererConfig     OPTIONAL; an array or Zend_Config object with renderer parameters.
+     * @param mixed $renderer           String name of renderer class, or \Zend_Config object.
+     * @param mixed $rendererConfig     OPTIONAL; an array or \Zend_Config object with renderer parameters.
      * @return Pimcore_Image_Matrixcode_Renderer_Abstract
      */
     public static function getRenderer($renderer = 'image', $rendererConfig = array())
     {
         /*
-         * Convert Zend_Config argument to plain string
+         * Convert \Zend_Config argument to plain string
          * renderer name and separate config object.
          */
-        if ($renderer instanceof Zend_Config) {
+        if ($renderer instanceof \Zend_Config) {
             if (isset($renderer->rendererParams)) {
                 $rendererConfig = $renderer->rendererParams->toArray();
             }
@@ -196,7 +201,7 @@ class Pimcore_Image_Matrixcode
                 $renderer = (string) $renderer->renderer;
             }
         }
-        if ($rendererConfig instanceof Zend_Config) {
+        if ($rendererConfig instanceof \Zend_Config) {
             $rendererConfig = $rendererConfig->toArray();
         }
 
@@ -204,8 +209,8 @@ class Pimcore_Image_Matrixcode
          * Verify that renderer parameters are in an array.
          */
         if (!is_array($rendererConfig)) {
-            $e = new Pimcore_Image_Matrixcode_Exception(
-                'Renderer parameters must be in an array or a Zend_Config object'
+            $e = new Exception(
+                'Renderer parameters must be in an array or a \Zend_Config object'
             );
             throw $e;
         }
@@ -214,7 +219,7 @@ class Pimcore_Image_Matrixcode
          * Verify that a renderer name has been specified.
          */
         if (!is_string($renderer) || empty($renderer)) {
-            $e = new Pimcore_Image_Matrixcode_Exception(
+            $e = new Exception(
                 'Renderer name must be specified in a string'
             );
             throw $e;
@@ -223,18 +228,17 @@ class Pimcore_Image_Matrixcode
         /*
          * Form full renderer class name
          */
-        $rendererNamespace = 'Pimcore_Image_Matrixcode_Renderer';
+        $rendererNamespace = '\\Pimcore\\Image\\Matrixcode\\Renderer';
         if (isset($rendererConfig['rendererNamespace'])) {
             $rendererNamespace = $rendererConfig['rendererNamespace'];
         }
-        $rendererName = strtolower($rendererNamespace . '_' . $renderer);
-        $rendererName = str_replace(' ', '_', ucwords(str_replace( '_', ' ', $rendererName)));
+        $rendererName = $rendererNamespace . '\\' . ucfirst($renderer);
 
         /*
          * Load the renderer class.
          */
         if (!class_exists($rendererName)) {
-            Zend_Loader::loadClass($rendererName);
+            \Zend_Loader::loadClass($rendererName);
         }
 
         /*
@@ -245,8 +249,8 @@ class Pimcore_Image_Matrixcode
         /*
          * Verify that the object created is a descendent of the abstract renderer type.
          */
-        if (!$rdrAdapter instanceof Pimcore_Image_Matrixcode_Renderer_Abstract) {
-            $e = new Pimcore_Image_Matrixcode_Exception(
+        if (!$rdrAdapter instanceof \Pimcore\Image\Matrixcode\Renderer\AbstractRenderer) {
+            $e = new Exception(
                 "Renderer class '$rendererName' does not extend Pimcore_Image_Matrixcode_Renderer_Abstract"
             );
             throw $e;
@@ -259,10 +263,10 @@ class Pimcore_Image_Matrixcode
     /**
      * Proxy to renderer render() method
      * 
-     * @param string | array | Zend_Config $matrixcode
-     * @param array | Zend_Config $matrixcodeConfig
+     * @param string | array | \Zend_Config $matrixcode
+     * @param array | \Zend_Config $matrixcodeConfig
      * @param string $renderer OPTIONAL
-     * @param array | Zend_Config $rendererConfig OPTIONAL
+     * @param array | \Zend_Config $rendererConfig OPTIONAL
      * @return mixed
      */
     public static function render (

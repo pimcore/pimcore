@@ -5,12 +5,25 @@
  * Source: http://nikolassv.de/blogpost/parser-fuer-die-robots-txt-in-php/
  */
 
+namespace Pimcore\Helper;
 
-class Pimcore_Helper_RobotsTxt
+use Pimcore\Model\Cache;
+
+class RobotsTxt
 {
+    /**
+     * @var null
+     */
     private $_domain = null;
+
+    /**
+     * @var array
+     */
     private $_rules = array();
 
+    /**
+     * @param $domain
+     */
     public function __construct($domain)
     {
         $this->_domain = $domain;
@@ -18,18 +31,22 @@ class Pimcore_Helper_RobotsTxt
             $robotsUrl = $domain . '/robots.txt';
             $cacheKey = "robots_" . crc32($robotsUrl);
 
-            if (!$robotsTxt = Pimcore_Model_Cache::load($cacheKey)) {
-                $robotsTxt = Pimcore_Tool::getHttpData($robotsUrl);
-                Pimcore_Model_Cache::save($robotsTxt, $cacheKey, array("contentanalysis", "system"), 3600, 999, true);
+            if (!$robotsTxt = Cache::load($cacheKey)) {
+                $robotsTxt = \Pimcore\Tool::getHttpData($robotsUrl);
+                Cache::save($robotsTxt, $cacheKey, array("system"), 3600, 999, true);
             }
 
             $this->_rules = $this->_makeRules($robotsTxt);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
     }
 
-
+    /**
+     * @param $url
+     * @param string $userAgent
+     * @return bool
+     */
     public function isUrlBlocked($url, $userAgent = '*')
     {
         if (!isset($this->_rules[$userAgent])) {
@@ -70,6 +87,10 @@ class Pimcore_Helper_RobotsTxt
         return $blocked;
     }
 
+    /**
+     * @param $robotsTxt
+     * @return array
+     */
     private function _makeRules($robotsTxt)
     {
         $rules = array();
@@ -103,6 +124,10 @@ class Pimcore_Helper_RobotsTxt
         return $rules;
     }
 
+    /**
+     * @param $path
+     * @return string
+     */
     private function _getRegExByPath($path)
     {
         $regEx = '';

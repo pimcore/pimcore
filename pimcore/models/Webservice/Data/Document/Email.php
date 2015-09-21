@@ -15,13 +15,17 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_Data_Document_Email extends Webservice_Data_Document_Snippet {
+namespace Pimcore\Model\Webservice\Data\Document;
+
+use Pimcore\Model;
+
+class Email extends Model\Webservice\Data\Document\Snippet {
 
 
     /**
-     * Contains a Zend_Validate_EmailAddress object
+     * Contains a \Zend_Validate_EmailAddress object
      *
-     * @var Zend_Validate_EmailAddress
+     * @var \Zend_Validate_EmailAddress
      */
     protected static $validator;
 

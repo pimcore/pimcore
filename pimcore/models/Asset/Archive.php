@@ -15,7 +15,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Archive extends Asset {
+namespace Pimcore\Model\Asset;
+
+use Pimcore\Model;
+
+class Archive extends Model\Asset {
 
     /**
      * @var string

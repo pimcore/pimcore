@@ -41,7 +41,7 @@ pimcore.document.versions = Class.create({
                         }
                     }
                     return null;
-                }},"public","show", {name:'publicurl', convert: function (v, rec) {
+                }},"public","show", "scheduled", {name:'publicurl', convert: function (v, rec) {
                     return this.document.data.path + this.document.data.key + "?v=" + rec.id;
                 }.bind(this)}]
             });
@@ -69,6 +69,12 @@ pimcore.document.versions = Class.create({
                         return date.format("Y-m-d H:i:s");
                     }, editable: false},
                     {header: t("user"), sortable: true, dataIndex: 'name', editable: false},
+                    {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
+                        if (d != null){
+                            var date = new Date(d * 1000);
+                            return date.format("Y-m-d H:i:s");
+                        }
+                    }, editable: false},
                     {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
                     checkPublic,
                     {header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
@@ -77,7 +83,7 @@ pimcore.document.versions = Class.create({
                 trackMouseOver: true,
                 stripeRows: true,
                 plugins: [checkPublic,checkShow],
-                width:470,
+                width:600,
                 title: t('available_versions'),
                 region: "west",
                 viewConfig: {
@@ -102,7 +108,7 @@ pimcore.document.versions = Class.create({
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe src="about:blank" frameborder="0" id="document_version_iframe_'
-                                                                            + this.document.id + '"></iframe>'
+                    + this.document.id + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -162,11 +168,19 @@ pimcore.document.versions = Class.create({
     },
 
     onRowContextmenu: function (grid, rowIndex, event) {
-        
+
         $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
-                                                                    .animate( { backgroundColor: '#fff' }, 400);
-        
+            .animate( { backgroundColor: '#fff' }, 400);
+
         var menu = new Ext.menu.Menu();
+
+        if(this.store.getAt(rowIndex).get("public")) {
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_menu_webbrowser",
+                handler: this.openVersion.bind(this, rowIndex, grid)
+            }));
+        }
 
         menu.add(new Ext.menu.Item({
             text: t('edit'),
@@ -196,13 +210,20 @@ pimcore.document.versions = Class.create({
 
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
-        
+
         Ext.Ajax.request({
             url: "/admin/document/delete-version",
             params: {id: versionId}
         });
 
         grid.getStore().removeAt(index);
+    },
+
+    openVersion: function (index, grid) {
+        var data = grid.getStore().getAt(index).data;
+        var versionId = data.id;
+
+        window.open(this.document.data.path + this.document.data.key + '?v=' + versionId,'_blank');
     },
 
     editVersion: function (index, grid) {
@@ -248,9 +269,14 @@ pimcore.document.versions = Class.create({
 
     reloadEdit: function () {
         this.document.edit.reload(true);
+
+        // Open edit tab
+        this.document.tabbar.setActiveTab(0);
+
     },
 
     reload: function () {
         this.store.reload();
     }
+
 });

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Zend_Mobile_Push
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -42,7 +42,7 @@ interface Zend_Mobile_Push_Interface
     /**
      * Send a Push Message
      *
-     * @param Zend_Mobile_Push_Message_Interface $message
+     * @param  Zend_Mobile_Push_Message_Abstract $message
      * @return boolean
      */
     public function send(Zend_Mobile_Push_Message_Abstract $message);

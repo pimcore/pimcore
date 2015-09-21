@@ -40,7 +40,10 @@
  * @copyright  Copyright (c) 2012 wob digital GmbH
  * @license    http://www.pimcore.org/license     New BSD License
  */
-class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
+
+namespace Pimcore\Cache\Backend;
+
+class Redis extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
 	/**
 	 * default Host
@@ -102,13 +105,13 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 	/**
 	 * Constructor
 	 *
-	 * @throws Zend_Cache_Exception
+	 * @throws \Zend_Cache_Exception
 	 * @return void
 	 */
 	public function __construct(array $options)
 	{
 		if (!extension_loaded('redis')) {
-			Zend_Cache::throwException('The Redis extension must be loaded for using this backend !');
+			\Zend_Cache::throwException('The Redis extension must be loaded for using this backend !');
 		}
 		parent::__construct($options);
 
@@ -116,22 +119,22 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		$this->_options = array_merge($this->_options, $options);
 
 		/** @var Redis */
-		$this->_conn = new Redis();
+		$this->_conn = new \Redis();
 		if ('socket' === @filetype($this->_options['host'])) {
 			if ( !$this->_conn->connect($this->_options['host']) ) {
-				Zend_Cache::throwException('Could not connect to Redis socket!');
+				\Zend_Cache::throwException('Could not connect to Redis socket!');
 			}
 		} else {
 			if ( !$this->_conn->connect($this->_options['host'], $this->_options['port']) ) {
-				Zend_Cache::throwException('Could not connect to Redis host!');
+				\Zend_Cache::throwException('Could not connect to Redis host!');
 			}
 		}
 		if ( !$this->_conn->select($this->_options['dbindex']) ) {
-			Zend_Cache::throwException('Failed to select Redis Database!');
+			\Zend_Cache::throwException('Failed to select Redis Database!');
 		}
 		$this->_conn->setnx($this->_options['prefix'].':datastructure_version', self::DATASTRUCTURE_VERSION);
 		if ( (int) $this->_conn->get($this->_options['prefix'].':datastructure_version') !== self::DATASTRUCTURE_VERSION) {
-			Zend_Cache::throwException('Found different Datastructure Version in Redis Database!');
+			\Zend_Cache::throwException('Found different Datastructure Version in Redis Database!');
 		}
 	}
 	
@@ -150,7 +153,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 	 * @param string $suffix the id or tag to prefix
 	 * @param string $type the prefix type, currently either "data","tags" or "tagref" 
 	 * @return string the prefixed key
-	 * @throws Zend_Cache_Exception
+	 * @throws \Zend_Cache_Exception
 	 */
 	protected function doPrefix($suffix, $type) {
 		$ret = $this->_options['prefix'].':';
@@ -165,7 +168,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 				$ret .= 'tagref';
 				break;
 			default:
-				Zend_Cache::throwException('Illegal type passed.');
+				\Zend_Cache::throwException('Illegal type passed.');
 		}
 		return $ret.':'.$suffix;
 	}
@@ -218,7 +221,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 				}
 				return false;
 			}
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 		return false;
@@ -237,7 +240,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 			if ($tmp) {
 				return $tmp['mtime'];
 			}
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 		
@@ -261,7 +264,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 		try {
 			$lifetime = $this->getLifetime($specificLifetime);
 			$result = $this->set($id, $data, $lifetime, $tags);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 		return $result;
@@ -306,25 +309,25 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 	 * Clean some cache records (protected method used for recursive stuff)
 	 *
 	 * Available modes are :
-	 * Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
-	 * Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
-	 * Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
+	 * \Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
+	 * \Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
+	 * \Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
 	 *                                               ($tags can be an array of strings or a single string)
-	 * Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
+	 * \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
 	 *                                               ($tags can be an array of strings or a single string)
-	 * Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
+	 * \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
 	 *                                               ($tags can be an array of strings or a single string)
 	 *
 	 * @param  string $dir  Directory to clean
 	 * @param  string $mode Clean mode
 	 * @param  array  $tags Array of tags
-	 * @throws Zend_Cache_Exception
+	 * @throws \Zend_Cache_Exception
 	 * @return boolean True if no problem
 	 */
-	public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+	public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array())
 	{
 		switch ($mode) {
-			case Zend_Cache::CLEANING_MODE_ALL:
+			case \Zend_Cache::CLEANING_MODE_ALL:
 				$toDelete = $this->_conn->keys($this->_options['prefix'].':*');
 				foreach ($toDelete as $key) {
 					if ($key === $this->_options['prefix'].':datastructure_version') continue;
@@ -332,7 +335,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 				}
 				return true;
 				break;
-			case Zend_Cache::CLEANING_MODE_OLD:
+			case \Zend_Cache::CLEANING_MODE_OLD:
 				// $now = $this->_conn->time();
 				$now = time();
 				$toDelete = $this->_conn->zRangeByScore($this->_options['prefix'].':expiry','(0', $now);
@@ -341,21 +344,21 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 				}
 				return true;
 				break;
-			case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
+			case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
 				$toDelete = $this->getIdsMatchingTags($tags);
 				foreach ($toDelete as $id) {
 					$this->remove($id);
 				}
 				return true;
 				break;
-			case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+			case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
 				$toDelete = $this->getIdsNotMatchingTags($tags);
 				foreach ($toDelete as $id) {
 					$this->remove($id);
 				}
 				return true;
 				break;
-			case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+			case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
 				$toDelete = $this->getIdsMatchingAnyTags($tags);
 				foreach ($toDelete as $id) {
 					$this->remove($id);
@@ -363,7 +366,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 				return true;
 				break;
 			default:
-				Zend_Cache::throwException('Invalid mode for clean() method');
+				\Zend_Cache::throwException('Invalid mode for clean() method');
 				break;
 		}
 	}
@@ -382,7 +385,7 @@ class Pimcore_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cac
 	 * Set the frontend directives
 	 *
 	 * @param  array $directives Assoc of directives
-	 * @throws Zend_Cache_Exception
+	 * @throws \Zend_Cache_Exception
 	 * @return void
 	 */
 	public function setDirectives($directives)

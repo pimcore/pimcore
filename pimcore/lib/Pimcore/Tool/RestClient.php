@@ -13,15 +13,57 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Tool_RestClient
+namespace Pimcore\Tool;
+
+use Pimcore\Tool\RestClient\Exception;
+use Pimcore\Tool;
+use Pimcore\Model;
+use Pimcore\Model\User;
+use Pimcore\Model\Object;
+use Pimcore\Model\Document;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Webservice;
+
+class RestClient
 {
+    /**
+     * @var bool
+     */
     protected $loggingEnabled = false;
+
+    /**
+     * @var bool
+     */
     protected $testMode = false;
+
+    /**
+     * @var string
+     */
     protected $host;
+
+    /**
+     * @var string
+     */
     protected $baseUrl;
+
+    /**
+     * @var string
+     */
     protected $apikey;
+
+    /**
+     * @var bool
+     */
     protected $disableMappingExceptions = false;
+
+    /**
+     * @var bool
+     */
     protected $enableProfiling = false;
+
+    /**
+     * @var bool
+     */
     protected $condense = false;
 
     /**
@@ -52,42 +94,65 @@ class Pimcore_Tool_RestClient
         return $this;
     }
 
+    /**
+     * @param $disableMappingExceptions
+     * @return $this
+     */
     public function setDisableMappingExceptions($disableMappingExceptions)
     {
         $this->disableMappingExceptions = $disableMappingExceptions;
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function getDisableMappingExceptions()
     {
         return $this->disableMappingExceptions;
     }
 
+    /**
+     * @param $condense
+     * @return $this
+     */
     public function setCondense($condense)
     {
         $this->condense = $condense;
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function getCondense()
     {
         return $this->condense;
     }
 
+    /**
+     * @param $enableProfiling
+     * @return $this
+     */
     public function setEnableProfiling($enableProfiling)
     {
         $this->enableProfiling = $enableProfiling;
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function getEnableProfiling()
     {
         return $this->enableProfiling;
     }
 
 
-    /** Set the host name.
-     * @param $host e.g. pimcore.jenkins.elements.at
+    /**
+     * @param $host
+     * @return $this
+     * @throws \Zend_Http_Client_Exception
      */
     public function setHost($host)
     {
@@ -96,14 +161,17 @@ class Pimcore_Tool_RestClient
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getHost()
     {
         return $this->host;
     }
 
     /**
-     * Set the base url
-     * @param $base e.g. http://pimcore.jenkins.elements.at/webservice/rest/
+     * @param $base
+     * @return $this
      */
     public function setBaseUrl($base)
     {
@@ -111,6 +179,9 @@ class Pimcore_Tool_RestClient
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getBaseUrl()
     {
         return $this->baseUrl;
@@ -134,7 +205,7 @@ class Pimcore_Tool_RestClient
                 $user = User::create(array(
                     "parentId" => 0,
                     "username" => "rest",
-                    "password" => Pimcore_Tool_Authentication::getPasswordHash($username, $username),
+                    "password" => \Pimcore\Tool\Authentication::getPasswordHash($username, $username),
                     "active" => true,
                     "apiKey" => $apikey,
                     "admin" => true
@@ -146,49 +217,80 @@ class Pimcore_Tool_RestClient
         $this->setTestMode(true);
     }
 
+    /**
+     * @param $testMode
+     * @return $this
+     */
     public function setTestMode($testMode)
     {
         $this->testMode = $testMode;
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function getTestMode()
     {
         return $this->testMode;
     }
 
+    /**
+     * @param $apikey
+     * @return $this
+     */
     public function setApiKey($apikey)
     {
         $this->apikey = $apikey;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getApiKey()
     {
         return $this->apikey;
     }
 
-    public function setClient(Zend_Http_Client $client)
+    /**
+     * @param \Zend_Http_Client $client
+     * @return $this
+     */
+    public function setClient(\Zend_Http_Client $client)
     {
         $this->client = $client;
         return $this;
     }
 
+    /**
+     * @return \Zend_Http_Client
+     */
     public function getClient()
     {
         return $this->client;
     }
 
+    /**
+     * @param array $options
+     * @throws \Exception
+     */
     public function __construct($options = array())
     {
-        $this->client = Pimcore_Tool::getHttpClient();
+        $this->client = Tool::getHttpClient();
         $this->setValues($options);
     }
 
+    /**
+     * @param $wsData
+     * @param $data
+     * @return mixed
+     * @throws Exception
+     */
     private function map($wsData, $data)
     {
-        if (!($data instanceof stdClass)) {
-            throw new Pimcore_Tool_RestClient_Exception("Ws data format error");
+        if (!($data instanceof \stdClass)) {
+            throw new Exception("Ws data format error");
         }
 
         foreach ($data as $key => $value) {
@@ -197,7 +299,7 @@ class Pimcore_Tool_RestClient
 
                 foreach ($value as $subkey => $subvalue) {
                     if (is_array($subvalue)) {
-                        $object = new stdClass();
+                        $object = new \stdClass();
                         $tmp[] = $this->map($object, $subvalue);
                     } else {
                         $tmp[$subkey] = $subvalue;
@@ -211,9 +313,17 @@ class Pimcore_Tool_RestClient
         return $wsData;
     }
 
+    /**
+     * @param $class
+     * @param $data
+     * @return mixed
+     * @throws Exception
+     */
     private function fillWebserviceData($class, $data)
     {
-        if (!Pimcore_Tool::classExists($class)) {
+        $class = "\\" . ltrim($class, "\\"); // add global namespace
+
+        if (!Tool::classExists($class)) {
             throw new Exception("cannot fill web service data " . $class);
         }
         $wsData = new $class();
@@ -221,13 +331,15 @@ class Pimcore_Tool_RestClient
     }
 
 
-    /** Does the actual request.
+    /**
      * @param $uri
      * @param string $method
      * @param null $body
-     * @return mixed
+     * @return mixed|null|string
+     * @throws Exception
+     * @throws \Zend_Http_Client_Exception
      */
-    private function doRequest($uri, $method = "GET", $body = null)
+    public function doRequest($uri, $method = "GET", $body = null)
     {
         $client = $this->client;
         $client->setMethod($method);
@@ -245,29 +357,48 @@ class Pimcore_Tool_RestClient
         $body = $result->getBody();
         $statusCode = $result->getStatus();
         if ($statusCode != 200) {
-            throw new Pimcore_Tool_RestClient_Exception("Status code " . $statusCode . " " . $uri);
+            throw new Exception("Status code " . $statusCode . " " . $uri);
         }
 
         if ($result->getHeader('content-type') != 'application/json') {
-            echo($body); Exit;
-            throw new Pimcore_Tool_RestClient_Exception("No JSON response " . $statusCode . " " . $uri);
+            throw new Exception("No JSON response header " . $statusCode . " " . $uri);
         }
 
-        $body = json_decode($body);
-        return $body;
+        $bodyObj = json_decode($body);
+
+        if($bodyObj === NULL) {
+            throw new \Exception("No valid JSON data: '" . $body . "'");
+        }
+
+        return $bodyObj;
     }
 
+    /**
+     * @param $loggingEnabled
+     */
     public function setLoggingEnabled($loggingEnabled)
     {
         $this->loggingEnabled = $loggingEnabled;
     }
 
+    /**
+     * @return bool
+     */
     public function getLoggingEnabled()
     {
         return $this->loggingEnabled;
     }
 
-
+    /**
+     * @param null $condition
+     * @param null $order
+     * @param null $orderKey
+     * @param null $offset
+     * @param null $limit
+     * @param null $groupBy
+     * @param null $objectClass
+     * @return string
+     */
     private function fillParms($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         $params = "";
@@ -301,6 +432,18 @@ class Pimcore_Tool_RestClient
         return $params;
     }
 
+    /**
+     * @param null $condition
+     * @param null $order
+     * @param null $orderKey
+     * @param null $offset
+     * @param null $limit
+     * @param null $groupBy
+     * @param bool $decode
+     * @param null $objectClass
+     * @return array
+     * @throws Exception
+     */
     public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true, $objectClass = null)
     {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
@@ -315,11 +458,11 @@ class Pimcore_Tool_RestClient
         }
         $result = array();
         foreach ($response as $item) {
-            $wsDocument = $this->fillWebserviceData("Webservice_Data_Object_List_Item", $item);
+            $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Object\\Listing\\Item", $item);
             if (!$decode) {
                 $result[] = $wsDocument;
             } else {
-                $object = new Object_Abstract();
+                $object = new Object\AbstractObject();
                 $wsDocument->reverseMap($object);
                 $result[] = $object;
             }
@@ -336,6 +479,7 @@ class Pimcore_Tool_RestClient
      * @param null $groupBy
      * @param bool $decode
      * @return array
+     * @throws Exception
      */
     public function getAssetList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true)
     {
@@ -350,12 +494,12 @@ class Pimcore_Tool_RestClient
 
         $result = array();
         foreach ($response as $item) {
-            $wsDocument = $this->fillWebserviceData("Webservice_Data_Asset_List_Item", $item);
+            $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\Listing\\Item", $item);
             if (!$decode) {
                 $result[] = $wsDocument;
             } else {
                 $type = $wsDocument->type;
-                $type = "Asset_" . ucfirst($type);
+                $type = "\\Pimcore\\Model\\Asset\\" . ucfirst($type);
                 $asset = new $type();
                 $wsDocument->reverseMap($asset);
                 $result[] = $asset;
@@ -364,7 +508,17 @@ class Pimcore_Tool_RestClient
         return $result;
     }
 
-
+    /**
+     * @param null $condition
+     * @param null $order
+     * @param null $orderKey
+     * @param null $offset
+     * @param null $limit
+     * @param null $groupBy
+     * @param bool $decode
+     * @return array
+     * @throws Exception
+     */
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null,
                                     $groupBy = null, $decode = true)
     {
@@ -378,14 +532,14 @@ class Pimcore_Tool_RestClient
 
         $result = array();
         foreach ($response as $item) {
-            $wsDocument = $this->fillWebserviceData("Webservice_Data_Document_List_Item", $item);
+            $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Document\\Listing\\Item", $item);
             if (!$decode) {
                 $result[] = $wsDocument;
             } else {
                 $type = $wsDocument->type;
-                $type = "Document_" . ucfirst($type);
+                $type = "\\Pimcore\\Model\\Document\\" . ucfirst($type);
 
-                if (!Pimcore_Tool::classExists($type)) {
+                if (!Tool::classExists($type)) {
                     throw new Exception("Class " . $type . " does not exist");
                 }
 
@@ -397,7 +551,9 @@ class Pimcore_Tool_RestClient
         return $result;
     }
 
-
+    /**
+     * @return mixed
+     */
     public function getProfilingInfo()
     {
         return $this->profilingInfo;
@@ -423,25 +579,25 @@ class Pimcore_Tool_RestClient
         $response = $response->data;
 
 
-        $wsDocument = $this->fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
+        $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\In", $response);
 
         if (!$decode) {
             return $wsDocument;
         }
 
         if ($wsDocument->type == "folder") {
-            $object = new Object_Folder();
+            $object = new Object\Folder();
             $wsDocument->reverseMap($object);
             return $object;
         } else if ($wsDocument->type == "object" || $wsDocument->type == "variant") {
-            $classname = "Object_" . ucfirst($wsDocument->className);
+            $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
             // check for a mapped class
-            $classname = Pimcore_Tool::getModelClassMapping($classname);
+            $classname = Tool::getModelClassMapping($classname);
 
-            if (Pimcore_Tool::classExists($classname)) {
+            if (Tool::classExists($classname)) {
                 $object = new $classname();
 
-                if ($object instanceof Object_Concrete) {
+                if ($object instanceof Object\Concrete) {
                     $curTime = microtime(true);
                     $wsDocument->reverseMap($object, $this->getDisableMappingExceptions(), $idMapper);
                     $timeConsumed = round(microtime(true) - $curTime, 3) * 1000;
@@ -461,10 +617,12 @@ class Pimcore_Tool_RestClient
 
     }
 
-    /** Gets a document by id.
-     * @param $id id.
-     * @param bool
-     * @return Document_Folder
+    /**
+     * @param $id
+     * @param bool $decode
+     * @param null $idMapper
+     * @return mixed
+     * @throws Exception
      */
     public function getDocumentById($id, $decode = true, $idMapper = null)
     {
@@ -472,16 +630,16 @@ class Pimcore_Tool_RestClient
         $response = $response->data;
 
         if ($response->type == "folder") {
-            $wsDocument = $this->fillWebserviceData("Webservice_Data_Document_Folder_In", $response);
+            $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Document\\Folder\\In", $response);
             if (!$decode) {
                 return $wsDocument;
             }
-            $doc = new Document_Folder();
+            $doc = new Document\Folder();
             $wsDocument->reverseMap($doc, $this->getDisableMappingExceptions(), $idMapper);
             return $doc;
         } else {
             $type = ucfirst($response->type);
-            $class = "Webservice_Data_Document_" . $type . "_In";
+            $class = "\\Pimcore\\Model\\Webservice\\Data\\Document\\" . $type . "\\In";
 
             $wsDocument = $this->fillWebserviceData($class, $response);
             if (!$decode) {
@@ -489,7 +647,7 @@ class Pimcore_Tool_RestClient
             }
 
             if (!empty($type)) {
-                $type = "Document_" . ucfirst($wsDocument->type);
+                $type = "\\Pimcore\\Model\\Document\\" . ucfirst($wsDocument->type);
                 $document = new $type();
                 $wsDocument->reverseMap($document, $this->getDisableMappingExceptions(), $idMapper);
                 return $document;
@@ -497,7 +655,11 @@ class Pimcore_Tool_RestClient
         }
     }
 
-
+    /**
+     * @param $filename
+     * @param $extension
+     * @return string
+     */
     public function changeExtension($filename, $extension)
     {
         $idx = strrpos($filename, ".");
@@ -517,23 +679,23 @@ class Pimcore_Tool_RestClient
         $response = $response->data;
 
         if ($response->type == "folder") {
-            $wsDocument = $this->fillWebserviceData("Webservice_Data_Asset_Folder_In", $response);
+            $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\Folder\\In", $response);
             if (!$decode) {
                 return $wsDocument;
             }
-            $asset = new Asset_Folder();
+            $asset = new Asset\Folder();
             $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
             return $asset;
         } else {
-            $wsDocument = $this->fillWebserviceData("Webservice_Data_Asset_File_In", $response);
+            $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\In", $response);
             if (!$decode) {
                 return $wsDocument;
             }
 
             $type = $wsDocument->type;
             if (!empty($type)) {
-                $type = "Asset_" . ucfirst($type);
-                if (!Pimcore_Tool::classExists($type)) {
+                $type = "\\Pimcore\\Model\\Asset\\" . ucfirst($type);
+                if (!Tool::classExists($type)) {
                     throw new Exception("Asset class " . $type . " does not exist");
                 }
 
@@ -541,7 +703,7 @@ class Pimcore_Tool_RestClient
                 $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
 
                 if ($light) {
-                    $client = Pimcore_Tool::getHttpClient();
+                    $client = Tool::getHttpClient();
                     $client->setMethod("GET");
 
                     $assetType = $asset->getType();
@@ -550,7 +712,8 @@ class Pimcore_Tool_RestClient
                     if ($assetType == "image" && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
                         // http://example.com/website/var/tmp/thumb_9__fancybox_thumb
-                        $uri = $protocol . $this->getHost() . "/website/var/tmp/thumb_" . $asset->getId() . "__" . $thumbnail;
+                        $tmpPath = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", PIMCORE_TEMPORARY_DIRECTORY);
+                        $uri = $protocol . $this->getHost() . $tmpPath . "/thumb_" . $asset->getId() . "__" . $thumbnail;
                         $client->setUri($uri);
 
                         if ($this->getLoggingEnabled()) {
@@ -581,7 +744,7 @@ class Pimcore_Tool_RestClient
 
                         }
 
-                        Logger::debug("mimeType: " . $mimeType);
+                        \Logger::debug("mimeType: " . $mimeType);
                         $asset->setFilename($filename);
                     }
 
@@ -613,9 +776,9 @@ class Pimcore_Tool_RestClient
     {
         $type = $document->getType();
         $typeUpper = ucfirst($type);
-        $className = "Webservice_Data_Document_" . $typeUpper . "_In";
+        $className = "\\Pimcore\\Model\\Webservice\\Data\\Document\\" . $typeUpper . "\\In";
 
-        $wsDocument = Webservice_Data_Mapper::map($document, $className, "out");
+        $wsDocument = Webservice\Data\Mapper::map($document, $className, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest($this->buildEndpointUrl("document/"), "PUT", $encodedData);
         return $response;
@@ -629,28 +792,30 @@ class Pimcore_Tool_RestClient
     public function createObjectConcrete($object)
     {
         if ($object->getType() == "folder") {
-            $documentType = "Webservice_Data_Object_Folder_Out";
+            $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\Out";
         } else {
-            $documentType = "Webservice_Data_Object_Concrete_Out";
+            $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\Out";
         }
-        $wsDocument = Webservice_Data_Mapper::map($object, $documentType, "out");
+        $wsDocument = Webservice\Data\Mapper::map($object, $documentType, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest($this->buildEndpointUrl("object/"), "PUT", $encodedData);
         return $response;
     }
 
-    /** Creates a new asset.
-     * @param $object
-     * @return mixed json encoded success value and id
+    /**
+     * @param $asset
+     * @return mixed|null|string
+     * @throws Exception
+     * @throws \Exception
      */
     public function createAsset($asset)
     {
         if ($asset->getType() == "folder") {
-            $documentType = "Webservice_Data_Asset_Folder_Out";
+            $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Asset\\Folder\\Out";
         } else {
-            $documentType = "Webservice_Data_Asset_File_Out";
+            $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\Out";
         }
-        $wsDocument = Webservice_Data_Mapper::map($asset, $documentType, "out");
+        $wsDocument = Webservice\Data\Mapper::map($asset, $documentType, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest($this->buildEndpointUrl("asset/"), "PUT", $encodedData);
         $response = $response->data;
@@ -717,10 +882,10 @@ class Pimcore_Tool_RestClient
     }
 
 
-    /** Returns class information for the class with the given id.
+    /**
      * @param $id
      * @param bool $decode
-     * @return Object_Concrete|Object_Folder
+     * @return mixed|null|Object\ClassDefinition|string
      * @throws Exception
      */
     public function getClassById($id, $decode = true)
@@ -732,18 +897,18 @@ class Pimcore_Tool_RestClient
             return $response;
         }
 
-        $wsDocument = $this->fillWebserviceData("Webservice_Data_Class_In", $responseData);
+        $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\In", $responseData);
 
-        $class = new Object_Class();
+        $class = new Object\ClassDefinition();
         $wsDocument->reverseMap($class);
         return $class;
     }
 
 
-    /** Returns class information for the class with the given id.
+    /**
      * @param $id
      * @param bool $decode
-     * @return Object_Concrete|Object_Folder
+     * @return mixed|Object\ClassDefinition
      * @throws Exception
      */
     public function getObjectMetaById($id, $decode = true)
@@ -751,13 +916,13 @@ class Pimcore_Tool_RestClient
         $response = $this->doRequest($this->buildEndpointUrl("object-meta/id/" . $id), "GET");
         $response = $response->data;
 
-        $wsDocument = $this->fillWebserviceData("Webservice_Data_Class_In", $response);
+        $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\In", $response);
 
         if (!$decode) {
             return $wsDocument;
         }
 
-        $class = new Object_Class();
+        $class = new Object\ClassDefinition();
         $wsDocument->reverseMap($class);
         return $class;
     }
@@ -773,7 +938,12 @@ class Pimcore_Tool_RestClient
         return $response;
     }
 
-
+    /**
+     * @param null $condition
+     * @param null $groupBy
+     * @return mixed
+     * @throws Exception
+     */
     public function getAssetCount($condition = null, $groupBy = null)
     {
         $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
@@ -786,6 +956,12 @@ class Pimcore_Tool_RestClient
         return $response["data"]->totalCount;
     }
 
+    /**
+     * @param null $condition
+     * @param null $groupBy
+     * @return mixed
+     * @throws Exception
+     */
     public function getDocumentCount($condition = null, $groupBy = null)
     {
         $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
@@ -797,6 +973,13 @@ class Pimcore_Tool_RestClient
         return $response["data"]->totalCount;
     }
 
+    /**
+     * @param null $condition
+     * @param null $groupBy
+     * @param null $objectClass
+     * @return mixed
+     * @throws Exception
+     */
     public function getObjectCount($condition = null, $groupBy = null, $objectClass = null)
     {
         $params = $this->fillParms($condition, null, null, null, null, $groupBy, $objectClass);
@@ -818,6 +1001,10 @@ class Pimcore_Tool_RestClient
         return $response;
     }
 
+    /**
+     * @return mixed|null|string
+     * @throws Exception
+     */
     public function getFieldCollections()
     {
         $response = $this->doRequest($this->buildEndpointUrl("field-collections"), "GET");
@@ -825,13 +1012,17 @@ class Pimcore_Tool_RestClient
         return $response;
     }
 
+    /**
+     * @param $id
+     * @return mixed|null|string
+     * @throws Exception
+     */
     public function getFieldCollection($id)
     {
         $response = $this->doRequest($this->buildEndpointUrl("field-collection/id/" . $id), "GET");
 
         return $response;
     }
-
 
     /** Returns a list of defined classes
      * @return mixed
@@ -903,6 +1094,11 @@ class Pimcore_Tool_RestClient
         return $response;
     }
 
+    /**
+     * @param $customUrlPath
+     * @param array $params
+     * @return string
+     */
     public function buildEndpointUrl($customUrlPath,$params = array())
     {
         $url = $this->getBaseUrl() . $customUrlPath . "?apikey=" . $this->getApiKey();

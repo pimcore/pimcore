@@ -13,11 +13,13 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Model_Cache {
+namespace Pimcore\Model;
+
+class Cache {
 
     /**
      * Instance of the used cache-implementation
-     * @var Zend_Cache_Core|Zend_Cache_Frontend
+     * @var \Zend_Cache_Core|\Zend_Cache_Frontend
      */
     public static $instance;
 
@@ -50,7 +52,7 @@ class Pimcore_Model_Cache {
     public static $clearedTagsStack = array();
 
     /**
-     * Items having tags which are in this array are cleared on shutdown Pimcore::shutdown(); This is especially for the output-cache
+     * Items having tags which are in this array are cleared on shutdown \Pimcore::shutdown(); This is especially for the output-cache
      * @var array
      */
     protected static $_clearTagsOnShutdown = array();
@@ -88,18 +90,18 @@ class Pimcore_Model_Cache {
     protected static $writeLockTimestamp;
 
     /**
-     * @var Zend_Cache_Core
+     * @var \Zend_Cache_Core
      */
     protected static $blackHoleCache = null;
     
     /**
      * Returns a instance of the cache, if the instance isn't available it creates a new one
      *
-     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
     public static function getInstance() {
 
-        if (!self::$instance instanceof Zend_Cache_Core) {
+        if (!self::$instance instanceof \Zend_Cache_Core) {
             self::init();
         }
 
@@ -110,15 +112,18 @@ class Pimcore_Model_Cache {
         return self::$instance;
     }
 
+    /**
+     *
+     */
     public static function init() {
 
-        if (!self::$instance instanceof Zend_Cache_Core) {
+        if (!self::$instance instanceof \Zend_Cache_Core) {
             // check for custom cache configuration
             $customCacheFile = PIMCORE_CONFIGURATION_DIRECTORY . "/cache.xml";
             if (is_file($customCacheFile)) {
                 $config = self::getDefaultConfig();
                 try {
-                    $conf = new Zend_Config_Xml($customCacheFile);
+                    $conf = new \Zend_Config_Xml($customCacheFile);
 
                     if ($conf->frontend) {
                         $config["frontendType"] = (string) $conf->frontend->type;
@@ -140,22 +145,24 @@ class Pimcore_Model_Cache {
                         self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
                     }
 
+                    $config = self::normalizeConfig($config);
+
                     // here you can use the cache backend you like
                     try {
                         self::$instance = self::initializeCache($config);
-                    } catch (Exception $e) {
-                        Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
+                    } catch (\Exception $e) {
+                        \Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
                     }
 
-                } catch (Exception $e) {
-                    Logger::crit($e);
-                    Logger::crit("Error while reading cache configuration, using the default file backend");
+                } catch (\Exception $e) {
+                    \Logger::crit($e);
+                    \Logger::crit("Error while reading cache configuration, using the default file backend");
                 }
             }
         }
 
         // return default cache if cache cannot be initialized
-        if (!self::$instance instanceof Zend_Cache_Core) {
+        if (!self::$instance instanceof \Zend_Cache_Core) {
             self::$instance = self::getDefaultCache();
         }
 
@@ -173,12 +180,33 @@ class Pimcore_Model_Cache {
     }
 
     /**
-     * @static
      * @param $config
-     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     * @return mixed
+     */
+    protected static function normalizeConfig($config) {
+
+        foreach ($config as $key => &$value) {
+            if($value === "true") {
+                $value = true;
+            }
+            if($value === "false") {
+                $value = false;
+            }
+
+            if(is_array($value)) {
+                $value = self::normalizeConfig($value);
+            }
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param $config
+     * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
     public static function initializeCache ($config) {
-        $cache = Zend_Cache::factory($config["frontendType"], $config["backendType"], $config["frontendConfig"], $config["backendConfig"], $config["customFrontendNaming"], $config["customBackendNaming"], true);
+        $cache = \Zend_Cache::factory($config["frontendType"], $config["backendType"], $config["frontendConfig"], $config["backendConfig"], $config["customFrontendNaming"], $config["customBackendNaming"], true);
         return $cache;
     }
 
@@ -195,7 +223,7 @@ class Pimcore_Model_Cache {
                 "automatic_cleaning_factor" => 0
             ),
             "customFrontendNaming" => true,
-            "backendType" => "Pimcore_Cache_Backend_MysqlTable",
+            "backendType" => "\\Pimcore\\Cache\\Backend\\MysqlTable",
             "backendConfig" => array(),
             "customBackendNaming" => true
         );
@@ -208,11 +236,10 @@ class Pimcore_Model_Cache {
     }
 
     /**
-     * @static
-     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
     public static function getDefaultCache () {
-        if(Pimcore_Config::getSystemConfig()) {
+        if(\Pimcore\Config::getSystemConfig()) {
             // default mysql cache adapter
             $config = self::getDefaultConfig();
             $cache = self::initializeCache($config);
@@ -224,12 +251,12 @@ class Pimcore_Model_Cache {
     }
 
     /**
-     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
     public static function getBlackHoleCache() {
         if(!self::$blackHoleCache) {
             $config = self::getDefaultConfig();
-            $config["backendType"] = "Zend_Cache_Backend_BlackHole";
+            $config["backendType"] = "\\Zend_Cache_Backend_BlackHole";
             self::$blackHoleCache = self::initializeCache($config);
         }
         return self::$blackHoleCache;
@@ -243,7 +270,7 @@ class Pimcore_Model_Cache {
     public static function load($key, $doNotTestCacheValidity = false) {
         
         if (!self::$enabled) {
-            Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
+            \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
             return;
         }
 
@@ -257,14 +284,42 @@ class Pimcore_Model_Cache {
             }
     
             if ($data !== false) {
-                Logger::debug("Successfully got data for key " . $key . " from cache");
+                \Logger::debug("Successfully got data for key " . $key . " from cache");
             } else {
-                Logger::debug("Key " . $key . " doesn't exist in cache");
+                \Logger::debug("Key " . $key . " doesn't exist in cache");
             }
     
             return $data;
         }
         return false;
+    }
+
+    /**
+     * Get the last modified time for the requested cache entry
+     *
+     * @param  string $key Cache key
+     * @return int|bool Last modified time of cache entry if it is available, false otherwise
+     */
+    public static function test ($key) {
+        if (!self::$enabled) {
+            \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
+            return;
+        }
+
+        $lastModified = false;
+
+        if($cache = self::getInstance()) {
+            $key = self::$cachePrefix . $key;
+            $data = $cache->test($key);
+
+            if ($data !== false) {
+                $lastModified = $data;
+            } else {
+                \Logger::debug("Key " . $key . " doesn't exist in cache");
+            }
+        }
+
+        return $lastModified;
     }
 
     /**
@@ -280,17 +335,21 @@ class Pimcore_Model_Cache {
                 return;
             }
 
-            self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
+            return self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
         } else {
             self::addToSaveStack(array($data, $key, $tags, $lifetime, $priority, $force));
         }
     }
-    
+
     /**
      * Write's an item to the cache // don't use the logger inside here
-     *
-     * @param array $config
-     * @return void
+     * @param $data
+     * @param $key
+     * @param array $tags
+     * @param null $lifetime
+     * @param null $priority
+     * @param bool $force
+     * @return bool|void
      */
     public static function storeToCache ($data, $key, $tags = array(), $lifetime = null, $priority = null, $force = false) {
         if (!self::$enabled) {
@@ -303,7 +362,7 @@ class Pimcore_Model_Cache {
         }
 
         // do not cache hardlink-wrappers
-        if($data instanceof Document_Hardlink_Wrapper_Interface) {
+        if($data instanceof Document\Hardlink\Wrapper\WrapperInterface) {
             return;
         }
 
@@ -317,7 +376,7 @@ class Pimcore_Model_Cache {
             //    $cache->setLifetime($lifetime);
             //}
 
-            if ($data instanceof Element_Interface) {
+            if ($data instanceof Element\ElementInterface) {
                 // check for currupt data
                 if ($data->getId() < 1) {
                     return;
@@ -331,14 +390,14 @@ class Pimcore_Model_Cache {
                 $tags = $data->getCacheTags($tags);
                 $type = get_class($data);
 
-                Logger::debug("prepared " . $type . " " . $data->getId() . " for data cache with tags: " . implode(",", $tags));
+                \Logger::debug("prepared " . $type . " " . $data->getId() . " for data cache with tags: " . implode(",", $tags));
             }
 
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
             if(is_array($tags)){
                 foreach ($tags as $t) {
                     if(in_array($t,self::$clearedTagsStack)) {
-                        Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
+                        \Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
                         return;
                     }
                 }
@@ -349,7 +408,7 @@ class Pimcore_Model_Cache {
             // always add the key as tag
             $tags[] = $key;
 
-            // array_values() because the tags from Element_Interface and some others are associative eg. array("object_123" => "object_123")
+            // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
             $tags = array_values($tags);
 
             if(is_object($data) && isset($data->____pimcore_cache_item__)) {
@@ -359,15 +418,17 @@ class Pimcore_Model_Cache {
             $key = self::$cachePrefix . $key;
 
             if($lifetime === null) {
-                $lifetime = false; // set to false otherwise the lifetime stays at null (Zend_Cache_Backend::getLifetime())
+                $lifetime = false; // set to false otherwise the lifetime stays at null (\Zend_Cache_Backend::getLifetime())
             }
 
             $success = $cache->save($data, $key, $tags, $lifetime);
             if($success !== true) {
-                Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));
+                \Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));
             }
 
-            Logger::debug("Added " . $key . " to cache");
+            \Logger::debug("Added " . $key . " to cache");
+
+            return $success;
         }
     }
 
@@ -426,9 +487,9 @@ class Pimcore_Model_Cache {
 
             try {
                 forward_static_call_array(array(__CLASS__, "storeToCache"),$conf);
-            } catch (Exception $e) {
-                Logger::error("Unable to put element " . $conf[1] . " to cache because of the following reason: ");
-                Logger::error($e);
+            } catch (\Exception $e) {
+                \Logger::error("Unable to put element " . $conf[1] . " to cache because of the following reason: ");
+                \Logger::error($e);
             }
 
             $processedKeys[] = $conf[1]; // index 1 is the key for the cache item
@@ -505,7 +566,7 @@ class Pimcore_Model_Cache {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            Logger::debug("Cache is not cleared because it is disabled");
+            \Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 
@@ -526,14 +587,14 @@ class Pimcore_Model_Cache {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            Logger::debug("Cache is not cleared because it is disabled");
+            \Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 
         self::setWriteLock();
 
         if($cache = self::getInstance()) {
-            $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
+            $cache->clean(\Zend_Cache::CLEANING_MODE_ALL);
         }
         
         // add tag to clear stack
@@ -563,13 +624,13 @@ class Pimcore_Model_Cache {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            Logger::debug("Cache is not cleared because it is disabled");
+            \Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 
         self::setWriteLock();
 
-        Logger::info("clear cache tags: " . implode(",",$tags));
+        \Logger::info("clear cache tags: " . implode(",",$tags));
 
         // ensure that every tag is unique
         $tags = array_unique($tags);
@@ -599,7 +660,7 @@ class Pimcore_Model_Cache {
         // clean tags, except output
         if($cache = self::getInstance()) {
             $cache->clean(
-                Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
+                \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
                 $tags
             );
         }
@@ -619,7 +680,7 @@ class Pimcore_Model_Cache {
 
 
     /**
-     * Clears all tags stored in self::$_clearTagsOnShutdown, this function is executed in Pimcore::shutdown()
+     * Clears all tags stored in self::$_clearTagsOnShutdown, this function is executed in \Pimcore::shutdown()
      * @static
      * @return void
      */
@@ -627,7 +688,7 @@ class Pimcore_Model_Cache {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            Logger::debug("Cache is not cleared because it is disabled");
+            \Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 
@@ -635,7 +696,7 @@ class Pimcore_Model_Cache {
             $tags = array_unique(self::$_clearTagsOnShutdown);
             if($cache = self::getInstance()) {
                 $cache->clean(
-                    Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
+                    \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
                     $tags
                 );
             }
@@ -698,9 +759,9 @@ class Pimcore_Model_Cache {
      * @param null $cache
      */
     public static function setZendFrameworkCaches ($cache = null) {
-        Zend_Locale::setCache($cache);
-        Zend_Locale_Data::setCache($cache);
-        Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
+        \Zend_Locale::setCache($cache);
+        \Zend_Locale_Data::setCache($cache);
+        \Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
     }
 
     /**
@@ -721,6 +782,6 @@ class Pimcore_Model_Cache {
 
     public static function maintenance() {
         $cache = self::getInstance();
-        $cache->clean(Zend_Cache::CLEANING_MODE_OLD);
+        $cache->clean(\Zend_Cache::CLEANING_MODE_OLD);
     }
 }

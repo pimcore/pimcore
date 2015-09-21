@@ -15,11 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Data_KeyValue extends Pimcore_Model_Abstract {
+namespace Pimcore\Model\Object\Data;
 
+use Pimcore\Model;
+use Pimcore\Model\Object;
+
+class KeyValue extends Model\AbstractModel {
 
     /**
-     * @var Object_Class
+     * @var Object\ClassDefinition
      */
     public $class;
 
@@ -38,30 +42,35 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
      */
     protected $multivalent;
 
-
+    /**
+     *
+     */
     public function __construct() {
     }
 
     /**
-     * @param Object_Class $class
+     * @param Object\ClassDefinition $class
      * @return void
      */
-    public function setClass(Object_Class $class)
+    public function setClass(Object\ClassDefinition $class)
     {
         $this->class = $class;
         return $this;
     }
 
     /**
-     * @return Object_Class
+     * @return Object\ClassDefinition
      */
     public function getClass()
     {
         return $this->class;
     }
 
+    /**
+     * @return string
+     */
     public function __toString() {
-        $str = "Object_Data_KeyValue oid=" . $this->objectId . "\n";
+        $str = "Object\\Data\\KeyValue oid=" . $this->objectId . "\n";
         $props = $this->getInternalProperties();
 
         if (is_array($props)) {
@@ -72,15 +81,26 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $str;
     }
 
+    /**
+     * @return int
+     */
     public function getObjectId() {
         return $this->objectId;
     }
 
+    /**
+     * @param $objectId
+     * @return $this
+     */
     public function setObjectId($objectId) {
         $this->objectId = $objectId;
         return $this;
     }
 
+    /**
+     * @param $arr
+     * @return $this
+     */
     public function setProperties($arr) {
         $newProperties = array();
         foreach ($arr as $key => $pair) {
@@ -94,13 +114,20 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getInternalProperties() {
         return $this->arr;
     }
 
+    /**
+     * @param $groupName
+     * @return array
+     */
     public function getKeyvaluepairsByGroup($groupName){
         $data = array();
-        $group = Object_KeyValue_GroupConfig::getByName($groupName);
+        $group = Object\KeyValue\GroupConfig::getByName($groupName);
         if (!empty($group)) {
             $properties = $this->getProperties();
             foreach ((array)$properties as $property) {
@@ -112,26 +139,33 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $data;
     }
 
+    /**
+     * @param bool $forEditMode
+     * @return array
+     */
     public function getProperties($forEditMode = false) {
         $result = array();
-        $object = Object_Abstract::getById($this->objectId);
+        $object = Object::getById($this->objectId);
+        if(!$object){
+            throw new \Exception('Object with Id '. $this->objectId .' not found');
+        }
         $objectName = $object->getKey();
 
         $internalKeys = array();
         foreach ($this->arr as $pair) {
             $pair["inherited"] = false;
             $pair["source"] = $object->getId();
-            $pair["groupId"] = Object_KeyValue_KeyConfig::getById($pair['key'])->getGroup();
+            $pair["groupId"] = Object\KeyValue\KeyConfig::getById($pair['key'])->getGroup();
             $result[] = $pair;
             $internalKeys[] = $pair["key"];
         }
 
-        $blacklist = array();
+        $blacklist = $internalKeys;
 
-        $parent = Object_Service::hasInheritableParentObject($object);
+        $parent = Object\Service::hasInheritableParentObject($object);
         while ($parent) {
             $kv = $parent->getKeyvaluepairs();
-            $parentProperties = $kv->getInternalProperties();
+            $parentProperties = $kv ? $kv->getInternalProperties() : [];
 
             $addedKeys = array();
 
@@ -187,6 +221,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
                     $parentPair["source"] = $parent->getId();
                     $parentPair["altSource"] = $parent->getId();
                     $parentPair["altValue"] = $parentPair["value"];
+                    $parentPair["groupId"] = Object\KeyValue\KeyConfig::getById($parentPair['key'])->getGroup();
                     $result[] = $parentPair;
                 }
             }
@@ -196,27 +231,34 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
                 $blacklist[] = $parentKeyId;
             }
 
-            $parent = Object_Service::hasInheritableParentObject($parent);
+            $parent = Object\Service::hasInheritableParentObject($parent);
         }
 
         return $result;
     }
 
-
+    /**
+     * @param $propName
+     * @param null $groupId
+     * @return int
+     * @throws \Exception
+     */
     function getKeyId($propName, $groupId = null) {
-        $keyConfig = Object_KeyValue_KeyConfig::getByName($propName, $groupId);
+        $keyConfig = Object\KeyValue\KeyConfig::getByName($propName, $groupId);
 
         if (!$keyConfig) {
-            throw new Exception("key does not exist");
+            throw new \Exception("key does not exist");
         }
         $keyId =  $keyConfig->getId();
         return $keyId;
     }
 
 
-    /** Throws an exception if property is not globally defined. Null, if it is not set
-     * for this object.
+    /**
      * @param $propName
+     * @param null $groupId
+     * @return array|null
+     * @throws \Exception
      */
     public function getProperty($propName, $groupId = null) {
         $keyId =  $this->getKeyId($propName, $groupId);
@@ -226,7 +268,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $propsWithInheritance = $this->getProperties();
         foreach ($propsWithInheritance as $pair) {
             if ($pair["key"] == $keyId) {
-                $result[] = new Object_Data_KeyValue_Entry($pair["value"], $pair["translated"], $pair["metadata"]);
+                $result[] = new Object\Data\KeyValue\Entry($pair["value"], $pair["translated"], $pair["metadata"]);
             }
         }
         $count = count($result);
@@ -239,15 +281,12 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         }
     }
 
-
-
-
     /** Sets the value of the property with the given id
      * @param $keyId the id of the key
      * @param $value the value
      * @param bool $fromGrid if true then the data is coming from the grid, we have to check if the value needs
      *                  to be translated
-     * @return Object_Data_KeyValue the resulting object
+     * @return Object\Data\KeyValue the resulting object
      */
     public function setPropertyWithId($keyId, $value, $fromGrid = false) {
         // the key name is valid, now iterate over the object's pairs
@@ -273,13 +312,18 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $this;
     }
 
+    /**
+     * @param $keyId
+     * @param $value
+     * @return string
+     */
     private function getTranslatedValue($keyId, $value) {
         $translatedValue = "";
-        $keyConfig = Object_KeyValue_KeyConfig::getById($keyId);
+        $keyConfig = Object\KeyValue\KeyConfig::getById($keyId);
         $translatorID = $keyConfig->getTranslator();
-        $translatorConfig = Object_KeyValue_TranslatorConfig::getById($translatorID);
+        $translatorConfig = Object\KeyValue\TranslatorConfig::getById($translatorID);
         $className = $translatorConfig->getTranslator();
-        if (Pimcore_Tool::classExists($className)) {
+        if (\Pimcore\Tool::classExists($className)) {
             $translator = new $className();
             $translatedValue = $translator->translate($value);
             if (!$translatedValue) {
@@ -289,21 +333,31 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return $translatedValue;
     }
 
-
+    /**
+     * @param $propName
+     * @param $value
+     * @throws \Exception
+     */
     public function setProperty($propName, $value) {
         $keyId =  $this->getKeyId($propName);
         $this->setPropertyWithId($keyId, $value);
     }
 
+    /**
+     * @param $name
+     * @param $arguments
+     * @return array|mixed|null|void
+     * @throws \Exception
+     */
     public function __call($name, $arguments) {
         $sub = substr($name, 0, 14);
         if(substr($name, 0, 16) == "getWithGroupName") {
             $key = substr($name, 16, strlen($name)-16);
-            $groupConfig = Object_KeyValue_GroupConfig::getByName($arguments[0]);
+            $groupConfig = Object\KeyValue\GroupConfig::getByName($arguments[0]);
             return $this->getProperty($key, $groupConfig->getId());
         } else if(substr($name, 0, 14) == "getWithGroupId") {
             $key = substr($name, 14, strlen($name)-14);
-            $groupConfig = Object_KeyValue_GroupConfig::getById($arguments[0]);
+            $groupConfig = Object\KeyValue\GroupConfig::getById($arguments[0]);
             return $this->getProperty($key, $groupConfig->getId());
         } else  if(substr($name, 0, 3) == "get") {
             $key = substr($name, 3, strlen($name)-3);
@@ -315,12 +369,15 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         return parent::__call($name, $arguments);
     }
 
-
+    /**
+     * @param $keyId
+     * @return array|null
+     */
     public function getEntryByKeyId($keyId) {
         $result = array();
         foreach($this->getProperties() as $property) {
             if($property['key'] == $keyId) {
-                $result[] = new Object_Data_KeyValue_Entry($property["value"], $property["translated"],$property["metadata"]);
+                $result[] = new Object\Data\KeyValue\Entry($property["value"], $property["translated"],$property["metadata"]);
             }
         }
 
@@ -335,6 +392,10 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
 
     }
 
+    /**
+     * @param $keyId
+     * @param $value
+     */
     public function setValueWithKeyId($keyId, $value) {
         $cleanedUpValues = array();
         foreach($this->arr as $entry) {
@@ -358,7 +419,6 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
 
     }
 
-
     /**
      * @param  $multivalent
      */
@@ -374,6 +434,4 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
     {
         return $this->multivalent;
     }
-
-
 }

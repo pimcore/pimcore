@@ -41,8 +41,8 @@
                 <table border="1" cellpadding="3" cellspacing="0">
                     <?php foreach ($this->checksPHP as $check) { ?>
                         <tr>
-                            <td><a href="<?php echo $check["link"]; ?>" target="_blank"><?php echo $check["name"]; ?></a></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><a href="<?= $check["link"]; ?>" target="_blank"><?= $check["name"]; ?></a></td>
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -60,8 +60,8 @@
                 <table border="1" cellpadding="3" cellspacing="0">
                     <?php foreach ($this->checksMySQL as $check) { ?>
                         <tr>
-                            <td><?php echo $check["name"]; ?></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><?= $check["name"]; ?></td>
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -79,8 +79,8 @@
                 <table border="1" cellpadding="3" cellspacing="0">
                     <?php foreach ($this->checksFS as $check) { ?>
                         <tr>
-                            <td><?php echo $check["name"]; ?></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><?= $check["name"]; ?></td>
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -100,8 +100,8 @@
                 <table border="1" cellpadding="3" cellspacing="0">
                     <?php foreach ($this->checksApps as $check) { ?>
                         <tr>
-                            <td><?php echo $check["name"]; ?></td>
-                            <td><img src="/pimcore/static/img/icon/<?php
+                            <td><?= $check["name"]; ?></td>
+                            <td><img src="/pimcore/static6/img/icon/<?php
                                 if($check["state"] == "ok") {
                                     echo "accept";
                                 } else if ($check["state"] == "warning") {
@@ -123,9 +123,9 @@
             <b>Explanation:</b>
         </p>
         <p>
-            <span class="legend"><img src="/pimcore/static/img/icon/accept.png" /> Everything ok.</span>
-            <span class="legend"><img src="/pimcore/static/img/icon/error.png" /> Recommended but not required.</span>
-            <span class="legend"><img src="/pimcore/static/img/icon/delete.png" /> Required.</span>
+            <span class="legend"><img src="/pimcore/static6/img/icon/accept.png" /> Everything ok.</span>
+            <span class="legend"><img src="/pimcore/static6/img/icon/error.png" /> Recommended but not required.</span>
+            <span class="legend"><img src="/pimcore/static6/img/icon/delete.png" /> Required.</span>
         </p>
     </div>
 

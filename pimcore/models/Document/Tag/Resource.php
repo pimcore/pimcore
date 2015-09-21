@@ -15,15 +15,21 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Resource extends Pimcore_Model_Resource_Abstract {
+namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Model;
 
+class Resource extends Model\Resource\AbstractResource {
+
+    /**
+     *
+     */
     public function save() {
 
         $data = $this->model->getDataForResource();
         
         if (is_array($data) or is_object($data)) {
-            $data = Pimcore_Tool_Serialize::serialize($data);
+            $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 
         $element = array(
@@ -35,7 +41,10 @@ class Document_Tag_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->db->insertOrUpdate("documents_elements", $element);
     }
-    
+
+    /**
+     *
+     */
     public function delete () {
         $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getDocumentId()) . " AND " . $this->db->quoteInto("name = ?", $this->model->getName()));
     }

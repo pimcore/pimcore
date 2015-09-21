@@ -12,30 +12,34 @@
  * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-class Pimcore_Document {
+
+namespace Pimcore;
+
+use Pimcore\Tool; 
+
+class Document {
 
     /**
      * @param null $adapter
-     * @return null|Pimcore_Document_Adapter
-     * @throws Exception
+     * @return bool|null|Document
+     * @throws \Exception
      */
     public static function getInstance ($adapter = null) {
         try {
             if($adapter) {
-                $adapterClass = "Pimcore_Document_Adapter_" . $adapter;
-                if(Pimcore_Tool::classExists($adapterClass)) {
+                $adapterClass = "\\Pimcore\\Document\\Adapter\\" . $adapter;
+                if(Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
-                    throw new Exception("document-transcode adapter `" . $adapter . "´ does not exist.");
+                    throw new \Exception("document-transcode adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
                 if($adapter = self::getDefaultAdapter()) {
                     return $adapter;
                 }
             }
-        } catch (Exception $e) {
-            Logger::crit("Unable to load document adapter: " . $e->getMessage());
+        } catch (\Exception $e) {
+            \Logger::crit("Unable to load document adapter: " . $e->getMessage());
             throw $e;
         }
 
@@ -73,15 +77,15 @@ class Pimcore_Document {
         $adapters = array("LibreOffice", "Ghostscript");
 
         foreach ($adapters as $adapter) {
-            $adapterClass = "Pimcore_Document_Adapter_" . $adapter;
-            if(Pimcore_Tool::classExists($adapterClass)) {
+            $adapterClass = "\\Pimcore\\Document\\Adapter\\" . $adapter;
+            if(Tool::classExists($adapterClass)) {
                 try {
                     $adapter = new $adapterClass();
                     if($adapter->isAvailable()) {
                         return $adapter;
                     }
-                } catch (Exception $e) {
-                    Logger::warning($e);
+                } catch (\Exception $e) {
+                    \Logger::warning($e);
                 }
             }
         }
