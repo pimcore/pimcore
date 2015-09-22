@@ -319,9 +319,7 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
     public function load()
     {
         // init
-        $params = [
-            'query' => '*'
-        ];
+        $params = [];
 
 
         // add conditions
@@ -506,7 +504,10 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
             ;
         }
 
-        $params['query'] = $query ?: '*';
+        if($query)
+        {
+            $params['query'] = $query;
+        }
 
         return $params;
     }
@@ -707,9 +708,7 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
     protected function doLoadGroupByValues()
     {
         // init
-        $params = [
-            'query' => '*'
-        ];
+        $params = [];
 
 
         // add conditions

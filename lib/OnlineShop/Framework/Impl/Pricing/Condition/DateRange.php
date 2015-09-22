@@ -93,7 +93,9 @@ class OnlineShop_Framework_Impl_Pricing_Condition_DateRange implements OnlineSho
     {
         $json = json_decode($string);
         $this->setStarting(new Zend_Date(strtotime($json->starting)));
-        $this->setEnding(new Zend_Date(strtotime($json->ending)));
+        $ending = new Zend_Date(strtotime($json->ending));
+        $ending->setHour(59)->setMinute(59)->setSecond(59);
+        $this->setEnding( $ending );
 
         return $this;
     }

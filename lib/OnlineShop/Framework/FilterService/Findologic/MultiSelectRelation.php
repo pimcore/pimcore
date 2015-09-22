@@ -14,12 +14,25 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelectRelation extends 
         {
             foreach($currentFilter[$field] as $id)
             {
-                array_unshift($values, [
-                    'value' => $id
-                    , 'label' => $id
-                    , 'count' => null
-                    , 'parameter' => null
-                ]);
+                $add = true;
+                foreach($values as $v)
+                {
+                    if($v['value'] == $id)
+                    {
+                        $add = false;
+                        break;
+                    }
+                }
+
+                if($add)
+                {
+                    array_unshift($values, [
+                        'value' => $id
+                        , 'label' => $id
+                        , 'count' => null
+                        , 'parameter' => null
+                    ]);
+                }
             }
         }
 
