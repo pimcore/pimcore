@@ -29,6 +29,7 @@
         <viewSuffix/>
         <instanceIdentifier/>
         <show_cookie_notice/>
+        <extjs6>1</extjs6>
     </general>
     <database>
         <adapter>Mysqli</adapter>
