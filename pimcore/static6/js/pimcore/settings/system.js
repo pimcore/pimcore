@@ -144,13 +144,12 @@ pimcore.settings.system = Class.create({
                                 triggerAction: 'all',
                                 store: this.data.config.timezones,
                                 value: this.getValue("general.timezone"),
-                                width: 400,
-                                listWidth: 400
+                                width: 600
                             },
                             {
                                 fieldLabel: t("view_suffix"),
                                 xtype: "combo",
-                                width: 450,
+                                width: 600,
                                 //editable: true, // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
                                 name: "general.viewSuffix",
                                 value: this.getValue("general.viewSuffix"),
@@ -189,18 +188,6 @@ pimcore.settings.system = Class.create({
                                 width: 450
                             },
                             {
-                                fieldLabel: t("extjs_version"),
-                                xtype: "combo",
-                                name: "general.extjs6",
-                                value: this.getValue("general.extjs6"),
-                                store: [
-                                    ["0",t("extjs_34")],
-                                    ["1",t("extjs_6")]
-                                ],
-                                mode: "local",
-                                triggerAction: "all"
-                            },
-                            {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
                                 name: "general.loginscreencustomimage",
@@ -232,6 +219,19 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('instance_identifier_info'),
                                 cls: "pimcore_extra_label_bottom"
+                            },
+                            {
+                                fieldLabel: t("user_interface") + " / " + t("extjs_version"),
+                                xtype: "combo",
+                                width: 600,
+                                name: "general.extjs6",
+                                value: this.getValue("general.extjs6"),
+                                store: [
+                                    ["",t("legacy_user_interface") + " (" + t("extjs_34") + ")"],
+                                    ["1",t("new_user_interface") + " (" + t("extjs_6") + ")"]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
                             }
                         ]
                     }

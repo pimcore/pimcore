@@ -150,6 +150,19 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 150},
                         items :[
                             {
+                                fieldLabel: t("user_interface") + " / " + t("extjs_version"),
+                                xtype: "combo",
+                                width: 250,
+                                name: "general.extjs6",
+                                value: this.getValue("general.extjs6"),
+                                store: [
+                                    ["",t("legacy_user_interface") + " (" + t("extjs_34") + ")"],
+                                    ["1",t("new_user_interface") + " (" + t("extjs_6") + ")"]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
+                            },
+                            {
                                 fieldLabel: t('timezone'),
                                 name: 'general.timezone',
                                 xtype: "combo",
@@ -200,19 +213,6 @@ pimcore.settings.system = Class.create({
                                 name: "general.contactemail",
                                 value: this.getValue("general.contactemail"),
                                 width: 300
-                            },
-                            {
-                                fieldLabel: t("extjs_version"),
-                                //xtype: "combo",
-                                xtype: "hidden",
-                                name: "general.extjs6",
-                                value: this.getValue("general.extjs6"),
-                                store: [
-                                    ["0",t("extjs_34")],
-                                    ["1",t("extjs_6")]
-                                ],
-                                mode: "local",
-                                triggerAction: "all"
                             },
                             {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),

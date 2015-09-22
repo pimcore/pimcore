@@ -53,7 +53,8 @@ class Setup extends Model\AbstractModel {
 					"validLanguages" => "en",
 					"debug" => "1",
 					"debugloglevel" => "debug",
-					"custom_php_logfile" => "1"
+					"custom_php_logfile" => "1",
+                    "extjs6" => "1",
 				),
 				"database" => array(
 					"adapter" => "Mysqli",
