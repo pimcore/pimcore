@@ -38,5 +38,5 @@ mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 
 ## Copyright and license
 
-Copyright: [pimcore](http://www.pimcore.org) GmbH 
+Copyright: [pimcore](http://www.pimcore.org) GmbH  
 For licensing details please visit [LICENSE.md](LICENSE.md) 
