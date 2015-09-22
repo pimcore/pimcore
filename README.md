@@ -1,6 +1,6 @@
 # pimcore
 
-THE PREMIER OPEN-SOURCE CMS/CMF, PIM, ECOMMERCE-SUITE
+THE PREMIER OPEN-SOURCE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 
 [![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg?style=flat)](LICENSE.txt)
 [![Current Release](https://img.shields.io/packagist/v/pimcore/pimcore.svg?style=flat)](https://packagist.org/packages/pimcore/pimcore)
@@ -38,6 +38,6 @@ mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 
 ## Copyright and license
 
-Copyright [pimcore](http://www.pimcore.org) GmbH under a modified [BSD license](LICENSE.txt).  
-For licensing details please visit http://www.pimcore.org/license
+Copyright [pimcore](http://www.pimcore.org) GmbH 
+For licensing details please visit [LICENSE.md](LICENSE.md)
 
