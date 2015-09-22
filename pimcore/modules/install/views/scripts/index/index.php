@@ -49,7 +49,8 @@ $scripts = array(
 
     Ext.onReady(function() {
 
-        Ext.Ajax.timeout = 900000;
+        Ext.Ajax.setDisableCaching(true);
+        Ext.Ajax.setTimeout(900000);
 
         var win = new Ext.Window({
             width: 450,
