@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Please see also (files in this directory): 
-[Licensing FAQ - license-faq.md](license-faq.md) 
-[GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - gpl-3.0.txt](gpl-3.0.txt) 
-[Libraries used by pimcore incl. their licenses - 3rd-party-licenses.md](3rd-party-licenses.md) 
+Please see also (files in this directory):  
+[Licensing FAQ - license-faq.md](license-faq.md)  
+[GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - gpl-3.0.txt](gpl-3.0.txt)  
+[Libraries used by pimcore incl. their licenses - 3rd-party-licenses.md](3rd-party-licenses.md)  
