@@ -215,7 +215,7 @@ class Image extends Model\Asset {
     {
         $isAnimated = false;
 
-        switch ($this->mimetype) {
+        switch ($this->getMimetype()) {
             case 'image/gif':
                 $isAnimated = $this->isAnimatedGif();
                 break;
@@ -238,7 +238,7 @@ class Image extends Model\Asset {
     {
         $isAnimated = false;
 
-        if ($this->mimetype == 'image/gif') {
+        if ($this->getMimetype() == 'image/gif') {
             $fileContent = $this->getData();
 
             /**
@@ -266,7 +266,7 @@ class Image extends Model\Asset {
     {
         $isAnimated = false;
 
-        if ($this->mimetype == 'image/png') {
+        if ($this->getMimetype() == 'image/png') {
             $fileContent = $this->getData();
 
             /**
