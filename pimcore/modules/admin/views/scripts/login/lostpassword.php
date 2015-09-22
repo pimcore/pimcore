@@ -7,6 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, follow" />
 
+    <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png" />
+
     <link rel="stylesheet" href="/pimcore/static6/css/login.css" type="text/css" />
 
     <?php
