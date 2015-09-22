@@ -24,33 +24,46 @@
             text-align: center;
         }
 
-        #pimcore_loading .spinner {
-            width: 40px;
-            height: 40px;
-            background-color: #222222;
-
-            margin: 100px auto;
-            -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
-            animation: sk-rotateplane 1.2s infinite ease-in-out;
+        .spinner {
+            margin: 100px auto 0;
+            width: 70px;
+            text-align: center;
         }
 
-        @-webkit-keyframes sk-rotateplane {
-            0% { -webkit-transform: perspective(120px) }
-            50% { -webkit-transform: perspective(120px) rotateY(180deg) }
-            100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+        .spinner > div {
+            width: 18px;
+            height: 18px;
+            background-color: #0078BE;
+
+            border-radius: 100%;
+            display: inline-block;
+            -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
         }
 
-        @keyframes sk-rotateplane {
-            0% {
-                transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-                -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
-            } 50% {
-                  transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-                  -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
-              } 100% {
-                    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-                    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-                }
+        .spinner .bounce1 {
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        .spinner .bounce2 {
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+        @-webkit-keyframes sk-bouncedelay {
+            0%, 80%, 100% { -webkit-transform: scale(0) }
+            40% { -webkit-transform: scale(1.0) }
+        }
+
+        @keyframes sk-bouncedelay {
+            0%, 80%, 100% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            } 40% {
+                  -webkit-transform: scale(1.0);
+                  transform: scale(1.0);
+              }
         }
     </style>
 
@@ -64,7 +77,11 @@
 </div>
 
 <div id="pimcore_loading">
-    <div class="spinner"></div>
+    <div class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
 </div>
 
 <div id="pimcore_navigation" style="display:none;">
