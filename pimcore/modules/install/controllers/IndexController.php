@@ -43,7 +43,7 @@ class Install_IndexController extends \Pimcore\Controller\Action {
 
         foreach ($files as $file) {
             if (is_dir($file) && !is_writable($file)) {
-                $errors[] = "Please ensure that the whole /" . PIMCORE_WEBSITE_VAR . " folder is writeable (recursivly)";
+                $errors[] = "Please ensure that the entire /" . PIMCORE_WEBSITE_VAR . " directory is recursivly writeable.";
                 break;
             }
         }

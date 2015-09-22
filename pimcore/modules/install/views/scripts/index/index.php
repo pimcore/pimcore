@@ -40,12 +40,12 @@ $scripts = array(
 
 <script type="text/javascript">
 
-    var errorMessages = '<?= implode("<br />", $this->errors) ?>';
+    var errorMessages = '<b>ERROR:</b><br /><?= implode("<br />", $this->errors) ?>';
     var installdisabled = false;
 
     <?php if (!empty($this->errors)) { ?>
-            installdisabled = true;
-        <?php } ?>
+        installdisabled = true;
+    <?php } ?>
 
     Ext.onReady(function() {
 
@@ -71,7 +71,7 @@ $scripts = array(
                     border: false,
                     bodyStyle: "color: red; padding: 10px",
                     html: errorMessages,
-                    hidden: true
+                    hidden: !installdisabled
                 },
                 {
                     xtype: "form",
