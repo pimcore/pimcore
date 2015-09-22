@@ -20,7 +20,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
      * Delete collection with the group-relations
      */
     public function deleteCollectionAction() {
-        $id = $this->_getParam("id");
+        $id = $this->getParam("id");
 
         $configRelations = new Classificationstore\CollectionGroupRelation\Listing();
         $configRelations->setCondition("colId = ?", $id);
