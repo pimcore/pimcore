@@ -314,10 +314,33 @@ pimcore.helpers.getElementTypeByObject = function (object) {
     return type;
 };
 
-pimcore.helpers.getTreeNodeLoadingIndicatorElement = function (type, id) {
+pimcore.helpers.getNodeCopiesInCustomviews = function(nodeId) {
+    var nodeCopies = {};
+
+    for (var i = 0; i < pimcore.settings.customviews.length; i++) {
+        var customview = pimcore.settings.customviews[i];
+        // check whether customview tree exists
+        var tree =  pimcore.globalmanager.get("layout_object_tree_" + customview.id).tree;
+        if (!tree) continue;
+        var store = tree.getStore();
+        var node = store.getNodeById(nodeId);
+        if (!node) continue;
+        var view = tree.getView();
+        nodeCopies[customview.id] = {
+            node: node,
+            nodeEl: Ext.fly(view.getNodeByRecord(node))
+        };
+    }
+
+    return nodeCopies;
+}
+
+pimcore.helpers.getTreeNodeLoadingIndicatorElement = function (type, id, cvTreeId) {
     // display loading indicator on treenode
     try {
-        var tree = pimcore.globalmanager.get("layout_" + type + "_tree").tree;
+        var treeId = "layout_" + type + "_tree";
+        if (cvTreeId) treeId += "_" + cvTreeId;
+        var tree = pimcore.globalmanager.get(treeId).tree;
         var store = tree.getStore();
         var node = store.getNodeById(id);
         if (node) {
@@ -344,6 +367,20 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
             iconEl.addCls("pimcore_tree_node_loading_indicator");
         }
     }, 200);
+
+    // handle custom view nodes
+    if (type == 'object') {
+        var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
+        for(var customviewId in nodeCopies) {
+            pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id + customviewId] = window.setTimeout(function () {
+                var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id, customviewId);
+                if(iconEl) {
+                    iconEl.addCls("pimcore_tree_node_loading_indicator");
+                }
+            }, 200);
+        }
+    }
+
 };
 
 pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
@@ -355,6 +392,19 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
     if(iconEl) {
         iconEl.removeCls("pimcore_tree_node_loading_indicator");
     }
+
+    // handle custom view nodes
+    if (type == 'object') {
+        var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
+        for(var customviewId in nodeCopies) {
+            clearTimeout(pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id + customviewId]);
+            var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id, customviewId);
+            if(iconEl) {
+                iconEl.removeCls("pimcore_tree_node_loading_indicator");
+            }
+        }
+    }
+
 };
 
 
@@ -959,11 +1009,15 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
         var view = tree.getView();
         var store = tree.getStore();
         var node = store.getNodeById(id);
+        var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
         pimcore.helpers.addTreeNodeLoadingIndicator("object", id);
 
         if(node) {
             var nodeEl = Ext.fly(view.getNodeByRecord(node));
             nodeEl.addCls("pimcore_delete");
+        }
+        for(var customviewId in nodeCopies) {
+            nodeCopies[customviewId].nodeEl.addCls("pimcore_delete");
         }
         /*this.originalClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
          Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
@@ -998,9 +1052,15 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
             success: function (id, callback) {
 
                 //var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
+                var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
+                var customviewId = null;
                 try {
                     if(nodeEl) {
                         nodeEl.removeCls("pimcore_delete");
+                    }
+                    for(customviewId in nodeCopies) {
+                        nodeCopies[customviewId].nodeEl.removeCls("pimcore_delete");
+                        nodeCopies[customviewId].node.remove();
                     }
                     //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
                     pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
@@ -1014,6 +1074,11 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
                     if(node) {
                         tree.getStore().load( {
                             node: node.parentNode
+                        });
+                    }
+                    for(customviewId in nodeCopies) {
+                        pimcore.globalmanager.get("layout_object_tree_" + customviewId).tree.getStore().load({
+                            node: nodeCopies[customviewId].node.parentNode
                         });
                     }
                 }
@@ -1041,9 +1106,15 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
                 pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error", t(message));
 
                 var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
+                var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(id);
                 if(node) {
                     tree.getStore().load( {
                         node: node.parentNode
+                    });
+                }
+                for(var customviewId in nodeCopies) {
+                    pimcore.globalmanager.get("layout_object_tree_" + customviewId).tree.getStore().load({
+                        node: nodeCopies[customviewId].node.parentNode
                     });
                 }
             }.bind(this, id),
