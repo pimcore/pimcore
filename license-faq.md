@@ -95,7 +95,7 @@ use with your module. If you believe that your module is a special case where it
 Git repository, usually only because you need to make substantial modifications to it in order for it to work, please 
 file an issue with in the Licensing Working Group issue queue first to discuss it.
 
-11: Do I have to give the code for my web site to anyone who visits it?
+## Do I have to give the code for my web site to anyone who visits it?
 
 No. The GPL does not consider viewing a web site to count as "distributing", 
 so you are not required to share the code running on your server.
@@ -110,5 +110,5 @@ please post your question in the pimcore discussion group.
 
 
 ### Credits / License of this FAQ page
-This FAQ is based on https://www.drupal.org/licensing/faq (modified)- many thanks to the Drupal Association!
-License: Creative Commons Attribution-ShareAlike license 2.0 (http://creativecommons.org/licenses/by-sa/2.0/) 
+This FAQ is based on https://www.drupal.org/licensing/faq (modified)- many thanks to the Drupal Association!  
+License: Creative Commons Attribution-ShareAlike license 2.0 (http://creativecommons.org/licenses/by-sa/2.0/)   

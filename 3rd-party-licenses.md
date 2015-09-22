@@ -5,8 +5,8 @@ The overal pimcore project is licensed under the terms of a modified BSD Licence
 
 ## ExtJS by Sencha Inc.
 License: GPLv3  
-pimcore includes the GPLv3 version of the ExtJS JavaScript framework.
-http://www.sencha.com/license/
+pimcore includes the GPLv3 version of the ExtJS JavaScript framework.  
+http://www.sencha.com/license/  
 
 ## Zend Framework by Zend Technologies Ltd.
 License: New BSD License  
@@ -17,7 +17,7 @@ License: MIT or GPLv2
 http://jquery.org/license
 
 ## Symfony 
-License: MIT License
+License: MIT License  
 http://symfony.com/license
 
 ## CKEditor by Frederico Knabben
