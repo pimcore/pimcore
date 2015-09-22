@@ -208,4 +208,78 @@ class Image extends Model\Asset {
         $dimensions = $this->getDimensions();
         return $dimensions["height"];
     }
+
+    /**
+     * Checks if this file represents an animated image (png or gif)
+     *
+     * @return bool
+     */
+    public function isAnimated()
+    {
+        $isAnimated = false;
+
+        switch ($this->mimetype) {
+            case 'image/gif':
+                $isAnimated = $this->isAnimatedGif();
+                break;
+            case 'image/png':
+                $isAnimated = $this->isAnimatedPng();
+                break;
+            default:
+                break;
+        }
+
+        return $isAnimated;
+    }
+
+    /**
+     * Checks if this object represents an animated gif file
+     *
+     * @return bool
+     */
+    private function isAnimatedGif()
+    {
+        $isAnimated = false;
+
+        if ($this->mimetype == 'image/gif') {
+            $fileContent = $this->getData();
+
+            /**
+             * An animated gif contains multiple "frames", with each frame having a header made up of:
+             *  - a static 4-byte sequence (\x00\x21\xF9\x04)
+             *  - 4 variable bytes
+             *  - a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
+             *
+             * @see http://it.php.net/manual/en/function.imagecreatefromgif.php#104473
+             */
+            $numberOfFrames = preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $fileContent, $matches);
+
+            $isAnimated = $numberOfFrames > 1;
+        }
+
+        return $isAnimated;
+    }
+
+    /**
+     * Checks if this object represents an animated png file
+     *
+     * @return bool
+     */
+    private function isAnimatedPng()
+    {
+        $isAnimated = false;
+
+        if ($this->mimetype == 'image/png') {
+            $fileContent = $this->getData();
+
+            /**
+             * Valid APNGs have an "acTL" chunk somewhere before their first "IDAT" chunk.
+             * 
+             * @see http://foone.org/apng/
+             */
+            $isAnimated = strpos(substr($fileContent, 0, strpos($fileContent, 'IDAT')), 'acTL') !== false;
+        }
+
+        return $isAnimated;
+    }
 }
