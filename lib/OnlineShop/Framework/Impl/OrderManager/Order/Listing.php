@@ -129,9 +129,10 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
      */
     public function setOrder($order)
     {
-        $this->getQuery()->order( $order );
-
-//        $this->getQuery()->reset(Zend_Db_Select::WHERE)
+        $this->getQuery()
+            ->reset( Zend_Db_Select::ORDER )
+            ->order( $order )
+        ;
 
         return $this;
     }
