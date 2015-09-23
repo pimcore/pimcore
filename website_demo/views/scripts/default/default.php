@@ -78,7 +78,7 @@
 
 <div id="site">
     <div id="logo">
-        <a href="http://www.pimcore.org/"><img src="/pimcore/static/img/logo-gray.png" /></a>
+        <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo.svg" /></a>
         <hr />
         <div class="claim">
             The premier Open-Source
