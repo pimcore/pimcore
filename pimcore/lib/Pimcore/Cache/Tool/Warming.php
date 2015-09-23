@@ -109,7 +109,7 @@ class Warming {
 
             foreach ($elements as $element) {
                 $cacheKey = Element\Service::getElementType($element) . "_" . $element->getId();
-                Cache::storeToCache($element, $cacheKey);
+                Cache::storeToCache($element, $cacheKey, [], null, null, true);
             }
 
             \Pimcore::collectGarbage();
