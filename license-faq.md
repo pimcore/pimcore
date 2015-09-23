@@ -9,7 +9,7 @@ Affero General Public License (AGPL) version 3.
 
 ## Does the license cover just PHP, or everything?
 We require that all files (PHP, JavaScript, CSS, images, etc.) that are not part of a bundled 3rd party library 
-(see 3rd-party-licenses.md) are under the terms of the GPLv3.
+(see [3rd-party-licenses.md](3rd-party-licenses.md) ) are under the terms of the GPLv3.
 
 ## Who holds the copyright for pimcore?
 All pimcore contributors retain copyright on their code, but agree to release it under the same license as pimcore. 
