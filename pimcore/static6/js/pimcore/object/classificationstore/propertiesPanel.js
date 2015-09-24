@@ -208,7 +208,24 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         });
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            //clicksToEdit: 2
+            listeners: {
+                edit: function (editor, e) {
+                    var field = e.field;
+                    var rec = e.record;
+                    var val = e.value;
+                    var definition = rec.get("definition");
+                    definition = Ext.util.JSON.decode(definition);
+                    if (field == "name") {
+                        definition.name = val;
+                        definition = Ext.util.JSON.encode(definition);
+                        rec.set("definition", definition);
+                    } else if (field == "type") {
+                        definition.fieldtype = val;
+                        definition = Ext.util.JSON.encode(definition);
+                        rec.set("definition", definition);
+                    }
+                }
+            }
         });
 
         var plugins = ['gridfilters', cellEditing];
@@ -236,25 +253,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 }
-            ],
-            listeners: {
-                afteredit: function (e) {
-                    var field = e.field;
-                    var rec = e.record;
-                    var val = e.value;
-                    var definition = rec.get("definition");
-                    definition = Ext.util.JSON.decode(definition);
-                    if (field == "name") {
-                        definition.name = val;
-                        definition = Ext.util.JSON.encode(definition);
-                        rec.set("definition", definition);
-                    } else if (field == "type") {
-                        definition.fieldtype = val;
-                        definition = Ext.util.JSON.encode(definition);
-                        rec.set("definition", definition);
-                    }
-                }
-            }
+            ]
         } ;
 
         this.grid = Ext.create('Ext.grid.Panel', gridConfig);
