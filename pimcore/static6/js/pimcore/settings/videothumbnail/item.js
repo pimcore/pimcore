@@ -174,7 +174,10 @@ pimcore.settings.videothumbnail.item = Class.create({
     },
 
     saveOnComplete: function () {
-        this.parentPanel.tree.getRootNode().reload();
+        this.parentPanel.tree.getStore().load({
+            node: this.parentPanel.tree.getRootNode()
+        });
+
         pimcore.helpers.showNotification(t("success"), t("thumbnail_saved_successfully"), "success");
     },
 

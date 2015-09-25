@@ -235,7 +235,10 @@ pimcore.settings.thumbnail.item = Class.create({
     },
 
     saveOnComplete: function () {
-        this.parentPanel.tree.getRootNode().reload();
+        this.parentPanel.tree.getStore().load({
+            node: this.parentPanel.tree.getRootNode()
+        });
+
         pimcore.helpers.showNotification(t("success"), t("thumbnail_saved_successfully"), "success");
     },
 
@@ -1142,6 +1145,106 @@ pimcore.settings.thumbnail.items = {
                 xtype: 'hidden',
                 name: 'type',
                 value: 'sharpen'
+            }]
+        });
+
+        return item;
+    },
+
+    itemGaussianBlur: function (panel, data, getName) {
+
+        var niceName = t("gaussianBlur") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'spinnerfield',
+                name: 'radius',
+                fieldLabel: t('radius'),
+                width: 210,
+                decimalPrecision: 1,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.1,
+                value: data.radius || 0
+            },{
+                xtype: 'spinnerfield',
+                name: 'sigma',
+                width: 210,
+                fieldLabel: t('sigma'),
+                decimalPrecision: 1,
+                minValue: 0,
+                allowDecimals: true,
+                incrementValue: 0.1,
+                value: data.sigma || 1
+            },{
+                xtype: 'hidden',
+                name: 'type',
+                value: 'gaussianBlur'
+            }]
+        });
+
+        return item;
+    },
+
+    itemBrightnessSaturation: function (panel, data, getName) {
+
+        var niceName = t("brightness") + " / " + t("saturation") + " / " + t("hue") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'spinnerfield',
+                name: 'brightness',
+                fieldLabel: t('brightness'),
+                width: 210,
+                allowDecimals: false,
+                incrementValue: 1,
+                value: data.brightness || 100
+            },{
+                xtype: 'spinnerfield',
+                name: 'saturation',
+                fieldLabel: t('saturation'),
+                width: 210,
+                allowDecimals: false,
+                incrementValue: 1,
+                value: data.saturation || 100
+            },{
+                xtype: 'spinnerfield',
+                name: 'hue',
+                fieldLabel: t('hue'),
+                width: 210,
+                allowDecimals: false,
+                incrementValue: 1,
+                value: data.hue || 100
+            },{
+                xtype: 'hidden',
+                name: 'type',
+                value: 'brightnessSaturation'
             }]
         });
 
