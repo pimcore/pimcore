@@ -437,9 +437,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
             var fieldset = this.groupElements[currentLanguage][groupId];
             if (fieldset) {
-
-                itemHeight = fieldset.getHeight();
-
                 fieldset.destroy();
                 var languagePanel = this.languagePanels[currentLanguage];
                 languagePanel.updateLayout();
@@ -459,11 +456,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             }
         }
 
-        if (itemHeight > 0) {
-            var height = this.component.getHeight();
-            //this.component.setHeight(height - itemHeight);
-            this.component.updateLayout();
-        }
+        this.component.updateLayout();
 
         delete this.activeGroups[groupId];
 
