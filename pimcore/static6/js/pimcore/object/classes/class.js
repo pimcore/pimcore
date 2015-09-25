@@ -692,7 +692,8 @@ pimcore.object.classes.klass = Class.create({
             type: "layout",
             iconCls: "pimcore_icon_" + type,
             leaf: false,
-            expandable: false
+            expandable: false,
+            expanded: true
         };
         newNode = this.appendChild(newNode);
 
@@ -731,6 +732,12 @@ pimcore.object.classes.klass = Class.create({
             leaf: true,
             iconCls: "pimcore_icon_" + type
         };
+
+        if (type == "localizedfields") {
+            newNode.leaf = false;
+            newNode.expanded = true;
+            newNode.expandable = false;
+        }
 
         newNode = this.appendChild(newNode);
 

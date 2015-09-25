@@ -107,7 +107,7 @@ pimcore.object.tree = Class.create({
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
-                    appendOnly: true,
+                    appendOnly: false,
                     ddGroup: "element"
                 },
                 listeners: {
