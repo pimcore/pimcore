@@ -776,6 +776,7 @@ pimcore.object.classes.klass = Class.create({
             }
 
 
+            var parentNode = record.parentNode;
 
             var newNode = {
                 text: nodeLabel,
@@ -785,6 +786,8 @@ pimcore.object.classes.klass = Class.create({
                 //,
                 //listeners: this.getTreeNodeListeners()
             };
+
+            newNode = parentNode.createNode(newNode);
 
             if (!removeExisting) {
                 theData.name = nodeLabel;
@@ -806,7 +809,7 @@ pimcore.object.classes.klass = Class.create({
             newNode.data.editor = editor;
             newNode.data.editor.applySpecialData(record.data.editor);
 
-            var parentNode = record.parentNode;
+
             if (removeExisting) {
                 parentNode.removeChild(record);
 
