@@ -40,3 +40,7 @@ needed components:
 #5fa2dd => #3c3f41
 #eaeff4 => #e4e4e4
 #7fb5e4 => #3c3f41
+
+# fixes the problem with font-rendering in chrome (gray instead of black)
+fonts/OpenSans-LightItalic.ttf => fonts/OpenSans-Italic.ttf
+fonts/OpenSans-Light.ttf => fonts/OpenSans-Regular.ttf

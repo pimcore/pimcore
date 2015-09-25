@@ -6886,14 +6886,14 @@ div.x-border-layout-ct {
 /* http://localhost:1843/classic/theme-triton/sass/src/Component.scss:3 */
 @font-face {
     font-family: 'Open Sans';
-    src: url('fonts/OpenSans-Light.ttf');
+    src: url('fonts/OpenSans-Regular.ttf');
     font-weight: 300;
     font-style: normal;
 }
 /* http://localhost:1843/classic/theme-triton/sass/src/Component.scss:10 */
 @font-face {
     font-family: 'Open Sans';
-    src: url('fonts/OpenSans-LightItalic.ttf');
+    src: url('fonts/OpenSans-Italic.ttf');
     font-weight: 300;
     font-style: italic;
 }
