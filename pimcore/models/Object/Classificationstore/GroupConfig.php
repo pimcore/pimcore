@@ -247,5 +247,15 @@ class GroupConfig extends Model\AbstractModel {
         $this->sorter = $sorter;
     }
 
+    /** Returns all keys belonging to this group
+     * @return KeyGroupRelation
+     */
+    public function getRelations() {
+        $list = new KeyGroupRelation\Listing();
+        $list->setCondition("groupId = " . $this->id);
+        $list = $list->load();
+        return $list;
+    }
+
 
 }

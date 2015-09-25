@@ -68,8 +68,88 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 $c++;
             } ?>
         <?php } ?>
-    <?php } else
-            if($definition instanceof Object\ClassDefinition\Data\ObjectBricks) {
+        <?php } else if($definition instanceof Object\ClassDefinition\Data\Classificationstore){
+
+
+
+            /** @var $storedata Object\Classificationstore */
+            $storedata1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
+            $storedata2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
+
+            $existingGroups = array();
+
+
+            if ($storedata1) {
+                $activeGroups1 = $storedata1->getActiveGroups();
+            } else {
+                $activeGroups1 = array();
+            }
+
+            if ($storedata2) {
+                $activeGroups2 = $storedata2->getActiveGroups();
+            } else {
+                $activeGroups2 = array();
+            }
+
+            foreach ($activeGroups1 as $activeGroupId => $enabled) {
+                $existingGroups[$activeGroupId] = $activeGroupId;
+            }
+
+            foreach ($activeGroups2 as $activeGroupId => $enabled) {
+                $existingGroups[$activeGroupId] = $enabled;
+            }
+
+            if (!$existingGroups) {
+                continue;
+            }
+
+            $languages = array("default");
+
+            if ($definition->isLocalized()) {
+                $languages = array_merge($languages, \Pimcore\Tool::getValidLanguages());
+            }
+
+            foreach ($existingGroups as $activeGroupId => $enabled) {
+                if  (!$activeGroups1[$activeGroupId] && !$activeGroups2[$activeGroupId]) {
+                    continue;
+                }
+                /** @var $groupDefinition Object\Classificationstore\GroupConfig */
+                $groupDefinition = Pimcore\Model\Object\Classificationstore\GroupConfig::getById($activeGroupId);
+                if (!$groupDefinition) {
+                    continue;
+                }
+
+                /** @var $keyGroupRelation Object\Classificationstore\KeyGroupRelation */
+                $keyGroupRelations = $groupDefinition->getRelations();
+
+                foreach ($keyGroupRelations as $keyGroupRelation) {
+
+                    $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                    if (!$keyDef) {
+                        continue;
+                    }
+
+                    foreach ($languages as $language) {
+                        $keyData1 = $storedata1 ? $storedata1->getLocalizedKeyValue($activeGroupId, $keyGroupRelation->getKeyId(), $language, true, true) : null;
+                        $preview1 = $keyDef->getVersionPreview($keyData1);
+
+                        $keyData2 = $storedata2 ? $storedata2->getLocalizedKeyValue($activeGroupId, $keyGroupRelation->getKeyId(), $language, true, true) : null;
+                        $preview2 = $keyDef->getVersionPreview($keyData2);
+                        ?>
+
+                        <tr class = "<?php if ($c % 2) { ?> odd<?php  } ?>">
+                            <td><?= $definition->getTitle() ?></td>
+                            <td><?= $groupDefinition->getName() ?> - <?= $keyGroupRelation->getName()?> <?= $definition->isLocalized() ? "/ " . $language : "" ?></td>
+                            <td><?= $preview1 ?></td>
+                            <td><?= $preview2 ?></td>
+                        </tr>
+                        <?php
+                        $c++;
+                    }
+                }
+            }
+            ?>
+    <?php } else if($definition instanceof Object\ClassDefinition\Data\ObjectBricks) {
                 ?>
                 <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
                     <?php
@@ -121,6 +201,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             <td><?= $v1 ?></td>
             <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
         </tr>
+
     <?php } ?>
     <?php $c++;
 } ?>

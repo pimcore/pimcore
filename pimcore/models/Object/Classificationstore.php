@@ -234,7 +234,7 @@ class Classificationstore extends Model\AbstractModel {
      * @param bool|false $ignoreFallbackLanguage
      * @return null
      */
-    public function getLocalizedKeyValue($groupId, $keyId, $language = "default", $ignoreFallbackLanguage = false) {
+    public function getLocalizedKeyValue($groupId, $keyId, $language = "default", $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false) {
         $oid = $this->object->getId();
         \Logger::debug($oid);
         $keyConfig = Model\Object\Classificationstore\DefinitionCache::get($keyId);
@@ -255,7 +255,7 @@ class Classificationstore extends Model\AbstractModel {
         }
 
 
-        if ($fieldDefinition->isEmpty($data) && $language != "default") {
+        if ($fieldDefinition->isEmpty($data) && !$ignoreDefaultLanguage && $language != "default") {
             $data = $this->items[$groupId][$keyId]["default"];
         }
 

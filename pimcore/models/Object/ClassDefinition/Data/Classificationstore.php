@@ -302,7 +302,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     {
         // this is handled directly in the template
         // /pimcore/modules/admin/views/scripts/object/preview-version.php
-        return "LOCALIZED FIELDS";
+        return $data;
     }
 
     /**

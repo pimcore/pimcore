@@ -39,6 +39,10 @@ class Service {
      */
     public static function getFieldDefinitionFromJson($definition, $type)
     {
+        if (!$definition) {
+            return null;
+        }
+
         if (!$type) {
             $type = "input";
         }
@@ -49,6 +53,5 @@ class Service {
         $dataDefinition->setValues($definition);
         return $dataDefinition;
     }
-
 
 }
