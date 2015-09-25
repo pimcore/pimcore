@@ -159,7 +159,16 @@ pimcore.element.properties = Class.create({
 
             var checkColumn = Ext.create('Ext.grid.column.Check', {
                 header: t("inheritable"),
-                dataIndex: 'inheritable'
+                dataIndex: 'inheritable',
+                listeners: {
+                    beforecheckchange: function (el, rowIndex, checked, eOpts) {
+                        if(store.getAt(rowIndex).get("inherited")) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+                }
             });
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
@@ -170,6 +179,10 @@ pimcore.element.properties = Class.create({
                         //enable different editors per row
                         editor.editors.each(Ext.destroy, Ext);
                         editor.editors.clear();
+
+                        if(context.record.get("inherited")) {
+                            return false;
+                        }
                     }
                 }
             });
@@ -306,12 +319,7 @@ pimcore.element.properties = Class.create({
             this.propertyGrid.on("afterrender", function() {
                 this.setAutoScroll(true);
             });
-            this.propertyGrid.on("beforeedit", function (editor, context, eOpts) {
-                if (context.record.data.inherited) {
-                    return false;
-                }
-                return true;
-            });
+
             this.propertyGrid.on("rowcontextmenu", function ( grid, record, tr, rowIndex, e, eOpts ) {
                 
                 var propertyData = grid.getStore().getAt(rowIndex).data;
