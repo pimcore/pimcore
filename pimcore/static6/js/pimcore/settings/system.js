@@ -335,14 +335,15 @@ pimcore.settings.system = Class.create({
                                 triggerAction: "all",
                                 listeners: {
                                     "select": function (el) {
+                                        console.log(el);
                                         if(el.getValue() == "production") {
-                                            var ipField = Ext.getCmp("system.settings.general.debug_ip");
+                                            var ipField = Ext.getCmp("system_settings_general_debug_ip");
                                             if(empty(ipField.getValue())) {
-                                                Ext.getCmp("system.settings.general.debug").setValue(false);
+                                                Ext.getCmp("system_settings_general_debug").setValue(false);
                                             }
 
-                                            Ext.getCmp("system.settings.general.debugloglevel").setValue("error");
-                                            Ext.getCmp("system.settings.general.devmode").setValue(false);
+                                            Ext.getCmp("system_settings_general_debugloglevel").setValue("error");
+                                            Ext.getCmp("system_settings_general_devmode").setValue(false);
                                         }
                                     }
                                 }
@@ -354,7 +355,8 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_general_debug",
                                 checked: this.getValue("general.debug"),
                                 listeners: {
-                                    check: function (el, checked) {
+                                    change: function (el, checked) {
+                                        console.log("check");
                                         // set the current client ip to the debug ip field
                                         var ipField = Ext.getCmp("system_settings_general_debug_ip");
                                         if(checked && empty(ipField.getValue())) {
@@ -417,6 +419,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: "debug.log Log-Level",
                                 xtype: "combo",
                                 name: "general.debugloglevel",
+                                id: "system_settings_general_debugloglevel",
                                 width: 400,
                                 value: this.getValue("general.debugloglevel"),
                                 store: [
@@ -526,6 +529,7 @@ pimcore.settings.system = Class.create({
                                 + 'DON`T ACTIVATE IT!</span>)',
                                 xtype: "checkbox",
                                 name: "general.devmode",
+                                id: "system_settings_general_devmode",
                                 checked: this.getValue("general.devmode")
                             }
                         ]
@@ -950,13 +954,13 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('absolute_path_to_wkhtmltoimage_binary'),
                                 name: 'documents.wkhtmltoimage',
                                 value: this.getValue("documents.wkhtmltoimage"),
-                                width: 500
+                                width: 600
                             },
                             {
                                 fieldLabel: t('absolute_path_to_wkhtmltopdf_binary'),
                                 name: 'documents.wkhtmltopdf',
                                 value: this.getValue("documents.wkhtmltopdf"),
-                                width: 500
+                                width: 600
                             }
                         ]
                     }
@@ -1343,31 +1347,27 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_proxy_settings",
                                 collapsible: false,
                                 title: t("proxy_settings"),
-                                width: 400,
-                                labelWidth: 130,
+                                width: 600,
+                                defaults: {width: 565},
                                 items: [{
                                     xtype: "textfield",
                                     fieldLabel: t('proxy_host'),
                                     name: 'httpclient.proxy_host',
-                                    width: 200,
                                     value: this.getValue("httpclient.proxy_host")
                                 },{
                                     xtype: "textfield",
                                     fieldLabel: t('proxy_port'),
                                     name: 'httpclient.proxy_port',
-                                    width: 200,
                                     value: this.getValue("httpclient.proxy_port")
                                 },{
                                     xtype: "textfield",
                                     fieldLabel: t('proxy_user'),
                                     name: 'httpclient.proxy_user',
-                                    width: 200,
                                     value: this.getValue("httpclient.proxy_user")
                                 },{
                                     xtype: "textfield",
                                     fieldLabel: t('proxy_pass'),
                                     name: 'httpclient.proxy_pass',
-                                    width: 200,
                                     value: this.getValue("httpclient.proxy_pass")
                                 }]
                             }
@@ -1398,7 +1398,7 @@ pimcore.settings.system = Class.create({
                             xtype: "fieldset",
                             title: t("delivery_settings"),
                             collapsible: false,
-                            defaults: {width: 150},
+                            defaults: {width: 600},
                             labelWidth: 250,
                             hidden: !this.getValue("newsletter.usespecific"),
                             id: "system_settings_newsletter_fieldset",
@@ -1424,6 +1424,7 @@ pimcore.settings.system = Class.create({
                                     xtype: "fieldset",
                                     title: "SMTP",
                                     width: 600,
+                                    defaults: {width: 565},
                                     itemId: "newsletterSmtpSettings",
                                     defaultType: 'textfield',
                                     hidden: (this.getValue("newsletter.method") == "smtp") ? false : true,
@@ -1435,7 +1436,6 @@ pimcore.settings.system = Class.create({
                                         {
                                             fieldLabel: t("email_smtp_ssl"),
                                             xtype: "combo",
-                                            width: 130,
                                             name: "newsletter.smtp.ssl",
                                             value: this.getValue("newsletter.smtp.ssl"),
                                             store: [
@@ -1459,7 +1459,6 @@ pimcore.settings.system = Class.create({
                                         {
                                             fieldLabel: t("email_smtp_auth_method"),
                                             xtype: "combo",
-                                            width: 130,
                                             name: "newsletter.smtp.auth.method",
                                             value: this.getValue("newsletter.smtp.auth.method"),
                                             store: [
