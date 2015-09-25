@@ -16,6 +16,7 @@ matrix:
   allow_failures:
     - php: 7
     - php: hhvm-nightly
+    - php: hhvm
 
 before_script:
   # install apache
