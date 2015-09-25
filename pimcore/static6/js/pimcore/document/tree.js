@@ -149,9 +149,7 @@ pimcore.document.tree = Class.create({
         this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
 
         store.on("nodebeforeexpand", function (node) {
-            window.setTimeout(function () {
-                pimcore.helpers.addTreeNodeLoadingIndicator("document", node.data.id);
-            }, 200);
+            pimcore.helpers.addTreeNodeLoadingIndicator("document", node.data.id);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {

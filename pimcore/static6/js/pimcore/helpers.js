@@ -319,16 +319,23 @@ pimcore.helpers.getTreeNodeLoadingIndicatorElement = function (type, id) {
     }
 };
 
-pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
-    // display loading indicator on treenode
-    var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
-    if(iconEl) {
-        iconEl.addCls("pimcore_tree_node_loading_indicator");
-    }
+pimcore.helpers.treeNodeLoadingIndicatorTimeouts = {};
 
+pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
+
+    pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id] = window.setTimeout(function () {
+        // display loading indicator on treenode
+        var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
+        if(iconEl) {
+            iconEl.addCls("pimcore_tree_node_loading_indicator");
+        }
+    }, 200);
 };
 
 pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
+
+    clearTimeout(pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id]);
+
     // display loading indicator on treenode
     var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
     if(iconEl) {

@@ -955,35 +955,6 @@ span.warning {
     margin-bottom: 10px;
 }
 
-.x-accordion-item .x-tree-icon-parent {
-    vertical-align: middle;
-}
-
-.x-column-header-text-container {
-    display: inline  !important;
-}
-
-.x-column-header-text-wrapper {
-    display: inline  !important;
-}
-
-.x-column-header-text {
-    display: inline !important;
-}
-
-.x-grid-cell-inner {
-    cursor: pointer !important;
-}
-
-.x-grid-cell-inner, .x-grid-cell-inner-checkcolumn, .x-grid-cell-inner-action-col {
-    padding: 2px 10px 2px;
-}
-
-.x-column-header-checkbox .x-column-header-inner, .x-grid-cell-row-checker .x-grid-cell-inner {
-    padding: 3px 4px 0px 7px;
-}
-
-
 /* highlight error logs */
 .log-type-CRIT .x-grid-cell,
 .log-type-ALERT .x-grid-cell,

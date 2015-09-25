@@ -186,9 +186,7 @@ pimcore.asset.tree = Class.create({
 
 
         store.on("nodebeforeexpand", function (node) {
-            window.setTimeout(function () {
-                pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
-            }, 200);
+            pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
