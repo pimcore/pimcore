@@ -354,35 +354,30 @@ pimcore.settings.redirects = Class.create({
 
         this.wizardForm = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
+            layout: 'hbox',
             items: [{
-                xtype:"fieldset",
-                layout: 'hbox',
-                border: false,
-                padding: 0,
-                items: [{
-                    xtype: "combo",
-                    name: "mode",
-                    store: [
-                        ["begin", t("beginning_with")],
-                        ["exact", t("matching_exact")],
-                        ["contain", t("contain")],
-                        ["begin_end_slash", t("short_url")],
-                        ["domain", t("domain")]
-                    ],
-                    mode: "local",
-                    typeAhead: false,
-                    editable: false,
-                    forceSelection: true,
-                    triggerAction: "all",
-                    fieldLabel: t("pattern"),
-                    emptyText: t("select")
-                }, {
-                    xtype: "textfield",
-                    name: "pattern",
-                    margin: "0 0 0 20",
-                    width: 330,
-                    emptyText: "/some/example/path"
-                }]
+                xtype: "combo",
+                name: "mode",
+                store: [
+                    ["begin", t("beginning_with")],
+                    ["exact", t("matching_exact")],
+                    ["contain", t("contain")],
+                    ["begin_end_slash", t("short_url")],
+                    ["domain", t("domain")]
+                ],
+                mode: "local",
+                typeAhead: false,
+                editable: false,
+                forceSelection: true,
+                triggerAction: "all",
+                fieldLabel: t("pattern"),
+                emptyText: t("select")
+            }, {
+                xtype: "textfield",
+                name: "pattern",
+                margin: "0 0 0 20",
+                width: 330,
+                emptyText: "/some/example/path"
             }]
         });
 
