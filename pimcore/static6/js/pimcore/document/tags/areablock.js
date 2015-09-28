@@ -630,22 +630,24 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     editmodeOpen: function (element) {
 
-        var content = Ext.get(element).query(".pimcore_area_editmode")[0];
+        var content = Ext.get(element).down(".pimcore_area_editmode");
 
         this.editmodeWindow = new Ext.Window({
             modal: true,
-            width: 500,
-            height: 330,
+            width: 550,
+            height: 370,
             title: "Edit Block",
             closeAction: "hide",
             bodyStyle: "padding: 10px;",
             closable: false,
             autoScroll: true,
             listeners: {
-                afterrender: function (content) {
-                    Ext.get(content).removeClass("pimcore_area_editmode_hidden");
+                afterrender: function (win) {
 
-                    var elements = Ext.get(content).query(".pimcore_editable");
+                    content.removeCls("pimcore_area_editmode_hidden");
+                    win.body.down(".x-autocontainer-innerCt").insertFirst(content);
+
+                    var elements = win.body.query(".pimcore_editable");
                     for (var i=0; i<elements.length; i++) {
                         var name = elements[i].getAttribute("id").split("pimcore_editable_").join("");
                         for (var e=0; e<editables.length; e++) {
@@ -660,7 +662,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         }
                     }
 
-                }.bind(this, content)
+                }.bind(this)
             },
             buttons: [{
                 text: t("save"),
@@ -668,8 +670,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     "click": this.editmodeSave.bind(this)
                 },
                 icon: "/pimcore/static6/img/icon/tick.png"
-            }],
-            contentEl: content
+            }]
         });
         this.editmodeWindow.show();
     },
