@@ -130,6 +130,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
         $result["activeGroups"] = $data->getActiveGroups();
+        $result["groupCollectionMapping"] = $data->getGroupCollectionMappings();
 
         return $result;
     }
@@ -243,7 +244,17 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
         $data = $containerData["data"];
         $activeGroups = $containerData["activeGroups"];
+        $groupCollectionMapping = $containerData["groupCollectionMapping"];
 
+        $correctedMapping = array();
+
+        foreach ($groupCollectionMapping as $groupId => $collectionId) {
+            if ($activeGroups[$groupId]) {
+                $correctedMapping[$groupId] = $collectionId;
+            }
+        }
+
+        $classificationStore->setGroupCollectionMappings($correctedMapping);
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
@@ -791,6 +802,34 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
 
+    public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = array())
+    {
+
+        $getter = "get" . ucfirst($this->getName());
+        /** @var  $classificationStore Object\Classificationstore */
+        $classificationStore = $object->$getter();
+        $mapping = $classificationStore->getGroupCollectionMappings();
+
+        foreach ($mapping as $groupId => $collectionId) {
+            if (!isset($mergedMapping[$groupId]) && $collectionId) {
+                $mergedMapping[$groupId] = $collectionId;
+            }
+        }
+
+        $class = $object->getClass();
+        $inheritanceAllowed = $class->getAllowInherit();
+
+        if ($inheritanceAllowed) {
+            $parent = Object\Service::hasInheritableParentObject($object);
+            if ($parent) {
+                $mergedMapping = $this->recursiveGetActiveGroupCollectionMapping($parent, $mergedMapping);
+            }
+        }
+
+        return $mergedMapping;
+    }
+
+
     /**
      * @param $object \Object_Abstract
      * @param array $activeGroups
@@ -799,7 +838,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function recursiveGetActiveGroupsIds($object, $activeGroups = array()) {
 
         $getter = "get" . ucfirst($this->getName());
-        /** @var  $classificationStore Classificationstore */
+        /** @var  $classificationStore Object\Classificationstore */
         $classificationStore = $object->$getter();
         $activeGroupIds = $classificationStore->getActiveGroups();
 
@@ -820,10 +859,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
         return $activeGroups;
-
     }
 
     public function enrichLayoutDefinition($object) {
+        $groupCollectionMapping = $this->recursiveGetActiveGroupCollectionMapping($object);
+
         $this->activeGroupDefinitions = array();
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
@@ -839,11 +879,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             }
         }
 
-
         $condition = "ID in (" . implode(',', $filteredGroupIds) . ")";
         $groupList = new Object\Classificationstore\GroupConfig\Listing();
         $groupList->setCondition($condition);
-        $groupList->setOrderKey(array("sorter", "id"));
         $groupList->setOrder(array("ASC", "ASC"));
         $groupList = $groupList->load();
 
@@ -854,7 +892,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
             $relation->setCondition("groupId = " . $relation->quote($group->getId()));
             $relation->setOrderKey(array("sorter", "id"));
-            $relation->setOrder(array("ASC", "ASC"));
+            $relation->setOrder(array("DESC", "ASC"));
             $relation = $relation->load();
             foreach ($relation as $key) {
                 $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
@@ -880,6 +918,34 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
         }
 
+        if ($groupCollectionMapping) {
+            $collectionIds = array_values($groupCollectionMapping);
+
+            $relation = new Object\Classificationstore\CollectionGroupRelation\Listing();
+            $condition = "colId IN (" . implode("," , $collectionIds) . ")";
+            $relation->setCondition($condition);
+            $relation = $relation->load();
+
+            $sorting = array();
+            /** @var $item Object\Classificationstore\CollectionGroupRelation */
+            foreach ($relation as $item) {
+                $sorting[$item->getGroupId()] = $item->getSorter();
+            }
+
+            usort($this->activeGroupDefinitions, function ($a, $b) use ($sorting) {
+                $s1 = $sorting[$a["id"]] ? $sorting[$a["id"]] : 0;
+                $s2 = $sorting[$b["id"]] ? $sorting[$b["id"]] : 0;
+
+                if ($s1 < $s2) {
+                    return 1;
+                } else if ($s2 > $s1) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+
+            });
+        }
     }
 
     /**

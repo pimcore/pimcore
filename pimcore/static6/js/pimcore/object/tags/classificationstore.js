@@ -17,6 +17,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
     initialize: function (data, fieldConfig) {
 
         this.activeGroups = {};
+        this.groupCollectionMapping = {};
         this.languageElements = {};
         this.groupElements = {};
         this.languagePanels = {};
@@ -35,6 +36,10 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             }
             if (data.activeGroups) {
                 this.activeGroups = data.activeGroups;
+            }
+
+            if (data.groupCollectionMapping) {
+                this.groupCollectionMapping = data.groupCollectionMapping;
             }
         }
         this.fieldConfig = fieldConfig;
@@ -246,6 +251,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         }
 
         var activeGroups = {};
+
         for (var key in this.activeGroups) {
             if (this.activeGroups.hasOwnProperty(key)) {
                 if (this.activeGroups[key]) {
@@ -254,9 +260,11 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             }
         }
 
+
         var container = {
             "data" : localizedData,
-            "activeGroups": activeGroups
+            "activeGroups": activeGroups,
+            "groupCollectionMapping" : this.groupCollectionMapping
         };
         return container;
 
@@ -459,15 +467,13 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         this.component.updateLayout();
 
         delete this.activeGroups[groupId];
+        delete this.groupCollectionMapping[groupId];
 
     },
 
     handleAddGroups: function (response) {
         var data = Ext.decode(response.responseText);
 
-        var addedGroups= {};
-        var handledGroups = {};
-        var numberOfGroups = data.length;
         var nrOfLanguages = this.frontendLanguages.length;
 
         var activeLanguage = this.currentLanguage;
@@ -489,7 +495,9 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                         continue;
                     }
 
-                    addedGroups[groupId] = true;
+
+                    this.activeGroups[groupId] = true;
+                    this.groupCollectionMapping[groupId] = group.collectionId;
 
                     var fieldset = this.createGroupFieldset(currentLanguage, group, groupedChildItems, "pimcore_new_cs_group");
                     var panel = this.languagePanels[currentLanguage];
@@ -500,10 +508,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                     this.groupModified = true;
                 }
             }
-        }
-
-        for (var groupId in addedGroups) {
-            this.activeGroups[groupId] = true;
         }
 
         this.component.updateLayout();

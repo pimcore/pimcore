@@ -39,6 +39,9 @@ class CollectionGroupRelation extends Model\AbstractModel {
      */
     public $description;
 
+    /** @var int */
+    public $sorter;
+
 
     /**
      * @return Model\Object\Classificationstore\CollectionGroupRelation
@@ -114,6 +117,23 @@ class CollectionGroupRelation extends Model\AbstractModel {
     {
         $this->colId = $colId;
     }
+
+    /**
+     * @return int
+     */
+    public function getSorter()
+    {
+        return $this->sorter;
+    }
+
+    /**
+     * @param int $sorter
+     */
+    public function setSorter($sorter)
+    {
+        $this->sorter = $sorter;
+    }
+
 
 
 }

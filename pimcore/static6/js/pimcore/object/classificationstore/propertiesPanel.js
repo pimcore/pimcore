@@ -110,11 +110,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                     'date','datetime','language','languagemultiselect','country','countrymultiselect','table']
 
             })});
-        gridColumns.push({header: t('sorter'), width: 150, sortable: true, dataIndex: 'sorter',
-            tooltip: t("classificationstore_tooltip_sorter"),
-            editor: new Ext.form.NumberField()
-        });
-
 
 
         gridColumns.push({
@@ -221,6 +216,10 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                         rec.set("definition", definition);
                     } else if (field == "type") {
                         definition.fieldtype = val;
+                        definition = Ext.util.JSON.encode(definition);
+                        rec.set("definition", definition);
+                    } else if (field == "title") {
+                        definition.title = val;
                         definition = Ext.util.JSON.encode(definition);
                         rec.set("definition", definition);
                     }

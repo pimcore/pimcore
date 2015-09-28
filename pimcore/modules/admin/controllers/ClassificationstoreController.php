@@ -396,8 +396,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $item = array(
                     "id" => $config->getId(),
                     "name" => $name,
-                    "description" => $config->getDescription(),
-                    "sorter" => $config->getSorter()
+                    "description" => $config->getDescription()
                 );
                 if ($config->getCreationDate()) {
                     $item["creationDate"] = $config->getCreationDate();
@@ -424,10 +423,12 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $colId = $data["colId"];
             $groupId = $data["groupId"];
+            $sorter = $data["sorter"];
 
             $config = new Classificationstore\CollectionGroupRelation();
             $config->setGroupId($groupId);
             $config->setColId($colId);
+            $config->setSorter($sorter);
 
             $config->save();
             $data["id"] = $config->getColId() . "-" . $config->getGroupId();
@@ -510,7 +511,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     "groupId" => $config->getGroupId(),
                     "groupName" => $config->getName(),
                     "groupDescription" => $config->getDescription(),
-                    "id" => $config->getColId() . "-" . $config->getGroupId()
+                    "id" => $config->getColId() . "-" . $config->getGroupId(),
+                    "sorter" => $config->getSorter()
                 );
                 $data[] = $item;
             }
@@ -531,10 +533,12 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $keyId = $data["keyId"];
             $groupId = $data["groupId"];
+            $sorter = $data["sorter"];
 
             $config = new Classificationstore\KeyGroupRelation();
             $config->setGroupId($groupId);
             $config->setKeyId($keyId);
+            $config->setSorter($sorter);
 
             $config->save();
             $data["id"] = $config->getGroupId() . "-" . $config->getKeyId();
@@ -617,7 +621,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     "groupId" => $config->getGroupId(),
                     "keyName" => $config->getName(),
                     "keyDescription" => $config->getDescription(),
-                    "id" => $config->getGroupId() . "-" . $config->getKeyId()
+                    "id" => $config->getGroupId() . "-" . $config->getKeyId(),
+                    "sorter" => $config->getSorter()
                 );
                 $data[] = $item;
             }
@@ -636,7 +641,14 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $db = Pimcore_Resource::get();
             $query = "select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (" . implode("," , $ids)
                     . ") and g.id = c.groupId";
+
+            $mappedData = array();
             $groupsData = $db->fetchAll($query);
+
+            foreach ($groupsData as $groupData) {
+                $mappedData[$groupData["id"]] = $groupData;
+            }
+
             $groupIdList = array();
 
             $allowedGroupIds = null;
@@ -659,8 +671,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $groupList = new Classificationstore\GroupConfig\Listing();
             $groupList->setCondition($groupCondition);
-            $groupList->setOrderKey(array("sorter", "id"));
-            $groupList->setOrder(array("ASC", "ASC"));
+//            $groupList->setOrderKey(array("sorter", "id"));
+//            $groupList->setOrder(array("ASC", "ASC"));
             $groupList = $groupList->load();
 
             $keyCondition = "groupId in (" . implode(",", $groupIdList) . ")";
@@ -676,7 +688,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     "name" => $groupData->getName(),
                     "id" => $groupData->getId(),
                     "description" => $groupData->getDescription(),
-                    "keys" => array()
+                    "keys" => array(),
+                    "collectionId" => $mappedData[$groupId]["colId"]
                 );
             }
 
@@ -892,9 +905,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             "name" => $name,
             "description" => $config->getDescription(),
             "type" => $config->getType() ? $config->getType() : "input",
-            "definition" => $config->getDefinition(),
-            "sorter" => $config->getSorter()
-
+            "definition" => $config->getDefinition()
         );
 
         if ($config->getDefinition()) {

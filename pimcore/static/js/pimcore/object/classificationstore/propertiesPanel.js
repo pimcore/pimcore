@@ -270,6 +270,10 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                         definition.fieldtype = val;
                         definition = Ext.util.JSON.encode(definition);
                         rec.set("definition", definition);
+                    } else if (field == "title") {
+                        definition.title = val;
+                        definition = Ext.util.JSON.encode(definition);
+                        rec.set("definition", definition);
                     }
                 }
             }

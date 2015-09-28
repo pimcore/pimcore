@@ -48,8 +48,8 @@ class GroupConfig extends Model\AbstractModel {
      */
     public $modificationDate;
 
-    /** @var  int */
-    public $sorter;
+    public $collId;
+
 
     /**
      * @param integer $id
@@ -229,22 +229,6 @@ class GroupConfig extends Model\AbstractModel {
     public function getCreationDate()
     {
         return $this->creationDate;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSorter()
-    {
-        return $this->sorter;
-    }
-
-    /**
-     * @param int $sorter
-     */
-    public function setSorter($sorter)
-    {
-        $this->sorter = $sorter;
     }
 
     /** Returns all keys belonging to this group

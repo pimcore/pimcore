@@ -66,10 +66,7 @@ class KeyConfig extends Model\AbstractModel {
 
     /** @var  boolean */
     public $enabled;
-
-    /** @var  int */
-    public $sorter;
-
+    
 
     /**
      * @param integer $id
@@ -311,24 +308,6 @@ class KeyConfig extends Model\AbstractModel {
     {
         $this->enabled = $enabled;
     }
-
-    /**
-     * @return int
-     */
-    public function getSorter()
-    {
-        return $this->sorter;
-    }
-
-    /**
-     * @param int $sorter
-     */
-    public function setSorter($sorter)
-    {
-        $this->sorter = $sorter;
-    }
-
-
 
 
 }

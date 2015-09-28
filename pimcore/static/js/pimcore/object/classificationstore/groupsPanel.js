@@ -36,7 +36,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
     createRelationsGrid: function() {
-        this.relationsFields = ['id', 'keyId', 'groupId', 'keyName', 'keyDescription'];
+        this.relationsFields = ['id', 'keyId', 'groupId', 'keyName', 'keyDescription', 'sorter'];
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
@@ -48,7 +48,11 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             method: 'post'
         });
 
-        var writer = new Ext.data.JsonWriter();
+        var writer = new Ext.data.JsonWriter(
+            {
+                writeAllFields: true
+            }
+        );
 
         var listeners = {};
 
@@ -73,7 +77,10 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             proxy: proxy,
             reader: reader,
             writer: writer,
-            listeners: listeners
+            listeners: listeners,
+            baseParams: {
+                groupId: null
+            }
         });
 
 
@@ -83,6 +90,14 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         gridColumns.push({header: t("key_id"), width: 60, sortable: true, dataIndex: 'keyId'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'keyName'});
         gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'keyDescription'});
+
+        gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
+            tooltip: t("classificationstore_tooltip_sorter"),
+            editor: new Ext.ux.form.SpinnerField({
+                editable: true
+
+            })});
+
 
         gridColumns.push({
             hideable: false,
@@ -199,7 +214,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
     createGroupsGrid: function(response) {
-        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate', 'sorter'];
+        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate'];
 
         var readerFields = [];
         for (var i = 0; i < this.groupsFields.length; i++) {
@@ -249,12 +264,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', hidden: true, editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
-            tooltip: t("classificationstore_tooltip_sorter"),
-            editor: new Ext.ux.form.SpinnerField({
-                editable: true
-
-            })});
 
         gridColumns.push(
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,

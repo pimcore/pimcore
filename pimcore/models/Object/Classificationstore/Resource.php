@@ -46,7 +46,6 @@ class Resource extends Model\Resource\AbstractResource {
     public function save () {
         $object = $this->model->object;
         $objectId = $object->getId();
-        $classId = $object->getClassId();
         $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
 
@@ -55,6 +54,8 @@ class Resource extends Model\Resource\AbstractResource {
         $this->db->delete($dataTable, $condition);
 
         $items = $this->model->getItems();
+
+        $collectionMapping = $this->model->getGroupCollectionMappings();
 
 
         foreach ($items as $groupId => $group) {
@@ -65,9 +66,11 @@ class Resource extends Model\Resource\AbstractResource {
                 $values = array();
                 foreach ($keyData as $language => $value) {
                     $value = $fd->getDataForResource($value, $this->model->object);
+                    $collectionId = $collectionMapping[$groupId];
 
                     $data = array(
                         "o_id" => $objectId,
+                        "collectionId" => $collectionId,
                         "groupId" => $groupId,
                         "keyId" => $keyId,
                         "value" => $value,
@@ -135,9 +138,13 @@ class Resource extends Model\Resource\AbstractResource {
 
         $data = $this->db->fetchAll($query);
 
+        $groupCollectionMapping = array();
+
         foreach ($data as $item) {
             $groupId = $item["groupId"];
             $keyId = $item["keyId"];
+            $collectionId = $item["collectionId"];
+            $groupCollectionMapping[$groupId] = $collectionId;
 
             $value = $item["value"];
 
@@ -161,6 +168,7 @@ class Resource extends Model\Resource\AbstractResource {
         }
 
         $classificationStore->setActiveGroups($list);
+        $classificationStore->setGroupCollectionMappings($groupCollectionMapping);
     }
 
 
@@ -182,7 +190,9 @@ class Resource extends Model\Resource\AbstractResource {
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $dataTable . "` (
             `o_id` BIGINT(20) NOT NULL,
+            `colGroupRelId` BIGINT(20) NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
+            `groupKeyId` BIGINT(20) NOT NULL,
             `keyId` BIGINT(20) NOT NULL,
             `value` LONGTEXT NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,

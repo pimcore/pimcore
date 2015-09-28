@@ -36,7 +36,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
 
     createRelationsGrid: function() {
-        this.relationsFields = ['id', 'colId', 'groupId', 'groupName', 'groupDescription'];
+        this.relationsFields = ['id', 'colId', 'groupId', 'groupName', 'groupDescription', 'sorter'];
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
@@ -85,6 +85,12 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         gridColumns.push({header: t("group_id"), flex: 60, sortable: true, dataIndex: 'groupId', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'groupName', filter: 'string'});
         gridColumns.push({header: t("description"), flex: 200, sortable: true, dataIndex: 'groupDescription', filter: 'string'});
+
+        gridColumns.push({header: t('sorter'), width: 150, sortable: true, dataIndex: 'sorter',
+            tooltip: t("classificationstore_tooltip_sorter"),
+            editor: new Ext.form.NumberField()
+        });
+
 
         gridColumns.push({
             hideable: false,

@@ -36,7 +36,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
 
     createRelationsGrid: function() {
-        this.relationsFields = ['id', 'colId', 'groupId', 'groupName', 'groupDescription'];
+        this.relationsFields = ['id', 'colId', 'groupId', 'groupName', 'groupDescription', 'sorter'];
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
@@ -48,7 +48,9 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             method: 'post'
         });
 
-        var writer = new Ext.data.JsonWriter();
+        var writer = new Ext.data.JsonWriter({
+            writeAllFields: true
+        });
 
         var listeners = {};
 
@@ -82,6 +84,13 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         gridColumns.push({header: t("group_id"), width: 60, sortable: true, dataIndex: 'groupId'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'groupName'});
         gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'groupDescription'});
+
+        gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
+            tooltip: t("classificationstore_tooltip_sorter"),
+            editor: new Ext.ux.form.SpinnerField({
+                editable: true
+
+            })});
 
         gridColumns.push({
             hideable: false,

@@ -40,6 +40,8 @@ class Classificationstore extends Model\AbstractModel {
     /** @var  array */
     public $activeGroups;
 
+    /** @var  array */
+    public $groupCollectionMapping;
 
     /**
      * @param array $items
@@ -132,10 +134,11 @@ class Classificationstore extends Model\AbstractModel {
 
 
     /**
-     * @param $name
+     * @param $groupId
+     * @param $keyId
      * @param $value
      * @param null $language
-     * @return void
+     * @return $this
      */
     public function setLocalizedKeyValue ($groupId, $keyId, $value, $language = null) {
 
@@ -312,6 +315,43 @@ class Classificationstore extends Model\AbstractModel {
     {
         return true;
     }
+
+    /**
+     * @return array
+     */
+    public function getGroupCollectionMappings()
+    {
+        return $this->groupCollectionMapping;
+    }
+
+    /**
+     * @param array $groupCollectionMapping
+     */
+    public function setGroupCollectionMappings($groupCollectionMapping)
+    {
+        $this->groupCollectionMapping = $groupCollectionMapping;
+    }
+
+    /**
+     * @param $groupId
+     * @param $collectionId
+     */
+    public function setGroupCollectionMapping($groupId, $collectionId) {
+        if (!is_array($this->groupCollectionMapping)) {
+            $this->groupCollectionMapping[$groupId] = $collectionId;
+        }
+    }
+
+    /**
+     * @param $groupId
+     * @return mixed
+     */
+    public function getGroupCollectionMapping($groupId) {
+        if ($this->groupCollectionMapping) {
+            return $this->groupCollectionMapping[$groupId];
+        }
+    }
+
 
 
 }

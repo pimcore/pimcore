@@ -36,7 +36,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
     createRelationsGrid: function() {
-        this.relationsFields = ['id', 'keyId', 'groupId', 'keyName', 'keyDescription'];
+        this.relationsFields = ['id', 'keyId', 'groupId', 'keyName', 'keyDescription', 'sorter'];
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
@@ -87,6 +87,12 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         gridColumns.push({header: t("key_id"), flex: 60, sortable: true, dataIndex: 'keyId', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'keyName', filter: 'string'});
         gridColumns.push({header: t("description"), flex: 200, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
+
+        gridColumns.push({header: t('sorter'), width: 150, sortable: true, dataIndex: 'sorter',
+            tooltip: t("classificationstore_tooltip_sorter"),
+            editor: new Ext.form.NumberField()
+        });
+
 
         gridColumns.push({
             hideable: false,
@@ -182,7 +188,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
     createGroupsGrid: function(response) {
-        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate', 'sorter'];
+        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate'];
 
         var readerFields = [];
         for (var i = 0; i < this.groupsFields.length; i++) {
@@ -236,10 +242,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', hidden: true, editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("description"), flex: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t('sorter'), width: 100, sortable: true, dataIndex: 'sorter',
-            tooltip: t("classificationstore_tooltip_sorter"),
-            editor: new Ext.form.NumberField()
-        });
 
         var dateRenderer =  function(d) {
             if (d !== undefined) {
