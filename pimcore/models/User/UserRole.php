@@ -203,7 +203,7 @@ class UserRole extends AbstractUser {
      */
     public function setClasses($classes)
     {
-        if (!\Pimcore\Tool\Admin::isExtJS6()) {
+        if (is_string($classes)) {
             if (strlen($classes)) {
                 $classes = explode(",", $classes);
             }
