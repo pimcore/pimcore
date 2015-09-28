@@ -279,7 +279,7 @@ pimcore.object.tree = Class.create({
         var classGroups = {};
         var currentClass = '', nextClass = '', count = 0, group = '', lastGroup = '';
 
-        var object_types = pimcore.globalmanager.get("object_types_store");
+        var object_types = pimcore.globalmanager.get("object_types_store_create");
         for (var i = 0; i < object_types.getCount(); i++) {
             //
             currentClass = object_types.getAt(i);

@@ -323,17 +323,20 @@ Ext.onReady(function () {
     pimcore.globalmanager.add("translations_admin_added", new Array());
     pimcore.globalmanager.add("translations_admin_translated_values", new Array());
 
+
+    var objectClassFields = [
+        {name:'id'},
+        {name:'text', allowBlank:false},
+        {name:"translatedText", convert:function (v, rec) {
+            return ts(rec.data.text);
+        }},
+        {name:'icon'},
+        {name:"propertyVisibility"}
+    ];
+
     Ext.define('pimcore.model.objecttypes', {
         extend: 'Ext.data.Model',
-        fields: [
-            {name:'id'},
-            {name:'text', allowBlank:false},
-            {name:"translatedText", convert:function (v, rec) {
-                return ts(rec.data.text);
-            }},
-            {name:'icon'},
-            {name:"propertyVisibility"}
-        ],
+        fields: objectClassFields,
         proxy: {
             type: 'ajax',
             url:'/admin/class/get-tree',
@@ -350,6 +353,28 @@ Ext.onReady(function () {
     storeo.load();
 
     pimcore.globalmanager.add("object_types_store", storeo);
+
+
+    // a store for filtered classes that can be created by the user
+    Ext.define('pimcore.model.objecttypes.create', {
+        extend: 'Ext.data.Model',
+        fields: objectClassFields,
+        proxy: {
+            type: 'ajax',
+            url:'/admin/class/get-tree?createAllowed=true',
+            reader: {
+                type: 'json'
+            }
+        }
+    });
+
+    var storeoc = new Ext.data.Store({
+        model: 'pimcore.model.objecttypes.create',
+        id:'object_types'
+    });
+    storeoc.load();
+
+    pimcore.globalmanager.add("object_types_store_create", storeoc);
 
     // current user
     pimcore.globalmanager.add("user", new pimcore.user(pimcore.currentuser));

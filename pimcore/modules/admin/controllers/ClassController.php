@@ -59,13 +59,15 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
         $classes = $classesList->load();
 
         // filter classes
-        $tmpClasses = array();
-        foreach($classes as $class) {
-            if($this->getUser()->isAllowed($class->getId(), "class")) {
-                $tmpClasses[] = $class;
+        if($this->getParam("createAllowed")) {
+            $tmpClasses = array();
+            foreach($classes as $class) {
+                if($this->getUser()->isAllowed($class->getId(), "class")) {
+                    $tmpClasses[] = $class;
+                }
             }
+            $classes = $tmpClasses;
         }
-        $classes = $tmpClasses;
 
         $classItems = array();
 

@@ -241,6 +241,23 @@ Ext.onReady(function () {
 
     pimcore.globalmanager.add("object_types_store", storeo);
 
+
+    // classes
+    var proxyoc = new Ext.data.HttpProxy({
+        url:'/admin/class/get-tree?createAllowed=true'
+    });
+
+    var storeoc = new Ext.data.Store({
+        id:'object_types',
+        restful:false,
+        proxy:proxyoc,
+        reader:readero
+    });
+    storeoc.load();
+
+    pimcore.globalmanager.add("object_types_store_create", storeoc);
+
+
     // current user
     pimcore.globalmanager.add("user", new pimcore.user(pimcore.currentuser));
 
