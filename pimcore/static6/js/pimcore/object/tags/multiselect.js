@@ -64,16 +64,18 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             restrictTo = this.fieldConfig.restrictTo;
         }
 
-        for (var i = 0; i < this.fieldConfig.options.length; i++) {
-            var value = this.fieldConfig.options[i].value;
-            if (restrictTo) {
-                if (!in_array(value, restrictTo)) {
-                    continue;
+        if (this.fieldConfig.options) {
+            for (var i = 0; i < this.fieldConfig.options.length; i++) {
+                var value = this.fieldConfig.options[i].value;
+                if (restrictTo) {
+                    if (!in_array(value, restrictTo)) {
+                        continue;
+                    }
                 }
-            }
 
-            storeData.push([value, this.fieldConfig.options[i].key]);
-            validValues.push(value);
+                storeData.push([value, this.fieldConfig.options[i].key]);
+                validValues.push(value);
+            }
         }
 
         var store = Ext.create('Ext.data.ArrayStore', {
