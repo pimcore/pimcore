@@ -108,7 +108,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 editable: false,
                 store: ['input','textarea','wysiwyg','checkbox','numeric','slider', 'select','multiselect',
                     'date','datetime','language','languagemultiselect','country','countrymultiselect','table',"quantityValue"]
-
             })});
 
 
@@ -120,27 +119,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 {
                     tooltip: t("classificationstore_detailed_configuration"),
                     icon: "/pimcore/static6/img/icon/building_edit.png",
-                    handler: function (grid, rowIndex) {
-                        var data = grid.getStore().getAt(rowIndex);
-                        var id = data.data.id;
-
-                        var type = data.data.type;
-                        var definition = data.data.definition;
-                        if (definition) {
-                            definition = Ext.util.JSON.decode(definition);
-                            definition.name = data.data.name;
-                        } else {
-                            definition = {
-                                name: data.data.name
-                            };
-                        }
-
-                        definition.fieldtype = type;
-
-                        var keyDefinitionWindow = new pimcore.object.classificationstore.keyDefinitionWindow(
-                            definition, data.id, this);
-                        keyDefinitionWindow.show();
-                    }.bind(this)
+                    handler: this.showDetailedConfig.bind(this)
                 }
             ]
         });
@@ -208,6 +187,8 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                     var field = e.field;
                     var rec = e.record;
                     var val = e.value;
+                    var originalValue = e.originalValue;
+
                     var definition = rec.get("definition");
                     definition = Ext.util.JSON.decode(definition);
                     if (field == "name") {
@@ -223,7 +204,11 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                         definition = Ext.util.JSON.encode(definition);
                         rec.set("definition", definition);
                     }
-                }
+
+                    if (val != originalValue) {
+                        this.showDetailedConfig(e.grid, e.rowIdx);
+                    }
+                }.bind(this)
             }
         });
 
@@ -264,6 +249,27 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         this.layout.updateLayout();
     },
 
+    showDetailedConfig: function (grid, rowIndex) {
+        var data = grid.getStore().getAt(rowIndex);
+        var id = data.data.id;
+
+        var type = data.data.type;
+        var definition = data.data.definition;
+        if (definition) {
+            definition = Ext.util.JSON.decode(definition);
+            definition.name = data.data.name;
+        } else {
+            definition = {
+                name: data.data.name
+            };
+        }
+
+        definition.fieldtype = type;
+
+        var keyDefinitionWindow = new pimcore.object.classificationstore.keyDefinitionWindow(
+            definition, data.id, this);
+        keyDefinitionWindow.show();
+    },
 
     applyTranslatorConfig: function(keyid, value) {
         var data = this.store.getById(keyid);
