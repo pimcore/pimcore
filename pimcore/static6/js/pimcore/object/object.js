@@ -62,6 +62,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
         catch (e) {
             console.log(e);
+            if (this.toolbar) {
+                this.toolbar.destroy();
+            }
             pimcore.helpers.closeObject(this.id);
         }
     },
