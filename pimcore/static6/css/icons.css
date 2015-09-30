@@ -1420,3 +1420,7 @@
 .pimcore_icon_white_flag  {
     background: url(/pimcore/static6/img/icon/white_flag.png) center center no-repeat !important;
 }
+
+.pimcore_icon_quantityValue {
+    background: url("/pimcore/static6/img/icon/application_view_columns.png") center center no-repeat !important;
+}

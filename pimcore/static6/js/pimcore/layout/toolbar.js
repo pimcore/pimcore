@@ -609,6 +609,20 @@ pimcore.layout.toolbar = Class.create({
                 });
 
                 objectMenu.menu.items.push({
+                    text: t("quantityValue_field"),
+                    iconCls: "pimcore_icon_quantityValue",
+                    cls: "pimcore_main_menu",
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get("quantityValue_units").activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
+                        }
+                    }
+                });
+
+                objectMenu.menu.items.push({
                     text: t("keyvalue_menu_config"),
                     iconCls: "pimcore_icon_key",
                     handler: this.keyValueSettings

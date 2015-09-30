@@ -181,6 +181,7 @@ $scripts = array(
     "pimcore/globalmanager.js",
     "pimcore/helpers.js",
     "pimcore/helpers/generic-grid.js",
+    "pimcore/helpers/quantityValue.js",
     "pimcore/experimental.js",
 
     "pimcore/user.js",
@@ -349,6 +350,7 @@ $scripts = array(
     "pimcore/object/classes/data/newsletterConfirmed.js",
     "pimcore/object/classes/data/persona.js",
     "pimcore/object/classes/data/personamultiselect.js",
+    "pimcore/object/classes/data/quantityValue.js",
     "pimcore/object/classes/layout/layout.js",
     "pimcore/object/classes/layout/accordion.js",
     "pimcore/object/classes/layout/fieldset.js",
@@ -407,6 +409,7 @@ $scripts = array(
     "pimcore/object/tags/newsletterConfirmed.js",
     "pimcore/object/tags/persona.js",
     "pimcore/object/tags/personamultiselect.js",
+    "pimcore/object/tags/quantityValue.js",
     "pimcore/object/preview.js",
     "pimcore/object/versions.js",
     "pimcore/object/variantsTab.js",
@@ -420,6 +423,7 @@ $scripts = array(
     "pimcore/object/tree.js",
     "pimcore/object/customviews/settings.js",
     "pimcore/object/customviews/tree.js",
+    "pimcore/object/quantityvalue/unitsettings.js",
 
     //plugins
     "pimcore/plugin/broker.js",
