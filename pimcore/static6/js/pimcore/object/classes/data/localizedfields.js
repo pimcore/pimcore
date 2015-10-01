@@ -55,13 +55,11 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
         this.specificPanel.removeAll();
 
         this.layout = new Ext.Panel({
-            bodyStyle: "padding: 10px;",
             items: [
                 {
                     xtype: "form",
                     title: t("general_settings"),
                     bodyStyle: "padding: 10px;",
-                    style: "margin: 10px 0 10px 0",
                     defaults: {
                         labelWidth: 140,
                         width: 300
@@ -129,7 +127,6 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                 width: 300
             },
             bodyStyle: "padding: 10px;",
-            style: "margin: 10px 0 10px 0",
             items: [
                 {
                     xtype: "numberfield",
