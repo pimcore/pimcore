@@ -94,22 +94,9 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
 
-        var input = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            cls: "object_field"
-        };
-
-        if (this.data && this.data.value) {
-            input.value = this.data.value;
-        }
-
-        if (this.fieldConfig.width) {
-            input.width = this.fieldConfig.width;
-        }
-
-        this.component = new Ext.form.TextField(input);
-        this.component.disable();
+        this.getLayoutEdit();
+        this.unitField.disable();
+        this.inputField.disable();
 
         return this.component;
     },
