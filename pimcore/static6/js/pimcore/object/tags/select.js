@@ -123,15 +123,17 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             restrictTo = this.fieldConfig.restrictTo.split(",");
         }
 
-        for (var i = 0; i < this.fieldConfig.options.length; i++) {
-            var value = this.fieldConfig.options[i].value;
-            if (restrictTo) {
-                if (!in_array(value, restrictTo)) {
-                    continue;
+        if (this.fieldConfig.options) {
+            for (var i = 0; i < this.fieldConfig.options.length; i++) {
+                var value = this.fieldConfig.options[i].value;
+                if (restrictTo) {
+                    if (!in_array(value, restrictTo)) {
+                        continue;
+                    }
                 }
+                store.push([value, ts(this.fieldConfig.options[i].key)]);
+                validValues.push(value);
             }
-            store.push([value, ts(this.fieldConfig.options[i].key)]);
-            validValues.push(value);
         }
 
         var options = {
