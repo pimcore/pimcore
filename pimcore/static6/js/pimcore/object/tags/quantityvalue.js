@@ -84,9 +84,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         this.component = Ext.create('Ext.form.Panel', {
             layout: 'hbox',
+            margin: '0 0 10 0',
             combineErrors: false,
             items: [this.inputField, this.unitField],
-            componentCls: "object_field",
+            cls: "object_field",
             isDirty: function() {
                 return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
