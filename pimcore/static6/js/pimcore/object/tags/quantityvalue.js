@@ -40,7 +40,9 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var input = {
-            itemCls: "object_field"
+            fieldLabel: this.fieldConfig.title,
+            itemCls: "object_field",
+            labelWidth: 100
         };
 
         if (this.data && !isNaN(this.data.value)) {
@@ -49,6 +51,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
+        }
+
+        if (this.fieldConfig.labelWidth) {
+            input.labelWidth = this.fieldConfig.labelWidth;
         }
 
         var options = {
@@ -76,9 +82,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         this.inputField = new Ext.form.field.Number(input);
 
-        this.component = Ext.create('Ext.form.FieldContainer', {
+        this.component = Ext.create('Ext.form.Panel', {
             layout: 'hbox',
-            fieldLabel: this.fieldConfig.title,
             combineErrors: false,
             items: [this.inputField, this.unitField],
             componentCls: "object_field",
