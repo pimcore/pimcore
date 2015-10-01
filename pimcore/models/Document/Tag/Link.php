@@ -43,6 +43,9 @@ class Link extends Model\Document\Tag
      */
     public function getData()
     {
+        // update path if internal link
+        $this->updatePathFromInternal();
+
         return $this->data;
     }
 
@@ -131,6 +134,25 @@ class Link extends Model\Document\Tag
      */
     public function getHref()
     {
+        $this->updatePathFromInternal();
+
+        $url = $this->data["path"];
+
+        if (strlen($this->data["parameters"]) > 0) {
+            $url .= "?" . str_replace("?", "", $this->getParameters());
+        }
+
+        if (strlen($this->data["anchor"]) > 0) {
+            $url .= "#" . str_replace("#", "", $this->getAnchor());
+        }
+
+        return $url;
+    }
+
+    /**
+     * 
+     */
+    protected function updatePathFromInternal() {
         if ($this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 if ($doc = Document::getById($this->data["internalId"])) {
@@ -146,18 +168,6 @@ class Link extends Model\Document\Tag
                 }
             }
         }
-
-        $url = $this->data["path"];
-
-        if (strlen($this->data["parameters"]) > 0) {
-            $url .= "?" . str_replace("?", "", $this->getParameters());
-        }
-
-        if (strlen($this->data["anchor"]) > 0) {
-            $url .= "#" . str_replace("#", "", $this->getAnchor());
-        }
-
-        return $url;
     }
 
     /**
