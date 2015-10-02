@@ -150,7 +150,10 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         var href = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            cls: "object_field"
+            cls: "object_field",
+            labelWidth: 300
+            //,
+            //labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100
         };
 
         if (this.data) {
@@ -164,6 +167,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         } else {
             href.width = 300;
         }
+        href.width = href.labelWidth + href.width;
         href.disabled = true;
 
         this.component = new Ext.form.TextField(href);
