@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -32,17 +32,17 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
      * @var array
      */
     public $options;
-    
+
     /**
      * @var integer
      */
-    public $width;    
-    
+    public $width;
+
     /**
      * @var integer
      */
-    public $height; 
-    
+    public $height;
+
     /**
      * Type for the column to query
      *
@@ -79,7 +79,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
         $this->options = $options;
         return $this;
     }
-    
+
     /**
      * @return integer
      */
@@ -95,7 +95,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
         $this->width = $this->getAsIntegerCast($width);
         return $this;
     }
-    
+
     /**
      * @return integer
      */
@@ -130,7 +130,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
      * @return string
      */
     public function getDataFromResource($data) {
-        if($data) {
+        if(strlen($data)) {
             return explode(",",$data);
         } else {
             return null;
@@ -159,7 +159,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
      */
     public function getDataForEditmode($data, $object = null) {
         if(is_array($data)) {
-           return implode(",",$data); 
+           return implode(",",$data);
         }
     }
 
@@ -170,15 +170,12 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
      * @return string
      */
     public function getDataFromEditmode($data, $object = null) {
-        if($data) {
-            if (\Pimcore\Tool\Admin::isExtJS6()) {
-                return $data;
-            } else {
-                return explode(",", $data);
-            }
-        } else {
-            return null;
+        if (\Pimcore\Tool\Admin::isExtJS6()) {
+            return $data;
+        } else if (strlen($data)) {
+            return explode(",", $data);
         }
+        return null;
     }
 
     /**
