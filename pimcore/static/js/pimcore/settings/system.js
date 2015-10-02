@@ -152,7 +152,7 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t("user_interface") + " / " + t("extjs_version"),
                                 xtype: "combo",
-                                width: 250,
+                                width: 300,
                                 name: "general.extjs6",
                                 value: this.getValue("general.extjs6"),
                                 store: [
@@ -170,8 +170,8 @@ pimcore.settings.system = Class.create({
                                 triggerAction: 'all',
                                 store: this.data.config.timezones,
                                 value: this.getValue("general.timezone"),
-                                width: 400,
-                                listWidth: 400
+                                width: 300,
+                                listWidth: 300
                             },
                             {
                                 fieldLabel: t("view_suffix"),
