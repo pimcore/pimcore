@@ -151,9 +151,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
             cls: "object_field",
-            labelWidth: 300
-            //,
-            //labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100
+            labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100
         };
 
         if (this.data) {
