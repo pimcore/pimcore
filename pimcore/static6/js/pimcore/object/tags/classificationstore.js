@@ -474,6 +474,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
     handleAddGroups: function (response) {
         var data = Ext.decode(response.responseText);
 
+        var addedGroups= {};
+
         var nrOfLanguages = this.frontendLanguages.length;
 
         var activeLanguage = this.currentLanguage;
@@ -496,7 +498,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                     }
 
 
-                    this.activeGroups[groupId] = true;
+                    addedGroups[groupId] = true;
                     this.groupCollectionMapping[groupId] = group.collectionId;
 
                     var fieldset = this.createGroupFieldset(currentLanguage, group, groupedChildItems, "pimcore_new_cs_group");
@@ -508,6 +510,10 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                     this.groupModified = true;
                 }
             }
+        }
+
+        for (var groupId in addedGroups) {
+            this.activeGroups[groupId] = true;
         }
 
         this.component.updateLayout();
