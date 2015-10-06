@@ -315,59 +315,63 @@ Ext.define('Ext.overrides.grid.View', {
         ptb: false,
 
         onProxyLoad: function(operation) {
-            var me = this;
-            var options = operation.initialConfig
-            var node = options.node;
+            try {
+                var me = this;
+                var options = operation.initialConfig
+                var node = options.node;
 
-            var response = operation.getResponse();
-            var data = Ext.decode(response.responseText);
-            var total = data.total;
-            // console.log("total nodes for  " + node.data.text + " (" + total + ")");
+                var response = operation.getResponse();
+                var data = Ext.decode(response.responseText);
+                var total = data.total;
+                // console.log("total nodes for  " + node.data.text + " (" + total + ")");
 
-            var text = node.data.text;
-            if (typeof total == "undefined") {
-                total = 0;
+                var text = node.data.text;
+                if (typeof total == "undefined") {
+                    total = 0;
+                }
+
+                //if (!node.decorated) {
+                //    node.decorated = true;
+                //    if (node.data && node.data.text) {
+                //        node.data.text = node.data.text + " (" + total + ")" ;
+                //    }
+                //}
+
+                node.addListener("expand", function (node) {
+                    var tree = node.getOwnerTree();
+                    if (tree) {
+                        var view = tree.getView();
+                        view.updatePaging();
+                    }
+                }.bind(this));
+
+                //to hide or show the expanding icon depending if childs are available or not
+                node.addListener('remove', function (node, removedNode, isMove) {
+                    if (!node.hasChildNodes()) {
+                        node.set('expandable', false);
+                    }
+                });
+                node.addListener('append', function (node) {
+                    node.set('expandable', true);
+                });
+
+                if (me.pageSize < total) {
+                    node.needsPaging = true;
+                    node.pagingData = {
+                        total: data.total,
+                        offset: data.offset,
+                        limit: data.limit
+                    }
+                }
+
+                me.superclass.onProxyLoad.call(this, operation);
+
+                //var store = node.getTreeStore();
+                var proxy = this.getProxy();
+                proxy.setExtraParam("start", 0);
+            } catch (e) {
+                console.log(e);
             }
-
-            //if (!node.decorated) {
-            //    node.decorated = true;
-            //    if (node.data && node.data.text) {
-            //        node.data.text = node.data.text + " (" + total + ")" ;
-            //    }
-            //}
-
-            node.addListener("expand", function(node) {
-                var tree = node.getOwnerTree();
-                if (tree) {
-                    var view = tree.getView();
-                    view.updatePaging();
-                }
-            }.bind(this));
-
-            //to hide or show the expanding icon depending if childs are available or not
-            node.addListener('remove', function(node, removedNode, isMove) {
-                if(!node.hasChildNodes()) {
-                    node.set('expandable', false);
-                }
-            });
-            node.addListener('append', function(node) {
-                node.set('expandable', true);
-            });
-
-            if (me.pageSize < total) {
-                node.needsPaging = true;
-                node.pagingData = {
-                    total: data.total,
-                    offset: data.offset,
-                    limit: data.limit
-                }
-            }
-
-            me.superclass.onProxyLoad.call(this, operation);
-
-            //var store = node.getTreeStore();
-            var proxy = this.getProxy();
-            proxy.setExtraParam("start", 0);
         }
     });
 
