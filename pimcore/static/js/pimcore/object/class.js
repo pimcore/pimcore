@@ -198,6 +198,7 @@ pimcore.object.klass = Class.create({
 
                     // update object type store
                     pimcore.globalmanager.get("object_types_store").reload();
+                    pimcore.globalmanager.get("object_types_store_create").reload();
 
                     var data = Ext.decode(response.responseText);
                     if(data && data.success) {
@@ -229,6 +230,7 @@ pimcore.object.klass = Class.create({
 
                         // update object type store
                         pimcore.globalmanager.get("object_types_store").reload();
+                        pimcore.globalmanager.get("object_types_store_create").reload();
                     }
                 });
 
