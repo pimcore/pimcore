@@ -216,6 +216,10 @@ body > .x-mask {
     background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
 }
 
+.x-form-item-default.x-item-disabled {
+    opacity: 0.7;
+}
+
 /* ExtJS 6.0 bugfixes */
 
 .x-accordion-hd .x-tool-right, .x-accordion-hd .x-tool-left {
