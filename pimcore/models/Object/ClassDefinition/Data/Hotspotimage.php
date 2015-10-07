@@ -132,7 +132,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
      * @return Asset
      */
     public function getDataFromResource($data) {
-        if($data[$this->getName() . "__image"] || $data[$this->getName() . "__hotspots"]) {
+        if($data[$this->getName() . "__image"]) {
 
             $metaData = $data[$this->getName() . "__hotspots"];
 
