@@ -36,6 +36,16 @@ class Tool {
     }
 
     /**
+     * returns a valid cache key/tag string
+     *
+     * @param string $key
+     * @return string
+     */
+    public static function getValidCacheKey($key){
+        return preg_replace("/[^a-zA-Z0-9]/", "_", $key);
+    }
+
+    /**
      * @static
      * @param  $path
      * @return bool
