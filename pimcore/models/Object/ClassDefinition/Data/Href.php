@@ -271,7 +271,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param null|Model\Object\AbstractObject $object
      * @return array
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
         if ($data instanceof Element\ElementInterface) {
 
             $r = array(

@@ -163,7 +163,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
         if ($data instanceof  \Object_Data_QuantityValue) {
             return array(
                 "value" => $data->getValue(),

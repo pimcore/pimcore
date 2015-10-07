@@ -272,7 +272,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return tbd
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
         $result = array();
         if (!$data) {
             return $result;

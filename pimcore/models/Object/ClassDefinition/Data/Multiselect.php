@@ -157,7 +157,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
         if(is_array($data)) {
            return implode(",",$data);
         }

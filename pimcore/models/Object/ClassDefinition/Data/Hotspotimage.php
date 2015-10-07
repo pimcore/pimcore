@@ -194,7 +194,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
      * @param null|Model\Object\AbstractObject $object
      * @return integer
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
         if ($data instanceof Object\Data\Hotspotimage) {
             $imageId = null;
             if($data->getImage()) {

@@ -101,7 +101,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
         if ($data instanceof Object\Data\Geopoint) {
             return array(
                 "longitude" => $data->getLongitude(),
