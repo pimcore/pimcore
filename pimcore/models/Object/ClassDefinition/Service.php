@@ -67,6 +67,7 @@ class Service  {
         $class->setLayoutDefinitions($layout);
 
         // set properties of class
+        $class->setDescription($importData["description"]);
         $class->setModificationDate(time());
         $class->setUserModification($userId);
         $class->setIcon($importData["icon"]);
