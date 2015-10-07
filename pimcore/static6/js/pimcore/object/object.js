@@ -565,7 +565,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     var view = tree.getView();
                     var nodeEl = Ext.fly(view.getNodeByRecord(record));
                     if (nodeEl) {
-                        nodeEl.removeCls("pimcore_unpublished");
+                        var nodeElInner = nodeEl.down(".x-grid-td");
+                        if (nodeElInner) {
+                            nodeElInner.removeCls("pimcore_unpublished");
+                        }
                     }
                 }
             } catch (e) {
@@ -593,7 +596,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     var view = tree.getView();
                     var nodeEl = Ext.fly(view.getNodeByRecord(record));
                     if (nodeEl) {
-                        nodeEl.addCls("pimcore_unpublished");
+                        var nodeElInner = nodeEl.down(".x-grid-td");
+                        if (nodeElInner) {
+                            nodeElInner.addCls("pimcore_unpublished");
+                        }
                     }
                 }
             } catch (e) {
