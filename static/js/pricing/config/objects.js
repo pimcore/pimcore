@@ -258,8 +258,12 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
                         //return e.getTarget(this.grid.getView().rowSelector);
                     }.bind(this),
                     onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                        var assetAllowed = false;
+                        if (this.fieldConfig.allowAssets) {
+                            assetAllowed = data.node.attributes.elementType == "asset";
+                        }
 
-                        if (data.node.attributes.elementType == "object" && this.dndAllowed(data)) {
+                        if ((data.node.attributes.elementType == "object" || assetAllowed) && this.dndAllowed(data)) {
                             return Ext.dd.DropZone.prototype.dropAllowed;
                         } else {
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
@@ -273,8 +277,12 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
                             return true;
                         }
 
-                        if (data.node.attributes.elementType != "object") {
+                        if (!this.fieldConfig.allowAssets && data.node.attributes.elementType != "object") {
                             return false;
+                        } else {
+                            if (data.node.attributes.elementType != "object" && data.node.attributes.elementType != "asset") {
+                            return false;
+                        }
                         }
 
                         if (this.dndAllowed(data)) {

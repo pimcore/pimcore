@@ -379,13 +379,28 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         // get defined actions
         var actionData = [];
         var actions = this.actionsContainer.items.getRange();
+
         for (var i=0; i<actions.length; i++) {
             var action = {};
-            action = actions[i].getForm().getFieldValues();
-            action['type'] = actions[i].type;
+            // collect action settings
+            for (var c = 0; c < actions[i].items.length; c++) {
+                var item = actions[i].items.item(c);
+                try {
+                    // workarround for pimcore.object.tags.objects
+                    if (item.reference) {
+                        action[item.reference.getName()] = item.reference.getValue();
+                    }
+                    else {
+                        action[item.getName()] = item.getValue();
+                    }
+                } catch (e) {
+                }
 
+                action['type'] = actions[i].type;
             actionData.push(action);
         }
+        }
+
         saveData["actions"] = actionData;
 
         // send data
