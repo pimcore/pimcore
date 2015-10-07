@@ -65,7 +65,7 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
 
         for (i = 0; i < visibleFields.length; i++) {
             columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
-                                                                    renderer: renderer});
+                renderer: renderer});
         }
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {

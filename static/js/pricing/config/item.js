@@ -264,9 +264,9 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         item.on("afterrender", function (el) {
             el.getEl().applyStyles({position: "relative", "min-height": "40px"});
             var leftBracket = el.getEl().insertHtml("beforeEnd",
-                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
+                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
             var rightBracket = el.getEl().insertHtml("beforeEnd",
-                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
+                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
             if(data["bracketLeft"]){
                 leftBracket.addClass("pimcore_targeting_bracket_active");
@@ -368,9 +368,9 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
             // get the brackets
             condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0])
-                                                                .hasClass("pimcore_targeting_bracket_active");
+                .hasClass("pimcore_targeting_bracket_active");
             condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0])
-                                                                .hasClass("pimcore_targeting_bracket_active");
+                .hasClass("pimcore_targeting_bracket_active");
 
             conditionsData.push(condition);
         }
@@ -1136,7 +1136,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
                 handler: function (index, parent) {
                     parent.actionsContainer.remove(Ext.getCmp(index));
                 }.bind(window, index, parent)
-        }];
+            }];
     },
 
     /**
