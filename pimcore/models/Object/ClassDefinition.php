@@ -285,7 +285,7 @@ class ClassDefinition extends Model\AbstractModel {
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def,"isRemoteOwner") and $def->isRemoteOwner())) {
+                if (!(method_exists($def,"isRemoteOwner") && $def->isRemoteOwner()) && !$def instanceof Object\ClassDefinition\Data\CalculatedValue) {
                     $cd .= "public $" . $key . ";\n";
                 }
             }

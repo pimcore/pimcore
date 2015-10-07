@@ -765,7 +765,6 @@ abstract class Data
     public function getGetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
-        $code = "";
 
         $code = "";
         $code .= '/**' . "\n";
@@ -834,7 +833,11 @@ abstract class Data
 
         // adds a hook preGetValue which can be defined in an extended class
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}' . "\n";
+        $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
+        $code .= "\t\t" . 'return $preValue;' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
 
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";

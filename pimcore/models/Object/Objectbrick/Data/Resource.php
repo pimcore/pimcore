@@ -106,16 +106,8 @@ class Resource extends Model\Resource\AbstractResource {
                 //exclude untouchables if value is not an array - this means data has not been loaded
 
                 $method = "get" . $key;
-
-                if ($fd instanceof Object\ClassDefinition\Data\CalculatedValue) {
-                    $fieldValue = new \Pimcore\Model\Object\Data\CalculatedValue($fd->getName());
-                    $fieldValue->setContextualData("objectbrick", $this->model->getFieldName() , $this->model->getType(), $fd->getName(), null, null, $fd);
-                    $fieldValue = Object\Service::getCalculatedFieldValue($object, $fieldValue);
-                    $insertData = $fd->getDataForQueryResource($fieldValue, $object);
-                } else {
-                    $fieldValue = $this->model->$method();
-                    $insertData = $fd->getDataForQueryResource($fieldValue, $object);
-                }
+                $fieldValue = $this->model->$method();
+                $insertData = $fd->getDataForQueryResource($fieldValue, $object);
                 $isEmpty = $fd->isEmpty($fieldValue);
 
                 if (is_array($insertData)) {

@@ -199,9 +199,18 @@ class Localizedfield extends Model\AbstractModel {
      */
     public function getLocalizedValue ($name, $language = null, $ignoreFallbackLanguage = false) {
 
-        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
-        $language = $this->getLanguage($language);
         $data = null;
+        $language = $this->getLanguage($language);
+
+        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+
+        if($fieldDefinition instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
+            $valueData = new Model\Object\Data\CalculatedValue($fieldDefinition->getName());
+            $valueData->setContextualData("localizedfield", "localizedfields", null, $language);
+            $data = Service::getCalculatedFieldValue($this->getObject(), $valueData);
+            return $data;
+        }
+
         if($this->languageExists($language)) {
             if(array_key_exists($name, $this->items[$language])) {
                 $data = $this->items[$language][$name];
