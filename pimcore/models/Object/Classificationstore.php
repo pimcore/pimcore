@@ -239,8 +239,17 @@ class Classificationstore extends Model\AbstractModel {
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = "default", $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false) {
         $oid = $this->object->getId();
-        \Logger::debug($oid);
+
         $keyConfig = Model\Object\Classificationstore\DefinitionCache::get($keyId);
+
+        if ($keyConfig->getType() == "calculatedValue") {
+            $data = new Model\Object\Data\CalculatedValue($this->getFieldname());
+            $childDef = Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+            $data->setContextualData("classificationstore", $this->getFieldname(), null, $language, $groupId, $keyId, $childDef);
+            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($this->getObject(), $data);
+            return $data;
+        }
+
         $fieldDefinition =  Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
         $language = $this->getLanguage($language);
@@ -286,7 +295,6 @@ class Classificationstore extends Model\AbstractModel {
                                 if ($classificationStore instanceof Classificationstore) {
                                     if($classificationStore->object->getId() != $this->object->getId()) {
                                         $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
-                                        \Logger::debug($data);
                                     }
                                 }
                             }

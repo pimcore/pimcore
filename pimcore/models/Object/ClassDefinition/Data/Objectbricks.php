@@ -52,10 +52,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $editmodeData = array();
 
         if ($data instanceof Object\Objectbrick) {
-            $getters = $data->getBrickGetters();
+            $allowedBrickTypes = $data->getAllowedBrickTypes();
 
-            foreach ($getters as $getter) {
-                $editmodeData[] = $this->doGetDataForEditmode($data, $getter, $objectFromVersion);
+            foreach ($allowedBrickTypes as $allowedBrickType) {
+                $editmodeData[] = $this->doGetDataForEditmode($data, $allowedBrickType, $objectFromVersion);
             }
         }
 
@@ -64,12 +64,13 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $data
-     * @param $getter
+     * @param $allowedBrickType
      * @param $objectFromVersion
      * @param int $level
      * @return array
      */
-    private function doGetDataForEditmode($data, $getter, $objectFromVersion, $level = 0) {
+    private function doGetDataForEditmode($data, $allowedBrickType, $objectFromVersion, $level = 0) {
+        $getter = "get" . ucfirst($allowedBrickType);
 
         $parent = Object\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
@@ -93,8 +94,17 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
         $inherited = false;
         foreach ($collectionDef->getFieldDefinitions() as $fd) {
-            $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $objectFromVersion); //$fd->getDataForEditmode($item->{$fd->getName()});
-            $brickData[$fd->getName()] = $fieldData->objectData;
+
+            if ($fd instanceof CalculatedValue) {
+                $fieldData = new Object\Data\CalculatedValue($fd->getName());
+                $fieldData->setContextualData("objectbrick", $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
+                $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject());
+                $brickData[$fd->getName()] = $fieldData;
+            } else {
+                $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $objectFromVersion); //$fd->getDataForEditmode($item->{$fd->getName()});
+                $brickData[$fd->getName()] = $fieldData->objectData;
+            }
+
             $brickMetaData[$fd->getName()] = $fieldData->metaData;
             if($fieldData->metaData['inherited'] == true) {
                 $inherited = true;

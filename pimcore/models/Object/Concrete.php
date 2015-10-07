@@ -307,6 +307,10 @@ class Concrete extends AbstractObject {
     public function getValueForFieldName($key) {
         if ($this->$key) {
             return $this->$key;
+        } else if ($this->getClass()->getFieldDefinition($key) instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
+            $value = new Model\Object\Data\CalculatedValue($key);
+            $value = Service::getCalculatedFieldValue($this, $value);
+            return $value;
         }
         return false;
     }

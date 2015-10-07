@@ -474,7 +474,14 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         } else {
             $fieldData = $object->$getter();
             $isInheritedValue = false;
-            $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+
+            if ($fielddefinition instanceof Object\ClassDefinition\Data\CalculatedValue) {
+                $fieldData = new Object\Data\CalculatedValue($fielddefinition->getName());
+                $fieldData->setContextualData("object", null, null, null);
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+            } else {
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+            }
 
             // following some exceptions for special data types (localizedfields, objectbricks)
             if ($value && ($fieldData instanceof Object\Localizedfield || $fieldData instanceof Object\Classificationstore)) {

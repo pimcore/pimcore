@@ -34,7 +34,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = "array";
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ClassificationStore";
 
     /**
      * @var array
@@ -128,6 +128,39 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                 }
             }
         }
+
+        $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
+
+        if ($this->localized) {
+            $validLanguages = Tool::getValidLanguages();
+        } else {
+            $validLanguages = array();
+        }
+        array_unshift($validLanguages, "default");
+
+        foreach ($validLanguages as $language) {
+            foreach ($activeGroupIds as $groupId => $enabled) {
+                if (!$enabled) {
+                    continue;
+                }
+
+                $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
+                $relation->setCondition("type = 'calculatedValue' and groupId = " . $relation->quote($groupId));
+                $relation = $relation->load();
+                foreach ($relation as $key) {
+                    $keyId = $key->getKeyId();
+                    $childDef = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+
+                    $childData = new Object\Data\CalculatedValue($this->getName());
+                    $childData->setContextualData("classificationstore", $this->getName(), null, $language, $groupId, $keyId, $childDef);
+                    $childData = $childDef->getDataForEditmode($childData, $object);
+                    $result["data"][$language][$groupId][$keyId]= $childData;
+
+                }
+            }
+        }
+
+
 
         $result["activeGroups"] = $data->getActiveGroups();
         $result["groupCollectionMapping"] = $data->getGroupCollectionMappings();

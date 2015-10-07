@@ -138,6 +138,9 @@ class Resource extends Model\Object\AbstractObject\Resource {
             if (method_exists($value, "load")) {
                 // datafield has it's own loader
                 $value = $value->load($this->model);
+                if (method_exists($value, "setContextualData")) {
+                    $value->setContextualData("object");
+                }
                 if($value === 0 || !empty($value)) {
                     $this->model->setValue($key, $value);
                 }

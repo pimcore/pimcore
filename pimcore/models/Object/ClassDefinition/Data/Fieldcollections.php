@@ -97,10 +97,12 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
 
         $editmodeData = array();
+        $idx = -1;
 
         if ($data instanceof Object\Fieldcollection) {
             foreach ($data as $item) {
-
+                $idx++;
+                
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
@@ -114,7 +116,15 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $collectionData = array();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object); 
+
+                    if ($fd instanceof CalculatedValue) {
+                        $data = new Object\Data\CalculatedValue($fd->getName());
+                        $data->setContextualData("fieldcollection", $this->getName(), $idx, null,  null, null, $fd);
+                        $data = $fd->getDataForEditmode($data, $object);
+                        $collectionData[$fd->getName()] = $data;
+                    } else {
+                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object);
+                    }
                 }
 
                 $editmodeData[] = array(

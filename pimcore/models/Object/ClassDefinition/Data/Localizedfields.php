@@ -114,7 +114,29 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         // replace the real data with the data for the editmode
         foreach($result["data"] as $language => &$data) {
             foreach($data as $key => &$value) {
-                $value = $this->getFielddefinition($key)->getDataForEditmode($value, $object);
+                $fieldDefinition = $this->getFielddefinition($key);
+                if (!$fieldDefinition instanceof CalculatedValue) {
+                    $value = $fieldDefinition->getDataForEditmode($value, $object);
+                }
+            }
+        }
+
+        if ($this->hasChilds()) {
+            $childs = $this->getChilds();
+
+            $validLanguages = Tool::getValidLanguages();
+
+            foreach ($childs as $childDef) {
+                if ($childDef instanceof CalculatedValue) {
+
+
+                    foreach ($validLanguages as $language) {
+                        $childData = new Object\Data\CalculatedValue($childDef->getName());
+                        $childData->setContextualData("localizedfield", $this->getName(), null, $language);
+                        $childData = $childDef->getDataForEditmode($childData, $object);
+                        $result["data"][$language][$childDef->getName()] = $childData;
+                    }
+                }
             }
         }
 
@@ -597,8 +619,61 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function getGetterCode($class)
     {
 
+        $key = $this->getName();
         $code = "";
-        $code .= parent::getGetterCode($class);
+
+        $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= "public function get" . ucfirst($key) . " () {\n";
+
+        // adds a hook preGetValue which can be defined in an extended class
+        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+        $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
+        $code .= "\t\t" . 'return $preValue;' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        if (method_exists($this, "preGetData")) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        // insert this line if inheritance from parent objects is allowed
+        if ($class->getAllowInherit()) {
+            $code .= "\t" . 'if(\Pimcore\Model\Object::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
+        $code .= "\t" . 'if ($this->__calculationInProgress) {' . "\n";
+        $code .= "\t\t" . 'return $data;' . "\n";
+        $code .= "\t" . '}' . "\n";
+        $code .= "\t" . '' . "\n";
+        $code .= "\t" . '$this->__calculationInProgress = true;' . "\n";
+
+        $code .= "\t" . '$fieldDefinition = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+        $code .= "\t" . 'if ($fieldDefinition->hasChilds()) {' . "\n";
+        $code .= "\t\t" .  '$childs = $fieldDefinition->getChilds();' . "\n";
+        $code .= "\t\t" .  '$validLanguages = \Pimcore\Tool::getValidLanguages();' . "\n";
+        $code .= "\t\t" .  'foreach ($childs as $childDef) {' . "\n";
+        $code .= "\t\t\t" .  'if ($childDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\CalculatedValue) {' . "\n";
+        $code .= "\t\t\t\t" .  'foreach ($validLanguages as $language) {' . "\n";
+        $code .= "\t\t\t\t\t" .  '$childData = new \Pimcore\Model\Object\Data\CalculatedValue($childDef->getName());' . "\n";
+        $code .= "\t\t\t\t\t" .  '$childData->setContextualData("localizedfield", "localizedfields", null, $language);' . "\n";
+        $code .= "\t\t\t\t\t" .  '$childData = Service::getCalculatedFieldValue($this, $childData);' . "\n";
+        $code .= "\t\t\t\t\t" .  '$data->items[$language][$childDef->getName()] = $childData;' . "\n";
+
+        $code .= "\t\t\t\t" .  '}' . "\n";
+        $code .= "\t\t\t" .  '}' . "\n";
+        $code .= "\t\t" .  '}' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        $code .= "\t" . 'unset($this->__calculationInProgress);' . "\n";
+
+        $code .= "\treturn " . '$data' . ";\n";
+        $code .= "}\n\n";
 
         foreach ($this->getFieldDefinitions() as $fd) {
 

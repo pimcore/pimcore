@@ -107,7 +107,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 triggerAction: 'all',
                 editable: false,
                 store: ['input','textarea','wysiwyg','checkbox','numeric','slider', 'select','multiselect',
-                    'date','datetime','language','languagemultiselect','country','countrymultiselect','table',"quantityValue"]
+                    'date','datetime','language','languagemultiselect','country','countrymultiselect','table','quantityValue','calculatedValue']
             })});
 
 

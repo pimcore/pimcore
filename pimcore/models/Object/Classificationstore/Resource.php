@@ -190,9 +190,8 @@ class Resource extends Model\Resource\AbstractResource {
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $dataTable . "` (
             `o_id` BIGINT(20) NOT NULL,
-            `colGroupRelId` BIGINT(20) NOT NULL,
+            `collectionId` BIGINT(20) NULL,
             `groupId` BIGINT(20) NOT NULL,
-            `groupKeyId` BIGINT(20) NOT NULL,
             `keyId` BIGINT(20) NOT NULL,
             `value` LONGTEXT NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,

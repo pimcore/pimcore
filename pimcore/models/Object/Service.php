@@ -1191,4 +1191,97 @@ class Service extends Model\Element\Service {
             }
         }
     }
+
+    /**
+     * @param $object
+     * @param $data Model\Object\Data\CalculatedValue
+     * @return mixed|null
+     */
+    public static function getCalculatedFieldValueForEditMode($object, $data) {
+        if (!$data) {
+            return;
+        }
+        $fieldname = $data->getFieldname();
+        $ownerType = $data->getOwnerType();
+        /** @var $fd Model\Object\ClassDefinition\Data\CalculatedValue */
+        if ($ownerType == "object") {
+            $fd = $object->getClass()->getFieldDefinition($fieldname);
+        } else if ($ownerType == "localizedfield") {
+            $fd = $object->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($fieldname);
+        } else if ($ownerType == "classificationstore") {
+            $fd = $data->getKeyDefinition();
+        } else if ($ownerType == "fieldcollection" || $ownerType == "objectbrick") {
+            $fd = $data->getKeyDefinition();
+        }
+
+        if (!$fd) {
+            return $data;
+        }
+        $className = $fd->getCalculatorClass();
+        if (!$className || !class_exists($className)) {
+            \Logger::error("Class does not exist: " . $className);
+            return null;
+        }
+
+        $inheritanceEnabled = Model\Object\Concrete::getGetInheritedValues();
+        Model\Object\Concrete::setGetInheritedValues(true);
+
+        if (method_exists($className, 'getCalculatedValueForEditMode')) {
+            $result = call_user_func($className . '::getCalculatedValueForEditMode', $object, $data);
+
+        } else {
+            $result = self::getCalculatedFieldValue($object, $data);
+
+        }
+        Model\Object\Concrete::setGetInheritedValues($inheritanceEnabled);
+        return $result;
+
+    }
+
+
+    /**
+     * @param $object
+     * @param $data Model\Object\Data\CalculatedValue
+     * @return mixed|null
+     */
+    public static function getCalculatedFieldValue($object, $data) {
+        if (!$data) {
+            return null;
+        }
+        $fieldname = $data->getFieldname();
+        $ownerType = $data->getOwnerType();
+        /** @var $fd Model\Object\ClassDefinition\Data\CalculatedValue */
+        if ($ownerType == "object") {
+            $fd = $object->getClass()->getFieldDefinition($fieldname);
+        } else if ($ownerType == "localizedfield") {
+            $fd = $object->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($fieldname);
+        } else if ($ownerType == "classificationstore") {
+            $fd = $data->getKeyDefinition();
+        } else if ($ownerType == "fieldcollection" || $ownerType == "objectbrick") {
+            $fd = $data->getKeyDefinition();
+        }
+
+        if (!$fd) {
+            return null;
+        }
+        $className = $fd->getCalculatorClass();
+        if (!$className || !class_exists($className)) {
+            \Logger::error("Class does not exsist: " . $className);
+            return null;
+        }
+
+        if (method_exists($className, 'compute')) {
+            $inheritanceEnabled = Model\Object\Concrete::getGetInheritedValues();
+            Model\Object\Concrete::setGetInheritedValues(true);
+
+            $result = call_user_func($className . '::compute', $object, $data);
+            Model\Object\Concrete::setGetInheritedValues($inheritanceEnabled);
+            return $result;
+        }
+
+        return null;
+
+
+
+    }
 }

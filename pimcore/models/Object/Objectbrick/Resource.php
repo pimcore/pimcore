@@ -56,6 +56,9 @@ class Resource extends Model\Object\Fieldcollection\Resource {
                     if (method_exists($fd, "load")) {
                         // datafield has it's own loader
                         $value = $fd->load($brick);
+                        if (method_exists($value, "setContextualData")) {
+                            $value->setContextualData("objectbrick", $definition->getKey(), null, null);
+                        }
                         if($value === 0 || !empty($value)) {
                             $brick->setValue($key, $value);
                         }

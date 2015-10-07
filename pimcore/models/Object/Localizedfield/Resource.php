@@ -256,11 +256,15 @@ class Resource extends Model\Resource\AbstractResource {
 
         $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",",$validLanguages) . ")", $this->model->getObject()->getId());
         foreach ($data as $row) {
-            foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $key => $fd) {
+            $localizedFieldDefinition = $this->model->getClass()->getFielddefinition("localizedfields");
+            foreach ($localizedFieldDefinition->getFielddefinitions() as $key => $fd) {
                 if($fd) {
                     if (method_exists($fd, "load")) {
                         // datafield has it's own loader
                         $value = $fd->load($this->model, array("language" => $row["language"]));
+                        if (method_exists($value, "setContextualData")) {
+                            $value->setContextualData("localizedfield", $localizedFieldDefinition->getName(), 0, $row["language"]);
+                        }
                         if($value === 0 || !empty($value)) {
                             $this->model->setLocalizedValue($key, $value, $row["language"]);
                         }

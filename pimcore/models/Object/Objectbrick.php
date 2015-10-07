@@ -115,6 +115,13 @@ class Objectbrick extends Model\AbstractModel {
     /**
      * @return array
      */
+    public function getAllowedBrickTypes() {
+        return is_array($this->brickGetters) ? $this->brickGetters : array();
+    }
+
+    /**
+     * @return array
+     */
     public function getItemDefinitions () {
         $definitions = array();
         foreach ($this->getItems() as $item) {
