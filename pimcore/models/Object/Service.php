@@ -1218,7 +1218,7 @@ class Service extends Model\Element\Service {
             return $data;
         }
         $className = $fd->getCalculatorClass();
-        if (!$className || !class_exists($className)) {
+        if (!$className || !\Pimcore\Tool::classExists($className)) {
             \Logger::error("Class does not exist: " . $className);
             return null;
         }
@@ -1265,7 +1265,7 @@ class Service extends Model\Element\Service {
             return null;
         }
         $className = $fd->getCalculatorClass();
-        if (!$className || !class_exists($className)) {
+        if (!$className || !\Pimcore\Tool::classExists($className)) {
             \Logger::error("Class does not exsist: " . $className);
             return null;
         }
