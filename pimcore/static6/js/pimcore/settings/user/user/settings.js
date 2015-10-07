@@ -54,12 +54,13 @@ pimcore.settings.user.user.settings = Class.create({
             enableKeyEvents: true,
             listeners: {
                 keyup: function (el) {
+                    var theEl = el.getEl();
                     if(/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(el.getValue())) {
-                        el.getEl().addCls("password_valid");
-                        el.getEl().removeCls("password_invalid");
+                        theEl.addCls("password_valid");
+                        theEl.removeCls("password_invalid");
                     } else {
-                        el.getEl().addCls("password_invalid");
-                        el.getEl().removeCls("password_valid");
+                        theEl.addCls("password_invalid");
+                        theEl.removeCls("password_valid");
                     }
                 }
             }

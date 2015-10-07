@@ -871,11 +871,11 @@ span.warning {
     color:#dc2626 !important;
 }
 
-.password_valid .x-form-text-wrap {
+.password_valid .x-form-trigger-wrap {
     border-color: #9ecb2d !important;
 }
 
-.password_invalid .x-form-text-wrap  {
+.password_invalid .x-form-trigger-wrap  {
     border-color: #e9322d !important;
 }
 
