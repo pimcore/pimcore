@@ -120,7 +120,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param null|Object\AbstractObject $object
      * @return boolean
      */
-    public function getDataForEditmode($data, $object = null, $objectFromVersion = null)
+    public function getDataForEditmode($data, $object = null)
     {
         return $this->getDataForResource($data, $object);
     }

@@ -142,7 +142,7 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return integer
      */
-    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
+    public function getDataForEditmode($data, $object = null) {
         return $this->getDataForResource($data, $object);
     }
 

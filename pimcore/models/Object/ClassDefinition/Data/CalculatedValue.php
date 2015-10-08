@@ -144,7 +144,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
+    public function getDataForEditmode($data, $object = null) {
         if ($data instanceof Model\Object\Data\CalculatedValue) {
             $data = Model\Object\Service::getCalculatedFieldValueForEditMode($object, $data);
         }

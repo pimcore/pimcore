@@ -156,7 +156,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param null|Model\Object\AbstractObject $object
      * @return array
      */
-    public function getDataForEditmode($data, $object = null, $objectFromVersion = null) {
+    public function getDataForEditmode($data, $object = null) {
         $return = array();
 
         if (is_array($data) && count($data) > 0) {

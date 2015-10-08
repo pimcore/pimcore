@@ -159,7 +159,7 @@ abstract class Data
      * @param null|Object\AbstractObject $object
      * @return mixed
      */
-    abstract public function getDataForEditmode($data, $object = null, $objectFromVersion = null);
+    abstract public function getDataForEditmode($data, $object = null);
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
