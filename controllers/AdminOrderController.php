@@ -142,6 +142,15 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
 
         // add Date Filter
+        if($this->hasParam('from') === false && $this->hasParam('till') === false )
+        {
+            // als default, nehmen wir den ersten des aktuellen monats
+            $from = new Zend_Date();
+            $from->setDay(1);
+            $this->setParam('from', $from->get(Zend_Date::DATE_MEDIUM));
+
+        }
+
         $filterDate = new Filter\OrderDateTime();
         if($this->getParam('from') || $this->getParam('till') )
         {
@@ -159,13 +168,6 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             {
                 $filterDate->setTill( $till );
             }
-        }
-        else
-        {
-            // als default, nehmen wir den ersten des aktuellen monats
-            $from = new Zend_Date();
-            $from->setDay(1);
-
         }
         $list->addFilter( $filterDate );
 
