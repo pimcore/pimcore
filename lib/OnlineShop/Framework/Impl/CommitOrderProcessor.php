@@ -75,9 +75,12 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      */
     public function getOrCreateOrder(OnlineShop_Framework_ICart $cart) {
 
-        $orderListClass = $this->orderClass . "_List";
+        $orderListClass = $this->orderClass . "\\Listing";
         if(!\Pimcore\Tool::classExists($orderListClass)) {
-            throw new Exception("Class $orderListClass does not exist.");
+            $orderListClass = $this->orderClass . "_List";
+            if(!\Pimcore\Tool::classExists($orderListClass)) {
+                throw new Exception("Class $orderListClass does not exist.");
+            }
         }
 
         $cartId = get_class($cart) . "_" . $cart->getId();
@@ -101,7 +104,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
             $order->setParent( \Pimcore\Model\Object\Folder::getById($this->parentFolderId) );
             $order->setCreationDate(Zend_Date::now()->get());
-            $order->setKey($tempOrdernumber);
+            $order->setKey( \Pimcore\File::getValidFilename($tempOrdernumber) );
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
@@ -318,9 +321,12 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      */
     protected function createOrderItem(OnlineShop_Framework_ICartItem $item,  $parent) {
 
-        $orderItemListClass = $this->orderItemClass . "_List";
+        $orderItemListClass = $this->orderItemClass . "\\Listing";
         if(!class_exists($orderItemListClass)) {
-            throw new Exception("Class $orderItemListClass does not exist.");
+            $orderItemListClass = $this->orderItemClass . "_List";
+            if(!class_exists($orderItemListClass)) {
+                throw new Exception("Class $orderItemListClass does not exist.");
+            }
         }
 
         $key = \Pimcore\File::getValidFilename($item->getProduct()->getId() . "_" . $item->getItemKey());

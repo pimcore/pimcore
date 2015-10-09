@@ -445,6 +445,10 @@ class Agent implements IOrderAgent
             foreach($order->getItems() as $item)
             {
                 $cid[] = $item->getId();
+                foreach($item->getSubItems() as $subItem)
+                {
+                    $cid[] = $subItem->getId();
+                }
             }
 
             $noteList->addConditionParam('type = ?', 'order-agent');

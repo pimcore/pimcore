@@ -784,7 +784,9 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
 
         // start request
         $start = microtime(true);
-        $client = new \Zend_Http_Client( $url );
+        $client = new \Zend_Http_Client($url, [
+            'timeout' => 3
+        ]);
         $client->setMethod(\Zend_Http_Client::GET);
         $response = $client->request();
         $this->getLogger()->log('Duration: ' . number_format(microtime(true) - $start, 3), Zend_Log::INFO);
