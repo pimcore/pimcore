@@ -11,9 +11,9 @@ Affero General Public License (AGPL) version 3.
 We require that all files (PHP, JavaScript, CSS, images, etc.) that are not part of a bundled 3rd party library 
 (see [3rd-party-licenses.md](3rd-party-licenses.md) ) are under the terms of the GPLv3.
 
-## Who holds the copyright for pimcore?
-All pimcore contributors retain copyright on their code, but agree to release it under the same license as pimcore. 
-If you are unable or unwilling to contribute a patch under the GPL version 3 or later, do not submit a patch.
+## Copyright & contributions
+All pimcore contributors retain copyright on their code, but agree to release it under the same licenses as pimcore. 
+If you are unable or unwilling to contribute a patch under the GPL version 3 and the pimcore enterprise license, do not submit a patch.
 
 ## I want to release my work under a different license than GPLv3, is that possible? 
 No. You can only release your work under any GPL version 3 or later compatible license. 
