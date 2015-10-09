@@ -29,13 +29,10 @@ pimcore.settings.update = Class.create({
                     this.window = new Ext.Window({
                         layout:'fit',
                         width:500,
-                        height:310,
+                        height:385,
                         autoScroll: true,
-                        closeAction:'close',
                         modal: true
                     });
-
-                    pimcore.viewport.add(this.window);
 
                     this.window.show();
 
@@ -130,7 +127,6 @@ pimcore.settings.update = Class.create({
         }
 
         var panelConfig = {
-            title: t('select_update'),
             items: []
         };
 
@@ -152,6 +148,7 @@ pimcore.settings.update = Class.create({
             panelConfig.items.push({
                 xtype: "form",
                 bodyStyle: "padding: 10px;",
+                style: "margin-bottom: 10px;",
                 title: t('stable_updates'),
                 items: [
                     {
