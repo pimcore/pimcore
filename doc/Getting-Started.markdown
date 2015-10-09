@@ -3,7 +3,7 @@ For more detailed documentation see 'Dev-Doku' chapters and the source code docu
 
 ### 1. Installation and base configuration
 
-   1. [Installation](/doc/Installation-and-base-configuration.markdown#1-installation)
+   1. [Installation](Installation-and-base-configuration.markdown#1-installation)
    2. [Configure Product and Product Category classes](/doc/Installation-and-base-configuration.markdown#2-configure-product-and-product-category-classes)
    3. [Configuring OnlineShopConfig.xml](/doc/Installation-and-base-configuration.markdown#3-configuring-onlineshopconfig-xml)
 
