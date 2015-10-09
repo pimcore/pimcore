@@ -55,7 +55,8 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             $allowedBrickTypes = $data->getAllowedBrickTypes();
 
             foreach ($allowedBrickTypes as $allowedBrickType) {
-                $editmodeData[] = $this->doGetDataForEditmode($data, $allowedBrickType, $objectFromVersion);
+                $getter = "get" . ucfirst($allowedBrickType);
+                $editmodeData[] = $this->doGetDataForEditmode($getter, $data, $allowedBrickType, $objectFromVersion);
             }
         }
 
@@ -69,14 +70,14 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param int $level
      * @return array
      */
-    private function doGetDataForEditmode($data, $allowedBrickType, $objectFromVersion, $level = 0) {
-        $getter = "get" . ucfirst($allowedBrickType);
+    private function doGetDataForEditmode($getter, $data, $allowedBrickType, $objectFromVersion, $level = 0) {
+
 
         $parent = Object\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
         if(!$item && !empty($parent)) {
             $data = $parent->{"get" . ucfirst($this->getName())}();
-            return $this->doGetDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
+            return $this->doGetDataForEditmode($getter, $data, $allowedBrickType, $objectFromVersion, $level + 1);
         }
 
         if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
