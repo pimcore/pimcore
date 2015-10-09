@@ -306,20 +306,20 @@ pimcore.document.tree = Class.create({
                     documentMenu.page.push({
                         text: ts(typeRecord.get("name")),
                         iconCls: "pimcore_icon_page_add",
-                        handler: this.addDocument.bind(this, tree, record, "page")
+                        handler: this.addDocument.bind(this, tree, record, "page", typeRecord.get("id"))
                     });
                 }
                 else if (typeRecord.get("type") == "snippet") {
                     documentMenu.snippet.push({
                         text: ts(typeRecord.get("name")),
                         iconCls: "pimcore_icon_snippet_add",
-                        handler: this.addDocument.bind(this, tree, record, "snippet")
+                        handler: this.addDocument.bind(this, tree, record, "snippet", typeRecord.get("id"))
                     });
                 }else if (typeRecord.get("type") == "email") { //ckogler
                     documentMenu.email.push({
                         text: ts(typeRecord.get("name")),
                         iconCls: "pimcore_icon_email_add",
-                        handler: this.addDocument.bind(this, tree, record, "email")
+                        handler: this.addDocument.bind(this, tree, record, "email", typeRecord.get("id"))
                     });
                 }
             }.bind(this, documentMenu), documentMenu);
