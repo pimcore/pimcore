@@ -61,7 +61,7 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
 
             // base order
             $select->from(
-                ['order' => 'object_query_' . OnlineShopOrder::classId() ]
+                [ 'order' => 'object_query_' . OnlineShopOrder::classId() ]
                 , [
                     new Zend_Db_Expr('SQL_CALC_FOUND_ROWS 1')
                     , 'OrderId' => 'order.oo_id'
@@ -70,15 +70,22 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
 
             // join ordered products
             $select->join(
-                ['_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ]
+                [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ]
                 , '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id'
+                , ''
+            );
+
+            // join ordered sub products
+            $select->joinLeft(
+                [ '_orderSubItems' => 'object_relations_' . OnlineShopOrderItem::classId() ]
+                , '_orderSubItems.fieldname = "subItems" AND _orderSubItems.src_id = _orderItems.dest_id'
                 , ''
             );
 
             // join order item
             $select->join(
-                ['orderItem' => 'object_' . OnlineShopOrderItem::classId() ]
-                , 'orderItem.o_id = _orderItems.dest_id'
+                [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ]
+                , 'orderItem.o_id = _orderItems.dest_id OR orderItem.o_id = _orderSubItems.dest_id'
                 , ['OrderItemId' => 'orderItem.oo_id']
             );
 

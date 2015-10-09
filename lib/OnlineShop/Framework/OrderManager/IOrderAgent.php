@@ -73,7 +73,7 @@ interface IOrderAgent
      * @param OrderItem $item
      * @param string    $state
      *
-     * @return $this
+     * @return Note
      */
     public function itemSetState(OrderItem $item, $state);
 
