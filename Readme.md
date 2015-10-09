@@ -11,6 +11,6 @@ It's most important features are:
 
 
 ### Documentation Chapters: 
-- [Design Principles](/doc/Design-Principles.markdown)
-- [Big Picture](/doc/Big-Picture.markdown)
-- [Getting Started](/doc/Getting-Started.markdown)
+- [Design Principles](doc/Design-Principles.markdown)
+- [Big Picture](doc/Big-Picture.markdown)
+- [Getting Started](doc/Getting-Started.markdown)
