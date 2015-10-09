@@ -1,12 +1,15 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: tballmann
- * Date: 02.02.2015
- * Time: 10:36
+ * Pimcore
  *
- * Siehe http://developer.yahoo.com/ypatterns/pattern.php?pattern=searchpagination
+ * This source file is subject to the GNU General Public License version 3 (GPLv3)
+ * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
+ * files that are distributed with this source code.
+ *
+ * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
+
 
 $params = $this->params ?: [];
 
