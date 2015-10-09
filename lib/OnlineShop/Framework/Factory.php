@@ -561,8 +561,10 @@ class OnlineShop_Framework_Factory {
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
     public function getTokenManager(OnlineShop_Framework_AbstractVoucherTokenType $configuration) {
+        $id   = $configuration->getObject()->getId();
         $type = $configuration->getType();
-        if(empty($this->tokenManagers[$type])) {
+
+        if(empty($this->tokenManagers[$id])) {
 
             $tokenManagerClass = $this->config->onlineshop->voucherservice->tokenmanagers->$type;
 
@@ -572,14 +574,14 @@ class OnlineShop_Framework_Factory {
                     throw new OnlineShop_Framework_Exception_InvalidConfigException("Token Manager class " . $tokenManagerClass->class . " does not implement OnlineShop_Framework_VoucherService_ITokenManager.");
                 }
 
-                $this->tokenManagers[$type] = $tokenManager;
+                $this->tokenManagers[$id] = $tokenManager;
 
             } else {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("Token Manager for " . $type . " not defined.");
             }
 
         }
-        return $this->tokenManagers[$type];
+        return $this->tokenManagers[$id];
 
     }
 
