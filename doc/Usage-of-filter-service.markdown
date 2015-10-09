@@ -52,7 +52,7 @@ The configuration of available filters and the set up of product listings in the
 - PreConditions for pre filtering of products, e.g. only products of a certain category. These preconditions cannot be changed by the user in the frontend. 
 - Filters that are visible in the frontend. 
 
-![filterdefinition](img/filterdefinitions.png)
+![filterdefinition](images/filterdefinitions.png)
 
 
 The configuration of preconditions and filters is done by field collection entries, whereby the field collection types are mapped to FilterTypes and their backend implementations in the OnlineShopConfig.xml (see previous chapter). The FilterDefinition class can be extended and modified to the needs of the system. 

@@ -148,7 +148,7 @@ OnlineShop_Framework_IndexService_Tool_IndexUpdater::updateIndex("Object_Product
 - Only used for OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql
 
 
-![productindex-simple](img/productindex-simple.png)
+![productindex-simple](images/productindex-simple.png)
 
 
 
@@ -185,7 +185,7 @@ OnlineShop_Framework_IndexService_Tool_IndexUpdater::processUpdateIndexQueue();
 - Used for optimized mysql, elastic search, ...
 
 
-![productindex-optimized](img/productindex-optimized.png)
+![productindex-optimized](images/productindex-optimized.png)
 
 
 ## 5 - Usage of product list
