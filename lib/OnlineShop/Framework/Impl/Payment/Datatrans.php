@@ -57,12 +57,14 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         if($xml->mode == 'live')
         {
             $this->endpoint['form'] = 'https://payment.datatrans.biz/upp/jsp/upStart.jsp';
+            $this->endpoint['script'] = 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';
             $this->endpoint['xmlAuthorize'] = 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp';
             $this->endpoint['xmlProcessor'] = 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp';
         }
         else
         {
             $this->endpoint['form'] = 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp';
+            $this->endpoint['script'] = 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';
             $this->endpoint['xmlAuthorize'] = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
             $this->endpoint['xmlProcessor'] = 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp';
         }
@@ -142,9 +144,24 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         $form->addElement( 'hidden', 'refno', ['value' => $config['refno']] );
         $form->addElement( 'hidden', 'reqtype', ['value' => $paymentData['reqtype']] );
 
+
+        // used for lightbox version
+        $form->setAttrib( 'data-language', $config['language'] );
+        $form->setAttrib( 'data-merchant-id', $this->merchantId );
+        $form->setAttrib( 'data-sign', $this->sign );
+        $form->setAttrib( 'data-amount', $paymentData['amount'] );
+        $form->setAttrib( 'data-currency', $paymentData['currency'] );
+        $form->setAttrib( 'data-refno', $config['internal_id'] );
+        $form->setAttrib( 'data-reqtype', $paymentData['reqtype'] );
+        $form->setAttrib( 'data-script', $this->endpoint['script'] );
+        $form->setAttrib( 'data-success-url',  $config['successUrl'] );
+        $form->setAttrib( 'data-error-url',  $config['errorUrl'] );
+        $form->setAttrib( 'data-cancel-url', $config['cancelUrl'] );
+
         if($config['useAlias'])
         {
             $form->addElement( 'hidden', 'useAlias', ['value' => 'yes'] );
+            $form->setAttrib( 'data-use-alias', 'true' );
         }
 
 
