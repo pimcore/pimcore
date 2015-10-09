@@ -160,6 +160,11 @@ pimcore.settings.user.user.settings = Class.create({
             checked:this.currentUser.closeWarning
         });
 
+        var rolesStore = Ext.create('Ext.data.ArrayStore', {
+            fields: ["id","name"],
+            data: this.data.roles
+        });
+
         this.roleField = Ext.create('Ext.ux.form.MultiSelect', {
             name:"roles",
             triggerAction:"all",
@@ -167,7 +172,9 @@ pimcore.settings.user.user.settings = Class.create({
             fieldLabel:t("roles"),
             width:400,
             minHeight: 100,
-            store:this.data.roles,
+            store: rolesStore,
+            displayField: "name",
+            valueField: "id",
             value:this.currentUser.roles.join(","),
             hidden: this.currentUser.admin
         });
