@@ -918,7 +918,7 @@ pimcore.document.tree = Class.create({
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
                     var data = win.getComponent("form").getForm().getFieldValues();
-                    data["id"] = this.id;
+                    data["id"] = record.id;
 
                     Ext.Ajax.request({
                         url: "/admin/document/update-site/",
