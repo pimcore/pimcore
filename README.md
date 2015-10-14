@@ -36,6 +36,10 @@ mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 [A detailed installation guide can be found here.](http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124463)
 
 
+## Contribute
+**Bug fixes:** please create a pull request including a detailed and reproducible description of the problem  
+**Contribute features**: please contact the core-team before you start developing ( contribute@pimcore.org )
+
 ## Copyright and license
 
 Copyright: [pimcore](http://www.pimcore.org) GmbH  
