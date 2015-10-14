@@ -935,6 +935,15 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
 		$this->_redis->del(self::PREFIX_KEY.$id);
 	}
 
+    /**
+     * Reruns system infos about redis
+     *
+     * @return array
+     */
+    public function getInfo(){
+        return $this->_redis->info();
+    }
+
 }
 
 }
