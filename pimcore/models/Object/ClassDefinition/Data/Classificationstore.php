@@ -290,20 +290,18 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $classificationStore->setGroupCollectionMappings($correctedMapping);
 
         if (is_array($data)) {
-            foreach ($data as $language => $fields) {
-                foreach ($fields as $name => $fdata) {
-                    $keyId = $fdata["keyId"];
-                    $groupId = $fdata["groupId"];
+            foreach ($data as $language => $groups) {
+                foreach ($groups as $groupId => $keys) {
+                    foreach ($keys as $keyId => $value) {
+                        $keyConfig = $this->getKeyConfiguration($keyId);
 
-                    $keyConfig = $this->getKeyConfiguration($keyId);
+                        $dataDefinition = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                    $dataDefinition = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
+                        $activeGroups[$groupId] = true;
 
-                    $value = $fdata["value"];
-                    $dataFromEditMode =  $dataDefinition->getDataFromEditmode($value);
-                    $activeGroups[$groupId] = true;
-
-                    $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);
+                        $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);
+                    }
                 }
             }
         }

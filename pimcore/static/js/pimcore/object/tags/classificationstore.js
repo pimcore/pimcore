@@ -283,12 +283,15 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isDirty()) {
                     var languageElement = this.languageElements[currentLanguage][s];
-                    var value = {
-                        value: languageElement.getValue(),
-                        keyId: languageElement.fieldConfig.csKeyId,
-                        groupId: languageElement.fieldConfig.csGroupId
-                    };
-                    localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()] = value;
+                    var groupId =  languageElement.fieldConfig.csGroupId;
+                    var keyId = languageElement.fieldConfig.csKeyId;
+                    var value = languageElement.getValue();
+
+                    if (!localizedData[currentLanguage][groupId]) {
+                        localizedData[currentLanguage][groupId] = {};
+                    }
+
+                    localizedData[currentLanguage][groupId][keyId] = value;
 
                 }
             }
