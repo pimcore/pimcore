@@ -88,6 +88,15 @@ class Warming {
         self::loadToCache($list);
     }
 
+    /**
+     * Adds a Pimcore Object/Asset/Document to the cache
+     *
+     * @param $element
+     */
+    public static function loadElementToCache($element){
+        $cacheKey = Element\Service::getElementType($element) . "_" . $element->getId();
+        Cache::storeToCache($element, $cacheKey, [], null, null, true);
+    }
 
     /**
      * @param AbstractListing $list
@@ -108,8 +117,7 @@ class Warming {
             $elements = $list->load();
 
             foreach ($elements as $element) {
-                $cacheKey = Element\Service::getElementType($element) . "_" . $element->getId();
-                Cache::storeToCache($element, $cacheKey, [], null, null, true);
+                self::loadElementToCache($element);
             }
 
             \Pimcore::collectGarbage();
