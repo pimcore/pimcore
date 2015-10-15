@@ -566,10 +566,11 @@ pimcore.document.tree = Class.create({
             if (!record.data.site) {
                 menu.add(new Ext.menu.Item({
                     text: t('advanced'),
-                    iconCls: "",
+                    iconCls: "pimcore_icon_site",
                     hideOnClick: false,
                     menu: [
                         {
+                            iconCls: "pimcore_icon_site",
                             text: t('use_as_site'),
                             handler: this.addUpdateSite.bind(this, tree, record)
                         }
@@ -579,15 +580,17 @@ pimcore.document.tree = Class.create({
             else {
                 menu.add(new Ext.menu.Item({
                     text: t('advanced'),
-                    iconCls: "",
+                    iconCls: "pimcore_icon_site",
                     hideOnClick: false,
                     menu: [
                         {
                             text: t('edit_site'),
-                            handler: this.addUpdateSite.bind(this, tree, record)
+                            handler: this.addUpdateSite.bind(this, tree, record),
+                            iconCls: "pimcore_icon_edit",
                         }, {
                             text: t('remove_site'),
-                            handler: this.removeSite.bind(this, tree, record)
+                            handler: this.removeSite.bind(this, tree, record),
+                            iconCls: "pimcore_icon_delete",
                         }
                     ]
                 }));
