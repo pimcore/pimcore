@@ -469,6 +469,7 @@
     z-index:1000;
     cursor:pointer;
     background:url(/pimcore/static6/img/inheritance-indicator.png) top left no-repeat;
+    pointer-events: all !important;
 }
 
 .asset_folder_preview {
