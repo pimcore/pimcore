@@ -960,7 +960,14 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
                 name: "count",
                 width: 200,
                 value: data.count
-            }],
+            },{
+                xtype: "checkbox",
+                fieldLabel: t("plugin_onlineshop_pricing_config_condition_sold_count_cart"),
+                name: "countCart",
+                width: 200,
+                checked: data.countCart,
+                value: 1
+            }]
         });
 
         return item;

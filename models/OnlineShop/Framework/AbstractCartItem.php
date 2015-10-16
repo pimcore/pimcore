@@ -157,6 +157,7 @@ abstract class OnlineShop_Framework_AbstractCartItem extends \Pimcore\Model\Abst
         if($priceInfo instanceof OnlineShop_Framework_Pricing_IPriceInfo)
         {
             $priceInfo->getEnvironment()->setCart( $this->getCart() );
+            $priceInfo->getEnvironment()->setCartItem( $this );
         }
 
         return $priceInfo;

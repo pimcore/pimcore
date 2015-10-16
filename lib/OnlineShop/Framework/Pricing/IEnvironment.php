@@ -26,6 +26,18 @@ interface OnlineShop_Framework_Pricing_IEnvironment
     public function getCart();
 
     /**
+     * @param OnlineShop_Framework_ICartItem $cartItem
+     *
+     * @return OnlineShop_Framework_Pricing_IEnvironment
+     */
+    public function setCartItem(OnlineShop_Framework_ICartItem $cartItem);
+
+    /**
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getCartItem();
+
+    /**
      * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      *
      * @return OnlineShop_Framework_Pricing_IEnvironment

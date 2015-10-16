@@ -31,7 +31,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     /**
      * @var OnlineShop_Framework_Pricing_IRule[]
      */
-    protected $validRules = array();
+    protected $validRules = null;
 
     /**
      * @var bool
@@ -95,7 +95,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     public function getRules($forceRecalc = false)
     {
 
-        if($forceRecalc || empty($this->validRules))
+        if($forceRecalc || $this->validRules === NULL)
         {
             $env = $this->getEnvironment();
             $this->validRules = array();
@@ -257,14 +257,6 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
-     * @return OnlineShop_Framework_IPriceInfo|OnlineShop_Framework_Pricing_IPriceInfo
-     */
-    public function getOriginalPriceInfo()
-    {
-        return $this->priceInfo;
-    }
-
-    /**
      * @return OnlineShop_Framework_IPrice
      */
     public function getOriginalPrice()
@@ -332,5 +324,14 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
         $percent = 100 - ($new / $org);
 
         return round($percent, 2);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function hasRulesApplied()
+    {
+        return (bool)$this->rulesApplied;
     }
 }

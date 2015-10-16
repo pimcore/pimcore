@@ -47,11 +47,6 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
     public function getAmount();
 
     /**
-     * @return OnlineShop_Framework_IPriceInfo
-     */
-    public function getOriginalPriceInfo();
-
-    /**
      * @return OnlineShop_Framework_IPrice
      */
     public function getOriginalPrice();
@@ -93,4 +88,9 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
      * @return float
      */
     public function getDiscountPercent();
+
+    /**
+     * @return bool
+     */
+    public function hasRulesApplied();
 }

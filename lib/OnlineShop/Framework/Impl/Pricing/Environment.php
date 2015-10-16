@@ -19,6 +19,11 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     protected $cart;
 
     /**
+     * @var OnlineShop_Framework_ICartItem
+     */
+    protected $cartItem;
+
+    /**
      * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     protected $product;
@@ -61,6 +66,25 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     public function getCart()
     {
         return $this->cart;
+    }
+
+    /**
+     * @return OnlineShop_Framework_ICartItem
+     */
+    public function getCartItem()
+    {
+        return $this->cartItem;
+    }
+
+    /**
+     * @param OnlineShop_Framework_ICartItem $cartItem
+     *
+     * @return $this
+     */
+    public function setCartItem(OnlineShop_Framework_ICartItem $cartItem)
+    {
+        $this->cartItem = $cartItem;
+        return $this;
     }
 
     /**

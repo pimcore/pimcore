@@ -23,6 +23,11 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends OnlineShop_Framew
      */
     protected $currentSoldCount = [];
 
+    /**
+     * @var bool
+     */
+    protected $countCart = false;
+
 
     /**
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
@@ -34,7 +39,24 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends OnlineShop_Framew
         $rule = $environment->getRule();
         if($rule)
         {
-            return $this->getSoldCount( $rule ) < $this->getCount();
+            $cartUsedCount = 0;
+
+            if($this->isCountCart())
+            {
+                if($environment->getCart() && $environment->getCartItem())
+                {
+                    // cart view
+                    $cartUsedCount = $this->getCartRuleCount($environment->getCart(), $rule, $environment->getCartItem());
+                }
+                else if(!$environment->getCart())
+                {
+                    // product view
+                    $cart = $this->getCart();
+                    $cartUsedCount = $this->getCartRuleCount($cart, $rule);
+                }
+            }
+
+            return ($this->getSoldCount( $rule ) + $cartUsedCount) < $this->getCount();
         }
         else
         {
@@ -51,6 +73,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends OnlineShop_Framew
         $json = [
             'type' => 'Sold'
             , 'count' => $this->getCount()
+            , 'countCart' => $this->isCountCart()
         ];
 
         return json_encode($json);
@@ -66,6 +89,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends OnlineShop_Framew
         $json = json_decode($string);
 
         $this->setCount( $json->count );
+        $this->setCountCart( (bool)$json->countCart );
 
         return $this;
     }
@@ -84,5 +108,83 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends OnlineShop_Framew
     public function setCount($count)
     {
         $this->count = (int)$count;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCountCart()
+    {
+        return $this->countCart;
+    }
+
+    /**
+     * @param boolean $countCart
+     *
+     * @return $this
+     */
+    public function setCountCart($countCart)
+    {
+        $this->countCart = (bool)$countCart;
+        return $this;
+    }
+
+
+    /**
+     * @return OnlineShop_Framework_ICart|null
+     */
+    protected function getCart()
+    {
+        // use this in your own implementation
+    }
+
+
+    /**
+     * return a count how often the rule is already uses in the cart
+     * @param OnlineShop_Framework_ICart          $cart
+     * @param OnlineShop_Framework_Pricing_IRule  $rule
+     * @param OnlineShop_Framework_ICartItem|null $cartItem
+     *
+     * @return int
+     */
+    protected function getCartRuleCount(OnlineShop_Framework_ICart $cart, OnlineShop_Framework_Pricing_IRule $rule, OnlineShop_Framework_ICartItem $cartItem = null)
+    {
+        // init
+        $counter = 0;
+
+        foreach($cart->getItems() as $item)
+        {
+            $rules = [];
+
+            if($cartItem && $item->getItemKey() == $cartItem)
+            {
+                // skip self if we are on a cartItem
+            }
+            else
+            {
+                // get rules
+                $priceInfo = $item->getPriceInfo();
+                if($priceInfo instanceof OnlineShop_Framework_Pricing_IPriceInfo)
+                {
+                    if(($cartItem && $priceInfo->hasRulesApplied()) || $cartItem === NULL)
+                    {
+                        $rules = $priceInfo->getRules();
+                    }
+                }
+            }
+
+
+            // search for current rule
+            foreach($rules as $r)
+            {
+                if($r->getId() == $rule->getId())
+                {
+                    $counter++;
+                    break;
+                }
+            }
+        }
+
+        return $counter;
     }
 }
