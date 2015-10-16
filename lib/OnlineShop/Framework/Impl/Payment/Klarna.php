@@ -167,6 +167,8 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
             , [
                 'klarna_amount' => $order['cart']['total_price_including_tax']
                 , 'klarna_marshal' => json_encode( $order->marshal() )
+                , 'klarna_reservation' => $order['reservation']
+                , 'klarna_reference' => $order['reference']
             ]
         );
     }
