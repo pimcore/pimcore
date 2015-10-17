@@ -29,10 +29,7 @@ class Application extends \Symfony\Component\Console\Application
      *
      * @var array
      */
-    protected $defaultAutoloadNamespaces = [
-        'Pimcore\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Pimcore/Console/Command',
-        'Website\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/website/lib/Website/Console/Command'
-    ];
+    protected $defaultAutoloadNamespaces = [];
 
     /**
      * Autoloaded namespaces
@@ -52,6 +49,11 @@ class Application extends \Symfony\Component\Console\Application
     public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN')
     {
         parent::__construct('Pimcore CLI', Version::getVersion());
+
+        $this->defaultAutoloadNamespaces = [
+            'Pimcore\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Pimcore/Console/Command',
+            'Website\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/website/lib/Website/Console/Command'
+        ];
 
         foreach ($this->defaultAutoloadNamespaces as $namespace => $directory) {
             $this->addAutoloadNamespace($namespace, $directory);
