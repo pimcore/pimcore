@@ -241,11 +241,8 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
             //need check, if there are sub objects because update on empty result set is too slow
             $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
             if($objects) {
-                $updateStatement =
-                    "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND id IN
-                 (SELECT o_id FROM objects WHERE o_path LIKE ?)";
-
-                $this->db->query($updateStatement, array($this->name, $object->getFullPath() . "/%"));
+                $updateStatement = "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND id IN (".implode(',',$objects).")";
+                $this->db->query($updateStatement, array($this->name));
             }
 
         }
