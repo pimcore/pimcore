@@ -104,11 +104,13 @@ pimcore.object.tree = Class.create({
             bufferedRenderer: false,
             border: false,
             listeners: this.getTreeNodeListeners(),
+            scrollable: true,
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
                     appendOnly: false,
-                    ddGroup: "element"
+                    ddGroup: "element",
+                    scrollable: true
                 },
                 listeners: {
                     nodedragover: this.onTreeNodeOver.bind(this)
