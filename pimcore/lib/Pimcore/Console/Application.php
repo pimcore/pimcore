@@ -24,17 +24,6 @@ use Symfony\Component\Finder\SplFileInfo;
 class Application extends \Symfony\Component\Console\Application
 {
     /**
-     * Namespaces to automatically scan for commands which can be autoloaded. More namespaces
-     * can be added via addAutoloadNamespace()
-     *
-     * @var array
-     */
-    protected $defaultAutoloadNamespaces = [
-        'Pimcore\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Pimcore/Console/Command',
-        'Website\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/website/lib/Website/Console/Command'
-    ];
-
-    /**
      * Autoloaded namespaces
      *
      * @var array
@@ -53,9 +42,8 @@ class Application extends \Symfony\Component\Console\Application
     {
         parent::__construct('Pimcore CLI', Version::getVersion());
 
-        foreach ($this->defaultAutoloadNamespaces as $namespace => $directory) {
-            $this->addAutoloadNamespace($namespace, $directory);
-        }
+        // init default autoload namespaces
+        $this->initDefaultAutoloadNamespaces();
 
         // allow to register commands here (e.g. through plugins)
         \Pimcore::getEventManager()->trigger('system.console.init', $this);
@@ -72,6 +60,21 @@ class Application extends \Symfony\Component\Console\Application
         $inputDefinition->addOption(new InputOption('ignore-maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force execution in maintenance mode'));
 
         return $inputDefinition;
+    }
+
+    /**
+     * Init default autoload namespaces. More namespaces can be added via addAutoloadNamespace()
+     */
+    protected function initDefaultAutoloadNamespaces()
+    {
+        $defaultAutoloadNamespaces = [
+            'Pimcore\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/pimcore/lib/Pimcore/Console/Command',
+            'Website\\Console\\Command' => PIMCORE_DOCUMENT_ROOT . '/website/lib/Website/Console/Command'
+        ];
+
+        foreach ($defaultAutoloadNamespaces as $namespace => $directory) {
+            $this->addAutoloadNamespace($namespace, $directory);
+        }
     }
 
     /**
