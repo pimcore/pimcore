@@ -91,7 +91,13 @@ class OnlineShop_Framework_Impl_CartItem extends OnlineShop_Framework_AbstractCa
         if ($this->subItems == null) {
             $this->subItems = array();
 
-            $itemClass = get_class($this) . "_List";
+            $itemClass = get_class($this) . "\\Listing";
+            if(!\Pimcore\Tool::classExists($itemClass)) {
+                $itemClass = get_class($this) . "_List";
+                if(!\Pimcore\Tool::classExists($itemClass)) {
+                    throw new Exception("Class $itemClass does not exist.");
+                }
+            }
             $itemList = new $itemClass();
 
             $db = \Pimcore\Resource::get();
