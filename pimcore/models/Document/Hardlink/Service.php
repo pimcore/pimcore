@@ -131,7 +131,7 @@ class Service {
                     $_path = str_replace("\\", "/", $_path); // windows patch
                     $_path .= $_path != "/" ? "/" : "";
 
-                    $_path = preg_replace("@^" . preg_quote($hardlink->getSourceDocument()->getRealFullPath()) . "@", $hardlink->getRealFullPath(), $_path);
+                    $_path = preg_replace("@^" . preg_quote($hardlink->getSourceDocument()->getRealPath()) . "@", $hardlink->getRealPath(), $_path);
 
                     $hardLinkedDocument->setPath($_path);
                     return $hardLinkedDocument;
