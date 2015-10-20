@@ -91,7 +91,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
         this.getLayout();
-        this.component.on("afterrender", this.initCkEditor.bind(this));
+        this.component.on("afterlayout", this.initCkEditor.bind(this));
         this.component.on("beforedestroy", function() {
             if(this.ckeditor) {
                 this.ckeditor.destroy();
@@ -102,6 +102,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     initCkEditor: function () {
+
+        if (this.ckeditor) {
+            return;
+        }
 
         // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
         var dd = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {
