@@ -73,7 +73,20 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
         return $this;
     }
 
-
+    /**
+     * Should be added to the cart
+     *
+     * @param $item
+     * @return bool
+     */
+    protected static function isValidCartItem($item){
+        if ($item->getProduct() != null) {
+            return true;
+        }else {
+            Logger::warn("product " . $item->getProductId() . " not found");
+            return false;
+        }
+    }
 
     /**
      * @param int $id
@@ -99,10 +112,8 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
                 $itemList->setOrderKey('sortIndex');
                 $items = array();
                 foreach ($itemList->getCartItems() as $item) {
-                    if ($item->getProduct() != null) {
+                    if(static::isValidCartItem($item)){
                         $items[$item->getItemKey()] = $item;
-                    }else {
-                        Logger::warn("product " . $item->getProductId() . " not found");
                     }
                 }
                 $mod = $cart->getModificationDate();
