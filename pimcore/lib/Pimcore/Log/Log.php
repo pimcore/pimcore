@@ -282,4 +282,23 @@ class Log extends Zend_Log {
          $this->log($message, $priority, $relatedObject, $fileObject, $component);
      }
 
+    /**
+     * Shorthand to get a Db Logger
+     *
+     * @param string $component
+     *
+     * @return static
+     * @throws \Zend_Log_Exception
+     */
+    public static function getDbLogger($component = null, $logLevel = \Zend_Log::INFO){
+        $runtimeCacheKey = 'pimcore_db_logger_' . $component;
+        $logger = \Pimcore\Cache\Runtime::load($runtimeCacheKey);
+        if (!$logger) {
+            $logger = new static();
+            $logger->setComponent($component);
+            $logger->addWriter(new \Pimcore\Log\Writer\Db($logLevel));
+            \Pimcore\Cache\Runtime::save($logger, $runtimeCacheKey);
+        }
+        return $logger;
+    }
 }
