@@ -78,6 +78,17 @@ class Resource extends Model\Object\Listing\Resource {
         return $select;
     }
 
+    /**
+     * @return array
+     * @throws
+     */
+    public function loadIdList() {
+        try {
+            return parent::loadIdList();
+        } catch (\Exception $e) {
+            return $this->exceptionHandler($e);
+        }
+    }
 
     /**
      * @param $e
@@ -98,7 +109,7 @@ class Resource extends Model\Object\Listing\Resource {
             $localizedFields->setClass(Object\ClassDefinition::getById($this->model->getClassId()));
             $localizedFields->createUpdateTable();
 
-            return $this->load();
+            return $this->loadIdList();
         }
 
         throw $e;
