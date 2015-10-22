@@ -444,6 +444,22 @@ pimcore.object.classes.klass = Class.create({
                     handler: this.changeDataType.bind(this, tree, record, record.data.editor.type, dataComps, false)
                 }));
             }
+
+            menu.add(new Ext.menu.Item({
+                text: t('copy'),
+                iconCls: "pimcore_icon_copy",
+                hideOnClick: true,
+                handler: this.copyNode.bind(this, tree, record)
+            }));
+
+            if (pimcore && pimcore.classEditor && pimcore.classEditor.clipboard) {
+                menu.add(new Ext.menu.Item({
+                    text: t('paste'),
+                    iconCls: "pimcore_icon_paste",
+                    hideOnClick: true,
+                    handler: this.dropNode.bind(this, tree, record)
+                }));
+            }
         }
 
         var deleteAllowed = true;
@@ -479,6 +495,90 @@ pimcore.object.classes.klass = Class.create({
 
         return null;
     },
+
+    cloneNode:  function(tree, node) {
+        var theReference = this;
+        var nodeLabel = node.data.text;
+        var nodeType = node.data.type;
+
+        var config = {
+            text: nodeLabel,
+            type: nodeType,
+            leaf: node.data.leaf,
+            expanded: node.data.expanded
+        };
+
+
+        config.listeners = theReference.getTreeNodeListeners();
+
+        if (node.data.editor) {
+            config.iconCls = node.data.editor.getIconClass();
+        }
+
+        var newNode = node.createNode(config);
+
+        var theData = {};
+
+        if (node.data.editor) {
+            theData = Ext.apply(theData, node.data.editor.datax);
+        }
+
+        if (node.data.editor) {
+            var definitions = newNode.data.editor = pimcore.object.classes[nodeType];
+            var editorType = node.data.editor.type;
+            var editor = definitions[editorType];
+
+            newNode.data.editor = new editor(newNode, theData);
+        }
+
+        if (nodeType == "data") {
+            var availableFields = newNode.data.editor.availableSettingsFields;
+            for (var i = 0; i < availableFields.length; i++) {
+                var field = availableFields[i];
+                if (node.data.editor.datax[field]) {
+                    if (field != "name") {
+                        newNode.data.editor.datax[field] = node.data.editor.datax[field];
+                    }
+                }
+            }
+
+            newNode.data.editor.applySpecialData(node.data.editor);
+        }
+
+
+        var len = node.childNodes ? node.childNodes.length : 0;
+
+        var i = 0;
+
+        // Move child nodes across to the copy if required
+        for (i = 0; i < len; i++) {
+            var childNode = node.childNodes[i];
+            var clonedChildNode = this.cloneNode(tree, childNode);
+
+            newNode.appendChild(clonedChildNode);
+        }
+        return newNode;
+    },
+
+
+    copyNode: function(tree, record) {
+        if (!pimcore.classEditor) {
+            pimcore.classEditor = {};
+        }
+
+        var newNode = this.cloneNode(tree, record);
+        pimcore.classEditor.clipboard = newNode;
+
+    },
+
+    dropNode: function(tree, record) {
+        var node = pimcore.classEditor.clipboard;
+        var newNode = this.cloneNode(tree, node);
+
+        record.appendChild(newNode);
+        tree.updateLayout();
+    },
+
 
     setCurrentNode: function (cn) {
         this.currentNode = cn;
