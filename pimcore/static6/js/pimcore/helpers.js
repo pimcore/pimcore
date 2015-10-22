@@ -1798,7 +1798,7 @@ pimcore.helpers.sendTestEmail = function () {
                 name: "content",
                 fieldLabel: t("content"),
                 width: 650,
-                height: 450
+                height: 400
             }]
         }],
         buttons: [{
