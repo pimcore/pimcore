@@ -57,7 +57,7 @@ class Object_Data_QuantityValue {
 
     public function getUnit() {
         if(empty($this->unit)) {
-            $this->unit = QuantityValue_Unit::getById($this->unitId);
+            $this->unit = Pimcore\Model\Object\QuantityValue\Unit::getById($this->unitId);
         }
         return $this->unit;
     }
