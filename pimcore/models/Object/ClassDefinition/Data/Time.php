@@ -32,6 +32,59 @@ class Time extends Model\Object\ClassDefinition\Data\Input {
      */
     public $columnLength = 5;
 
+
+    /**
+     * @var string
+     */
+    public $minValue;
+
+    /**
+     * @var string
+     */
+    public $maxValue;
+
+
+    /**
+     * @return string
+     */
+    public function getMinValue()
+    {
+        return $this->minValue;
+    }
+
+    /**
+     * @param string $minValue
+     */
+    public function setMinValue($minValue)
+    {
+        if(strlen($minValue)) {
+            $this->minValue = date("H:i", strtotime($minValue));
+        } else {
+            $this->minValue = null;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getMaxValue()
+    {
+        return $this->maxValue;
+    }
+
+    /**
+     * @param string $maxValue
+     */
+    public function setMaxValue($maxValue)
+    {
+        if(strlen($maxValue)) {
+            $this->maxValue = date("H:i", strtotime($maxValue));
+        } else {
+            $this->maxValue = null;
+        }
+    }
+
+
     /**
      * Checks if data is valid for current data field
      *
