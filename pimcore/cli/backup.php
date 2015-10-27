@@ -1,20 +1,21 @@
-<?php
+<?php 
 /**
  * Pimcore
  *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
+ * LICENSE
  *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
 chdir(__DIR__);
 
 include_once("startup.php");
-
-echo "\n";
 
 try {
     $opts = new \Zend_Console_Getopt(array(
@@ -25,6 +26,7 @@ try {
         'verbose|v' => 'show detailed information during the backup',
         'mysql-tables=s' => 'a comma separated list of mysql tables to backup e.g "translations_website,translations_admin" ',
         'only-mysql-related-tasks' => 'executes only mysql related tasks.',
+        'maintenance|m' => 'set maintenance mode during backup',
         'help|h' => 'display this help'
     ));
 } catch (Exception $e) {
@@ -53,7 +55,8 @@ $config = array(
     "directory" => PIMCORE_BACKUP_DIRECTORY,
     "overwrite" => false,
     "cleanup" => 7,
-    "verbose" => false
+    "verbose" => false,
+    "maintenance" => false
 );
 
 
@@ -71,6 +74,7 @@ foreach ($config as $key => $value) {
 }
 $config = $tmpConfig;
 \Zend_Registry::set("config", $config);
+
 
 $backupFile = $config["directory"] . "/" . $config["filename"] . ".zip";
 
@@ -95,6 +99,14 @@ if ($config["cleanup"] != "false") {
             }
         }
     }
+}
+
+// maintenance
+if ($config["maintenance"] == true) {
+    session_start();
+    verboseMessage("------------------------------------------------");
+    verboseMessage("set maintenance mode on");
+    Pimcore\Tool\Admin::activateMaintenanceMode();
 }
 
 verboseMessage("------------------------------------------------");
@@ -132,6 +144,13 @@ if (empty($initInfo["errors"])) {
     }
 }
 
+
+// maintenance
+if ($config["maintenance"] == true) {
+    verboseMessage("------------------------------------------------");
+    verboseMessage("set maintenance mode off");
+    Pimcore\Tool\Admin::deactivateMaintenanceMode();
+}
 
 
 verboseMessage("------------------------------------------------");
