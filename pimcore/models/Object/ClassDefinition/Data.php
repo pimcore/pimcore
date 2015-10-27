@@ -1026,4 +1026,23 @@ abstract class Data
             }
         }
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @return mixed
+     */
+    public function marshal($value, $object = null) {
+        return $value;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null) {
+        return $value;
+    }
+
 }

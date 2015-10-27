@@ -66,6 +66,7 @@ class Resource extends Model\Resource\AbstractResource {
                 $values = array();
                 foreach ($keyData as $language => $value) {
                     $value = $fd->getDataForResource($value, $this->model->object);
+                    $value = $fd->marshal($value, $object);
                     $collectionId = $collectionMapping[$groupId];
 
                     $data = array(
@@ -150,7 +151,10 @@ class Resource extends Model\Resource\AbstractResource {
 
             $keyConfig = DefinitionCache::get($keyId);
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
+            $value = $fd->unmarshal($value, $object);
+
             $value = $fd->getDataFromResource($value);
+
 
             $language = $item["language"];
             $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);
