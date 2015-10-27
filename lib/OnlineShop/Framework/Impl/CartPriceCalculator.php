@@ -96,7 +96,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
         $currentSubTotal = $this->getDefaultPriceObject($subTotal, $currency);
 
         $this->modifications = array();
-        foreach($this->modificators as $modificator) {
+        foreach($this->getModificators() as $modificator) {
             /* @var OnlineShop_Framework_ICartPriceModificator $modificator */
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if($modification !== null) {
