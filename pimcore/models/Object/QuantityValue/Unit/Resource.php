@@ -58,7 +58,7 @@ class Resource extends Model\Resource\AbstractResource {
 
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE id=" . $this->db->quote($id));
         if(empty($classRaw)) {
-            throw new Exception("Unit " . $id . " not found.");
+            throw new \Exception("Unit " . $id . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
 
