@@ -313,4 +313,25 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
     }
 
 
+    public function configureOptions () {
+        if (!$this->validUnits) {
+            $list = new \Pimcore\Model\Object\QuantityValue\Unit\Listing();
+            $units = $list->getUnits();
+            if (is_array($units)) {
+                $this->validUnits = array();
+                /** @var  $unit Model\Object\QuantityValue\Unit */
+                foreach ($units as $unit) {
+                    $this->validUnits[] = $unit->getId();
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    public function __wakeup () {
+        $this->configureOptions();
+    }
+
 }
