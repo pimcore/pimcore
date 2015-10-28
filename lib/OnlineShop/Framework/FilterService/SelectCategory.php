@@ -51,7 +51,8 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => array_values($values),
             "fieldname" => $filterDefinition->getField(),
-            "metaData" => $filterDefinition->getMetaData()
+            "metaData" => $filterDefinition->getMetaData(),
+            "rootCategory" => $filterDefinition->getRootCategory()
         ));
     }
 
