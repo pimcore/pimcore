@@ -192,7 +192,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
             } else {
                 $db->query($this->buildInsertQuery($codeSets));
             }
-            return true;
+            return $codeSets;
 
         } catch (Exception $e) {
 //            var_dump($e);

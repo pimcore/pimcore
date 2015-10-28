@@ -67,7 +67,7 @@ class OnlineShop_Framework_Impl_Pricing_Action_Gift implements OnlineShop_Framew
     {
         return json_encode(array(
                                 'type' => 'Gift',
-                                'product' => $this->getProduct()->getFullPath(),
+                                'product' => $this->getProduct() ? $this->getProduct()->getFullPath() : null,
                            ));
     }
 
