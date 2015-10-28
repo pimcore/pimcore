@@ -235,7 +235,7 @@ class Agent implements IOrderAgent
     public function hasPayment()
     {
         $paymentInfo = $this->getOrder()->getPaymentInfo();
-        if(empty($paymentInfo->getItems())){
+        if(!$paymentInfo || empty($paymentInfo->getItems())){
             return false;
         }else{
             return true;
