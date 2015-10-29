@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -132,7 +132,9 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
      * @return Asset
      */
     public function getDataFromResource($data) {
-        if($data[$this->getName() . "__image"]) {
+        $imageId = $data[$this->getName() . "__image"];
+        $image = Asset::getById($imageId);
+        if($image) {
 
             $metaData = $data[$this->getName() . "__hotspots"];
 
@@ -172,7 +174,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
             $hotspots = $rewritePath($hotspots);
             $marker = $rewritePath($marker);
 
-            return new Object\Data\Hotspotimage($data[$this->getName() . "__image"], $hotspots, $marker, $crop);
+            $value = new Object\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
+            return $value;
         }
         return null;
 
@@ -403,7 +406,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image {
     }
 
 
-        /**
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @return mixed
