@@ -183,16 +183,15 @@ pimcore.object.importer = Class.create({
                     }.bind(this),
                     flex: 1
                 },
-                {header: t("target"),sortable: false, dataIndex: "target", editor: new Ext.form.ComboBox({
+                {header: t("target"), sortable: false, dataIndex: "target", flex: 1, editor: new Ext.form.ComboBox({
                     store: targetFields,
                     mode: "local",
                     triggerAction: "all",
-                    flex: 1
+                    valueField: 'value',
+                    displayField: 'text',
                 })}
             ],
-            viewConfig: {
-                forceFit: true
-            }
+            forceFit: true
         });
 
         var filenameMappingStore = sourceFields;
@@ -220,6 +219,8 @@ pimcore.object.importer = Class.create({
                 {
                     xtype: "checkbox",
                     name: "overwrite",
+                    inputValue: "true",
+                    uncheckedValue: "false",
                     fieldLabel: t("overwrite_object_with_same_key")
                 },
                 {
@@ -307,10 +308,9 @@ pimcore.object.importer = Class.create({
             parentId: this.parentId
         };
 
-        this.jobRequest = mergeObject(this.jobRequest, this.settingsForm.getForm().getFieldValues());
+        this.jobRequest = mergeObject(this.jobRequest, this.settingsForm.getForm().getValues());
 
         this.dataWin.close();
-
 
         this.importProgressBar = new Ext.ProgressBar({
             text: t('Initializing'),
