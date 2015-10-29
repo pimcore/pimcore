@@ -14,6 +14,21 @@
 class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_Framework_IProductList
 {
     /**
+     * @var string
+     */
+    protected $userIp = '';
+
+    /**
+     * @var string
+     */
+    protected $referer = '';
+
+    /**
+     * @var string
+     */
+    protected $revision = '0.1';
+
+    /**
      * @var \OnlineShop_Framework_ProductInterfaces_IIndexable[]
      */
     protected $products = null;
@@ -125,6 +140,11 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
         {
             $this->logger->addWriter(new Zend_Log_Writer_Stream($this->tenantConfig->getClientConfig('logOutput')));
         }
+
+
+        // set defaults for required params
+        $this->userIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER["REMOTE_ADDR"];
+        $this->referer = $_SERVER["HTTP_REFERER"];
     }
 
     /**
@@ -759,17 +779,16 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
      * @return SimpleXMLElement
      * @throws Zend_Http_Client_Exception
      * @throws Zend_Log_Exception
-     * @todo insert missing params
      */
     protected function sendRequest(array $params)
     {
         // add system params
         $params = [
             'shopkey' => $this->tenantConfig->getClientConfig('shopKey')
-//            , 'shopurl' => 'http://google.de'
-//            , 'userip' => '127.0.0.1'
-//            , 'referer' => ''
-//            , 'revision' => ''
+            , 'shopurl' => $this->tenantConfig->getClientConfig('shopUrl')
+            , 'userip' => $this->userIp
+            , 'referer' => $this->referer
+            , 'revision' => $this->revision
         ] + $params;
 
 
@@ -780,7 +799,7 @@ class OnlineShop_Framework_ProductList_DefaultFindologic implements \OnlineShop_
         $url .= http_build_query($params);
 
         $this->getLogger()->log('Request: ' . $url, Zend_Log::INFO);
-//        var_dump($params);
+
 
         // start request
         $start = microtime(true);
