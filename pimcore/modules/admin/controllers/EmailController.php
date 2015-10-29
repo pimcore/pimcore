@@ -356,6 +356,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $mail = new Mail();
         $mail->addTo($this->getParam("to"));
         $mail->setSubject($this->getParam("subject"));
+        $mail->setIgnoreDebugMode(true);
 
         if($this->getParam("type") == "text") {
             $mail->setBodyText($this->getParam("content"));
