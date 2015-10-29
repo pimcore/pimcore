@@ -243,6 +243,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
     protected function doDeleteFromIndex($objectId)
     {
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
+        $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getStoreTableName(), $objectId));
     }
 
 
