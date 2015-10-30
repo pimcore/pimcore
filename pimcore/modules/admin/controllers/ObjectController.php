@@ -343,8 +343,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $objectData["childdata"]["id"] = $object->getId();
             $objectData["childdata"]["data"]["classes"] = $object->getResource()->getClasses();
 
-            $currentLayoutId = $this->getParam("layoutId");
-
+            $currentLayoutId = $this->getParam("layoutId", null);
+            
             $validLayouts = Object\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
