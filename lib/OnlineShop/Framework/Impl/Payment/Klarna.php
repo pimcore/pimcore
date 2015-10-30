@@ -158,7 +158,7 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
             , 'created' => OnlineShop_Framework_Payment_IStatus::STATUS_CLEARED
         ];
         return new OnlineShop_Framework_Impl_Payment_Status(
-            $order['merchant_reference']['orderid1']
+            $order['merchant_reference']['orderid2']
             , $order['id']
             , $order['status']
             , array_key_exists($order['status'], $statMap)
