@@ -474,8 +474,8 @@ class Pimcore {
         }
 
         // check some system variables
-        if (version_compare(PHP_VERSION, '5.4', "<")) {
-            $m = "pimcore requires at least PHP version 5.4.0 your PHP version is: " . PHP_VERSION;
+        if (version_compare(PHP_VERSION, '5.5', "<")) {
+            $m = "pimcore requires at least PHP version 5.5.0 your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);
         }
     }
