@@ -45,7 +45,7 @@ pimcore.layout.portlets.modifiedAssets = Class.create(pimcore.layout.portlets.ab
             store: store,
             columns: [
                 {header: t('path'), sortable: false, dataIndex: 'path', flex: 1},
-                {header: t('date'), width: 130, sortable: false, renderer: function (d) {
+                {header: t('date'), width: 150, sortable: false, renderer: function (d) {
                     var date = new Date(d * 1000);
                     return Ext.Date.format(date,"Y-m-d H:i:s");
                 }, dataIndex: 'date'}
