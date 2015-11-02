@@ -125,7 +125,7 @@ class PimcoreNavigationController
             $navigationRootDocument = Document::getById(1);
         }
 
-        $cacheKeys = []; 
+        $cacheKeys = [];
 
         if(Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
@@ -179,7 +179,7 @@ class PimcoreNavigationController
 
         if(!$activePage) {
             // find by link target
-            $activePage = $navigation->findOneBy("uri", $activeDocument->getRealFullPath());
+            $activePage = $navigation->findOneBy("uri", $activeDocument->getFullPath());
         }
 
         if($activePage) {
@@ -256,7 +256,7 @@ class PimcoreNavigationController
 
     /**
      * Returns the name of the pageclass
-     * 
+     *
      * @return String
      */
     public function getPageClass()
@@ -298,7 +298,7 @@ class PimcoreNavigationController
                     if ($child instanceof Document\Link) {
                         $path = $child->getHref();
                     }
-                    
+
                     $page = new $this->_pageClass();
                     $page->setUri($path . $child->getProperty("navigation_parameters") . $child->getProperty("navigation_anchor"));
                     $page->setLabel($child->getProperty("navigation_name"));
@@ -335,7 +335,7 @@ class PimcoreNavigationController
                 }
             }
         }
-        
+
         return $pages;
     }
 
