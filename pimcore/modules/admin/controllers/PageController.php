@@ -169,15 +169,6 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document {
         $this->_helper->json(false);
     }
 
-    public function mobilePreviewAction() {
-
-        $page = Document::getById($this->getParam("id"));
-
-        if($page instanceof Document\Page) {
-            $this->view->previewUrl = $page->getFullPath() . "?pimcore_preview=true&time=" . time();
-        }
-    }
-
     public function getListAction() {
         $list = new Document\Listing();
         $list->setCondition("type = ?", array("page"));
