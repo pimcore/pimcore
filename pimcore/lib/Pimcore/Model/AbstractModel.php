@@ -92,7 +92,7 @@ abstract class AbstractModel {
                         array_pop($classParts);
                     }
 
-                    if($className && $className != "Pimcore\\Resource") {
+                    if($className) {
                         $dao = $className;
                         self::$daoClassCache[$myClass] = $dao;
 
