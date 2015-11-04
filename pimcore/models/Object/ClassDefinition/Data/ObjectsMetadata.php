@@ -18,7 +18,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
-use Pimcore\Resource;
+use Pimcore\Db;
 
 class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
 
@@ -472,7 +472,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
         }
 
         $table = "object_metadata_" . $classId;
-        $db = Resource::get();
+        $db = Db::get();
 
         $this->enrichRelation($object, $params, $classId, $relation);
 
@@ -545,7 +545,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
      * @return void
      */
     public function delete($object) {
-        $db = Resource::get();
+        $db = Db::get();
         $db->delete("object_metadata_" . $object->getClassId(), $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
     }
 

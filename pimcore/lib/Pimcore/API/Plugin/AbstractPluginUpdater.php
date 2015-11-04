@@ -13,7 +13,7 @@
 namespace Pimcore\API\Plugin;
 
 use Pimcore\API\AbstractAPI;
-use Pimcore\Resource;
+use Pimcore\Db;
 
 abstract class AbstractPluginUpdater {
 
@@ -28,13 +28,13 @@ abstract class AbstractPluginUpdater {
     protected $revision;
 
     /**
-     * @var \Pimcore\Resource
+     * @var \Pimcore\Db
      */
     protected $db;
 
     public function __construct($revision){
         $this->revision = $revision;
-        $this->db = \Pimcore\Resource::getConnection();
+        $this->db = \Pimcore\Db::getConnection();
     }
 
     /**

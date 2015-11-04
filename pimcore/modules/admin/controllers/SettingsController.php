@@ -540,7 +540,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         // empty document cache
         Cache::clearAll();
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $db->query("truncate table cache_tags");
         $db->query("truncate table cache");
 
@@ -1504,7 +1504,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
      */
     protected function deleteViews ($language, $dbName) {
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $views = $db->fetchAll("SHOW FULL TABLES IN " . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
 
         foreach($views as $view) {

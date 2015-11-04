@@ -15,7 +15,7 @@ use Pimcore\Model\Cache;
 use Pimcore\Controller;
 use Pimcore\Tool;
 use Pimcore\File;
-use Pimcore\Resource;
+use Pimcore\Db;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\User;
 use Pimcore\Model;
@@ -841,7 +841,7 @@ class Pimcore {
     public static function collectGarbage ($keepItems = array()) {
 
         // close mysql-connection
-        Resource::close();
+        Db::close();
 
         $protectedItems = array(
             "Zend_Locale",
@@ -858,7 +858,7 @@ class Pimcore {
             "pimcore_editmode",
             "pimcore_error_document",
             "pimcore_site",
-            "Pimcore_Resource_Mysql"
+            "Pimcore_Db"
         );
 
         if(is_array($keepItems) && count($keepItems) > 0) {
@@ -883,7 +883,7 @@ class Pimcore {
             \Zend_Registry::set($key, $value);
         }
 
-        Resource::reset();
+        Db::reset();
 
         // force PHP garbage collector
         gc_enable();

@@ -601,7 +601,7 @@ abstract class Data
      */
     public function getFilterCondition($value, $operator)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $key = $db->quoteIdentifier($this->name);
 
         if ($value === "NULL") {

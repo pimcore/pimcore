@@ -13,7 +13,7 @@
 namespace Pimcore\Model\Listing;
 
 use Pimcore\Model\AbstractModel;
-use Pimcore\Resource;
+use Pimcore\Db;
 
 
 /**
@@ -313,7 +313,7 @@ abstract class AbstractListing extends AbstractModel {
      * @return string
      */
     public function quote ($value, $type = null) {
-        $db = Resource::get();
+        $db = Db::get();
         return $db->quote($value, $type);
     }
 

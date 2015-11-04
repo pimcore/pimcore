@@ -12,7 +12,7 @@
 
 namespace Pimcore\Cache\Backend;
 
-use Pimcore\Resource;
+use Pimcore\Db;
 
 class Memcached extends \Zend_Cache_Backend_Memcached {
 
@@ -75,7 +75,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
         if(!$this->db) {
             // we're using a new mysql connection here to avoid problems with active (nested) transactions
             \Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
-            $this->db = Resource::getConnection();
+            $this->db = Db::getConnection();
         }
         return $this->db;
     }

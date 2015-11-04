@@ -12,7 +12,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Resource; 
+use Pimcore\Db;
 
 class Backup {
 
@@ -187,7 +187,7 @@ class Backup {
         $steps = array();
 
         // get available tables
-        $db = Resource::get();
+        $db = Db::get();
         $tables = $this->getTables();
 
 
@@ -354,7 +354,7 @@ class Backup {
      * @return array
      */
     protected function getTables(){
-        $db = Resource::get();
+        $db = Db::get();
 
         if($mysqlTables = $this->options['mysql-tables']){
             $specificTables = explode(',',$mysqlTables);
@@ -373,7 +373,7 @@ class Backup {
      * @return array
      */
     public function mysqlTables ($exclude = []) {
-        $db = Resource::get();
+        $db = Db::get();
 
         $tables = $this->getTables();
 
@@ -421,7 +421,7 @@ class Backup {
      * @return array
      */
     public function mysqlData ($name, $type) {
-        $db = Resource::reset();
+        $db = Db::reset();
 
         $dumpData = "\n\n";
 

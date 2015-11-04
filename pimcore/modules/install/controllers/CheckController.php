@@ -211,7 +211,7 @@ class Install_CheckController extends \Pimcore\Controller\Action {
             }
         } else {
             // this is after installing, eg. after a migration, ...
-            $db = \Pimcore\Resource::get();
+            $db = \Pimcore\Db::get();
         }
 
         if($db) {

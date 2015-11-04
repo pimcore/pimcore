@@ -38,7 +38,7 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract {
     public function writeLog () {
 
         $code = (string) $this->getResponse()->getHttpResponseCode();
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         try {
             $uri = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() . $this->getRequest()->getRequestUri();

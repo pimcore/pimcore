@@ -303,7 +303,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin {
 
     public function portletModificationStatisticsAction () {
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         $days = 31;
         $startDate = mktime(23,59,59,date("m"),date("d"),date("Y"));

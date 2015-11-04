@@ -550,7 +550,7 @@ class Service extends Model\Element\Service {
         $conditionPartsFilters = array();
 
         if ($filterJson) {
-            $db = \Pimcore\Resource::get();
+            $db = \Pimcore\Db::get();
             $filters = \Zend_Json::decode($filterJson);
             foreach ($filters as $filter) {
 
@@ -626,7 +626,7 @@ class Service extends Model\Element\Service {
                 }
                 if($field instanceof ClassDefinition\Data\Objectbricks) {
                     // custom field
-                    $db = \Pimcore\Resource::get();
+                    $db = \Pimcore\Db::get();
                     if(is_array($filter["value"])) {
                         $fieldConditions = array();
                         foreach ($filter["value"] as $filterValue) {

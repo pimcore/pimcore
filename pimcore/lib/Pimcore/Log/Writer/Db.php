@@ -12,13 +12,12 @@
 
 namespace Pimcore\Log\Writer;
 
-use \Pimcore\Resource;
-use \Pimcore\Log;
-use \Zend_Log_Writer_Db;
-use \Zend_Log;
+use Pimcore\Db as Database;
+use Pimcore\Log;
+use Zend_Log_Writer_Db;
+use Zend_Log;
 
 class Db extends Zend_Log_Writer_Db {
-
 
     /**
      * @param int|\Zend_Db_Adapter $filterPriority
@@ -36,7 +35,7 @@ class Db extends Zend_Log_Writer_Db {
             'component' => 'component',
             'source' => 'source'
         );
-        parent::__construct(Resource::get(), Log\Helper::ERROR_LOG_TABLE_NAME, $mapping);
+        parent::__construct(Database::get(), Log\Helper::ERROR_LOG_TABLE_NAME, $mapping);
 
         $this->setFilterPriority($filterPriority);
     }
@@ -63,7 +62,7 @@ class Db extends Zend_Log_Writer_Db {
      * @return string[]
      */
     public static function getComponents() {
-        $db = Resource::get();
+        $db = Database::get();
 
         $components = $db->fetchCol("SELECT component FROM " . Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE NOT ISNULL(component) GROUP BY component;");
         return $components;
@@ -86,7 +85,7 @@ class Db extends Zend_Log_Writer_Db {
             Zend_Log::EMERG => "EMERG"
         );
 
-        $db = Resource::get();
+        $db = Database::get();
 
         $priorityNumbers = $db->fetchCol("SELECT priority FROM " . Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE NOT ISNULL(priority) GROUP BY priority;");
         foreach($priorityNumbers as $priorityNumber) {
@@ -103,6 +102,4 @@ class Db extends Zend_Log_Writer_Db {
         parent::_write($event);
 
     }
-
-
 }

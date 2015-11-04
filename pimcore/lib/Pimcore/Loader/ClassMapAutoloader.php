@@ -18,6 +18,17 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
 
     public function autoload($class) {
 
+        // manual aliasing
+        $classAliases = [
+            "Pimcore\\Resource" => "Pimcore\\Db",
+            "Pimcore_Resource" => "Pimcore\\Db"
+        ];
+
+        if(array_key_exists($class, $classAliases)) {
+            class_alias($classAliases[$class], $class);
+            return;
+        }
+
         parent::autoload($class);
 
         // reverse compatibility from namespaced to prefixed class names e.g. Pimcore\Model\Document => Document

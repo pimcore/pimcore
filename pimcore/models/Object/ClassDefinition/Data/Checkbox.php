@@ -232,7 +232,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      *
      */
     public function getFilterCondition($value, $operator) {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $value = $db->quote($value);
         $key = $db->quoteIdentifier($this->name, $this->name);
         return "IFNULL(" . $key . ", 0) = " . $value . " ";

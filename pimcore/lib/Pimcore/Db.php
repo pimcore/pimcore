@@ -10,11 +10,11 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-namespace Pimcore\Resource;
+namespace Pimcore;
 
-use Pimcore\Config; 
+use Pimcore\Db\Wrapper;
 
-class Mysql {
+class Db {
 
     /**
      * @var string
@@ -125,8 +125,8 @@ class Mysql {
     public static function get() {
 
         try {
-            if(\Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
-                $connection = \Zend_Registry::get("Pimcore_Resource_Mysql");
+            if(\Zend_Registry::isRegistered("Pimcore_Db")) {
+                $connection = \Zend_Registry::get("Pimcore_Db");
                 if($connection instanceof Wrapper) {
                     return $connection;
                 }
@@ -159,12 +159,12 @@ class Mysql {
 
         if($connection instanceof Wrapper) {
             // set default adapter for \Zend_Db_Table -> use getResource() because setDefaultAdapter()
-            // accepts only instances of \Zend_Db but $connection is an instance of Pimcore_Resource_Wrapper
+            // accepts only instances of \Zend_Db but $connection is an instance of Pimcore\Db\Wrapper
             \Zend_Db_Table::setDefaultAdapter($connection->getResource());
         }
 
         // register globally
-        \Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
+        \Zend_Registry::set("Pimcore_Db", $connection);
     }
 
     /**
@@ -173,8 +173,8 @@ class Mysql {
      */
     public static function close () {
         try {
-            if(\Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
-                $db = \Zend_Registry::get("Pimcore_Resource_Mysql");
+            if(\Zend_Registry::isRegistered("Pimcore_Db")) {
+                $db = \Zend_Registry::get("Pimcore_Db");
 
                 if($db instanceof Wrapper) {
                     // the following select causes an infinite loop (eg. when the connection is lost -> error handler)

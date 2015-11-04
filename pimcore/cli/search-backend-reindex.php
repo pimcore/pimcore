@@ -17,7 +17,7 @@ include_once("startup.php");
 use Pimcore\Model\Search;
 
 // clear all data
-$db = \Pimcore\Resource::get();
+$db = \Pimcore\Db::get();
 $db->query("TRUNCATE `search_backend_data`;");
 
 $elementsPerLoop = 100;

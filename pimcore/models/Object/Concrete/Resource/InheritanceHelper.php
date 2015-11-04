@@ -52,7 +52,7 @@ class InheritanceHelper {
      * @param null $relationtable
      */
     public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null) {
-        $this->db = \Pimcore\Resource::get();
+        $this->db = \Pimcore\Db::get();
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();

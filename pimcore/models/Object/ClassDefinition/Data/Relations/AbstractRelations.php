@@ -17,7 +17,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data\Relations;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
-use Pimcore\Resource;
+use Pimcore\Db;
 
 abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
 
@@ -274,7 +274,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      */
     public function save ($object, $params = array()) {
 
-        $db = Resource::get();
+        $db = Db::get();
 
         $data = $this->getDataFromObjectParam($object, $params);
         $relations = $this->getDataForResource($data, $object);
@@ -307,7 +307,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @return null
      */
     public function load($object, $params = array()) {
-        $db = Resource::get();
+        $db = Db::get();
         $data = null;
 
         if($object instanceof Object\Concrete) {

@@ -44,7 +44,7 @@ class Resource extends Model\Resource\AbstractResource {
         $this->db->query("ALTER TABLE search_backend_data /*!50600 ENGINE=InnoDB */;");
 
         // reset the database connection
-        \Pimcore\Resource::reset();
+        \Pimcore\Db::reset();
     }
 
     /**
@@ -72,7 +72,7 @@ class Resource extends Model\Resource\AbstractResource {
 			$this->db->getConnection()->exec($sql);
 		}
 				
-		\Pimcore\Resource::reset();
+		\Pimcore\Db::reset();
 
         // set the id of the system user to 0
         $this->db->update("users",array("id" => 0), $this->db->quoteInto("name = ?", "system"));

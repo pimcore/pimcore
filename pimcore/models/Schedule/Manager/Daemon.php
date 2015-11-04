@@ -126,7 +126,7 @@ class Daemon extends Procedural {
         else {
             //Forked child
             try {
-                \Pimcore\Resource::reset(); // reset resource
+                \Pimcore\Db::reset(); // reset resource
                 \Pimcore::initLogger(); // reinit logger so that he gets a different token eg for mailing
                 \Logger::debug("Executing job [ " . $job->getId() . " ] as forked child");
                 $job->execute();

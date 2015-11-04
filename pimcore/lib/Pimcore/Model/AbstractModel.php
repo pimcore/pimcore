@@ -13,7 +13,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\File;
-use Pimcore\Resource;
+use Pimcore\Db;
 use Pimcore\Tool; 
 
 abstract class AbstractModel {
@@ -86,7 +86,7 @@ abstract class AbstractModel {
                         // this is just for compatibility anymore, this was before the standard way
                         // but as there will not be a specialized implementation anymore eg. Oracle, PostgreSQL, ...
                         // we can move that below the general resource adapter as a fallback
-                        $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Resource" . $delimiter . ucfirst(Resource::getType());
+                        $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Resource" . $delimiter . ucfirst(Db::getType());
                         if($className = $this->determineResourceClass($tmpClassName)) {
                             break;
                         }
@@ -115,7 +115,7 @@ abstract class AbstractModel {
                 }
 
                 // check for a specialized resource adapter for the current DBMS
-                $resourceClass = $key . $delimiter . "Resource" . $delimiter . ucfirst(Resource::getType());
+                $resourceClass = $key . $delimiter . "Resource" . $delimiter . ucfirst(Db::getType());
                 if(!$resource = $this->determineResourceClass($resourceClass)) {
                     $resource = $key . $delimiter . "Resource";
                 }
@@ -134,7 +134,7 @@ abstract class AbstractModel {
         $this->resource = new $resource();
         $this->resource->setModel($this);
 
-        $db = Resource::get();
+        $db = Db::get();
         $this->resource->configure($db);
 
         if (method_exists($this->resource, "init")) {

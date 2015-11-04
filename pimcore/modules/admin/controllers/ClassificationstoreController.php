@@ -12,7 +12,7 @@
 
 use Pimcore\Model\Object;
 use Pimcore\Model\Object\Classificationstore;
-use Pimcore\Resource;
+use Pimcore\Db;
 
 class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Admin
 {
@@ -199,7 +199,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $allowedGroupIds = $fd->getAllowedGroupIds();
 
                 if ($allowedGroupIds) {
-                    $db = Pimcore_Resource::get();
+                    $db = \Pimcore\Db::get();
                     $query = "select * from classificationstore_collectionrelations where groupId in (" . implode(",", $allowedGroupIds) .")";
                     $relationList = $db->fetchAll($query);
 
@@ -225,7 +225,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
-                $db = Resource::get();
+                $db = Db::get();
                 $count = 0;
 
                 foreach($filters as $f) {
@@ -346,7 +346,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
-                $db = Resource::get();
+                $db = Db::get();
                 $count = 0;
 
                 foreach($filters as $f) {
@@ -473,7 +473,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             if($this->_getParam("filter")) {
-                $db = Resource::get();
+                $db = Db::get();
                 $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
@@ -583,7 +583,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             if($this->_getParam("filter")) {
-                $db = Resource::get();
+                $db = Db::get();
                 $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
@@ -638,7 +638,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         if ($ids) {
 
-            $db = Pimcore_Resource::get();
+            $db = \Pimcore\Db::get();
             $query = "select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (" . implode("," , $ids)
                     . ") and g.id = c.groupId";
 
@@ -829,7 +829,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             if($this->_getParam("filter")) {
-                $db = Resource::get();
+                $db = Db::get();
                 $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
@@ -854,7 +854,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             }
 
             if ($this->_getParam("groupIds") || $this->_getParam("keyIds")) {
-                $db = Resource::get();
+                $db = Db::get();
 
                 if ($this->_getParam("groupIds")) {
                     $ids = \Zend_Json::decode($this->_getParam("groupIds"));

@@ -554,7 +554,7 @@ class Concrete extends AbstractObject {
             $arguments = array_pad($arguments, 3, 0);
             list($value, $limit, $offset) = $arguments;
 
-            $defaultCondition = $propertyName . " = " . \Pimcore\Resource::get()->quote($value) . " ";
+            $defaultCondition = $propertyName . " = " . \Pimcore\Db::get()->quote($value) . " ";
             $listConfig = array(
                 "condition" => $defaultCondition
             );

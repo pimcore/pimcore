@@ -895,7 +895,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
             }
             $sql = "select " . $col . " from " .$type . "s where " . $col . " IN (" . implode(',', $idList) . ")";
 
-            $result = \Pimcore\Resource::get()->fetchAll($sql);
+            $result = \Pimcore\Db::get()->fetchAll($sql);
             foreach ($result as $item) {
                 $id = $item[$col];
                 if ($condense) {

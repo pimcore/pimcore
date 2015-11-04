@@ -10,9 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-namespace Pimcore\Resource;
+namespace Pimcore\Db;
 
-use Pimcore\Resource;
+use Pimcore\Db;
 
 class Wrapper {
 
@@ -50,7 +50,7 @@ class Wrapper {
         if($this->writeResource === null) {
             // get the \Zend_Db_Adapter_Abstract not the wrapper
             try {
-                $this->writeResource = Resource::getConnection(true, true);
+                $this->writeResource = Db::getConnection(true, true);
             } catch (\Exception $e) {
                 $this->writeResource = false;
             }
@@ -98,7 +98,7 @@ class Wrapper {
     {
         if(!$this->resource) {
             // get the \Zend_Db_Adapter_Abstract not the wrapper
-            $this->resource = Resource::getConnection(true);
+            $this->resource = Db::getConnection(true);
         }
         return $this->resource;
     }
@@ -231,7 +231,7 @@ class Wrapper {
             return $r;
         }
         catch (\Exception $e) {
-            return Resource::errorHandler($method, $args, $e);
+            return Db::errorHandler($method, $args, $e);
         }
     }
 
@@ -243,7 +243,7 @@ class Wrapper {
     public function callResourceMethod ($method, $args) {
 
         $resource = $this->getResource();
-        if($this->inTransaction || Resource::isWriteQuery($method, $args)) {
+        if($this->inTransaction || Db::isWriteQuery($method, $args)) {
             $resource = $this->getWriteResource();
         }
 
@@ -253,14 +253,14 @@ class Wrapper {
             $methodsToCheck = array("query","update","delete","insert");
             if(in_array($method, $methodsToCheck)) {
                 $capture = true;
-                Resource::startCapturingDefinitionModifications($resource, $method, $args);
+                Db::startCapturingDefinitionModifications($resource, $method, $args);
             }
         }
 
         $r = call_user_func_array(array($resource, $method), $args);
 
         if(\Pimcore::inAdmin() && $capture) {
-            Resource::stopCapturingDefinitionModifications($resource);
+            Db::stopCapturingDefinitionModifications($resource);
         }
 
         return $r;

@@ -49,7 +49,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
 
         $searcherList = new Data\Listing();
         $conditionParts = array();
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         //exclude forbidden assets
         if(in_array("asset", $types)) {

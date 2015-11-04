@@ -13,7 +13,7 @@
 namespace Pimcore\API\Plugin;
 
 use Pimcore\API\AbstractAPI;
-use Pimcore\Resource;
+use Pimcore\Db;
 
 class AbstractPlugin extends AbstractAPI {
 
@@ -52,7 +52,7 @@ class AbstractPlugin extends AbstractAPI {
      * @return mixed|\Zend_Db_Adapter_Abstract
      */
     protected static function getDb() {
-        $db = Resource::get();
+        $db = Db::get();
         return $db;
     }
 

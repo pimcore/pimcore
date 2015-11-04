@@ -105,7 +105,7 @@ class Resource extends Model\Resource\AbstractResource {
         $classId = $class->getId();
         $table = $this->getTableName();
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
     		`id` INT NOT NULL AUTO_INCREMENT,
     		`o_id` INT NOT NULL,
@@ -138,7 +138,7 @@ class Resource extends Model\Resource\AbstractResource {
         \Logger::debug("load called");
 
         $table = $this->getTableName();
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $sql = "SELECT * FROM " . $table . " WHERE o_id = " . $model->getObjectId();
         $result = $db->fetchAll($sql);
         $model->setProperties($result);

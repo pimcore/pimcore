@@ -10,7 +10,7 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-use Pimcore\Resource;
+use Pimcore\Db;
 use Pimcore\Model\Object;
 use Pimcore\Model\Object\KeyValue;
 
@@ -111,7 +111,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
-                $db = Resource::get();
+                $db = Db::get();
                 $count = 0;
 
                 foreach($filters as $f) {
@@ -222,7 +222,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $list->setOrderKey($orderKey);
 
             if($this->_getParam("filter")) {
-                $db = Resource::get();
+                $db = Db::get();
                 $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
@@ -246,7 +246,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             }
 
             if ($this->_getParam("groupIds") || $this->_getParam("keyIds")) {
-                $db = Resource::get();
+                $db = Db::get();
 
                 if ($this->_getParam("groupIds")) {
                     $ids = \Zend_Json::decode($this->_getParam("groupIds"));
