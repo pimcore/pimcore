@@ -72,7 +72,7 @@ class Note extends Model\AbstractModel {
 
         try {
             $note = new self();
-            $note->getResource()->getById($id);
+            $note->getDao()->getById($id);
 
             return $note;
         } catch (\Exception $e) {
@@ -115,7 +115,7 @@ class Note extends Model\AbstractModel {
             }
         }
 
-        $this->getResource()->save();
+        $this->getDao()->save();
     }
 
     /**

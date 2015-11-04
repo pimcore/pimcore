@@ -47,7 +47,7 @@ trait Wrapper {
         if($this->properties == null) {
 
             if($this->getHardLinkSource()->getPropertiesFromSource()) {
-                $sourceProperties = $this->getResource()->getProperties();
+                $sourceProperties = $this->getDao()->getProperties();
             } else {
                 $sourceProperties = array();
             }

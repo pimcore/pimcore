@@ -81,7 +81,7 @@ class Editlock extends Model\AbstractModel {
 
         try {
             $lock = new self();
-            $lock->getResource()->getByElement($cid, $ctype);
+            $lock->getDao()->getByElement($cid, $ctype);
             return $lock;
         }
         catch (\Exception $e) {
@@ -96,7 +96,7 @@ class Editlock extends Model\AbstractModel {
     public static function clearSession($sessionId) {
         try {
             $lock = new self();
-            $lock->getResource()->clearSession($sessionId);
+            $lock->getDao()->clearSession($sessionId);
             return true;
         }
         catch (\Exception $e) {

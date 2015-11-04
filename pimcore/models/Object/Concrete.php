@@ -182,7 +182,7 @@ class Concrete extends AbstractObject {
 
         parent::update();
 
-        $this->getResource()->update();
+        $this->getDao()->update();
 
         // scheduled tasks are saved in $this->saveVersion();
 
@@ -195,7 +195,7 @@ class Concrete extends AbstractObject {
      */
     protected function saveChildData () {
         if($this->getClass()->getAllowInherit()) {
-            $this->getResource()->saveChildData();
+            $this->getDao()->saveChildData();
         }
     }
 
@@ -205,12 +205,12 @@ class Concrete extends AbstractObject {
     public function saveScheduledTasks () {
         // update scheduled tasks
         $this->getScheduledTasks();
-        $this->getResource()->deleteAllTasks();
+        $this->getDao()->deleteAllTasks();
 
         if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
             foreach ($this->getScheduledTasks() as $task) {
                 $task->setId(null);
-                $task->setResource(null);
+                $task->setDao(null);
                 $task->setCid($this->getId());
                 $task->setCtype("object");
                 $task->save();
@@ -228,7 +228,7 @@ class Concrete extends AbstractObject {
             $v->delete();
         }
 
-        $this->getResource()->deleteAllTasks();
+        $this->getDao()->deleteAllTasks();
 
         parent::delete();
     }
@@ -286,7 +286,7 @@ class Concrete extends AbstractObject {
      */
     public function getVersions() {
         if ($this->o_versions === null) {
-            $this->setVersions($this->getResource()->getVersions());
+            $this->setVersions($this->getDao()->getVersions());
         }
         return $this->o_versions;
     }
@@ -518,7 +518,7 @@ class Concrete extends AbstractObject {
      * @return array
      */
     public function getRelationData($fieldName,$forOwner,$remoteClassId){
-        $relationData = $this->getResource()->getRelationData($fieldName,$forOwner,$remoteClassId);
+        $relationData = $this->getDao()->getRelationData($fieldName,$forOwner,$remoteClassId);
         return $relationData;
     }
 

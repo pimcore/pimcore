@@ -50,7 +50,7 @@ class AbstractUser extends Model\AbstractModel {
                 $user =  \Zend_Registry::get($cacheKey);
             } else {
                 $user = new static();
-                $user->getResource()->getById($id);
+                $user->getDao()->getById($id);
 
                 if(get_class($user) == "Pimcore\\Model\\User\\AbstractUser") {
                     $className = Service::getClassNameForType($user->getType());
@@ -86,7 +86,7 @@ class AbstractUser extends Model\AbstractModel {
 
         try {
             $user = new static();
-            $user->getResource()->getByName($name);
+            $user->getDao()->getByName($name);
             return $user;
         }
         catch (\Exception $e) {
@@ -166,7 +166,7 @@ class AbstractUser extends Model\AbstractModel {
         }
 
         // now delete the current user
-        $this->getResource()->delete();
+        $this->getDao()->delete();
         \Pimcore\Model\Cache::clearAll();
     }
 

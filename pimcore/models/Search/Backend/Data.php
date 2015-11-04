@@ -103,13 +103,13 @@ class Data extends \Pimcore\Model\AbstractModel {
     }
 
     /**
-     * @return \Pimcore\Model\Resource\AbstractResource
+     * @return \Pimcore\Model\Dao\AbstractDao
      * @throws \Exception
      */
     public function getResource() {
 
         if (!$this->resource) {
-            $this->initResource("\\Pimcore\\Model\\Search\\Backend\\Data");
+            $this->initDao("\\Pimcore\\Model\\Search\\Backend\\Data");
         }
         return $this->resource;
     }
@@ -426,7 +426,7 @@ class Data extends \Pimcore\Model\AbstractModel {
     public static function getForElement($element){
 
         $data = new self();
-		$data->getResource()->getForElement($element);
+		$data->getDao()->getForElement($element);
 		return $data;
 
     }
@@ -435,7 +435,7 @@ class Data extends \Pimcore\Model\AbstractModel {
      *
      */
     public function delete(){
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
     /**
@@ -443,7 +443,7 @@ class Data extends \Pimcore\Model\AbstractModel {
      */
 	public function save () {
         if($this->id instanceof Data\Id){
-            $this->getResource()->save();
+            $this->getDao()->save();
         } else {
             throw new \Exception("Search\\Backend\\Data cannot be saved - no id set!");
         }

@@ -597,7 +597,7 @@ class Service extends Model\AbstractModel {
      */
     public function cleanupBrokenViews () {
 
-        $this->getResource()->cleanupBrokenViews();
+        $this->getDao()->cleanupBrokenViews();
     }
 
     /** Callback for array_filter function.

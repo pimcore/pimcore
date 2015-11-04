@@ -80,7 +80,7 @@ class KeyConfig extends Model\AbstractModel {
             }
             $config = new self();
             $config->setId($id);
-            $config->getResource()->getById();
+            $config->getDao()->getById();
             if (self::$cacheEnabled) {
                 self::$cache[$id] = $config;
             }
@@ -120,7 +120,7 @@ class KeyConfig extends Model\AbstractModel {
             $config = new self();
             $config->setName($name);
             $config->setGroup($groupId);
-            $config->getResource()->getByName();
+            $config->getDao()->getByName();
 
             return $config;
         } catch (\Exception $e) {

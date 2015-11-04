@@ -52,10 +52,10 @@ class UserRole extends AbstractUser {
      *
      */
     public function update () {
-        $this->getResource()->update();
+        $this->getDao()->update();
 
         // save all workspaces
-        $this->getResource()->emptyWorkspaces();
+        $this->getDao()->emptyWorkspaces();
 
         foreach ($this->getWorkspacesAsset() as $workspace) {
             $workspace->save();

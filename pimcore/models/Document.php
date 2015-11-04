@@ -211,7 +211,7 @@ class Document extends Element\AbstractElement {
             $document = new Document();
             // validate path
             if (Tool::isValidPath($path)) {
-                $document->getResource()->getByPath($path);
+                $document->getDao()->getByPath($path);
             }
 
             return self::getById($document->getId());
@@ -249,7 +249,7 @@ class Document extends Element\AbstractElement {
             try {
                 if (!$document = Cache::load($cacheKey)) {
                     $document = new Document();
-                    $document->getResource()->getById($id);
+                    $document->getDao()->getById($id);
 
                     $mappingClass = "\\Pimcore\\Model\\Document\\" . ucfirst($document->getType());
 
@@ -266,7 +266,7 @@ class Document extends Element\AbstractElement {
                     if (Tool::classExists($typeClass)) {
                         $document = new $typeClass();
                         \Zend_Registry::set($cacheKey, $document);
-                        $document->getResource()->getById($id);
+                        $document->getDao()->getById($id);
 
                         Cache::save($document, $cacheKey);
                     }
@@ -413,13 +413,13 @@ class Document extends Element\AbstractElement {
                 }
 
                 if (!$isUpdate) {
-                    $this->getResource()->create();
+                    $this->getDao()->create();
                 }
 
                 // get the old path from the database before the update is done
                 $oldPath = null;
                 if ($isUpdate) {
-                    $oldPath = $this->getResource()->getCurrentFullPath();
+                    $oldPath = $this->getDao()->getCurrentFullPath();
                 }
 
                 $this->update();
@@ -427,8 +427,8 @@ class Document extends Element\AbstractElement {
                 // if the old path is different from the new path, update all children
                 $updatedChildren = array();
                 if($oldPath && $oldPath != $this->getFullPath()) {
-                    $this->getResource()->updateWorkspaces();
-                    $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
+                    $this->getDao()->updateWorkspaces();
+                    $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
 
                 $this->commit();
@@ -535,16 +535,16 @@ class Document extends Element\AbstractElement {
 
         // set index if null
         if($this->getIndex() === null) {
-            $this->setIndex($this->getResource()->getNextIndex());
+            $this->setIndex($this->getDao()->getNextIndex());
         }
 
         // save properties
         $this->getProperties();
-        $this->getResource()->deleteAllProperties();
+        $this->getDao()->deleteAllProperties();
         if (is_array($this->getProperties()) and count($this->getProperties()) > 0) {
             foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
-                    $property->setResource(null);
+                    $property->setDao(null);
                     $property->setCid($this->getId());
                     $property->setCtype("document");
                     $property->setCpath($this->getRealFullPath());
@@ -568,7 +568,7 @@ class Document extends Element\AbstractElement {
         }
         $d->save();
 
-        $this->getResource()->update();
+        $this->getDao()->update();
 
         //set object to registry
         \Zend_Registry::set("document_" . $this->getId(), $this);
@@ -578,7 +578,7 @@ class Document extends Element\AbstractElement {
      * @param $index
      */
     public function saveIndex($index) {
-        $this->getResource()->saveIndex($index);
+        $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
     }
 
@@ -654,12 +654,12 @@ class Document extends Element\AbstractElement {
     public function hasChilds() {
         if(is_bool($this->hasChilds)){
             if(($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))){
-                return $this->getResource()->hasChilds();
+                return $this->getDao()->hasChilds();
             } else {
                 return $this->hasChilds;
             }
         }
-        return $this->getResource()->hasChilds();
+        return $this->getDao()->hasChilds();
     }
 
 	/**
@@ -690,12 +690,12 @@ class Document extends Element\AbstractElement {
 	public function hasSiblings() {
 		if(is_bool($this->hasSiblings)){
 			if(($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))){
-				return $this->getResource()->hasSiblings();
+				return $this->getDao()->hasSiblings();
 			} else {
 				return $this->hasSiblings;
 			}
 		}
-		return $this->getResource()->hasSiblings();
+		return $this->getDao()->hasSiblings();
 	}
 
     /**
@@ -739,16 +739,16 @@ class Document extends Element\AbstractElement {
         }
 
         // remove all properties
-        $this->getResource()->deleteAllProperties();
+        $this->getDao()->deleteAllProperties();
 
         // remove permissions
-        $this->getResource()->deleteAllPermissions();
+        $this->getDao()->deleteAllPermissions();
 
         // remove dependencies
         $d = $this->getDependencies();
         $d->cleanAllForElement($this);
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
 
         // clear cache
         $this->clearDependentCache();
@@ -1060,7 +1060,7 @@ class Document extends Element\AbstractElement {
             $cacheKey = "document_properties_" . $this->getId();
             $properties = Cache::load($cacheKey);
             if (!is_array($properties)) {
-                $properties = $this->getResource()->getProperties();
+                $properties = $this->getDao()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("document_properties" => "document_properties", $elementCacheTag => $elementCacheTag);
                 Cache::save($properties, $cacheKey, $cacheTags);
@@ -1201,14 +1201,14 @@ class Document extends Element\AbstractElement {
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
 
-        // add to registry to avoid infinite regresses in the following $this->getResource()->getProperties()
+        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
         $cacheKey = "document_" . $this->getId();
         if(!\Zend_Registry::isRegistered($cacheKey)) {
             \Zend_Registry::set($cacheKey, $this);
         }
 
         $myProperties = $this->getProperties();
-        $inheritedProperties = $this->getResource()->getProperties(true);
+        $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 }

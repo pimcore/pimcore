@@ -63,7 +63,7 @@ class Service extends Model\Element\Service {
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
-        $new->setResource(null);
+        $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
@@ -103,7 +103,7 @@ class Service extends Model\Element\Service {
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
-        $new->setResource(null);
+        $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
@@ -165,7 +165,7 @@ class Service extends Model\Element\Service {
             $asset = new Asset();
 
             if (\Pimcore\Tool::isValidPath($path)) {
-                $asset->getResource()->getByPath($path);
+                $asset->getDao()->getByPath($path);
                 return true;
             }
         }

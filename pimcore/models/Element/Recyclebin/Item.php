@@ -84,7 +84,7 @@ class Item extends Model\AbstractModel {
     public static function getById ($id) {
         
         $item = new self();
-        $item->getResource()->getById($id);
+        $item->getDao()->getById($id);
         
         return $item;
     }
@@ -147,7 +147,7 @@ class Item extends Model\AbstractModel {
         $this->element->_fulldump = true;
         $data = Serialize::serialize($this->getElement());
         
-        $this->getResource()->save();
+        $this->getDao()->save();
         
         if(!is_dir(PIMCORE_RECYCLEBIN_DIRECTORY)) {
             File::mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
@@ -192,7 +192,7 @@ class Item extends Model\AbstractModel {
             }
         }
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
     /**

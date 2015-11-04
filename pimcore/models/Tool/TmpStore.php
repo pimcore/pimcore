@@ -82,7 +82,7 @@ class TmpStore extends Model\AbstractModel {
             return true;
         }
 
-        return $instance->getResource()->add($id, $data, $tag, $lifetime);
+        return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
     /**
@@ -91,7 +91,7 @@ class TmpStore extends Model\AbstractModel {
      */
     public static function delete($id) {
         $instance = self::getInstance();
-        return $instance->getResource()->delete($id);
+        return $instance->getDao()->delete($id);
     }
 
     /**
@@ -115,7 +115,7 @@ class TmpStore extends Model\AbstractModel {
      */
     public static function cleanup() {
         $instance = self::getInstance();
-        $instance->getResource()->cleanup();
+        $instance->getDao()->cleanup();
     }
 
     /**
@@ -124,7 +124,7 @@ class TmpStore extends Model\AbstractModel {
      */
     public static function getIdsByTag($tag) {
         $instance = self::getInstance();
-        $items = $instance->getResource()->getIdsByTag($tag);
+        $items = $instance->getDao()->getIdsByTag($tag);
         return $items;
     }
 

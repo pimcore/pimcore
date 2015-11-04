@@ -280,7 +280,7 @@ class Definition extends Model\AbstractModel {
                 foreach ($class->getFieldDefinitions() as $fieldDef) {
                     if($fieldDef instanceof Object\ClassDefinition\Data\Fieldcollections) {
                         if(in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getResource()->createUpdateTable($class);
+                            $this->getDao()->createUpdateTable($class);
                             break;
                         }
                     }
@@ -311,7 +311,7 @@ class Definition extends Model\AbstractModel {
                 foreach ($class->getFieldDefinitions() as $fieldDef) {
                     if($fieldDef instanceof Object\ClassDefinition\Data\Fieldcollections) {
                         if(in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getResource()->delete($class);
+                            $this->getDao()->delete($class);
                             break;
                         }
                     }

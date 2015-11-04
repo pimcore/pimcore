@@ -240,7 +240,7 @@ class Definition extends Model\Object\Fieldcollection\Definition {
 
                 if(!$processedClasses[$cl['classname']]) {
                     $class = Object\ClassDefinition::getById($cl['classname']);
-                    $this->getResource()->createUpdateTable($class);
+                    $this->getDao()->createUpdateTable($class);
                     $processedClasses[$cl['classname']] = true;
                 }
 
@@ -251,7 +251,7 @@ class Definition extends Model\Object\Fieldcollection\Definition {
             foreach($this->oldClassDefinitions as $cl) {
                 $class = Object\ClassDefinition::getById($cl);
                 if($class) {
-                    $this->getResource()->delete($class);
+                    $this->getDao()->delete($class);
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
                         if($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
@@ -428,7 +428,7 @@ class Definition extends Model\Object\Fieldcollection\Definition {
 
                 if(!$processedClasses[$cl['classname']]) {
                     $class = Object\ClassDefinition::getById($cl['classname']);
-                    $this->getResource()->delete($class);
+                    $this->getDao()->delete($class);
                     $processedClasses[$cl['classname']] = true;
 
 

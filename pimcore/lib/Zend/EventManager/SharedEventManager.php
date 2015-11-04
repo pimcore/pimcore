@@ -46,11 +46,11 @@ class Zend_EventManager_SharedEventManager implements Zend_EventManager_SharedEv
      *
      * Allows attaching a callback to an event offerred by one or more 
      * identifying components. As an example, the following connects to the 
-     * "getAll" event of both an AbstractResource and EntityResource:
+     * "getAll" event of both an AbstractDao and EntityResource:
      *
      * <code>
      * SharedEventManager::getInstance()->connect(
-     *     array('My\Resource\AbstractResource', 'My\Resource\EntityResource'),
+     *     array('My\Resource\AbstractDao', 'My\Resource\EntityResource'),
      *     'getOne',
      *     function ($e) use ($cache) {
      *         if (!$id = $e->getParam('id', false)) {

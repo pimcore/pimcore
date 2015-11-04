@@ -92,7 +92,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      */
     public function save ($object) {
 
-        $this->getResource()->save($object);
+        $this->getDao()->save($object);
         $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
 
         if(is_array($this->getItems())) {

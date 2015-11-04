@@ -175,7 +175,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         try {
-            $translation->getResource()->getByKey(self::getValidTranslationKey($id));
+            $translation->getDao()->getByKey(self::getValidTranslationKey($id));
         } catch (\Exception $e) {
             if (!$create) {
                 throw new \Exception($e->getMessage());
@@ -245,7 +245,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             $this->setModificationDate(time());
         }
 
-        $this->getResource()->save();
+        $this->getDao()->save();
     }
 
     /**

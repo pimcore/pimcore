@@ -644,7 +644,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects {
     public function classSaved($class) {
         $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata');
         $temp = new $className(null);
-        $temp->getResource()->createOrUpdateTable($class);
+        $temp->getDao()->createOrUpdateTable($class);
     }
 
     /**

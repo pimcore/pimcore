@@ -341,7 +341,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $objectData["childdata"]["id"] = $object->getId();
-            $objectData["childdata"]["data"]["classes"] = $object->getResource()->getClasses();
+            $objectData["childdata"]["data"]["classes"] = $object->getDao()->getClasses();
 
             $currentLayoutId = $this->getParam("layoutId", null);
             
@@ -634,7 +634,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectData["classes"] = $object->getResource()->getClasses();
+            $objectData["classes"] = $object->getDao()->getClasses();
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";

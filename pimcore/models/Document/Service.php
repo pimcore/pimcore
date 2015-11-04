@@ -218,7 +218,7 @@ class Service extends Model\Element\Service {
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
-        $new->setResource(null);
+        $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
         if(method_exists($new, "setPrettyUrl")) {
@@ -259,7 +259,7 @@ class Service extends Model\Element\Service {
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
-        $new->setResource(null);
+        $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
         if(method_exists($new, "setPrettyUrl")) {
@@ -379,7 +379,7 @@ class Service extends Model\Element\Service {
             $document = new Document();
             // validate path
             if (\Pimcore\Tool::isValidPath($path)) {
-                $document->getResource()->getByPath($path);
+                $document->getDao()->getByPath($path);
                 return true;
             }
         }

@@ -69,7 +69,7 @@ class Task extends Model\AbstractModel {
         }
         catch (\Exception $e) {
             $task = new self();
-            $task->getResource()->getById(intval($id));
+            $task->getDao()->getById(intval($id));
 
             \Zend_Registry::set($cacheKey, $task);
         }

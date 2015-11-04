@@ -60,7 +60,7 @@ class Unit extends Model\AbstractModel {
      */
     public static function getByAbbreviation($abbreviation) {
         $unit = new self();
-        $unit->getResource()->getByAbbreviation($abbreviation);
+        $unit->getDao()->getByAbbreviation($abbreviation);
         return $unit;
     }
 
@@ -70,7 +70,7 @@ class Unit extends Model\AbstractModel {
      */
     public static function getById($id) {
 
-        $cacheKey = Unit\Resource::TABLE_NAME . "_" . $id;
+        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $id;
 
         try {
             $unit = \Zend_Registry::get($cacheKey);
@@ -79,7 +79,7 @@ class Unit extends Model\AbstractModel {
 
             try {
                 $unit = new self();
-                $unit->getResource()->getById($id);
+                $unit->getDao()->getById($id);
                 \Zend_Registry::set($cacheKey, $unit);
             } catch(\Exception $ex) {
                 \Logger::debug($ex->getMessage());
@@ -105,17 +105,17 @@ class Unit extends Model\AbstractModel {
      * @return void
      */
     public function save() {
-        $this->getResource()->save();
+        $this->getDao()->save();
     }
 
     /**
      * @return void
      */
     public function delete() {
-        $cacheKey = Unit\Resource::TABLE_NAME . "_" . $this->getId();
+        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();
         \Zend_Registry::set($cacheKey, null);
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
 

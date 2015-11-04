@@ -90,7 +90,7 @@ class CustomLayout extends Model\AbstractModel {
         } catch (\Exception $e) {
             try {
                 $customLayout = new self();
-                $customLayout->getResource()->getById($id);
+                $customLayout->getDao()->getById($id);
 
                 Object\Service::synchronizeCustomLayout($customLayout);
                 \Zend_Registry::set($cacheKey, $customLayout);
@@ -136,7 +136,7 @@ class CustomLayout extends Model\AbstractModel {
             \Pimcore\File::mkdir(PIMCORE_CUSTOMLAYOUT_DIRECTORY);
         }
 
-        $this->getResource()->save();
+        $this->getDao()->save();
 
         // empty custom layout cache
         try {
@@ -162,7 +162,7 @@ class CustomLayout extends Model\AbstractModel {
         }
         catch (\Exception $e) {}
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
 
