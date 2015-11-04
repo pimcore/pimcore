@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * Traduction française : Jean-Bernard Yata yata.jb@revolsys.fr
@@ -34,6 +34,8 @@ $lang = array(
 	'uptime' => 'Uptime',
 	'hostname' => 'Nom d\'hôte',
 	'cpus' => 'Processeur(s)',
+	'phpversion' => 'version de PHP',
+	'webservice' =>'serveur HTTP', 	
 	'load' => 'Charge',
 	'processes' => 'Processus',
 	'threads' => 'Opérations en cours',

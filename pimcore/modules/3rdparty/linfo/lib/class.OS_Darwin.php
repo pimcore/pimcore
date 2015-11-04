@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * Alpha osx class
@@ -59,7 +59,7 @@ class OS_Darwin extends OS_BSD_Common{
 			'hw.model'
 		),false);
 
-		// And get this shit for when the above fails like a fucking douche
+		// And get this info for when the above fails 
 		try {
 			$this->systemProfiler = $this->exec->exec('system_profiler', 'SPHardwareDataType SPSoftwareDataType SPPowerDataType');
 		}
@@ -69,40 +69,15 @@ class OS_Darwin extends OS_BSD_Common{
 		}
 	}
 	
-	// This function will likely be shared among all the info classes
-	public function getAll() {
-
-		// Return everything, whilst obeying display permissions
+	// What we should leave out
+	public function getContains() {
 		return array(
-			'OS' => empty($this->settings['show']) ? '' : $this->getOS(), 			# done
-			'Kernel' => empty($this->settings['show']) ? '' : $this->getKernel(), 		# done
-			'HostName' => empty($this->settings['show']) ? '' : $this->getHostName(), 	# done
-			'Mounts' => empty($this->settings['show']) ? array() : $this->getMounts(), 	# done
-			'Network Devices' => empty($this->settings['show']) ? array() : $this->getNet(),# done (possibly missing nics)
-			'CPUArchitecture' => empty($this->settings['show']['cpu']) ? array() : $this->getCPUArchitecture(),
-			'UpTime' => empty($this->settings['show']) ? '' : $this->getUpTime(), 		# done
-			'Load' => empty($this->settings['show']) ? array() : $this->getLoad(), 		# done
-			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(), # lacks thread stats
-			'CPU' => empty($this->settings['show']) ? array() : $this->getCPU(), 		# done
-			'RAM' => empty($this->settings['show']) ? array() : $this->getRam(), 		# done
-			'Model' => empty($this->settings['show']) ? false : $this->getModel(), 		# done
-			'Battery' => empty($this->settings['show']['battery']) ? array(): $this->getBattery(), # done
-			'HD' => empty($this->settings['show']['hd']) ? '' : $this->getHD(),
-			/*
-			'Devices' => empty($this->settings['show']) ? array() : $this->getDevs(), 	# todo
-			'RAID' => empty($this->settings['show']) ? '' : $this->getRAID(),	 	# todo(
-			'Battery' => empty($this->settings['show']) ? array(): $this->getBattery(),  	# todo
-			'Temps' => empty($this->settings['show']) ? array(): $this->getTemps(), 	# TODO
-			*/
-			
-			// Columns we should leave out.
-			'contains' => array(
 				'hw_vendor' => false,
 				'drives_rw_stats' => false,
 				'drives_vendor' => false,
-				'nic_type' => false
-			)
-		);
+				'nic_type' => false,
+				'nic_port_speed' => false,
+			);
 	}
 
 	// Operating system
@@ -120,7 +95,7 @@ class OS_Darwin extends OS_BSD_Common{
 		return preg_match('/^\s*Computer Name:\s+(.+)\s*$/m', $this->systemProfiler, $m) ? $m[1] : php_uname('n');
 	}
 
-	private function getCPUArchitecture() {
+	public function getCPUArchitecture() {
 		return php_uname('m');
 	}
 
@@ -177,7 +152,7 @@ class OS_Darwin extends OS_BSD_Common{
 	}
 
 	// Get network interfaces
-	private function getNet() {
+	public function getNet() {
 		// Time?
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('Network Devices');
@@ -294,7 +269,7 @@ class OS_Darwin extends OS_BSD_Common{
 	}
 
 	// Get uptime 
-	private function getUpTime() {
+	public function getUpTime() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -305,11 +280,11 @@ class OS_Darwin extends OS_BSD_Common{
 			return '';
 
 		// Get it textual, as in days/minutes/hours/etc
-		return seconds_convert(time() - $m[1]) . '; booted ' . date($this->settings['dates'], $m[1]);
+		return LinfoCommon::secondsConvert(time() - $m[1]) . '; booted ' . date($this->settings['dates'], $m[1]);
 	}
 	
 	// Get system load
-	private function getLoad() {
+	public function getLoad() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -329,7 +304,7 @@ class OS_Darwin extends OS_BSD_Common{
 	}
 	
 	// Get stats on processes
-	private function getProcessStats() {
+	public function getProcessStats() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -397,7 +372,7 @@ class OS_Darwin extends OS_BSD_Common{
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('CPUs');
 
-		// Was machdep a cunt to us? Likely on ppc macs
+		// Was machdep mean to us? Likely on ppc macs
 		if (empty($this->sysctl['machdep.cpu.brand_string']) && preg_match('/^\s+Processor Name:\s+(.+)(?= \([\d\.]+\))/m', $this->systemProfiler, $m)) {
 			$this->sysctl['machdep.cpu.brand_string'] = $m[1];
 		}
@@ -421,7 +396,7 @@ class OS_Darwin extends OS_BSD_Common{
 	}
 	
 	// Get ram usage
-	private function getRam(){
+	public function getRam() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -451,7 +426,7 @@ class OS_Darwin extends OS_BSD_Common{
 	}
 
 	// Model of mac
-	private function getModel() {
+	public function getModel() {
 		if (preg_match('/^\s+Model Name:\s+(.+)/m', $this->systemProfiler, $m))
 			return $m[1];
 
@@ -462,7 +437,7 @@ class OS_Darwin extends OS_BSD_Common{
 	}
 	
 	// Battery
-	private function getBattery() {
+	public function getBattery() {
 		// Time?
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('Battery');
@@ -477,29 +452,28 @@ class OS_Darwin extends OS_BSD_Common{
 		$bat = array();
 		$in_bat_field = false;
 
-		// Parse teh fucka
-		for ($i = 0, $num_lines = count($lines); $i < $num_lines; $i++) {
-			if (preg_match('/^\s+Battery Information/', $lines[$i])) {
+		foreach ($lines as $line) {
+			if (preg_match('/^\s+Battery Information/', $line)) {
 				$in_bat_field = true;
 				continue;
 			}
-			elseif(preg_match('/^\s+System Power Settings/', $m)) {
+			elseif(preg_match('/^\s+System Power Settings/', $line)) {
 				$in_bat_field = false;
 				break;
 			}
-			elseif ($in_bat_field && preg_match('/^\s+Fully charged: ([a-zA-Z]+)/', $lines[$i], $m)) 
+			elseif ($in_bat_field && preg_match('/^\s+Fully charged: ([a-zA-Z]+)/i', $line, $m))
 				$bat['charged'] = $m[1] == 'Yes';
-			elseif ($in_bat_field && preg_match('/^\s+Charging: ([a-zA-Z]+)/', $lines[$i], $m)) 
+			elseif ($in_bat_field && preg_match('/^\s+Charging: ([a-zA-Z]+)/i', $line, $m))
 				$bat['charging'] = $m[1] == 'Yes';
-			elseif($in_bat_field && preg_match('/^\s+Charge remaining \(mAh\): (\d+)/', $lines[$i], $m)) 
+			elseif($in_bat_field && preg_match('/^\s+Charge remaining \(mAh\): (\d+)/i', $line, $m))
 				$bat['charge_now'] = (int) $m[1];
-			elseif($in_bat_field && preg_match('/^\s+Full charge capacity \(mAh\): (\d+)/', $lines[$i], $m)) 
+			elseif($in_bat_field && preg_match('/^\s+Full charge capacity \(mAh\): (\d+)/i', $line, $m))
 				$bat['charge_full'] = (int) $m[1];
-			elseif($in_bat_field && preg_match('/^\s+Serial Number: ([A-Z0-9]+)/', $lines[$i], $m)) 
+			elseif($in_bat_field && preg_match('/^\s+Serial Number: ([A-Z0-9]+)/i', $line, $m))
 				$bat['serial'] = $m[1];
-			elseif($in_bat_field && preg_match('/^\s+Manufacturer: (\w+)/', $lines[$i], $m)) 
+			elseif($in_bat_field && preg_match('/^\s+Manufacturer: (\w+)/i', $line, $m))
 				$bat['vendor'] = $m[1];
-			elseif($in_bat_field && preg_match('/^\s+Device name: (\w+)/', $lines[$i], $m)) 
+			elseif($in_bat_field && preg_match('/^\s+Device name: (\w+)/i', $line, $m))
 				$bat['name'] = $m[1];
 		}
 
@@ -510,7 +484,7 @@ class OS_Darwin extends OS_BSD_Common{
 				'charge_now' => $bat['charge_now'],
 				'percentage' => $bat['charge_full'] > 0 && $bat['charge_now'] > 0 ? round($bat['charge_now'] / $bat['charge_full'], 4) * 100 . '%' : '?',
 				'device' => $bat['vendor'].' - '.$bat['name'],
-				'state' => $bat['charging'] ? 'Charging' : ($bat['charged'] ? 'Fully Charged' : 'Discharging, probably')
+				'state' => $bat['charging'] ? 'Charging' : ($bat['charged'] ? 'Fully Charged' : 'Discharging')
 			);
 		
 		// Give
@@ -518,7 +492,7 @@ class OS_Darwin extends OS_BSD_Common{
 	}
 
 	// drives
-	private function getHD() {
+	public function getHD() {
 		// Time?
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('Drives');
@@ -544,7 +518,6 @@ class OS_Darwin extends OS_BSD_Common{
 		// Work on tmp drive here
 		$tmp = false;
 		
-		// Parse teh fucka
 		for ($i = 0, $num_lines = count($lines); $i < $num_lines; $i++) {
 
 			// A drive or partition entry
@@ -581,8 +554,7 @@ class OS_Darwin extends OS_BSD_Common{
 						$drives[] = $tmp;
 
 					// Try getting the name
-					$drive_name = false; // I'm fucking pessimistic
-	//			/*	
+					$drive_name = false; // I'm pessimistic
 					try {
 						$drive_res = $this->exec->exec('diskutil', ' info /dev/'.$m[5]); 
 						if (preg_match('/^\s+Device \/ Media Name:\s+(.+)/m', $drive_res, $drive_m))
@@ -590,7 +562,6 @@ class OS_Darwin extends OS_BSD_Common{
 					}
 					catch(CallExtException $e) {
 					}
-	//			*/
 
 					// Start this one off
 					$tmp = array(
@@ -622,5 +593,18 @@ class OS_Darwin extends OS_BSD_Common{
 
 		// Give
 		return $drives;
+	}
+
+	public function getVirtualization() {
+
+		// Time?
+		if (!empty($this->settings['timer']))
+			$t = new LinfoTimerStart('Determining virtualization type');
+
+		// All results on google show this file only being present and related to VMware Fusion
+		if (file_exists('/dev/vmmon'))
+			return array('type' => 'host', 'method' => 'VMWare');
+
+		return false;
 	}
 }

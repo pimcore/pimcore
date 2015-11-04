@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * NetBSD info class. Differs slightly from FreeBSD's
@@ -49,47 +49,23 @@ class OS_NetBSD extends OS_BSD_Common {
 		$this->GetSysCTL(array('kern.boottime', 'vm.loadavg'), false);
 	}
 
-
-	// Get
-	public function getAll() {
-
-		// Return everything, whilst obeying display permissions
-		return array(
-			'OS' => empty($this->settings['show']) ? '' : $this->getOS(), 			# done
-			'Kernel' => empty($this->settings['show']) ? '' : $this->getKernel(), 		# done
-			'HostName' => empty($this->settings['show']) ? '' : $this->getHostName(), 	# done
-			'Mounts' => empty($this->settings['show']) ? array() : $this->getMounts(), 	# done
-			'Load' => empty($this->settings['show']) ? array() : $this->getLoad(), 		# done
-			'UpTime' => empty($this->settings['show']) ? '' : $this->getUpTime(), 		# done
-			'RAM' => empty($this->settings['show']) ? array() : $this->getRam(), 		# done
-			'Devices' => empty($this->settings['show']) ? array() : $this->getDevs(), 	# done
-			'CPU' => empty($this->settings['show']) ? array() : $this->getCPU(), 		# done
-			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(), # lacks thread stats
-			'Network Devices' => empty($this->settings['show']) ? array() : $this->getNet(),# lacks type
-			'HD' => empty($this->settings['show']) ? '' : $this->getHD(), 			# Known to get hard drives and cdroms
-			'RAID' => empty($this->settings['show']) ? '' : $this->getRAID(),	 	# TODO 
-			'Battery' => empty($this->settings['show']) ? array() : $this->getBattery(),  	# TODO
-			'Temps' => empty($this->settings['show']) ? array() : $this->getTemps() 	# TODO
-		);
-	}
-
 	// Operating System
-	private function getOS() {
+	public function getOS() {
 		return 'NetBSD';
 	}
 
 	// Kernel version
-	private function getKernel() {
+	public function getKernel() {
 		return php_uname('r');
 	}
 
 	// Host name
-	private function getHostName() {
+	public function getHostName() {
 		return php_uname('n');
 	}
 
 	// Mounted file systems
-	private function getMounts() {
+	public function getMounts() {
 
 		// Time it
 		if (!empty($this->settings['timer']))
@@ -140,7 +116,7 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 
 	// Get system load
-	private function getLoad() {
+	public function getLoad() {
 
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -163,7 +139,7 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 
 	// Get the always gloatable uptime
-	private function getUpTime() {
+	public function getUpTime() {
 		// Time?
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('Uptime');
@@ -172,11 +148,14 @@ class OS_NetBSD extends OS_BSD_Common {
 		$booted = strtotime($this->sysctl['kern.boottime']);
 
 		// Give it
-		return seconds_convert(time() - $booted) . '; booted ' . date($this->settings['dates'], $booted);
+		return array(
+			'text' => LinfoCommon::secondsConvert(time() - $booted),
+			'bootedTimestamp' => $booted
+		);
 	}
 
 	// Get network devices
-	private function getNet() {
+	public function getNet() {
 		// Time?
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('Network Devices');
@@ -249,13 +228,12 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 
 	// Get drives
-	private function getHD() {
+	public function getHD() {
 
 		// Time?
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('CPU');
 
-		// Temp shit
 		$drives = array();
 		$curr_hd = false;
 
@@ -321,7 +299,7 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 
 	// Get cpu's
-	private function getCPU() {
+	public function getCPU() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -347,7 +325,7 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 
 	// Get ram usage
-	private function getRam() {
+	public function getRam() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -430,7 +408,7 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 	
 	// Get devices
-	private function getDevs() {
+	public function getDevs() {
 
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -449,7 +427,6 @@ class OS_NetBSD extends OS_BSD_Common {
 		// Stuff it
 		foreach ($devices_match as $device) {
 
-			// Ignore shit I can't decipher with
 			if ($device[2] == 'ppb' || strpos($device[3], 'vendor') !== false)
 				continue;
 
@@ -475,7 +452,7 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 	
 	// Get stats on processes
-	private function getProcessStats() {
+	public function getProcessStats() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -535,7 +512,7 @@ class OS_NetBSD extends OS_BSD_Common {
 	}
 	
 	// TODO:
-	private function getRAID() {}
-	private function getBattery() {}
-	private function getTemps() {}
+	public function getRAID() {}
+	public function getBattery() {}
+	public function getTemps() {}
 }

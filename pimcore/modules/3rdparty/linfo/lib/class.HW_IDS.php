@@ -10,17 +10,17 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
  * Keep out hackers...
  */
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /**
  * Deal with pci.ids and usb.ids workings
@@ -59,10 +59,10 @@ class HW_IDS {
 		// Allow the same web root to be used for multiple insances of linfo, across multiple machines using 
 		// nfs or whatever, and to have a different cache file for each
 		$sys_id = is_readable('/proc/sys/kernel/hostname') ?
-			'_'.substr(md5(getContents('/proc/sys/kernel/hostname')), 0, 10) : '_x';
+			'_'.substr(md5(LinfoCommon::getContents('/proc/sys/kernel/hostname')), 0, 10) : '_x';
 
 		// Path to the cache file
-		$this->_cache_file = CACHE_PATH.'/ids_cache'.$sys_id.($this->_use_json ? '.json' : '');
+		$this->_cache_file = LINFO_CACHE_PATH.'/ids_cache'.$sys_id.($this->_use_json ? '.json' : '');
 
 		// Load contents of cache
 		$this->_populate_cache();
@@ -70,7 +70,7 @@ class HW_IDS {
 		// Might need these
 		$this->exec = new CallExt;
 		$this->exec->setSearchPaths(array('/sbin', '/bin', '/usr/bin', '/usr/local/bin', '/usr/sbin'));
-		$this->error = LinfoError::Fledging();
+		$this->error = LinfoError::Singleton();
 	}
 
 	/**
@@ -81,12 +81,12 @@ class HW_IDS {
 	private function _populate_cache() {
 		if ($this->_use_json) {
 			if (is_readable($this->_cache_file) &&
-			($loaded = @json_decode(getContents($this->_cache_file, ''), true)) && is_array($loaded))
+			($loaded = @json_decode(LinfoCommon::getContents($this->_cache_file, ''), true)) && is_array($loaded))
 				$this->_existing_cache_vals = $loaded;
 		}
 		else {
 			if (is_readable($this->_cache_file) &&
-			($loaded = @unserialize(getContents($this->_cache_file, false))) && is_array($loaded)) 
+			($loaded = @unserialize(LinfoCommon::getContents($this->_cache_file, false))) && is_array($loaded)) 
 				$this->_existing_cache_vals = $loaded;
 		}
 
@@ -98,20 +98,17 @@ class HW_IDS {
 	 * @access private
 	 */
 	private function _fetchUsbIdsLinux() {
-		$usb_paths = (array) @glob('/sys/bus/usb/devices/*', GLOB_NOSORT);
-		$num_usb_paths = count($usb_paths);
-		for ($i = 0; $i < $num_usb_paths; $i++) {
-			$path = $usb_paths[$i];
+		foreach ((array) @glob('/sys/bus/usb/devices/*', GLOB_NOSORT) as $path) {
 
 			// First try uevent
 			if (is_readable($path.'/uevent') && 
-				preg_match('/^product=([^\/]+)\/([^\/]+)\/[^$]+$/m', strtolower(getContents($path.'/uevent')), $match)) {
+				preg_match('/^product=([^\/]+)\/([^\/]+)\/[^$]+$/m', strtolower(LinfoCommon::getContents($path.'/uevent')), $match)) {
 				$this->_usb_entries[str_pad($match[1], 4, '0', STR_PAD_LEFT)][str_pad($match[2], 4, '0', STR_PAD_LEFT)] = 1;
 			}
 
 			// And next modalias 
 			elseif (is_readable($path.'/modalias') && 
-				preg_match('/^usb:v([0-9A-Z]{4})p([0-9A-Z]{4})/', getContents($path.'/modalias'), $match)) {
+				preg_match('/^usb:v([0-9A-Z]{4})p([0-9A-Z]{4})/', LinfoCommon::getContents($path.'/modalias'), $match)) {
 				$this->_usb_entries[strtolower($match[1])][strtolower($match[2])] = 1;
 			}
 		}
@@ -123,13 +120,10 @@ class HW_IDS {
 	 * @access private
 	 */
 	private function _fetchPciIdsLinux() {
-		$pci_paths = (array) @glob('/sys/bus/pci/devices/*', GLOB_NOSORT);
-		$num_pci_paths = count($pci_paths);
-		for ($i = 0; $i < $num_pci_paths; $i++) {
-			$path = $pci_paths[$i];
+		foreach ((array) @glob('/sys/bus/pci/devices/*', GLOB_NOSORT) as $path) {
 			
 			// See if we can use simple vendor/device files and avoid taking time with regex
-			if (($f_device = getContents($path.'/device', '')) && ($f_vend = getContents($path.'/vendor', '')) &&
+			if (($f_device = LinfoCommon::getContents($path.'/device', '')) && ($f_vend = LinfoCommon::getContents($path.'/vendor', '')) &&
 				$f_device != '' && $f_vend != '') {
 				list(, $v_id) = explode('x', $f_vend, 2);
 				list(, $d_id) = explode('x', $f_device, 2);
@@ -138,13 +132,13 @@ class HW_IDS {
 
 			// Try uevent nextly
 			elseif (is_readable($path.'/uevent') &&
-				preg_match('/pci\_(?:subsys_)?id=(\w+):(\w+)/', strtolower(getContents($path.'/uevent')), $match)) {
+				preg_match('/pci\_(?:subsys_)?id=(\w+):(\w+)/', strtolower(LinfoCommon::getContents($path.'/uevent')), $match)) {
 				$this->_pci_entries[$match[1]][$match[2]] = 1;
 			}
 
 			// Now for modalias
 			elseif (is_readable($path.'/modalias') &&
-				preg_match('/^pci:v0{4}([0-9A-Z]{4})d0{4}([0-9A-Z]{4})/', getContents($path.'/modalias'), $match)) {
+				preg_match('/^pci:v0{4}([0-9A-Z]{4})d0{4}([0-9A-Z]{4})/', LinfoCommon::getContents($path.'/modalias'), $match)) {
 				$this->_pci_entries[strtolower($match[1])][strtolower($match[2])] = 1;
 			}
 		}
@@ -216,12 +210,12 @@ class HW_IDS {
 	}
 
 	/*
-	 * Write cache file with latest shit
+	 * Write cache file with latest info
 	 *
 	 * @access private
 	 */
 	private function _write_cache() {
-		if (is_writable(CACHE_PATH)) 
+		if (is_writable(LINFO_CACHE_PATH)) 
 			@file_put_contents($this->_cache_file, $this->_use_json ? 
 				json_encode(array(
 					'hw' => array(
@@ -284,13 +278,13 @@ class HW_IDS {
 			$this->_fetchPciNames();
 		}
 		else 
-			$this->_pci_devices = $this->_existing_cache_vals['hw']['pci'];
+			$this->_pci_devices = isset($this->_existing_cache_vals['hw']['pci']) ? $this->_existing_cache_vals['hw']['pci'] : array();
 		if (!$worthiness['usb']) {
 			$save_cache = true;
 			$this->_fetchUsbNames();
 		}
 		else 
-			$this->_usb_devices = $this->_existing_cache_vals['hw']['usb'];
+			$this->_usb_devices = isset($this->_existing_cache_vals['hw']['usb']) ? $this->_existing_cache_vals['hw']['usb'] : array();
 		if ($save_cache)
 			$this->_write_cache();
 	}

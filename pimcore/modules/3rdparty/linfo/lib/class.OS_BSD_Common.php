@@ -10,23 +10,23 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 
 /*
  * The BSD os's are largely similar and thus draw from this class.
 */
 
-abstract class OS_BSD_Common {
+abstract class OS_BSD_Common extends OS_Unix_Common {
 	
 	// Store these
 	protected
@@ -43,7 +43,7 @@ abstract class OS_BSD_Common {
 		$this->settings = $settings;
 		
 		// Localize error handler
-		$this->error = LinfoError::Fledging();
+		$this->error = LinfoError::Singleton();
 		
 		// Exec running
 		$this->exec = new CallExt;
@@ -54,7 +54,7 @@ abstract class OS_BSD_Common {
 	
 	// Save dmesg
 	protected function loadDmesg() {
-		$this->dmesg = getContents('/var/run/dmesg.boot');
+		$this->dmesg = LinfoCommon::getContents('/var/run/dmesg.boot');
 	}
 
 	// Use sysctl to get something, and cache result.
@@ -70,7 +70,6 @@ abstract class OS_BSD_Common {
 
 		// Go through each
 		foreach ($keys as $k => $v) {
-			// unfuck evil shit, such as malicious shell injection
 			$keys[$k] = escapeshellarg($v);
 			
 			// Check and see if we have any of these already. If so, use previous 

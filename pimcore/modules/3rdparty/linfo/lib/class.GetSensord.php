@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * Exception
@@ -50,7 +50,7 @@ class GetSensord {
 			return array();
 		}
 		$devices = array();
-		foreach (getLines($file) as $line) {
+		foreach (LinfoCommon::getLines($file) as $line) {
 			if (preg_match('/\w+\s*\d+ \d{2}:\d{2}:\d{2} \w+ sensord:\s*(.+):\s*(.+)/i', trim($line), $match) == 1) {
 				// Replace current record of dev with updated temp
 				$devices[$match[1]] = $match[2];

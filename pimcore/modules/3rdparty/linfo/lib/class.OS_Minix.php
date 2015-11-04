@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit; 
+defined('IN_LINFO') or exit; 
 
 
 /*
@@ -52,35 +52,18 @@ class OS_Minix {
 		$this->exec->setSearchPaths(array('/usr/bin', '/usr/local/bin', '/bin'));
 	}
 
-	// Get the information
-	function getAll() {
-		
-		// Return everything, whilst obeying display permissions
-		return array(
-			'OS' => empty($this->settings['show']['os']) ? '' : $this->getOS(),				# done
-			'Kernel' => empty($this->settings['show']['kernel']) ? '' : $this->getKernel(),			# done
-			'HostName' => empty($this->settings['show']['hostname']) ? '' : $this->getHostName(),		# done
-			'Mounts' => empty($this->settings['show']['mounts']) ? array() : $this->getMounts(),		# lacking info
-			'Network Devices' => empty($this->settings['show']['network']) ? array() : $this->getNet(),	# lacking info
-			'CPU' => array(),
-			'Load' => array(),
-
-			// More to follow in further commits
-		);
-	}
-
 	// Operating system
-	private function getOS() {
+	public function getOS() {
 		return 'Minix';
 	}
 
 	// Take advantage of php_uname for kernel
-	private function getKernel() {
+	public function getKernel() {
 		return php_uname('r');
 	}
 
 	// Use that function again for host name
-	private function getHostName() {
+	public function getHostName() {
 		return php_uname('n');
 	}
 
@@ -89,7 +72,7 @@ class OS_Minix {
 	// Note: the `mount` command does not have file system type
 	// and php's disk_free_space/disk_total_space functions don't seem
 	// to work here
-	private function getMounts() {
+	public function getMounts() {
 
 		// Try using the `mount` command to get mounted file systems
 		try {
@@ -136,7 +119,7 @@ class OS_Minix {
 	// netstat isn't installed by default and ifconfig doesn't have
 	// much functionality for viewing status, so I can't seem to get
 	// more than just name of interface
-	private function getNet() {
+	public function getNet() {
 
 		// Try getting it. 
 		try {

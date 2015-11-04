@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * Mostly complete FreeBSD info class.
@@ -66,62 +66,44 @@ class OS_FreeBSD extends OS_BSD_Common{
 		// Save version
 		if (preg_match('/^([\d\.]+)/', php_uname('r'), $vm) != 0)
 			$this->version = (float) $vm[1];
-		
-	//	var_dump($this->version); exit;
 	}
-	
-	// This function will likely be shared among all the info classes
-	public function getAll() {
 
-		// Return everything, whilst obeying display permissions
+	/**
+	 * Return a list of things to hide from view..
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function getContains() {
 		return array(
-			'OS' => empty($this->settings['show']['os']) ? '' : $this->getOS(), 			# done
-			'Kernel' => empty($this->settings['show']['kernel']) ? '' : $this->getKernel(), 		# done
-			'HostName' => empty($this->settings['show']['hostname']) ? '' : $this->getHostName(), 	# done
-			'Mounts' => empty($this->settings['show']['mounts']) ? array() : $this->getMounts(), 	# done
-			'RAM' => empty($this->settings['show']['ram']) ? array() : $this->getRam(), 		# done
-			'Load' => empty($this->settings['show']['load']) ? array() : $this->getLoad(), 		# done
-			'Devices' => empty($this->settings['show']['devices']) ? array() : $this->getDevs(), 	# done
-			'HD' => empty($this->settings['show']['hd']) ? '' : $this->getHD(), 			# done
-			'UpTime' => empty($this->settings['show']['uptime']) ? '' : $this->getUpTime(), 		# done
-			'Network Devices' => empty($this->settings['show']['network']) ? array() : $this->getNet(),# done 
-			'Raid' => empty($this->settings['show']['raid']) ? '' : $this->getRAID(),	 	# done (gmirror only)
-			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(), # lacks thread stats
-			'Battery' => empty($this->settings['show']['battery']) ? array(): $this->getBattery(),  	# works
-			'CPUArchitecture' => empty($this->settings['show']['cpu']) ? array() : $this->getCPUArchitecture(), # done
-			'CPU' => empty($this->settings['show']['cpu']) ? array() : $this->getCPU(), 		# works
-			'Temps' => empty($this->settings['show']['temps']) ? array(): $this->getTemps(), 	# TODO,
-
-			// Columns we should leave out. (because finding them out is either impossible or requires root access)
-			'contains' => array(
-				'drives_rw_stats' => false
-			)
+			'drives_rw_stats' => false,
+			'nic_port_speed' => false,
 		);
 	}
 
 	// Return OS type
-	private function getOS() {
+	public function getOS() {
 
 		// Obviously
 		return 'FreeBSD';	
 	}
 	
 	// Get kernel version
-	private function getKernel() {
+	public function getKernel() {
 		
 		// hmm. PHP has a native function for this
 		return php_uname('r');
 	}
 
 	// Get host name
-	private function getHostName() {
+	public function getHostName() {
 		
 		// Take advantage of that function again
 		return php_uname('n');
 	}
 
 	// Get mounted file systems
-	private function getMounts() {
+	public function getMounts() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -184,7 +166,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 
 	// Get ram usage
-	private function getRam(){
+	public function getRam(){
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -240,7 +222,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 	
 	// Get system load
-	private function getLoad() {
+	public function getLoad() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -259,7 +241,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 	
 	// Get uptime
-	private function getUpTime() {
+	public function getUpTime() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -272,12 +254,15 @@ class OS_FreeBSD extends OS_BSD_Common{
 		// Boot unix timestamp
 		$booted = $m[1];
 
-		// Get it textual, as in days/minutes/hours/etc
-		return seconds_convert(time() - $booted) . '; booted ' . date($this->settings['dates'], $booted);
+		// Give it
+		return array(
+			'text' => LinfoCommon::secondsConvert(time() - $booted),
+			'bootedTimestamp' => $booted
+		);
 	}
 
 	// RAID Stats
-	private function getRAID() {
+	public function getRAID() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -365,7 +350,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 
 	// Done
-	private function getNet() {
+	public function getNet() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -486,7 +471,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	// Get CPU's
 	// I still don't really like how this is done
 	// todo: support multiple non-identical cpu's
-	private function getCPU() {
+	public function getCPU() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -501,7 +486,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 			// Save each
 			$cpus[] = array(
 				'Model' => $this->sysctl['hw.model'],
-				'MHz' => $this->sysctl['hw.clockrate']
+				'MHz' => (int) trim($this->sysctl['hw.clockrate'])
 			);
 		
 		// Return
@@ -509,7 +494,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 	
 	// TODO: Get reads/writes and partitions for the drives
-	private function getHD(){
+	public function getHD(){
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -518,7 +503,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 		// Keep them here
 		$drives = array();
 		
-		// Must they change the format of everything with each fucking release?!?!?!?!
+		// Must they change the format of everything with each release?!?!?!?!
 		switch ($this->version) {
 
 			case 8.2:
@@ -579,7 +564,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 	
 	// Parse dmesg boot log
-	private function getDevs() {
+	public function getDevs() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -592,7 +577,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 		
 	// APM? Seems to only support either one battery of them all collectively
-	private function getBattery() {
+	public function getBattery() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -644,7 +629,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 	
 	// Get stats on processes
-	private function getProcessStats() {
+	public function getProcessStats() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -707,7 +692,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	}
 	
 	// idk
-	private function getTemps() {
+	public function getTemps() {
 		// Time?
 		if (!empty($this->settings['timer']))
 			$t = new LinfoTimerStart('Temperature');
@@ -720,7 +705,7 @@ class OS_FreeBSD extends OS_BSD_Common{
 	 * @access private
 	 * @return string the arch
 	 */
-	private function getCPUArchitecture() {
+	public function getCPUArchitecture() {
 		return php_uname('m');
 	}
 }

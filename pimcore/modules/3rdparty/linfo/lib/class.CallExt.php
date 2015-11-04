@@ -10,17 +10,17 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo.	If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
  * Keep out hackers...
  */
-defined('IN_INFO') or exit; 
+defined('IN_LINFO') or exit; 
 
 /**
  * Exception for CallExt class
@@ -31,6 +31,13 @@ class CallExtException extends Exception {}
  * Class used to call external programs 
  */
 class CallExt {
+
+	protected static
+		$settings = array();
+
+	public static function config(Linfo $linfo) {
+		self::$settings = $linfo->getSettings();
+	}
 
 	/**
 	 * Maintain a count of how many external programs we call
@@ -63,12 +70,9 @@ class CallExt {
 	 */
 	public function setSearchPaths($paths) {
 		
-		// Gain access to settings
-		global $settings;
-		
 		// Merge in possible custom paths
-		if (is_array($settings['additional_paths']) && count($settings['additional_paths']) > 0)
-			$paths = array_merge($settings['additional_paths'], $paths);
+		if (is_array(self::$settings['additional_paths']) && count(self::$settings['additional_paths']) > 0)
+			$paths = array_merge(self::$settings['additional_paths'], $paths);
 
 		// Make sure they all have a trailing slash
 		foreach ($paths as $k => $v)
@@ -86,12 +90,9 @@ class CallExt {
 	 * @param string $switches command arguments
 	 */
 	public function exec($name, $switches = '') {
-		
-		// Need settings 
-		global $settings;
 
 		// Sometimes it is necessary to call a program with sudo 
-		$attempt_sudo = array_key_exists('sudo_apps', $settings) && in_array($name, $settings['sudo_apps']);
+		$attempt_sudo = array_key_exists('sudo_apps', self::$settings) && in_array($name, self::$settings['sudo_apps']);
 		
 		// Have we gotten it before?
 		if (array_key_exists($name.$switches, $this->cliCache))
@@ -107,7 +108,7 @@ class CallExt {
 				$command = "$path$name $switches";
 
 				// Sudoing?
-				$command = $attempt_sudo ? locate_actual_path(array_append_string($this->searchPaths, 'sudo', '%2s%1s')) . ' ' . $command : $command;
+				$command = $attempt_sudo ? LinfoCommon::locateActualPath(LinfoCommon::arrayAppendString($this->searchPaths, 'sudo', '%2s%1s')) . ' ' . $command : $command;
 
 				// Result of command
 				$result = `$command`;
@@ -120,9 +121,6 @@ class CallExt {
 
 				// Give result
 				return $result;
-
-				// Redundancy
-				break;
 			}
 		}
 

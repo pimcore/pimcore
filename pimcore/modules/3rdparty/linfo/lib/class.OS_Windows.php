@@ -10,24 +10,24 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 /**
  * Keep out hackers...
  */
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /**
  * Get info on Windows systems
  * Written and maintained by Oliver Kuckertz (mologie).
  */
-class OS_Windows {
+class OS_Windows extends OS {
 
 	// Keep these tucked away
 	protected
@@ -48,60 +48,36 @@ class OS_Windows {
 		$this->settings = $settings;
 
 		// Localize error handler
-		$this->error = LinfoError::Fledging();
+		$this->error = LinfoError::Singleton();
 		
 		// Get WMI instance
 		$this->wmi = new COM('winmgmts:{impersonationLevel=impersonate}//./root/cimv2');
 		
 		if (!is_object($this->wmi)) {
-			throw new GetInfoException('This needs access to WMI. Please enable DCOM in php.ini and allow the current user to access the WMI DCOM object.');
+			throw new LinfoFatalException('This needs access to WMI. Please enable DCOM in php.ini and allow the current user to access the WMI DCOM object.');
 		}
 	}
 
 	/**
-	 * getAll 
-	 * 
+	 * Return a list of things to hide from view..
+	 *
 	 * @access public
-	 * @return array the info
+	 * @return array
 	 */
-	public function getAll() {
-	
-		// Return everything, whilst obeying display permissions
+	public function getContains() {
 		return array(
-			'OS' => empty($this->settings['show']['os']) ? '' : $this->getOS(),
-			'Kernel' => empty($this->settings['show']['kernel']) ? '' : $this->getKernel(),
-			'Distro' => empty($this->settings['show']['distro']) ? '' : $this->getDistro(),
-			'RAM' => empty($this->settings['show']['ram']) ? array() : $this->getRam(),
-			'HD' => empty($this->settings['show']['hd']) ? '' : $this->getHD(),
-			'Mounts' => empty($this->settings['show']['mounts']) ? array() : $this->getMounts(),
-			'Load' => empty($this->settings['show']['load']) ? array() : $this->getLoad(),
-			'HostName' => empty($this->settings['show']['hostname']) ? '' : $this->getHostName(),
-			'UpTime' => empty($this->settings['show']['uptime']) ? '' : $this->getUpTime(),
-			'CPU' => empty($this->settings['show']['cpu']) ? array() : $this->getCPU(),
-			'CPUArchitecture' => empty($this->settings['show']['cpu']) ? array() : $this->getCPUArchitecture(),
-			'Network Devices' => empty($this->settings['show']['network']) ? array() : $this->getNet(),
-			'Devices' => empty($this->settings['show']['devices']) ? array() : $this->getDevs(),
-			'Temps' => empty($this->settings['show']['temps']) ? array(): $this->getTemps(),
-			'Battery' => empty($this->settings['show']['battery']) ? array(): $this->getBattery(),
-			'Raid' => empty($this->settings['show']['raid']) ? array(): $this->getRAID(),
-			'Wifi' => empty($this->settings['show']['wifi']) ? array(): $this->getWifi(),
-			'SoundCards' => empty($this->settings['show']['sound']) ? array(): $this->getSoundCards(),
-			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(),
-			'services' => empty($this->settings['show']['process_stats']) ? array() : $this->getServices(),
-
-			'contains' => array(
-				'drives_rw_stats' => false
-			)
+			'drives_rw_stats' => false,
+			'nic_port_speed' => false,
 		);
 	}
 	
 	/**
 	 * getOS 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return string current windows version
 	 */
-	private function getOS() {
+	public function getOS() {
 		
 		foreach ($this->wmi->ExecQuery("SELECT Caption FROM Win32_OperatingSystem") as $os) {
 			return $os->Caption;
@@ -113,10 +89,10 @@ class OS_Windows {
 	/**
 	 * getKernel 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return string kernel version
 	 */
-	private function getKernel() {
+	public function getKernel() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -133,10 +109,10 @@ class OS_Windows {
 	/**
 	 * getHostName 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return string the host name
 	 */
-	private function getHostName() {
+	public function getHostName() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -152,10 +128,10 @@ class OS_Windows {
 	/**
 	 * getRam 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array the memory information
 	 */
-	private function getRam(){
+	public function getRam() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -184,10 +160,10 @@ class OS_Windows {
 	/**
 	 * getCPU 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of cpu info
 	 */
-	private function getCPU() {
+	public function getCPU() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -195,10 +171,10 @@ class OS_Windows {
 		
 		$cpus = array();
 		$alt = false;
-		$object = $this->wmi->ExecQuery("SELECT Name, Manufacturer, CurrentClockSpeed, NumberOfLogicalProcessors FROM Win32_Processor");
+		$object = $this->wmi->ExecQuery("SELECT Name, Manufacturer, CurrentClockSpeed, NumberOfLogicalProcessors,LoadPercentage FROM Win32_Processor");
 		
 		if (!is_object($object)) {
-			$object = $this->wmi->ExecQuery("SELECT Name, Manufacturer, CurrentClockSpeed FROM Win32_Processor");
+			$object = $this->wmi->ExecQuery("SELECT Name, Manufacturer, CurrentClockSpeed,LoadPercentage FROM Win32_Processor");
 			$alt = true;
 		}
 
@@ -206,9 +182,12 @@ class OS_Windows {
 			$curr = array(
 				'Model' => $cpu->Name,
 				'Vendor' => $cpu->Manufacturer,
-				'MHz' => $cpu->CurrentClockSpeed,
+				'MHz' => $cpu->CurrentClockSpeed
 			);
-			$curr['Model'] = $cpu->Name;
+			
+			if($cpu->LoadPercentage != '') {
+				$curr['usage_percentage'] = $cpu->LoadPercentage;
+			}
 			
 			if (!$alt) {
 				for ($i = 0; $i < $cpu->NumberOfLogicalProcessors; $i++)
@@ -224,10 +203,10 @@ class OS_Windows {
 	/**
 	 * getUpTime 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return string uptime
 	 */
-	private function getUpTime () {
+	public function getUpTime () {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -250,16 +229,19 @@ class OS_Windows {
 		);
 		$booted_ts = mktime($booted['hour'], $booted['minute'], $booted['second'], $booted['month'], $booted['day'], $booted['year']);
 		
-		return seconds_convert(time() - $booted_ts) . '; booted ' . date($this->settings['dates'], $booted_ts);
+		return array(
+			'text' => LinfoCommon::secondsConvert(time() - $booted_ts),
+			'bootedTimestamp' => $booted_ts
+		);
 	}
 	
 	/**
 	 * getHD 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array the hard drive info
 	 */
-	private function getHD() {
+	public function getHD() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -296,10 +278,10 @@ class OS_Windows {
 	/**
 	 * getTemps 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array the temps
 	 */
-	private function getTemps() {
+	public function getTemps() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -311,10 +293,10 @@ class OS_Windows {
 	/**
 	 * getMounts 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array the mounted the file systems
 	 */
-	private function getMounts() {
+	public function getMounts() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -398,10 +380,10 @@ class OS_Windows {
 	/**
 	 * getDevs 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of devices
 	 */
-	private function getDevs() {
+	public function getDevs() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -437,10 +419,10 @@ class OS_Windows {
 	/**
 	 * getRAID 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of raid arrays
 	 */
-	private function getRAID() {
+	public function getRAID() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -452,10 +434,10 @@ class OS_Windows {
 	/**
 	 * getLoad 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of current system load values
 	 */
-	private function getLoad() {
+	public function getLoad() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -471,10 +453,10 @@ class OS_Windows {
 	/**
 	 * getNet 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of network devices
 	 */
-	private function getNet() {
+	public function getNet() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -579,10 +561,10 @@ class OS_Windows {
 	/**
 	 * getBattery 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of battery status
 	 */
-	private function getBattery() {
+	public function getBattery() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -594,10 +576,10 @@ class OS_Windows {
 	/**
 	 * getWifi 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of wifi devices
 	 */
-	private function getWifi() {
+	public function getWifi() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -607,10 +589,10 @@ class OS_Windows {
 	/**
 	 * getSoundCards 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of soundcards
 	 */
-	private function getSoundCards() {
+	public function getSoundCards() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -640,10 +622,10 @@ class OS_Windows {
 	/**
 	 * getProcessStats 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array of process stats
 	 */
-	private function getProcessStats() {
+	public function getProcessStats() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -666,10 +648,10 @@ class OS_Windows {
 	/**
 	 * getServices 
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array the services
 	 */
-	private function getServices() {
+	public function getServices() {
 	
 		return array(); // TODO
 	}
@@ -677,10 +659,10 @@ class OS_Windows {
 	/**
 	 * getDistro
 	 * 
-	 * @access private
+	 * @access public
 	 * @return array the distro,version or false
 	 */
-	private function getDistro() {
+	public function getDistro() {
 	
 		return false;
 	}
@@ -688,10 +670,10 @@ class OS_Windows {
 	/**
 	 * getCPUArchitecture
 	 * 
-	 * @access private
+	 * @access public
 	 * @return string the arch and bits
 	 */
-	private function getCPUArchitecture() {
+	public function getCPUArchitecture() {
 	
 		// Time?
 		if (!empty($this->settings['timer']))
