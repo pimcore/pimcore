@@ -264,7 +264,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         // here the "normal" task of __sleep ;-)
-        $blockedVars = array("resource", "controller", "view", "editmode");
+        $blockedVars = array("dao", "controller", "view", "editmode");
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
@@ -376,7 +376,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             $el[$key] = Webservice\Data\Mapper::map($value,$className,"out");
         }
 
-        unset($el["resource"]);
+        unset($el["dao"]);
         unset($el["documentId"]);
         unset($el["controller"]);
         unset($el["view"]);

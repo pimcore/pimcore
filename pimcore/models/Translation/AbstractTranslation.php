@@ -367,7 +367,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public function getForWebserviceExport(){
         $data = get_object_vars($this);
-        unset($data['resource']);
+        unset($data['dao']);
         return $data;
     }
 }

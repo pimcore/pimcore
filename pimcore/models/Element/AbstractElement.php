@@ -121,7 +121,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         $elementType = Service::getElementType($this);
         $vars = get_class_vars("\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($elementType));
-        $ignored = array("userId","cid","cpath","resource");
+        $ignored = array("userId","cid","cpath","dao");
         $permissions = array();
 
         foreach ($vars as $name => $defaultValue) {
