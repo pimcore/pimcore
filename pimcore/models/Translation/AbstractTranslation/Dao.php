@@ -16,7 +16,7 @@ namespace Pimcore\Model\Translation\AbstractTranslation;
 
 use Pimcore\Model;
 
-abstract class Dao extends Model\Dao\AbstractDao implements Resource\DaoInterface {
+abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface {
 
     /**
      * @param $key

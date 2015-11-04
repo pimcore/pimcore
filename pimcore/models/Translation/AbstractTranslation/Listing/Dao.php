@@ -17,7 +17,7 @@ namespace Pimcore\Model\Translation\AbstractTranslation\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Cache; 
 
-abstract class Dao extends Model\Listing\Dao\AbstractDao implements Resource\DaoInterface {
+abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface {
 
     /**
      * @return int
