@@ -6554,5 +6554,9 @@
     {
         "term": "calculatedValue_field",
         "definition": "Calculated Value"
+    },
+    {
+        "term": "multihrefMetadata",
+        "definition": "Multihref with Metadata"
     }
 ]

@@ -648,6 +648,16 @@
     background: url(/pimcore/static6/img/icon/database_link.png) center center no-repeat !important;
 }
 
+/*.pimcore_icon_multihrefMetadata {*/
+    /*background: url(/pimcore/static6/img/icon/table_link.png) center center no-repeat !important;*/
+/*}*/
+
+.pimcore_icon_multihrefMetadata {
+    background: url(/pimcore/static6/img/icon/outline.png) center center no-repeat !important;
+}
+
+
+
 .pimcore_icon_object_add {
     background: url(/pimcore/static6/img/icon/database_add.png) center center no-repeat  !important;
 }

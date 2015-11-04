@@ -316,6 +316,7 @@ $scripts = array(
     "pimcore/object/classes/data/input.js",
     "pimcore/object/classes/data/numeric.js",
     "pimcore/object/classes/data/objects.js",
+    "pimcore/object/classes/data/multihrefMetadata.js",
     "pimcore/object/classes/data/objectsMetadata.js",
     "pimcore/object/classes/data/nonownerobjects.js",
     "pimcore/object/classes/data/select.js",
