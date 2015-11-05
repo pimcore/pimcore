@@ -179,7 +179,7 @@ pimcore.settings.system = Class.create({
                                 valueField: 'language',
                                 forceSelection: true,
                                 triggerAction: 'all',
-                                hiddenName: 'general.language'
+                                name: 'general.language'
                             },{
                                 fieldLabel: t("contact_email"),
                                 xtype: "textfield",
