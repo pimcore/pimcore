@@ -467,6 +467,12 @@ class Pimcore {
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
 
+        // zlib.output_compression conflicts with while (@ob_end_flush()) ;
+        // see also: https://github.com/pimcore/pimcore/issues/291
+        if (ini_get('zlib.output_compression')) {
+            @ini_set('zlib.output_compression', 'Off');
+        }
+
         // set dummy timezone if no tz is specified / required for example by the logger, ...
         $defaultTimezone = @date_default_timezone_get();
         if(!$defaultTimezone) {
