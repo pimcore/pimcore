@@ -263,7 +263,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         id: 'class_asset_upload_path_' + this.uniqeFieldId,
                         cls: "input_drop_target",
                         value: this.datax.assetUploadPath,
-                        width: 350,
+                        width: 500,
                         xtype: "textfield",
                         listeners: {
                             "render": function (el) {
