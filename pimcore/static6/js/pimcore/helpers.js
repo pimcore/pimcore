@@ -1147,7 +1147,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
             xtype: 'fileuploadfield',
             emptyText: t("select_a_file"),
             fieldLabel: t("asset"),
-            width: 330,
+            width: 360,
             name: 'Filedata',
             buttonText: "",
             buttonConfig: {
