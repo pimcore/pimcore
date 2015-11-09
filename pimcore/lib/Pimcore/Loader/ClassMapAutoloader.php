@@ -21,7 +21,9 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
         // manual aliasing
         $classAliases = [
             "Pimcore\\Resource" => "Pimcore\\Db",
-            "Pimcore_Resource" => "Pimcore\\Db"
+            "Pimcore_Resource" => "Pimcore\\Db",
+            "Pimcore\\Resource\\Mysql" => "Pimcore\\Db",
+            "Pimcore_Resource_Mysql" => "Pimcore\\Db",
         ];
 
         if(array_key_exists($class, $classAliases)) {
