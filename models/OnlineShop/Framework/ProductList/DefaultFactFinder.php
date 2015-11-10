@@ -451,7 +451,6 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         return $filter;
     }
 
-
     /**
      * builds filter condition of user specific conditions
      *
@@ -466,29 +465,20 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
             if(is_array($condition))
             {
                 $and = [];
-
                 foreach($condition as $or)
                 {
-                    if(is_array($or)){
-                        foreach($or as &$v){
-                            $v = urlencode($v);
-                        }
-                    }else{
-                        $or = urlencode($or);
-                    }
                     $and[] = is_array($or)
                         ? implode('~~~', $or)   // OR
                         : $or
                     ;
                 }
+
                 $value = implode('___', $and);  // AND
             }
             else
             {
                 $value = $condition;
-                $value = urlencode($value);
             }
-
 
             $params[ 'filter' . $fieldname ] = $value;
         }
