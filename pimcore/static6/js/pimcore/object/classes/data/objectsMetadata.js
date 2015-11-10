@@ -71,7 +71,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
                 value: this.datax.maxItems,
-                disabled: this.isInCustomLayoutEditor()
+                disabled: this.isInCustomLayoutEditor(),
+                minValue: 0
             },
             {
                 xtype: "checkbox",

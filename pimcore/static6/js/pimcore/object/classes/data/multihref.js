@@ -155,7 +155,8 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         xtype: "numberfield",
                         fieldLabel: t("maximum_items"),
                         name: "maxItems",
-                        value: this.datax.maxItems
+                        value: this.datax.maxItems,
+                        minValue: 0
                     },
                     {
                         xtype: "checkbox",

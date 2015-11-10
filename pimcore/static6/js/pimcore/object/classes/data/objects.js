@@ -73,7 +73,8 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
                 value: this.datax.maxItems,
-                disabled: this.isInCustomLayoutEditor()
+                disabled: this.isInCustomLayoutEditor(),
+                minValue: 0
             },
             {
                 xtype: "checkbox",
