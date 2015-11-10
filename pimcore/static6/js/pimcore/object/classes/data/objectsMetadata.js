@@ -254,7 +254,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), width: 70, sortable: true, dataIndex: 'type', editor: typeComboBox,
+            typesColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type', editor: typeComboBox,
                 renderer: function(value) {
                     return types[value];
                 }});
