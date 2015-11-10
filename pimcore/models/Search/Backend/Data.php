@@ -106,12 +106,12 @@ class Data extends \Pimcore\Model\AbstractModel {
      * @return \Pimcore\Model\Dao\AbstractDao
      * @throws \Exception
      */
-    public function getResource() {
-
-        if (!$this->resource) {
+    public function getDao()
+    {
+        if (!$this->dao) {
             $this->initDao("\\Pimcore\\Model\\Search\\Backend\\Data");
         }
-        return $this->resource;
+        return $this->dao;
     }
 
 
