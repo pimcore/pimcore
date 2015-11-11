@@ -133,7 +133,7 @@ pimcore.element.note_details = Class.create({
             autoScroll: true,
             defaults: {
                 labelWidth: 130,
-                width: 600
+                width: 650
             }
         });
 
