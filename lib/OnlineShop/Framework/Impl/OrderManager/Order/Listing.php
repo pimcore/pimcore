@@ -35,6 +35,11 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
      */
     protected $filter = [];
 
+    /**
+     * @var bool
+     */
+    protected $useSubItems = false;
+
 
     /**
      * @param string $type
@@ -73,26 +78,9 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
                 ]
             );
 
+
             // join ordered products
-            $select->join(
-                [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ]
-                , '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id'
-                , ''
-            );
-
-            // join ordered sub products
-            $select->joinLeft(
-                [ '_orderSubItems' => 'object_relations_' . OnlineShopOrderItem::classId() ]
-                , '_orderSubItems.fieldname = "subItems" AND _orderSubItems.src_id = _orderItems.dest_id'
-                , ''
-            );
-
-            // join order item
-            $select->join(
-                [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ]
-                , 'orderItem.o_id = _orderItems.dest_id OR orderItem.o_id = _orderSubItems.dest_id'
-                , ['OrderItemId' => 'orderItem.oo_id']
-            );
+            $this->joinItemsAndSubItems($select);
 
 
             // group by list type
@@ -246,6 +234,79 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
 
 
     /**
+     * join for item / sub items
+     * @param Zend_Db_Select $select
+     *
+     * @return $this
+     */
+    protected function joinItemsAndSubItems(Zend_Db_Select $select)
+    {
+        if(!$this->useSubItems())
+        {
+            // just order items
+            $select->join(
+                [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ]
+                , '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id'
+                , ''
+            );
+        }
+        else
+        {
+            // join items and sub items
+            $select->join(
+                ['_orderItems' => new \Zend_Db_Expr( <<<SUBQUERY
+(
+    -- add items
+    SELECT
+
+        _orderItems.src_id as "orderId"
+        , _orderItems.dest_id "dest_id"
+        , "item" as "kind"
+
+    FROM `object_relations_109` AS `_orderItems`
+
+    WHERE 1
+
+        AND _orderItems.fieldname = "items"
+
+    UNION
+
+    -- add sub items (1. level)
+    SELECT
+
+        _orderItems.src_id as "orderId"
+        , _orderSubItems.dest_id as "dest_id"
+        , "subItem" as "kind"
+
+    FROM `object_relations_109` AS `_orderItems`
+
+        JOIN `object_relations_108` AS `_orderSubItems`
+            ON _orderSubItems.fieldname = "subItems" AND _orderSubItems.src_id = _orderItems.dest_id
+
+    WHERE 1
+
+        AND _orderItems.fieldname = "items"
+)
+SUBQUERY
+                )]
+                , '_orderItems.orderId = `order`.oo_id'
+                , ''
+            );
+        }
+
+
+        // join related order item
+        $select->join(
+            [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ]
+            , 'orderItem.o_id = _orderItems.dest_id'
+            , ['OrderItemId' => 'orderItem.oo_id']
+        );
+
+        return $this;
+    }
+
+
+    /**
      * @param $field
      *
      * @return $this
@@ -325,5 +386,24 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
     public function __clone()
     {
         $this->query = clone $this->query;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function useSubItems()
+    {
+        return $this->useSubItems;
+    }
+
+    /**
+     * @param boolean $useSubItems
+     *
+     * @return $this
+     */
+    public function setUseSubItems($useSubItems)
+    {
+        $this->useSubItems = (bool)$useSubItems;
+        return $this;
     }
 }

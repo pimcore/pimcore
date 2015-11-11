@@ -169,4 +169,16 @@ interface IOrderList extends SeekableIterator, Countable, Zend_Paginator_Adapter
      * @return $this
      */
     public function addFilter(IOrderListFilter $filter);
+
+    /**
+     * @return boolean
+     */
+    public function useSubItems();
+
+    /**
+     * @param boolean $useSubItems
+     *
+     * @return $this
+     */
+    public function setUseSubItems($useSubItems);
 }
