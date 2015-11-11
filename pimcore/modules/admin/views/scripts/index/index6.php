@@ -377,6 +377,7 @@ $scripts = array(
     "pimcore/object/tags/classificationstore.js",
     "pimcore/object/tags/numeric.js",
     "pimcore/object/tags/objects.js",
+    "pimcore/object/tags/multihrefMetadata.js",
     "pimcore/object/tags/objectsMetadata.js",
     "pimcore/object/tags/nonownerobjects.js",
     "pimcore/object/tags/select.js",

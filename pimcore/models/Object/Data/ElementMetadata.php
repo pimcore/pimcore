@@ -17,12 +17,12 @@ namespace Pimcore\Model\Object\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class ObjectMetadata extends Model\AbstractModel {
+class ElementMetadata extends Model\AbstractModel {
 
     /**
-     * @var Object\Concrete
+     * @var Model\Element\ElementInterface
      */
-    protected $object;
+    protected $element;
 
     /**
      * @var string
@@ -42,12 +42,12 @@ class ObjectMetadata extends Model\AbstractModel {
     /**
      * @param $fieldname
      * @param array $columns
-     * @param null $object
+     * @param null $element
      * @throws \Exception
      */
-    public function __construct($fieldname, $columns = array(), $object = null) {
+    public function __construct($fieldname, $columns = array(), $element = null) {
         $this->fieldname = $fieldname;
-        $this->object = $object;
+        $this->element = $element;
         $this->columns = $columns;
     }
 
@@ -86,7 +86,9 @@ class ObjectMetadata extends Model\AbstractModel {
      * @param $position
      */
     public function save($object, $ownertype = "object", $ownername, $position) {
-        $this->getDao()->save($object, $ownertype, $ownername, $position);
+        $element = $this->getElement();
+        $type = Model\Element\Service::getElementType($element);
+        $this->getDao()->save($object, $ownertype, $ownername, $position, $type);
     }
 
     /**
@@ -98,8 +100,8 @@ class ObjectMetadata extends Model\AbstractModel {
      * @param $position
      * @return mixed
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position) {
-        return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position);
+    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type) {
+        return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position, $type);
     }
 
     /**
@@ -119,34 +121,19 @@ class ObjectMetadata extends Model\AbstractModel {
     }
 
     /**
-     * @param $object
+     * @param $element
      * @return $this
      */
-    public function setObject($object) {
-        $this->object = $object;
+    public function setElement($element) {
+        $this->element = $element;
         return $this;
     }
 
     /**
      * @return Object\Concrete
      */
-    public function getObject() {
-        return $this->object;
-    }
-
-    /**
-     * @param $object
-     * @return $this
-     */
-    public function setElement($element) {
-        return $this->setObject($element);
-    }
-
-    /**
-     * @return Object\Concrete
-     */
     public function getElement() {
-        return $this->getObject();
+        return $this->element;
     }
 
     /**
@@ -169,6 +156,6 @@ class ObjectMetadata extends Model\AbstractModel {
      * @return mixed
      */
     public function __toString() {
-        return $this->getObject()->__toString();
+        return $this->getElement()->__toString();
     }
 }
