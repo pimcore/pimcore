@@ -304,10 +304,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $objectData["idPath"] = Element\Service::getIdPath($object);
             $objectData["previewUrl"] = $object->getClass()->getPreviewUrl();
-            $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
-            $this->getDataForObject($object, $objectFromVersion);
-            $objectData["data"] = $this->objectData;
-            $objectData["metaData"] = $this->metaData;
 
             $objectData["general"] = array();
             $allowedKeys = array("o_published", "o_key", "o_id", "o_modificationDate", "o_creationDate", "o_classId", "o_className", "o_locked", "o_type", "o_parentId", "o_userOwner", "o_userModification");
@@ -319,6 +315,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $objectData["general"]["o_locked"] = $object->isLocked();
+
+            $this->getDataForObject($object, $objectFromVersion);
+            $objectData["data"] = $this->objectData;
+
+
+
+            $objectData["metaData"] = $this->metaData;
+
+            $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
 
             $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
