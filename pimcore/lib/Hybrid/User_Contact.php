@@ -1,9 +1,10 @@
 <?php
+
 /**
-* HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
-*/
+ * HybridAuth
+ * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+ * (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+ */
 
 /**
  * Hybrid_User_Contact
@@ -12,47 +13,48 @@
  *
  * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Contacts.html
  */
-class Hybrid_User_Contact
-{
-	/**
-         * The Unique contact user ID
-         * @var Numeric
-         */
-	public $identifier = NULL;
+class Hybrid_User_Contact {
 
 	/**
-         * User website, blog, web page
-         * @var String
-         */
-	public $webSiteURL = NULL;
+	 * The Unique contact user ID
+	 * @var mixed
+	 */
+	public $identifier = null;
 
 	/**
-         * URL link to profile page on the IDp web site
-         * @var String
-         */
-	public $profileURL = NULL;
+	 * User website, blog, web page
+	 * @var string
+	 */
+	public $webSiteURL = null;
 
 	/**
-         * URL link to user photo or avatar
-         * @var String
-         */
-	public $photoURL = NULL;
+	 * URL link to profile page on the IDp web site
+	 * @var string
+	 */
+	public $profileURL = null;
 
 	/**
-         * User displayName provided by the IDp or a concatenation of first and last name
-         * @var String
-         */
-        public $displayName = NULL;
-
-        /**
-         * A short about_me
-         * @var String
-         */
-	public $description = NULL;
+	 * URL link to user photo or avatar
+	 * @var string
+	 */
+	public $photoURL = null;
 
 	/**
-         * User email. Not all of IDp grant access to the user email
-         * @var String
-         */
-        public $email = NULL;
+	 * User displayName provided by the IDp or a concatenation of first and last name
+	 * @var string
+	 */
+	public $displayName = null;
+
+	/**
+	 * A short about_me
+	 * @var string
+	 */
+	public $description = null;
+
+	/**
+	 * User email. Not all of IDp grant access to the user email
+	 * @var string
+	 */
+	public $email = null;
+
 }
