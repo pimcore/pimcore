@@ -440,7 +440,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             (!$objectFromVersion
                 && $fielddefinition instanceof Object\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
-                && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata)
+                && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
+                && !$fielddefinition instanceof Object\ClassDefinition\Data\MultihrefMetadata
+            )
             || $fielddefinition instanceof Object\ClassDefinition\Data\Nonownerobjects
         ) {
 
