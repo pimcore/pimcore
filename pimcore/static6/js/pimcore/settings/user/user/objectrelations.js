@@ -23,8 +23,13 @@ pimcore.settings.user.user.objectrelations = Class.create({
 
         this.objectDependenciesStore = new Ext.data.JsonStore({
             autoDestroy: true,
+            proxy: {
+                type: 'memory',
+                reader: {
+                    rootProperty: 'dependencies'
+                }
+            },
             data: this.data.objectDependencies,
-            root: 'dependencies',
             fields: ['id', 'path', 'subtype']
         });
 
