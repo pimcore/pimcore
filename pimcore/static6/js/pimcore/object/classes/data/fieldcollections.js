@@ -98,7 +98,8 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 xtype: "numberfield",
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
-                value: this.datax.maxItems
+                value: this.datax.maxItems,
+                minValue: 0
             },
             {
                 xtype: "checkbox",
