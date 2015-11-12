@@ -28,6 +28,10 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
 
         this.initData(initData);
 
+        if (typeof this.datax.lazyLoading == "undefined") {
+            this.datax.lazyLoading = true;
+        }
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
                                         "visibleGridView","visibleSearch","style"];
