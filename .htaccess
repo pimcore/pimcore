@@ -30,10 +30,20 @@ RewriteRule ^.*modules/.*/static.* - [PT,L]
 RewriteRule ^pimcore/static.* - [PT,L]
 
 # forbid the direct access to pimcore-internal data (eg. config-files, ...)
-RewriteRule ^website/var/(?!tmp|assets|plugins|areas) / [F,L]
+RewriteRule ^website/var/(?!tmp|assets|areas) / [F,L]
 RewriteRule ^plugins/.*$ / [F,L]
 RewriteRule ^pimcore/.*$ / [F,L]
-RewriteRule ^composer.(json|lock)$ / [F,L]
+
+# restrict access to dotfiles
+RewriteRule (^\.|/\.) - [F,L]
+
+# restrict access to potentially sensitive directories and files
+RewriteRule ^phing/.*$ / [F,L]
+RewriteRule ^node_modules/.*$ / [F,L]
+RewriteRule ^vendor/.*$ / [F,L]
+RewriteRule ^tests/.*$ / [F,L]
+RewriteRule ^(bower|package|composer)\. / [F,L]
+RewriteRule ^gulpfile\.js / [F,L]
 
 # basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html
 RewriteCond %{REQUEST_FILENAME} -d [OR]
