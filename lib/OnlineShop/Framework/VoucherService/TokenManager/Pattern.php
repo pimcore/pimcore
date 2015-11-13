@@ -177,7 +177,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      * Generates Codes and an according Insert Query, if the MAX_PACKAGE_SIZE
      * may be reached several queries are generated.
      *
-     * @return bool
+     * @return array|bool
      */
     public function insertOrUpdateVoucherSeries()
     {
