@@ -47,7 +47,12 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineSh
      */
     protected function initPriceInfoInstance($quantityScale,$product,$products) {
         $priceInfo = $this->createPriceInfoInstance($quantityScale,$product,$products);
-        $priceInfo->setQuantity($quantityScale);
+
+        if($quantityScale !== OnlineShop_Framework_IPriceInfo::MIN_PRICE)
+        {
+            $priceInfo->setQuantity($quantityScale);
+        }
+
         $priceInfo->setProduct($product);
         $priceInfo->setProducts($products);
         $priceInfo->setPriceSystem($this);
