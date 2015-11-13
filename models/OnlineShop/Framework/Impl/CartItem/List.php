@@ -40,7 +40,7 @@ class OnlineShop_Framework_Impl_CartItem_List extends \Pimcore\Model\Listing\Abs
     }
 
     /**
-     * @return array
+     * @return OnlineShop_Framework_ICartItem[]
      */
     public function getCartItems() {
         if(empty($this->cartItems)) {
@@ -50,7 +50,7 @@ class OnlineShop_Framework_Impl_CartItem_List extends \Pimcore\Model\Listing\Abs
     }
 
     /**
-     * @param array $cartItems
+     * @param OnlineShop_Framework_ICartItem[] $cartItems
      * @return void
      */
     public function setCartItems($cartItems) {

@@ -74,21 +74,6 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
     }
 
     /**
-     * Should be added to the cart
-     *
-     * @param $item
-     * @return bool
-     */
-    protected static function isValidCartItem($item){
-        if ($item->getProduct() != null) {
-            return true;
-        }else {
-            Logger::warn("product " . $item->getProductId() . " not found");
-            return false;
-        }
-    }
-
-    /**
      * @param int $id
      * @return OnlineShop_Framework_Impl_Cart
      */
