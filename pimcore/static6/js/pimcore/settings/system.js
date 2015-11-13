@@ -887,7 +887,8 @@ pimcore.settings.system = Class.create({
                                     "keyup": this.checkVersionInputs.bind(this, "documents", "days"),
                                     "spin": this.checkVersionInputs.bind(this, "documents", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "documents", "days", "init")
-                                }
+                                },
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('store_version_history_in_steps'),
@@ -900,7 +901,8 @@ pimcore.settings.system = Class.create({
                                     "keyup": this.checkVersionInputs.bind(this, "documents", "steps"),
                                     "spin": this.checkVersionInputs.bind(this, "documents", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "documents", "steps", "init")
-                                }
+                                },
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('default_controller'),
@@ -986,7 +988,8 @@ pimcore.settings.system = Class.create({
                                     "keyup": this.checkVersionInputs.bind(this, "objects", "days"),
                                     "spin": this.checkVersionInputs.bind(this, "objects", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "objects", "days", "init")
-                                }
+                                },
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('store_version_history_in_steps'),
@@ -999,7 +1002,8 @@ pimcore.settings.system = Class.create({
                                     "keyup": this.checkVersionInputs.bind(this, "objects", "steps"),
                                     "spin": this.checkVersionInputs.bind(this, "objects", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "objects", "steps", "init")
-                                }
+                                },
+                                minValue: 0
                             }
                         ]
                     },
@@ -1030,7 +1034,8 @@ pimcore.settings.system = Class.create({
                                     "spin": this.checkVersionInputs.bind(this, "assets", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "days", "init")
                                 },
-                                width: 400
+                                width: 400,
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('store_version_history_in_steps'),
@@ -1044,7 +1049,8 @@ pimcore.settings.system = Class.create({
                                     "spin": this.checkVersionInputs.bind(this, "assets", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "steps", "init")
                                 },
-                                width: 400
+                                width: 400,
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('absolute_path_to_ffmpeg_binary'),
