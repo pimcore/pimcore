@@ -2674,7 +2674,6 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             layout: "fit",
             closeAction:'close',
             plain: true,
-            maximized: false,
             items : [panel],
             scrollable : false,
             modal: true,
