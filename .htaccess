@@ -38,12 +38,8 @@ RewriteRule ^pimcore/.*$ / [F,L]
 RewriteRule (^\.|/\.) - [F,L]
 
 # restrict access to potentially sensitive directories and files
-RewriteRule ^phing/.*$ / [F,L]
-RewriteRule ^node_modules/.*$ / [F,L]
-RewriteRule ^vendor/.*$ / [F,L]
-RewriteRule ^tests/.*$ / [F,L]
-RewriteRule ^(bower|package|composer)\. / [F,L]
-RewriteRule ^gulpfile\.js / [F,L]
+RewriteRule ^(vendor|tests|node_modules|phing)/.*$ / [F,L]
+RewriteRule ^(bower|package|composer|gulpfile)\. / [F,L]
 
 # basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html
 RewriteCond %{REQUEST_FILENAME} -d [OR]
