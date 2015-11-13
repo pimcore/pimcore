@@ -884,8 +884,7 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_documents_versions_days",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "documents", "days"),
-                                    "spin": this.checkVersionInputs.bind(this, "documents", "days"),
+                                    "change": this.checkVersionInputs.bind(this, "documents", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "documents", "days", "init")
                                 },
                                 minValue: 0
@@ -898,8 +897,7 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_documents_versions_steps",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "documents", "steps"),
-                                    "spin": this.checkVersionInputs.bind(this, "documents", "steps"),
+                                    "change": this.checkVersionInputs.bind(this, "documents", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "documents", "steps", "init")
                                 },
                                 minValue: 0
@@ -985,8 +983,7 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_objects_versions_days",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "objects", "days"),
-                                    "spin": this.checkVersionInputs.bind(this, "objects", "days"),
+                                    "change": this.checkVersionInputs.bind(this, "objects", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "objects", "days", "init")
                                 },
                                 minValue: 0
@@ -999,8 +996,7 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_objects_versions_steps",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "objects", "steps"),
-                                    "spin": this.checkVersionInputs.bind(this, "objects", "steps"),
+                                    "change": this.checkVersionInputs.bind(this, "objects", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "objects", "steps", "init")
                                 },
                                 minValue: 0
@@ -1030,8 +1026,7 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_assets_versions_days",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "assets", "days"),
-                                    "spin": this.checkVersionInputs.bind(this, "assets", "days"),
+                                    "change": this.checkVersionInputs.bind(this, "assets", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "days", "init")
                                 },
                                 width: 400,
@@ -1045,8 +1040,7 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_assets_versions_steps",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "assets", "steps"),
-                                    "spin": this.checkVersionInputs.bind(this, "assets", "steps"),
+                                    "change": this.checkVersionInputs.bind(this, "assets", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "steps", "init")
                                 },
                                 width: 400,
