@@ -22,10 +22,23 @@ pimcore.object.tags.indexFieldSelectionCombo = Class.create(pimcore.object.tags.
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
-            baseParams: {class_id: fieldConfig.classId, specific_price_field: this.fieldConfig.specificPriceField, add_empty: !this.fieldConfig.mandatory, show_all_fields: this.fieldConfig.showAllFields },
-            url: '/plugin/OnlineShop/index/get-fields',
-            root: 'data',
-            fields: ['key', 'name']
+            proxy: {
+                type: 'ajax',
+                url: '/plugin/OnlineShop/index/get-fields',
+                reader: {
+                    rootProperty: 'data',
+                    idProperty: 'key'
+                },
+                extraParams: {class_id: fieldConfig.classId, specific_price_field: this.fieldConfig.specificPriceField, show_all_fields: this.fieldConfig.showAllFields }
+            },
+            fields: ['key','name'],
+            listeners: {
+                load: function (store) {
+                    if(this.fieldsCombobox) {
+                        this.fieldsCombobox.setValue(this.data);
+                    }
+                }.bind(this)
+            }
         });
 
 
@@ -33,8 +46,14 @@ pimcore.object.tags.indexFieldSelectionCombo = Class.create(pimcore.object.tags.
             this.tenantStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
-                url: '/plugin/OnlineShop/index/get-all-tenants',
-                root: 'data',
+                proxy: {
+                    type: 'ajax',
+                    url: '/plugin/OnlineShop/index/get-all-tenants',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'key'
+                    }
+                },
                 fields: ['key', 'name']
             });
         }
@@ -68,31 +87,36 @@ pimcore.object.tags.indexFieldSelectionCombo = Class.create(pimcore.object.tags.
         this.fieldsCombobox = new Ext.form.ComboBox(options);
 
         if(this.fieldConfig.considerTenants) {
+            this.fieldsCombobox.setFieldLabel("");
             var tenantCombobox = new Ext.form.ComboBox({
                 triggerAction: "all",
+                fieldLabel: this.fieldConfig.title,
                 editable: false,
                 store: this.tenantStore,
                 valueField: 'key',
                 displayField: 'name',
                 itemCls: "object_field",
-                width: 150,
+                width: 300,
                 listeners: {
                     select: function(combo, record) {
                         this.fieldsCombobox.setValue("");
 
-                        this.store.setBaseParam("tenant", record.data.key);
+                        var proxy = this.store.getProxy();
+                        proxy.extraParams.tenant = record.data.key;
                         this.store.reload({params: {tenant: record.data.key}});
                     }.bind(this)
                 }
             });
 
-            this.component = new Ext.form.CompositeField({
-                xtype: 'compositefield',
-                fieldLabel: this.fieldConfig.title,
-                items: [
-                    tenantCombobox,
-                    this.fieldsCombobox
-                ]
+            this.component = Ext.create('Ext.form.Panel', {
+                layout: 'hbox',
+                margin: '0 0 10 0',
+                combineErrors: false,
+                items: [tenantCombobox, this.fieldsCombobox],
+                cls: "object_field",
+                isDirty: function() {
+                    return tenantCombobox.isDirty() || this.fieldsCombobox.isDirty()
+                }.bind(this)
             });
 
         } else {

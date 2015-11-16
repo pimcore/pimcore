@@ -52,4 +52,32 @@ class IndexFieldSelectionField extends Textarea {
     }
 
 
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function isEmpty($data) {
+        if(is_string($data)) {
+            return (strlen($data) < 1);
+        } else if(is_array($data)) {
+            return empty($data);
+        }
+        return true;
+    }
+
+    /**
+     * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @return string
+     */
+    public function getDataFromEditmode($data, $object = null) {
+        if(is_array($data)) {
+            $data = implode(",", $data);
+        }
+
+        return $data;
+    }
+
+
 }

@@ -24,7 +24,7 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true
-    },        
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "indexFieldSelection";
@@ -49,9 +49,37 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
     getLayout: function ($super) {
 
         $super();
-
-        this.uniqeFieldId = uniqid();
         this.specificPanel.removeAll();
+
+        var filterGroups = Ext.create('Ext.ux.form.MultiSelect', {
+            triggerAction: "all",
+            fieldLabel: t("filtergroups"),
+            editable: false,
+            name: "filterGroups",
+            store: new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/plugin/OnlineShop/index/get-filter-groups',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'key'
+                    }
+                },
+                listeners: {
+                    load: function(store) {
+                        filterGroups.setValue(this.datax.filterGroups);
+                    }.bind(this)
+                },
+                fields: ['data']
+            }),
+            valueField: 'data',
+            displayField: 'data',
+            itemCls: "object_field",
+            width: 500
+        });
+
         this.specificPanel.add([
             {
                 xtype: "spinnerfield",
@@ -63,30 +91,9 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                 fieldLabel: t("considerTenants"),
                 name: "considerTenants",
                 checked: this.datax.considerTenants
-            },{
-                xtype: "multiselect",
-                id: "class_filter_groups_" + this.uniqeFieldId,
-                triggerAction: "all",
-                fieldLabel: t("filtergroups"),
-                editable: false,
-                name: "filterGroups",
-                store: new Ext.data.JsonStore({
-                    autoDestroy: true,
-                    autoLoad: true,
-                    url: '/plugin/OnlineShop/index/get-filter-groups',
-                    root: 'data',
-                    listeners: {
-                        load: function(store) {
-                            Ext.getCmp('class_filter_groups_' + this.uniqeFieldId).setValue(this.datax.filterGroups);
-                        }.bind(this)
-                    },
-                    fields: ['data']
-                }),
-                valueField: 'data',
-                displayField: 'data',
-                itemCls: "object_field",
-                width: 200
-            },{
+            },
+            filterGroups,
+            {
                 xtype: "combo",
                 triggerAction: "all",
                 fieldLabel: t("preSelectMode"),
@@ -109,10 +116,10 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                 }),
                 valueField: 'key',
                 displayField: 'value',
-                width: 200,
+                width: 500,
                 listeners: {
                     select: function(combo, rec) {
-                        if(rec.id == "local_single" || rec.id == "local_multi") {
+                        if(rec.data.key == "local_single" || rec.data.key == "local_multi") {
                             this.valueGrid.setVisible(true);
                         } else {
                             this.valueGrid.setVisible(false);
@@ -125,12 +132,14 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
             this.getPredefinedListGrid()
 
         ]);
-        
+
         return this.layout;
     },
 
     getPredefinedListGrid: function() {
+        console.log(this.datax.predefinedPreSelectOptions);
         if(typeof this.datax.predefinedPreSelectOptions != "object") {
+            console.log("dd");
             this.datax.predefinedPreSelectOptions = [];
         }
 
@@ -139,7 +148,11 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
             data: this.datax.predefinedPreSelectOptions
         });
 
-        this.valueGrid = new Ext.grid.EditorGridPanel({
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
+
+        this.valueGrid = Ext.create('Ext.grid.Panel', {
             tbar: [{
                 xtype: "tbtext",
                 text: t("predefined_pre_select_options")
@@ -147,17 +160,19 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                 xtype: "button",
                 iconCls: "pimcore_icon_add",
                 handler: function () {
-                    var u = new this.valueStore.recordType({
+                    this.valueStore.insert(0, {
                         key: "",
                         value: ""
                     });
-                    this.valueStore.insert(0, u);
                 }.bind(this)
             }],
             style: "margin-top: 10px",
             store: this.valueStore,
             hidden: (this.datax.multiPreSelect != "local_single" && this.datax.multiPreSelect != "local_multi"),
-            selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
+            selModel: Ext.create('Ext.selection.RowModel', {}),
+            plugins: [
+                this.cellEditing
+            ],
             columnLines: true,
             columns: [
                 {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}),
@@ -166,7 +181,7 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                     width: 200},
                 {
                     xtype:'actioncolumn',
-                    width:30,
+                    width:40,
                     items:[
                         {
                             tooltip:t('up'),
@@ -183,7 +198,7 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                 },
                 {
                     xtype:'actioncolumn',
-                    width:30,
+                    width:40,
                     items:[
                         {
                             tooltip:t('down'),
@@ -200,7 +215,7 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                 },
                 {
                     xtype: 'actioncolumn',
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('remove'),

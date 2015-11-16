@@ -26,9 +26,15 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
-            baseParams: {class_id: fieldConfig.classId, add_empty: !this.fieldConfig.mandatory, filtergroup: this.fieldConfig.filterGroups },
-            url: '/plugin/OnlineShop/index/get-fields',
-            root: 'data',
+            proxy: {
+                type: 'ajax',
+                url: '/plugin/OnlineShop/index/get-fields',
+                reader: {
+                    rootProperty: 'data',
+                    idProperty: 'key'
+                },
+                extraParams: {class_id: fieldConfig.classId, add_empty: !this.fieldConfig.mandatory, filtergroup: this.fieldConfig.filterGroups }
+            },
             fields: ['key', 'name']
         });
 
@@ -36,12 +42,18 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             this.preSelectStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
-                baseParams:  {
-                    tenant: this.data ? this.data.tenant : "",
-                    field: this.data ? this.data.field : ""
+                proxy: {
+                    type: 'ajax',
+                    url: '/plugin/OnlineShop/index/get-values-for-filter-field',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'key'
+                    },
+                    extraParams: {
+                        tenant: this.data ? this.data.tenant : "",
+                        field: this.data ? this.data.field : ""
+                    }
                 },
-                url: '/plugin/OnlineShop/index/get-values-for-filter-field',
-                root: 'data',
                 listeners: {
                     load: function(store) {
                         if(this.data) {
@@ -60,9 +72,12 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             });
         } else if(this.fieldConfig.multiPreSelect == 'local_single' || this.fieldConfig.multiPreSelect == 'local_multi') {
             this.preSelectStore = new Ext.data.JsonStore({
+                autoDestroy: true,
                 data: this.fieldConfig.predefinedPreSelectOptions,
+                proxy: {
+                    type: 'memory'
+                },
                 fields: ['key', 'value']
-
             });
         }
 
@@ -70,8 +85,14 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             this.tenantStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
-                url: '/plugin/OnlineShop/index/get-all-tenants',
-                root: 'data',
+                proxy: {
+                    type: 'ajax',
+                    url: '/plugin/OnlineShop/index/get-all-tenants',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'key'
+                    }
+                },
                 listeners: {
                     load: function(store) {
                         if(this.data) {
@@ -109,10 +130,11 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                     }
 
                     if(this.fieldConfig.multiPreSelect == 'remote_single' || this.fieldConfig.multiPreSelect == 'remote_multi') {
-                        this.preSelectStore.setBaseParam("field", record.data.key);
+                        var proxy = this.preSelectStore.getProxy();
+                        proxy.extraParams.field = record.data.key;
                         var params = {field: record.data.key};
                         if(this.tenantCombobox) {
-                            this.preSelectStore.setBaseParam("tenant", this.tenantCombobox.getValue());
+                            proxy.extraParams.tenant = this.tenantCombobox.getValue();
                             params.tenant = this.tenantCombobox.getValue();
                         }
                         this.preSelectStore.reload({params: params});
@@ -137,28 +159,37 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
         });
 
         if(this.fieldConfig.considerTenants) {
+            this.fieldsCombobox.setFieldLabel("");
             this.tenantCombobox = new Ext.form.ComboBox({
                 triggerAction: "all",
                 data: (this.data ? this.data.tenant : ""),
                 editable: false,
                 store: this.tenantStore,
+                fieldLabel: this.fieldConfig.title,
                 valueField: 'key',
                 displayField: 'name',
                 itemCls: "object_field",
-                width: 150,
+                width: 300,
                 listeners: {
                     select: function(combo, record) {
                         this.fieldsCombobox.setValue("");
 
-                        this.store.setBaseParam("tenant", record.data.key);
+                        var proxy = this.store.getProxy();
+                        proxy.extraParams.tenant = record.data.key;
                         this.store.reload({params: {tenant: record.data.key}});
+
                     }.bind(this)
                 }
             });
 
-            panel.add(new Ext.form.CompositeField({
-                xtype: 'compositefield',
-                fieldLabel: this.fieldConfig.title,
+            panel.add(Ext.create('Ext.form.Panel', {
+                layout: 'hbox',
+                margin: '0 0 10 0',
+                combineErrors: false,
+                cls: "object_field",
+                isDirty: function() {
+                    return this.tenantCombobox.isDirty() || this.fieldsCombobox.isDirty()
+                }.bind(this),
                 items: [
                     this.tenantCombobox,
                     this.fieldsCombobox
@@ -180,7 +211,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                 displayField: 'value',
                 itemCls: "object_field",
                 height: 300,
-                width: (this.fieldConfig.width ? this.fieldConfig.width : 300) + (this.fieldConfig.considerTenants ? 155 : 0)
+                width: (this.fieldConfig.width ? this.fieldConfig.width : 300) + (this.fieldConfig.considerTenants ? 300 : 0)
             });
 
             panel.add(this.preSelectCombobox);
@@ -194,7 +225,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                 valueField: 'key',
                 displayField: 'value',
                 itemCls: "object_field",
-                width: (this.fieldConfig.width ? this.fieldConfig.width : 300) + (this.fieldConfig.considerTenants ? 155 : 0)
+                width: (this.fieldConfig.width ? this.fieldConfig.width : 300) + (this.fieldConfig.considerTenants ? 300 : 0)
             });
             panel.add(this.preSelectCombobox);
         }
