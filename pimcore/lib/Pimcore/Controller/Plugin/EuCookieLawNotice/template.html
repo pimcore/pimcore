@@ -3,11 +3,15 @@
     #pc-cookie-notice {
         background: #3c3c3c;
         color: #fff;
-        position: relative;
+        position: fixed;
+        bottom:0;
+        left:0;
+        width: 100%;
         box-sizing: border-box;
         padding: 5px 0 5px;
         font-family: 'Arial Unicode MS', Arial, Verdana, sans-serif;
         font-size: 12px;
+        z-index: 10000;
     }
 
     #pc-cookie-notice a {
@@ -62,7 +66,7 @@
 </style>
 
 <div id="pc-cookie-notice">
-    <div id="pc-icon">&#9733;</div>
+    <div id="pc-icon"></div>
     <div id="pc-message">
         %text% %link%
     </div>
