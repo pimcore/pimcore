@@ -113,7 +113,9 @@ class Site extends AbstractModel {
         }
         
         if($site == "failed" || !$site) {
-            throw new \Exception("there is no site for the requested domain, content was [" . $site . "]");
+            $msg = "there is no site for the requested domain [" . $domain . "], content was [" . $site . "]";
+            \Logger::error($msg);
+            throw new \Exception($msg);
         }
         
         return $site;
