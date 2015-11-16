@@ -105,7 +105,7 @@ class Site extends AbstractModel {
             try {
                 $site->getDao()->getByDomain($domain);
             } catch (\Exception $e) {
-                \Logger::error($e);
+                \Logger::debug($e);
                 $site = "failed";
             }
             
@@ -114,7 +114,7 @@ class Site extends AbstractModel {
         
         if($site == "failed" || !$site) {
             $msg = "there is no site for the requested domain [" . $domain . "], content was [" . $site . "]";
-            \Logger::error($msg);
+            \Logger::debug($msg);
             throw new \Exception($msg);
         }
         
