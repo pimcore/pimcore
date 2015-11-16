@@ -319,7 +319,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             ]
         });
 
-        this.component.on("rowcontextmenu", this.onRowContextmenu);
+        this.component.on("rowcontextmenu", this.onRowContextmenu.bind(this));
         this.component.reference = this;
 
         if(!readOnly) {
@@ -557,7 +557,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         menu.add(new Ext.menu.Item({
             text: t('remove'),
             iconCls: "pimcore_icon_delete",
-            handler: this.reference.removeElement.bind(this, rowIndex)
+            handler: this.removeElement.bind(this, rowIndex)
         }));
 
         menu.add(new Ext.menu.Item({
@@ -581,7 +581,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.openSearchEditor();
-            }.bind(this.reference)
+            }.bind(this)
         }));
 
         e.stopEvent();
@@ -685,7 +685,57 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 console.log(e);
             }
         }.bind(this));
-    }
+    },
 
+    removeElement: function (index, item) {
+        this.store.removeAt(index);
+        item.parentMenu.destroy();
+    },
+
+    openSearchEditor: function () {
+
+        var allowedTypes = [];
+        var allowedSpecific = {};
+        var allowedSubtypes = {};
+        var i;
+
+        if (this.fieldConfig.objectsAllowed) {
+            allowedTypes.push("object");
+            if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
+                allowedSpecific.classes = [];
+                allowedSubtypes.object = ["object"];
+                for (i = 0; i < this.fieldConfig.classes.length; i++) {
+                    allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
+                }
+            } else {
+                allowedSubtypes.object = ["object","folder","variant"];
+            }
+        }
+        if (this.fieldConfig.assetsAllowed) {
+            allowedTypes.push("asset");
+            if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
+                allowedSubtypes.asset = [];
+                for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
+                    allowedSubtypes.asset.push(this.fieldConfig.assetTypes[i].assetTypes);
+                }
+            }
+        }
+        if (this.fieldConfig.documentsAllowed) {
+            allowedTypes.push("document");
+            if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
+                allowedSubtypes.document = [];
+                for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
+                    allowedSubtypes.document.push(this.fieldConfig.documentTypes[i].documentTypes);
+                }
+            }
+        }
+
+        pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
+            type: allowedTypes,
+            subtype: allowedSubtypes,
+            specific: allowedSpecific
+        });
+
+    }
 
 });
