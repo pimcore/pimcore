@@ -409,12 +409,12 @@ pimcore.settings.redirects = Class.create({
         } else if (values.mode == "exact") {
             source = "@^" + pattern + "$@";
         } else if (values.mode == "contain") {
-            source = "@" + pattern + "@";
+            source = "@" + pattern + "@i";
         } else if (values.mode == "begin_end_slash") {
             if(pattern.charAt(0) != "/") {
                 pattern = "/" + pattern;
             }
-            source = "@^" + pattern + "[\\/]?$@";
+            source = "@^" + pattern + "[\\/]?$@i";
         } else if (values.mode == "domain") {
             if(values.pattern.indexOf("http") >= 0) {
                 pattern = parse_url(values.pattern, "host");
