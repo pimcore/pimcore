@@ -1,18 +1,25 @@
 <?php 
 
-/** Generated at 2014-10-21T11:07:05+02:00 */
+/** Generated at 2015-11-17T06:56:34+01:00 */
 
 /**
 * Inheritance: no
 * Variants   : no
-* Changed by : system (0)
-* IP:          192.168.11.104
+* Changed by : admin (37)
+* IP:          192.168.11.33
 */
 
 
 namespace Pimcore\Model\Object;
 
 
+
+/**
+* @method static \Pimcore\Model\Object\Inquiry getByDate ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Inquiry getByPerson ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Inquiry getByMessage ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Inquiry getByTerms ($value, $limit = 0) 
+*/
 
 class Inquiry extends Concrete {
 
@@ -36,7 +43,7 @@ public static function create($values = array()) {
 
 /**
 * Get date - Date
-* @return Zend_Date
+* @return \Pimcore\Date
 */
 public function getDate () {
 	$preValue = $this->preGetValue("date"); 
@@ -49,7 +56,7 @@ public function getDate () {
 
 /**
 * Set date - Date
-* @param Zend_Date $date
+* @param \Pimcore\Date $date
 * @return \Pimcore\Model\Object\Inquiry
 */
 public function setDate ($date) {
@@ -59,7 +66,7 @@ public function setDate ($date) {
 
 /**
 * Get person - Person
-* @return Document_Page | Document_Snippet | Document | Asset | Object_Abstract
+* @return \Pimcore\Model\Document\Page | \Pimcore\Model\Document\Snippet | \Pimcore\Model\Document | \Pimcore\Model\Asset | \Pimcore\Model\Object\AbstractObject
 */
 public function getPerson () {
 	$preValue = $this->preGetValue("person"); 
@@ -72,7 +79,7 @@ public function getPerson () {
 
 /**
 * Set person - Person
-* @param Document_Page | Document_Snippet | Document | Asset | Object_Abstract $person
+* @param \Pimcore\Model\Document\Page | \Pimcore\Model\Document\Snippet | \Pimcore\Model\Document | \Pimcore\Model\Asset | \Pimcore\Model\Object\AbstractObject $person
 * @return \Pimcore\Model\Object\Inquiry
 */
 public function setPerson ($person) {
