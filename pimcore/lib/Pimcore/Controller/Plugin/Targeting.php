@@ -64,7 +64,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract {
             return $this->disable();
         }
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $enabled = $db->fetchOne("SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1");
         if(!$enabled) {
             return $this->disable();
