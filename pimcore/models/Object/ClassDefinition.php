@@ -385,6 +385,12 @@ class ClassDefinition extends Model\AbstractModel {
         }
         catch (\Exception $e) {
         }
+
+        if ($isUpdate) {
+            \Pimcore::getEventManager()->trigger("object.class.postUpdate", $this);
+        } else {
+            \Pimcore::getEventManager()->trigger("object.class.postAdd", $this);
+        }
     }
 
     /**

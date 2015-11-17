@@ -53,7 +53,9 @@ class AbstractAPI {
         "preUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.preUpdate",
         "postUpdateKeyValueGroupConfig" => "object.keyValue.groupConfig.postUpdate",
         "preAddObjectClass" => "object.class.preAdd",
-        "preUpdateObjectClass" => "object.class.preUpdate"
+        "preUpdateObjectClass" => "object.class.preUpdate",
+        "postAddObjectClass" => "object.class.postAdd",
+        "postUpdateObjectClass" => "object.class.postUpdate"
     ];
 
     /**
