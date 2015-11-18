@@ -449,6 +449,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             if ($this->_getParam("sort")) {
                 $orderKey = $this->_getParam("sort");
                 $orderKey = $mapping[$orderKey];
+            } else {
+                $orderKey = "sorter";
             }
 
             if ($this->_getParam("overrideSort") == "true") {
@@ -559,6 +561,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             if ($this->_getParam("sort")) {
                 $orderKey = $this->_getParam("sort");
                 $orderKey = $mapping[$orderKey];
+            } else {
+                    $orderKey = "sorter";
             }
 
             if ($this->_getParam("overrideSort") == "true") {
