@@ -339,8 +339,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             ],
             listeners: {
 
-                rowclick: function(grid, record, tr, rowIndex, e, eOpts ) {
-                    var record = this.groupsStore.getAt(rowIndex);
+                selectionchange: function(rowModel, selected, eOpts ) {
+                    var record = selected[0];
                     var groupId = record.data.id;
                     var groupName = record.data.name;
 

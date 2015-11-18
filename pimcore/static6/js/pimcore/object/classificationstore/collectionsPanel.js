@@ -325,8 +325,8 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             ],
             listeners: {
 
-                rowclick: function(grid, record, tr, rowIndex, e, eOpts ) {
-                    var record = this.collectionsStore.getAt(rowIndex);
+                selectionchange: function(rowModel, selected, eOpts ) {
+                    var record = selected[0];
                     var collectionId = record.data.id;
                     var collectionName = record.data.name;
 
