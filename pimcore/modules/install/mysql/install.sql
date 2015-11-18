@@ -820,7 +820,6 @@ CREATE TABLE `classificationstore_groups` (
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
-	`sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -834,7 +833,6 @@ CREATE TABLE `classificationstore_keys` (
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`definition` LONGTEXT NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
-	`sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -842,6 +840,7 @@ DROP TABLE IF EXISTS `classificationstore_relations`;
 CREATE TABLE `classificationstore_relations` (
 	`groupId` BIGINT(20) NOT NULL,
 	`keyId` BIGINT(20) NOT NULL,
+  `sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
@@ -863,6 +862,7 @@ DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
 CREATE TABLE `classificationstore_collectionrelations` (
 	`colId` BIGINT(20) NOT NULL,
 	`groupId` BIGINT(20) NOT NULL,
+    `sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`colId`, `groupId`),
 	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8;
