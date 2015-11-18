@@ -173,8 +173,8 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         foreach([\OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT,\OnlineShop_Framework_IProductList::PRODUCT_TYPE_VARIANT] as $mappingType){
             $params = $this->getMappingParams($mappingType);
 
-            $result = $esClient->indices()->putMapping($params);
             try {
+                $result = $esClient->indices()->putMapping($params);
                 Logger::info('Updated Mapping for Index: ' . $this->getIndexNameVersion());
             } catch(\Exception $e) {
                 if($exceptionOnFailure){
@@ -294,7 +294,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         foreach($subObjectIds as $subObjectId => $object) {
-            $this->doDeleteFromIndex($subObjectId);
+            $this->doDeleteFromIndex($subObjectId, $object);
         }
 
         //cleans up all old zombie data
@@ -302,20 +302,41 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     }
 
-    protected function doDeleteFromIndex($objectId) {
+    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null) {
         $esClient = $this->getElasticSearchClient();
-        try {
-            $o = \Pimcore\Model\Object::getById($objectId);
-            $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => $o->getOSIndexType(), 'id' => $objectId]);
-            $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
 
-        } catch(Exception $e) {
-            $check = \Zend_Json::decode($e->getMessage());
-            if(!$check['found']){ //not in es index -> we can delete it from store table
-                $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote($objectId));
-            }else{
-                \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+        if($object) {
+            try {
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => $object->getOSIndexType(), 'id' => $objectId]);
+
+                $this->deleteFromStoreTable($objectId);
+                $this->deleteFromMockupCache($objectId);
+
+            } catch(Exception $e) {
+                $check = \Zend_Json::decode($e->getMessage());
+                if(!$check['found']){ //not in es index -> we can delete it from store table
+                    $this->deleteFromStoreTable($objectId);
+                    $this->deleteFromMockupCache($objectId);
+                } else {
+                    \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+                }
             }
+        } else {
+            //object is empty so the object does not exist in pimcore any more. therefore it has to be deleted from the index, store table and mockup table
+            try {
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT, 'id' => $objectId]);
+            } catch(Exception $e) {
+                \Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+            }
+
+            try {
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => OnlineShop_Framework_IProductList::PRODUCT_TYPE_VARIANT, 'id' => $objectId]);
+            } catch(Exception $e) {
+                \Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+            }
+
+            $this->deleteFromStoreTable($objectId);
+            $this->deleteFromMockupCache($objectId);
         }
     }
 

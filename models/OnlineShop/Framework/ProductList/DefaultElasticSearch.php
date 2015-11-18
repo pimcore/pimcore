@@ -874,7 +874,6 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
             $params = $this->buildQuery($params, $boolFilters, $queryFilters);
 
             // send request
-          #  p_r(\Zend_Json::encode($params));
             $result = $this->sendRequest( $params );
 
 
@@ -946,7 +945,6 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
             $result = json_decode($result->getBody(), true);
         }
 
-        #echo json_encode($params['body'], JSON_PRETTY_PRINT); exit;
         return $result;
     }
 
@@ -983,12 +981,10 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * The return value is cast to an integer.
      */
     public function count() {
-        /*
+
         if($this->totalCount === null) {
             $this->load();
         }
-        return $this->totalCount;*/
-        $this->getProducts();
         return $this->totalCount;
     }
 
