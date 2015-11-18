@@ -875,5 +875,6 @@ CREATE TABLE `quantityvalue_units` (
               `longname` varchar(250) COLLATE utf8_bin DEFAULT NULL,
               `baseunit` varchar(10) COLLATE utf8_bin DEFAULT NULL,
               `factor` double DEFAULT NULL,
+              `reference` varchar(50) COLLATE utf8_bin DEFAULT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

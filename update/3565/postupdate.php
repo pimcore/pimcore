@@ -19,4 +19,3 @@ $db->query("ALTER TABLE `classificationstore_keys`
 $db->query("ALTER TABLE `classificationstore_relations`
 	ADD COLUMN `sorter` INT NOT NULL AFTER `keyId`;
 ");
-
