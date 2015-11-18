@@ -866,3 +866,14 @@ CREATE TABLE `classificationstore_collectionrelations` (
 	PRIMARY KEY (`colId`, `groupId`),
 	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `quantityvalue_units`;
+CREATE TABLE `quantityvalue_units` (
+              `id` bigint(20) NOT NULL AUTO_INCREMENT,
+              `group` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+              `abbreviation` varchar(10) COLLATE utf8_bin NOT NULL,
+              `longname` varchar(250) COLLATE utf8_bin DEFAULT NULL,
+              `baseunit` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+              `factor` double DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
