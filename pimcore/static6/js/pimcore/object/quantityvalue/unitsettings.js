@@ -71,7 +71,8 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {name: 'longname', allowBlank: true},
             {name: 'group', allowBlank: true},
             {name: 'baseunit', allowBlank: true},
-            {name: 'factor', allowBlank: true}
+            {name: 'factor', allowBlank: true},
+            {name: 'reference', allowBlank: true}
         ];
 
 
@@ -80,7 +81,8 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {type: "string", dataIndex: "longname"},
             {type: "string", dataIndex: "group"},
             {type: "string", dataIndex: "baseunit"},
-            {type: "numeric", dataIndex: "factor"}
+            {type: "numeric", dataIndex: "factor"},
+            {type: "string", dataIndex: "reference"}
         ];
 
         var typesColumns = [
@@ -89,7 +91,8 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {flex: 2, dataIndex: 'longname', header: t("longname"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 1, dataIndex: 'group', header: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
             {flex: 1, dataIndex: 'baseunit', header: t("baseunit"), editor: new Ext.form.TextField({}), hidden: true},
-            {flex: 1, dataIndex: 'factor', header: t("factor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true}
+            {flex: 1, dataIndex: 'factor', header: t("factor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
+            {flex: 1, dataIndex: 'reference', header: t("reference"), editor: new Ext.form.TextField({}), hidden: true}
         ];
 
         typesColumns.push({

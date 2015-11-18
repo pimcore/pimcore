@@ -47,6 +47,11 @@ class Unit extends Model\AbstractModel {
      */
     public $baseunit;
 
+    /**
+     * @var string
+     */
+    public $reference;
+
 
     /**
      * @var double
@@ -182,6 +187,23 @@ class Unit extends Model\AbstractModel {
     {
         return $this->longname;
     }
+
+    /**
+     * @return string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     */
+    public function setReference($reference)
+    {
+        $this->reference = $reference;
+    }
+
 
 
 }
