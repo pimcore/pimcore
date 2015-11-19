@@ -133,7 +133,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach($subObjectIds as $subObjectId => $object) {
-            $this->doDeleteFromIndex($subObjectId);
+            $this->doDeleteFromIndex($subObjectId, $object);
         }
 
         //cleans up all old zombie data
@@ -141,7 +141,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
 
     }
 
-    protected function doDeleteFromIndex($subObjectId) {
+    protected function doDeleteFromIndex($subObjectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null) {
         $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
         $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
         if($this->tenantConfig->getTenantRelationTablename()) {

@@ -71,7 +71,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
      */
     public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object)
     {
-        $this->doDeleteFromIndex( $object->getId() );
+        $this->doDeleteFromIndex( $object->getId(), $object );
     }
 
 
@@ -240,7 +240,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
     /**
      * @param int $objectId
      */
-    protected function doDeleteFromIndex($objectId)
+    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null)
     {
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getStoreTableName(), $objectId));

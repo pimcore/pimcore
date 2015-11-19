@@ -95,10 +95,17 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Worker_Abstract implemen
     protected function doCleanupOldZombieData(OnlineShop_Framework_ProductInterfaces_IIndexable $object, array $subObjectIds) {
         $cleanupIds = $this->tenantConfig->getSubIdsToCleanup($object, $subObjectIds);
         foreach($cleanupIds as $idToCleanup) {
-            $this->doDeleteFromIndex($idToCleanup);
+            $this->doDeleteFromIndex($idToCleanup, $object);
         }
     }
 
-    abstract protected function doDeleteFromIndex($subObjectId);
+    /**
+     * actually deletes all sub entries from index. original object is delivered too, but keep in mind, that this might be empty.
+     *
+     * @param $subObjectId
+     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object - might be empty (when object doesn't exist any more in pimcore
+     * @return mixed
+     */
+    abstract protected function doDeleteFromIndex($subObjectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null);
 
 }
