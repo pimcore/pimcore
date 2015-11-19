@@ -66,7 +66,7 @@ class Unit extends Model\AbstractModel {
 
     /**
      * @param string $abbreviation
-     * @return QuantityValue_Unit
+     * @return Unit
      */
     public static function getByAbbreviation($abbreviation) {
         $unit = new self();
@@ -76,7 +76,7 @@ class Unit extends Model\AbstractModel {
 
     /**
      * @param string $reference
-     * @return QuantityValue_Unit
+     * @return Unit
      */
     public static function getByReference($reference) {
         $unit = new self();
@@ -86,7 +86,7 @@ class Unit extends Model\AbstractModel {
 
     /**
      * @param string $id
-     * @return QuantityValue_Unit
+     * @return Unit
      */
     public static function getById($id) {
 
