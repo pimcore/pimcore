@@ -245,10 +245,11 @@ pimcore.object.quantityValue.unitsettings = Class.create({
     },
 
     onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelected();
-        if (!rec) {
+        var selections = this.grid.getSelectionModel().getSelected();
+        if (!selections || selections.length < 1) {
             return false;
         }
+        var rec = selections.getAt(0);
         this.grid.store.remove(rec);
     }
 
