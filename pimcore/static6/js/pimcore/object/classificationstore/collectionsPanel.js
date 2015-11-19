@@ -327,18 +327,20 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             listeners: {
 
                 selectionchange: function(rowModel, selected, eOpts ) {
-                    var record = selected[0];
-                    var collectionId = record.data.id;
-                    var collectionName = record.data.name;
+                    if (selected.length > 0) {
+                        var record = selected[0];
+                        var collectionId = record.data.id;
+                        var collectionName = record.data.name;
 
-                    this.collectionId = collectionId;
+                        this.collectionId = collectionId;
 
-                    this.relationsPanel.setTitle(t("relations") + " - "  + t("collection") +  " " + record.data.id + " - " + collectionName);
-                    this.relationsPanel.enable();
-                    var proxy = this.relationsStore.getProxy();
-                    proxy.setExtraParam("colId", collectionId);
-                    this.relationsStore.reload();
-                    this.relationsGrid.show();
+                        this.relationsPanel.setTitle(t("relations") + " - " + t("collection") + " " + record.data.id + " - " + collectionName);
+                        this.relationsPanel.enable();
+                        var proxy = this.relationsStore.getProxy();
+                        proxy.setExtraParam("colId", collectionId);
+                        this.relationsStore.reload();
+                        this.relationsGrid.show();
+                    }
 
                 }.bind(this)
             }

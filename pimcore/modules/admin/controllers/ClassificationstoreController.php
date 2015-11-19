@@ -447,7 +447,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $start = 0;
             $limit = 15;
-            $orderKey = "name";
+            $orderKey = "sorter";
             $order = "ASC";
 
             if ($this->_getParam("dir")) {
