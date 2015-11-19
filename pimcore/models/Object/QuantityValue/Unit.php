@@ -58,6 +58,11 @@ class Unit extends Model\AbstractModel {
      */
     public $factor;
 
+    /**
+     * @var double
+     */
+    public $conversionOffset;
+
 
     /**
      * @param string $abbreviation
@@ -214,6 +219,20 @@ class Unit extends Model\AbstractModel {
         $this->reference = $reference;
     }
 
+    /**
+     * @return float
+     */
+    public function getConversionOffset()
+    {
+        return $this->conversionOffset;
+    }
 
+    /**
+     * @param float $conversionOffset
+     */
+    public function setConversionOffset($conversionOffset)
+    {
+        $this->conversionOffset = $conversionOffset;
+    }
 
 }

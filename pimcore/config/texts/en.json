@@ -6532,8 +6532,12 @@
         "definition": "Base Unit"
     },
     {
-        "term": "factor",
-        "definition": "Factor"
+        "term": "conversionFactor",
+        "definition": "Conversion Factor"
+    },
+    {
+        "term": "conversionOffset",
+        "definition": "Conversion Offset"
     },
     {
         "term": "quantityValue_units",
