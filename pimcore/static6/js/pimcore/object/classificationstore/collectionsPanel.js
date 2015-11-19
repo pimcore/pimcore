@@ -220,7 +220,8 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             proxy: proxy,
             fields: readerFields,
             listeners: listeners,
-            remoteFilter: true
+            remoteFilter: true,
+            remoteSort: true
         });
 
 
