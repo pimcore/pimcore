@@ -37,6 +37,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
     public $defaultValue;
 
     /**
+     * @var string
+     */
+    public $defaultUnit;
+
+    /**
      * @var array()
      */
     public $validUnits;
@@ -44,7 +49,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var int
      */
     public $queryColumnType = array(
         "value" => "double",
@@ -116,6 +121,24 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
     public function getValidUnits() {
         return $this->validUnits;
     }
+
+    /**
+     * @return string
+     */
+    public function getDefaultUnit()
+    {
+        return $this->defaultUnit;
+    }
+
+    /**
+     * @param string $defaultUnit
+     */
+    public function setDefaultUnit($defaultUnit)
+    {
+        $this->defaultUnit = $defaultUnit;
+    }
+
+
 
 
     /**
