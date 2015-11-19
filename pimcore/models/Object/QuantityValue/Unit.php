@@ -70,6 +70,16 @@ class Unit extends Model\AbstractModel {
     }
 
     /**
+     * @param string $reference
+     * @return QuantityValue_Unit
+     */
+    public static function getByReference($reference) {
+        $unit = new self();
+        $unit->getDao()->getByReference($reference);
+        return $unit;
+    }
+
+    /**
      * @param string $id
      * @return QuantityValue_Unit
      */
