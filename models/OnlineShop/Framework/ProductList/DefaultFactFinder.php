@@ -29,6 +29,12 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
     protected $tenantConfig;
 
     /**
+     * @var bool
+     */
+    protected $useAsn = true;
+
+
+    /**
      * @var null|int
      */
     protected $totalCount = null;
@@ -105,6 +111,24 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
      */
     protected $logger;
 
+    /**
+     * @return boolean
+     */
+    public function getUseAsn()
+    {
+        return $this->useAsn;
+    }
+
+    /**
+     * @param boolean $useAsn
+     *
+     * @return $this
+     */
+    public function setUseAsn($useAsn)
+    {
+        $this->useAsn = $useAsn;
+        return $this;
+    }
 
     /**
      * @param OnlineShop_Framework_IndexService_Tenant_IConfig $tenantConfig
@@ -335,6 +359,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
         $params['page'] = ceil($this->getOffset() / $this->getLimit())+1;
         $params['productsPerPage'] = $this->getLimit();
         $params['idsOnly'] = 'true';
+        $params['useAsn'] = $this->getUseAsn() ? 'true' : 'false';
 
 
         // send request
