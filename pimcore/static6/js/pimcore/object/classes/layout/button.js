@@ -58,7 +58,16 @@ pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layou
 							xtype: "textfield",
 							fieldLabel: t("icon"),
 							name: "icon",
-							value: this.datax.icon
+							value: this.datax.icon,
+							enableKeyEvents: true,
+							listeners: {
+								"keyup": function (el) {
+									el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
+								},
+								"afterrender": function (el) {
+									el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
+								}
+							}
 						},
                         {
                             xtype: "textarea",
