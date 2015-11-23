@@ -34,6 +34,11 @@ class Button extends Model\Object\ClassDefinition\Layout {
      * @var
      */
     public $text;
+	
+	/**
+	 * @var
+	 */
+	public $icon;
 
     /**
      * @return mixed
@@ -64,6 +69,22 @@ class Button extends Model\Object\ClassDefinition\Layout {
      */
     public function setHandler($handler) {
         $this->handler = $handler;
+        return $this;
+    }
+	
+	/**
+     * @return mixed
+     */
+    public function getIcon() {
+        return $this->icon;
+    }
+
+    /**
+     * @param $icon
+     * @return $this
+     */
+    public function setIcon($icon) {
+        $this->icon = $icon;
         return $this;
     }
 }

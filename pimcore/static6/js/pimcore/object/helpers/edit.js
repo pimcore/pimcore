@@ -105,7 +105,7 @@ pimcore.object.helpers.edit = {
             }
         };
 
-        var validKeys = ["xtype","title","layout","items","region","width","height","name","text","html","handler",
+        var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
             "labelWidth","collapsible","collapsed","bodyStyle"];
 
         var tmpItems;

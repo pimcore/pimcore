@@ -54,6 +54,12 @@ pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layou
                             name: "text",
                             value: this.datax.text
                         },
+						{
+							xtype: "textfield",
+							fieldLabel: t("icon"),
+							name: "icon",
+							value: this.datax.icon
+						},
                         {
                             xtype: "textarea",
                             width: 400,
