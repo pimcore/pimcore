@@ -19,6 +19,8 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
     /**
      * Looks if order object for given cart already exists, otherwise creates it
      *
+     * move to ordermanagers
+     *
      * @return OnlineShop_Framework_AbstractOrder
      */
     public function getOrCreateOrder(OnlineShop_Framework_ICart $cart);
