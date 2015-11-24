@@ -1530,7 +1530,7 @@ pimcore.settings.system = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_settings_system");
+        tabPanel.setActiveItem("pimcore_settings_system");
     },
 
     save: function () {
