@@ -67,7 +67,8 @@ pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layou
 								"afterrender": function (el) {
 									el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
 								}
-							}
+							},
+                            width: 600
 						},
                         {
                             xtype: "textarea",
