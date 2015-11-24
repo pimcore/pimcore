@@ -268,7 +268,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     hideMode: "offsets",
                     iconCls: "pimcore_icon_language_" + this.frontendLanguages[i].toLowerCase(),
                     title: pimcore.available_languages[this.frontendLanguages[i]],
-                    items: items.items
+                    items: items.items,
+                    language: this.currentLanguage
                 };
 
                 if (this.fieldConfig.labelWidth) {

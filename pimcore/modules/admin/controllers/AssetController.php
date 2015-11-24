@@ -544,6 +544,16 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     $tmpAsset["imageHeight"] = $asset->getCustomSetting("imageHeight");
                 }
 
+                // load metadata (inputs only)
+                $metadata = new stdClass();
+                foreach ((array)$asset->getMetadata() as $meta) {
+                    if ($meta['type'] != 'input') continue;
+                    if (!$meta['language']) $meta['language'] = 'default';
+                    if (!$metadata->{$meta['name']}) $metadata->{$meta['name']} = new stdClass();
+                    $metadata->{$meta['name']}->{$meta['language']} = $meta['data'];
+                }
+                $tmpAsset['metadata'] = $metadata;
+
             } catch (\Exception $e) {
                 \Logger::debug("Cannot get dimensions of image, seems to be broken.");
             }

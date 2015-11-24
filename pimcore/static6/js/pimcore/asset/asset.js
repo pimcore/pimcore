@@ -314,6 +314,15 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("save"), t("successful_saved_asset"), "success");
                         this.resetChanges();
+
+                        // refresh node in asset tree to reload metadata
+                        // (not optimal, reloads whole parent with all childs)
+                        if(this.type == "image") {
+                            var tree = pimcore.globalmanager.get('layout_asset_tree');
+                            var store = tree.tree.getStore();
+                            var parentNode = store.getNodeById(this.data.parentId);
+                            if (parentNode) tree.refresh(parentNode);
+                        }
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_asset"), "error",t(rdata.message));

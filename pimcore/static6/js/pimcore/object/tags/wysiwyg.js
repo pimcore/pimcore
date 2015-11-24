@@ -257,6 +257,45 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
+                // pre-fill attributes from asset metadata
+                if (node.data.hasOwnProperty('metadata')) {
+                    // load object from active tab
+                    var activeTab = window.parent.Ext.getCmp('pimcore_panel_tabs').getActiveTab();
+                    var objectId = (activeTab && activeTab.object) ? activeTab.object.id : null;
+                    var object = pimcore.globalmanager.get('object_' + objectId);
+                    if (object) {
+                        // load the default language from system settings
+                        var fieldLanguage = pimcore.settings.websiteLanguages[0];
+                        // if the wysiwyg field is in the current tab of a localized fields container
+                        // load the current localized fields container language
+                        if (object.edit.dataFields.hasOwnProperty('localizedfields')) {
+                            var lcLanguage = null;
+                            if (object.edit.dataFields.localizedfields.dropdownLayout) {
+                                lcLanguage = object.edit.dataFields.localizedfields.currentLanguage;
+                            } else {
+                                lcLanguage = object.edit.dataFields.localizedfields.tabPanel.activeTab.language;
+                            }
+                            if (object.edit.dataFields.localizedfields.data[lcLanguage].hasOwnProperty(this.name)) {
+                                fieldLanguage = lcLanguage;
+                            }
+                        }
+                        // pre-fill allowed attributes
+                        var allowedMetadata = ['alt', 'title'];
+                        for (var j in allowedMetadata) {
+                            var key = allowedMetadata[j];
+                            if (node.data.metadata.hasOwnProperty(key)) {
+                                var value = null;
+                                if (node.data.metadata[key].hasOwnProperty(fieldLanguage)) {
+                                    value = node.data.metadata[key][fieldLanguage];
+                                } else if(node.data.metadata[key].hasOwnProperty('default')) {
+                                    value = node.data.metadata[key]['default'];
+                                }
+                                if (value) additionalAttributes += ' ' + key + '="' + value + '"';
+                            }
+                        }
+                    }
+                }
+
                 this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id
                                 + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
                 return true;

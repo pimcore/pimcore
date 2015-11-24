@@ -212,6 +212,33 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     additionalAttributes += ' style="width:' + defaultWidth + 'px;"';
                 }
 
+                // pre-fill attributes from asset metadata
+                if (data.hasOwnProperty('metadata')) {
+                    // load document from active tab
+                    var activeTab = window.parent.Ext.getCmp('pimcore_panel_tabs').getActiveTab();
+                    var docId = (activeTab && activeTab.document) ? activeTab.document.id : null;
+                    var document = pimcore.globalmanager.get('document_' + docId);
+                    if (document) {
+                        // get language from document property or set the default from system settings
+                        var documentLanguage = document.properties.getPropertyData('language');
+                        if (!documentLanguage) documentLanguage = pimcore.settings.websiteLanguages[0];
+                        // pre-fill allowed attributes
+                        var allowedMetadata = ['alt', 'title'];
+                        for (var j in allowedMetadata) {
+                            var key = allowedMetadata[j];
+                            if (data.metadata.hasOwnProperty(key)) {
+                                var value = null;
+                                if (data.metadata[key].hasOwnProperty(documentLanguage)) {
+                                    value = data.metadata[key][documentLanguage];
+                                } else if(data.metadata[key].hasOwnProperty('default')) {
+                                    value = data.metadata[key]['default'];
+                                }
+                                if (value) additionalAttributes += ' ' + key + '="' + value + '"';
+                            }
+                        }
+                    }
+                }
+
                 insertEl = CKEDITOR.dom.element.createFromHtml('<img src="'
                             + uri + '" pimcore_type="asset" pimcore_id="' + id + '" ' + additionalAttributes + ' />');
                 this.ckeditor.insertElement(insertEl);
