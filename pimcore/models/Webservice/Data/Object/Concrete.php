@@ -88,13 +88,16 @@ class Concrete extends Model\Webservice\Data\Object {
                 $setter = "set" . ucfirst($element->name);
                 if (method_exists($object, $setter)) {
                     $tag = $object->getClass()->getFieldDefinition($element->name);
-                    if($class instanceof Model\Object\ClassDefinition\Data\Fieldcollections){
-                        $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object,
-                                                                                    $idMapper));
+                    if($tag) {
+                        if ($class instanceof Model\Object\ClassDefinition\Data\Fieldcollections) {
+                            $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object,
+                                $idMapper));
+                        } else {
+                            $object->$setter($tag->getFromWebserviceImport($element->value, $object, $idMapper));
+                        }
                     } else {
-                        $object->$setter($tag->getFromWebserviceImport($element->value, $object, $idMapper));
+                        \Logger::error("tag for field " . $element->name . " not found");
                     }
-
 
                 } else {
                     if(!$disableMappingExceptions) {
