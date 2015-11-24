@@ -17,15 +17,6 @@
 interface OnlineShop_Framework_ICommitOrderProcessor {
 
     /**
-     * Looks if order object for given cart already exists, otherwise creates it
-     *
-     * move to ordermanagers
-     *
-     * @return OnlineShop_Framework_AbstractOrder
-     */
-    public function getOrCreateOrder(OnlineShop_Framework_ICart $cart);
-
-    /**
      * Gets or creates active payment info for the given order
      *
      * @deprecated use orderManager instead
@@ -51,21 +42,6 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrder(OnlineShop_Framework_ICart $cart);
-
-    /**
-     * @param int $id
-     */
-    public function setParentOrderFolder($id);
-
-    /**
-     * @param string $classname
-     */
-    public function setOrderClass($classname);
-
-    /**
-     * @param string $classname
-     */
-    public function setOrderItemClass($classname);
 
     /**
      * @param string $confirmationMail

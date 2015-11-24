@@ -30,4 +30,37 @@ interface IOrderManager
      * @return OrderManager\IOrderAgent
      */
     public function createOrderAgent(Order $order);
+
+
+    /**
+     * @param int $id
+     */
+    public function setParentOrderFolder($id);
+
+    /**
+     * @param string $classname
+     */
+    public function setOrderClass($classname);
+
+    /**
+     * @param string $classname
+     */
+    public function setOrderItemClass($classname);
+
+    /**
+     * Looks if order object for given cart already exists, otherwise creates it
+     *
+     * move to ordermanagers
+     *
+     * @return \OnlineShop_Framework_AbstractOrder
+     */
+    public function getOrCreateOrderFromCart(\OnlineShop_Framework_ICart $cart);
+
+    /**
+     * gets order based on given payment status
+     *
+     * @param \OnlineShop_Framework_Payment_IStatus $paymentStatus
+     * @return \OnlineShop_Framework_AbstractOrder
+     */
+    public function getOrderByPaymentStatus(\OnlineShop_Framework_Payment_IStatus $paymentStatus);
 }

@@ -63,21 +63,6 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     protected $paid = true;
 
     /**
-     * @var int parent folder id for pimcore order object
-     */
-    protected $parentFolderId = 1;
-
-    /**
-     * @var string
-     */
-    protected $orderClassname;
-
-    /**
-     * @var string
-     */
-    protected $orderItemClassname;
-
-    /**
      * @var string
      */
     protected $confirmationMail;
@@ -115,19 +100,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
         $config = new OnlineShop_Framework_Config_HelperContainer($config, "checkoutmanager");
 
-        //processing config and setting options
-        $parentFolderId = (string)$config->parentorderfolder;
-        if (is_numeric($parentFolderId)) {
-            $this->parentFolderId = (int)$parentFolderId;
-        } else {
-            $p = Pimcore\Model\Object\Service::createFolderByPath(strftime($parentFolderId, time()));
-            $this->parentFolderId = $p->getId();
-            unset($p);
-        }
-
         $this->commitOrderProcessorClassname = $config->commitorderprocessor->class;
-        $this->orderClassname = (string)$config->orderstorage->orderClass;
-        $this->orderItemClassname = (string)$config->orderstorage->orderItemClass;
         $this->confirmationMail = (string)$config->mails->confirmation;
         foreach ($config->steps as $step) {
             $step = new $step->class($this->cart);
@@ -163,9 +136,6 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     {
         if (!$this->commitOrderProcessor) {
             $this->commitOrderProcessor = new $this->commitOrderProcessorClassname();
-            $this->commitOrderProcessor->setParentOrderFolder($this->parentFolderId);
-            $this->commitOrderProcessor->setOrderClass($this->orderClassname);
-            $this->commitOrderProcessor->setOrderItemClass($this->orderItemClassname);
             $this->commitOrderProcessor->setConfirmationMail($this->confirmationMail);
         }
         return $this->commitOrderProcessor;
@@ -191,7 +161,8 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         }
 
         //Create Order and PaymentInformation
-        $order = $this->getCommitOrderProcessor()->getOrCreateOrder($this->cart);
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
         if ($order->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed");
@@ -212,7 +183,8 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function getOrder()
     {
-        return $this->getCommitOrderProcessor()->getOrCreateOrder($this->cart);
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        return $orderManager->getOrCreateOrderFromCart($this->cart);
     }
 
 
