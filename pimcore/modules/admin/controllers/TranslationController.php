@@ -809,6 +809,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         $openTags = array();
         $final = array();
 
+        $replacement = ['%_%_%lt;%_%_%','%_%_%gt;%_%_%'];
+        $content = str_replace(['&lt;','&gt;'], $replacement, $content);
         $content = html_entity_decode($content, null, "UTF-8");
 
         if(!preg_match_all("/<([^>]+)>([^<]+)?/", $content, $matches)) {
@@ -835,6 +837,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
                             $part = '<ept id="' . $closingTag["id"] . '"><![CDATA[' . $part . ']]></ept>';
                         }
                     } else {
+                        $part = str_replace($replacement,['<','>'], $part);
                         $part = '<![CDATA[' . $part . ']]>';
                     }
 
