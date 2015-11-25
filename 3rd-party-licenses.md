@@ -47,7 +47,4 @@ http://code.google.com/p/sabredav/wiki/License
 ## simplehtmldom
 License: MIT  
 http://opensource.org/licenses/mit-license.php
- 
-## password_compat
-License: MIT  
-http://www.opensource.org/licenses/mit-license.html
+

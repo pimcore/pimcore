@@ -11,7 +11,7 @@
  */
 namespace Pimcore\Log\Writer;
 
-use \Zend_Log;
+use Zend_Log;
 
 class Stream extends \Zend_Log_Writer_Stream {
 

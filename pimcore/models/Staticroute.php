@@ -139,7 +139,7 @@ class Staticroute extends AbstractModel {
                 $route = new self();
                 \Zend_Registry::set($cacheKey, $route);
                 $route->setId(intval($id));
-                $route->getResource()->getById();
+                $route->getDao()->getById();
 
             } catch (\Exception $e) {
                 \Logger::error($e);
@@ -167,7 +167,7 @@ class Staticroute extends AbstractModel {
         $route = new self();
 
         try {
-            $route->getResource()->getByName($name, $siteId);
+            $route->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
             \Logger::warn($e);
             return null;
@@ -572,7 +572,7 @@ class Staticroute extends AbstractModel {
      */
     public function clearDependentCache() {
         
-        // this is mostly called in Staticroute\Resource not here
+        // this is mostly called in Staticroute\Dao not here
         try {
             \Pimcore\Model\Cache::clearTag("staticroute");
         }

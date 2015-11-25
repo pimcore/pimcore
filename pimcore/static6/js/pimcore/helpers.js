@@ -1147,7 +1147,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
             xtype: 'fileuploadfield',
             emptyText: t("select_a_file"),
             fieldLabel: t("asset"),
-            width: 330,
+            width: 360,
             name: 'Filedata',
             buttonText: "",
             buttonConfig: {
@@ -1787,17 +1787,17 @@ pimcore.helpers.sendTestEmail = function () {
                 xtype: "textfield",
                 name: "to",
                 fieldLabel: t("to"),
-                width: 650
+                width: 780
             }, {
                 xtype: "textfield",
                 name: "subject",
                 fieldLabel: t("subject"),
-                width: 650
+                width: 780
             }, {
                 xtype: "textarea",
                 name: "content",
                 fieldLabel: t("content"),
-                width: 650,
+                width: 780,
                 height: 400
             }]
         }],
@@ -2674,7 +2674,6 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             layout: "fit",
             closeAction:'close',
             plain: true,
-            maximized: false,
             items : [panel],
             scrollable : false,
             modal: true,

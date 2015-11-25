@@ -165,7 +165,7 @@ class Hardlink extends Document
                 }
                 $properties = array_merge($sourceProperties, $properties);
             } else if ($this->getSourceDocument()) {
-                $sourceProperties = $this->getSourceDocument()->getResource()->getProperties(false,true);
+                $sourceProperties = $this->getSourceDocument()->getDao()->getProperties(false,true);
                 foreach ($sourceProperties as &$prop) {
                     $prop = clone $prop; // because of cache
                     $prop->setInherited(true);
@@ -244,7 +244,7 @@ class Hardlink extends Document
      */
     protected function update() {
 
-        $oldPath = $this->getResource()->getCurrentFullPath();
+        $oldPath = $this->getDao()->getCurrentFullPath();
 
         parent::update();
 

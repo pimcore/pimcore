@@ -15,7 +15,7 @@ use Pimcore\Model\Cache;
 use Pimcore\Controller;
 use Pimcore\Tool;
 use Pimcore\File;
-use Pimcore\Resource;
+use Pimcore\Db;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\User;
 use Pimcore\Model;
@@ -467,6 +467,12 @@ class Pimcore {
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
 
+        // zlib.output_compression conflicts with while (@ob_end_flush()) ;
+        // see also: https://github.com/pimcore/pimcore/issues/291
+        if (ini_get('zlib.output_compression')) {
+            @ini_set('zlib.output_compression', 'Off');
+        }
+
         // set dummy timezone if no tz is specified / required for example by the logger, ...
         $defaultTimezone = @date_default_timezone_get();
         if(!$defaultTimezone) {
@@ -474,8 +480,8 @@ class Pimcore {
         }
 
         // check some system variables
-        if (version_compare(PHP_VERSION, '5.4', "<")) {
-            $m = "pimcore requires at least PHP version 5.4.0 your PHP version is: " . PHP_VERSION;
+        if (version_compare(PHP_VERSION, '5.5', "<")) {
+            $m = "pimcore requires at least PHP version 5.5.0 your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);
         }
     }
@@ -841,7 +847,7 @@ class Pimcore {
     public static function collectGarbage ($keepItems = array()) {
 
         // close mysql-connection
-        Resource::close();
+        Db::close();
 
         $protectedItems = array(
             "Zend_Locale",
@@ -858,7 +864,7 @@ class Pimcore {
             "pimcore_editmode",
             "pimcore_error_document",
             "pimcore_site",
-            "Pimcore_Resource_Mysql"
+            "Pimcore_Db"
         );
 
         if(is_array($keepItems) && count($keepItems) > 0) {
@@ -883,7 +889,7 @@ class Pimcore {
             \Zend_Registry::set($key, $value);
         }
 
-        Resource::reset();
+        Db::reset();
 
         // force PHP garbage collector
         gc_enable();

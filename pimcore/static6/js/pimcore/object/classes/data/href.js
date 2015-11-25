@@ -28,6 +28,10 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
 
         this.initData(initData);
 
+        if (typeof this.datax.lazyLoading == "undefined") {
+            this.datax.lazyLoading = true;
+        }
+
         this.treeNode = treeNode;
     },
 
@@ -247,7 +251,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_asset_upload_path_' + this.uniqeFieldId,
                         cls: "input_drop_target",
                         value: this.datax.assetUploadPath,
-                        width: 350,
+                        width: 500,
                         xtype: "textfield",
                         listeners: {
                             "render": function (el) {

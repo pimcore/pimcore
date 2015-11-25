@@ -12,7 +12,7 @@
 
 namespace Pimcore\Model\Search;
 
-use Pimcore\Resource; 
+use Pimcore\Db;
 
  class Backend {
 
@@ -116,7 +116,7 @@ use Pimcore\Resource;
      */
     public function getTotalSearchMatches($queryStr, $webResourceType, $type, $subtype, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $classname = null){
         $this->createBackendSearchQuery($queryStr, $webResourceType, $type, $subtype, $modifiedRange, $createdRange, $userOwner, $userModification,$classname,true);
-        $db = Resource::get();
+        $db = Db::get();
         $result =  $db->fetchRow($this->backendQuery,$this->backendQueryParams);
         if($result['count']){
             return $result['count'];
@@ -139,7 +139,7 @@ use Pimcore\Resource;
     public function findInDb($queryStr, $type=null, $subtype=null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $offset=0, $limit=25) {
 
         $this->createBackendSearchQuery($queryStr, $type, $subtype, $classname, $modifiedRange, $createdRange, $userOwner, $userModification,false);
-        $db = Resource::get();
+        $db = Db::get();
         return $db->fetchAll($this->backendQuery,$this->backendQueryParams);
     }
 

@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * Chinese translation
@@ -35,6 +35,8 @@ $lang = array(
 	'uptime' => '在线时间',
 	'hostname' => '主机名',
 	'cpus' => 'CPU',
+	'phpversion' => 'PHP版本',
+	'webservice' =>'HTTP服務器', 	
 	'load' => '负载',
 	'processes' => '进程',
 	'threads' => '线程',

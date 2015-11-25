@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  * Pimcore
  *
@@ -25,6 +25,7 @@ try {
         'verbose|v' => 'show detailed information during the backup',
         'mysql-tables=s' => 'a comma separated list of mysql tables to backup e.g "translations_website,translations_admin" ',
         'only-mysql-related-tasks' => 'executes only mysql related tasks.',
+        'maintenance|m' => 'set maintenance mode during backup',
         'help|h' => 'display this help'
     ));
 } catch (Exception $e) {
@@ -53,7 +54,8 @@ $config = array(
     "directory" => PIMCORE_BACKUP_DIRECTORY,
     "overwrite" => false,
     "cleanup" => 7,
-    "verbose" => false
+    "verbose" => false,
+    "maintenance" => false
 );
 
 
@@ -97,6 +99,14 @@ if ($config["cleanup"] != "false") {
     }
 }
 
+// maintenance
+if ($config["maintenance"] == true) {
+    session_start();
+    verboseMessage("------------------------------------------------");
+    verboseMessage("set maintenance mode on");
+    Pimcore\Tool\Admin::activateMaintenanceMode();
+}
+
 verboseMessage("------------------------------------------------");
 verboseMessage("------------------------------------------------");
 verboseMessage("starting backup into file: " . $backupFile);
@@ -132,6 +142,13 @@ if (empty($initInfo["errors"])) {
     }
 }
 
+
+// maintenance
+if ($config["maintenance"] == true) {
+    verboseMessage("------------------------------------------------");
+    verboseMessage("set maintenance mode off");
+    Pimcore\Tool\Admin::deactivateMaintenanceMode();
+}
 
 
 verboseMessage("------------------------------------------------");

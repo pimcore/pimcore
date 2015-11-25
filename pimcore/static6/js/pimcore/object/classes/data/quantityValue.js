@@ -47,16 +47,29 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-                xtype: "spinnerfield",
+                xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
             },
             {
-                xtype: "spinnerfield",
+                xtype: "numberfield",
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
                 value: this.datax.defaultValue
+            },{
+                xtype: 'combobox',
+                name: 'defaultUnit',
+                triggerAction: "all",
+                editable: true,
+                typeAhead: true,
+                selectOnFocus: true,
+                fieldLabel: t('default_unit'),
+                store: this.store,
+                value: this.datax.defaultUnit,
+                displayField: 'abbreviation',
+                valueField: 'id',
+                width: 275
             },
             {
                 xtype: 'multiselect',
@@ -66,11 +79,9 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 width: 600,
                 fieldLabel: t("valid_quantityValue_units"),
                 typeAhead: true,
-                //emptyText: t("valid_quantityValue_units_empty_text"),
                 name: 'validUnits',
                 value: this.datax.validUnits,
                 store: this.store,
-
                 displayField: 'abbreviation',
                 valueField: 'id'
             }

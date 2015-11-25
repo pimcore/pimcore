@@ -61,7 +61,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
 
         if (is_array($subTypes)) {
             $types = array();
-            $db = \Pimcore\Resource::get();
+            $db = \Pimcore\Db::get();
             foreach ($subTypes as $item) {
                 $types[] = $db->quote($item);
             }
@@ -80,7 +80,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      */
     public static function getByKeyAndLanguage($key, $language, $targetSubtype = null) {
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $list = new self();
         $condition = "name = " . $db->quote($key);
         if ($language) {

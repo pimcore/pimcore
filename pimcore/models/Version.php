@@ -84,7 +84,7 @@ class Version extends AbstractModel {
     public static function getById($id) {
 
         $version = new self();
-        $version->getResource()->getById($id);
+        $version->getDao()->getById($id);
 
         return $version;
     }
@@ -150,7 +150,7 @@ class Version extends AbstractModel {
             $dataString = $data;
         }
 
-        $this->id = $this->getResource()->save();
+        $this->id = $this->getDao()->save();
 
         // check if directory exists
         $saveDir = dirname($this->getFilePath());
@@ -195,7 +195,7 @@ class Version extends AbstractModel {
             @unlink($this->getBinaryFilePath());
         }
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
     /**
@@ -312,10 +312,10 @@ class Version extends AbstractModel {
         $steps = array();
 
         if (intval($conf->days) > 0) {
-            $days = $this->getResource()->getOutdatedVersionsDays($conf->days);
+            $days = $this->getDao()->getOutdatedVersionsDays($conf->days);
         }
         else {
-            $steps = $this->getResource()->getOutdatedVersionsSteps(intval($conf->steps));
+            $steps = $this->getDao()->getOutdatedVersionsSteps(intval($conf->steps));
         }
 
         $versions = array_merge($days, $steps);
@@ -590,7 +590,7 @@ class Version extends AbstractModel {
         $ignoredIds = array();
 
         while (true) {
-            $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes, $ignoredIds);
+            $versions = $this->getDao()->maintenanceGetOutdatedVersions($elementTypes, $ignoredIds);
             if (count($versions) ==  0) {
                 break;
             }

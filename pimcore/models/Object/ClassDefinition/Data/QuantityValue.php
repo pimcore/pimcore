@@ -37,6 +37,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
     public $defaultValue;
 
     /**
+     * @var string
+     */
+    public $defaultUnit;
+
+    /**
      * @var array()
      */
     public $validUnits;
@@ -44,7 +49,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var int
      */
     public $queryColumnType = array(
         "value" => "double",
@@ -116,6 +121,24 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
     public function getValidUnits() {
         return $this->validUnits;
     }
+
+    /**
+     * @return string
+     */
+    public function getDefaultUnit()
+    {
+        return $this->defaultUnit;
+    }
+
+    /**
+     * @param string $defaultUnit
+     */
+    public function setDefaultUnit($defaultUnit)
+    {
+        $this->defaultUnit = $defaultUnit;
+    }
+
+
 
 
     /**
@@ -291,6 +314,47 @@ class QuantityValue extends Model\Object\ClassDefinition\Data {
         } else {
             throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
         }
+    }
+
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @return mixed
+     */
+    public function marshal($value, $object = null) {
+        return serialize($value);
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null) {
+        return unserialize($value);
+    }
+
+
+    public function configureOptions () {
+        if (!$this->validUnits) {
+            $list = new \Pimcore\Model\Object\QuantityValue\Unit\Listing();
+            $units = $list->getUnits();
+            if (is_array($units)) {
+                $this->validUnits = array();
+                /** @var  $unit Model\Object\QuantityValue\Unit */
+                foreach ($units as $unit) {
+                    $this->validUnits[] = $unit->getId();
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    public function __wakeup () {
+        $this->configureOptions();
     }
 
 }

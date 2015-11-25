@@ -55,7 +55,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @throws \Exception
      */
     public function __construct() {
-        $this->initResource("\\Pimcore\\Model\\Search\\Backend\\Data\\Listing");
+        $this->initDao("\\Pimcore\\Model\\Search\\Backend\\Data\\Listing");
 
     }
 

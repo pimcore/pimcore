@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * English translation
@@ -34,6 +34,8 @@ $lang = array(
 	'uptime' => 'Uptime',
 	'hostname' => 'Hostname',
 	'cpus' => 'CPUs',
+	'phpversion' => 'PHP version',
+	'webservice' =>'HTTP server', 
 	'load' => 'Load',
 	'processes' => 'Processes',
 	'threads' => 'Threads',
@@ -97,5 +99,10 @@ $lang = array(
 	'distro' => 'Distribution',
 	'cpu_arch' => 'Architecture',
 	'model' => 'Model',
-	'numLoggedIn' => 'Active Users'
+	'numLoggedIn' => 'Active Users',
+	'virtualization' => 'Virtualization',
+	'guest' => 'Guest',
+	'host' => 'Host',
+	'cpu_usage' => 'Overall CPU Usage',
+	'port_speed' => 'Port Speed'
 );

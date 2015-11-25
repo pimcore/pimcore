@@ -67,7 +67,7 @@ class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin {
             if($this->_getParam("filter")) {
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
-                $db = Pimcore_Resource::get();
+                $db = \Pimcore\Db::get();
                 foreach($filters as $f) {
                     if($f->type == "string") {
                         $condition .= " AND " . $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
@@ -103,10 +103,12 @@ class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin {
 
     public function unitListAction() {
         $list = new \Pimcore\Model\Object\QuantityValue\Unit\Listing();
+        $list->setOrderKey("abbreviation");
+        $list->setOrder("ASC");
         if($this->_getParam("filter")) {
             $array = explode(",", $this->_getParam("filter"));
             $quotedArray = array();
-            $db = Pimcore_Resource::get();
+            $db = \Pimcore\Db::get();
             foreach($array as $a) {
                 $quotedArray[] = $db->quote($a);
             }

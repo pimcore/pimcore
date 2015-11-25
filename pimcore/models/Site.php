@@ -74,7 +74,7 @@ class Site extends AbstractModel {
      */
     public static function getById($id) {
         $site = new self();
-        $site->getResource()->getById(intval($id));
+        $site->getDao()->getById(intval($id));
 
         return $site;
     }
@@ -85,7 +85,7 @@ class Site extends AbstractModel {
      */
     public static function getByRootId($id) {
         $site = new self();
-        $site->getResource()->getByRootId(intval($id));
+        $site->getDao()->getByRootId(intval($id));
 
         return $site;
     }
@@ -103,8 +103,9 @@ class Site extends AbstractModel {
             $site = new self();
             
             try {
-                $site->getResource()->getByDomain($domain);
+                $site->getDao()->getByDomain($domain);
             } catch (\Exception $e) {
+                \Logger::debug($e);
                 $site = "failed";
             }
             
@@ -112,7 +113,9 @@ class Site extends AbstractModel {
         }
         
         if($site == "failed" || !$site) {
-            throw new \Exception("there is no site for the requested domain");
+            $msg = "there is no site for the requested domain [" . $domain . "], content was [" . $site . "]";
+            \Logger::debug($msg);
+            throw new \Exception($msg);
         }
         
         return $site;
@@ -316,7 +319,7 @@ class Site extends AbstractModel {
      */
     public function clearDependentCache() {
         
-        // this is mostly called in Site\Resource not here
+        // this is mostly called in Site\Dao not here
         try {
             Cache::clearTag("site");
         }

@@ -175,7 +175,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         try {
-            $translation->getResource()->getByKey(self::getValidTranslationKey($id));
+            $translation->getDao()->getByKey(self::getValidTranslationKey($id));
         } catch (\Exception $e) {
             if (!$create) {
                 throw new \Exception($e->getMessage());
@@ -245,7 +245,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             $this->setModificationDate(time());
         }
 
-        $this->getResource()->save();
+        $this->getDao()->save();
     }
 
     /**
@@ -367,7 +367,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public function getForWebserviceExport(){
         $data = get_object_vars($this);
-        unset($data['resource']);
+        unset($data['dao']);
         return $data;
     }
 }

@@ -82,7 +82,7 @@ class Predefined extends Model\AbstractModel {
     public static function getById($id) {
         $property = new self();
         $property->setId($id);
-        $property->getResource()->getById();
+        $property->getDao()->getById();
 
         return $property;
     }
@@ -103,7 +103,7 @@ class Predefined extends Model\AbstractModel {
         } catch (\Exception $e) {
             $property = new self();
             $property->setKey($key);
-            $property->getResource()->getByKey();
+            $property->getDao()->getByKey();
 
             \Zend_Registry::set($cacheKey, $property);
         }

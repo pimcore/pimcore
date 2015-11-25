@@ -297,8 +297,9 @@ window['Linfo'] = (function() {
 
 			// Get the information table
 			m_elTable = elSection.getElementsByTagName('table')[0];
-
-			if (getCollapseState()) {
+			
+			//collapse if set in cookie or not first element on mobile view
+			if((elSection.mobile && elSection.w!=0) || getCollapseState()){
 				collapse();
 			}
 		}
@@ -311,12 +312,14 @@ window['Linfo'] = (function() {
 	 */
 	function initializeSections() {
 		// Get a list of divs
-		var aDivs = document.getElementsByTagName('div');
+		var aDivs = document.getElementsByTagName('div'),w=0,mobile=(document.body.clientWidth<=640);
 
 		// Loop through them all
 		each(aDivs, function(i, elSection) {
 			// If this is an infoTable
 			if (hasClass(elSection, 'infoTable')) {
+				elSection.w=w++;
+				elSection.mobile=mobile;
 				new Section(elSection);
 			}
 		});

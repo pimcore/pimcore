@@ -79,7 +79,7 @@ class Maintenance {
         // it's allowed to store the IP for 7 days for security reasons (DoS, ...)
         $limit = time() - (6 * 86400);
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $db->delete("http_error_log", "date < " . $limit);
     }
 
@@ -135,7 +135,7 @@ class Maintenance {
             });
 
             $logLevel = (int)$config->mail_notification->filter_priority;
-            $db = \Pimcore\Resource::get()->getResource();
+            $db = \Pimcore\Db::get()->getResource();
 
 
             $query = "SELECT * FROM ". \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
@@ -178,7 +178,7 @@ class Maintenance {
         $conf = Config::getSystemConfig();
         $config = $conf->applicationlog;
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         $tablename =  \Pimcore\Log\Helper::ERROR_LOG_ARCHIVE_TABLE_NAME . "_" . \Zend_Date::now()->get(\Zend_Date::MONTH_NAME) . '_' .\Zend_Date::now()->get(\Zend_Date::YEAR);
 

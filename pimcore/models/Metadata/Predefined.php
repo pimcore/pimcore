@@ -89,7 +89,7 @@ class Predefined extends Model\AbstractModel {
     public static function getById($id) {
         $metadata = new self();
         $metadata->setId($id);
-        $metadata->getResource()->getById();
+        $metadata->getDao()->getById();
 
         return $metadata;
     }
@@ -102,7 +102,7 @@ class Predefined extends Model\AbstractModel {
 
         $metadata = new self();
         $metadata->setName($name);
-        $metadata->getResource()->getByNameAndLanguage($name, $language);
+        $metadata->getDao()->getByNameAndLanguage($name, $language);
 
         return $metadata;
     }

@@ -179,7 +179,7 @@ pimcore.settings.system = Class.create({
                                 valueField: 'language',
                                 forceSelection: true,
                                 triggerAction: 'all',
-                                hiddenName: 'general.language'
+                                name: 'general.language'
                             },{
                                 fieldLabel: t("contact_email"),
                                 xtype: "textfield",
@@ -884,10 +884,10 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_documents_versions_days",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "documents", "days"),
-                                    "spin": this.checkVersionInputs.bind(this, "documents", "days"),
+                                    "change": this.checkVersionInputs.bind(this, "documents", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "documents", "days", "init")
-                                }
+                                },
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('store_version_history_in_steps'),
@@ -897,10 +897,10 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_documents_versions_steps",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "documents", "steps"),
-                                    "spin": this.checkVersionInputs.bind(this, "documents", "steps"),
+                                    "change": this.checkVersionInputs.bind(this, "documents", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "documents", "steps", "init")
-                                }
+                                },
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('default_controller'),
@@ -983,10 +983,10 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_objects_versions_days",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "objects", "days"),
-                                    "spin": this.checkVersionInputs.bind(this, "objects", "days"),
+                                    "change": this.checkVersionInputs.bind(this, "objects", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "objects", "days", "init")
-                                }
+                                },
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('store_version_history_in_steps'),
@@ -996,10 +996,10 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_objects_versions_steps",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "objects", "steps"),
-                                    "spin": this.checkVersionInputs.bind(this, "objects", "steps"),
+                                    "change": this.checkVersionInputs.bind(this, "objects", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "objects", "steps", "init")
-                                }
+                                },
+                                minValue: 0
                             }
                         ]
                     },
@@ -1026,11 +1026,11 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_assets_versions_days",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "assets", "days"),
-                                    "spin": this.checkVersionInputs.bind(this, "assets", "days"),
+                                    "change": this.checkVersionInputs.bind(this, "assets", "days"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "days", "init")
                                 },
-                                width: 400
+                                width: 400,
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('store_version_history_in_steps'),
@@ -1040,11 +1040,11 @@ pimcore.settings.system = Class.create({
                                 id: "system_settings_assets_versions_steps",
                                 enableKeyEvents: true,
                                 listeners: {
-                                    "keyup": this.checkVersionInputs.bind(this, "assets", "steps"),
-                                    "spin": this.checkVersionInputs.bind(this, "assets", "steps"),
+                                    "change": this.checkVersionInputs.bind(this, "assets", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "steps", "init")
                                 },
-                                width: 400
+                                width: 400,
+                                minValue: 0
                             },
                             {
                                 fieldLabel: t('absolute_path_to_ffmpeg_binary'),
@@ -1530,7 +1530,7 @@ pimcore.settings.system = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_settings_system");
+        tabPanel.setActiveItem("pimcore_settings_system");
     },
 
     save: function () {

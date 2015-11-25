@@ -144,7 +144,7 @@ class ClassDefinition extends Model\AbstractModel {
 
             try {
                 $class = new self();
-                $class->getResource()->getById($id);
+                $class->getDao()->getById($id);
                 \Zend_Registry::set($cacheKey, $class);
             } catch (\Exception $e) {
                 \Logger::error($e);
@@ -163,7 +163,7 @@ class ClassDefinition extends Model\AbstractModel {
         $class = new self();
 
         try {
-            $class->getResource()->getByName($name);
+            $class->getDao()->getByName($name);
         } catch (\Exception $e) {
             \Logger::error($e);
             return null;
@@ -215,7 +215,7 @@ class ClassDefinition extends Model\AbstractModel {
 
         $this->setModificationDate(time());
 
-        $this->getResource()->save();
+        $this->getDao()->save();
 
         // create class for object
         $extendClass = "Concrete";
@@ -385,6 +385,12 @@ class ClassDefinition extends Model\AbstractModel {
         }
         catch (\Exception $e) {
         }
+
+        if ($isUpdate) {
+            \Pimcore::getEventManager()->trigger("object.class.postUpdate", $this);
+        } else {
+            \Pimcore::getEventManager()->trigger("object.class.postAdd", $this);
+        }
     }
 
     /**
@@ -423,7 +429,7 @@ class ClassDefinition extends Model\AbstractModel {
             $customLayout->delete();
         }
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
     /**

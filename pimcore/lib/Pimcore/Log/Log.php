@@ -12,7 +12,7 @@
 
 namespace Pimcore\Log;
 
-use \Zend_Log;
+use Zend_Log;
 
 class Log extends Zend_Log {
 

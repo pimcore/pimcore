@@ -39,7 +39,6 @@ pimcore.settings.user.usertab = Class.create({
         this.panel = new Ext.TabPanel({
             title: this.data.user.name,
             closable: true,
-            activeTab: 0,
             iconCls: "pimcore_icon_user",
             buttons: [{
                 text: t("save"),

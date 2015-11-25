@@ -231,7 +231,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             proxy: proxy,
             fields: readerFields,
             listeners: listeners,
-            remoteFilter: true
+            remoteFilter: true,
+            remoteSort: true
         });
 
 
@@ -339,19 +340,20 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             ],
             listeners: {
 
-                rowclick: function(grid, record, tr, rowIndex, e, eOpts ) {
-                    var record = this.groupsStore.getAt(rowIndex);
-                    var groupId = record.data.id;
-                    var groupName = record.data.name;
+                selectionchange: function(rowModel, selected, eOpts ) {
+                    if (selected.length > 0) {
+                        var record = selected[0];
+                        var groupId = record.data.id;
+                        var groupName = record.data.name;
 
-                    this.groupId = groupId;
+                        this.groupId = groupId;
 
-                    this.relationsPanel.setTitle(t("relations") + " - "  + t("group") +  " " + record.data.id + " - " + groupName);
-                    this.relationsPanel.enable();
-                    this.relationsStore.getProxy().setExtraParam("groupId", groupId);
-                    this.relationsStore.reload();
-                    this.relationsGrid.show();
-
+                        this.relationsPanel.setTitle(t("relations") + " - " + t("group") + " " + record.data.id + " - " + groupName);
+                        this.relationsPanel.enable();
+                        this.relationsStore.getProxy().setExtraParam("groupId", groupId);
+                        this.relationsStore.reload();
+                        this.relationsGrid.show();
+                    }
                 }.bind(this)
             }
         } ;

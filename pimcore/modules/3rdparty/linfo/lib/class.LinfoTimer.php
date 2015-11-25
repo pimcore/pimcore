@@ -10,17 +10,17 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
  * Keep out hackers...
  */
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /**
  * Used to time how long it takes to fetch each bit of information. 
@@ -37,13 +37,13 @@ class LinfoTimer {
 	protected static $_fledging;
 
 	/**
-	 * Fledging. Get singleton instance
+	 * Singleton. Get singleton instance
 	 * 
 	 * @param array $settings linfo settings
 	 * @access public
 	 * @return object LinfoError instance
 	 */
-	public static function Fledging($settings = null) {
+	public static function Singleton($settings = null) {
 		$c = __CLASS__;
 		if (!isset(self::$_fledging))
 			self::$_fledging = new $c($settings);
@@ -79,37 +79,15 @@ class LinfoTimer {
 	public function getResults() {
 		return $this->_results;
 	}
-}
 
-/**
- * Started/created at the beginning of a function declaration.
- * Is only useful since __destruct() is called when that function ends,
- * which in turn calls LinfoTimer and saves result
- */
-class LinfoTimerStart {
-
-	// Store stuff here
-	protected
-		$_id,
-		$_start;
-	
 	/**
-	 * Initiate timer and set the name
-	 * 
-	 * @param string $id name of caller
-	 * @access public
+	 * Wipe out singleton instance. Used mainly for unit tests
+	 *
+	 * @static
+	 * @return void
 	 */
-	public function __construct($id) {
-		$this->_id = $id;
-		$this->_start = microtime(true);
-	}
-	
-	/**
-	 * Runs when it ends. As in, each bit of linfo's info fetching is done
-	 * in its own function. And when that function ends, any inner created
-	 * classes dies, thus calling the following destructor
-	 */
-	public function __destruct() {
-		LinfoTimer::Fledging()->save($this->_id, microtime(true) - $this->_start);
+	public static function clear() {
+		self::$_fledging = null;
 	}
 }
+

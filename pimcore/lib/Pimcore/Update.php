@@ -183,7 +183,7 @@ class Update {
      */
     public static function downloadData ($revision, $url) {
         
-        $db = Resource::get();
+        $db = Db::get();
         
         $db->query("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
           `id` int(11) NULL DEFAULT NULL,
@@ -243,7 +243,7 @@ class Update {
      */
     public static function installData ($revision) {
         
-        $db = Resource::get();
+        $db = Db::get();
         $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", $revision);
         
         foreach ($files as $file) { 
@@ -324,7 +324,7 @@ class Update {
     public static function cleanup () {
         
         // remove database tmp table
-        $db = Resource::get();
+        $db = Db::get();
         $db->query("DROP TABLE IF EXISTS `" . self::$tmpTable . "`");
         
         //delete tmp data

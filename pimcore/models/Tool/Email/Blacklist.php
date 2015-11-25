@@ -41,7 +41,7 @@ class Blacklist extends Model\AbstractModel {
 
         try {
             $address = new self();
-            $address->getResource()->getByAddress($addr);
+            $address->getDao()->getByAddress($addr);
 
             return $address;
         } catch (\Exception $e) {

@@ -304,10 +304,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $objectData["idPath"] = Element\Service::getIdPath($object);
             $objectData["previewUrl"] = $object->getClass()->getPreviewUrl();
-            $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
-            $this->getDataForObject($object, $objectFromVersion);
-            $objectData["data"] = $this->objectData;
-            $objectData["metaData"] = $this->metaData;
 
             $objectData["general"] = array();
             $allowedKeys = array("o_published", "o_key", "o_id", "o_modificationDate", "o_creationDate", "o_classId", "o_className", "o_locked", "o_type", "o_parentId", "o_userOwner", "o_userModification");
@@ -319,6 +315,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $objectData["general"]["o_locked"] = $object->isLocked();
+
+            $this->getDataForObject($object, $objectFromVersion);
+            $objectData["data"] = $this->objectData;
+
+
+
+            $objectData["metaData"] = $this->metaData;
+
+            $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
 
             $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
@@ -341,10 +346,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $objectData["childdata"]["id"] = $object->getId();
-            $objectData["childdata"]["data"]["classes"] = $object->getResource()->getClasses();
+            $objectData["childdata"]["data"]["classes"] = $object->getDao()->getClasses();
 
-            $currentLayoutId = $this->getParam("layoutId");
-
+            $currentLayoutId = $this->getParam("layoutId", null);
+            
             $validLayouts = Object\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
@@ -435,7 +440,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             (!$objectFromVersion
                 && $fielddefinition instanceof Object\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
-                && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata)
+                && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
+                && !$fielddefinition instanceof Object\ClassDefinition\Data\MultihrefMetadata
+            )
             || $fielddefinition instanceof Object\ClassDefinition\Data\Nonownerobjects
         ) {
 
@@ -634,7 +641,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectData["classes"] = $object->getResource()->getClasses();
+            $objectData["classes"] = $object->getDao()->getClasses();
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";

@@ -1,18 +1,28 @@
 <?php 
 
-/** Generated at 2014-10-21T11:07:05+02:00 */
+/** Generated at 2015-11-17T06:56:43+01:00 */
 
 /**
 * Inheritance: no
 * Variants   : no
-* Changed by : system (0)
-* IP:          192.168.11.104
+* Changed by : admin (37)
+* IP:          192.168.11.33
 */
 
 
 namespace Pimcore\Model\Object;
 
 
+
+/**
+* @method static \Pimcore\Model\Object\Person getByGender ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person getByFirstname ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person getByLastname ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person getByEmail ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person getByNewsletterActive ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person getByNewsletterConfirmed ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person getByDateRegister ($value, $limit = 0) 
+*/
 
 class Person extends Concrete {
 
@@ -177,7 +187,7 @@ public function setNewsletterConfirmed ($newsletterConfirmed) {
 
 /**
 * Get dateRegister - dateRegister
-* @return Zend_Date
+* @return \Pimcore\Date
 */
 public function getDateRegister () {
 	$preValue = $this->preGetValue("dateRegister"); 
@@ -190,7 +200,7 @@ public function getDateRegister () {
 
 /**
 * Set dateRegister - dateRegister
-* @param Zend_Date $dateRegister
+* @param \Pimcore\Date $dateRegister
 * @return \Pimcore\Model\Object\Person
 */
 public function setDateRegister ($dateRegister) {

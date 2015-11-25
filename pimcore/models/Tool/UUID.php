@@ -155,7 +155,7 @@ class UUID extends Model\AbstractModel {
      */
     public static function getByUuid($uuid){
         $self = new self;
-        return $self->getResource()->getByUuid($uuid);
+        return $self->getDao()->getByUuid($uuid);
     }
 
     /**

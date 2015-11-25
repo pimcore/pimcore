@@ -12,7 +12,7 @@
 
 use Pimcore\Tool;
 use Pimcore\File;
-use Pimcore\Resource;
+use Pimcore\Db;
 use Pimcore\Model\Translation;
 
 class Admin_MiscController extends \Pimcore\Controller\Action\Admin
@@ -324,7 +324,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Resource::get();
+        $db = Db::get();
 
         $limit = intval($this->getParam("limit"));
         $offset = intval($this->getParam("start"));
@@ -369,7 +369,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Resource::get();
+        $db = Db::get();
         $db->query("TRUNCATE TABLE http_error_log"); // much faster then $db->delete()
 
         $this->_helper->json(array(
@@ -381,7 +381,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $this->checkPermission("http_errors");
 
-        $db = Resource::get();
+        $db = Db::get();
         $data = $db->fetchRow("SELECT * FROM http_error_log WHERE uri = ?", array($this->getParam("uri")));
 
         foreach ($data as $key => &$value) {

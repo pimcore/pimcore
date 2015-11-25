@@ -54,7 +54,7 @@ class Event extends Model\AbstractModel {
      */
     public static function getById($id) {
         $event = new self();
-        $event->getResource()->getById(intval($id));
+        $event->getDao()->getById(intval($id));
 
         return $event;
     }
@@ -71,7 +71,7 @@ class Event extends Model\AbstractModel {
     public static function getByDate($category, $action, $label, $day, $month, $year) {
         $event = new self();
         try {
-            $event->getResource()->getByDate($category, $action, $label, $day, $month, $year);
+            $event->getDao()->getByDate($category, $action, $label, $day, $month, $year);
         } catch (\Exception $e) {
             $event->setTimestamp(mktime(1,0,0,$month, $day, $year));
             $event->setCategory($category);

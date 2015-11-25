@@ -83,12 +83,6 @@ if (defined('HHVM_VERSION')) {
 
 echo "\n\nDatabase Config: ". print_r($dbConfig, true) . "\n\n";
 
-// force the db wrapper to use only one connection, regardless if read/write
-if(is_array($systemConfig)) {
-    $db = \Pimcore\Resource::get();
-    $db->setWriteResource($db->getResource());
-}
-
 $setup = new Tool_Setup();
 $setup->config(array(
     "database" => $dbConfig,
@@ -97,6 +91,12 @@ $setup->config(array(
 ));
 
 Pimcore::initConfiguration();
+
+// force the db wrapper to use only one connection, regardless if read/write
+if(is_array($systemConfig)) {
+    $db = \Pimcore\Db::get();
+    $db->setWriteResource($db->getResource());
+}
 
 $setup->database();
 

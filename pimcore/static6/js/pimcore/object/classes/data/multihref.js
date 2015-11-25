@@ -28,6 +28,10 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
 
         this.initData(initData);
 
+        if (typeof this.datax.lazyLoading == "undefined") {
+            this.datax.lazyLoading = true;
+        }
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
                                         "visibleGridView","visibleSearch","style"];
@@ -155,7 +159,8 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         xtype: "numberfield",
                         fieldLabel: t("maximum_items"),
                         name: "maxItems",
-                        value: this.datax.maxItems
+                        value: this.datax.maxItems,
+                        minValue: 0
                     },
                     {
                         xtype: "checkbox",
@@ -263,7 +268,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         id: 'class_asset_upload_path_' + this.uniqeFieldId,
                         cls: "input_drop_target",
                         value: this.datax.assetUploadPath,
-                        width: 350,
+                        width: 500,
                         xtype: "textfield",
                         listeners: {
                             "render": function (el) {

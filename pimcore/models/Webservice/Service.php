@@ -1088,7 +1088,7 @@ class Service
              */
             $list = new $listClass();
             if($key = $params['key']){
-                $list->addConditionParam(" `key` LIKE " . \Pimcore\Resource::get()->quote("%" . $key . "%"),'');
+                $list->addConditionParam(" `key` LIKE " . \Pimcore\Db::get()->quote("%" . $key . "%"),'');
             }
 
             $list->addConditionParam(" `creationDate` >= ? ", $params['creationDateFrom']);

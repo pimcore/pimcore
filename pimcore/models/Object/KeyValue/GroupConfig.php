@@ -52,7 +52,7 @@ class GroupConfig extends Model\AbstractModel {
 
             $config = new self();
             $config->setId(intval($id));
-            $config->getResource()->getById();
+            $config->getDao()->getById();
 
             return $config;
         } catch (\Exception $e) {
@@ -68,7 +68,7 @@ class GroupConfig extends Model\AbstractModel {
         try {
             $config = new self();
             $config->setName($name);
-            $config->getResource()->getByName();
+            $config->getDao()->getByName();
 
             return $config;
         } catch (\Exception $e) {

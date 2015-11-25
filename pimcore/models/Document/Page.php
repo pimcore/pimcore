@@ -99,7 +99,7 @@ class Page extends Model\Document\PageSnippet {
      */
     protected function update() {
 
-        $oldPath = $this->getResource()->getCurrentFullPath();
+        $oldPath = $this->getDao()->getCurrentFullPath();
 
         parent::update();
 
@@ -347,7 +347,7 @@ class Page extends Model\Document\PageSnippet {
                 $inheritedElement = parent::getElement($inheritedName);
                 if($inheritedElement) {
                     $inheritedElement = clone $inheritedElement;
-                    $inheritedElement->setResource(null);
+                    $inheritedElement->setDao(null);
                     $inheritedElement->setName($personaName);
                     $inheritedElement->setInherited(true);
                     $this->setElement($personaName, $inheritedElement);

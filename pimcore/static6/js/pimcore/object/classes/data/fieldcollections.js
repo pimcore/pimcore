@@ -28,6 +28,10 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
 
         this.initData(initData);
 
+        if (typeof this.datax.lazyLoading == "undefined") {
+            this.datax.lazyLoading = true;
+        }
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","noteditable","invisible","style"];
 
@@ -94,7 +98,8 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 xtype: "numberfield",
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
-                value: this.datax.maxItems
+                value: this.datax.maxItems,
+                minValue: 0
             },
             {
                 xtype: "checkbox",

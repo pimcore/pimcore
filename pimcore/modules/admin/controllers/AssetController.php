@@ -1587,7 +1587,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 //TODO probably not needed
             }
         } else {
-            $db = \Pimcore\Resource::get();
+            $db = \Pimcore\Db::get();
                 // get list of objects
             $folder = Asset::getById($this->getParam("folderId"));
 

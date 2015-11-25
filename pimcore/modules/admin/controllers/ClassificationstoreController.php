@@ -12,7 +12,7 @@
 
 use Pimcore\Model\Object;
 use Pimcore\Model\Object\Classificationstore;
-use Pimcore\Resource;
+use Pimcore\Db;
 
 class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Admin
 {
@@ -175,15 +175,17 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $order = $this->_getParam("dir");
             }
 
-            if ($this->_getParam("sort")) {
-                $orderKey = $this->_getParam("sort");
-            }
-
             if ($this->_getParam("limit")) {
                 $limit = $this->_getParam("limit");
             }
             if ($this->_getParam("start")) {
                 $start = $this->_getParam("start");
+            }
+
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey'] && $sortingSettings['order']) {
+                $orderKey = $sortingSettings['orderKey'];
+                $order = $sortingSettings['order'];
             }
 
             if ($this->_getParam("overrideSort") == "true") {
@@ -199,7 +201,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $allowedGroupIds = $fd->getAllowedGroupIds();
 
                 if ($allowedGroupIds) {
-                    $db = Pimcore_Resource::get();
+                    $db = \Pimcore\Db::get();
                     $query = "select * from classificationstore_collectionrelations where groupId in (" . implode(",", $allowedGroupIds) .")";
                     $relationList = $db->fetchAll($query);
 
@@ -225,7 +227,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
-                $db = Resource::get();
+                $db = Db::get();
                 $count = 0;
 
                 foreach($filters as $f) {
@@ -286,7 +288,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         }
     }
 
-    
+
 
     public function groupsAction() {
         if ($this->_getParam("data")) {
@@ -328,6 +330,12 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $start = $this->_getParam("start");
             }
 
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey'] && $sortingSettings['order']) {
+                $orderKey = $sortingSettings['orderKey'];
+                $order = $sortingSettings['order'];
+            }
+
             if ($this->_getParam("overrideSort") == "true") {
                 $orderKey = "id";
                 $order = "DESC";
@@ -346,7 +354,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
-                $db = Resource::get();
+                $db = Db::get();
                 $count = 0;
 
                 foreach($filters as $f) {
@@ -439,16 +447,17 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $start = 0;
             $limit = 15;
-            $orderKey = "name";
+            $orderKey = "sorter";
             $order = "ASC";
 
             if ($this->_getParam("dir")) {
                 $order = $this->_getParam("dir");
             }
 
-            if ($this->_getParam("sort")) {
-                $orderKey = $this->_getParam("sort");
-                $orderKey = $mapping[$orderKey];
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey'] && $sortingSettings['order']) {
+                $orderKey = $sortingSettings['orderKey'];
+                $order = $sortingSettings['order'];
             }
 
             if ($this->_getParam("overrideSort") == "true") {
@@ -473,7 +482,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             if($this->_getParam("filter")) {
-                $db = Resource::get();
+                $db = Db::get();
                 $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
@@ -559,6 +568,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             if ($this->_getParam("sort")) {
                 $orderKey = $this->_getParam("sort");
                 $orderKey = $mapping[$orderKey];
+            } else {
+                $orderKey = "sorter";
             }
 
             if ($this->_getParam("overrideSort") == "true") {
@@ -583,7 +594,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             if($this->_getParam("filter")) {
-                $db = Resource::get();
+                $db = Db::get();
                 $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
@@ -638,9 +649,9 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         if ($ids) {
 
-            $db = Pimcore_Resource::get();
+            $db = \Pimcore\Db::get();
             $query = "select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (" . implode("," , $ids)
-                    . ") and g.id = c.groupId";
+                . ") and g.id = c.groupId";
 
             $mappedData = array();
             $groupsData = $db->fetchAll($query);
@@ -803,8 +814,10 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $order = $this->_getParam("dir");
             }
 
-            if ($this->_getParam("sort")) {
-                $orderKey = $this->_getParam("sort");
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey'] && $sortingSettings['order']) {
+                $orderKey = $sortingSettings['orderKey'];
+                $order = $sortingSettings['order'];
             }
 
             if ($this->_getParam("overrideSort") == "true") {
@@ -829,7 +842,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             if($this->_getParam("filter")) {
-                $db = Resource::get();
+                $db = Db::get();
                 $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
@@ -854,7 +867,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             }
 
             if ($this->_getParam("groupIds") || $this->_getParam("keyIds")) {
-                $db = Resource::get();
+                $db = Db::get();
 
                 if ($this->_getParam("groupIds")) {
                     $ids = \Zend_Json::decode($this->_getParam("groupIds"));

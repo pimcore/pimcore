@@ -122,7 +122,7 @@ class Setup extends Model\AbstractModel {
      *
      */
     public function contents($config = array()) {
-        $this->getResource()->contents();
+        $this->getDao()->contents();
 		$this->createOrUpdateUser($config);
     }
 	

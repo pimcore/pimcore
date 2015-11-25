@@ -10,19 +10,19 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 
-class OS_SunOS {
+class OS_SunOS extends OS {
 	
 	// Encapsulate these
 	protected
@@ -61,111 +61,68 @@ class OS_SunOS {
 			'unix:0:seg_cache:slab_size',
 			'unix:0:system_pages:pagestotal',
 			'unix:0:system_pages:pagesfree',
+
+			// Info on all CPUs
+			'cpu_info:0:',
+
+			// Network interface stats
+			'link:0:'
 		));
 	}
 	
-	// This function will likely be shared among all the info classes
-	public function getAll() {
-
-		// Return everything, whilst obeying display permissions
-		return array(
-			'OS' => empty($this->settings['show']) ? '' : $this->getOS(), 			# done
-			'Kernel' => empty($this->settings['show']) ? '' : $this->getKernel(), 		# done
-			'HostName' => empty($this->settings['show']) ? '' : $this->getHostName(), 	# done
-			'Mounts' => empty($this->settings['show']) ? array() : $this->getMounts(), 	# done
-			'processStats' => empty($this->settings['show']['process_stats']) ? array() : $this->getProcessStats(), # done
-			'UpTime' => empty($this->settings['show']) ? '' : $this->getUpTime(), 		# done
-			'Load' => empty($this->settings['show']) ? array() : $this->getLoad(), 		# done
-			'RAM' => empty($this->settings['show']) ? array() : $this->getRam(), 		# todo
-			/*
-			'Devices' => empty($this->settings['show']) ? array() : $this->getDevs(), 	# todo
-			'HD' => empty($this->settings['show']) ? '' : $this->getHD(), 			# todo
-			'Network Devices' => empty($this->settings['show']) ? array() : $this->getNet(),# todo 
-			'RAID' => empty($this->settings['show']) ? '' : $this->getRAID(),	 	# todo 
-			'Battery' => empty($this->settings['show']) ? array(): $this->getBattery(),  	# todo
-			'CPU' => empty($this->settings['show']) ? array() : $this->getCPU(), 		# todo
-			'Temps' => empty($this->settings['show']) ? array(): $this->getTemps(), 	# TODO
-			*/
-		);
-	}
-
 	// Get kstat values. *extremely* similar in practice to the sysctl nature of the bsd's
 	// - 
 	// Use kstat to get something, and cache result.
 	// Also allow getting multiple keys at once, in which case sysctl 
 	// will only be called once instead of multiple times (assuming it doesn't break)
-	protected function loadkstat($keys ) {
+	protected function loadkstat($keys) {
 
-		// Get the keys as an array, so we can treat it as an array of keys
-		$keys = (array) $keys;
+		// Time?
+		if (!empty($this->settings['timer']))
+			$t = new LinfoTimerStart('Solaris Kstat Parsing');
 
-		// Store the results of which here
 		$results = array();
 
-		// Go through each
 		foreach ($keys as $k => $v) {
-			// unfuck evil shit, such as malicious shell injection
-			$keys[$k] = escapeshellarg($v);
-			
-			// Check and see if we have any of these already. If so, use previous 
-			// values and don't retrive them again
 			if (array_key_exists($v, $this->kstat)) {
 				unset($keys[$k]);
-				$results[$v] = $this->kstat[$v];
 			}
 		}
 
-		// Try running kstat to get all the values together
 		try {
-			// Result of kstat
-			$command = $this->exec->exec('kstat', ' -p '.implode(' ', $keys));
-
-			// Place holder
-			$current_key = false;
-
-			// Go through each line
-			foreach (explode("\n", $command) as $line) {
-
-				// If this is the beginning of one of the keys' values
-				if (preg_match('/^(\S+)\s+(.+)/', $line, $line_match) == 1) {
-					if ($line_match[1] != $current_key) {
-						$current_key = $line_match[1];
-						$results[$line_match[1]] = trim($line_match[2]);
-					}
-				}
-
-				// If this line is a continuation of one of the keys' values
-				elseif($current_key != false) {
-					$results[$current_key] .= "\n".trim($line);
-				}
-			}
+			$command = $this->exec->exec('kstat', ' -p '.implode(' ', array_map('escapeshellarg', $keys)));
+			$lines = explode("\n", $command);
 		}
 
-		// Something broke with that kstat call; try getting
-		// all the values separately (slower)
 		catch(CallExtException $e) {
+			LinfoError::Singleton()->add('Solaris Core', 'Failed running kstat.');
+		}
 
-			// Go through each
-			foreach ($keys as $v) {
+		if (!is_array($lines))
+			return;
 
-				// Try it
-				try {
-					$results[$v] = $this->exec->exec('kstat', ' -p '.$v);
-				}
+		// Not very efficient as it loops over each line for every key that exists, but it is
+		// very effective and thorough
+		foreach ($keys as $key) {
+			foreach ($lines as $line) {
+				$line = trim($line);
 
-				// Didn't work again... just forget it and set value to empty string
-				catch (CallExtException $e) {
-					$results[$v] = '';
-				}
+				if (strpos($line, $key) !== 0)
+					continue;
+
+				$value = ltrim(substr($line, strlen($key)));
+				if (isset($results[$key]))
+					$results[$key] .= "\n".$value;
+				else
+					$results[$key] = $value;
 			}
 		}
 
-		// Cache these incase they're called upon again
 		$this->kstat = array_merge($results, $this->kstat);
 	}
 
 	// Return OS type
-	private function getOS() {
+	public function getOS() {
 
 		// Get SunOS version
 		$v = reset(explode('.', $this->release, 2));
@@ -185,21 +142,24 @@ class OS_SunOS {
 	}
 	
 	// Get kernel version
-	private function getKernel() {
+	public function getKernel() {
 		
-		// hmm. PHP has a native function for this
 		return $this->release;
 	}
 
 	// Get host name
-	private function getHostName() {
+	public function getHostName() {
 		
 		// Take advantage of that function again
 		return php_uname('n');
 	}
 
+	public function getCPUArchitecture() {
+		return php_uname('m');
+	}
+
 	// Mounted file systems
-	private function getMounts() {
+	public function getMounts() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -252,7 +212,7 @@ class OS_SunOS {
 	}
 
 	// Get ram stats
-	private function getRAM() {
+	public function getRAM() {
 		
 		// Time?
 		if (!empty($this->settings['timer']))
@@ -327,18 +287,151 @@ class OS_SunOS {
 	}
 
 	// uptime
-	private function getUpTime() {
+	public function getUpTime() {
 		$booted = $this->kstat['unix:0:system_misc:boot_time'];
-		return seconds_convert(time() - $booted) . '; booted ' . date($this->settings['dates'], $booted);
+		return array(
+			'text' => LinfoCommon::secondsConvert(time() - $booted),
+			'bootedTimestamp' => $booted
+		);
 	}
 
 	// load
-	private function getLoad() {
+	public function getLoad() {
 		// Give
 		return array(
 			'now' => round($this->kstat['unix:0:system_misc:avenrun_1min'] / 256, 2),
 			'5min' => round($this->kstat['unix:0:system_misc:avenrun_5min'] / 256, 2),
 			'15min' => round($this->kstat['unix:0:system_misc:avenrun_10min'] / 256, 2)
 		);
+	}
+
+	public function getCPU() {
+		$cpus = array();
+
+		foreach (explode("\n", $this->kstat['cpu_info:0:']) as $line) {
+			if (!preg_match('/^cpu_info(\d+):(\S+)\s+(.+)/', trim($line), $m))
+				continue;
+			if (!isset($cpus[$m[1]]))
+				$cpus[$m[1]] = array();
+
+			$cur_cpu = &$cpus[$m[1]];
+
+			$value = trim($m[3]);
+			switch ($m[2]) {
+				case 'vendor_id':
+					$cur_cpu['Vendor'] = $value;
+				break;
+
+				case 'clock_MHz':
+					$cur_cpu['MHz'] = $value;
+				break;
+
+				case 'brand':
+					$cur_cpu['Model'] = $value;
+				break;
+			}
+		}
+
+		return $cpus;
+	}
+
+	public function getNet() {
+		$nets = array();
+
+		// ifconfig for nics/statuses
+		try {
+			$ifconfig = $this->exec->exec('ifconfig', '-a');
+		}
+		catch(CallExtException $e) {
+			LinfoError::Singleton()->add('Solaris Core', 'Failed running ifconfig -a.');
+			return array();
+		}
+
+		foreach (explode("\n", $ifconfig) as $line) {
+			if (!preg_match('/^([^:]+):[^<]+<([^>]+)>/', trim($line), $m))
+				continue;
+
+			$nic = $m[1];
+			$flags = explode(',', strtolower($m[2]));
+
+			if (isset($nets[$nic]))
+				continue;
+
+			$type = null;
+
+			if (in_array('loopback', $flags))
+				$type = 'Loopback';
+
+			$nets[$nic] = array(
+
+				// To be filled in later
+				'recieved' => array(
+					'bytes' => null,
+					'packets' => null,
+					'errors' => null,
+				),
+				'sent' => array(
+					'bytes' => null,
+					'bytes' => null,
+					'errors' => null,
+				),
+
+				// Should find a better way of getting these
+				'state' => in_array('up', $flags) ? 'up' : 'Unknown',
+				'type' => $type
+			);
+		}
+
+		// kstat for more stats
+		foreach (explode("\n", $this->kstat['link:0:']) as $line) {
+			if (!preg_match('/^([^:]+):(\S+)\s+(\S+)/', trim($line), $m))
+				continue;
+
+			list (, $nic, $key, $value) = $m;
+
+			if (!isset($nets[$nic]))
+				continue;
+
+			$cur_nic = &$nets[$nic];
+
+			switch ($key) {
+				case 'ipackets64':
+					$cur_nic['recieved']['packets'] = $value;
+				break;
+				case 'opackets64':
+					$cur_nic['sent']['packets'] = $value;
+				break;
+				case 'rbytes64':
+					$cur_nic['recieved']['bytes'] = $value;
+				break;
+				case 'obytes64':
+					$cur_nic['sent']['bytes'] = $value;
+				break;
+			}
+		}
+
+		// dladm for more stats...
+		try {
+			$dladm = $this->exec->exec('dladm', 'show-link');
+			foreach (explode("\n", $dladm) as $line) {
+				if (!preg_match('/^(\S+)\s+(\S+)\s+\d+\s+(\S+)/', $line, $m))
+					continue;
+
+				if (!isset($nets[$m[1]]))
+					continue;
+
+				if (!$nets[$m[1]]['type'] && $m[2] == 'phys')
+				 $nets[$m[1]]['type'] = 'Physical';
+
+				if (!$nets[$m[1]]['state'] || $nets[$m[1]]['state'] == 'unknown')
+					$nets[$m[1]]['state'] = $m[3];
+			}
+		}
+		catch(CallExtException $e) {
+			LinfoError::Singleton()->add('Solaris Core', 'Failed running dladm show-link.');
+			return array();
+		}
+
+		return $nets;
 	}
 }

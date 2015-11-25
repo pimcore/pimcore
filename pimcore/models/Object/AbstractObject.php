@@ -237,7 +237,7 @@ class AbstractObject extends Model\Element\AbstractElement {
                 if (!$object = Cache::load($cacheKey)) {
 
                     $object = new Model\Object();
-                    $typeInfo = $object->getResource()->getTypeById($id);
+                    $typeInfo = $object->getDao()->getTypeById($id);
 
                     if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "variant" || $typeInfo["o_type"] == "folder") {
 
@@ -253,7 +253,7 @@ class AbstractObject extends Model\Element\AbstractElement {
 
                         $object = new $concreteClassName();
                         \Zend_Registry::set($cacheKey, $object);
-                        $object->getResource()->getById($id);
+                        $object->getDao()->getById($id);
 
                         Cache::save($object, $cacheKey);
                     } else {
@@ -297,7 +297,7 @@ class AbstractObject extends Model\Element\AbstractElement {
             $object = new self();
 
             if (Tool::isValidPath($path)) {
-                $object->getResource()->getByPath($path);
+                $object->getDao()->getByPath($path);
                 return self::getById($object->getId());
             }
         }
@@ -415,12 +415,12 @@ class AbstractObject extends Model\Element\AbstractElement {
     public function hasChilds($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
         if(is_bool($this->o_hasChilds)){
             if(($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))){
-                return $this->getResource()->hasChilds($objectTypes);
+                return $this->getDao()->hasChilds($objectTypes);
             } else {
                 return $this->o_hasChilds;
             }
         }
-        return $this->getResource()->hasChilds($objectTypes);
+        return $this->getDao()->hasChilds($objectTypes);
     }
 
 
@@ -457,12 +457,12 @@ class AbstractObject extends Model\Element\AbstractElement {
 	public function hasSiblings($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
 		if(is_bool($this->o_hasSiblings)){
 			if(($this->o_hasSiblings and empty($this->o_siblings)) or (!$this->o_hasSiblings and !empty($this->o_siblings))){
-				return $this->getResource()->hasSiblings($objectTypes);
+				return $this->getDao()->hasSiblings($objectTypes);
 			} else {
 				return $this->o_hasSiblings;
 			}
 		}
-		return $this->getResource()->hasSiblings($objectTypes);
+		return $this->getDao()->hasSiblings($objectTypes);
 	}
 
 
@@ -506,12 +506,12 @@ class AbstractObject extends Model\Element\AbstractElement {
         $d->cleanAllForElement($this);
 
         // remove all properties
-        $this->getResource()->deleteAllProperties();
+        $this->getDao()->deleteAllProperties();
 
         // remove all permissions
-        $this->getResource()->deleteAllPermissions();
+        $this->getDao()->deleteAllPermissions();
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
 
         // empty object cache
         $this->clearDependentCache();
@@ -560,13 +560,13 @@ class AbstractObject extends Model\Element\AbstractElement {
                 $this->correctPath();
 
                 if (!$isUpdate) {
-                    $this->getResource()->create();
+                    $this->getDao()->create();
                 }
 
                 // get the old path from the database before the update is done
                 $oldPath = null;
                 if ($isUpdate) {
-                    $oldPath = $this->getResource()->getCurrentFullPath();
+                    $oldPath = $this->getDao()->getCurrentFullPath();
                 }
 
                 // if the old path is different from the new path, update all children
@@ -574,8 +574,8 @@ class AbstractObject extends Model\Element\AbstractElement {
                 // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
                 $updatedChildren = array();
                 if($oldPath && $oldPath != $this->getFullPath()) {
-                    $this->getResource()->updateWorkspaces();
-                    $updatedChildren = $this->getResource()->updateChildsPaths($oldPath);
+                    $this->getDao()->updateWorkspaces();
+                    $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
 
                 $this->update();
@@ -691,12 +691,12 @@ class AbstractObject extends Model\Element\AbstractElement {
 
         // save properties
         $this->getProperties();
-        $this->getResource()->deleteAllProperties();
+        $this->getDao()->deleteAllProperties();
 
         if (is_array($this->getProperties()) and count(is_array($this->getProperties())) > 0) {
             foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
-                    $property->setResource(null);
+                    $property->setDao(null);
                     $property->setCid($this->getId());
                     $property->setCtype("object");
                     $property->setCpath($this->getPath() . $this->getKey());
@@ -969,7 +969,7 @@ class AbstractObject extends Model\Element\AbstractElement {
             $cacheKey = "object_properties_" . $this->getId();
             $properties = Cache::load($cacheKey);
             if (!is_array($properties)) {
-                $properties = $this->getResource()->getProperties();
+                $properties = $this->getDao()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("object_properties" => "object_properties", $elementCacheTag => $elementCacheTag);
                 Cache::save($properties, $cacheKey, $cacheTags);
@@ -1098,14 +1098,14 @@ class AbstractObject extends Model\Element\AbstractElement {
     public function renewInheritedProperties () {
         $this->removeInheritedProperties();
 
-        // add to registry to avoid infinite regresses in the following $this->getResource()->getProperties()
+        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
         $cacheKey = "object_" . $this->getId();
         if(!\Zend_Registry::isRegistered($cacheKey)) {
             \Zend_Registry::set($cacheKey, $this);
         }
 
         $myProperties = $this->getProperties();
-        $inheritedProperties = $this->getResource()->getProperties(true);
+        $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 

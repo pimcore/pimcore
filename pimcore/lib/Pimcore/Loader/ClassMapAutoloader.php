@@ -18,7 +18,30 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
 
     public function autoload($class) {
 
+        // manual aliasing
+        $classAliases = [
+            "Pimcore\\Resource" => "Pimcore\\Db",
+            "Pimcore_Resource" => "Pimcore\\Db",
+            "Pimcore\\Resource\\Mysql" => "Pimcore\\Db",
+            "Pimcore_Resource_Mysql" => "Pimcore\\Db",
+        ];
+
+        if(array_key_exists($class, $classAliases)) {
+            class_alias($classAliases[$class], $class);
+            return;
+        }
+
         parent::autoload($class);
+
+        // compatibility from Resource => Dao
+        if(strpos($class, "Resource") && !class_exists($class, false) && !interface_exists($class, false)) {
+            $daoClass = str_replace("Resource","Dao",$class);
+            if(Tool::classExists($daoClass) || Tool::interfaceExists($daoClass)) {
+                if(!class_exists($class, false) && !interface_exists($class, false)) {
+                    class_alias($daoClass, $class);
+                }
+            }
+        }
 
         // reverse compatibility from namespaced to prefixed class names e.g. Pimcore\Model\Document => Document
         if(strpos($class, "Pimcore\\") === 0) {

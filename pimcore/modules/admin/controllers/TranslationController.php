@@ -321,7 +321,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
     protected function getGridFilterCondition() {
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $conditionFilters = [];
 
         $filterJson = $this->getParam("filter");

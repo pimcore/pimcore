@@ -204,7 +204,7 @@ class LightOpenID
             curl_setopt($curl, CURLOPT_HTTPGET, true);
         }
         $response = curl_exec($curl);
-        if( $response === FALSE ) {
+        if( $response === false ) {
             Hybrid_Logger::error( "LightOpenID::request_curl(). curl_exec error: ", curl_error($curl) );
         }
 
@@ -908,7 +908,7 @@ class LightOpenID
      * or that there will be no other attributes besides those specified.
      * In other words. OP may provide whatever information it wants to.
      *     * SREG names will be mapped to AX names.
-     *     * @return Array Array of attributes with keys being the AX schema names, e.g. 'contact/email'
+     *     * @return array array of attributes with keys being the AX schema names, e.g. 'contact/email'
      * @see http://www.axschema.org/types/
      */
     function getAttributes()
@@ -932,7 +932,7 @@ class LightOpenID
      * Furthermore the registered consumer name must fit the OpenID realm. 
      * To register an OpenID consumer at Google use: https://www.google.com/accounts/ManageDomains
      * 
-     * @return string|bool OAuth request token on success, FALSE if no token was provided.
+     * @return string|bool OAuth request token on success, false if no token was provided.
      */
     function getOAuthRequestToken()
     {
@@ -946,7 +946,7 @@ class LightOpenID
      *
      * @param string $namespace The namespace for which an alias is needed.
      * @param string $hint Common alias of this namespace, used for optimization.
-     * @return string|null The namespace alias if found, otherwise - NULL.
+     * @return string|null The namespace alias if found, otherwise - null.
      */
     private function getNamespaceAlias($namespace, $hint = null)
     {
@@ -975,7 +975,7 @@ class LightOpenID
      * Gets an item from the $data array by the specified id.
      *
      * @param string $id The id of the desired item.
-     * @return string|null The item if found, otherwise - NULL.
+     * @return string|null The item if found, otherwise - null.
      */
     private function getItem($id)
     {

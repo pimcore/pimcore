@@ -92,7 +92,7 @@ class DocType extends Model\AbstractModel {
         $docType->setId(intval($id));
 
         try {
-            $docType->getResource()->getById();
+            $docType->getDao()->getById();
         } catch (\Exception $e) {
             return null;
         }

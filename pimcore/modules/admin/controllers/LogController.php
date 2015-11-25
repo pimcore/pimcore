@@ -10,9 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-use \Pimcore\Resource;
-use \Pimcore\Log;
-use \Pimcore\Log\Writer;
+use Pimcore\Db;
+use Pimcore\Log;
+use Pimcore\Log\Writer;
 
 class Admin_LogController extends \Pimcore\Controller\Action\Admin {
 
@@ -65,7 +65,7 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin {
         }
 
 
-        $db = Resource::get();
+        $db = Db::get();
         $count = $db->fetchCol("SELECT count(*) FROM " . Log\Helper::ERROR_LOG_TABLE_NAME . $queryString);
         $total = $count[0];
 

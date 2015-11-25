@@ -47,30 +47,50 @@ class Unit extends Model\AbstractModel {
      */
     public $baseunit;
 
+    /**
+     * @var string
+     */
+    public $reference;
+
 
     /**
      * @var double
      */
     public $factor;
 
+    /**
+     * @var double
+     */
+    public $conversionOffset;
+
 
     /**
      * @param string $abbreviation
-     * @return QuantityValue_Unit
+     * @return Unit
      */
     public static function getByAbbreviation($abbreviation) {
         $unit = new self();
-        $unit->getResource()->getByAbbreviation($abbreviation);
+        $unit->getDao()->getByAbbreviation($abbreviation);
+        return $unit;
+    }
+
+    /**
+     * @param string $reference
+     * @return Unit
+     */
+    public static function getByReference($reference) {
+        $unit = new self();
+        $unit->getDao()->getByReference($reference);
         return $unit;
     }
 
     /**
      * @param string $id
-     * @return QuantityValue_Unit
+     * @return Unit
      */
     public static function getById($id) {
 
-        $cacheKey = Unit\Resource::TABLE_NAME . "_" . $id;
+        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $id;
 
         try {
             $unit = \Zend_Registry::get($cacheKey);
@@ -79,7 +99,7 @@ class Unit extends Model\AbstractModel {
 
             try {
                 $unit = new self();
-                $unit->getResource()->getById($id);
+                $unit->getDao()->getById($id);
                 \Zend_Registry::set($cacheKey, $unit);
             } catch(\Exception $ex) {
                 \Logger::debug($ex->getMessage());
@@ -105,17 +125,17 @@ class Unit extends Model\AbstractModel {
      * @return void
      */
     public function save() {
-        $this->getResource()->save();
+        $this->getDao()->save();
     }
 
     /**
      * @return void
      */
     public function delete() {
-        $cacheKey = Unit\Resource::TABLE_NAME . "_" . $this->getId();
+        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();
         \Zend_Registry::set($cacheKey, null);
 
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
 
@@ -183,5 +203,36 @@ class Unit extends Model\AbstractModel {
         return $this->longname;
     }
 
+    /**
+     * @return string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     */
+    public function setReference($reference)
+    {
+        $this->reference = $reference;
+    }
+
+    /**
+     * @return float
+     */
+    public function getConversionOffset()
+    {
+        return $this->conversionOffset;
+    }
+
+    /**
+     * @param float $conversionOffset
+     */
+    public function setConversionOffset($conversionOffset)
+    {
+        $this->conversionOffset = $conversionOffset;
+    }
 
 }

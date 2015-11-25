@@ -39,7 +39,6 @@ pimcore.settings.user.role.tab = Class.create({
         this.panel = new Ext.TabPanel({
             title: this.data.role.name,
             closable: true,
-            activeTab: 0,
             iconCls: "pimcore_icon_roles",
             buttons: [{
                 text: t("save"),
@@ -60,6 +59,7 @@ pimcore.settings.user.role.tab = Class.create({
 
         this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().setActiveTab(this.panel);
+        this.panel.setActiveTab(0);
     },
 
     activate: function () {

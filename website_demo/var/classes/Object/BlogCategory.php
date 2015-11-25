@@ -1,17 +1,22 @@
 <?php 
 
-/** Generated at 2014-10-21T11:07:05+02:00 */
+/** Generated at 2015-11-17T06:57:25+01:00 */
 
 /**
 * Inheritance: no
 * Variants   : no
-* IP:          192.168.11.104
+* Changed by : admin (37)
+* IP:          192.168.11.33
 */
 
 
 namespace Pimcore\Model\Object;
 
 
+
+/**
+* @method static \Pimcore\Model\Object\BlogCategory getByLocalizedfields ($value, $limit = 0) 
+*/
 
 class BlogCategory extends Concrete {
 
@@ -50,7 +55,9 @@ public function getLocalizedfields () {
 public function getName ($language = null) {
 	$data = $this->getLocalizedfields()->getLocalizedValue("name", $language);
 	$preValue = $this->preGetValue("name"); 
-	if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	 return $data;
 }
 

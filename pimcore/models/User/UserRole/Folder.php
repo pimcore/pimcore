@@ -41,6 +41,6 @@ class Folder extends Model\User\AbstractUser {
         if ($this->hasChilds !== null) {
             return $this->hasChilds;
         }
-        return $this->getResource()->hasChilds();
+        return $this->getDao()->hasChilds();
     }
 }

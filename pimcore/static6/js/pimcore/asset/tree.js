@@ -359,6 +359,9 @@ pimcore.asset.tree = Class.create({
 
     onTreeNodeOver: function (targetNode, position, dragData, e, eOpts ) {
         var node = dragData.records[0];
+        if (node.getOwnerTree() != targetNode.getOwnerTree()) {
+            return false;
+        }
         // check for permission
         try {
             if (node.data.permissions.settings) {

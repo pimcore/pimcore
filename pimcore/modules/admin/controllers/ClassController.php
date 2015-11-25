@@ -1003,7 +1003,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin {
 
 
                     $layoutList = new Object\ClassDefinition\CustomLayout\Listing();
-                    $db = \Pimcore\Resource::get();
+                    $db = \Pimcore\Db::get();
                     $layoutList->setCondition("name = " . $db->quote($layoutName) . " AND classId = " . $classId);
                     $layoutList = $layoutList->load();
 

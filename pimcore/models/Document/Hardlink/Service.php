@@ -32,14 +32,14 @@ class Service {
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
                 $destDoc->setPath($doc->getRealPath());
-                $destDoc->initResource(get_class($sourceDoc));
+                $destDoc->initDao(get_class($sourceDoc));
                 $destDoc->setHardLinkSource($doc);
                 return $destDoc;
             }
         } else {
             $sourceClass = get_class($doc);
             $doc = self::upperCastDocument($doc);
-            $doc->initResource($sourceClass);
+            $doc->initDao($sourceClass);
             return $doc;
         }
 

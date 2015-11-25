@@ -96,7 +96,7 @@ class Redirect extends AbstractModel {
 
         $redirect = new self();
         $redirect->setId(intval($id));
-        $redirect->getResource()->getById();
+        $redirect->getDao()->getById();
 
         return $redirect;
     }
@@ -212,7 +212,7 @@ class Redirect extends AbstractModel {
      */
     public function clearDependentCache() {
         
-        // this is mostly called in Redirect\Resource not here
+        // this is mostly called in Redirect\Dao not here
         try {
             \Pimcore\Model\Cache::clearTag("redirect");
         }

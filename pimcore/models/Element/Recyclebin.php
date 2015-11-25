@@ -19,7 +19,7 @@ use Pimcore\Model;
 class Recyclebin extends Model\AbstractModel {
     
     public function flush () {
-        $this->getResource()->flush();
+        $this->getDao()->flush();
         
         $files = scandir(PIMCORE_RECYCLEBIN_DIRECTORY);
         foreach ($files as $file) {

@@ -38,7 +38,7 @@ class BlogController extends Action
         $this->view->categories = $categories;
 
         // archive information, we have to do this in pure SQL
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $ranges = $db->fetchCol("SELECT DATE_FORMAT(FROM_UNIXTIME(date), '%Y-%c') as ranges FROM object_5 GROUP BY DATE_FORMAT(FROM_UNIXTIME(date), '%b-%Y') ORDER BY ranges ASC");
         $this->view->archiveRanges = $ranges;
     }

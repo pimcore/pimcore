@@ -111,7 +111,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         // check for inherited
-        return $this->getResource()->isLocked();
+        return $this->getDao()->isLocked();
     }
 
     /**
@@ -121,7 +121,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         $elementType = Service::getElementType($this);
         $vars = get_class_vars("\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($elementType));
-        $ignored = array("userId","cid","cpath","resource");
+        $ignored = array("userId","cid","cpath","dao");
         $permissions = array();
 
         foreach ($vars as $name => $defaultValue) {
@@ -147,7 +147,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return true;
         }
 
-        return $this->getResource()->isAllowed($type, $currentUser);
+        return $this->getDao()->isAllowed($type, $currentUser);
     }
 
     /**
@@ -155,7 +155,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function unlockPropagate() {
         $type = Service::getType($this);
-        $ids = $this->getResource()->unlockPropagate();
+        $ids = $this->getDao()->unlockPropagate();
 
         // invalidate cache items
         foreach ($ids as $id) {

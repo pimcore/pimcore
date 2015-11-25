@@ -59,7 +59,7 @@ class WebsiteSetting extends AbstractModel {
         $setting = new self();
 
         $setting->setId(intval($id));
-        $setting->getResource()->getById();
+        $setting->getDao()->getById();
         return $setting;
     }
     
@@ -73,7 +73,7 @@ class WebsiteSetting extends AbstractModel {
         $setting = new self();
 
         try {
-            $setting->getResource()->getByName($name, $siteId);
+            $setting->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
             \Logger::error($e);
             return null;

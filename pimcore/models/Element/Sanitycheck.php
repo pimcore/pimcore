@@ -67,7 +67,7 @@ class Sanitycheck extends Model\AbstractModel {
      * @return void
      */
     public function save(){
-        $this->getResource()->save();
+        $this->getDao()->save();
     }
 
     /**
@@ -76,7 +76,7 @@ class Sanitycheck extends Model\AbstractModel {
      * @return void
      */
     public function delete(){
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
 
@@ -86,7 +86,7 @@ class Sanitycheck extends Model\AbstractModel {
      */
     public static function getNext(){
         $sanityCheck = new Sanitycheck();
-        $sanityCheck->getResource()->getNext();
+        $sanityCheck->getDao()->getNext();
         if($sanityCheck->getId() and $sanityCheck->getType()){
                 return $sanityCheck;
         } else return null;

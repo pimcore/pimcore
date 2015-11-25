@@ -57,7 +57,7 @@ class Dependency extends AbstractModel {
         $d = new self();
         $d->setSourceId($id);
         $d->setSourceType($type);
-        $d->getResource()->getBySourceId();
+        $d->getDao()->getBySourceId();
         return $d;
     }
 
@@ -80,7 +80,7 @@ class Dependency extends AbstractModel {
      * @return void
      */
     public function cleanAllForElement($element){
-        $this->getResource()->cleanAllForElement($element);
+        $this->getDao()->cleanAllForElement($element);
     }
 
     /**
@@ -90,7 +90,7 @@ class Dependency extends AbstractModel {
      */
     public function clean() {
         $this->requires = array();
-        $this->getResource()->clear();
+        $this->getDao()->clear();
     }
 
     /**

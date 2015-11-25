@@ -9,7 +9,6 @@ Ext.define('Portal.view.Portlet', {
     layout: 'fit',
     anchor: '100%',
     frame: true,
-    padding: '8 8 0 0',
     closable: true,
     collapsible: true,
     animCollapse: true,

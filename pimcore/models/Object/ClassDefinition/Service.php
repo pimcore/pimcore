@@ -233,7 +233,7 @@ class Service  {
             $tableDefinitions = array();
         }
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $tmp = array();
         foreach ($tableNames as $tableName) {
             $tmp[$tableName] = $db->fetchAll("show columns from " . $tableName);

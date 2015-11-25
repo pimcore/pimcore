@@ -210,7 +210,7 @@ class Log extends Model\AbstractModel
         }
 
         $emailLog = new Model\Tool\Email\Log();
-        $emailLog->getResource()->getById($id);
+        $emailLog->getDao()->getById($id);
         $emailLog->setEmailLogExistsHtml();
         $emailLog->setEmailLogExistsText();
         return $emailLog;
@@ -361,7 +361,7 @@ class Log extends Model\AbstractModel
     {
         @unlink(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log');
         @unlink(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log');
-        $this->getResource()->delete();
+        $this->getDao()->delete();
     }
 
 
@@ -394,7 +394,7 @@ class Log extends Model\AbstractModel
     {
         // set date
         if (!(int)$this->getId()) {
-            $this->getResource()->create();
+            $this->getDao()->create();
         }
         $this->update();
     }
@@ -404,7 +404,7 @@ class Log extends Model\AbstractModel
      */
     protected function update()
     {
-        $this->getResource()->update();
+        $this->getDao()->update();
         if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
             File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
         }

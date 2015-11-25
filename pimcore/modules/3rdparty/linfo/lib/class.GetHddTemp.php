@@ -10,16 +10,16 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
  * 
 */
 
 
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /*
  * Exception
@@ -81,15 +81,11 @@ class GetHddTemp {
 		// Kill surounding ||'s and split it by pipes
 		$drives = explode('||', trim($data, '|'));
 
-		// Return oour stuff here
+		// Return our stuff here
 		$return = array();
 
 		// Go through each
-		$num_drives = count($drives);
-		for($i = 0; $i < $num_drives; $i++) {
-
-			// This drive
-			$drive = $drives[$i];
+		foreach ($drives as $drive) {
 
 			// Extract stuff from it
 			list($path, $name, $temp, $unit) = explode('|', trim($drive));
@@ -127,7 +123,7 @@ class GetHddTemp {
 			return array();
 		}
 		$devices = array();
-		foreach (getLines($file) as $line) {
+		foreach (LinfoCommon::getLines($file) as $line) {
 			if (preg_match('/\w+\s*\d+ \d{2}:\d{2}:\d{2} \w+ hddtemp\[\d+\]: (.+): (.+): (\d+) ([CF])/i', trim($line), $match) == 1) {
 				// Replace current record of dev with updated temp
 				$devices[$match[1]] = array($match[2], $match[3], $match[4]);
@@ -157,15 +153,12 @@ class GetHddTemp {
 
 			// Connect to daemon mode
 			case 'daemon':
-				$sockResult = $this->getSock();
-				$temps = $this->parseSockData($sockResult);
-				return $temps;
+				return $this->parseSockData($this->getSock());
 			break;
 
 			// Syslog every n seconds
 			case 'syslog':
-				$temps = $this->parseSysLogData();
-				return $temps;
+				return $this->parseSysLogData();
 			break;
 
 			// Some other mode

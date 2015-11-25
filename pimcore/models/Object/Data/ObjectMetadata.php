@@ -86,7 +86,7 @@ class ObjectMetadata extends Model\AbstractModel {
      * @param $position
      */
     public function save($object, $ownertype = "object", $ownername, $position) {
-        $this->getResource()->save($object, $ownertype, $ownername, $position);
+        $this->getDao()->save($object, $ownertype, $ownername, $position);
     }
 
     /**
@@ -99,7 +99,7 @@ class ObjectMetadata extends Model\AbstractModel {
      * @return mixed
      */
     public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position) {
-        return $this->getResource()->load($source, $destination, $fieldname, $ownertype, $ownername, $position);
+        return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position);
     }
 
     /**
@@ -132,6 +132,21 @@ class ObjectMetadata extends Model\AbstractModel {
      */
     public function getObject() {
         return $this->object;
+    }
+
+    /**
+     * @param $object
+     * @return $this
+     */
+    public function setElement($element) {
+        return $this->setObject($element);
+    }
+
+    /**
+     * @return Object\Concrete
+     */
+    public function getElement() {
+        return $this->getObject();
     }
 
     /**

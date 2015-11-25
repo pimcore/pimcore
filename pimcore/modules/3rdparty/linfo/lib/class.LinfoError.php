@@ -10,17 +10,17 @@
  * 
  * Linfo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Linfo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Linfo. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
  * Keep out hackers...
  */
-defined('IN_INFO') or exit;
+defined('IN_LINFO') or exit;
 
 /**
  * Use this class for all error handling
@@ -37,13 +37,13 @@ class LinfoError {
 	protected static $_fledging;
 
 	/**
-	 * Fledging. Get singleton instance
+	 * Singleton. Get singleton instance
 	 * 
 	 * @param array $settings linfo settings
 	 * @access public
 	 * @return object LinfoError instance
 	 */
-	static public function Fledging($settings = null) {
+	static public function Singleton($settings = null) {
 		$c = __CLASS__;
 		if (!isset(self::$_fledging))
 			self::$_fledging = new $c($settings);
@@ -87,5 +87,15 @@ class LinfoError {
 	 */
 	public function num() {
 		return count($this->_errors);
+	}
+
+	/**
+	 * Wipe out singleton instance. Used mainly for unit tests
+	 *
+	 * @static
+	 * @return void
+	 */
+	public static function clear() {
+		self::$_fledging = null;
 	}
 }

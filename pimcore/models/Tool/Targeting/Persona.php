@@ -56,7 +56,7 @@ class Persona extends Model\AbstractModel {
         try {
             $persona = new self();
             $persona->setId(intval($id));
-            $persona->getResource()->getById();
+            $persona->getDao()->getById();
             return $persona;
         } catch (\Exception $e) {
             return null;

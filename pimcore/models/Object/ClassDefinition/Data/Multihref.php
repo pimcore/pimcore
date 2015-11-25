@@ -218,7 +218,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             }
             $assetTypes = array();
             foreach ($parts as $type) {
-                $assetTypes[] = array("assetTypes" => $type);
+                if ($type) {
+                    $assetTypes[] = array("assetTypes" => $type);
+                }
             }
         }
 

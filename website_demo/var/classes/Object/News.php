@@ -1,18 +1,26 @@
 <?php 
 
-/** Generated at 2014-10-21T11:07:05+02:00 */
+/** Generated at 2015-11-17T06:56:39+01:00 */
 
 /**
 * Inheritance: no
 * Variants   : no
-* Changed by : system (0)
-* IP:          192.168.11.104
+* Changed by : admin (37)
+* IP:          192.168.11.33
 */
 
 
 namespace Pimcore\Model\Object;
 
 
+
+/**
+* @method static \Pimcore\Model\Object\News getByLocalizedfields ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News getByDate ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News getByImage_1 ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News getByImage_2 ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News getByImage_3 ($value, $limit = 0) 
+*/
 
 class News extends Concrete {
 
@@ -55,7 +63,9 @@ public function getLocalizedfields () {
 public function getTitle ($language = null) {
 	$data = $this->getLocalizedfields()->getLocalizedValue("title", $language);
 	$preValue = $this->preGetValue("title"); 
-	if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	 return $data;
 }
 
@@ -66,7 +76,9 @@ public function getTitle ($language = null) {
 public function getShortText ($language = null) {
 	$data = $this->getLocalizedfields()->getLocalizedValue("shortText", $language);
 	$preValue = $this->preGetValue("shortText"); 
-	if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	 return $data;
 }
 
@@ -77,7 +89,9 @@ public function getShortText ($language = null) {
 public function getText ($language = null) {
 	$data = $this->getLocalizedfields()->getLocalizedValue("text", $language);
 	$preValue = $this->preGetValue("text"); 
-	if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}
+	if($preValue !== null && !\Pimcore::inAdmin()) { 
+		return $preValue;
+	}
 	 return $data;
 }
 
@@ -123,7 +137,7 @@ public function setText ($text, $language = null) {
 
 /**
 * Get date - Date
-* @return Zend_Date
+* @return \Pimcore\Date
 */
 public function getDate () {
 	$preValue = $this->preGetValue("date"); 
@@ -136,7 +150,7 @@ public function getDate () {
 
 /**
 * Set date - Date
-* @param Zend_Date $date
+* @param \Pimcore\Date $date
 * @return \Pimcore\Model\Object\News
 */
 public function setDate ($date) {
@@ -146,7 +160,7 @@ public function setDate ($date) {
 
 /**
 * Get image_1 - Image
-* @return Asset_Image
+* @return \Pimcore\Model\Asset\Image
 */
 public function getImage_1 () {
 	$preValue = $this->preGetValue("image_1"); 
@@ -159,7 +173,7 @@ public function getImage_1 () {
 
 /**
 * Set image_1 - Image
-* @param Asset_Image $image_1
+* @param \Pimcore\Model\Asset\Image $image_1
 * @return \Pimcore\Model\Object\News
 */
 public function setImage_1 ($image_1) {
@@ -169,7 +183,7 @@ public function setImage_1 ($image_1) {
 
 /**
 * Get image_2 - Image
-* @return Asset_Image
+* @return \Pimcore\Model\Asset\Image
 */
 public function getImage_2 () {
 	$preValue = $this->preGetValue("image_2"); 
@@ -182,7 +196,7 @@ public function getImage_2 () {
 
 /**
 * Set image_2 - Image
-* @param Asset_Image $image_2
+* @param \Pimcore\Model\Asset\Image $image_2
 * @return \Pimcore\Model\Object\News
 */
 public function setImage_2 ($image_2) {
@@ -192,7 +206,7 @@ public function setImage_2 ($image_2) {
 
 /**
 * Get image_3 - Image
-* @return Asset_Image
+* @return \Pimcore\Model\Asset\Image
 */
 public function getImage_3 () {
 	$preValue = $this->preGetValue("image_3"); 
@@ -205,7 +219,7 @@ public function getImage_3 () {
 
 /**
 * Set image_3 - Image
-* @param Asset_Image $image_3
+* @param \Pimcore\Model\Asset\Image $image_3
 * @return \Pimcore\Model\Object\News
 */
 public function setImage_3 ($image_3) {

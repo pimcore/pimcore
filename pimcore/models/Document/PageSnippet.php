@@ -79,12 +79,12 @@ abstract class PageSnippet extends Model\Document {
 
         // update elements
         $this->getElements();
-        $this->getResource()->deleteAllElements();
+        $this->getDao()->deleteAllElements();
 
         if (is_array($this->getElements()) and count($this->getElements()) > 0) {
             foreach ($this->getElements() as $name => $element) {
                 if(!$element->getInherited()) {
-                    $element->setResource(null);
+                    $element->setDao(null);
                     $element->setDocumentId($this->getId());
                     $element->save();
                 }
@@ -164,7 +164,7 @@ abstract class PageSnippet extends Model\Document {
         }
 
         // remove all tasks
-        $this->getResource()->deleteAllTasks();
+        $this->getDao()->deleteAllTasks();
 
         parent::delete();
     }
@@ -441,7 +441,7 @@ abstract class PageSnippet extends Model\Document {
      */
     public function getElements() {
         if ($this->elements === null) {
-            $this->setElements($this->getResource()->getElements());
+            $this->setElements($this->getDao()->getElements());
         }
         return $this->elements;
     }
@@ -460,7 +460,7 @@ abstract class PageSnippet extends Model\Document {
      */
     public function getVersions() {
         if ($this->versions === null) {
-            $this->setVersions($this->getResource()->getVersions());
+            $this->setVersions($this->getDao()->getVersions());
         }
         return $this->versions;
     }
@@ -508,12 +508,12 @@ abstract class PageSnippet extends Model\Document {
      */
     public function saveScheduledTasks() {
         $scheduled_tasks = $this->getScheduledTasks();
-        $this->getResource()->deleteAllTasks();
+        $this->getDao()->deleteAllTasks();
 
         if (is_array($scheduled_tasks) && count($scheduled_tasks) > 0) {
             foreach ($scheduled_tasks as $task) {
                 $task->setId(null);
-                $task->setResource(null);
+                $task->setDao(null);
                 $task->setCid($this->getId());
                 $task->setCtype("document");
                 $task->save();

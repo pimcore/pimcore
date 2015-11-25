@@ -54,7 +54,7 @@ if($opts->getOption("verbose")) {
     \Logger::setVerbosePriorities();
 }
 
-$db = \Pimcore\Resource::get();
+$db = \Pimcore\Db::get();
 
 if($opts->getOption("mode") == "optimize") {
     $tables = $db->fetchAll("SHOW TABLES");

@@ -42,7 +42,7 @@ class Folder extends AbstractObject {
     public function update() {
 
         parent::update();
-        $this->getResource()->update();
+        $this->getDao()->update();
     }
 
     /**

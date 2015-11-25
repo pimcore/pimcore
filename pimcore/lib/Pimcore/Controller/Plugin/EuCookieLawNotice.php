@@ -59,7 +59,7 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
                         var ci = window.setInterval(function () {
                             if(document.body) {
                                 clearInterval(ci);
-                                document.body.insertAdjacentHTML("afterbegin", code);
+                                document.body.insertAdjacentHTML("beforeend", code);
 
                                 document.getElementById("pc-button").onclick = function () {
                                     document.getElementById("pc-cookie-notice").style.display = "none";

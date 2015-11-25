@@ -55,7 +55,7 @@ class Lock extends Model\AbstractModel {
     public static function acquire ($key, $expire = 120, $refreshInterval = 1) {
 
         $instance = self::getInstance();
-        $instance->getResource()->acquire($key, $expire, $refreshInterval);
+        $instance->getDao()->acquire($key, $expire, $refreshInterval);
 
         self::$acquiredLocks[$key] = $key;
     }
@@ -66,7 +66,7 @@ class Lock extends Model\AbstractModel {
     public static function release ($key) {
 
         $instance = self::getInstance();
-        $instance->getResource()->release($key);
+        $instance->getDao()->release($key);
 
         unset(self::$acquiredLocks[$key]);
     }
@@ -78,7 +78,7 @@ class Lock extends Model\AbstractModel {
     public static function lock ($key) {
 
         $instance = self::getInstance();
-        return $instance->getResource()->lock($key);
+        return $instance->getDao()->lock($key);
     }
 
     /**
@@ -88,7 +88,7 @@ class Lock extends Model\AbstractModel {
      */
     public static function isLocked ($key, $expire = 120) {
         $instance = self::getInstance();
-        return $instance->getResource()->isLocked($key, $expire);
+        return $instance->getDao()->isLocked($key, $expire);
     }
 
     /**
