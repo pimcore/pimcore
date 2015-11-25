@@ -31,32 +31,6 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
 
-    /**
-     * @deprecated use orderManager instead
-     * @return OnlineShop_Framework_AbstractPaymentInformation
-     */
-    public function getOrCreateActivePaymentInfo(OnlineShop_Framework_AbstractOrder $order, $createNew = true) {
-
-        $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
-        return $orderAgent->startPayment( $createNew );
-    }
-
-    /**
-     * @param OnlineShop_Framework_Payment_IStatus $status
-     *
-     * @deprecated use orderManager instead
-     * @return OnlineShop_Framework_AbstractOrder
-     * @throws Exception
-     */
-    public function updateOrderPayment(OnlineShop_Framework_Payment_IStatus $status) {
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
-        $order = $orderManager->getOrderByPaymentStatus($status);
-
-        $orderAgent = $orderManager->createOrderAgent( $order );
-        return $orderAgent->updatePayment( $status )->getOrder();
-    }
-
-
     protected function applyVoucherTokens(OnlineShop_Framework_AbstractOrder $order, OnlineShop_Framework_ICart $cart){
 
         $voucherTokens = $cart->getVoucherTokenCodes();

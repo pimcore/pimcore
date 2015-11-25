@@ -168,7 +168,8 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
             throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed");
         }
 
-        $paymentInfo = $this->getCommitOrderProcessor()->getOrCreateActivePaymentInfo($order);
+        $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        $paymentInfo = $orderAgent->startPayment();
 
         //make cart read only -> cart is now in payment mode (cart must not be changed during active payment)
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
@@ -200,7 +201,11 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         }
 
         //update order payment -> e.g. setting all available payment information to order object
-        $order = $this->getCommitOrderProcessor()->updateOrderPayment($status);
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrderByPaymentStatus($status);
+
+        $orderAgent = $orderManager->createOrderAgent( $order );
+        $order = $orderAgent->updatePayment( $status )->getOrder();
 
         //remove read only state for cart since payment process is finished (with or without success)
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
