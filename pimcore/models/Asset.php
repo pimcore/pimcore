@@ -305,6 +305,11 @@ class Asset extends Element\AbstractElement {
 
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
+
+        if ($data["filename"] === '..' || $data["filename"] === '.') {
+            throw new \Exception('Cannot create asset called ".." or "."');
+        }
+
         $class = "Asset";
         if(array_key_exists("filename", $data) && (array_key_exists("data", $data) || array_key_exists("sourcePath", $data) || array_key_exists("stream", $data))) {
             if(array_key_exists("data", $data) || array_key_exists("stream", $data)) {
@@ -865,6 +870,24 @@ class Asset extends Element\AbstractElement {
     }
 
     /**
+     * Deletes file from filesystem
+     */
+    protected function deletePhysicalFile()
+    {
+        $fsPath = PIMCORE_ASSET_DIRECTORY . $this->getPath() . $this->getFilename();
+
+        if ($this->getType() != "folder") {
+            if (is_file($fsPath) && is_writable($fsPath)) {
+                unlink($fsPath);
+            }
+        } else {
+            if (is_dir($fsPath) && is_writable($fsPath)) {
+                recursiveDelete($fsPath, true);
+            }
+        }
+    }
+
+    /**
      * @throws \Exception
      */
     public function delete() {
@@ -885,17 +908,8 @@ class Asset extends Element\AbstractElement {
         }
 
         // remove file on filesystem
-        $fsPath = PIMCORE_ASSET_DIRECTORY . $this->getPath() . $this->getFilename();
-
-        if ($this->getType() != "folder") {
-            if (is_file($fsPath) && is_writable($fsPath)) {
-                unlink($fsPath);
-            }
-        }
-        else {
-            if (is_dir($fsPath) && is_writable($fsPath)) {
-                recursiveDelete($fsPath, true);
-            }
+        if (!strpos($this->getFullPath(), '..') && $this->getKey() !== ".") {
+            $this->deletePhysicalFile();
         }
 
         $versions = $this->getVersions();
