@@ -212,7 +212,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
 
             } else {
                 Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
-                $this->doDeleteFromIndex($subObjectId);
+                $this->doDeleteFromIndex($subObjectId, $object);
             }
         }
 
@@ -275,7 +275,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                 } else {
                     //delete entry with id which was retrieved from index before
                     Logger::warn("Element with ID $objectId in product index but cannot be found in pimcore -> deleting element from index.");
-                    $this->doDeleteFromIndex($objectId);
+                    $this->doDeleteFromIndex($objectId, $object);
                 }
             }
             return count($entries);

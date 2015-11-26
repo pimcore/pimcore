@@ -1,15 +1,4 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
- */
-
 
 use \Pimcore\Model\Tool;
 
@@ -22,6 +11,8 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
     const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store_elastic";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_elastic";
     const REINDEX_LOCK_KEY = "plugin_onlineshop_productindex_elastic_reindex";
+
+
 
     /**
      * @var Elasticsearch\Client
@@ -124,22 +115,40 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
         $this->doCreateOrUpdateIndexStructures();
     }
 
-    protected function getMappingParams()
+    protected function getMappingParams($type)
     {
-        $params = [
-            'index' => $this->getIndexNameVersion(),
-            'type'  => 'product',
-            'body'  => [
-                'product' => [
-                    '_parent'    => ['type' => 'product'],
-                    '_routing'   => ['path' => 'system.o_virtualProductId'],
-                    'dynamic'    => false,
-                    //'_source' => ['enabled' => false ],
-                    'properties' => $this->createMappingAttributes()
+
+        if($type == \OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT){
+            $params = [
+                'index' => $this->getIndexNameVersion(),
+                'type'  => \OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT,
+                'body'  => [
+                    \OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT => [
+                        '_routing'   => ['path' => 'system.o_virtualProductId'],
+                        'dynamic'    => false,
+                        //'_source' => ['enabled' => false ],
+                        'properties' => $this->createMappingAttributes()
+                    ]
                 ]
-            ]
-        ];
-        return $params;
+            ];
+            return $params;
+        }elseif($type == \OnlineShop_Framework_IProductList::PRODUCT_TYPE_VARIANT){
+            $params = [
+                'index' => $this->getIndexNameVersion(),
+                'type'  => \OnlineShop_Framework_IProductList::PRODUCT_TYPE_VARIANT,
+                'body'  => [
+                    \OnlineShop_Framework_IProductList::PRODUCT_TYPE_VARIANT => [
+                        '_parent'    => ['type' => \OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT],
+                        '_routing'   => ['path' => 'system.o_virtualProductId'],
+                        'dynamic'    => false,
+                        //'_source' => ['enabled' => false ],
+                        'properties' => $this->createMappingAttributes()
+                    ]
+                ]
+            ];
+            return $params;
+        }
+        throw new \Exception("Unknown Type for mapping params");
     }
 
     protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false) {
@@ -160,20 +169,25 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
             }
         }
 
-        $params = $this->getMappingParams();
-        try {
-            $result = $esClient->indices()->putMapping($params);
-            Logger::info('Updated Mapping for Index: ' . $this->getIndexNameVersion());
-        } catch(\Exception $e) {
-            if($exceptionOnFailure){
-                throw new Exception("Can't create Mapping - Exiting to prevent infinit loop");
-            } else {
-                //when update mapping fails, start reindex mode
-                $this->startReindexMode();
+        $reIndex = false;
+        foreach([\OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT,\OnlineShop_Framework_IProductList::PRODUCT_TYPE_VARIANT] as $mappingType){
+            $params = $this->getMappingParams($mappingType);
+
+            try {
+                $result = $esClient->indices()->putMapping($params);
+                Logger::info('Updated Mapping for Index: ' . $this->getIndexNameVersion());
+            } catch(\Exception $e) {
+                if($exceptionOnFailure){
+                    throw new Exception("Can't create Mapping - Exiting to prevent infinit loop");
+                } else {
+                    $reIndex = true;
+                }
             }
-
         }
-
+        if($reIndex){
+            //when update mapping fails, start reindex mode
+            $this->startReindexMode();
+        }
         // index created return "true" and mapping creation returns array
         if((is_array($result) && !$result['acknowledged']) || (is_bool($result) && !$result)) {
             throw new Exception("Index creation failed");
@@ -280,7 +294,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         foreach($subObjectIds as $subObjectId => $object) {
-            $this->doDeleteFromIndex($subObjectId);
+            $this->doDeleteFromIndex($subObjectId, $object);
         }
 
         //cleans up all old zombie data
@@ -288,23 +302,42 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     }
 
-    protected function doDeleteFromIndex($objectId) {
+    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null) {
         $esClient = $this->getElasticSearchClient();
-        try {
-            $esClient->delete(['index' => $this->indexName, 'type' => "product", 'id' => $objectId]);
-            $this->deleteFromStoreTable($objectId);
-            $this->deleteFromMockupCache($objectId);
 
-        } catch(Exception $e) {
-            $check = \Zend_Json::decode($e->getMessage());
-            if(!$check['found']){ //not in es index -> we can delete it from store table
+        if($object) {
+            try {
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => $object->getOSIndexType(), 'id' => $objectId]);
+
                 $this->deleteFromStoreTable($objectId);
                 $this->deleteFromMockupCache($objectId);
-            }else{
-                \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
-            }
-        }
 
+            } catch(Exception $e) {
+                $check = \Zend_Json::decode($e->getMessage());
+                if(!$check['found']){ //not in es index -> we can delete it from store table
+                    $this->deleteFromStoreTable($objectId);
+                    $this->deleteFromMockupCache($objectId);
+                } else {
+                    \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+                }
+            }
+        } else {
+            //object is empty so the object does not exist in pimcore any more. therefore it has to be deleted from the index, store table and mockup table
+            try {
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => OnlineShop_Framework_IProductList::PRODUCT_TYPE_OBJECT, 'id' => $objectId]);
+            } catch(Exception $e) {
+                \Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+            }
+
+            try {
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => OnlineShop_Framework_IProductList::PRODUCT_TYPE_VARIANT, 'id' => $objectId]);
+            } catch(Exception $e) {
+                \Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+            }
+
+            $this->deleteFromStoreTable($objectId);
+            $this->deleteFromMockupCache($objectId);
+        }
     }
 
     /**
@@ -369,13 +402,13 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
             //check if parent should exist and if so, consider parent relation at indexing
             if(!empty($indexSystemData['o_virtualProductId']) && $indexSystemData['o_id'] != $indexSystemData['o_virtualProductId']) {
-                $this->bulkIndexData[] = ['index' => ['index' => $this->indexName, 'type' => 'product', '_id' => $objectId, '_parent' => $indexSystemData['o_virtualProductId']]];
+                $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId, '_parent' => $indexSystemData['o_virtualProductId']]];
             } else {
-                $this->bulkIndexData[] = ['index' => ['index' => $this->indexName, 'type' => 'product', '_id' => $objectId]];
+                $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId]];
             }
             \Logger::info('Added to Bulk index:  ' . $objectId);
-            $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
-
+            $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData),'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
+            
             //save new indexed element to mockup cache
             $this->saveToMockupCache($objectId, $data);
         }
@@ -387,15 +420,11 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
      * actually sending data to elastic search
      */
     protected function commitUpdateIndex() {
-
         Logger::info('in commitUpdateIndex');
         $esClient = $this->getElasticSearchClient();
         $responses = $esClient->bulk([
-            "index" => $this->getIndexNameVersion(),
-            "type" => "product",
             "body" => $this->bulkIndexData
         ]);
-
 
         if($responses['errors'])
         {
@@ -478,7 +507,7 @@ SQL;
      * - no index structure updates are allowed
      *
      */
-    protected function startReindexMode() {
+    public function startReindexMode() {
         // start reindex mode with pimcore lock
         Tool\Lock::lock(self::REINDEX_LOCK_KEY);
         // increment version and recreate index structures

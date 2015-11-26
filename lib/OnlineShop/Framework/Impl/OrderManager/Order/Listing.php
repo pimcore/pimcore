@@ -97,7 +97,9 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
 
 
             // filter order state
-            $select->where('`order`.orderState = ?', $this->getOrderState());
+            if(!is_null($this->getOrderState())) {
+                $select->where('`order`.orderState IN(?)', implode(',',(array)$this->getOrderState()));
+            }
 
 
             $this->query = $select;

@@ -1,15 +1,4 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
- */
-
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
@@ -399,6 +388,15 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         return $this->products;
     }
 
+    protected function getQueryType(){
+        if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT){
+            return self::PRODUCT_TYPE_OBJECT;
+        }elseif($this->getVariantMode() == self::VARIANT_MODE_HIDE){
+            return self::PRODUCT_TYPE_VARIANT;
+        }else{
+            return self::PRODUCT_TYPE_OBJECT . ','.self::PRODUCT_TYPE_VARIANT;
+        }
+    }
 
     /**
      * First case: no price filtering and no price sorting
@@ -426,7 +424,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
 
         $params = array();
         $params['index'] = $this->getIndexName();
-        $params['type'] = "product";
+        $params['type'] = $this->getQueryType();
         $params['body']['_source'] = false;
         $params['body']['size'] = $this->getLimit();
         $params['body']['from'] = $this->getOffset();
@@ -446,7 +444,6 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
 
         // build query for request
         $params = $this->buildQuery($params, $boolFilters, $queryFilters);
-
 
         // send request
         $result = $this->sendRequest( $params );
@@ -864,7 +861,8 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
         if($aggregations) {
             $params = array();
             $params['index'] = $this->getIndexName();
-            $params['type'] = "product";
+            $params['type'] = $this->getQueryType();
+            //$params['type'] = "product";
             $params['search_type'] = "count";
             $params['body']['_source'] = false;
             $params['body']['size'] = $this->getLimit();
@@ -934,10 +932,12 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
 
         if($esClient instanceof \Elasticsearch\Client)
         {
+
             $result = $esClient->search($params);
         }
         else if($esClient instanceof Zend_Http_Client)
         {
+
             $esClient->setMethod( Zend_Http_Client::GET );
             $esClient->setRawData( json_encode($params['body']) );
 
@@ -981,6 +981,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * The return value is cast to an integer.
      */
     public function count() {
+
         if($this->totalCount === null) {
             $this->load();
         }

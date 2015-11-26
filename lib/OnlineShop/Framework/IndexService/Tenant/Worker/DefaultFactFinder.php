@@ -118,7 +118,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder
      * @param int $objectId
      * @todo
      */
-    protected function doDeleteFromIndex($objectId)
+    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null)
     {
 
     }

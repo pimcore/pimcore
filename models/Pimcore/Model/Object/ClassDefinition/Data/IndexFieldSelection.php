@@ -52,10 +52,12 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
      */
     public $phpdocType = "Object_Data_IndexFieldSelection";
 
+    public $width;
     public $considerTenants = false;
     public $multiPreSelect = false;
     public $filterGroups = "";
     public $predefinedPreSelectOptions = array();
+
 
 
     public function __construct() {
@@ -179,6 +181,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
      */
     public function getDataFromEditmode($data, $object = null) {
         if($data["field"]) {
+
+            if(is_array($data['preSelect'])) {
+                $data['preSelect'] = implode(",", $data['preSelect']);
+            }
+
             return new \Pimcore\Model\Object\Data\IndexFieldSelection($data["tenant"], $data["field"], $data["preSelect"]);
         }
         return null;
@@ -289,6 +296,22 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
      */
     public function isDiffChangeAllowed() {
         return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param mixed $width
+     */
+    public function setWidth($width)
+    {
+        $this->width = intval($width);
     }
 
 }

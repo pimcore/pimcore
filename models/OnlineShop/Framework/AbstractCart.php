@@ -784,4 +784,22 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
             }
         }
     }
+
+
+
+    /**
+     * Should be added to the cart
+     *
+     * @param OnlineShop_Framework_ICartItem $item
+     * @return bool
+     */
+    protected static function isValidCartItem(OnlineShop_Framework_ICartItem $item){
+        if ($item->getProduct() != null) {
+            return true;
+        }else {
+            Logger::warn("product " . $item->getProductId() . " not found");
+            return false;
+        }
+    }
+
 }

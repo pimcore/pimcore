@@ -42,7 +42,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
 
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         foreach($subObjectIds as $subObjectId => $object) {
-            $this->doDeleteFromIndex($subObjectId);
+            $this->doDeleteFromIndex($subObjectId, $object);
         }
 
         //cleans up all old zombie data
@@ -50,7 +50,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
 
     }
 
-    protected function doDeleteFromIndex($objectId) {
+    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null) {
         try {
             $this->db->beginTransaction();
             $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($objectId));

@@ -1,3 +1,15 @@
+/**
+ * Pimcore
+ *
+ * This source file is subject to the GNU General Public License version 3 (GPLv3)
+ * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
+ * files that are distributed with this source code.
+ *
+ * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ */
+
+
 pimcore.registerNS("pimcore.object.tags.indexFieldSelectionField");
 pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.abstract, {
 
@@ -10,30 +22,51 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
-            baseParams: {class_id: fieldConfig.classId, specific_price_field: this.fieldConfig.specificPriceField, show_all_fields: this.fieldConfig.showAllFields },
-            url: '/plugin/OnlineShop/index/get-fields',
-            root: 'data',
+            proxy: {
+                type: 'ajax',
+                url: '/plugin/OnlineShop/index/get-fields',
+                reader: {
+                    rootProperty: 'data',
+                    idProperty: 'key'
+                },
+                extraParams: {class_id: fieldConfig.classId, specific_price_field: this.fieldConfig.specificPriceField, show_all_fields: this.fieldConfig.showAllFields }
+            },
             fields: ['key','name'],
             listeners: {
                 load: function(store) {
 
-                    if(this.firstLoad) {
+                    //add values to store, even if they are not in store
+                    //needed, becuase on initial load, no tenant is selected, and there might be values selected, that are not in default tenant
+                    if(this.firstLoad !== false) {
                         var values = this.data.split(",");
                         for(var i = 0; i < values.length; i++) {
                             if(store.find('key', values[i]) < 0) {
                                 var defaultData = {
                                     'key': values[i],
                                     'name': ts(values[i])
-                                }
-                                var record = new store.recordType(defaultData, values[i]);
-                                store.add(record);
+                                };
+                                store.add(defaultData);
                             }
                         }
                         this.firstLoad = false;
-                    }
 
-                    if(this.fieldsCombobox) {
-                        this.fieldsCombobox.setValue(this.data);
+                        if(this.fieldsCombobox) {
+                            this.fieldsCombobox.setValue(this.data);
+                        }
+
+                    } else {
+
+                        //on subsequent loads, check this.data for only allowed values
+                        var allowedValues = [];
+                        var originalValues = this.data.split(",");
+                        for(var i = 0; i < originalValues.length; i++) {
+                            if(store.find('key', originalValues[i]) >= 0) {
+                                allowedValues.push(originalValues[i]);
+                            }
+                        }
+                        if(this.fieldsCombobox) {
+                            this.fieldsCombobox.setValue(allowedValues.join());
+                        }
                     }
                 }.bind(this)
             }
@@ -43,8 +76,14 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             this.tenantStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
-                url: '/plugin/OnlineShop/index/get-all-tenants',
-                root: 'data',
+                proxy: {
+                    type: 'ajax',
+                    url: '/plugin/OnlineShop/index/get-all-tenants',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'key'
+                    }
+                },
                 fields: ['key', 'name']
             });
         }
@@ -79,35 +118,39 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             conf.value = this.data;
         }
 
-        this.fieldsCombobox = new Ext.ux.form.SuperBoxSelect(conf);
+        this.fieldsCombobox = Ext.create('Ext.form.field.Tag', conf);
 
 
         if(this.fieldConfig.considerTenants) {
+            this.fieldsCombobox.setFieldLabel("");
             var tenantCombobox = new Ext.form.ComboBox({
                 triggerAction: "all",
+                fieldLabel: this.fieldConfig.title,
                 editable: false,
                 store: this.tenantStore,
                 valueField: 'key',
                 displayField: 'name',
-                itemCls: "object_field",
-                width: 150,
+                width: 300,
                 listeners: {
                     select: function(combo, record) {
                         this.fieldsCombobox.setValue("");
 
-                        this.store.setBaseParam("tenant", record.data.key);
+                        var proxy = this.store.getProxy();
+                        proxy.extraParams.tenant = record.data.key;
                         this.store.reload({params: {tenant: record.data.key}});
                     }.bind(this)
                 }
             });
 
-            this.component = new Ext.form.CompositeField({
-                xtype: 'compositefield',
-                fieldLabel: this.fieldConfig.title,
-                items: [
-                    tenantCombobox,
-                    this.fieldsCombobox
-                ]
+            this.component = Ext.create('Ext.form.Panel', {
+                layout: 'hbox',
+                margin: '0 0 10 0',
+                combineErrors: false,
+                items: [tenantCombobox, this.fieldsCombobox],
+                cls: "object_field",
+                isDirty: function() {
+                    return tenantCombobox.isDirty() || this.fieldsCombobox.isDirty()
+                }.bind(this)
             });
 
         } else {

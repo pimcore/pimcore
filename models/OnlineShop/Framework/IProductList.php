@@ -18,6 +18,9 @@ interface OnlineShop_Framework_IProductList extends Zend_Paginator_Adapter_Inter
 {
     const ORDERKEY_PRICE = "orderkey_price";
 
+    const PRODUCT_TYPE_OBJECT = 'object';
+    const PRODUCT_TYPE_VARIANT = 'variant';
+
     /**
      * Variant mode defines how to consider variants in product list results
      * - does not consider variants in search results

@@ -70,6 +70,9 @@
 .plugin_onlineshop_pricing_icon_conditionVoucherToken {
     background: url("/pimcore/static/img/icon/medal_gold_3.png") left center no-repeat !important;
 }
+.plugin_onlineshop_pricing_icon_condition_tenant {
+    background: url("/pimcore/static/img/icon/user_home.png") left center no-repeat !important;
+}
 
 
 /** Actions **/

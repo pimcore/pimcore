@@ -75,11 +75,14 @@ $excludedDirectories = [
     '../install',
     '../static/img',
     '../static/vendor',
+    '../static6/img',
+    '../static6/vendor',
     '../tests',
     '../texts',
     '../uml',
     '../vendor',
-    '../frontend-samples/ajax-reload-grid/js/lib'
+    '../frontend-samples/ajax-reload-grid/js/lib',
+    '../'
 ];
 
 $license =
