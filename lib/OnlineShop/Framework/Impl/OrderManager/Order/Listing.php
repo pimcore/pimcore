@@ -253,6 +253,8 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
         else
         {
             // join items and sub items
+            $orderClassId = OnlineShopOrder::classId();
+            $orderItemClassId = OnlineShopOrderItem::classId();
             $select->join(
                 ['_orderItems' => new \Zend_Db_Expr( <<<SUBQUERY
 (
@@ -263,7 +265,7 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
         , _orderItems.dest_id "dest_id"
         , "item" as "kind"
 
-    FROM `object_relations_109` AS `_orderItems`
+    FROM `object_relations_{$orderClassId}` AS `_orderItems`
 
     WHERE 1
 
@@ -278,9 +280,9 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
         , _orderSubItems.dest_id as "dest_id"
         , "subItem" as "kind"
 
-    FROM `object_relations_109` AS `_orderItems`
+    FROM `object_relations_{$orderClassId}` AS `_orderItems`
 
-        JOIN `object_relations_108` AS `_orderSubItems`
+        JOIN `object_relations_{$orderItemClassId}` AS `_orderSubItems`
             ON _orderSubItems.fieldname = "subItems" AND _orderSubItems.src_id = _orderItems.dest_id
 
     WHERE 1
