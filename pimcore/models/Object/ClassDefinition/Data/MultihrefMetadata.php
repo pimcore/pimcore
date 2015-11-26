@@ -559,9 +559,10 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref {
 
         if(Object\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = array();
+            /** @var  $listElement Object\Data\ElementMetadata */
             foreach($data as $listElement){
 
-                if(Element\Service::isPublished($listElement->getObject())){
+                if(Element\Service::isPublished($listElement->getElement())){
                     $publishedList[] = $listElement;
                 }
             }
