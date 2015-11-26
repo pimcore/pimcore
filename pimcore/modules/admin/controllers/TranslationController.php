@@ -711,7 +711,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         list($type, $id) = explode("-", $file["original"]);
         $element = Element\Service::getElementById($type, $id);
 
-        if(true || $element) {
+        if($element) {
             foreach($file->body->{"trans-unit"} as $transUnit) {
                 list($fieldType, $name) = explode("~-~", $transUnit["id"]);
                 $content = $transUnit->target->asXml();
@@ -762,6 +762,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             } catch (\Exception $e) {
                 throw new \Exception("Unable to save " . Element\Service::getElementType($element) . " with id " . $element->getId() . " because of the following reason: " . $e->getMessage());
             }
+        } else {
+            \Logger::error("Could not resolve element " . $file["original"]);
         }
 
         $this->_helper->json(array(
