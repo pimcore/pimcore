@@ -698,6 +698,9 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         $file = $xliff->file[(int)$step];
         $target = $file["target-language"];
 
+        // see https://en.wikipedia.org/wiki/IETF_language_tag
+        $target = str_replace("-","_", $target);
+
         if(!Tool::isValidLanguage($target)) {
             $locale = new \Zend_Locale($target);
             $target = $locale->getLanguage();
