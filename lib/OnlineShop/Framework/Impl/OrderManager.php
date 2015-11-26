@@ -138,15 +138,21 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param \OnlineShop_Framework_ICart $cart
-     * @return \OnlineShop_Framework_AbstractOrder
-     * @throws \Exception
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * returns cart id for order object
      *
+     * @param \OnlineShop_Framework_ICart $cart
+     * @return string
      */
-    public function getOrCreateOrderFromCart(\OnlineShop_Framework_ICart $cart) {
+    protected function createCartId(\OnlineShop_Framework_ICart $cart) {
+        return get_class($cart) . "_" . $cart->getId();
+    }
 
-
+    /**
+     * @param \OnlineShop_Framework_ICart $cart
+     * @return null|\OnlineShop_Framework_AbstractOrder
+     * @throws \Exception
+     */
+    public function getOrderFromCart(\OnlineShop_Framework_ICart $cart) {
         $orderListClass = $this->getOrderClassName() . "\\Listing";
         if(!\Pimcore\Tool::classExists($orderListClass)) {
             $orderListClass = $this->getOrderClassName() . "_List";
@@ -155,7 +161,7 @@ class OrderManager implements IOrderManager
             }
         }
 
-        $cartId = get_class($cart) . "_" . $cart->getId();
+        $cartId = $this->createCartId($cart);
 
         $orderList = new $orderListClass;
         $orderList->setCondition("cartId = ?", array($cartId));
@@ -166,9 +172,23 @@ class OrderManager implements IOrderManager
         }
 
         if(count($orders) == 1) {
-            $order = $orders[0];
-        } else {
-            //No Order found, create new one
+            return $orders[0];
+        }
+        return null;
+    }
+
+    /**
+     * @param \OnlineShop_Framework_ICart $cart
+     * @return \OnlineShop_Framework_AbstractOrder
+     * @throws \Exception
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     *
+     */
+    public function getOrCreateOrderFromCart(\OnlineShop_Framework_ICart $cart) {
+        $order = $this->getOrderFromCart($cart);
+
+        //No Order found, create new one
+        if(empty($order)) {
 
             $tempOrdernumber = $this->createOrderNumber();
 
@@ -181,13 +201,11 @@ class OrderManager implements IOrderManager
 
             $order->setOrdernumber($tempOrdernumber);
             $order->setOrderdate(\Zend_Date::now());
-            $order->setCartId($cartId);
+            $order->setCartId($this->createCartId($cart));
         }
 
         //check if pending payment. if one, do not update order from cart
-        $orderAgent = \OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
-        $paymentInfo = $orderAgent->startPayment( false );
-        if($paymentInfo) {
+        if(!empty($order->getOrderState())) {
             return $order;
         }
 
@@ -244,6 +262,49 @@ class OrderManager implements IOrderManager
 
         $order->setItems($orderItems);
 
+        $this->applyVoucherTokens($order, $cart);
+
+        $order = $this->applyCustomCheckoutDataToOrder($cart, $order);
+        $order->save();
+
+        return $order;
+    }
+
+
+    protected function applyVoucherTokens(\OnlineShop_Framework_AbstractOrder $order, \OnlineShop_Framework_ICart $cart){
+
+        $voucherTokens = $cart->getVoucherTokenCodes();
+        if (is_array($voucherTokens)) {
+            $flippedVoucherTokens = array_flip($voucherTokens);
+
+            $service = \OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+            $tokenObjects = $order->getVoucherTokens();
+
+            foreach($tokenObjects as $tokenObject) {
+                if(!array_key_exists($tokenObject->getToken(), $flippedVoucherTokens)) {
+                    //remove applied tokens which are not in the cart anymore
+                    $service->removeAppliedTokenFromOrder($tokenObject, $order);
+                } else {
+                    //if token already in token objects, nothing has to be done
+                    //but remove it from $flippedVoucherTokens so they don't get added again
+                    unset($flippedVoucherTokens[$tokenObject->getToken()]);
+                }
+            }
+
+            //add new tokens - which are the remaining entries of $flippedVoucherTokens
+            foreach ($flippedVoucherTokens as $code => $x) {
+                $service->applyToken($code, $cart, $order);
+            }
+        }
+    }
+
+    /**
+     * hook to save individual data into order object
+     *
+     * @param \OnlineShop_Framework_ICart $cart
+     * @param Order $order
+     */
+    protected function applyCustomCheckoutDataToOrder(\OnlineShop_Framework_ICart $cart, Order $order) {
         return $order;
     }
 

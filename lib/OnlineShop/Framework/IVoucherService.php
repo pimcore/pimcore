@@ -38,6 +38,15 @@ interface OnlineShop_Framework_IVoucherService
     public function reserveToken($code, Onlineshop_Framework_ICart $cart);
 
     /**
+     * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
+     *
+     * @param string $code
+     * @param Onlineshop_Framework_ICart $cart
+     * @return bool
+     */
+    public function releaseToken($code, Onlineshop_Framework_ICart $cart);
+
+    /**
      * Gets the correct token manager and calls its applyToken() function, which returns
      * the ordered token object which gets appended to the order object. The token
      * reservations gets released.
@@ -49,14 +58,17 @@ interface OnlineShop_Framework_IVoucherService
      */
     public function applyToken($code, Onlineshop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order);
 
+
     /**
-     * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
+     * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
+     * token usage and the ordered token object if necessary, removes the token object from the order.
      *
-     * @param string $code
-     * @param Onlineshop_Framework_ICart $cart
-     * @return bool
+     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param OnlineShop_Framework_AbstractOrder $order
+     * @return mixed
      */
-    public function releaseToken($code, Onlineshop_Framework_ICart $cart);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order);
+
 
     /**
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is

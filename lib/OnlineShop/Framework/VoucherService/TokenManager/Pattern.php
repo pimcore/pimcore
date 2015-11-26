@@ -130,6 +130,26 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
         return false;
     }
 
+
+    /**
+     * cleans up the token usage and the ordered token object if necessary
+     *
+     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param OnlineShop_Framework_AbstractOrder $order
+     * @return bool
+     */
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order)
+    {
+        if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($tokenObject->getToken())) {
+                $token->unuse();
+            $tokenObject->delete();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     /**
      * @param string $code
      * @param OnlineShop_Framework_ICart $cart
@@ -626,6 +646,5 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
     {
         return $this->seriesId;
     }
-
 
 }

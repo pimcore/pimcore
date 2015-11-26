@@ -63,6 +63,18 @@ abstract class OnlineShop_Framework_AbstractPaymentInformation extends \Pimcore\
     /**
      * @return string
      */
+    public abstract function getMessage ();
+
+
+    /**
+     * @param string $message
+     * @return void
+     */
+    public abstract function setMessage ($message);
+
+    /**
+     * @return string
+     */
     public abstract function getInternalPaymentId ();
 
     /**

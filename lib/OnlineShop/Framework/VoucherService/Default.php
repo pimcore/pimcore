@@ -53,6 +53,19 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     /**
      * @param string $code
      * @param OnlineShop_Framework_ICart $cart
+     * @return bool
+     */
+    public function releaseToken($code, OnlineShop_Framework_ICart $cart)
+    {
+        if ($tokenManager = $this->getTokenManager($code)) {
+            return $tokenManager->releaseToken($code, $cart);
+        }
+        return false;
+    }
+
+    /**
+     * @param string $code
+     * @param OnlineShop_Framework_ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return bool
      */
@@ -72,14 +85,30 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     }
 
     /**
-     * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
+     * token usage and the ordered token object if necessary, removes the token object from the order.
+     *
+     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param OnlineShop_Framework_AbstractOrder $order
      * @return bool
      */
-    public function releaseToken($code, OnlineShop_Framework_ICart $cart)
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order)
     {
-        if ($tokenManager = $this->getTokenManager($code)) {
-            return $tokenManager->releaseToken($code, $cart);
+        if ($tokenManager = $tokenObject->getVoucherSeries()->getTokenManager()) {
+            $tokenManager->removeAppliedTokenFromOrder($tokenObject, $order);
+
+            $voucherTokens = $order->getVoucherTokens();
+
+            $newVoucherTokens = [];
+            foreach($voucherTokens as $voucherToken) {
+                if($voucherToken->getId() != $tokenObject->getId()) {
+                    $newVoucherTokens[] = $voucherToken;
+                }
+            }
+
+            $order->setVoucherTokens($newVoucherTokens);
+
+            return true;
         }
         return false;
     }
@@ -131,6 +160,5 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
         }
         return false;
     }
-
 
 }

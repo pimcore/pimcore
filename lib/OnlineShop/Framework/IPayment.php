@@ -40,7 +40,8 @@ interface OnlineShop_Framework_IPayment
 
 
     /**
-     * handle response / execute payment
+     * Handles response of payment provider and creates payment status object
+     *
      * @param OnlineShop_Framework_Payment_IStatus $response
      *
      * @return OnlineShop_Framework_Payment_IStatus

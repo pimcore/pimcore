@@ -17,12 +17,38 @@
 interface OnlineShop_Framework_ICommitOrderProcessor {
 
     /**
-     * commits order
+     * facade method for
+     * - handling payment response and
+     * - commit order payment
      *
-     * @param OnlineShop_Framework_ICart $cart
+     * can be used by controllers to commit orders with payment
+     *
+     * @param $paymentResponseParams
+     * @param OnlineShop_Framework_IPayment $paymentProvider
      * @return OnlineShop_Framework_AbstractOrder
      */
-    public function commitOrder(OnlineShop_Framework_ICart $cart);
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
+
+    /**
+     * commits order payment
+     *   - updates order payment information in order object
+     *   - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
+     *
+     * use this for committing order when payment is activated
+     *
+     * @param OnlineShop_Framework_Payment_IStatus $paymentStatus
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider);
+
+    /**
+     * commits order
+     *
+     * @param OnlineShop_Framework_AbstractOrder $order
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function commitOrder(OnlineShop_Framework_AbstractOrder $order);
 
     /**
      * @param string $confirmationMail

@@ -30,33 +30,77 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         }
     }
 
+    /**
+     * @param $paymentResponseParams
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return OnlineShop_Framework_AbstractOrder
+     * @throws Exception
+     */
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
 
-    protected function applyVoucherTokens(OnlineShop_Framework_AbstractOrder $order, OnlineShop_Framework_ICart $cart){
+        //since handle response can throw exceptions and commitOrderPayment must be executed,
+        // this needs to be in a try-catch block
+        try {
+            $paymentStatus = $paymentProvider->handleResponse($paymentResponseParams);
+        } catch(Exception $e) {
+            \Logger::err($e);
 
-        $voucherTokens = $cart->getVoucherTokenCodes();
-        if (is_array($voucherTokens)) {
-            $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
-            foreach ($voucherTokens as $code) {
-                $service->applyToken($code, $cart, $order);
-            }
+            //create payment status with error message and cancelled payment
+            $paymentStatus = new OnlineShop_Framework_Impl_Payment_Status(
+                $paymentResponseParams['orderIdent'], "unknown", "there was an error: " . $e->getMessage(), OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+            );
         }
+
+        return $this->commitOrderPayment($paymentStatus, $paymentProvider);
     }
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param OnlineShop_Framework_Payment_IStatus $paymentStatus
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return OnlineShop_Framework_AbstractOrder
+     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider) {
+
+        //update order payment -> e.g. setting all available payment information to order object
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
+
+        if(empty($order)) {
+            $message = "No order found for payment status: " . print_r($paymentStatus, true);
+            \Logger::error($message);
+            throw new Exception($message);
+        }
+
+
+        $orderAgent = $orderManager->createOrderAgent( $order );
+        $orderAgent->setPaymentProvider( $paymentProvider );
+
+        $order = $orderAgent->updatePayment( $paymentStatus )->getOrder();
+
+        if (in_array($paymentStatus->getStatus(), [OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED, OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
+            //only when payment state is committed or authorized -> proceed and commit order
+            $order = $this->commitOrder( $order );
+        } else {
+            $order->setOrderState(null);
+            $order->save();
+        }
+
+        return $order;
+
+    }
+
+    /**
+     * @param OnlineShop_Framework_AbstractOrder $order
      *
      * @return OnlineShop_Framework_AbstractOrder
      * @throws Exception
      */
-    public function commitOrder(OnlineShop_Framework_ICart $cart) {
-        //Create Order and PaymentInformation
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
-        $order = $orderManager->getOrCreateOrderFromCart($cart);
-
+    public function commitOrder(OnlineShop_Framework_AbstractOrder $order) {
         try {
-            $this->processOrder($cart, $order);
+            $this->processOrder($order);
             $order->setOrderState(OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED);
-            $this->applyVoucherTokens($order, $cart); // TODO check if right position in code
             $order->save();
         } catch(Exception $e) {
             $order->delete();
@@ -64,17 +108,15 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         }
 
         try {
-            $this->sendConfirmationMail($cart, $order);
+            $this->sendConfirmationMail($order);
         } catch(Exception $e) {
             Logger::err("Error during sending confirmation e-mail", $e);
         }
-        $cart->delete();
         return $order;
     }
 
-    protected function sendConfirmationMail(OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order) {
+    protected function sendConfirmationMail(OnlineShop_Framework_AbstractOrder $order) {
         $params = array();
-        $params["cart"] = $cart;
         $params["order"] = $order;
         $params["customer"] = $order->getCustomer();
         $params["ordernumber"] = $order->getOrdernumber();
@@ -91,10 +133,9 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     /**
      * implementation-specific processing of order, must be implemented in subclass (e.g. sending order to ERP-system)
      *
-     * @param OnlineShop_Framework_ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      */
-    protected function processOrder(OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order) {
+    protected function processOrder(OnlineShop_Framework_AbstractOrder $order) {
         //nothing to do
     }
 

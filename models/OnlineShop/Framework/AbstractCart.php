@@ -106,15 +106,19 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
         $this->ignoreReadonly = false;
     }
 
+
+    public function isCartReadOnly() {
+        $order = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+        return !empty($order) && !empty($order->getOrderState());
+    }
+
     /**
      * @return bool
      * @throws Exception
      */
     protected function checkCartIsReadOnly() {
         if(!$this->ignoreReadonly) {
-            $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-            $item = $env->getCustomItem(OnlineShop_Framework_Impl_CheckoutManager::CART_READONLY_PREFIX . "_" . $this->getId());
-            if($item == "READONLY") {
+            if($this->isCartReadOnly()) {
                 throw new Exception("Cart " . $this->getId() . " is readonly.");
             }
         }
@@ -747,7 +751,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
         $key = array_search($code, $this->getVoucherTokenCodes());
 
         if ($key !== false) {
-            if ($service->releaseToken($code, $this)) {
+            if ($service->releaseToken($code, $this->getId())) {
                 unset($this->checkoutData[$key]);
                 $this->save();
                 return true;
@@ -760,7 +764,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     /**
      * Filters checkout data and returns an array of strings with the assigns tokens.
      *
-     * @return array
+     * @return string[]
      */
     public function getVoucherTokenCodes(){
         $tokens = [];

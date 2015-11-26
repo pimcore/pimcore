@@ -164,19 +164,19 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single extends OnlineShop
      * @param OnlineShop_Framework_ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      *
-     * @return bool|Object_OnlineShopVoucherToken
+     * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
     public function applyToken($code, OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages(), true)) {
                 if ($token->apply()) {
-                    $orderToken = Object_OnlineShopVoucherToken::getByToken($code, 1);
-                    if(!$orderToken instanceof Object_OnlineShopVoucherToken) {
-                        $orderToken = new Object_OnlineShopVoucherToken();
+                    $orderToken = \Pimcore\Model\Object\OnlineShopVoucherToken::getByToken($code, 1);
+                    if(!$orderToken instanceof \Pimcore\Model\Object\OnlineShopVoucherToken) {
+                        $orderToken = new \Pimcore\Model\Object\OnlineShopVoucherToken();
                         $orderToken->setTokenId($token->getId());
                         $orderToken->setToken($token->getToken());
-                        $series = Object_OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
+                        $series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
                         $orderToken->setVoucherSeries($series);
                         $orderToken->setParent($series);        // TODO set correct parent for applied tokens
                         $orderToken->setKey(\Pimcore\File::getValidFilename($token->getToken()));
@@ -187,6 +187,22 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single extends OnlineShop
                     return $orderToken;
                 }
             }
+        }
+        return false;
+    }
+
+
+    /**
+     * cleans up the token usage and the ordered token object if necessary
+     *
+     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param OnlineShop_Framework_AbstractOrder $order
+     * @return bool
+     */
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order)
+    {
+        if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($tokenObject->getToken())) {
+            return $token->unuse();
         }
         return false;
     }
@@ -257,6 +273,5 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single extends OnlineShop
     {
         $this->template = $template;
     }
-
 
 }

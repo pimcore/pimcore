@@ -172,9 +172,10 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
     public function handleResponse($response)
     {
         // check required fields
-        $required = [  'responseFingerprintOrder' => null
-                       , 'responseFingerprint' => null
+        $required = [
+            'orderIdent' => null
         ];
+
         $authorizedData = [
             'orderNumber' => null
             , 'language' => null
@@ -203,7 +204,12 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         if($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint'])
         {
             // fingerprint is wrong, ignore this response
-            throw new Exception( 'fingerprint is invalid' );
+            return new OnlineShop_Framework_Impl_Payment_Status(
+                $response['orderIdent']
+                , $response['orderNumber']
+                , $response['avsResponseMessage'] ?: $response['message']
+                , OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+            );
         }
 
 
@@ -219,7 +225,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         return new OnlineShop_Framework_Impl_Payment_Status(
             $response['orderIdent']
             , $response['orderNumber']
-            , $response['avsResponseMessage']
+            , $response['avsResponseMessage'] ?: $response['message']
             , $response['orderNumber'] !== NULL && $response['paymentState'] == 'SUCCESS'
                 ? OnlineShop_Framework_Payment_IStatus::STATUS_AUTHORIZED
                 : OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED

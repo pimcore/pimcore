@@ -107,6 +107,19 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
         }
     }
 
+    /**
+     * @return bool
+     */
+    public function unuse()
+    {
+        try {
+            $this->db->query("UPDATE " . self::TABLE_NAME . " SET usages=usages-1 WHERE token = ?", [$this->model->getToken()]);
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     public function check($cart){
 
     }
