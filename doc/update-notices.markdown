@@ -5,15 +5,15 @@ Please consider following update notices when updating the e-commerce framework.
 This version contains some significant refactorings concerning committing orders. These refactorings made some changes necessary 
  that need to be addressed during an update:  
 
-### OnlineShopConfig.xml
+#### OnlineShopConfig.xml
 The configuration for `orderstorage` and `parentorderfolder` moved from section `checkoutmanager` to section `ordermanager`. 
 For details see [Sample OnlineShopConfig.xml](/config/OnlineShopConfig_sample.xml)
 
-### Class OnlineShopOrder
+#### Class OnlineShopOrder
 The object class OnlineShopOrder needs as additional number field `subTotalPrice`. In addition, lots of fields became not editable by default. 
 For details see [Class Defintiion](/install/class_source/class_OnlineShopOrder_export.json)
 
-### Changes in combination with `IOrderManager`, `ICart`, `ICheckoutManager` and `ICommitOrderProcessor`
+#### Changes in combination with `IOrderManager`, `ICart`, `ICheckoutManager` and `ICommitOrderProcessor`
  
 * `IOrderManager` is now responsible for creating and retrieving order objects. This has the consequence, that adding custom data to 
   an order object from the cart needs to be moved from the `ICommitOrderProcessor` to an extension of the `IOrderManager`. 
