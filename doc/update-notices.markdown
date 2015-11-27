@@ -27,6 +27,8 @@ For details see [Class Defintiion](/install/class_source/class_OnlineShopOrder_e
     
      For details see [IOrderManager](/lib/OnlineShop/Framework/IOrderManager.php) and [OrderManager](/lib/OnlineShop/Framework/Impl/OrderManager.php).
 
+
+
 * `ICart` now has a new method `isCartReadOnly` which returns if cart is read only or not - is not based on the environment entry anymore. 
 
 * `ICheckoutManager` should be the one-stop API for a checkout controller. Following methods/constants were added or removed:
@@ -37,6 +39,7 @@ For details see [Class Defintiion](/install/class_source/class_OnlineShopOrder_e
     for these states is now calcualted based on the order object.
     
      For details see [ICheckoutManager](/lib/OnlineShop/Framework/ICheckoutManager.php) and  [CheckoutManager](/lib/OnlineShop/Framework/Impl/CheckoutManager.php). 
+
 
 
 * `ICommitOrderProcessor` is the only place for committing orders and now works without cart. This has the consequence, that the cart is not available in the 
