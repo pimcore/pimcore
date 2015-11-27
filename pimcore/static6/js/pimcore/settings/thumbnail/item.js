@@ -886,7 +886,7 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
                 name: "path",
                 value: data.path,
-                width: 350
+                width: 450
             },{
                 xtype: 'fieldset',
                 layout: 'hbox',
@@ -916,7 +916,7 @@ pimcore.settings.thumbnail.items = {
                 triggerAction: 'all',
                 editable: false,
                 store: ["top-left", "top-right", "bottom-left", "bottom-right", "center"],
-                width: 200
+                width: 300
             },{
                 xtype: 'numberfield',
                 name: "alpha",
@@ -931,7 +931,7 @@ pimcore.settings.thumbnail.items = {
                 triggerAction: 'all',
                 editable: false,
                 store: ["COMPOSITE_DEFAULT", "COMPOSITE_HARDLIGHT", "COMPOSITE_EXCLUSION"],
-                width: 200
+                width: 300
             },{
                 xtype: "hidden",
                 name: "type",
@@ -971,7 +971,7 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
                 name: "path",
                 value: data.path,
-                width: 350
+                width: 450
             },{
                 xtype: "combo",
                 name: "composite",
@@ -980,7 +980,7 @@ pimcore.settings.thumbnail.items = {
                 triggerAction: 'all',
                 editable: false,
                 store: ["COMPOSITE_DEFAULT", "COMPOSITE_HARDLIGHT", "COMPOSITE_EXCLUSION"],
-                width: 200
+                width: 300
             },{
                 xtype: "hidden",
                 name: "type",
@@ -1014,7 +1014,7 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
                 name: "path",
                 value: data.path,
-                width: 350
+                width: 450
             },{
                 xtype: "hidden",
                 name: "type",

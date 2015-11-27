@@ -201,6 +201,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         });
 
         this.layoutChangeCombo = new Ext.form.ComboBox({
+            fieldLabel: t("layout"),
             triggerAction: "all",
             selectOnFocus: true,
             forceSelection: true,
@@ -239,7 +240,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             layout: 'hbox',
             border: false,
             style: "border-top: none !important;",
-            fieldLabel: t("layout"),
             items: [this.layoutChangeCombo,
                 {
                     xtype: "button",

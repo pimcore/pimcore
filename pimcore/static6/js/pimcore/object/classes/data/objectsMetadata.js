@@ -28,6 +28,10 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
 
         this.initData(initData);
 
+        if (typeof this.datax.lazyLoading == "undefined") {
+            this.datax.lazyLoading = true;
+        }
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
             "visibleGridView","visibleSearch","style"];
@@ -71,7 +75,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
                 value: this.datax.maxItems,
-                disabled: this.isInCustomLayoutEditor()
+                disabled: this.isInCustomLayoutEditor(),
+                minValue: 0
             },
             {
                 xtype: "checkbox",
@@ -253,7 +258,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), width: 70, sortable: true, dataIndex: 'type', editor: typeComboBox,
+            typesColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type', editor: typeComboBox,
                 renderer: function(value) {
                     return types[value];
                 }});

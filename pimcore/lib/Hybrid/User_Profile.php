@@ -1,9 +1,10 @@
 <?php
+
 /**
-* HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
-*/
+ * HybridAuth
+ * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+ * (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+ */
 
 /**
  * Hybrid_User_Profile object represents the current logged in user profile.
@@ -14,137 +15,138 @@
  *
  * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Profile.html
  */
-class Hybrid_User_Profile
-{
-	/**
-         * The Unique user's ID on the connected provider
-         * @var Numeric
-         */
-        public $identifier = NULL;
+class Hybrid_User_Profile {
 
 	/**
-         * User website, blog, web page
-         * @var String
-         */
-        public $webSiteURL = NULL;
+	 * The Unique user's ID on the connected provider
+	 * @var mixed
+	 */
+	public $identifier = null;
 
 	/**
-         * URL link to profile page on the IDp web site
-         * @var String
-         */
-        public $profileURL = NULL;
+	 * User website, blog, web page
+	 * @var string
+	 */
+	public $webSiteURL = null;
 
 	/**
-         * URL link to user photo or avatar
-         * @var String
-         */
-        public $photoURL = NULL;
+	 * URL link to profile page on the IDp web site
+	 * @var string
+	 */
+	public $profileURL = null;
 
 	/**
-         * User displayName provided by the IDp or a concatenation of first and last name.
-         * @var String
-         */
-        public $displayName = NULL;
+	 * URL link to user photo or avatar
+	 * @var string
+	 */
+	public $photoURL = null;
 
 	/**
-         * A short about_me
-         * @var String
-         */
-        public $description = NULL;
+	 * User displayName provided by the IDp or a concatenation of first and last name.
+	 * @var string
+	 */
+	public $displayName = null;
 
 	/**
-         * User's first name
-         * @var String
-         */
-        public $firstName = NULL;
+	 * A short about_me
+	 * @var string
+	 */
+	public $description = null;
 
 	/**
-         * User's last name
-         * @var String
-         */
-        public $lastName = NULL;
+	 * User's first name
+	 * @var string
+	 */
+	public $firstName = null;
 
 	/**
-         * male or female
-         * @var String
-         */
-        public $gender = NULL;
+	 * User's last name
+	 * @var string
+	 */
+	public $lastName = null;
 
 	/**
-         * Language
-         * @var String
-         */
-        public $language = NULL;
+	 * Male or female
+	 * @var string
+	 */
+	public $gender = null;
 
 	/**
-         * User age, we don't calculate it. we return it as is if the IDp provide it.
-         * @var Numeric
-         */
-        public $age = NULL;
-
-        /**
-         * User birth Day
-         * @var Numeric
-         */
-	public $birthDay = NULL;
-
-        /**
-         * User birth Month
-         * @var Numeric/String
-         */
-	public $birthMonth = NULL;
-
-        /**
-         * User birth Year
-         * @var Numeric
-         */
-	public $birthYear = NULL;
-
-        /**
-         * User email. Note: not all of IDp grant access to the user email
-         * @var String
-         */
-	public $email = NULL;
+	 * Language
+	 * @var string
+	 */
+	public $language = null;
 
 	/**
-         * Verified user email. Note: not all of IDp grant access to verified user email
-         * @var String
-         */
-        public $emailVerified = NULL;
+	 * User age, we don't calculate it. we return it as is if the IDp provide it.
+	 * @var int
+	 */
+	public $age = null;
 
 	/**
-         * Phone number
-         * @var String
-         */
-        public $phone = NULL;
+	 * User birth Day
+	 * @var int
+	 */
+	public $birthDay = null;
 
 	/**
-         * Complete user address
-         * @var String
-         */
-        public $address = NULL;
+	 * User birth Month
+	 * @var int
+	 */
+	public $birthMonth = null;
 
 	/**
-         * User country
-         * @var String
-         */
-        public $country = NULL;
+	 * User birth Year
+	 * @var int
+	 */
+	public $birthYear = null;
 
 	/**
-         * Region
-         * @var String
-         */
-        public $region = NULL;
+	 * User email. Note: not all of IDp grant access to the user email
+	 * @var string
+	 */
+	public $email = null;
 
 	/**
-         * City
-         * @var String
-         */
-        public $city = NULL;
+	 * Verified user email. Note: not all of IDp grant access to verified user email
+	 * @var string
+	 */
+	public $emailVerified = null;
 
 	/**
-         * Postal code
-         * @var String
-         */
-        public $zip = NULL;
+	 * Phone number
+	 * @var string
+	 */
+	public $phone = null;
+
+	/**
+	 * Complete user address
+	 * @var string
+	 */
+	public $address = null;
+
+	/**
+	 * User country
+	 * @var string
+	 */
+	public $country = null;
+
+	/**
+	 * Region
+	 * @var string
+	 */
+	public $region = null;
+
+	/**
+	 * City
+	 * @var string
+	 */
+	public $city = null;
+
+	/**
+	 * Postal code
+	 * @var string
+	 */
+	public $zip = null;
+
 }

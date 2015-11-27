@@ -325,7 +325,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             layout: "pimcoreform",
             autoHeight: true,
             border: false,
-            items: this.getRecursiveLayout(this.layoutDefinitions[type]).items
+            items: this.getRecursiveLayout(this.layoutDefinitions[type]).items,
+            disabled: this.fieldConfig.noteditable
         });
         
         blockElement.insert(0, this.getControls(blockElement));
@@ -366,7 +367,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
-        this.component.disable();
 
         return this.component;
     },

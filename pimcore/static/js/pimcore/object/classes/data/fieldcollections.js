@@ -28,6 +28,10 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
 
         this.initData(initData);
 
+        if (typeof this.datax.lazyLoading == "undefined") {
+            this.datax.lazyLoading = true;
+        }
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","noteditable","invisible","style"];
 

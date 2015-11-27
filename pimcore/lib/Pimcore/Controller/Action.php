@@ -38,10 +38,6 @@ class Action extends \Zend_Controller_Action {
             $this->getResponse()->setHeader("Cache-Control", "no-transform"); // this is for mod_pagespeed
             $this->getResponse()->setHeader("Pragma","no-cache", true);
             $this->getResponse()->setHeader("Expires", "Tue, 01 Jan 1980 00:00:00 GMT", true);
-
-            // remove output-cache if registered
-            $front = \Zend_Controller_Front::getInstance();
-            $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
         }
     }
 

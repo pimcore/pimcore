@@ -115,11 +115,10 @@ class KeyConfig extends Model\AbstractModel {
      * @param null $groupId
      * @return KeyConfig
      */
-    public static function getByName ($name, $groupId = null) {
+    public static function getByName ($name) {
         try {
             $config = new self();
             $config->setName($name);
-            $config->setGroup($groupId);
             $config->getDao()->getByName();
 
             return $config;

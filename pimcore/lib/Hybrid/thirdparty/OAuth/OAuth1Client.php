@@ -111,15 +111,15 @@ class OAuth1Client{
 	/**
 	* GET wrapper for provider apis request
 	*/
-	function get($url, $parameters = array(), $content_type = NULL)
+	function get($url, $parameters = array(), $content_type = null)
 	{
-		return $this->api($url, 'GET', $parameters, NULL, $content_type);
+		return $this->api($url, 'GET', $parameters, null, $content_type);
 	}
 
 	/**
 	* POST wrapper for provider apis request
 	*/
-	function post($url, $parameters = array(), $body = NULL, $content_type = NULL, $multipart = false)
+	function post($url, $parameters = array(), $body = null, $content_type = null, $multipart = false)
 	{
 		return $this->api($url, 'POST', $parameters, $body, $content_type, $multipart );
 	}
@@ -127,7 +127,7 @@ class OAuth1Client{
 	/**
 	* Format and sign an oauth for provider api
 	*/
-	function api( $url, $method = 'GET', $parameters = array(), $body = NULL, $content_type = NULL, $multipart = false )
+	function api( $url, $method = 'GET', $parameters = array(), $body = null, $content_type = null, $multipart = false )
 	{
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
 			$url = $this->api_base_url . $url;
@@ -155,7 +155,7 @@ class OAuth1Client{
 	/**
 	* Make signed request
 	*/
-	function signedRequest( $url, $method, $parameters, $body = NULL, $content_type = NULL, $multipart = false )
+	function signedRequest( $url, $method, $parameters, $body = null, $content_type = null, $multipart = false )
 	{
 
         $signature_parameters = array();
@@ -170,7 +170,7 @@ class OAuth1Client{
 		$request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $signature_parameters);
 		$request->sign_request($this->sha1_method, $this->consumer, $this->token);
 		switch ($method) {
-			case 'GET': return $this->request( $request->to_url(), 'GET', NULL, NULL, $content_type );
+			case 'GET': return $this->request( $request->to_url(), 'GET', null, null, $content_type );
 			default   :
 		if ($body)
 			return $this->request( $request->to_url(), $method, $body, $request->to_header(), $content_type );
@@ -182,7 +182,7 @@ class OAuth1Client{
 	/**
 	* Make http request
 	*/
-	function request( $url, $method, $postfields = NULL, $auth_header = NULL, $content_type = NULL, $multipart = false )
+	function request( $url, $method, $postfields = null, $auth_header = null, $content_type = null, $multipart = false )
 	{
 		Hybrid_Logger::info( "Enter OAuth1Client::request( $method, $url )" );
 		Hybrid_Logger::debug( "OAuth1Client::request(). dump post fields: ", serialize( $postfields ) );
@@ -194,11 +194,11 @@ class OAuth1Client{
 		curl_setopt( $ci, CURLOPT_USERAGENT     , $this->curl_useragent );
 		curl_setopt( $ci, CURLOPT_CONNECTTIMEOUT, $this->curl_connect_time_out );
 		curl_setopt( $ci, CURLOPT_TIMEOUT       , $this->curl_time_out );
-		curl_setopt( $ci, CURLOPT_RETURNTRANSFER, TRUE );
+		curl_setopt( $ci, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $ci, CURLOPT_HTTPHEADER    , array('Expect:') );
 		curl_setopt( $ci, CURLOPT_SSL_VERIFYPEER, $this->curl_ssl_verifypeer );
 		curl_setopt( $ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader') );
-		curl_setopt( $ci, CURLOPT_HEADER        , FALSE );
+		curl_setopt( $ci, CURLOPT_HEADER        , false );
 
         if( $multipart ){
             curl_setopt( $ci, CURLOPT_HTTPHEADER, array( 'Expect:', $auth_header ) );
@@ -212,7 +212,7 @@ class OAuth1Client{
 
 		switch ($method){
 			case 'POST':
-				curl_setopt( $ci, CURLOPT_POST, TRUE );
+				curl_setopt( $ci, CURLOPT_POST, true );
 
 				if ( !empty($postfields) ){
 					curl_setopt( $ci, CURLOPT_POSTFIELDS, $postfields );
@@ -231,7 +231,7 @@ class OAuth1Client{
 
 		curl_setopt($ci, CURLOPT_URL, $url);
 		$response = curl_exec($ci);
-		if( $response === FALSE ) {
+		if( $response === false ) {
 				Hybrid_Logger::error( "OAuth1Client::request(). curl_exec error: ", curl_error($ci) );
 		}
 

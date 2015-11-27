@@ -648,10 +648,6 @@
     background: url(/pimcore/static6/img/icon/database_link.png) center center no-repeat !important;
 }
 
-/*.pimcore_icon_multihrefMetadata {*/
-    /*background: url(/pimcore/static6/img/icon/table_link.png) center center no-repeat !important;*/
-/*}*/
-
 .pimcore_icon_multihrefMetadata {
     background: url(/pimcore/static6/img/icon/outline.png) center center no-repeat !important;
 }
@@ -1305,7 +1301,7 @@
 }
 
 .pimcore_icon_menu_clear_thumbnails {
-    background: url(/pimcore/static6/img/icon/lightning.png) 8px center no-repeat !important;
+    background: url(/pimcore/static6/img/icon/lightning.png) center center no-repeat !important;
 }
 
 .pimcore_icon_mic {

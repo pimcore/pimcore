@@ -135,6 +135,21 @@ class ObjectMetadata extends Model\AbstractModel {
     }
 
     /**
+     * @param $object
+     * @return $this
+     */
+    public function setElement($element) {
+        return $this->setObject($element);
+    }
+
+    /**
+     * @return Object\Concrete
+     */
+    public function getElement() {
+        return $this->getObject();
+    }
+
+    /**
      * @param $columns
      * @return $this
      */

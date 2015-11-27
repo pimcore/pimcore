@@ -103,6 +103,8 @@ class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin {
 
     public function unitListAction() {
         $list = new \Pimcore\Model\Object\QuantityValue\Unit\Listing();
+        $list->setOrderKey("abbreviation");
+        $list->setOrder("ASC");
         if($this->_getParam("filter")) {
             $array = explode(",", $this->_getParam("filter"));
             $quotedArray = array();

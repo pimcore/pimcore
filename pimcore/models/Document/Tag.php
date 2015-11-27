@@ -48,13 +48,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $documentId;
 
     /**
-     * Resource of the tag
-     *
-     * @var mixed
-     */
-    protected $resource;
-
-    /**
      * @var \Pimcore\Controller\Action
      */
     protected $controller;

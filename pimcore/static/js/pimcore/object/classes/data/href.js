@@ -28,6 +28,10 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
 
         this.initData(initData);
 
+        if (typeof this.datax.lazyLoading == "undefined") {
+            this.datax.lazyLoading = true;
+        }
+
         this.treeNode = treeNode;
     },
 

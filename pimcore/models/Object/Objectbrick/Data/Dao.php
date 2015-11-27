@@ -223,6 +223,10 @@ class Dao extends Model\Dao\AbstractDao {
                             $this->inheritanceHelper->addFieldToCheck($key, $fd);
                         }
                     }
+
+                    if (method_exists($fd, "delete")) {
+                        $fd->delete($object);
+                    }
                 }
             }
         }

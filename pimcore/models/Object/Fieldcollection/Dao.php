@@ -124,6 +124,16 @@ class Dao extends Model\Dao\AbstractDao {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
             }
+
+            $childDefinitions = $definition->getFielddefinitions();
+
+            if (is_array($childDefinitions)) {
+                foreach ($childDefinitions as $fd) {
+                    if (method_exists($fd, "delete")) {
+                        $fd->delete($object);
+                    }
+                }
+            }
         }
 
         // empty relation table

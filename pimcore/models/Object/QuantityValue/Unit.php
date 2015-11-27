@@ -47,16 +47,26 @@ class Unit extends Model\AbstractModel {
      */
     public $baseunit;
 
+    /**
+     * @var string
+     */
+    public $reference;
+
 
     /**
      * @var double
      */
     public $factor;
 
+    /**
+     * @var double
+     */
+    public $conversionOffset;
+
 
     /**
      * @param string $abbreviation
-     * @return QuantityValue_Unit
+     * @return Unit
      */
     public static function getByAbbreviation($abbreviation) {
         $unit = new self();
@@ -65,8 +75,18 @@ class Unit extends Model\AbstractModel {
     }
 
     /**
+     * @param string $reference
+     * @return Unit
+     */
+    public static function getByReference($reference) {
+        $unit = new self();
+        $unit->getDao()->getByReference($reference);
+        return $unit;
+    }
+
+    /**
      * @param string $id
-     * @return QuantityValue_Unit
+     * @return Unit
      */
     public static function getById($id) {
 
@@ -183,5 +203,36 @@ class Unit extends Model\AbstractModel {
         return $this->longname;
     }
 
+    /**
+     * @return string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     */
+    public function setReference($reference)
+    {
+        $this->reference = $reference;
+    }
+
+    /**
+     * @return float
+     */
+    public function getConversionOffset()
+    {
+        return $this->conversionOffset;
+    }
+
+    /**
+     * @param float $conversionOffset
+     */
+    public function setConversionOffset($conversionOffset)
+    {
+        $this->conversionOffset = $conversionOffset;
+    }
 
 }

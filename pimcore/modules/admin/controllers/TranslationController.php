@@ -698,6 +698,9 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         $file = $xliff->file[(int)$step];
         $target = $file["target-language"];
 
+        // see https://en.wikipedia.org/wiki/IETF_language_tag
+        $target = str_replace("-","_", $target);
+
         if(!Tool::isValidLanguage($target)) {
             $locale = new \Zend_Locale($target);
             $target = $locale->getLanguage();
@@ -711,7 +714,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         list($type, $id) = explode("-", $file["original"]);
         $element = Element\Service::getElementById($type, $id);
 
-        if(true || $element) {
+        if($element) {
             foreach($file->body->{"trans-unit"} as $transUnit) {
                 list($fieldType, $name) = explode("~-~", $transUnit["id"]);
                 $content = $transUnit->target->asXml();
@@ -762,6 +765,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             } catch (\Exception $e) {
                 throw new \Exception("Unable to save " . Element\Service::getElementType($element) . " with id " . $element->getId() . " because of the following reason: " . $e->getMessage());
             }
+        } else {
+            \Logger::error("Could not resolve element " . $file["original"]);
         }
 
         $this->_helper->json(array(
@@ -809,6 +814,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
         $openTags = array();
         $final = array();
 
+        $replacement = ['%_%_%lt;%_%_%','%_%_%gt;%_%_%'];
+        $content = str_replace(['&lt;','&gt;'], $replacement, $content);
         $content = html_entity_decode($content, null, "UTF-8");
 
         if(!preg_match_all("/<([^>]+)>([^<]+)?/", $content, $matches)) {
@@ -835,6 +842,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
                             $part = '<ept id="' . $closingTag["id"] . '"><![CDATA[' . $part . ']]></ept>';
                         }
                     } else {
+                        $part = str_replace($replacement,['<','>'], $part);
                         $part = '<![CDATA[' . $part . ']]>';
                     }
 

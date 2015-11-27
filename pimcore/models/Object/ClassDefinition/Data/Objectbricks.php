@@ -136,7 +136,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $valueGetter = "get" . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        if (!$objectFromVersion && method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading() and !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata) {
+        if (!$objectFromVersion && method_exists($fielddefinition, "getLazyLoading")
+            && $fielddefinition->getLazyLoading()
+            && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
+            && !$fielddefinition instanceof Object\ClassDefinition\Data\MultihrefMetadata) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
@@ -831,7 +834,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
-     * @return Element\ElementInterface
+     * @return Model\Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = array()) {
         $data = $this->getDataFromObjectParam($object, $params);

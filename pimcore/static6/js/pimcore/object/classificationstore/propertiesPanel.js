@@ -84,7 +84,8 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             proxy: proxy,
             fields: readerFields,
             listeners: listeners,
-            remoteFilter: true
+            remoteFilter: true,
+            remoteSort: true
         });
 
         var gridColumns = [];

@@ -414,7 +414,7 @@ class Asset extends Element\AbstractElement {
 
         $mappings = array(
             "image" => array("/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"),
-            "text" => array("/text/"),
+            "text" => array("/text/","/xml/"),
             "audio" => array("/audio/"),
             "video" => array("/video/"),
             "document" => array("/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"),
@@ -452,6 +452,10 @@ class Asset extends Element\AbstractElement {
      * @throws \Exception
      */
     public function save() {
+
+        if ($this->getFilename()  === '..' || $this->getFilename() === '.') {
+            throw new \Exception('Cannot create asset called ".." or "."');
+        }
 
         $isUpdate = false;
         if ($this->getId()) {
@@ -865,6 +869,24 @@ class Asset extends Element\AbstractElement {
     }
 
     /**
+     * Deletes file from filesystem
+     */
+    protected function deletePhysicalFile()
+    {
+        $fsPath = PIMCORE_ASSET_DIRECTORY . $this->getPath() . $this->getFilename();
+
+        if ($this->getType() != "folder") {
+            if (is_file($fsPath) && is_writable($fsPath)) {
+                unlink($fsPath);
+            }
+        } else {
+            if (is_dir($fsPath) && is_writable($fsPath)) {
+                recursiveDelete($fsPath, true);
+            }
+        }
+    }
+
+    /**
      * @throws \Exception
      */
     public function delete() {
@@ -885,17 +907,9 @@ class Asset extends Element\AbstractElement {
         }
 
         // remove file on filesystem
-        $fsPath = PIMCORE_ASSET_DIRECTORY . $this->getPath() . $this->getFilename();
-
-        if ($this->getType() != "folder") {
-            if (is_file($fsPath) && is_writable($fsPath)) {
-                unlink($fsPath);
-            }
-        }
-        else {
-            if (is_dir($fsPath) && is_writable($fsPath)) {
-                recursiveDelete($fsPath, true);
-            }
+        $fullPath = $this->getFullPath();
+        if ($fullPath != "/.." && !strpos($fullPath, '/../') && $this->getKey() !== "." && $this->getKey() !== "..") {
+            $this->deletePhysicalFile();
         }
 
         $versions = $this->getVersions();

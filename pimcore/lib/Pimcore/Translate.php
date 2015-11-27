@@ -124,6 +124,7 @@ class Translate extends \Zend_Translate_Adapter {
 
         $messageIdOriginal = $messageId;
         $messageId = mb_strtolower($messageId);
+        $messageId = trim($messageId);
 
         // the maximum length of message-id's is 255
         if(strlen($messageId) > 255) {
@@ -225,6 +226,7 @@ class Translate extends \Zend_Translate_Adapter {
 
         $messageIdOriginal = $messageId;
         $messageId = mb_strtolower($messageId);
+        $messageId = trim($messageId);
 
         // don't create translation if it's just empty
         if(array_key_exists($messageId, $this->_translate[$locale])) {

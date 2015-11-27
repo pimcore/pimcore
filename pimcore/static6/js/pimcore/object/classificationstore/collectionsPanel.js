@@ -220,7 +220,8 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             proxy: proxy,
             fields: readerFields,
             listeners: listeners,
-            remoteFilter: true
+            remoteFilter: true,
+            remoteSort: true
         });
 
 
@@ -325,19 +326,21 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             ],
             listeners: {
 
-                rowclick: function(grid, record, tr, rowIndex, e, eOpts ) {
-                    var record = this.collectionsStore.getAt(rowIndex);
-                    var collectionId = record.data.id;
-                    var collectionName = record.data.name;
+                selectionchange: function(rowModel, selected, eOpts ) {
+                    if (selected.length > 0) {
+                        var record = selected[0];
+                        var collectionId = record.data.id;
+                        var collectionName = record.data.name;
 
-                    this.collectionId = collectionId;
+                        this.collectionId = collectionId;
 
-                    this.relationsPanel.setTitle(t("relations") + " - "  + t("collection") +  " " + record.data.id + " - " + collectionName);
-                    this.relationsPanel.enable();
-                    var proxy = this.relationsStore.getProxy();
-                    proxy.setExtraParam("colId", collectionId);
-                    this.relationsStore.reload();
-                    this.relationsGrid.show();
+                        this.relationsPanel.setTitle(t("relations") + " - " + t("collection") + " " + record.data.id + " - " + collectionName);
+                        this.relationsPanel.enable();
+                        var proxy = this.relationsStore.getProxy();
+                        proxy.setExtraParam("colId", collectionId);
+                        this.relationsStore.reload();
+                        this.relationsGrid.show();
+                    }
 
                 }.bind(this)
             }

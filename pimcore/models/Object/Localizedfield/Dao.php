@@ -225,8 +225,9 @@ class Dao extends Model\Dao\AbstractDao {
     public function delete ($deleteQuery = true) {
 
         try {
+            $object = $this->model->getObject();
             if ($deleteQuery) {
-                $id = $this->model->getObject()->getId();
+                $id = $object->getId();
                 $tablename = $this->getTableName();
                 $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
 
@@ -234,6 +235,16 @@ class Dao extends Model\Dao\AbstractDao {
                 foreach ($validLanguages as $language) {
                     $queryTable = $this->getQueryTableName() . "_" . $language;
                     $this->db->delete($queryTable, $this->db->quoteInto("ooo_id = ?", $id));
+                }
+            }
+
+            $childDefinitions = $object->getClass()->getFieldDefinition("localizedfields")->getFielddefinitions();
+
+            if (is_array($childDefinitions)) {
+                foreach ($childDefinitions as $fd) {
+                    if (method_exists($fd, "delete")) {
+                        $fd->delete($object);
+                    }
                 }
             }
         } catch (\Exception $e) {

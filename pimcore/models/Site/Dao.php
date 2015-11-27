@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao {
             }
 
             if (!$data["id"]) {
-                throw new \Exception("there is no site for the requested domain");
+                throw new \Exception("there is no site for the requested domain: `" . $domain . "´");
             }
         }
         $this->assignVariablesToModel($data);

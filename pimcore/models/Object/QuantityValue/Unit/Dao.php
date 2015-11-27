@@ -44,10 +44,22 @@ class Dao extends Model\Dao\AbstractDao {
 
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE abbreviation=" . $this->db->quote($abbreviation));
         if(empty($classRaw)) {
-            throw new Exception("Unit " . $abbreviation . " not found.");
+            throw new \Exception("Unit " . $abbreviation . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
+    }
 
+    /**
+     * @param string $reference
+     * @return void
+     */
+    public function getByReference($reference) {
+
+        $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE reference=" . $this->db->quote($reference));
+        if(empty($classRaw)) {
+            throw new \Exception("Unit " . $reference . " not found.");
+        }
+        $this->assignVariablesToModel($classRaw);
     }
 
     /**

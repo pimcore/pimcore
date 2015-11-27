@@ -5,8 +5,8 @@ return [
         "Google" => [
             "enabled" => true,
             "keys"    => [
-                "id" => "655439141282-ep39uolf6b9b9n967tisihtv1t69hfnj.apps.googleusercontent.com",
-                "secret" => "hjhKcN05QHk6uwmE4E_LH15G"
+                "id" => "655439141282-nfvap5belfqv8s3v177jg9761j879cv3.apps.googleusercontent.com",
+                "secret" => "xGtTcy3knT3YILGRRTgVWwjp"
             ]
         ],
         "Facebook" => [

@@ -49,6 +49,14 @@ abstract class AbstractModel {
     }
 
     /**
+     * @deprecated
+     * @return Dao\AbstractDao
+     */
+    public function getResource() {
+        return $this->getDao();
+    }
+
+    /**
      * @param null $key
      * @throws \Exception
      */

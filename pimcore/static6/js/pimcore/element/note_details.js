@@ -31,7 +31,6 @@ pimcore.element.note_details = Class.create({
                 title: t('note_details'),
                 closeAction:'close',
                 plain: true,
-                maximized: false,
                 autoScroll: true,
                 modal: true,
                 buttons: [
@@ -133,7 +132,7 @@ pimcore.element.note_details = Class.create({
             autoScroll: true,
             defaults: {
                 labelWidth: 130,
-                width: 600
+                width: 650
             }
         });
 

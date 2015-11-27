@@ -48,12 +48,9 @@ class Dao extends Model\Dao\AbstractDao {
         }
 
         $name = $this->model->getName();
-        $groupId = $this->model->getGroup();
+
 
         $stmt = "SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = '" . $name . "'";
-        if ($groupId > 0) {
-            $stmt .= " AND `group` = " . $groupId;
-        }
 
         $data = $this->db->fetchRow($stmt);
 

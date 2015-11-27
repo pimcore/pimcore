@@ -1,28 +1,29 @@
 <?php
+
 /**
-* HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
-*/
+ * HybridAuth
+ * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+ * (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+ */
 
 /**
  * HybridAuth storage manager interface
  */
-interface Hybrid_Storage_Interface
-{
-    public function config($key, $value = null);
+interface Hybrid_Storage_Interface {
 
-    public function get($key);
+	public function config($key, $value = null);
 
-    public function set( $key, $value );
+	public function get($key);
 
-    function clear();
+	public function set($key, $value);
 
-    function delete($key);
+	function clear();
 
-    function deleteMatch($key);
+	function delete($key);
 
-    function getSessionData();
+	function deleteMatch($key);
 
-    function restoreSessionData( $sessiondata = null);
+	function getSessionData();
+
+	function restoreSessionData($sessiondata = null);
 }
