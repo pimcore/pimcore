@@ -26,7 +26,8 @@ When a product category class is used, this class needs to implement the abstrac
 
 
 ## 3 - Configuring OnlineShopConfig.xml
-TODO: ADD LINKS HERE
+
+[Sample OnlineShopConfig.xml](/config/OnlineShopConfig_sample.xml)
 
 Open /website/var/plugins/OnlineShop/OnlineShopConfig.xml and adjust the settings. This configuration file is the central configuration for the e-commerce framework and defines the concrete implementations and configurations for all modules. 
 
