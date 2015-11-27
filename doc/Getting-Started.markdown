@@ -47,12 +47,12 @@ For more detailed documentation see 'Dev-Doku' chapters and the source code docu
 
 
 ### 7. Usage of payment manager
-   1. [Payment Manager configuration](Usage-of-payment-manager.markdown)
-   2. [Provider configuration](Usage-of-payment-manager.markdown#2-provider-configuration)
-   3. [Recurring payment](Usage-of-payment-manager.markdown#3-recurring-payment)
+   1. [Payment Manager configuration](Usage-of-payment-manager.markdown#1---payment-manager-configuration)
+   2. [Provider configuration](Usage-of-payment-manager.markdown#2---provider-configuration)
+   3. [Recurring payment](Usage-of-payment-manager.markdown#3---recurring-payment)
 
 
 ### 8. Usage of order manager
-   1. [Order Manager configuration](Usage-of-order-manager.markdown)
-   2. [Usage OrderList](Usage-of-order-manager.markdown#2-usage-orderlist)
-   3. [Usage OrderAgent](Usage-of-order-manager.markdown#3-usage-orderagent)
+   1. [Order Manager configuration](Usage-of-order-manager.markdown#1---order-manager-configuration)
+   2. [Usage OrderList](Usage-of-order-manager.markdown#2---usage-orderlist)
+   3. [Usage OrderAgent](Usage-of-order-manager.markdown#3---usage-orderagent)
