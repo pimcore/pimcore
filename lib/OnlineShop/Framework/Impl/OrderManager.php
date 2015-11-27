@@ -211,6 +211,7 @@ class OrderManager implements IOrderManager
 
         //update order from cart
         $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getAmount());
+        $order->setSubTotalPrice($cart->getPriceCalculator()->getSubTotal()->getAmount());
 
         $modificationItems = new \Pimcore\Model\Object\Fieldcollection();
         foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
