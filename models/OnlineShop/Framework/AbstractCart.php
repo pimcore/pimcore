@@ -703,6 +703,8 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      * @throws Exception
      */
     public function addVoucherToken($code){
+        $this->checkCartIsReadOnly();
+
         $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
         if($service->checkToken($code, $this)){
             if($service->reserveToken($code, $this)){
@@ -747,12 +749,14 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      */
     public function removeVoucherToken($code)
     {
+        $this->checkCartIsReadOnly();
+
         $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
         $key = array_search($code, $this->getVoucherTokenCodes());
 
         if ($key !== false) {
-            if ($service->releaseToken($code, $this->getId())) {
-                unset($this->checkoutData[$key]);
+            if ($service->releaseToken($code, $this)) {
+                unset($this->checkoutData["voucher_" . $code]);
                 $this->save();
                 return true;
             }
@@ -781,12 +785,26 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      * Checks if checkout data voucher tokens are valid reservations
      */
     protected function validateVoucherTokenReservations(){
-        foreach($this->getVoucherTokenCodes() as $code){
-            $reservation = OnlineShop_Framework_VoucherService_Reservation::get($code, $this);
-            if(!$reservation->check($this->getId())){
-                unset($this->checkoutData["voucher_".$code]);
+
+        if($this->getVoucherTokenCodes()) {
+
+            $order = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+            $appliedVoucherCodes = [];
+            if($order) {
+                foreach($order->getVoucherTokens() as $voucherToken) {
+                    $appliedVoucherCodes[$voucherToken->getToken()] = $voucherToken->getToken();
+                }
+            }
+
+            //check for each voucher token if reservation is valid or it is already applied to order
+            foreach($this->getVoucherTokenCodes() as $code){
+                $reservation = OnlineShop_Framework_VoucherService_Reservation::get($code, $this);
+                if(!$reservation->check($this->getId()) && !array_key_exists($code, $appliedVoucherCodes)){
+                    unset($this->checkoutData["voucher_".$code]);
+                }
             }
         }
+
     }
 
 
