@@ -928,7 +928,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         $sitesList = new Model\Site\Listing();
         $sitesObjects = $sitesList->load();
         $sites = array(array(
-            "id" => "",
+            "id" => \Pimcore\Tool\Admin::isExtJS6() ? "default" : "",
             "rootId" => 1,
             "domains" => "",
             "rootPath" => "/",
