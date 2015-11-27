@@ -65,11 +65,12 @@ pimcore.report.analytics.settings = Class.create({
 
         sites.each(function (record) {
             var id = record.data.id;
-            var key = "site_" + id;
-            if(!id) {
-                id = "default";
+            if (id == "default") {
                 key = "default";
+            } else {
+                key = "site_" + id;
             }
+
             configs.push(this.getConfiguration(key, record.data.domain, id));
         }, this);
 
@@ -230,23 +231,25 @@ pimcore.report.analytics.settings = Class.create({
 
         sites.each(function (record) {
             var id = record.data.id;
-            var key = "site_" + id;
-            if(!id) {
-                id = "default";
+            if (id == "default") {
                 key = "default";
+            } else {
+                key = "site_" + id;
             }
 
+            var itemId = id.replace(/\./g, '_');
+
             sitesData[key] = {
-                profile: Ext.getCmp("report_settings_analytics_profile_" + id).getValue(),
-                trackid: Ext.getCmp("report_settings_analytics_trackid_" + id).getValue(),
-                asynchronouscode: Ext.getCmp("report_settings_analytics_asynchronouscode_" + id).getValue(),
-                retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + id).getValue(),
-                additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + id).getValue(),
-                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id).getValue(),
-                additionalcodebeforeinit: Ext.getCmp("report_settings_analytics_additionalcodebeforeinit_" + id).getValue(),
-                accountid: Ext.getCmp("report_settings_analytics_accountid_" + id).getValue(),
-                internalid: Ext.getCmp("report_settings_analytics_internalid_" + id).getValue(),
-                universal_configuration: Ext.getCmp("report_settings_analytics_universal_configuration_" + id).getValue()
+                profile: Ext.getCmp("report_settings_analytics_profile_" + itemId).getValue(),
+                trackid: Ext.getCmp("report_settings_analytics_trackid_" + itemId).getValue(),
+                asynchronouscode: Ext.getCmp("report_settings_analytics_asynchronouscode_" + itemId).getValue(),
+                retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + itemId).getValue(),
+                additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + itemId).getValue(),
+                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + itemId).getValue(),
+                additionalcodebeforeinit: Ext.getCmp("report_settings_analytics_additionalcodebeforeinit_" + itemId).getValue(),
+                accountid: Ext.getCmp("report_settings_analytics_accountid_" + itemId).getValue(),
+                internalid: Ext.getCmp("report_settings_analytics_internalid_" + itemId).getValue(),
+                universal_configuration: Ext.getCmp("report_settings_analytics_universal_configuration_" + itemId).getValue()
             };
         }, this);
 
