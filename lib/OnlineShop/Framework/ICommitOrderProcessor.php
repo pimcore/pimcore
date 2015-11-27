@@ -16,6 +16,18 @@
  */
 interface OnlineShop_Framework_ICommitOrderProcessor {
 
+
+    /**
+     * check if order is already committed and payment information with same internal payment id has same state
+     *
+     * @param array|OnlineShop_Framework_Payment_IStatus $paymentResponseParams
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return null|OnlineShop_Framework_AbstractOrder
+     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
+
     /**
      * facade method for
      * - handling payment response and

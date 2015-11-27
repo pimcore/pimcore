@@ -33,11 +33,9 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     /**
      * @param $paymentResponseParams
      * @param OnlineShop_Framework_IPayment $paymentProvider
-     * @return OnlineShop_Framework_AbstractOrder
-     * @throws Exception
+     * @return OnlineShop_Framework_Impl_Payment_Status|OnlineShop_Framework_Payment_IStatus
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
-
+    protected function getPaymentStatus($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
         //since handle response can throw exceptions and commitOrderPayment must be executed,
         // this needs to be in a try-catch block
         try {
@@ -50,8 +48,64 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
                 $paymentResponseParams['orderIdent'], "unknown", "there was an error: " . $e->getMessage(), OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
             );
         }
+        return $paymentStatus;
+    }
 
+    /**
+     * @param $paymentResponseParams
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return OnlineShop_Framework_AbstractOrder
+     * @throws Exception
+     */
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
+
+        //check if order is already committed and payment information with same internal payment id has same state
+        //if so, do nothing and return order
+        if($committedOrder = $this->committedOrderWithSamePaymentExists($paymentResponseParams, $paymentProvider)) {
+            return $committedOrder;
+        }
+
+        $paymentStatus = $this->getPaymentStatus($paymentResponseParams, $paymentProvider);
         return $this->commitOrderPayment($paymentStatus, $paymentProvider);
+    }
+
+    /**
+     * check if order is already committed and payment information with same internal payment id has same state
+     *
+     * @param array|OnlineShop_Framework_Payment_IStatus $paymentResponseParams
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return null|OnlineShop_Framework_AbstractOrder
+     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
+
+        if(!$paymentResponseParams instanceof OnlineShop_Framework_Payment_IStatus) {
+            $paymentStatus = $this->getPaymentStatus($paymentResponseParams, $paymentProvider);
+        } else {
+            $paymentStatus = $paymentResponseParams;
+        }
+
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
+
+        if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
+            $paymentInformationCollection = $order->getPaymentInfo();
+            if($paymentInformationCollection) {
+                foreach($paymentInformationCollection as $paymentInfo) {
+                    if($paymentInfo->getInternalPaymentId() == $paymentStatus->getInternalPaymentId()) {
+                        if($paymentInfo->getPaymentState() == $paymentStatus->getStatus()) {
+                            return $order;
+                        } else {
+                            $message = "Payment state of order " . $order->getId() . " does not match with new request!";
+                            \Logger::error($message);
+                            throw new Exception($message);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -63,7 +117,12 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      */
     public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider) {
 
-        //update order payment -> e.g. setting all available payment information to order object
+        //check if order is already committed and payment information with same internal payment id has same state
+        //if so, do nothing and return order
+        if($committedOrder = $this->committedOrderWithSamePaymentExists($paymentStatus, $paymentProvider)) {
+            return $committedOrder;
+        }
+
         $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
 
@@ -72,7 +131,6 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             \Logger::error($message);
             throw new Exception($message);
         }
-
 
         $orderAgent = $orderManager->createOrderAgent( $order );
         $orderAgent->setPaymentProvider( $paymentProvider );

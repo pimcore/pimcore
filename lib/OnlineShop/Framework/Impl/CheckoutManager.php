@@ -226,6 +226,13 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams) {
+
+        //check if order is already committed and payment information with same internal payment id has same state
+        //if so, do nothing and return order
+        if($committedOrder = $this->getCommitOrderProcessor()->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
+            return $committedOrder;
+        }
+
         if (!$this->payment) {
             throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
         }
