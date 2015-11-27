@@ -182,9 +182,11 @@ class Targeting extends \Zend_Controller_Plugin_Abstract {
                 }
             }
 
-
-
-            $code = '<script type="text/javascript" src="/pimcore/static/js/frontend/geoip.js/"></script>';
+            $code = '';
+            // check if persona or target group requires geoip to be included
+            if($this->checkPersonasAndTargetGroupForGeoIPRequirement($personas,$targets)){
+                $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/geoip.js/"></script>';
+            }
             $code .= '<script type="text/javascript">';
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';
@@ -206,5 +208,31 @@ class Targeting extends \Zend_Controller_Plugin_Abstract {
 
             $this->getResponse()->setBody($body);
         }
+    }
+
+    /**
+     * Checks if the passed List of Personas and List of Targets use geopoints as condition
+     * @param $personas
+     * @param $targets
+     * @return bool
+     */
+    private function checkPersonasAndTargetGroupForGeoIPRequirement($personas,$targets){
+        foreach($personas as $persona) {
+
+            foreach($persona->getConditions() as $condition) {
+
+                if ($condition['type'] == "geopoint") {
+                    return true;
+                }
+            }
+        }
+        foreach($targets as $target) {
+            foreach($target->getConditions() as $condition) {
+                if ($condition['type'] == "geopoint") {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
