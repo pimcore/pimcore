@@ -3,17 +3,17 @@ For more detailed documentation see 'Dev-Doku' chapters and the source code docu
 
 ### 1. Installation and base configuration
 
-   1. [Installation](Installation-and-base-configuration.markdown#1-installation)
-   2. [Configure Product and Product Category classes](Installation-and-base-configuration.markdown#2-configure-product-and-product-category-classes)
-   3. [Configuring OnlineShopConfig.xml](Installation-and-base-configuration.markdown#3-configuring-onlineshopconfig-xml)
+   1. [Installation](Installation-and-base-configuration.markdown#1---installation)
+   2. [Configure Product and Product Category classes](Installation-and-base-configuration.markdown#2---configure-product-and-product-category-classes)
+   3. [Configuring OnlineShopConfig.xml](Installation-and-base-configuration.markdown#3---configuring-onlineshopconfig-xml)
 
 
 ### 2. Setup product index, use product list
-   1. [Basic Idea of the IndexService](product-index-product-list.markdown#1-basic-idea-of-the-indexservice)
-   2. [Configuration of the Product Index](product-index-product-list.markdown#2-configuration-of-the-product-index)
-   3. [Tenant configuration](product-index-product-list.markdown#3-tenant-configuration)
-   4. [Data architecture and indexing](product-index-product-list.markdown#4-data-architecture-and-indexing)
-   5. [Usage of product list](product-index-product-list.markdown#5-usage-of-product-list)
+   1. [Basic Idea of the IndexService](product-index-product-list.markdown#1---basic-idea-of-the-indexservice)
+   2. [Configuration of the Product Index](product-index-product-list.markdown#2---configuration-of-the-product-index)
+   3. [Tenant configuration](product-index-product-list.markdown#3---tenant-configuration)
+   4. [Data architecture and indexing](product-index-product-list.markdown#4---data-architecture-and-indexing)
+   5. [Usage of product list](product-index-product-list.markdown#5---usage-of-product-list)
 
 
 ### 3. Usage of filter service
