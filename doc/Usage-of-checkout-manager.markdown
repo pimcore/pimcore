@@ -274,9 +274,11 @@ A client side handling could look like as follows:
 
             // optional to clear payment
             // if this call is necessary depends on payment provider and configuration.
-            // its possible to execute this later (e.g. when shipment is done)
+            // its possible to execute this later (e.g. when shipment is done) - which is preferred
             $payment = $checkoutManager->getPayment();
-            $payment->executeDebit():
+            $paymentStatus = $payment->executeDebit();
+            $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+            $orderAgent->updatePayment($paymentStatus);
 
             if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
                 $this->view->goto = '/en/checkout/completed?id=' . $order->getId();
@@ -322,7 +324,7 @@ A server side handling could look as follows:
 
 ```
 
-For more details see [Usage of payment manager](Usage-of-payment-manager)
+For more details see [Usage of payment manager](Usage-of-payment-manager.markdown)
 
 
 ## 5 - Checkout tenants for checkout
@@ -341,3 +343,4 @@ $environment->setCurrentCheckoutTenant('noShipping');
 $environment->save();
 ```
 
+> When using server-by-server payment confirmation communication, make sure that the correct tenant is set during the response handling! 
