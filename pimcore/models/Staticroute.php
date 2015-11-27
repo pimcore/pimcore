@@ -431,15 +431,6 @@ class Staticroute extends AbstractModel {
         $url = $this->getReverse();
         $forbiddenCharacters = array("#",":","?");
 
-        // parameters ordering to prevent short parameter overwriting longer parameter
-        uksort($urlParams,function ($a, $b) {
-            if (strlen($a) == strlen($b))
-                return 0;
-            if (strlen($a) > strlen($b))
-                return -1;
-            return 1;
-        });
-
         // check for named variables
         foreach ($urlParams as $key => $param) {
             if(strpos($this->getReverse(), "%" . $key) !== false) {
