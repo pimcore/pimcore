@@ -24,12 +24,6 @@ The configuration takes place in the OnlineShopConfig.xml
         <!-- define used commit order processor -->
         <commitorderprocessor class="Website_OnlineShop_Order_Processor"/>
 
-        <!-- settings for order storage - pimcore class names for oder and order items -->
-        <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
-
-        <!-- parent folder for order objects - either ID or path can be specified. path is parsed by strftime. -->
-        <parentorderfolder>/order/%Y/%m/%d</parentorderfolder>
-
         <!-- settings for confirmation mail sent to customer after order is finished.
              also could be defined defined directly in commit order processor (e.g. when different languages are necessary)
         -->
@@ -57,8 +51,6 @@ Following elements are configured:
 * **Checkout steps and their implementation**: Each checkout step (e.g. Delivery address, delivery date, ...) needs a concrete checkout step implementation. The implementation is responsible for storing and validating the necessary data, is project dependent and has to be implemented for each project. 
 * **Implementation of the commit order processor**: When finalization of the order is done by the commit order processor. This is the places, where custom ERP integrations and other project dependent order finishing stuff should be placed. 
 * **Additional stuff like**: 
-   * Order storage configuration
-   * Parent order folder
    * Mail configuration
 
 ## 2 - Setting up Checkout Steps
@@ -140,27 +132,76 @@ After each checkout step is completed, the order can be committed. If no payment
 $manager = $this->of->getCheckoutManager($cart);
 $order = $manager->commitOrder();
 ```
-While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `OnlineShop_Framework_ICommitOrderProcessor`. This is the place where all functionality for committing the order (e.g. creating order objects, sending orders to erp systems, sending order confirmation mails, ...) is bundled. 
+While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `OnlineShop_Framework_ICommitOrderProcessor`. 
+This is the place where all functionality for committing the order (e.g. sending orders to erp systems, sending order confirmation mails, ...) is bundled. 
 
-The default implementation `OnlineShop_Framework_Impl_CommitOrderProcessor` provides basic functionality like creating an order object and sending a order confirmation mail. In simple use cases a website specific implementation needs to extend `OnlineShop_Framework_Impl_CommitOrderProcessor` and overwrite the method `processOrder` where website specific functionality is integrated (adding additional data to the order object, sending orders to erp systems, ...). 
+The default implementation `OnlineShop_Framework_Impl_CommitOrderProcessor` provides basic functionality like creating an order object and sending a order confirmation mail.
+ Order creation it self is delegated to the `\OnlineShop\Framework\IOrderManager`. 
+In simple use cases a website specific implementation needs 
 
-A simple implementation could look like: 
+* to extend `\OnlineShop\Framework\Impl\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` to add additional fields to the order object and 
+* to extend `OnlineShop_Framework_Impl_CommitOrderProcessor` and overwrite the method `processOrder` where website specific functionality is integrated (sending orders to erp systems, ...).
+
+If additional information needs to be stored into the order, the OrderManager has to be 
+ extended. For more Information 
+ 
+A simple implementation of `Website_OnlineShop_Order_OrderManager` could look like:
+
+```php
+<?php
+class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\Impl\OrderManager {
+
+    /**
+     * @param OnlineShop_Framework_ICart $cart
+     * @param OnlineShop_Framework_AbstractOrder $order
+     * @return OnlineShop_Framework_AbstractOrder
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     */
+    public function applyCustomCheckoutDataToOrder(\OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order)
+    {
+        $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
+
+        /* @var OnlineShop_Framework_AbstractOrder $order*/
+
+        $checkout = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager( $cart );
+        $deliveryAddress = $checkout->getCheckoutStep('deliveryaddress')->getData();
+        /* @var Website_OnlineShop_Order_DeliveryAddress $deliveryAddress */
+
+        // insert delivery address
+        $order->setCustomerName( $deliveryAddress->firstname . ' ' . $deliveryAddress->lastname );
+        $order->setCustomerCompany( $deliveryAddress->company );
+        $order->setCustomerStreet( $deliveryAddress->address );
+        $order->setCustomerZip( $deliveryAddress->zip );
+        $order->setCustomerCity( $deliveryAddress->city );
+        $order->setCustomerCountry( $deliveryAddress->country );
+        $order->setCustomerEmail( $deliveryAddress->email );
+        return $order;
+    }
+}
+```
+
+
+A simple implementation of `Website_OnlineShop_Order_Processor` could look like: 
+
 ```php
 <?php
 class OnlineShop_CommitOrderProcessor extends OnlineShop_Framework_Impl_CommitOrderProcessor {
  
-   protected function processOrder(OnlineShop_Framework_ICart $cart, Object_OnlineShopOrder $order) {
-      if($cart->getCheckoutData(OnlineShop_Framework_Impl_Checkout_DeliveryDate::DATE)) {
-         $order->setDeliverydate(new Zend_Date($cart->getCheckoutData(OnlineShop_Framework_Impl_Checkout_DeliveryDate::DATE), Zend_Date::TIMESTAMP));
+   protected function processOrder(Object_OnlineShopOrder $order) {
+      //send order to ERP-System
+      try {
+          $connector = Website_ERPConnector::getInstance();
+          $erpOrderNumber = $connector->sendOrder($order);
+          $order->setOrderNumber($erpOrderNumber);
+      } catch(Exception $e) {
+          Logger::error($e->getMessage()); 
+          throw $e;
       }
-      $order->setDeliveryinstantly($cart->getCheckoutData(OnlineShop_Framework_Impl_Checkout_DeliveryDate::INSTANTLY));
-      $order->setDeliveryAddressLine1($cart->getCheckoutData(OnlineShop_Framework_Impl_Checkout_DeliveryAddress::LINE1));
-      $order->setCustomerOrderData($cart->getCheckoutData("customerOrderData"));
-      $order->setCustomerOrderNumber($cart->getCheckoutData("customerOrderNumber"));
    }
 }
 ```
-If needed, further methods can be overwritten. E.g. `sendConfirmationMail` if special e-mails should be sent to specific persons. 
+ 
+If needed, further methods can be overwritten. E.g. `sendConfirmationMail` if special e-mails should be sent to specific persons.
 After commit order was successful, the user can be directed to a success-page. 
 
 
@@ -187,6 +228,7 @@ $config['successURL'] = $url . 'success';
 $config['cancelURL'] = $url . 'cancel';
 $config['failureURL'] = $url . 'failure';
 $config['serviceURL'] = $url . 'service';
+$config['confirmURL'] = $urlForServersidePaymentConfirmation;
 $config['orderDescription'] = 'My order at pimcore.org';
 $config['imageURL'] = URL-TO-LOGO-OF-WEBSITE;
 
@@ -203,26 +245,85 @@ echo $form;
 ```
 
 #### Handle payment response
-When the user finishes the payment, the given response (either via redirect or via server side call) has to be handled as follows. If payment handling was successful, the order needs to be committed. 
+When the user finishes the payment, the given response (either via redirect or via server side call) has to be handled as follows. If payment handling was successful, the order needs to be committed.
+
+A client side handling could look like as follows: 
 ```php
 <?php
-$manager = $this->of->getCheckoutManager($cart);
-$payment = $manager->getPayment();
 
-// check if payment is authorised
-$payment->handleResponse( $params );
+    /**
+     * got response from payment provider
+     */
+    public function paymentStatusAction()
+    {
+        // init
+        $cart = $this->getCart();
+        $checkoutManager = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager( $cart );
 
-// optional to clear payment
-// if this call is necessary depends on payment provider and configuration.
-// its possible to execute this later (e.g. when shipment is done)
-$paymentStatus = $payment->executeDebit();
+        if($this->getParam('mode') == "cancel") {
+            $checkoutManager->cancelStartedOrderPayment();
+            $this->view->goto = '/en/checkout/confirm?error=' . $this->getParam('mode');
+            return;
+        }
 
+        $params = $this->getAllParams();
 
-//commit order
-$order = $checkout->commitOrderPayment($paymentStatus);
+        try
+        {
+            $order = $checkoutManager->handlePaymentResponseAndCommitOrderPayment( $params );
+
+            // optional to clear payment
+            // if this call is necessary depends on payment provider and configuration.
+            // its possible to execute this later (e.g. when shipment is done)
+            $payment = $checkoutManager->getPayment();
+            $payment->executeDebit():
+
+            if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
+                $this->view->goto = '/en/checkout/completed?id=' . $order->getId();
+            } else {
+                $this->view->goto = '/en/checkout/confirm?error=' . $this->getParam('mode');
+            }
+            
+        }
+        catch(Exception $e)
+        {
+            $this->view->goto = '/en/checkout/confirm?error=' . $e->getMessage();
+            return;
+        }
+        
+    }
 
 ```
+
+A server side handling could look as follows: 
+ 
+```php
+<?php
+
+    public function serverSideQPayAction() {
+
+        \Logger::info("Starting server side call");
+
+        $params = $this->getAllParams();
+
+        $commitOrderProcessor = OnlineShop_Framework_Factory::getInstance()->getCommitOrderProcessor();
+        $paymentProvider = OnlineShop_Framework_Factory::getInstance()->getPaymentManager()->getProvider("qpay");
+
+        if($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($params, $paymentProvider)) {
+            \Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());
+        } else {
+            $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment( $params, $paymentProvider );
+
+            \Logger::info("Finished server side call. OrderId is " . $order->getId());
+        }
+
+        exit("success");
+    }
+
+```
+
 For more details see [Usage of payment manager](Usage-of-payment-manager)
+
 
 ## 5 - Checkout tenants for checkout
 The e-commerce framework has the concept of checkout tenants which allow different cart manager and checkout manager configurations based on a currently active checkout tenant. 

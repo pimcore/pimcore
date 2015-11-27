@@ -285,7 +285,6 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      */
     public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
     {
-        // TODO: Implement executeDebit() method.
         # https://integration.wirecard.at/doku.php/wcp:toolkit_light:start
         # https://integration.wirecard.at/doku.php/wcs:backend_operations?s[]=deposit
         # https://integration.wirecard.at/doku.php/backend:deposit
