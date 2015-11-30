@@ -111,9 +111,35 @@ interface IOrderAgent
 
 
     /**
-     * @return PaymentInfo
+     * Starts payment:
+     * checks if payment info with PENDING payment exists and checks if order fingerprint has not changed
+     * if true -> returns existing payment info
+     * if false -> creates new payment info (and aborts existing PENDING payment infos)
+     *
+     * @return \OnlineShop_Framework_AbstractPaymentInformation
      */
-    public function startPayment($forceNew = true);
+    public function startPayment();
+
+    /**
+     * Returns current payment info of order, or null if none exists
+     *
+     * @return null|\OnlineShop_Framework_AbstractPaymentInformation
+     */
+    public function getCurrentPendingPaymentInfo();
+
+    /**
+     * cancels payment for current payment info
+     * - payment will be cancelled, order state will be resetted and cart will we writable again.
+     *
+     * -> this should be used, when user cancels payment
+     *
+     * only possible when payment state is PENDING, otherwise exception is thrown
+     *
+     * @return \OnlineShop_Framework_AbstractOrder
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function cancelStartedOrderPayment();
+
 
     /**
      * @param OnlineShop_Framework_Payment_IStatus $status

@@ -16,54 +16,51 @@
  */
 interface OnlineShop_Framework_ICommitOrderProcessor {
 
-    /**
-     * Looks if order object for given cart already exists, otherwise creates it
-     *
-     * @return OnlineShop_Framework_AbstractOrder
-     */
-    public function getOrCreateOrder(OnlineShop_Framework_ICart $cart);
 
     /**
-     * Gets or creates active payment info for the given order
+     * check if order is already committed and payment information with same internal payment id has same state
      *
-     * @deprecated use orderManager instead
-     * @param OnlineShop_Framework_AbstractOrder $order
-     * @return OnlineShop_Framework_AbstractPaymentInformation
+     * @param array|OnlineShop_Framework_Payment_IStatus $paymentResponseParams
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return null|OnlineShop_Framework_AbstractOrder
+     * @throws Exception
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
-    public function getOrCreateActivePaymentInfo(OnlineShop_Framework_AbstractOrder $order);
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
 
     /**
-     * Updates payment information with given status information
-     * order id is retrieved from status object
+     * facade method for
+     * - handling payment response and
+     * - commit order payment
      *
-     * @deprecated use orderManager instead
-     * @param OnlineShop_Framework_Payment_IStatus $status
+     * can be used by controllers to commit orders with payment
+     *
+     * @param $paymentResponseParams
+     * @param OnlineShop_Framework_IPayment $paymentProvider
      * @return OnlineShop_Framework_AbstractOrder
      */
-    public function updateOrderPayment(OnlineShop_Framework_Payment_IStatus $status);
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
+
+    /**
+     * commits order payment
+     *   - updates order payment information in order object
+     *   - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
+     *
+     * use this for committing order when payment is activated
+     *
+     * @param OnlineShop_Framework_Payment_IStatus $paymentStatus
+     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider);
 
     /**
      * commits order
      *
-     * @param OnlineShop_Framework_ICart $cart
+     * @param OnlineShop_Framework_AbstractOrder $order
      * @return OnlineShop_Framework_AbstractOrder
      */
-    public function commitOrder(OnlineShop_Framework_ICart $cart);
-
-    /**
-     * @param int $id
-     */
-    public function setParentOrderFolder($id);
-
-    /**
-     * @param string $classname
-     */
-    public function setOrderClass($classname);
-
-    /**
-     * @param string $classname
-     */
-    public function setOrderItemClass($classname);
+    public function commitOrder(OnlineShop_Framework_AbstractOrder $order);
 
     /**
      * @param string $confirmationMail

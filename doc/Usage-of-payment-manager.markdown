@@ -89,6 +89,7 @@ $config = [
     , 'cancelURL' => $url . 'cancel'
     , 'failureURL' => $url . 'failure'
     , 'serviceURL' => $url . 'service'
+    , 'confirmURL' => $urlToServerSideConfirmation
     , 'orderDescription' => 'Meine Bestellung bei pimcore.org'
     , 'imageURL' => 'http://'. $_SERVER["HTTP_HOST"] . '/static/images/logo-white.png'
     , 'orderIdent' => $paymentInformation->getInternalPaymentId()

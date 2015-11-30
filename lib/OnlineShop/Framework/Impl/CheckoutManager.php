@@ -22,9 +22,6 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      * always concatenated with current cart id
      */
     const CURRENT_STEP = "checkout_current_step";
-    const FINISHED = "checkout_finished";
-    const CART_READONLY_PREFIX = "checkout_cart_readonly";
-    const COMMITTED = "checkout_committed";
     const TRACK_ECOMMERCE = "checkout_trackecommerce";
     const TRACK_ECOMMERCE_UNIVERSAL = "checkout_trackecommerce_universal";
 
@@ -50,32 +47,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * @var bool
      */
-    protected $finished = false;
-
-    /**
-     * @var bool
-     */
-    protected $committed = false;
-
-    /**
-     * @var bool
-     */
     protected $paid = true;
-
-    /**
-     * @var int parent folder id for pimcore order object
-     */
-    protected $parentFolderId = 1;
-
-    /**
-     * @var string
-     */
-    protected $orderClassname;
-
-    /**
-     * @var string
-     */
-    protected $orderItemClassname;
 
     /**
      * @var string
@@ -115,19 +87,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
         $config = new OnlineShop_Framework_Config_HelperContainer($config, "checkoutmanager");
 
-        //processing config and setting options
-        $parentFolderId = (string)$config->parentorderfolder;
-        if (is_numeric($parentFolderId)) {
-            $this->parentFolderId = (int)$parentFolderId;
-        } else {
-            $p = Pimcore\Model\Object\Service::createFolderByPath(strftime($parentFolderId, time()));
-            $this->parentFolderId = $p->getId();
-            unset($p);
-        }
-
         $this->commitOrderProcessorClassname = $config->commitorderprocessor->class;
-        $this->orderClassname = (string)$config->orderstorage->orderClass;
-        $this->orderItemClassname = (string)$config->orderstorage->orderItemClass;
         $this->confirmationMail = (string)$config->mails->confirmation;
         foreach ($config->steps as $step) {
             $step = new $step->class($this->cart);
@@ -138,8 +98,6 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
         //getting state information for checkout from custom environment items
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-        $this->finished = $env->getCustomItem(self::FINISHED . "_" . $this->cart->getId());
-        $this->committed = $env->getCustomItem(self::COMMITTED . "_" . $this->cart->getId());
         $this->currentStep = $this->checkoutSteps[$env->getCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId())];
 
         //if no step is set and cart is not finished -> set current step to first step of checkout
@@ -163,12 +121,24 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     {
         if (!$this->commitOrderProcessor) {
             $this->commitOrderProcessor = new $this->commitOrderProcessorClassname();
-            $this->commitOrderProcessor->setParentOrderFolder($this->parentFolderId);
-            $this->commitOrderProcessor->setOrderClass($this->orderClassname);
-            $this->commitOrderProcessor->setOrderItemClass($this->orderItemClassname);
             $this->commitOrderProcessor->setConfirmationMail($this->confirmationMail);
         }
         return $this->commitOrderProcessor;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function hasActivePayment()
+    {
+        $orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrderFromCart($this->cart);
+        if($order) {
+            $paymentInfo = $orderManager->createOrderAgent($order)->getCurrentPendingPaymentInfo();
+            return !empty($paymentInfo);
+        }
+        return false;
     }
 
     /**
@@ -178,10 +148,6 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function startOrderPayment()
     {
-        if ($this->committed) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Cart already committed.");
-        }
-
         if (!$this->isFinished()) {
             throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
         }
@@ -190,21 +156,33 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
             throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
         }
 
-        //Create Order and PaymentInformation
-        $order = $this->getCommitOrderProcessor()->getOrCreateOrder($this->cart);
+        //Create Order
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
         if ($order->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed");
         }
 
-        $paymentInfo = $this->getCommitOrderProcessor()->getOrCreateActivePaymentInfo($order);
-
-        //make cart read only -> cart is now in payment mode (cart must not be changed during active payment)
-        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-        $env->setCustomItem(self::CART_READONLY_PREFIX . "_" . $this->cart->getId(), "READONLY");
-        $env->save();
+        $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        $paymentInfo = $orderAgent->startPayment();
 
         return $paymentInfo;
+    }
+
+    /**
+     * @return null|OnlineShop_Framework_AbstractOrder
+     */
+    public function cancelStartedOrderPayment()
+    {
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrderFromCart($this->cart);
+        if($order) {
+            $orderAgent = $orderManager->createOrderAgent( $order );
+            return $orderAgent->cancelStartedOrderPayment();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -212,9 +190,67 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function getOrder()
     {
-        return $this->getCommitOrderProcessor()->getOrCreateOrder($this->cart);
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        return $orderManager->getOrCreateOrderFromCart($this->cart);
     }
 
+    /**
+     * updates and cleans up environment after order is committed
+     *
+     * @param OnlineShop_Framework_AbstractOrder $order
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    protected function updateEnvironmentAfterOrderCommit(OnlineShop_Framework_AbstractOrder $order) {
+        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        if(empty($order->getOrderState())) {
+            //if payment not successful -> set current checkout step to last step and checkout to not finished
+            //last step must be committed again in order to restart payment or e.g. commit without payment?
+            $this->currentStep = $this->checkoutStepOrder[count($this->checkoutStepOrder) - 1];
+
+            $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), $this->currentStep->getName());
+        } else {
+            $this->cart->delete();
+
+            $env->removeCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId());
+
+            //setting e-commerce tracking information to environment for later use in view
+            $env->setCustomItem(self::TRACK_ECOMMERCE . "_" . $order->getOrdernumber(), $this->generateGaEcommerceCode($order));
+            $env->setCustomItem(self::TRACK_ECOMMERCE_UNIVERSAL . "_" . $order->getOrdernumber(), $this->generateUniversalEcommerceCode($order));
+        }
+        $env->save();
+    }
+
+    /**
+     * @param $paymentResponseParams
+     * @return OnlineShop_Framework_AbstractOrder
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams) {
+
+        //check if order is already committed and payment information with same internal payment id has same state
+        //if so, do nothing and return order
+        if($committedOrder = $this->getCommitOrderProcessor()->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
+            return $committedOrder;
+        }
+
+        if (!$this->payment) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
+        }
+
+        if ($this->isCommitted()) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed.");
+        }
+
+        if (!$this->isFinished()) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
+        }
+
+        //delegate commit order to commit order processor
+        $order = $this->getCommitOrderProcessor()->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
+        $this->updateEnvironmentAfterOrderCommit($order);
+
+        return $order;
+    }
 
     /**
      * @param OnlineShop_Framework_Payment_IStatus $status
@@ -227,32 +263,17 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
             throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
         }
 
-        //update order payment -> e.g. setting all available payment information to order object
-        $order = $this->getCommitOrderProcessor()->updateOrderPayment($status);
-
-        //remove read only state for cart since payment process is finished (with or without success)
-        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-        $env->removeCustomItem(self::CART_READONLY_PREFIX . "_" . $this->cart->getId());
-        $env->save();
-
-
-        if (in_array($status->getStatus(), [OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED, OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
-
-            //only when payment state is committed or authorized -> proceed and commit order
-            $order = $this->commitOrder();
-        } else {
-
-            //if payment not successful -> set current checkout step to last step and checkout to not finished
-            //last step must be committed again in order to restart payment or e.g. commit without payment?
-            $this->currentStep = $this->checkoutStepOrder[count($this->checkoutStepOrder) - 1];
-            $this->finished = false;
-
-            $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-            $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), $this->currentStep->getName());
-            $env->setCustomItem(self::FINISHED . "_" . $this->cart->getId(), $this->finished);
-            $env->save();
+        if ($this->isCommitted()) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed.");
         }
 
+        if (!$this->isFinished()) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
+        }
+
+        //delegate commit order to commit order processor
+        $order = $this->getCommitOrderProcessor()->commitOrderPayment($status, $this->getPayment());
+        $this->updateEnvironmentAfterOrderCommit($order);
 
         return $order;
     }
@@ -263,8 +284,8 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function commitOrder()
     {
-        if ($this->committed) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Cart already committed.");
+        if ($this->isCommitted()) {
+            throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed.");
         }
 
         if (!$this->isFinished()) {
@@ -272,23 +293,12 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         }
 
         //delegate commit order to commit order processor
-        $result = $this->getCommitOrderProcessor()->commitOrder($this->cart);
+        $order = \OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrCreateOrderFromCart($this->cart);
+        $order = $this->getCommitOrderProcessor()->commitOrder($order);
 
-        $this->committed = true;
+        $this->updateEnvironmentAfterOrderCommit($order);
 
-        //updating environment with checkout state
-        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-        $env->removeCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId());
-        $env->removeCustomItem(self::FINISHED . "_" . $this->cart->getId());
-        $env->removeCustomItem(self::COMMITTED . "_" . $this->cart->getId());
-
-        //setting e-commerce tracking information to environment for later use in view
-        $env->setCustomItem(self::TRACK_ECOMMERCE . "_" . $result->getOrdernumber(), $this->generateGaEcommerceCode($result));
-        $env->setCustomItem(self::TRACK_ECOMMERCE_UNIVERSAL . "_" . $result->getOrdernumber(), $this->generateUniversalEcommerceCode($result));
-
-        $env->save();
-
-        return $result;
+        return $order;
     }
 
     /**
@@ -451,16 +461,9 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
             if (count($this->checkoutStepOrder) > $index) {
                 //setting checkout manager to next step
                 $this->currentStep = $this->checkoutStepOrder[$index];
-                $this->finished = false;
 
                 $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), $this->currentStep->getName());
-            } else {
-                //checkout is finished
-                $this->finished = true;
             }
-
-            $env->setCustomItem(self::FINISHED . "_" . $this->cart->getId(), $this->finished);
-            $env->setCustomItem(self::COMMITTED . "_" . $this->cart->getId(), $this->committed);
 
             $this->cart->save();
             $env->save();
@@ -507,7 +510,8 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function isFinished()
     {
-        return $this->finished;
+        $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
+        return count($this->checkoutStepOrder) > $indexCurrentStep;
     }
 
     /**
@@ -515,7 +519,10 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function isCommitted()
     {
-        return $this->committed;
+        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $order = $orderManager->getOrderFromCart($this->cart);
+
+        return $order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED;
     }
 
 

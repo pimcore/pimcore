@@ -32,7 +32,7 @@
 				"title":null,
 				"width":null,
 				"height":null,
-				"collapsible":null,
+				"collapsible":false,
 				"collapsed":null,
 				"bodyStyle":null,
 				"datatype":"layout",
@@ -40,7 +40,7 @@
 				"childs":[
 					{
 						"fieldtype":"input",
-						"width":"",
+						"width":null,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
 						"columnLength":255,
@@ -50,9 +50,9 @@
 						"title":"Token",
 						"tooltip":"",
 						"mandatory":false,
-						"noteditable":false,
+						"noteditable":true,
 						"index":false,
-						"locked":null,
+						"locked":false,
 						"style":"",
 						"permissions":null,
 						"datatype":"data",
@@ -63,7 +63,7 @@
 					},
 					{
 						"fieldtype":"input",
-						"width":"",
+						"width":null,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
 						"columnLength":255,
@@ -73,9 +73,9 @@
 						"title":"PayerID",
 						"tooltip":"",
 						"mandatory":false,
-						"noteditable":false,
+						"noteditable":true,
 						"index":false,
-						"locked":null,
+						"locked":false,
 						"style":"",
 						"permissions":null,
 						"datatype":"data",
@@ -85,7 +85,7 @@
 						"visibleSearch":false
 					}
 				],
-				"locked":null
+				"locked":false
 			}
 		],
 		"locked":null

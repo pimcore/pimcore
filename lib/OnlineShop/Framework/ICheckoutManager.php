@@ -64,12 +64,32 @@ interface OnlineShop_Framework_ICheckoutManager {
     public function isFinished();
 
     /**
+     * returns if there currently is a active payment
+     *
+     * @return bool
+     */
+    public function hasActivePayment();
+
+    /**
      * starts payment for checkout - only possible if payment provider is configured
      * sets cart to read only mode since it must not changed during ongoing payment process
      *
      * @return OnlineShop_Framework_AbstractPaymentInformation
      */
     public function startOrderPayment();
+
+    /**
+     * cancels payment for current payment info
+     * - payment will be cancelled, order state will be resetted and cart will we writable again.
+     *
+     * -> this should be used, when user cancels payment
+     *
+     * only possible when payment state is PENDING, otherwise exception is thrown
+     *
+     * @return null|\OnlineShop_Framework_AbstractOrder
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function cancelStartedOrderPayment();
 
     /**
      * returns order (creates it if not available yet)
@@ -79,13 +99,29 @@ interface OnlineShop_Framework_ICheckoutManager {
      */
     public function getOrder();
 
+
+    /**
+     * facade method for
+     * - handling payment response and
+     * - commit order payment
+     *
+     * use this for committing order when payment is activated
+     *
+     * delegates to commit order processor
+     *
+     * @param $paymentResponseParams
+     * @return OnlineShop_Framework_AbstractOrder
+     */
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams);
+
     /**
      * commits order payment
      *   - updates order payment information in order object
      *   - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
      *
-     * use this for committing order when payment is activated
+     * delegates to commit order processor
      *
+     * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
      * @param OnlineShop_Framework_Payment_IStatus $status
      * @return OnlineShop_Framework_AbstractOrder
      */
@@ -96,12 +132,15 @@ interface OnlineShop_Framework_ICheckoutManager {
      *
      * use this for committing order when no payment is activated
      *
+     * delegates to commit order processor
+     *
      * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrder();
 
     /**
      * returns if checkout process and subsequently order is committed
+     * basically checks, if order is available and if this order is committed
      *
      * @return bool
      */

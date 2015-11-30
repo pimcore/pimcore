@@ -142,6 +142,14 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
         return false;
     }
 
+    public function unuse()
+    {
+        if ($this->getResource()->unuse()) {
+            //TODO eventually remove from statistics
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @return int

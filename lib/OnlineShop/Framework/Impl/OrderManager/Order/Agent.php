@@ -346,13 +346,10 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @param bool $forceNew
-     *
-     * @return PaymentInfo
-     * @throws Exception
+     * @return null|\OnlineShop_Framework_AbstractPaymentInformation
      */
-    public function startPayment($forceNew = true)
-    {
+    public function getCurrentPendingPaymentInfo() {
+
         $order = $this->getOrder();
 
         $paymentInformation = $order->getPaymentInfo();
@@ -360,22 +357,55 @@ class Agent implements IOrderAgent
         if($paymentInformation) {
             foreach($paymentInformation as $paymentInfo) {
                 if($paymentInfo->getPaymentState() == $order::ORDER_STATE_PAYMENT_PENDING) {
-                    $currentPaymentInformation = $paymentInfo;
-                    break;
+                    return $paymentInfo;
                 }
             }
-        } else {
-            $paymentInformation = new Fieldcollection();
-            $order->setPaymentInfo($paymentInformation);
+        }
+        return null;
+    }
+
+    /**
+     * @return null|\OnlineShop_Framework_AbstractPaymentInformation|PaymentInfo
+     * @throws Exception
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function startPayment()
+    {
+        $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
+
+        $order = $this->getOrder();
+        $currentInternalPaymentId = $this->generateInternalPaymentId();
+
+        //create new payment information when
+        // a) no payment information is available or
+        // b) internal payment id does not fit anymore (which is a hint that order has changed)
+
+        //check if internal payment id has changed
+        // -> abort current payment information, update message
+        // and set current payment information to null (so a new one is created)
+        if($currentPaymentInformation && $currentPaymentInformation->getInternalPaymentId() != $currentInternalPaymentId) {
+            $currentPaymentInformation->setPaymentState( $order::ORDER_STATE_ABORTED );
+            $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . " - cancelled due to change of order fingerprint");
+
+            $currentPaymentInformation = null;
         }
 
-        if(empty($currentPaymentInformation) && $forceNew) {
-            $currentPaymentInformation = new PaymentInfo();
-            $currentPaymentInformation->setPaymentStart( Zend_Date::now() );
-            $currentPaymentInformation->setPaymentState( $order::ORDER_STATE_PAYMENT_PENDING );
-            $currentPaymentInformation->setInternalPaymentId(uniqid("payment_") . "~" . $order->getId());
 
-            $paymentInformation->add($currentPaymentInformation);
+        if(empty($currentPaymentInformation)) {
+            $paymentInformationCollection = $order->getPaymentInfo();
+            if(empty($paymentInformationCollection)) {
+                $paymentInformationCollection = new Fieldcollection();
+                $order->setPaymentInfo($paymentInformationCollection);
+            }
+
+            $currentPaymentInformation = new PaymentInfo();
+            $currentPaymentInformation->setPaymentStart( \Zend_Date::now() );
+            $currentPaymentInformation->setPaymentState( $order::ORDER_STATE_PAYMENT_PENDING );
+            $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
+
+            $paymentInformationCollection->add($currentPaymentInformation);
+
+            $order->setOrderState( $order::ORDER_STATE_PAYMENT_PENDING );
 
             $order->save();
         }
@@ -383,27 +413,96 @@ class Agent implements IOrderAgent
         return $currentPaymentInformation;
     }
 
+    /**
+     * generates internal payment id for current order
+     *
+     * @return string
+     */
+    protected function generateInternalPaymentId($paymentInfoCount = null) {
+        $order = $this->getOrder();
+        if($paymentInfoCount === null) {
+            $paymentInfoCount = $order->getPaymentInfo() ? $order->getPaymentInfo()->getCount() : 0;
+        }
+        return "payment_" . $this->getFingerprintOfOrder() . "-" . $paymentInfoCount . "~" . $order->getId();
+    }
+
+    /**
+     * creates fingerprint of order to check, if order has changed
+     * consider:
+     *  - total price
+     *  - creation date
+     *  - all product numbers
+     *
+     * @return int
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     */
+    protected function getFingerprintOfOrder() {
+        $order = $this->getOrder();
+        $fingerprintParts = [];
+        $fingerprintParts[] = $order->getTotalPrice();
+        $fingerprintParts[] = $order->getCreationDate();
+        foreach($order->getItems() as $item) {
+            $fingerprintParts[] = $item->getProductNumber();
+        }
+        return crc32(strtolower(implode(".", $fingerprintParts)));
+    }
+
+    /**
+     * @return Order
+     * @throws Exception
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function cancelStartedOrderPayment() {
+        $order = $this->getOrder();
+        $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
+
+        if($currentPaymentInformation) {
+            $currentPaymentInformation->setPaymentState($order::ORDER_STATE_CANCELLED);
+            $currentPaymentInformation->setMessage("Payment cancelled by 'cancelStartedOrderPayment'");
+            $order->setOrderState(null);
+            $order->save();
+        } else {
+            throw new \OnlineShop_Framework_Exception_UnsupportedException("Cancel started order payment not possible");
+        }
+
+
+        return $order;
+    }
+
 
     /**
      * @param OnlineShop_Framework_Payment_IStatus $status
-     *
-     * @return Order
+     * @return $this
      * @throws Exception
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
      */
     public function updatePayment(OnlineShop_Framework_Payment_IStatus $status)
     {
+        //log this for documentation
+        \Pimcore\Log\Simple::log("update-payment", "Update payment called with status: " . print_r($status, true));
+
         $order = $this->getOrder();
 
-        $paymentInformation = $order->getPaymentInfo();
+        $paymentInformationCollection = $order->getPaymentInfo();
         $currentPaymentInformation = null;
-        foreach($paymentInformation as $paymentInfo) {
+        if(empty($paymentInformationCollection)) {
+            $paymentInformationCollection = new Fieldcollection();
+            $order->setPaymentInfo($paymentInformationCollection);
+        }
+
+        foreach($paymentInformationCollection as $paymentInfo) {
             if($paymentInfo->getInternalPaymentId() == $status->getInternalPaymentId()) {
                 $currentPaymentInformation = $paymentInfo;
             }
         }
 
         if(empty($currentPaymentInformation)) {
-            throw new Exception("Paymentinformation with internal id " . $status->getInternalPaymentId() . " not found.");
+            \Logger::warn("Payment information with id " . $status->getInternalPaymentId() . " not found, creating new one.");
+
+            //if payment information not found, create a new in order to document all payment updates
+            $currentPaymentInformation = new PaymentInfo();
+            $currentPaymentInformation->setInternalPaymentId($status->getInternalPaymentId());
+            $paymentInformationCollection->add($currentPaymentInformation);
         }
 
         // save basic payment data

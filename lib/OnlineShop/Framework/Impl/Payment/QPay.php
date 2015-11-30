@@ -115,6 +115,9 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         $paymentData['language'] = $config['language'];
         $paymentData['orderDescription'] = $config['orderDescription'];
         $paymentData['successURL'] = $config['successURL'];
+        if(array_key_exists('confirmURL', $config)) {
+            $paymentData['confirmURL'] = $config['confirmURL'];
+        }
         $paymentData['duplicateRequestCheck'] = 'yes';
         $paymentData['orderIdent'] = $config['orderIdent'];
         $paymentData['requestfingerprintorder'] = '';
@@ -122,6 +125,10 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         if(array_key_exists('displayText', $config)) {
             $paymentData['displayText'] = $config['displayText'];
         }
+        if(array_key_exists('confirmMail', $config)) {
+            $paymentData['confirmMail'] = $config['confirmMail'];
+        }
+
 
 
         // generate fingerprint
@@ -146,6 +153,12 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         $form->addElement( 'hidden', 'failureURL', array('value' => $config['failureURL']) );
         $form->addElement( 'hidden', 'cancelURL', array('value' => $config['cancelURL']) );
         $form->addElement( 'hidden', 'serviceURL', array('value' => $config['serviceURL']) );
+        if(array_key_exists('confirmURL', $config)) {
+            $form->addElement( 'hidden', 'confirmURL', array('value' => $config['confirmURL']) );
+        }
+        if(array_key_exists('confirmMail', $config)) {
+            $form->addElement('hidden', 'confirmMail', array('value' => $config['confirmMail']));
+        }
         $form->addElement( 'hidden', 'duplicateRequestCheck', array('value' => 'yes') );
 
         // add optional data
@@ -171,10 +184,14 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      */
     public function handleResponse($response)
     {
+        //unsetting response document because it is not needed (and spams up log files)
+        unset($response['document']);
+
         // check required fields
-        $required = [  'responseFingerprintOrder' => null
-                       , 'responseFingerprint' => null
+        $required = [
+            'orderIdent' => null
         ];
+
         $authorizedData = [
             'orderNumber' => null
             , 'language' => null
@@ -203,7 +220,12 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         if($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint'])
         {
             // fingerprint is wrong, ignore this response
-            throw new Exception( 'fingerprint is invalid' );
+            return new OnlineShop_Framework_Impl_Payment_Status(
+                $response['orderIdent']
+                , $response['orderNumber']
+                , $response['avsResponseMessage'] ?: $response['message']
+                , OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+            );
         }
 
 
@@ -219,7 +241,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         return new OnlineShop_Framework_Impl_Payment_Status(
             $response['orderIdent']
             , $response['orderNumber']
-            , $response['avsResponseMessage']
+            , $response['avsResponseMessage'] ?: $response['message']
             , $response['orderNumber'] !== NULL && $response['paymentState'] == 'SUCCESS'
                 ? OnlineShop_Framework_Payment_IStatus::STATUS_AUTHORIZED
                 : OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
@@ -263,7 +285,6 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      */
     public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
     {
-        // TODO: Implement executeDebit() method.
         # https://integration.wirecard.at/doku.php/wcp:toolkit_light:start
         # https://integration.wirecard.at/doku.php/wcs:backend_operations?s[]=deposit
         # https://integration.wirecard.at/doku.php/backend:deposit

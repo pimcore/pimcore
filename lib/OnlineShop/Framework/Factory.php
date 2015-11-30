@@ -394,6 +394,25 @@ class OnlineShop_Framework_Factory {
     }
 
     /**
+     * @param string $checkoutManagerName
+     * @return OnlineShop_Framework_ICommitOrderProcessor
+     */
+    public function getCommitOrderProcessor($checkoutManagerName = null) {
+        $originalConfig = $this->config->onlineshop->checkoutmanager->config;
+        if($checkoutManagerName) {
+            $managerConfigName = "checkoutmanager_" . $checkoutManagerName;
+            $originalConfig = $this->config->onlineshop->$managerConfigName->config;
+        }
+
+        $config = new OnlineShop_Framework_Config_HelperContainer($originalConfig, "checkoutmanager");
+        $commitOrderProcessorClassname = $config->commitorderprocessor->class;
+
+        $commitOrderProcessor = new $commitOrderProcessorClassname();
+        $commitOrderProcessor->setConfirmationMail((string)$config->mails->confirmation);
+        return $commitOrderProcessor;
+    }
+
+    /**
      * @return OnlineShop_Framework_IEnvironment
      */
     public function getEnvironment() {
