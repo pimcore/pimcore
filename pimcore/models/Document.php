@@ -390,6 +390,8 @@ class Document extends Element\AbstractElement {
             \Pimcore::getEventManager()->trigger("document.preAdd", $this);
         }
 
+        $this->correctPath();
+
         // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
@@ -404,7 +406,6 @@ class Document extends Element\AbstractElement {
                     throw new \Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
                 }
 
-                $this->correctPath();
                 // set date
                 $this->setModificationDate(time());
 
@@ -500,7 +501,6 @@ class Document extends Element\AbstractElement {
             }
 
             if (strlen($this->getKey()) < 1) {
-                $this->setKey("---no-valid-key---" . $this->getId());
                 throw new \Exception("Document requires key, generated key automatically");
             }
         } else if($this->getId() == 1) {
