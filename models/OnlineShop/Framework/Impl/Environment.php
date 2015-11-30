@@ -12,7 +12,6 @@
 
 
 class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnvironment {
-    const SESSION_NAMESPACE = "onlineshop";
     const SESSION_KEY_CUSTOM_ITEMS = "customitems";
     const SESSION_KEY_USERID = "userid";
     const SESSION_KEY_USE_GUEST_CART = "useguestcart";
@@ -20,6 +19,8 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     const SESSION_KEY_ASSORTMENT_SUB_TENANT = "currentassortmentsubtenant";
     const SESSION_KEY_CHECKOUT_TENANT = "currentcheckouttenant";
     const USER_ID_NOT_SET = -1;
+
+    protected $sessionNamespace = "onlineshop";
 
     /**
      * @var Zend_Session_Namespace
@@ -56,8 +57,8 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
 
     protected function loadFromSession() {
         // when $_SESSION[self::SESSION_NAMESPACE] is set, always load environment from session (also within cli scripts)
-        if(php_sapi_name() != "cli" || $_SESSION[self::SESSION_NAMESPACE]) {
-            $this->session = new Zend_Session_Namespace(self::SESSION_NAMESPACE);
+        if(php_sapi_name() != "cli" || $_SESSION[$this->sessionNamespace]) {
+            $this->session = new Zend_Session_Namespace($this->sessionNamespace);
 
             $key = self::SESSION_KEY_CUSTOM_ITEMS;
             $this->customItems = $this->session->$key;
@@ -84,7 +85,7 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
 
     public function save() {
         // when $_SESSION[self::SESSION_NAMESPACE] is set, always save environment to session (also within cli scripts)
-        if(php_sapi_name() != "cli" || $_SESSION[self::SESSION_NAMESPACE])
+        if(php_sapi_name() != "cli" || $_SESSION[$this->sessionNamespace])
         {
             $key = self::SESSION_KEY_CUSTOM_ITEMS;
             $this->session->$key = $this->customItems;
@@ -313,5 +314,20 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     public function getCurrentCheckoutTenant()
     {
         return $this->currentCheckoutTenant;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionNamespace()
+    {
+        return $this->sessionNamespace;
+    }
+    /**
+     * @param string $sessionNamespace
+     */
+    public function setSessionNamespace($sessionNamespace)
+    {
+        $this->sessionNamespace = $sessionNamespace;
     }
 }
