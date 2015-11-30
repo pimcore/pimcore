@@ -10,6 +10,7 @@
 
 # libraries via composer
 /vendor/
+!/vendor/.dummy
 
 # PhpStorm / IDEA
 /.idea

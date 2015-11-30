@@ -6570,5 +6570,13 @@
     {
         "term": "default_unit",
         "definition": "Default Unit"
+    },
+    {
+      "term": "min_max_times",
+      "definition": "Min / Max Times"
+    },
+    {
+      "term": "reset",
+      "definition": "Reset"
     }
 ]
