@@ -565,11 +565,10 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $order = $this->_getParam("dir");
             }
 
-            if ($this->_getParam("sort")) {
-                $orderKey = $this->_getParam("sort");
-                $orderKey = $mapping[$orderKey];
-            } else {
-                $orderKey = "sorter";
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if($sortingSettings['orderKey'] && $sortingSettings['order']) {
+                $orderKey = $sortingSettings['orderKey'];
+                $order = $sortingSettings['order'];
             }
 
             if ($this->_getParam("overrideSort") == "true") {
