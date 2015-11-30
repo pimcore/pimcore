@@ -17,6 +17,9 @@ matrix:
     - php: hhvm-nightly
     - php: hhvm
 
+install:
+  - composer install
+
 before_script:
   # install apache
   - sudo apt-get update
@@ -32,6 +35,7 @@ before_script:
   # make tests executable
   - cd tests
   - sudo chmod 0755 alltests.sh hhvm-all.sh
+
 
 script:
   - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi
