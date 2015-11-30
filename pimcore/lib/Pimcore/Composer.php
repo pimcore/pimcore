@@ -24,7 +24,6 @@ class Composer
         $rootPath = dirname($config->get('vendor-dir'));
 
         // cleanup
-        @unlink($rootPath . '/.scrutinizer.yml');
         @unlink($rootPath . '/.travis.yml');
 
         rename($rootPath . '/plugins_example', $rootPath . '/plugins');
