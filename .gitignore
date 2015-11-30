@@ -15,4 +15,4 @@
 !/vendor/.dummy
 
 # PhpStorm / IDEA
-/.idea
+.idea
