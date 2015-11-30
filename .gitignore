@@ -9,7 +9,7 @@
 /tests/tmp/*
 
 # libraries via composer
-/vendor/
+/vendor/*
 !/vendor/.dummy
 
 # PhpStorm / IDEA
