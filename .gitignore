@@ -8,7 +8,8 @@
 /tests/output/*
 /tests/tmp/*
 
-# libraries via composer
+# composer
+/composer.lock
 /vendor/*
 !/vendor/.dummy
 
