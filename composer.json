@@ -23,7 +23,8 @@
         "tijsverkoyen/css-to-inline-styles": "~1.5",
         "hybridauth/hybridauth": "~2",
         "google/apiclient": "~1",
-        "oyejorge/less.php": "~1.7"
+        "oyejorge/less.php": "~1.7",
+        "geoip2/geoip2": "~2"
     },
     "autoload": {
         "psr-4": {
