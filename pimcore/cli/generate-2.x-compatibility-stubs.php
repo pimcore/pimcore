@@ -23,10 +23,6 @@ $paths = array(
 $output = PIMCORE_WEBSITE_VAR . "/compatibility-2.x-stubs.php";
 
 $excludePatterns = [
-    "/^Google_/",
-    "/^Zend_/",
-    "/^Hybrid/",
-    "/^lessc/",
     "/^Csv/",
 ];
 

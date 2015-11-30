@@ -47,17 +47,6 @@ if($opts->getOption("core")) {
     $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 
     $excludePatterns = [
-        "/^Google_/",
-        "/^Zend_Service/", "/^Zend_Gdata/", "/^Zend_Pdf/",
-        "/^Zend_Tool/", "/^Zend_CodeGenerator/",
-        "/^Zend_Ldap/", "/^Zend_Amf/", "/^Zend_Dojo/",
-        "/^Zend_Wildfire/", "/^Zend_Soap/", "/^Zend_XmlRpc/",
-        "/^Zend_Reflection/", "/^Zend_Cloud/", "/^Zend_Mobile/",
-        "/^Zend_Feed/", "/^Zend_Test/", "/^Zend_Barcode/", "/^Zend_Search/",
-        "/^Zend_Queue/", "/^Zend_Oauth/", "/^Zend_Application/",
-        "/^Zend_Measure/", "/^Zend_OpenId/",
-        "/^Hybrid/",
-        "/^lessc/",
         "/^Csv/",
     ];
 

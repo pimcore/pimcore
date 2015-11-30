@@ -22,7 +22,8 @@
         "filp/whoops": "~1",
         "tijsverkoyen/css-to-inline-styles": "~1.5",
         "hybridauth/hybridauth": "~2",
-        "google/apiclient": "~1"
+        "google/apiclient": "~1",
+        "oyejorge/less.php": "~1.7"
     },
     "autoload": {
         "psr-4": {

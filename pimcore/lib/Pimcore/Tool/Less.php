@@ -158,13 +158,12 @@ class Less {
 
         // use php implementation of lessc if it doesn't work
         if(empty($compiledContent)) {
-            include_once("lessc.inc.php");
-            $less = new \lessc();
-            $less->importDir = dirname($path);
-            $compiledContent = $less->parse(file_get_contents($path));
+            $parser = new \Less_Parser();
+            $parser->parse(file_get_contents($path));
+            $compiledContent = $parser->getCss();
 
             // add a comment to the css so that we know it's compiled by lessphp
-            $compiledContent = "\n\n/**** compiled with lessphp ****/\n\n" . $compiledContent;
+            $compiledContent = "\n\n/**** compiled with lessphp/Less_Parser ****/\n\n" . $compiledContent;
         }
 
         if($source) {
