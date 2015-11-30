@@ -67,14 +67,16 @@ $includePaths = array(
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
+// composer autoloader
+include_once(PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php");
+
+
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
 
 // setup zend framework and pimcore
 require_once PIMCORE_PATH . "/lib/Pimcore.php";
 require_once PIMCORE_PATH . "/lib/Logger.php";
-require_once PIMCORE_PATH . "/lib/Zend/Loader.php";
-require_once PIMCORE_PATH . "/lib/Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->suppressNotFoundWarnings(false);
@@ -92,11 +94,6 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
         $classMapAutoLoader = new \Pimcore\Loader\ClassMapAutoloader(array($autoloaderClassMapFile));
         $classMapAutoLoader->register();
     }
-}
-
-$composerStartup = PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php";
-if(@is_file($composerStartup)) {
-    include_once($composerStartup);
 }
 
 // do some general stuff

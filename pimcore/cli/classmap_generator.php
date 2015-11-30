@@ -12,7 +12,7 @@
 
 chdir(__DIR__);
 
-include("startup.php");
+include("../config/startup.php");
 
 try {
     $opts = new \Zend_Console_Getopt(array(

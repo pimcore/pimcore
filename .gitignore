@@ -5,8 +5,11 @@
 /plugins/
 
 # tests
-tests/output/*
-tests/tmp/*
+/tests/output/*
+/tests/tmp/*
+
+# libraries via composer
+/vendor/
 
 # PhpStorm / IDEA
 /.idea
