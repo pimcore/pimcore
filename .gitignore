@@ -9,6 +9,7 @@
 /tests/tmp/*
 
 # composer
+/composer.phar
 /composer.lock
 /vendor/*
 !/vendor/.dummy
