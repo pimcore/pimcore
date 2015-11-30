@@ -805,7 +805,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function setLabelWidth($labelWidth)
     {
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int) $labelWidth;
     }
 
     /**

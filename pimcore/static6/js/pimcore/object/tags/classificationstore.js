@@ -407,6 +407,9 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             var definition = key.definition;
             definition.csKeyId = key.id;
             definition.csGroupId = group.id;
+            if (this.fieldConfig.labelWidth) {
+                definition.labelWidth = this.fieldConfig.labelWidth;
+            }
             var childItem = this.getRecursiveLayout(definition, !editable);
             groupedChildItems.push(childItem);
         }
