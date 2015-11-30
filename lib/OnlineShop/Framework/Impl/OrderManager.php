@@ -279,16 +279,17 @@ class OrderManager implements IOrderManager
             $flippedVoucherTokens = array_flip($voucherTokens);
 
             $service = \OnlineShop_Framework_Factory::getInstance()->getVoucherService();
-            $tokenObjects = $order->getVoucherTokens();
 
-            foreach($tokenObjects as $tokenObject) {
-                if(!array_key_exists($tokenObject->getToken(), $flippedVoucherTokens)) {
-                    //remove applied tokens which are not in the cart anymore
-                    $service->removeAppliedTokenFromOrder($tokenObject, $order);
-                } else {
-                    //if token already in token objects, nothing has to be done
-                    //but remove it from $flippedVoucherTokens so they don't get added again
-                    unset($flippedVoucherTokens[$tokenObject->getToken()]);
+            if($tokenObjects = $order->getVoucherTokens()) {
+                foreach ($tokenObjects as $tokenObject) {
+                    if (!array_key_exists($tokenObject->getToken(), $flippedVoucherTokens)) {
+                        //remove applied tokens which are not in the cart anymore
+                        $service->removeAppliedTokenFromOrder($tokenObject, $order);
+                    } else {
+                        //if token already in token objects, nothing has to be done
+                        //but remove it from $flippedVoucherTokens so they don't get added again
+                        unset($flippedVoucherTokens[$tokenObject->getToken()]);
+                    }
                 }
             }
 
