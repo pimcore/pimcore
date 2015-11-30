@@ -38,7 +38,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits);
     },
 
-    setData: function(data) { 
+    setData: function(data) {
         this.storeData = data;
         this.store.loadData(data.data);
 
@@ -77,7 +77,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             allowBlank: true,
             forceSelection: true,
             store: this.store,
-            //itemCls: "object_field",
             valueField: 'id',
             displayField: 'abbreviation',
             queryMode: 'local'
@@ -85,16 +84,19 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         if(this.data) {
             options.value = this.data.unit;
-        } else if(this.storeData && this.storeData.data[0]) {
-            options.value = this.storeData.data[0].id;
         }
 
         this.unitField = new Ext.form.ComboBox(options);
 
         this.inputField = new Ext.form.field.Number(input);
 
-        this.component = Ext.create('Ext.form.Panel', {
-            layout: 'hbox',
+        this.component = new Ext.form.FieldContainer({
+            layout: {
+                type: 'table',
+                tdAttrs: {
+                    valign: 'center'
+                }
+            },
             margin: '0 0 10 0',
             combineErrors: false,
             items: [this.inputField, this.unitField],
@@ -103,7 +105,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                 return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
         });
-
 
         return this.component;
     },
@@ -134,15 +135,5 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             return false;
         }
         return true;
-    },
-
-    isDirty: function() {
-        if (this.defaultValue || this.defaultUnit) {
-            return true;
-        }
-
-        return this.component.isDirty;
-
-
     }
 });
