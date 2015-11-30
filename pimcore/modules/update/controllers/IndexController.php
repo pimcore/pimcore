@@ -85,6 +85,9 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin {
             Update::cleanup();
         }
 
-        $this->_helper->json($status);
+        // we use pure PHP here, otherwise this can cause issues with dependencies that changed during the update
+        header("Content-type: application/json");
+        echo json_encode($status);
+        exit;
     }
 }
