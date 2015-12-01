@@ -474,6 +474,7 @@ pimcore.document.pages.settings = Class.create({
                                 valueField: 'path',
                                 name: "template",
                                 disableKeyFilter: true,
+                                queryMode: "local",
                                 store: new Ext.data.Store({
                                     autoDestroy: true,
                                     proxy: {

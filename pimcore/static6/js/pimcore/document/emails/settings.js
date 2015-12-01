@@ -186,6 +186,7 @@ pimcore.document.emails.settings = Class.create({
                                 valueField: 'path',
                                 name: "template",
                                 disableKeyFilter: true,
+                                queryMode: "local",
                                 store: new Ext.data.Store({
                                     proxy: {
                                         type: 'ajax',

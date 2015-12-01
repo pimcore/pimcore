@@ -145,6 +145,7 @@ pimcore.document.snippets.settings = Class.create({
                                 valueField: 'path',
                                 name: "template",
                                 disableKeyFilter: true,
+                                queryMode: "local",
                                 store: new Ext.data.JsonStore({
                                     autoDestroy: true,
                                     proxy: {
