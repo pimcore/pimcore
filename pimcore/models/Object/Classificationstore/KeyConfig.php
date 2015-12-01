@@ -38,6 +38,12 @@ class KeyConfig extends Model\AbstractModel {
      */
     public $name;
 
+    /** Pseudo column for title
+     * @var string
+     */
+    public $title;
+
+
     /** The key description.
      * @var
      */
@@ -210,6 +216,13 @@ class KeyConfig extends Model\AbstractModel {
 
         $isUpdate = false;
 
+        $def = \Zend_Json::decode($this->definition);
+        if ($def && isset($def["title"])) {
+            $this->title = $def["title"];
+        } else {
+            $this->title = null;
+        }
+
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
             $isUpdate = true;
@@ -307,6 +320,24 @@ class KeyConfig extends Model\AbstractModel {
     {
         $this->enabled = $enabled;
     }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+
 
 
 }
