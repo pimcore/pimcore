@@ -32,6 +32,8 @@
         }
     },
     "scripts": {
-        "post-create-project-cmd": "Pimcore\\Composer::postCreateProject"
+        "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
+        "post-install-cmd": "Pimcore\\Composer::postInstall",
+        "post-update-cmd": "Pimcore\\Composer::postUpdate"
     }
 }

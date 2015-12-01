@@ -15,11 +15,11 @@ namespace Pimcore;
 
 use Composer\Script\Event;
 use Composer\Util\Filesystem;
+use Composer\Installer\PackageEvent;
 
 class Composer
 {
-    public static function postCreateProject(Event $event)
-    {
+    public static function postCreateProject(Event $event) {
         $config = $event->getComposer()->getConfig();
         $rootPath = dirname($config->get('vendor-dir'));
 
@@ -34,5 +34,56 @@ class Composer
         $filesystem->removeDirectory($rootPath . '/build');
         $filesystem->removeDirectory($rootPath . '/tests');
         $filesystem->removeDirectory($rootPath . '/.svn');
+        $filesystem->removeDirectory($rootPath . '/.git');
+    }
+
+    public static function postInstall(Event $event) {
+        $config = $event->getComposer()->getConfig();
+        $rootPath = dirname($config->get('vendor-dir'));
+
+        self::zendFrameworkOptimization($rootPath);
+    }
+
+    public static function postUpdate (Event $event) {
+        $config = $event->getComposer()->getConfig();
+        $rootPath = dirname($config->get('vendor-dir'));
+
+        self::zendFrameworkOptimization($rootPath);
+    }
+
+    public static function zendFrameworkOptimization($rootPath) {
+
+        // strips all require_once out of the sources
+        // see also: http://framework.zend.com/manual/1.10/en/performance.classloading.html#performance.classloading.striprequires.sed
+
+        $zfPath = $rootPath . "/vendor/zendframework/zendframework1/library/Zend/";
+
+        $directory = new \RecursiveDirectoryIterator($zfPath);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+
+        $excludePatterns = [
+            "/Loader/Autoloader.php$",
+            "/Loader/ClassMapAutoloader.php$",
+            "/Application.php$",
+        ];
+
+        foreach($regex as $file) {
+            $file = $file[0];
+
+            $excluded = false;
+            foreach($excludePatterns as $pattern) {
+                if(preg_match("@".$pattern."@", $file)) {
+                    $excluded = true;
+                    break;
+                }
+            }
+
+            if(!$excluded) {
+                $content = file_get_contents($file);
+                $content = preg_replace("@([^/])(require_once)@", "$1//$2", $content);
+                file_put_contents($file, $content);
+            }
+        }
     }
 }
