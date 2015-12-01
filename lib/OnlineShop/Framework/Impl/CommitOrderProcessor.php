@@ -156,14 +156,9 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      * @throws Exception
      */
     public function commitOrder(OnlineShop_Framework_AbstractOrder $order) {
-        try {
-            $this->processOrder($order);
-            $order->setOrderState(OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED);
-            $order->save();
-        } catch(Exception $e) {
-            $order->delete();
-            throw $e;
-        }
+        $this->processOrder($order);
+        $order->setOrderState(OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED);
+        $order->save();
 
         try {
             $this->sendConfirmationMail($order);
