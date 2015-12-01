@@ -544,16 +544,6 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     $tmpAsset["imageHeight"] = $asset->getCustomSetting("imageHeight");
                 }
 
-                // load metadata (inputs only)
-                $metadata = new stdClass();
-                foreach ((array)$asset->getMetadata() as $meta) {
-                    if ($meta['type'] != 'input') continue;
-                    if (!$meta['language']) $meta['language'] = 'default';
-                    if (!$metadata->{$meta['name']}) $metadata->{$meta['name']} = new stdClass();
-                    $metadata->{$meta['name']}->{$meta['language']} = $meta['data'];
-                }
-                $tmpAsset['metadata'] = $metadata;
-
             } catch (\Exception $e) {
                 \Logger::debug("Cannot get dimensions of image, seems to be broken.");
             }
@@ -1722,5 +1712,33 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $text = $asset->getText($page);
         }
         $this->_helper->json(array('success' => 'true','text' => $text));
+    }
+
+    public function getImageMetadataAction()
+    {
+
+        $asset = Asset\Image::getById($this->getParam('id'));
+        if (!$asset) {
+            $this->_helper->json(array('success' => 'true','metadata' => array()));
+        }
+
+        $language = $this->getParam('language');
+        if (!$language) {
+            $language = Tool::getDefaultLanguage();
+        }
+
+        $metadata = array();
+        $allowed = array('title', 'alt');
+        foreach ($allowed as $name) {
+            $value = $asset->getMetadata($name, $language);
+            // only string values for now
+            if (!is_string($value)) {
+                continue;
+            }
+            $metadata[$name] = $value;
+        }
+
+        $this->_helper->json(array('success' => 'true','metadata' => $metadata));
+
     }
 }

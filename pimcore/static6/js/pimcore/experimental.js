@@ -368,8 +368,7 @@ Ext.define('Ext.overrides.grid.View', {
 
                 //var store = node.getTreeStore();
                 var proxy = this.getProxy();
-                // reload current page
-                proxy.setExtraParam("start", (node.pagingData) ? node.pagingData.offset : 0);
+                proxy.setExtraParam("start", 0);
             } catch (e) {
                 console.log(e);
             }

@@ -2884,3 +2884,24 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
     this.metaDataWindow.show();
 };
+
+pimcore.helpers.getAssetImageMetadata = function(id, language) {
+
+    var response = jQuery.ajax({
+        url: "/admin/asset/get-image-metadata",
+        data: {
+            id: id,
+            language: language
+        },
+        async: false
+    });
+
+    var metadata = {};
+    var res = Ext.decode(response.responseText);
+    if (res.success) {
+        metadata = res.metadata;
+    }
+
+    return metadata;
+
+};
