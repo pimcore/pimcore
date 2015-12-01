@@ -15,7 +15,7 @@ RewriteEngine On
 RewriteBase /
 
 <IfModule mod_status.c>
-    RewriteCond %{REQUEST_URI} ^/server-(info|status)
+    RewriteCond %{REQUEST_URI} ^/(fpm|server)-(info|status|ping)
     RewriteRule . - [L]
 </IfModule>
 
