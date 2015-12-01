@@ -9,6 +9,10 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+[class*="pimcore_icon"] {
+    image-rendering: pixelated;
+}
+
 .pimcore_icon_clone  {
     background: url(/pimcore/static6/img/icon/application_double.png) center center no-repeat !important;
 }
