@@ -116,4 +116,12 @@ interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_ICompon
      * @return OnlineShop_Framework_ICartPriceCalculator
      */
     public function getCartPriceCalcuator(OnlineShop_Framework_ICart $cart);
+
+
+    /**
+     * resets cart manager - carts need to be reloaded after reset() is called
+     *
+     * @return void
+     */
+    public function reset();
 }
