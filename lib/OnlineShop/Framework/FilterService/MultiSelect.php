@@ -38,6 +38,12 @@ class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framewor
 
         $value = $params[$field];
 
+        if(!empty($value)) {
+            if(!is_array($value)) {
+                $value = [$value];
+            }
+        }
+
         if(empty($value) && !$params['is_reload']) {
             if(!empty($preSelect) || $preSelect == '0') {
                 $value = explode(",", $preSelect);
