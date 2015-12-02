@@ -436,6 +436,10 @@
         "definition": "Password wasn't changed because it isn't secure enough"
     },
     {
+        "term": "password_hint",
+        "definition": "Password must contain at least 10 characters, one lowercase letter, one uppercase letter, one numeric digit, and one special character!"
+    },
+    {
         "term": "absolute_path_to_ghostscript",
         "definition": "Absolute path to Ghostscript"
     },

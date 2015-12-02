@@ -55,15 +55,35 @@ pimcore.settings.user.user.settings = Class.create({
             listeners: {
                 keyup: function (el) {
                     var theEl = el.getEl();
-                    if(/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(el.getValue())) {
+                    var hintItem = this.generalSet.getComponent("password_hint");
+
+                    if(this.isValidPassword(el.getValue())) {
                         theEl.addCls("password_valid");
                         theEl.removeCls("password_invalid");
+                        hintItem.hide();
                     } else {
                         theEl.addCls("password_invalid");
                         theEl.removeCls("password_valid");
+                        hintItem.show();
                     }
-                }
+
+                    if(el.getValue().length < 1) {
+                        theEl.removeCls("password_valid");
+                        theEl.removeCls("password_invalid");
+                        hintItem.hide();
+                    }
+
+                    this.generalSet.updateLayout();
+                }.bind(this)
             }
+        });
+
+        generalItems.push({
+            xtype:"container",
+            itemId: "password_hint",
+            html: t("password_hint"),
+            style: "color: red;",
+            hidden: true
         });
 
         var date = new Date();
@@ -348,11 +368,19 @@ pimcore.settings.user.user.settings = Class.create({
         return this.panel;
     },
 
+    isValidPassword: function (pass) {
+        var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
+        if(!pass.match(passRegExp)) {
+            return false;
+        }
+        return true;
+    },
+
     getValues:function () {
 
         var values = this.panel.getForm().getFieldValues();
         if(values["password"]) {
-            if(!/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(values["password"])) {
+            if(!this.isValidPassword(values["password"])) {
                 delete values["password"];
                 Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
             }
