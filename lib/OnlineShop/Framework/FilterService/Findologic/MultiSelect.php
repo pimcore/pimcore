@@ -29,6 +29,36 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelect extends OnlineSh
                 'count' => $value['count']];
         }
 
+
+        // add current filter. workaround for findologic behavior
+        if(array_key_exists($field, $currentFilter) && $currentFilter[$field] != null)
+        {
+            foreach($currentFilter[$field] as $value)
+            {
+                $add = true;
+                foreach($values as $v)
+                {
+                    if($v['value'] == $value)
+                    {
+                        $add = false;
+                        break;
+                    }
+                }
+
+                if($add)
+                {
+                    array_unshift($values, [
+                        'value' => $value
+                        , 'label' => $value
+                        , 'count' => null
+                        , 'parameter' => null
+                    ]);
+                }
+            }
+        }
+
+
+
         return $this->view->partial($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
@@ -60,13 +90,17 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelect extends OnlineSh
             $value = explode(",", $preSelect);
         }
 
-        if($value === null) {
+
+        if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
             $value = [];
         }
 
         $currentFilter[$field] = $value;
 
-        $productList->addCondition($value, $field);
+        if($value)
+        {
+            $productList->addCondition($value, $field);
+        }
 
         return $currentFilter;
     }
