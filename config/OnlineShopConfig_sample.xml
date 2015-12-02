@@ -343,7 +343,6 @@
                         <parentorderfolder>/order_otherfolder/%Y/%m/%d</parentorderfolder>
                     </otherFolder>
                 </tenants>
-                <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
 
             </config>
         </ordermanager>

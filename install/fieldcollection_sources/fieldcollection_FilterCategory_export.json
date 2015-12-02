@@ -39,6 +39,7 @@
 						"columnType":"varchar",
 						"columnLength":"255",
 						"phpdocType":"string",
+						"regex":"",
 						"name":"label",
 						"title":"Label",
 						"tooltip":"",
@@ -63,16 +64,16 @@
 							"id":"int(11)",
 							"type":"enum('document','asset','object')"
 						},
-						"phpdocType":"Document_Page | Document_Snippet | Document | Asset | Object_Abstract",
-						"objectsAllowed":"1",
-						"assetsAllowed":"",
+						"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
+						"objectsAllowed":true,
+						"assetsAllowed":false,
 						"assetTypes":"",
-						"documentsAllowed":"",
+						"documentsAllowed":false,
 						"documentTypes":"",
-						"lazyLoading":"",
+						"lazyLoading":false,
 						"classes":[
 							{
-								"classes":"productCategory"
+								"classes":"ProductCategory"
 							}
 						],
 						"name":"preSelect",
@@ -80,12 +81,54 @@
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
 						"datatype":"data",
 						"columnType":"",
+						"invisible":false,
+						"visibleGridView":false,
+						"visibleSearch":false
+					},
+					{
+						"fieldtype":"href",
+						"width":300,
+						"assetUploadPath":"",
+						"relationType":true,
+						"queryColumnType":{
+							"id":"int(11)",
+							"type":"enum('document','asset','object')"
+						},
+						"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
+						"objectsAllowed":true,
+						"assetsAllowed":false,
+						"assetTypes":[
+							{
+								"assetTypes":null
+							}
+						],
+						"documentsAllowed":false,
+						"documentTypes":[
+							{
+								"documentTypes":null
+							}
+						],
+						"lazyLoading":false,
+						"classes":[
+
+						],
+						"name":"rootCategory",
+						"title":"Root Category",
+						"tooltip":"",
+						"mandatory":false,
+						"noteditable":false,
+						"index":false,
+						"locked":null,
+						"style":"",
+						"permissions":null,
+						"datatype":"data",
+						"columnType":null,
 						"invisible":false,
 						"visibleGridView":false,
 						"visibleSearch":false
@@ -118,6 +161,7 @@
 						"columnType":"varchar",
 						"columnLength":"255",
 						"phpdocType":"string",
+						"regex":"",
 						"name":"scriptPath",
 						"title":"Script Path",
 						"tooltip":"",

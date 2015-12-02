@@ -105,7 +105,13 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelectRelation extends 
             }
 
         } else if(!empty($value) && in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
-            $value = null;
+            foreach($value as $k => $v)
+            {
+                if($v == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING)
+                {
+                    unset($value[$k]);
+                }
+            }
         }
 
         $currentFilter[$field] = $value;

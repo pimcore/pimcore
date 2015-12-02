@@ -405,8 +405,11 @@ class Agent implements IOrderAgent
 
             $paymentInformationCollection->add($currentPaymentInformation);
 
-            $order->setOrderState( $order::ORDER_STATE_PAYMENT_PENDING );
+        }
 
+        //always set order state to payment pending when calling start payment
+        if($order->getOrderState() != $order::ORDER_STATE_PAYMENT_PENDING) {
+            $order->setOrderState( $order::ORDER_STATE_PAYMENT_PENDING );
             $order->save();
         }
 
@@ -482,6 +485,7 @@ class Agent implements IOrderAgent
         \Pimcore\Log\Simple::log("update-payment", "Update payment called with status: " . print_r($status, true));
 
         $order = $this->getOrder();
+        $currentOrderFingerPrint = null;
 
         $paymentInformationCollection = $order->getPaymentInfo();
         $currentPaymentInformation = null;
@@ -490,11 +494,15 @@ class Agent implements IOrderAgent
             $order->setPaymentInfo($paymentInformationCollection);
         }
 
-        foreach($paymentInformationCollection as $paymentInfo) {
+        foreach($paymentInformationCollection as $paymentInfoIndex => $paymentInfo) {
             if($paymentInfo->getInternalPaymentId() == $status->getInternalPaymentId()) {
                 $currentPaymentInformation = $paymentInfo;
+
+                $currentOrderFingerPrint = $this->generateInternalPaymentId($paymentInfoIndex+1);
+                break;
             }
         }
+
 
         if(empty($currentPaymentInformation)) {
             \Logger::warn("Payment information with id " . $status->getInternalPaymentId() . " not found, creating new one.");
@@ -506,10 +514,10 @@ class Agent implements IOrderAgent
         }
 
         // save basic payment data
-        $currentPaymentInformation->setPaymentFinish( Zend_Date::now() );
+        $currentPaymentInformation->setPaymentFinish( \Zend_Date::now() );
         $currentPaymentInformation->setPaymentReference( $status->getPaymentReference() );
         $currentPaymentInformation->setPaymentState( $status->getStatus() );
-        $currentPaymentInformation->setMessage( $status->getMessage() );
+        $currentPaymentInformation->setMessage( $currentPaymentInformation->getMessage() . " " . $status->getMessage() );
         $currentPaymentInformation->setProviderData( json_encode($status->getData()) );
 
 
@@ -524,7 +532,20 @@ class Agent implements IOrderAgent
         }
 
 
-        $order->save();
+        // check, if order finger print has changed since start payment - if so, throw exception because something wired is going on
+        // but finish update order first in order to have logging information
+        if($currentOrderFingerPrint != $status->getInternalPaymentId()) {
+
+            $currentPaymentInformation->setMessage( $currentPaymentInformation->getMessage() . " -> order fingerprint changed since start payment. throwing exception!");
+            $order->setOrderState(null);
+            $order->save();
+            throw new \OnlineShop_Framework_Exception_UnsupportedException("order fingerprint changed since start payment. Old internal status = " . $status->getInternalPaymentId() . " -> current internal status id = " . $currentOrderFingerPrint);
+
+        } else {
+
+            $order->save();
+
+        }
 
         return $this;
     }
