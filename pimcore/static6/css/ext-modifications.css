@@ -16,6 +16,10 @@
     color: #f0f0f0;
 }
 
+.x-fieldset .x-fieldset-header {
+    background-color: #fff;
+}
+
 /* Style overrides */
 
 .x-tab-default-top {
