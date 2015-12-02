@@ -53,6 +53,7 @@ class OnlineShop_Framework_Impl_SessionCart extends OnlineShop_Framework_Abstrac
      * @return void
      */
     public function delete() {
+        $this->setIgnoreReadonly();
 
         $session = self::getSession();
 

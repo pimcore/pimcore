@@ -44,6 +44,8 @@ class OnlineShop_Framework_Impl_Cart extends OnlineShop_Framework_AbstractCart i
      * @return void
      */
     public function delete() {
+        $this->setIgnoreReadonly();
+
         $cacheKey = OnlineShop_Framework_Impl_Cart_Resource::TABLE_NAME . "_" . $this->getId();
         Zend_Registry::set($cacheKey, null);
 

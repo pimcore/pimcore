@@ -42,6 +42,22 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @return float
      */
+    public function getSubTotalPrice() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getSubTotalPrice is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @param float $subTotalPrice
+     */
+    public function setSubTotalPrice($subTotalPrice) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setSubTotalPrice is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return float
+     */
     public function getTotalPrice() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
     }

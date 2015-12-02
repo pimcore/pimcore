@@ -89,6 +89,15 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
     public function releaseToken($code, OnlineShop_Framework_ICart $cart);
 
     /**
+     * cleans up the token usage and the ordered token object if necessary
+     *
+     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param OnlineShop_Framework_AbstractOrder $order
+     * @return bool
+     */
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order);
+
+    /**
      * Get the codes of a voucher series, optionally a filter array can be passed.
      *
      * @param array|null $filter

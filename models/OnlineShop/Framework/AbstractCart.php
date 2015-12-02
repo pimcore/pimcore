@@ -106,15 +106,19 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
         $this->ignoreReadonly = false;
     }
 
+
+    public function isCartReadOnly() {
+        $order = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+        return !empty($order) && !empty($order->getOrderState());
+    }
+
     /**
      * @return bool
      * @throws Exception
      */
     protected function checkCartIsReadOnly() {
         if(!$this->ignoreReadonly) {
-            $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
-            $item = $env->getCustomItem(OnlineShop_Framework_Impl_CheckoutManager::CART_READONLY_PREFIX . "_" . $this->getId());
-            if($item == "READONLY") {
+            if($this->isCartReadOnly()) {
                 throw new Exception("Cart " . $this->getId() . " is readonly.");
             }
         }
@@ -699,6 +703,8 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      * @throws Exception
      */
     public function addVoucherToken($code){
+        $this->checkCartIsReadOnly();
+
         $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
         if($service->checkToken($code, $this)){
             if($service->reserveToken($code, $this)){
@@ -743,12 +749,14 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      */
     public function removeVoucherToken($code)
     {
+        $this->checkCartIsReadOnly();
+
         $service = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
         $key = array_search($code, $this->getVoucherTokenCodes());
 
         if ($key !== false) {
             if ($service->releaseToken($code, $this)) {
-                unset($this->checkoutData[$key]);
+                unset($this->checkoutData["voucher_" . $code]);
                 $this->save();
                 return true;
             }
@@ -760,7 +768,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
     /**
      * Filters checkout data and returns an array of strings with the assigns tokens.
      *
-     * @return array
+     * @return string[]
      */
     public function getVoucherTokenCodes(){
         $tokens = [];
@@ -777,12 +785,26 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Model\Abstract
      * Checks if checkout data voucher tokens are valid reservations
      */
     protected function validateVoucherTokenReservations(){
-        foreach($this->getVoucherTokenCodes() as $code){
-            $reservation = OnlineShop_Framework_VoucherService_Reservation::get($code, $this);
-            if(!$reservation->check($this->getId())){
-                unset($this->checkoutData["voucher_".$code]);
+
+        if($this->getVoucherTokenCodes()) {
+
+            $order = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+            $appliedVoucherCodes = [];
+            if($order) {
+                foreach($order->getVoucherTokens() as $voucherToken) {
+                    $appliedVoucherCodes[$voucherToken->getToken()] = $voucherToken->getToken();
+                }
+            }
+
+            //check for each voucher token if reservation is valid or it is already applied to order
+            foreach($this->getVoucherTokenCodes() as $code){
+                $reservation = OnlineShop_Framework_VoucherService_Reservation::get($code, $this);
+                if(!$reservation->check($this->getId()) && !array_key_exists($code, $appliedVoucherCodes)){
+                    unset($this->checkoutData["voucher_".$code]);
+                }
             }
         }
+
     }
 
 

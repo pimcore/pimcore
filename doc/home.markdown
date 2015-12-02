@@ -9,6 +9,10 @@ It's most important features are:
 
 
 ### Documentation Chapters: 
-- [Design Principles](design-principles)
-- [Big Picture](big-picture)
-- [Getting Started](getting-started)
+- [Design Principles](design-principles.markdown)
+- [Big Picture](big-picture.markdown)
+- [Getting Started](getting-started.markdown)
+
+
+### Please also have a look at the Update Notices: 
+[Update Notice](update-notices.markdown)

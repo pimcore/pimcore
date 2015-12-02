@@ -117,9 +117,23 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
         if(empty($carts)) {
             $this->carts = array();
         } else {
+            $orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
             foreach($carts as $c) {
                 /* @var OnlineShop_Framework_ICart $c */
-                $this->carts[$c->getId()] = $c;
+
+                //check for order state of cart - remove it, when corresponding order is already committed
+                $order = $orderManager->getOrderFromCart($c);
+                if(empty($order) || $order->getOrderState() != $order::ORDER_STATE_COMMITTED) {
+                    $this->carts[$c->getId()] = $c;
+                } else {
+                    //cart is already committed - cleanup cart and environment
+                    \Logger::warn("Deleting cart with id " . $c->getId() . " because linked order " . $order->getId() . " is already committed.");
+                    $c->delete();
+
+                    $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+                    $env->removeCustomItem(OnlineShop_Framework_Impl_CheckoutManager::CURRENT_STEP . "_" . $c->getId());
+                    $env->save();
+                }
             }
         }
     }
@@ -283,5 +297,14 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      */
     public function getCartPriceCalculator(OnlineShop_Framework_ICart $cart) {
         return new $this->config->pricecalculator->class($this->config->pricecalculator->config, $cart);
+    }
+
+
+    /**
+     *
+     */
+    public function reset() {
+        $this->carts = [];
+        $this->initialized = false;
     }
 }

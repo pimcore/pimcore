@@ -94,12 +94,6 @@
                 <!-- define used commit order processor -->
                 <commitorderprocessor class="Website_OnlineShop_Order_Processor"/>
 
-                <!-- settings for order storage - pimcore class names for oder and order items -->
-                <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
-
-                <!-- parent folder for order objects - either ID or path can be specified. path is parsed by strftime. -->
-                <parentorderfolder>/order/%Y/%m/%d</parentorderfolder>
-
                 <!-- settings for confirmation mail sent to customer after order is finished.
                      also could be defined defined directly in commit order processor (e.g. when different languages are necessary)
                 -->
@@ -114,9 +108,6 @@
                     <datatrans>
                         <payment provider="datatrans" />
                     </datatrans>
-                    <otherFolder>
-                        <parentorderfolder>/order_otherfolder/%Y/%m/%d</parentorderfolder>
-                    </otherFolder>
                 </tenants>
             </config>
         </checkoutmanager>
@@ -339,6 +330,20 @@
             <config>
                 <orderList class="OnlineShop\Framework\Impl\OrderManager\Order\Listing" classItem="OnlineShop\Framework\Impl\OrderManager\Order\Listing\Item"/>
                 <orderAgent class="OnlineShop\Framework\Impl\OrderManager\Order\Agent" />
+
+                <!-- settings for order storage - pimcore class names for oder and order items -->
+                <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
+
+                <!-- parent folder for order objects - either ID or path can be specified. path is parsed by strftime. -->
+                <parentorderfolder>/order/%Y/%m/%d</parentorderfolder>
+
+                <!-- special configuration for specific checkout tenants -->
+                <tenants>
+                    <otherFolder>
+                        <parentorderfolder>/order_otherfolder/%Y/%m/%d</parentorderfolder>
+                    </otherFolder>
+                </tenants>
+
             </config>
         </ordermanager>
 

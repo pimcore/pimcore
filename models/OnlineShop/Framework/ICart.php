@@ -40,6 +40,14 @@ interface OnlineShop_Framework_ICart {
     public function isEmpty();
 
     /**
+     * returns if cart is read only
+     * default implementation checks if order object exists and if order state is PAYMENT_PENDING
+     *
+     * @return bool
+     */
+    public function isCartReadOnly();
+
+    /**
      * @param string $itemKey
      *
      * @return OnlineShop_Framework_ICartItem
@@ -290,7 +298,7 @@ interface OnlineShop_Framework_ICart {
     public function removeVoucherToken($token);
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getVoucherTokenCodes();
 
