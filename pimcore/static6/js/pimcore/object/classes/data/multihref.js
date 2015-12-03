@@ -102,8 +102,10 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
             fields: ["text"]
         });
         classesStore.load({
-            "callback": function (allowedClasses) {
-                Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
+            "callback": function (allowedClasses, success) {
+                if (success) {
+                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
+                }
             }.bind(this, allowedClasses)
         });
 
@@ -116,8 +118,10 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
             fields: ["text"]
         });
         documentTypeStore.load({
-            "callback": function (allowedDocuments) {
-                Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
+            "callback": function (allowedDocuments, success) {
+                if (success) {
+                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
+                }
             }.bind(this, allowedDocuments)
         });
 
@@ -130,8 +134,10 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
             fields: ["text"]
         });
         assetTypeStore.load({
-            "callback": function (allowedAssets) {
-                Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
+            "callback": function (allowedAssets, success) {
+                if (success) {
+                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
+                }
             }.bind(this, allowedAssets)
         });
 

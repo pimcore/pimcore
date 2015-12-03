@@ -34,7 +34,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
 
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
-                                        "visibleGridView","visibleSearch","style"];
+            "visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },
@@ -122,8 +122,10 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             fields: ["text"]
         });
         classesStore.load({
-            "callback": function (classes) {
-                Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(classes.join(","));
+            "callback": function (classes, success) {
+                if (success) {
+                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(classes.join(","));
+                }
             }.bind(this, classes)
         });
 
