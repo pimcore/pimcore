@@ -32,6 +32,10 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             this.datax.lazyLoading = true;
         }
 
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "assetTypes");
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "documentTypes");
+
         this.treeNode = treeNode;
     },
 
@@ -61,7 +65,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         if(typeof this.datax.classes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.classes.length; i++) {
-                allowedClasses.push(this.datax.classes[i]["classes"]);
+                allowedClasses.push(this.datax.classes[i]);
             }
         } else if(typeof this.datax.classes == "string") {
             // this is when it comes from the local store
@@ -72,7 +76,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         if(typeof this.datax.documentTypes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.documentTypes.length; i++) {
-                allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
+                allowedDocuments.push(this.datax.documentTypes[i]);
             }
         } else if(typeof this.datax.documentTypes == "string") {
             // this is when it comes from the local store
@@ -83,7 +87,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         if(typeof this.datax.assetTypes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.assetTypes.length; i++) {
-                allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
+                allowedAssets.push(this.datax.assetTypes[i]);
             }
         } else if(typeof this.datax.assetTypes == "string") {
             // this is when it comes from the local store

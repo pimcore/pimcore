@@ -32,6 +32,10 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
             this.datax.lazyLoading = true;
         }
 
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "assetTypes");
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "documentTypes");
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
                                         "visibleGridView","visibleSearch","style"];
@@ -64,7 +68,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         if(typeof this.datax.classes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.classes.length; i++) {
-                allowedClasses.push(this.datax.classes[i]["classes"]);
+                allowedClasses.push(this.datax.classes[i]);
             }
         } else if(typeof this.datax.classes == "string") {
             // this is when it comes from the local store
@@ -75,7 +79,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         if(typeof this.datax.documentTypes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.documentTypes.length; i++) {
-                allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
+                allowedDocuments.push(this.datax.documentTypes[i]);
             }
         } else if(typeof this.datax.documentTypes == "string") {
             // this is when it comes from the local store
@@ -86,7 +90,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         if(typeof this.datax.assetTypes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.assetTypes.length; i++) {
-                allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
+                allowedAssets.push(this.datax.assetTypes[i]);
             }
         } else if(typeof this.datax.assetTypes == "string") {
             // this is when it comes from the local store

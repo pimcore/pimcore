@@ -1340,6 +1340,19 @@ pimcore.helpers.openDocumentByPath = function (path) {
     pimcore.helpers.openElement(path, "document");
 };
 
+pimcore.helpers.sanitizeAllowedTypes = function(data, name) {
+    if (data[name]) {
+        var newList = [];
+        for (i = 0; i < data[name].length; i++) {
+            newList.push(data[name][i][name]);
+        }
+        data[name] = newList;
+    }
+}
+
+
+
+
 pimcore.helpers.generatePagePreview = function (id, path, callback) {
 
     var cb = callback;
@@ -2837,7 +2850,6 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         bodyStyle: "padding: 10px;",
         items: pages
     });
-
 
     var loadingInterval = window.setInterval(function () {
 

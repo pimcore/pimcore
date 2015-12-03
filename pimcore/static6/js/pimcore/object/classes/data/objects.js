@@ -32,6 +32,8 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             this.datax.lazyLoading = true;
         }
 
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
             "visibleGridView","visibleSearch","style"];
@@ -106,7 +108,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
         if(typeof this.datax.classes == "object") {
             // this is when it comes from the server
             for(var i=0; i<this.datax.classes.length; i++) {
-                classes.push(this.datax.classes[i]["classes"]);
+                classes.push(this.datax.classes[i]);
             }
         } else if(typeof this.datax.classes == "string") {
             // this is when it comes from the local store
