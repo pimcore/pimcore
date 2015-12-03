@@ -1666,7 +1666,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         // replace named variables
         $vars = get_object_vars($object);
         foreach ($vars as $key => $value) {
-            if (!empty($value)) {
+            if (!empty($value) && (is_string($value) || is_numeric($value))) {
                 $url = str_replace("%" . $key, urlencode($value), $url);
             } else {
                 if (strpos($url, "%" . $key) !== false) {
@@ -1674,6 +1674,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
             }
         }
+
+        // replace all remainaing % signs
+        $url = str_replace("%","%25", $url);
 
         $urlParts = parse_url($url);
         $this->redirect($urlParts["path"] . "?pimcore_object_preview=" . $id . "&_dc=" . time() . "&" . $urlParts["query"]);
