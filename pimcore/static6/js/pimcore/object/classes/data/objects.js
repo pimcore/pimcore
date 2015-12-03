@@ -59,7 +59,6 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
 
         this.uniqeFieldId = uniqid();
 
-        this.specificPanel.removeAll();
         this.specificPanel.add([
             {
                 xtype: "numberfield",
