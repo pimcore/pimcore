@@ -148,12 +148,13 @@ class LibreOffice extends Ghostscript {
 
         if(!file_exists($pdfFile)) {
 
-            Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions of the same document
-
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
             $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
+
+            Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions
             $out = Console::exec($cmd, PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log", 240);
+            Model\Tool\Lock::release($lockKey);
 
             \Logger::debug("LibreOffice Output was: " . $out);
 
@@ -167,7 +168,7 @@ class LibreOffice extends Ghostscript {
                 throw new \Exception($message);
             }
 
-            Model\Tool\Lock::release($lockKey);
+
         } else {
             $pdfPath = $pdfFile;
         }
