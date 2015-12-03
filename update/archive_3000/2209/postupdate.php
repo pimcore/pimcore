@@ -13,3 +13,4 @@ $db->query("CREATE TABLE `cache_tags` (
   INDEX `tag` (`tag`)
 ) ENGINE=MEMORY;");
 
+

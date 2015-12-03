@@ -11,6 +11,6 @@ function sendQuery ($sql) {
     }
 }
 
-sendQuery("RENAME TABLE `events` TO `notes`;");
-sendQuery("RENAME TABLE `events_data` TO `notes_data`;");
+sendQuery("UPDATE `users` SET `parentId` = 0;");
 
+?>
