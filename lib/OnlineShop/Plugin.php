@@ -16,6 +16,13 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
     public static $configFile = "/OnlineShop/config/plugin_config.xml";
 
 
+    public function init() {
+        parent::init();
+
+        class_alias('OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter', "OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter");
+
+    }
+
     public static function getConfig($readonly = true) {
         if(!$readonly) {
             $config = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile,
