@@ -230,6 +230,15 @@ pimcore.document.tree = Class.create({
                     }
                     node.data.basePath = newBasePath;
                     node.data.path = node.data.basePath + "/" + node.data.text;
+
+                    if (!node.data.published) {
+                        var view = tree.getView();
+                        var nodeEl = Ext.fly(view.getNodeByRecord(node));
+                        var nodeElInner = nodeEl.down(".x-grid-td");
+                        if (nodeElInner) {
+                            nodeElInner.addCls("pimcore_unpublished");
+                        }
+                    }
                 }
                 else {
                     tree.loadMask.hide();
