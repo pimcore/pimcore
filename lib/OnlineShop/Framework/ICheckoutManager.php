@@ -41,7 +41,7 @@ interface OnlineShop_Framework_ICheckoutManager {
     /**
      * returns the cart the checkout is started with
      *
-     * @return OnlineShop_Framework_ICart
+     * @return \OnlineShop\Framework\CartManager\ICart
      */
     public function getCart();
 

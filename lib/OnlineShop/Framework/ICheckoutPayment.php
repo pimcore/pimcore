@@ -18,9 +18,9 @@ interface OnlineShop_Framework_ICheckoutPayment
 {
     /**
      * @param Zend_Config                $xml
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      */
-    public function __construct(Zend_Config $xml, OnlineShop_Framework_ICart $cart);
+    public function __construct(\Zend_Config $xml, \OnlineShop\Framework\CartManager\ICart $cart);
 
 
     /**

@@ -15,15 +15,15 @@
         </environment>
 
         <!-- general settings for cart manager -->
-        <cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
+        <cartmanager class="\OnlineShop\Framework\CartManager\MultiCartManager">
             <config>
                 <!-- default cart implementation that is used -->
-                <cart class="OnlineShop_Framework_Impl_Cart">
+                <cart class="\OnlineShop\Framework\CartManager\Cart">
                     <!--
                         cart implementation that is used when system is in guest-checkout mode
                         -> OnlineShop_Framework_IEnvironment::getUseGuestCart()
                     -->
-                    <guest class="OnlineShop_Framework_Impl_SessionCart"/>
+                    <guest class="\OnlineShop\Framework\CartManager\SessionCart"/>
                 </cart>
 
                 <!-- default price calculator for cart -->
@@ -321,7 +321,7 @@
         </pricingmanager>
 
         <!-- Offertool -->
-        <offertool class="OnlineShop_OfferTool_Impl_DefaultService">
+        <offertool class="\OnlineShop\Framework\OfferTool\DefaultService">
             <orderstorage offerClass="Object_OfferToolOffer" offerItemClass="Object_OfferToolOfferItem" parentFolderPath="/offertool/offers/%Y/%m"/>
         </offertool>
 

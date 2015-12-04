@@ -65,7 +65,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     protected $commitOrderProcessorClassname;
 
     /**
-     * @var OnlineShop_Framework_ICart
+     * @var \OnlineShop\Framework\CartManager\ICart
      */
     protected $cart;
 
@@ -78,14 +78,14 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param                            $config
      */
-    public function __construct(OnlineShop_Framework_ICart $cart, $config)
+    public function __construct(\OnlineShop\Framework\CartManager\ICart $cart, $config)
     {
         $this->cart = $cart;
 
-        $config = new OnlineShop_Framework_Config_HelperContainer($config, "checkoutmanager");
+        $config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "checkoutmanager");
 
         $this->commitOrderProcessorClassname = $config->commitorderprocessor->class;
         $this->confirmationMail = (string)$config->mails->confirmation;
@@ -473,7 +473,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
     /**
-     * @return OnlineShop_Framework_ICart
+     * @return \OnlineShop\Framework\CartManager\ICart
      */
     public function getCart()
     {

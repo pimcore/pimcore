@@ -29,7 +29,7 @@ class OnlineShop_Framework_Impl_PaymentManager implements OnlineShop_Framework_I
     /**
      * @param Zend_Config $config
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(\Zend_Config $config)
     {
         $this->config = $config;
     }

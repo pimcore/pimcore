@@ -47,7 +47,7 @@ class OrderManager implements IOrderManager
      */
     public function __construct(Zend_Config $config)
     {
-        $this->config = new \OnlineShop_Framework_Config_HelperContainer($config, "ordermanager");
+        $this->config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "ordermanager");
     }
 
     /**
@@ -140,19 +140,19 @@ class OrderManager implements IOrderManager
     /**
      * returns cart id for order object
      *
-     * @param \OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return string
      */
-    protected function createCartId(\OnlineShop_Framework_ICart $cart) {
+    protected function createCartId(\OnlineShop\Framework\CartManager\ICart $cart) {
         return get_class($cart) . "_" . $cart->getId();
     }
 
     /**
-     * @param \OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return null|\OnlineShop_Framework_AbstractOrder
      * @throws \Exception
      */
-    public function getOrderFromCart(\OnlineShop_Framework_ICart $cart) {
+    public function getOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart) {
         $orderListClass = $this->getOrderClassName() . "\\Listing";
         if(!\Pimcore\Tool::classExists($orderListClass)) {
             $orderListClass = $this->getOrderClassName() . "_List";
@@ -178,13 +178,13 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param \OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return \OnlineShop_Framework_AbstractOrder
      * @throws \Exception
      * @throws \OnlineShop_Framework_Exception_UnsupportedException
      *
      */
-    public function getOrCreateOrderFromCart(\OnlineShop_Framework_ICart $cart) {
+    public function getOrCreateOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart) {
         $order = $this->getOrderFromCart($cart);
 
         //No Order found, create new one
@@ -272,7 +272,7 @@ class OrderManager implements IOrderManager
     }
 
 
-    protected function applyVoucherTokens(\OnlineShop_Framework_AbstractOrder $order, \OnlineShop_Framework_ICart $cart){
+    protected function applyVoucherTokens(\OnlineShop_Framework_AbstractOrder $order, \OnlineShop\Framework\CartManager\ICart $cart){
 
         $voucherTokens = $cart->getVoucherTokenCodes();
         if (is_array($voucherTokens)) {
@@ -303,10 +303,10 @@ class OrderManager implements IOrderManager
     /**
      * hook to save individual data into order object
      *
-     * @param \OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param Order $order
      */
-    protected function applyCustomCheckoutDataToOrder(\OnlineShop_Framework_ICart $cart, Order $order) {
+    protected function applyCustomCheckoutDataToOrder(\OnlineShop\Framework\CartManager\ICart $cart, Order $order) {
         return $order;
     }
 
@@ -366,14 +366,14 @@ class OrderManager implements IOrderManager
 
 
     /**
-     * @param \OnlineShop_Framework_ICartItem $item
+     * @param \OnlineShop\Framework\CartManager\ICartItem $item
      * @param \OnlineShop_Framework_AbstractOrder | \OnlineShop_Framework_AbstractOrderItem $parent
      *
      * @return \OnlineShop_Framework_AbstractOrderItem
      * @throws \Exception
      * @throws \OnlineShop_Framework_Exception_UnsupportedException
      */
-    protected function createOrderItem(\OnlineShop_Framework_ICartItem $item,  $parent) {
+    protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item,  $parent) {
 
         $orderItemListClass = $this->getOrderItemClassName() . "\\Listing";
         if(!class_exists($orderItemListClass)) {

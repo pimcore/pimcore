@@ -3,7 +3,7 @@
     <plugin>
         <pluginName>OnlineShop</pluginName>
         <pluginDescription><![CDATA[OnlineShop Framework for Pimcore]]></pluginDescription>
-        <pluginClassName>OnlineShop_Plugin</pluginClassName>
+        <pluginClassName>\OnlineShop\Plugin</pluginClassName>
 
         <pluginIframeSrc>/plugin/OnlineShop/admin/settings</pluginIframeSrc>
 

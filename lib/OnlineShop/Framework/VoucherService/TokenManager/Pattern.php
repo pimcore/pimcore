@@ -60,11 +60,11 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @throws Exception
      * @return bool|int
      */
-    public function checkToken($code, OnlineShop_Framework_ICart $cart)
+    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         parent::checkToken($code, $cart);
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
@@ -81,11 +81,11 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @throws Exception
      * @return bool
      */
-    public function reserveToken($code, OnlineShop_Framework_ICart $cart)
+    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
             if (OnlineShop_Framework_VoucherService_Reservation::create($code, $cart)) {
@@ -99,14 +99,14 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      *
      * @throws Exception
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
-    public function applyToken($code, OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order)
+    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
             if ($token->isUsed()) {
@@ -152,10 +152,10 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public function releaseToken($code, OnlineShop_Framework_ICart $cart)
+    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         return OnlineShop_Framework_VoucherService_Reservation::releaseToken($code);
     }

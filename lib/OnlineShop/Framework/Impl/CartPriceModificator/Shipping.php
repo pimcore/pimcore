@@ -42,11 +42,11 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
 
     /**
      * @param OnlineShop_Framework_IPrice $currentSubTotal
-     * @param OnlineShop_Framework_ICart  $cart
+     * @param \OnlineShop\Framework\CartManager\ICart  $cart
      *
      * @return OnlineShop_Framework_IModificatedPrice
      */
-    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, OnlineShop_Framework_ICart $cart)
+    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         return new OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
     }

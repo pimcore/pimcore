@@ -14,7 +14,7 @@
 /**
  * Interface for environment implementations of online shop framework
  */
-interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_IComponent {
+interface OnlineShop_Framework_IEnvironment extends \OnlineShop\Framework\IComponent {
 
     /**
      * returns current user id

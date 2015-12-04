@@ -26,10 +26,10 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public function checkToken($code, OnlineShop_Framework_ICart $cart)
+    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
@@ -39,10 +39,10 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public function reserveToken($code, OnlineShop_Framework_ICart $cart)
+    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->reserveToken($code, $cart);
@@ -52,10 +52,10 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public function releaseToken($code, OnlineShop_Framework_ICart $cart)
+    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->releaseToken($code, $cart);
@@ -65,11 +65,11 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return bool
      */
-    public function applyToken($code, OnlineShop_Framework_ICart $cart, Onlineshop_Framework_AbstractOrder $order)
+    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, Onlineshop_Framework_AbstractOrder $order)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {

@@ -152,12 +152,12 @@ A simple implementation of `Website_OnlineShop_Order_OrderManager` could look li
 class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\Impl\OrderManager {
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return OnlineShop_Framework_AbstractOrder
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
-    public function applyCustomCheckoutDataToOrder(\OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order)
+    public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order)
     {
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 

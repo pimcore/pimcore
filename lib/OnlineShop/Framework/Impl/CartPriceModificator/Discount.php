@@ -49,11 +49,11 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Discount implements OnlineS
      * modify price
      *
      * @param OnlineShop_Framework_IPrice $currentSubTotal
-     * @param OnlineShop_Framework_ICart  $cart
+     * @param \OnlineShop\Framework\CartManager\ICart  $cart
      *
      * @return OnlineShop_Framework_IPrice
      */
-    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, OnlineShop_Framework_ICart $cart)
+    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         if($this->getAmount() != 0) {
             return new OnlineShop_Framework_Impl_ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());

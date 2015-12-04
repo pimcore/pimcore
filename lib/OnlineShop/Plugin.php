@@ -10,27 +10,26 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop;
 
-class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
+class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
 
     public static $configFile = "/OnlineShop/config/plugin_config.xml";
-
 
     public function init() {
         parent::init();
 
-        class_alias('OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter', "OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter");
-
+        LegacyClassMappingTool::loadMapping();
     }
 
     public static function getConfig($readonly = true) {
         if(!$readonly) {
-            $config = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile,
+            $config = new \Zend_Config_Xml(PIMCORE_PLUGINS_PATH . self::$configFile,
                 null,
                 array('skipExtends'        => true,
                     'allowModifications' => true));
         } else {
-            $config = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile);
+            $config = new \Zend_Config_Xml(PIMCORE_PLUGINS_PATH . self::$configFile);
         }
         return $config;
     }
@@ -40,8 +39,8 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         $config->onlineshop_config_file = $onlineshopConfigFile;
 
         // Write the config file
-        $writer = new Zend_Config_Writer_Xml(array('config'   => $config,
-            'filename' => PIMCORE_PLUGINS_PATH . OnlineShop_Plugin::$configFile));
+        $writer = new \Zend_Config_Writer_Xml(array('config'   => $config,
+            'filename' => PIMCORE_PLUGINS_PATH . self::$configFile));
         $writer->write();
     }
 
@@ -53,7 +52,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
      */
     public static function install() {
         //Cart
-        \Pimcore\Resource::get()->query(
+        \Pimcore\Db::get()->query(
             "CREATE TABLE `plugin_onlineshop_cart` (
               `id` int(20) NOT NULL AUTO_INCREMENT,
               `userid` int(20) NOT NULL,
@@ -65,7 +64,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         );
 
         //CartCheckoutData
-        \Pimcore\Resource::get()->query(
+        \Pimcore\Db::get()->query(
             "CREATE TABLE `plugin_onlineshop_cartcheckoutdata` (
               `cartId` int(20) NOT NULL,
               `key` varchar(150) COLLATE utf8_bin NOT NULL,
@@ -75,7 +74,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         );
 
         //CartItem
-        \Pimcore\Resource::get()->query(
+        \Pimcore\Db::get()->query(
             "CREATE TABLE `plugin_onlineshop_cartitem` (
               `productId` int(20) NOT NULL,
               `cartId` int(20) NOT NULL,
@@ -92,7 +91,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         // Voucher Service
 
         // Statistics
-        \Pimcore\Resource::get()->query(
+        \Pimcore\Db::get()->query(
             "CREATE TABLE `plugins_onlineshop_vouchertoolkit_statistics` (
                 `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
                 `voucherSeriesId` BIGINT(20) NOT NULL,
@@ -105,7 +104,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
 
         // Tokens
-        \Pimcore\Resource::get()->query(
+        \Pimcore\Db::get()->query(
             "CREATE TABLE `plugins_onlineshop_vouchertoolkit_tokens` (
                 `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
                 `voucherSeriesId` BIGINT(20) NULL DEFAULT NULL,
@@ -122,7 +121,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
         );
 
         // Reservations
-        \Pimcore\Resource::get()->query(
+        \Pimcore\Db::get()->query(
             "CREATE TABLE `plugins_onlineshop_vouchertoolkit_reservations` (
                 `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
                 `token` VARCHAR(250) NOT NULL,
@@ -147,7 +146,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
                 try {
                     $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
-                } catch(Exception $e) {
+                } catch(\Exception $e) {
                     $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
                     $fieldCollection->setKey($key);
                 }
@@ -155,7 +154,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
                 $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
                 $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
                 if(!$success){
-                    Logger::err("Could not import $key FieldCollection.");
+                    \Logger::err("Could not import $key FieldCollection.");
                 }
             }
         }
@@ -180,11 +179,11 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
 
         // execute installations from subsystems
-        $reflection = new ReflectionClass( __CLASS__ );
-        $methods = $reflection->getMethods( ReflectionMethod::IS_STATIC );
+        $reflection = new \ReflectionClass( __CLASS__ );
+        $methods = $reflection->getMethods( \ReflectionMethod::IS_STATIC );
         foreach($methods as $method)
         {
-            /* @var ReflectionMethod $method */
+            /* @var \ReflectionMethod $method */
             if(preg_match('#^install[A-Z]#', $method->name))
             {
                 $func = $method->name;
@@ -217,7 +216,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
         $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
         if(!$success){
-            Logger::err("Could not import $classname Class.");
+            \Logger::err("Could not import $classname Class.");
         }
     }
 
@@ -236,8 +235,8 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
     public static function isInstalled() {
         $result = null;
         try{
-            $result = \Pimcore\Resource::get()->describeTable("plugin_onlineshop_cartitem");
-        } catch(Exception $e){}
+            $result = \Pimcore\Db::get()->describeTable("plugin_onlineshop_cartitem");
+        } catch(\Exception $e){}
         return !empty($result);
     }
 
@@ -247,21 +246,21 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
      */
     public static function uninstall() {
 
-        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cart`");
-        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
-        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
-        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
-        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_reservations`");
-        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_tokens`");
-        \Pimcore\Resource::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_statistics`");
+        \Pimcore\Db::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cart`");
+        \Pimcore\Db::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
+        \Pimcore\Db::get()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
+        \Pimcore\Db::get()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
+        \Pimcore\Db::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_reservations`");
+        \Pimcore\Db::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_tokens`");
+        \Pimcore\Db::get()->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_statistics`");
 
 
         // execute uninstallation from subsystems
-        $reflection = new ReflectionClass( __CLASS__ );
-        $methods = $reflection->getMethods( ReflectionMethod::IS_STATIC );
+        $reflection = new \ReflectionClass( __CLASS__ );
+        $methods = $reflection->getMethods( \ReflectionMethod::IS_STATIC );
         foreach($methods as $method)
         {
-            /* @var ReflectionMethod $method */
+            /* @var \ReflectionMethod $method */
             if(preg_match('#^uninstall[A-Z]#', $method->name))
             {
                 $func = $method->name;
@@ -307,8 +306,8 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
      * @return void
      */
     public function postAddObject(\Pimcore\Model\Object\AbstractObject $object) {
-        if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
-            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
+            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
     }
@@ -318,32 +317,32 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
      * @return void
      */
     public function postUpdateObject(\Pimcore\Model\Object\AbstractObject $object) {
-        if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
-            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
+            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
     }
 
     public function preDeleteObject(\Pimcore\Model\Object\AbstractObject $object) {
-        if ($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
-            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
+            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
             $indexService->deleteFromIndex($object);
         }
 
         // Delete tokens when a a configuration object gets removed.
         if($object instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries){
-            $voucherService = OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+            $voucherService = \OnlineShop_Framework_Factory::getInstance()->getVoucherService();
             $voucherService->cleanUpVoucherSeries($object);
         }
     }
 
     /**
-     * @var Zend_Log
+     * @var \Zend_Log
      */
     private static $sqlLogger = null;
 
     /**
-     * @return Zend_Log
+     * @return \Zend_Log
      */
     public static function getSQLLogger() {
         if(!self::$sqlLogger) {
@@ -356,14 +355,14 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
             }
 
             $prioMapping = array(
-                "debug" => Zend_Log::DEBUG,
-                "info" => Zend_Log::INFO,
-                "notice" => Zend_Log::NOTICE,
-                "warning" => Zend_Log::WARN,
-                "error" => Zend_Log::ERR,
-                "critical" => Zend_Log::CRIT,
-                "alert" => Zend_Log::ALERT,
-                "emergency" => Zend_Log::EMERG
+                "debug" => \Zend_Log::DEBUG,
+                "info" => \Zend_Log::INFO,
+                "notice" => \Zend_Log::NOTICE,
+                "warning" => \Zend_Log::WARN,
+                "error" => \Zend_Log::ERR,
+                "critical" => \Zend_Log::CRIT,
+                "alert" => \Zend_Log::ALERT,
+                "emergency" => \Zend_Log::EMERG
             );
 
             $prios = array();
@@ -384,12 +383,12 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
                 }
             }
 
-            $logger = new Zend_Log();
-            $logger->addWriter(new Zend_Log_Writer_Stream($logfilename));
+            $logger = new \Zend_Log();
+            $logger->addWriter(new \Zend_Log_Writer_Stream($logfilename));
 
             foreach($prioMapping as $key => $mapping) {
                 if(!array_key_exists($mapping, $prios)) {
-                    $logger->addFilter(new Zend_Log_Filter_Priority($mapping, "!="));
+                    $logger->addFilter(new \Zend_Log_Filter_Priority($mapping, "!="));
                 }
             }
 
@@ -413,7 +412,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
                 try {
                     $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($key);
-                } catch(Exception $e) {
+                } catch(\Exception $e) {
                     $brick = new \Pimcore\Model\Object\Objectbrick\Definition();
                     $brick->setKey($key);
                 }
@@ -421,7 +420,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
                 $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/objectbrick_sources/' . $filename);
                 $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
                 if(!$success){
-                    Logger::err("Could not import $key ObjectBrick.");
+                    \Logger::err("Could not import $key ObjectBrick.");
                 }
             }
         }
@@ -436,7 +435,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
     private static function installPricingRules()
     {
         // PricingRules
-        \Pimcore\Resource::get()->query("
+        \Pimcore\Db::get()->query("
             CREATE TABLE IF NOT EXISTS `plugin_onlineshop_pricing_rule` (
             `id` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `name` VARCHAR(50) NULL DEFAULT NULL,
@@ -457,11 +456,11 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
         // create permission key
         $key = 'plugin_onlineshop_pricing_rules';
-        $permission = new User_Permission_Definition();
+        $permission = new \Pimcore\Model\User\Permission\Definition();
         $permission->setKey( $key );
 
-        $res = new User_Permission_Definition_Resource();
-        $res->configure( \Pimcore\Resource::get() );
+        $res = new \Pimcore\Model\User\Permission\Definition\Dao();
+        $res->configure( \Pimcore\Db::get() );
         $res->setModel( $permission );
         $res->save();
 
@@ -476,7 +475,7 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
      */
     private static function uninstallPricingRules()
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         // remove tables
         $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
 
@@ -491,10 +490,10 @@ class OnlineShop_Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \P
 
 
     public function maintenance() {
-        $checkoutManager = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager(new OnlineShop_Framework_Impl_Cart());
+        $checkoutManager = \OnlineShop_Framework_Factory::getInstance()->getCheckoutManager(new \OnlineShop\Framework\CartManager\Cart());
         $checkoutManager->cleanUpPendingOrders();
 
-        OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpReservations();
-        OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpStatistics();
+        \OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpReservations();
+        \OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpStatistics();
     }
 }

@@ -28,6 +28,6 @@ interface OnlineShop_Framework_ICartPriceModificator {
      * @param OnlineShop_Framework_ICart   $cart             - cart
      * @return OnlineShop_Framework_IModificatedPrice
      */
-    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, OnlineShop_Framework_ICart $cart);
+    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart);
 
 }

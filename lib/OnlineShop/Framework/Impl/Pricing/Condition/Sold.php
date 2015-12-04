@@ -131,7 +131,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends OnlineShop_Framew
 
 
     /**
-     * @return OnlineShop_Framework_ICart|null
+     * @return \OnlineShop\Framework\CartManager\ICart|null
      */
     protected function getCart()
     {
@@ -141,13 +141,13 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends OnlineShop_Framew
 
     /**
      * return a count how often the rule is already uses in the cart
-     * @param OnlineShop_Framework_ICart          $cart
+     * @param \OnlineShop\Framework\CartManager\ICart          $cart
      * @param OnlineShop_Framework_Pricing_IRule  $rule
-     * @param OnlineShop_Framework_ICartItem|null $cartItem
+     * @param \OnlineShop\Framework\CartManager\ICartItem|null $cartItem
      *
      * @return int
      */
-    protected function getCartRuleCount(OnlineShop_Framework_ICart $cart, OnlineShop_Framework_Pricing_IRule $rule, OnlineShop_Framework_ICartItem $cartItem = null)
+    protected function getCartRuleCount(\OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_Pricing_IRule $rule, \OnlineShop\Framework\CartManager\ICartItem $cartItem = null)
     {
         // init
         $counter = 0;

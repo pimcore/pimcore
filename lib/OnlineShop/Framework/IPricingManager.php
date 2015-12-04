@@ -21,11 +21,11 @@ interface OnlineShop_Framework_IPricingManager
     public function applyProductRules(OnlineShop_Framework_IPriceInfo $priceinfo);
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
      * @return OnlineShop_Framework_IPricingManager
      */
-    public function applyCartRules(OnlineShop_Framework_ICart $cart);
+    public function applyCartRules(\OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * Factory

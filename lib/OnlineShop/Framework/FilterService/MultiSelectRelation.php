@@ -20,7 +20,7 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
         $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
 
         $objects = array();
-        Logger::log("Load Objects...", Zend_Log::INFO);
+        Logger::log("Load Objects...", \Zend_Log::INFO);
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
@@ -31,7 +31,7 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
-        Logger::log("done.", Zend_Log::INFO);
+        Logger::log("done.", \Zend_Log::INFO);
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();

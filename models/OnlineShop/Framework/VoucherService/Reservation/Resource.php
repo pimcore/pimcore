@@ -25,10 +25,10 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool|string
      */
-    public function get($code, OnlineShop_Framework_ICart $cart = null)
+    public function get($code, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
         $query = "SELECT * FROM " . self::TABLE_NAME . " WHERE token = ?";
         $params[] = $code;

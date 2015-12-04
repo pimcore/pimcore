@@ -570,7 +570,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
             $condition .= " AND " . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributeConfig(), $searchstring);
         }
 
-        OnlineShop_Plugin::getSQLLogger()->log("Total Condition: " . $condition, Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("Total Condition: " . $condition, Zend_Log::INFO);
         return $condition;
     }
 
@@ -604,7 +604,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
             }
         }
 
-        OnlineShop_Plugin::getSQLLogger()->log("User specific Condition Part: " . $condition, Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("User specific Condition Part: " . $condition, Zend_Log::INFO);
         return $condition;
     }
 

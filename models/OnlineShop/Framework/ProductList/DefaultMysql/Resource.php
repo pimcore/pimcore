@@ -71,10 +71,10 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchAll($query);
         $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
-        OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
         return $result;
     }
 
@@ -97,18 +97,18 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
                     . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             }
 
-            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchAll($query);
-            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         } else {
             $query = "SELECT " . $this->db->quoteIdentifier($fieldname) . " FROM "
                 . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . " GROUP BY " . $this->db->quoteIdentifier($fieldname);
-            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
-            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         }
     }
@@ -137,9 +137,9 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchAssoc($query);
-            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         } else {
             $query = "SELECT dest FROM " . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
@@ -152,9 +152,9 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
-            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         }
     }
@@ -187,9 +187,9 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchOne($query);
-        OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
         return $result;
     }
 
@@ -218,14 +218,14 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
             }
 
             $query = "SELECT " . $fieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a WHERE a.o_id = ?;";
-            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $objectValues = $this->db->fetchRow($query, $objectId);
-            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
 
             $query = "SELECT " . $maxFieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a";
-            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $maxObjectValues = $this->db->fetchRow($query);
-            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
 
             if(!empty($objectValues)) {
                 $subStatement = array();
@@ -240,7 +240,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
 
                 $statement = "ABS(" . implode(" + ", $subStatement) . ")";
 
-                OnlineShop_Plugin::getSQLLogger()->log("Similarity Statement: " . $statement, Zend_Log::INFO);
+                \OnlineShop\Plugin::getSQLLogger()->log("Similarity Statement: " . $statement, Zend_Log::INFO);
                 return $statement;
             } else {
                 throw new Exception("Field array for given object id is empty");
@@ -249,7 +249,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource {
 
 
         } catch(Exception $e) {
-            OnlineShop_Plugin::getSQLLogger()->err($e);
+            \OnlineShop\Plugin::getSQLLogger()->err($e);
             return "";
         }
     }

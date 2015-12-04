@@ -54,15 +54,15 @@ interface IOrderManager
      *
      * @return \OnlineShop_Framework_AbstractOrder
      */
-    public function getOrCreateOrderFromCart(\OnlineShop_Framework_ICart $cart);
+    public function getOrCreateOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * Looks if order object for given cart exists and returns it - it does not create it!
      *
-     * @param \OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return \OnlineShop_Framework_AbstractOrder
      */
-    public function getOrderFromCart(\OnlineShop_Framework_ICart $cart);
+    public function getOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * gets order based on given payment status

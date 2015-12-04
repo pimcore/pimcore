@@ -79,12 +79,12 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
      * start payment
      * @param OnlineShop_Framework_IPrice $price
      * @param array                       $config
-     * @param OnlineShop_Framework_ICart  $cart
+     * @param \OnlineShop\Framework\CartManager\ICart  $cart
      *
      * @return string
      * @throws Exception
      */
-    public function initPayment(OnlineShop_Framework_IPrice $price, array $config, OnlineShop_Framework_ICart $cart = null)
+    public function initPayment(OnlineShop_Framework_IPrice $price, array $config, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
         // check params
         $required = [  'purchase_country' => null

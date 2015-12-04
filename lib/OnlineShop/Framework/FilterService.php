@@ -22,7 +22,7 @@ class OnlineShop_Framework_FilterService {
      * @param $config OnlineShop Configuration
      * @param Zend_View $view View in which the filters are rendered
      */
-    public function __construct($config, Zend_View $view) {
+    public function __construct($config, \Zend_View $view) {
         $this->config = $config;
         $this->view = $view;
     }

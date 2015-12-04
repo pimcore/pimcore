@@ -29,14 +29,14 @@ class OnlineShop_Framework_IndexService {
         }
 
         $this->tenantWorkers = array();
-        if($config->tenants && $config->tenants instanceof Zend_Config) {
+        if($config->tenants && $config->tenants instanceof \Zend_Config) {
             foreach($config->tenants as $name => $tenant) {
                 $tenantConfigClass = (string) $tenant->class;
 
                 $tenantConfig = $tenant;
                 if($tenant->file) {
                     if(!$tenantConfig = \Pimcore\Model\Cache::load("onlineshop_config_assortment_tenant_" . $tenantConfigClass)) {
-                        $tenantConfig = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), null, true);
+                        $tenantConfig = new \Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), null, true);
                         $tenantConfig = $tenantConfig->tenant;
                         \Pimcore\Model\Cache::save($tenantConfig, "onlineshop_config_assortment_tenant_" . $tenantConfigClass, array("ecommerceconfig"), 9999);
                     }

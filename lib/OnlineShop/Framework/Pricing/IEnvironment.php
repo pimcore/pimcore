@@ -14,26 +14,26 @@
 interface OnlineShop_Framework_Pricing_IEnvironment
 {
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
      * @return OnlineShop_Framework_Pricing_IEnvironment
      */
-    public function setCart(OnlineShop_Framework_ICart $cart);
+    public function setCart(\OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
-     * @return OnlineShop_Framework_ICart
+     * @return \OnlineShop\Framework\CartManager\ICart
      */
     public function getCart();
 
     /**
-     * @param OnlineShop_Framework_ICartItem $cartItem
+     * @param \OnlineShop\Framework\CartManager\ICartItem $cartItem
      *
      * @return OnlineShop_Framework_Pricing_IEnvironment
      */
-    public function setCartItem(OnlineShop_Framework_ICartItem $cartItem);
+    public function setCartItem(\OnlineShop\Framework\CartManager\ICartItem $cartItem);
 
     /**
-     * @return OnlineShop_Framework_ICartItem
+     * @return \OnlineShop\Framework\CartManager\ICartItem
      */
     public function getCartItem();
 

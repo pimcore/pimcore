@@ -17,9 +17,9 @@
 interface OnlineShop_Framework_ICheckoutStep {
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      */
-    public function __construct(OnlineShop_Framework_ICart $cart);
+    public function __construct(\OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * @return string

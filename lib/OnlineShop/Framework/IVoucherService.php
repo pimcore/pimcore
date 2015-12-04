@@ -23,28 +23,28 @@ interface OnlineShop_Framework_IVoucherService
      * Gets the correct token manager and calls its checkToken() function.
      *
      * @param string $code
-     * @param Onlineshop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public function checkToken($code, Onlineshop_Framework_ICart $cart);
+    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * Gets the correct token manager and calls its reserveToken() function.
      *
      * @param string $code
-     * @param Onlineshop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public function reserveToken($code, Onlineshop_Framework_ICart $cart);
+    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
      *
      * @param string $code
-     * @param Onlineshop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public function releaseToken($code, Onlineshop_Framework_ICart $cart);
+    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * Gets the correct token manager and calls its applyToken() function, which returns
@@ -52,11 +52,11 @@ interface OnlineShop_Framework_IVoucherService
      * reservations gets released.
      *
      * @param string $code
-     * @param Onlineshop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return bool
      */
-    public function applyToken($code, Onlineshop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order);
+    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order);
 
 
     /**

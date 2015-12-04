@@ -362,11 +362,11 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
 
         // test conditionlist OR
         $dateRange = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();   // true
-        $dateRange->setStarting(new Zend_Date('2013-02-03'));
-        $dateRange->setEnding(new Zend_Date('2013-20-04'));
+        $dateRange->setStarting(new \Zend_Date('2013-02-03'));
+        $dateRange->setEnding(new \Zend_Date('2013-20-04'));
         $dateRange2 = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();  // false
-        $dateRange2->setStarting(new Zend_Date('2012-02-03'));
-        $dateRange2->setEnding(new Zend_Date('2012-30-04'));
+        $dateRange2->setStarting(new \Zend_Date('2012-02-03'));
+        $dateRange2->setEnding(new \Zend_Date('2012-30-04'));
 
         $bracket = new OnlineShop_Framework_Impl_Pricing_Condition_Bracket();
         $bracket->addCondition($dateRange, null);
@@ -376,8 +376,8 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
 
         // bracket test
         $dateRange3 = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();  // false
-        $dateRange3->setStarting(new Zend_Date('2012-02-03'));
-        $dateRange3->setEnding(new Zend_Date('2012-30-04'));
+        $dateRange3->setStarting(new \Zend_Date('2012-02-03'));
+        $dateRange3->setEnding(new \Zend_Date('2012-30-04'));
 
         $bracket2 = new OnlineShop_Framework_Impl_Pricing_Condition_Bracket();
         $bracket2->addCondition($bracket, null);

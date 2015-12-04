@@ -31,7 +31,7 @@ class OnlineShop_Framework_Factory {
     private $config;
 
     /**
-     * @var OnlineShop_Framework_ICartManager
+     * @var \OnlineShop\Framework\CartManager\ICartManager
      */
     private $cartManager;
 
@@ -61,7 +61,7 @@ class OnlineShop_Framework_Factory {
     private $orderManager;
 
     /**
-     * @var OnlineShop_OfferTool_IService
+     * @var \OnlineShop\Framework\OfferTool\IService
      */
     private $offerToolService;
 
@@ -125,8 +125,8 @@ class OnlineShop_Framework_Factory {
     public function getConfig() {
         if(empty($this->config)) {
             if(!$config = \Pimcore\Model\Cache::load("onlineshop_config")) {
-                $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
-                $config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath, null, true);
+                $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
+                $config = new \Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath, null, true);
                 \Pimcore\Model\Cache::save($config, "onlineshop_config", array("ecommerceconfig"), 9999);
             }
             $this->config = $config;
@@ -178,8 +178,8 @@ class OnlineShop_Framework_Factory {
         } else {
             if (class_exists($config->onlineshop->cartmanager->class)) {
                 $this->cartManager = new $config->onlineshop->cartmanager->class($config->onlineshop->cartmanager->config);
-                if (!($this->cartManager instanceof OnlineShop_Framework_ICartManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " does not implement OnlineShop_Framework_ICartManager.");
+                if (!($this->cartManager instanceof OnlineShop\Framework\CartManager\ICartManager)) {
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " does not implement OnlineShop\Framework\CartManager\ICartManager.");
                 }
             } else {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " not found.");
@@ -280,7 +280,7 @@ class OnlineShop_Framework_Factory {
      *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
-    private function configurePricingManager(Zend_Config_Xml $config) {
+    private function configurePricingManager(\Zend_Config_Xml $config) {
         if (empty($config->onlineshop->pricingmanager->class)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("No PricingManager class defined.");
         } else {
@@ -316,7 +316,7 @@ class OnlineShop_Framework_Factory {
      *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
-    private function configurePaymentManager(Zend_Config $config)
+    private function configurePaymentManager(\Zend_Config $config)
     {
         if (!empty($config->onlineshop->paymentmanager->class))
         {
@@ -341,7 +341,7 @@ class OnlineShop_Framework_Factory {
      *
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
-    private function configureOrderManager(Zend_Config $config)
+    private function configureOrderManager(\Zend_Config $config)
     {
         if (!empty($config->onlineshop->ordermanager->class))
         {
@@ -367,11 +367,11 @@ class OnlineShop_Framework_Factory {
 
     /**
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param string $name optional name of checkout manager, in case there are more than one configured
      * @return OnlineShop_Framework_ICheckoutManager
      */
-    public function getCheckoutManager(OnlineShop_Framework_ICart $cart, $name = null) {
+    public function getCheckoutManager(\OnlineShop\Framework\CartManager\ICart $cart, $name = null) {
 
         if(empty($this->checkoutManagers[$cart->getId()])) {
             if($name) {
@@ -404,7 +404,7 @@ class OnlineShop_Framework_Factory {
             $originalConfig = $this->config->onlineshop->$managerConfigName->config;
         }
 
-        $config = new OnlineShop_Framework_Config_HelperContainer($originalConfig, "checkoutmanager");
+        $config = new \OnlineShop\Framework\Tools\Config\HelperContainer($originalConfig, "checkoutmanager");
         $commitOrderProcessorClassname = $config->commitorderprocessor->class;
 
         $commitOrderProcessor = new $commitOrderProcessorClassname();
@@ -480,7 +480,7 @@ class OnlineShop_Framework_Factory {
      * @return string[]
      */
     public function getAllTenants() {
-        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && $this->config->onlineshop->productindex->tenants instanceof Zend_Config) {
+        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && $this->config->onlineshop->productindex->tenants instanceof \Zend_Config) {
             foreach($this->config->onlineshop->productindex->tenants as $name => $tenant) {
                 $this->allTenants[$name] = $name;
             }
@@ -494,7 +494,7 @@ class OnlineShop_Framework_Factory {
      *
      * @return OnlineShop_Framework_FilterService
      */
-    public function getFilterService(Zend_View $view) {
+    public function getFilterService(\Zend_View $view) {
 
         $filterTypes = $this->getIndexService()->getCurrentTenantConfig()->getFilterTypeConfig();
         if(!$filterTypes)
@@ -522,7 +522,7 @@ class OnlineShop_Framework_Factory {
     }
 
     /**
-     * @return OnlineShop_OfferTool_IService
+     * @return \OnlineShop\Framework\OfferTool\IService
      */
     public function getOfferToolService() {
         if(empty($this->offerToolService)) {

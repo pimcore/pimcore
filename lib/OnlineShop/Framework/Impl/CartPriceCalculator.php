@@ -42,16 +42,16 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     protected $modifications;
 
     /**
-     * @var OnlineShop_Framework_ICart
+     * @var \OnlineShop\Framework\CartManager\ICart
      */
     protected $cart;
 
 
     /**
      * @param $config
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      */
-    public function __construct($config, OnlineShop_Framework_ICart $cart) {
+    public function __construct($config, \OnlineShop\Framework\CartManager\ICart $cart) {
         $this->modificators = array();
         if(!empty($config->modificators) && is_object($config->modificators)) {
             foreach($config->modificators as $modificator) {
@@ -116,7 +116,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
      * @return Zend_Currency
      */
     protected function getDefaultCurrency() {
-        return new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return new \Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
     }
 
     /**
@@ -126,7 +126,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
      * @param Zend_Currency $currency
      * @return OnlineShop_Framework_IPrice
      */
-    protected function getDefaultPriceObject($amount, Zend_Currency $currency) {
+    protected function getDefaultPriceObject($amount, \Zend_Currency $currency) {
         return new OnlineShop_Framework_Impl_Price($amount, $currency);
     }
 

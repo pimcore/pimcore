@@ -24,7 +24,7 @@ class OnlineShop_Framework_FilterService_Findologic_SelectRelation extends Onlin
         $values = $productList->getGroupByRelationValues($field, true);
 
         $objects = array();
-        Logger::log("Load Objects...", Zend_Log::INFO);
+        Logger::log("Load Objects...", \Zend_Log::INFO);
 
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
@@ -36,7 +36,7 @@ class OnlineShop_Framework_FilterService_Findologic_SelectRelation extends Onlin
                 $objects[$v['label']] = \Pimcore\Model\Object\AbstractObject::getById($v['label']);
             }
         }
-        Logger::log("done.", Zend_Log::INFO);
+        Logger::log("done.", \Zend_Log::INFO);
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();

@@ -19,7 +19,7 @@ interface OnlineShop_Framework_IPayment
     /**
      * @param Zend_Config $xml
      */
-    public function __construct(Zend_Config $xml);
+    public function __construct(\Zend_Config $xml);
 
 
     /**

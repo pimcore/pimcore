@@ -108,7 +108,7 @@
         <?php if($this->pageLimit == count($this->productList->getProducts())) { ?>
             <div class="pagination" style="clear:both">
                 <?php
-                    $paginator = Zend_Paginator::factory($this->productList);
+                    $paginator = \Zend_Paginator::factory($this->productList);
 
                     $paginator->setCurrentPageNumber($this->currentPage);
                     $paginator->setItemCountPerPage($this->pageLimit);

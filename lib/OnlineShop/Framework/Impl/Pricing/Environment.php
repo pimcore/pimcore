@@ -14,12 +14,12 @@
 class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framework_Pricing_IEnvironment
 {
     /**
-     * @var OnlineShop_Framework_ICart
+     * @var \OnlineShop\Framework\CartManager\ICart
      */
     protected $cart;
 
     /**
-     * @var OnlineShop_Framework_ICartItem
+     * @var \OnlineShop\Framework\CartManager\ICartItem
      */
     protected $cartItem;
 
@@ -50,18 +50,18 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
 
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
      * @return OnlineShop_Framework_Pricing_IEnvironment
      */
-    public function setCart(OnlineShop_Framework_ICart $cart)
+    public function setCart(\OnlineShop\Framework\CartManager\ICart $cart)
     {
         $this->cart = $cart;
         return $this;
     }
 
     /**
-     * @return OnlineShop_Framework_ICart
+     * @return \OnlineShop\Framework\CartManager\ICart
      */
     public function getCart()
     {
@@ -69,7 +69,7 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     }
 
     /**
-     * @return OnlineShop_Framework_ICartItem
+     * @return \OnlineShop\Framework\CartManager\ICartItem
      */
     public function getCartItem()
     {
@@ -77,11 +77,11 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     }
 
     /**
-     * @param OnlineShop_Framework_ICartItem $cartItem
+     * @param \OnlineShop\Framework\CartManager\ICartItem $cartItem
      *
      * @return $this
      */
-    public function setCartItem(OnlineShop_Framework_ICartItem $cartItem)
+    public function setCartItem(\OnlineShop\Framework\CartManager\ICartItem $cartItem)
     {
         $this->cartItem = $cartItem;
         return $this;

@@ -201,7 +201,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             throw new Exception("Class $orderListClass does not exist.");
         }
 
-        $timestamp = Zend_Date::now()->sub(1, Zend_Date::HOUR)->get();
+        $timestamp = \Zend_Date::now()->sub(1, \Zend_Date::HOUR)->get();
 
         //Abort orders with payment pending
         $list = new $orderListClass();

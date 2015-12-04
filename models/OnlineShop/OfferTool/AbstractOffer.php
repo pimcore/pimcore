@@ -44,9 +44,26 @@ class OnlineShop_OfferTool_AbstractOffer extends \Pimcore\Model\Object\Concrete 
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param float $totalPrice
      */
+    public function setTotalPriceBeforeDiscount($totalPrice) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setTotalPriceBeforeDiscount is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return float
+     */
+    public function getTotalPriceBeforeDiscount() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getTotalPriceBeforeDiscount is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @param float $totalPrice
+     */
     public function setTotalPrice($totalPrice) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
     }
+
 
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException

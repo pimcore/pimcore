@@ -30,7 +30,7 @@ class OnlineShop_Framework_FilterService_Helper
      */
     public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
                                             OnlineShop_Framework_IProductList $productList,
-                                            $params, Zend_View $view,
+                                            $params, \Zend_View $view,
                                             OnlineShop_Framework_FilterService $filterService,
                                             $loadFullPage, $excludeLimitOfFirstpage = false) {
 

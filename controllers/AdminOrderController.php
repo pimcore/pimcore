@@ -36,7 +36,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
         // sprache setzen
         $language = $this->getUser() ? $this->getUser()->getLanguage() : 'en';
-        Zend_Registry::set("Zend_Locale", new Zend_Locale( $language ));
+        \Zend_Registry::set("Zend_Locale", new \Zend_Locale( $language ));
         $this->language = $language;
         $this->view->language = $language;
         $this->initTranslation();
@@ -55,8 +55,8 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
     protected function initTranslation() {
 
         $translate = null;
-        if(Zend_Registry::isRegistered("Zend_Translate")) {
-            $t = Zend_Registry::get("Zend_Translate");
+        if(\Zend_Registry::isRegistered("Zend_Translate")) {
+            $t = \Zend_Registry::get("Zend_Translate");
             // this check is necessary for the case that a document is rendered within an admin request
             // example: send test newsletter
             if($t instanceof Pimcore_Translate) {
@@ -67,7 +67,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         if(!$translate) {
             // setup Zend_Translate
             try {
-                $locale = Zend_Registry::get("Zend_Locale");
+                $locale = \Zend_Registry::get("Zend_Locale");
 
                 $translate = new Pimcore_Translate_Website($locale);
 
@@ -88,7 +88,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
 
                 // register the translator in Zend_Registry with the key "Zend_Translate" to use the translate helper for Zend_View
-                Zend_Registry::set("Zend_Translate", $translate);
+                \Zend_Registry::set("Zend_Translate", $translate);
             }
             catch (Exception $e) {
                 Logger::error("initialization of Pimcore_Translate failed");
@@ -156,19 +156,19 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         if($this->hasParam('from') === false && $this->hasParam('till') === false )
         {
             // als default, nehmen wir den ersten des aktuellen monats
-            $from = new Zend_Date();
+            $from = new \Zend_Date();
             $from->setDay(1);
-            $this->setParam('from', $from->get(Zend_Date::DATE_MEDIUM));
+            $this->setParam('from', $from->get(\Zend_Date::DATE_MEDIUM));
 
         }
 
         $filterDate = new Filter\OrderDateTime();
         if($this->getParam('from') || $this->getParam('till') )
         {
-            $from = $this->getParam('from') ? new Zend_Date($this->getParam('from')) : null;
-            $till = $this->getParam('till') ? new Zend_Date($this->getParam('till')) : null;
+            $from = $this->getParam('from') ? new \Zend_Date($this->getParam('from')) : null;
+            $till = $this->getParam('till') ? new \Zend_Date($this->getParam('till')) : null;
             if ($till){
-                $till->add(1,Zend_Date::DAY);
+                $till->add(1,\Zend_Date::DAY);
             }
 
             if($from)
@@ -188,7 +188,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
 
         // create paging
-        $paginator = Zend_Paginator::factory( $list );
+        $paginator = \Zend_Paginator::factory( $list );
         $paginator->setItemCountPerPage( 10 );
         $paginator->setCurrentPageNumber( $this->getParam('page', 1) );
 
@@ -245,8 +245,8 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             
 
             // register
-            $register = new Zend_Date($order->getCreationDate());
-            $arrCustomerAccount['created'] = $register->get(Zend_Date::DATE_MEDIUM);
+            $register = new \Zend_Date($order->getCreationDate());
+            $arrCustomerAccount['created'] = $register->get(\Zend_Date::DATE_MEDIUM);
 
 
             // mail
@@ -297,7 +297,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         ];
 
         $arrTimeline = [];
-        $date = new Zend_Date();
+        $date = new \Zend_Date();
         foreach($orderAgent->getFullChangeLog() as $note)
         {
             /* @var \Pimcore\Model\Element\Note $note */
@@ -311,7 +311,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             // group events
             $group = $date
                 ->setTimestamp( $note->getDate() )
-                ->get(Zend_Date::DATE_MEDIUM)
+                ->get(\Zend_Date::DATE_MEDIUM)
             ;
 
 
@@ -328,7 +328,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
                 'icon' => $arrIcons[ $note->getTitle() ]
                 , 'context' => $arrContext[ $note->getTitle() ] ?: 'default'
                 , 'type' => $note->getTitle()
-                , 'date' => $date->setTimestamp( $note->getDate() )->get(Zend_Date::DATETIME_MEDIUM)
+                , 'date' => $date->setTimestamp( $note->getDate() )->get(\Zend_Date::DATETIME_MEDIUM)
                 , 'avatar' => $avatar
                 , 'user' => $user ? $user->getName() : null
                 , 'message' => $note->getData()['message']['data']

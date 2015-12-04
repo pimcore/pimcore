@@ -25,7 +25,7 @@ class OnlineShop_OfferTool_AbstractOfferItem extends \Pimcore\Model\Object\Concr
     }
 
     /**
-     * @param OnlineShop_OfferTool_AbstractOfferToolProduct $product
+     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function setProduct($product) {

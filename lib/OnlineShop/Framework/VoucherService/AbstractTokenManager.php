@@ -50,10 +50,10 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return mixed
      */
-    public function checkToken($code, OnlineShop_Framework_ICart $cart){
+    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart){
         $this->checkAllowOncePerCart($code, $cart);
         $this->checkOnlyToken($cart);
     }
@@ -62,10 +62,10 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
      * Once per cart setting
      *
      * @param $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @throws Exception
      */
-    protected function checkAllowOncePerCart($code, OnlineShop_Framework_ICart $cart)
+    protected function checkAllowOncePerCart($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         if (method_exists($this->configuration, 'getAllowOncePerCart') && $this->configuration->getAllowOncePerCart()) {
@@ -84,11 +84,11 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
     /**
      * Only token per cart setting
      *
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
      * @throws Exception
      */
-    protected function checkOnlyToken(OnlineShop_Framework_ICart $cart)
+    protected function checkOnlyToken(\OnlineShop\Framework\CartManager\ICart $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         $cartVoucherCount = sizeof($cartCodes);
@@ -107,25 +107,25 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public abstract function reserveToken($code, OnlineShop_Framework_ICart $cart);
+    public abstract function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return bool
      */
-    public abstract function applyToken($code, OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order);
+    public abstract function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order);
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public abstract function releaseToken($code, OnlineShop_Framework_ICart $cart);
+    public abstract function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * @param null $filter

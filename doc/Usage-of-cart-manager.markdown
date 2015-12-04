@@ -5,15 +5,15 @@
 The configuration takes place in the OnlineShopConfig.xml
 ```xml
 <!-- general settings for cart manager -->
-<cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
+<cartmanager class="\OnlineShop\Framework\CartManager\MultiCartManager">
     <config>
         <!-- default cart implementation that is used -->
-        <cart class="OnlineShop_Framework_Impl_Cart">
+        <cart class="\OnlineShop\Framework\CartManager\Cart">
             <!--
                 cart implementation that is used when system is in guest-checkout mode
                 -> OnlineShop_Framework_IEnvironment::getUseGuestCart()
             -->
-            <guest class="OnlineShop_Framework_Impl_SessionCart"/>
+            <guest class="\OnlineShop\Framework\CartManager\SessionCart"/>
         </cart>
 
         <!-- default price calculator for cart -->

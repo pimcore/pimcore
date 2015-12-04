@@ -84,7 +84,7 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
      * @return Zend_Currency
      */
     protected function getDefaultCurrency() {
-        return new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return new \Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
     }
 
     /**

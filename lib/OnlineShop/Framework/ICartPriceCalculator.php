@@ -16,7 +16,7 @@
  */
 interface OnlineShop_Framework_ICartPriceCalculator {
 
-    public function __construct($config, OnlineShop_Framework_ICart $cart);
+    public function __construct($config, \OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
      * calculates cart sums and saves results

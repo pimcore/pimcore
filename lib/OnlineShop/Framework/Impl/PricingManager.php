@@ -30,7 +30,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     /**
      * @param Zend_Config $config
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(\Zend_Config $config)
     {
         $this->config = $config;
     }
@@ -62,11 +62,11 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     }
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
      * @return OnlineShop_Framework_IPricingManager
      */
-    public function applyCartRules(OnlineShop_Framework_ICart $cart)
+    public function applyCartRules(\OnlineShop\Framework\CartManager\ICart $cart)
     {
         if((string)$this->config->disabled == "true") {
             return $this;
@@ -138,7 +138,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     public function getEnvironment()
     {
         $environment = new OnlineShop_Framework_Impl_Pricing_Environment();
-        $environment->setSession( new Zend_Session_Namespace('PricingManager') );
+        $environment->setSession( new \Zend_Session_Namespace('PricingManager') );
 
         return $environment;
     }

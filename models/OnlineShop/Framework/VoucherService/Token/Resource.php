@@ -47,9 +47,9 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
     /**
      * @return bool
      *
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      */
-    public function isReserved($cart = null)
+    public function isReserved(\OnlineShop\Framework\CartManager\ICart $cart = null)
     {
         $reservation = OnlineShop_Framework_VoucherService_Reservation::get($this->model->getToken(), $cart);
         if (!$reservation->exists()) {

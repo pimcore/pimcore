@@ -21,10 +21,10 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
 
     /**
      * @param $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool|OnlineShop_Framework_VoucherService_Reservation
      */
-    public static function get($code, OnlineShop_Framework_ICart $cart = null)
+    public static function get($code, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
         try {
             $config = new self();
@@ -64,10 +64,10 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public static function releaseToken($code, OnlineShop_Framework_ICart $cart = null)
+    public static function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
         $db = \Pimcore\Resource::get();
 
