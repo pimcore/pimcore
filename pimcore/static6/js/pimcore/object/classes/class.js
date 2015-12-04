@@ -851,7 +851,7 @@ pimcore.object.classes.klass = Class.create({
 
     changeDataType: function (tree, record, type, initData, removeExisting) {
         try {
-           record.data.editor.applyData();
+            this.saveCurrentNode();
 
             var nodeLabel = record.data.text;
 
