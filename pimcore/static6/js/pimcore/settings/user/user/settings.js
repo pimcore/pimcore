@@ -30,6 +30,13 @@ pimcore.settings.user.user.settings = Class.create({
         var generalItems = [];
 
         generalItems.push({
+            xtype:"displayfield",
+            fieldLabel:t("id"),
+            value: this.currentUser.id
+        });
+
+
+        generalItems.push({
             xtype:"checkbox",
             fieldLabel:t("active"),
             name:"active",
