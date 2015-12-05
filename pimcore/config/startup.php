@@ -13,7 +13,7 @@
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 // configure some constants needed by pimcore
-$pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..'); 
+$pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..');
 
 if (!defined("PIMCORE_DOCUMENT_ROOT"))  define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
 // frontend module, this is the module containing your website, please be sure that the module folder is in PIMCORE_DOCUMENT_ROOT and is named identically with this name
@@ -85,8 +85,8 @@ $autoloader->registerNamespace('Pimcore');
 
 // register class map loader => speed
 $autoloaderClassMapFiles = array(
+    PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php",
     PIMCORE_PATH . "/config/autoload-classmap.php",
-    PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php"
 );
 
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
