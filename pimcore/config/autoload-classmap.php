@@ -466,7 +466,7 @@ return array (
   'Pimcore\\Model\\Document\\Tag\\Multiselect' => $pdr . '/pimcore/models/Document/Tag/Multiselect.php',
   'Pimcore\\Model\\Document\\Tag\\Multihref' => $pdr . '/pimcore/models/Document/Tag/Multihref.php',
   'Pimcore\\Model\\Document\\Tag\\Renderlet' => $pdr . '/pimcore/models/Document/Tag/Renderlet.php',
-  'Pimcore\\Model\\Document\\Tag\\Area\\AbstractArea' => $pdr . '/pimcore/models/Document/Tag/Area/Abstract.php',
+  'Pimcore\\Model\\Document\\Tag\\Area\\AbstractArea' => $pdr . '/pimcore/models/Document/Tag/Area/AbstractArea.php',
   'Pimcore\\Model\\Document\\Tag\\Area\\Info' => $pdr . '/pimcore/models/Document/Tag/Area/Info.php',
   'Pimcore\\Model\\Document\\Tag\\Snippet' => $pdr . '/pimcore/models/Document/Tag/Snippet.php',
   'Pimcore\\Model\\Document\\Tag\\Video' => $pdr . '/pimcore/models/Document/Tag/Video.php',
