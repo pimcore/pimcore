@@ -10,22 +10,24 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\AvailabilitySystem;
 
 /**
- * Class OnlineShop_Framework_Impl_AttributeAvailabilitySystem
+ * Interface IAvailabilitySystem
  */
-class OnlineShop_Framework_Impl_AttributeAvailabilitySystem implements OnlineShop_Framework_IAvailabilitySystem {
+interface IAvailabilitySystem {
+
+
     /**
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
+     * @abstract
+     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
      * @param int $quantityScale
      * @param null $products
-     * @return OnlineShop_Framework_IAvailability
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
-    public function getAvailabilityInfo(OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
-        return $abstractProduct;
-    }
+    public function getAvailabilityInfo(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = 1, $products = null);
+
 
 
 
 }
-

@@ -41,7 +41,7 @@ class OnlineShop_Framework_Factory {
     private $priceSystems;
 
     /**
-     * @var OnlineShop_Framework_IAvailabilitySystem
+     * @var \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
      */
     private $availabilitySystems;
 
@@ -254,7 +254,7 @@ class OnlineShop_Framework_Factory {
 
                 $class = $availabilitySystemConfig->class;
                 $availabilitySystem = new $class();
-                if (! $availabilitySystem instanceof OnlineShop_Framework_IAvailabilitySystem){
+                if (! $availabilitySystem instanceof \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem){
                     throw new OnlineShop_Framework_Exception_InvalidConfigException("AvailabilitySystem class " . $availabilitySystemConfig->class . ' does not implement \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem.');
                 }
                 $this->availabilitySystems->$name= $availabilitySystem;
@@ -443,7 +443,7 @@ class OnlineShop_Framework_Factory {
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param null $name
-     * @return OnlineShop_Framework_IAvailabilitySystem
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
      */
     public function getAvailabilitySystem($name = null) {
         if ($name == null) {

@@ -73,7 +73,7 @@
 
         <availablitysystems>
             <!-- Define one or more availability systems. The products getAvailabilitySystemName method need to return a name here defined -->
-            <availablitysystem name="default" class="OnlineShop_Framework_Impl_AttributeAvailabilitySystem"/>
+            <availablitysystem name="default" class="\OnlineShop\Framework\AvailabilitySystem\AttributeAvailabilitySystem"/>
         </availablitysystems>
 
         <!-- general settings for checkout manager -->

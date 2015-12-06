@@ -129,7 +129,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     /**
      * @param int $quantity
      * @param $products OnlineShop_Framework_AbstractSetProductEntry[]
-     * @return OnlineShop_Framework_IAvailability
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null, $products = null) {
         if (!is_array($products)) {

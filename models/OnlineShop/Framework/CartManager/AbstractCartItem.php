@@ -165,7 +165,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return \OnlineShop_Framework_IAvailability
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
     public function getAvailabilityInfo() {
         if ($this->getProduct() instanceof \OnlineShop_Framework_AbstractSetProduct) {

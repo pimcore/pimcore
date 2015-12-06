@@ -73,7 +73,7 @@ interface OnlineShop_Framework_ProductInterfaces_ICheckoutable {
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return OnlineShop_Framework_IAvailabilitySystem
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
      */
     public function getAvailabilitySystemImplementation();
 
@@ -103,7 +103,7 @@ interface OnlineShop_Framework_ProductInterfaces_ICheckoutable {
      * returns availability info based on given quantity
      *
      * @param int $quantity
-     * @return OnlineShop_Framework_IAvailability
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null);
 

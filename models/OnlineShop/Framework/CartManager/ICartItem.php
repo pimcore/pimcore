@@ -112,7 +112,7 @@ interface ICartItem {
 
     /**
      * @abstract
-     * @return \OnlineShop_Framework_IAvailability
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
     public function getAvailabilityInfo();
 

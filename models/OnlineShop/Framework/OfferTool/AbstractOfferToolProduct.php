@@ -89,7 +89,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return \OnlineShop_Framework_IAvailabilitySystem
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
      */
     public function getAvailabilitySystemImplementation() {
         return \OnlineShop_Framework_Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
@@ -121,7 +121,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * returns availability info based on given quantity
      *
      * @param int $quantity
-     * @return \OnlineShop_Framework_IAvailability
+     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null) {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
