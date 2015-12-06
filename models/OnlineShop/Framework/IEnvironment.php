@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework;
 
 /**
  * Interface for environment implementations of online shop framework
  */
-interface OnlineShop_Framework_IEnvironment extends \OnlineShop\Framework\IComponent {
+interface IEnvironment extends IComponent {
 
     /**
      * returns current user id
@@ -132,7 +133,7 @@ interface OnlineShop_Framework_IEnvironment extends \OnlineShop\Framework\ICompo
     public function getCurrentCheckoutTenant();
 
     /**
-     * @return Zend_Locale
+     * @return \Zend_Locale
      */
     public function getCurrencyLocale();
 

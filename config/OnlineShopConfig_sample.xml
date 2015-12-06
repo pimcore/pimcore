@@ -3,7 +3,7 @@
     <onlineshop>
 
         <!-- general settings for onlineshop environment -->
-        <environment class="OnlineShop_Framework_Impl_Environment">
+        <environment class="\OnlineShop\Framework\Environment">
             <config>
                 <!--
                     default locale defines locale for currency for the whole system.
@@ -21,7 +21,7 @@
                 <cart class="\OnlineShop\Framework\CartManager\Cart">
                     <!--
                         cart implementation that is used when system is in guest-checkout mode
-                        -> OnlineShop_Framework_IEnvironment::getUseGuestCart()
+                        -> \OnlineShop\Framework\IEnvironment::getUseGuestCart()
                     -->
                     <guest class="\OnlineShop\Framework\CartManager\SessionCart"/>
                 </cart>
@@ -41,7 +41,7 @@
                 <!--
                     special configuration for specific checkout tenants
                     - for not specified elements the default configuration is used as fallback
-                    - active tenant is set at OnlineShop_Framework_IEnvironment::setCurrentCheckoutTenant()
+                    - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant()
                 -->
                 <tenants>
                     <noShipping>

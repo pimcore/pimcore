@@ -16,6 +16,7 @@ class LegacyClassMappingTool {
 
     private static $mappingClasses = [
         'OnlineShop\Plugin' => 'OnlineShop_Plugin',
+        'OnlineShop\Framework\Environment' => 'OnlineShop_Framework_Impl_Environment',
         'OnlineShop\Framework\OfferTool\DefaultService' => 'OnlineShop_OfferTool_Impl_DefaultService',
         'OnlineShop\Framework\OfferTool\AbstractOffer' => 'OnlineShop_OfferTool_AbstractOffer',
         'OnlineShop\Framework\OfferTool\AbstractOfferItem' => 'OnlineShop_OfferTool_AbstractOfferItem',
@@ -59,6 +60,7 @@ class LegacyClassMappingTool {
 
     private static $mappingInterfaces = [
         'OnlineShop\Framework\IComponent' => 'OnlineShop_Framework_IComponent',
+        'OnlineShop\Framework\IEnvironment' => 'OnlineShop_Framework_IEnvironment',
         'OnlineShop\Framework\OfferTool\IService' => 'OnlineShop_OfferTool_IService',
         'OnlineShop\Framework\CartManager\ICartManager' => 'OnlineShop_Framework_ICartManager',
         'OnlineShop\Framework\CartManager\ICart' => 'OnlineShop_Framework_ICart',
@@ -73,6 +75,7 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\PriceSystem\IPriceInfo' => 'OnlineShop_Framework_IPriceInfo',
         'OnlineShop\Framework\AvailabilitySystem\IAvailability' => 'OnlineShop_Framework_IAvailability',
         'OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem' => 'OnlineShop_Framework_IAvailabilitySystem',
+
 
 
     ];

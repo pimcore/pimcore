@@ -11,7 +11,7 @@ The configuration takes place in the OnlineShopConfig.xml
         <cart class="\OnlineShop\Framework\CartManager\Cart">
             <!--
                 cart implementation that is used when system is in guest-checkout mode
-                -> OnlineShop_Framework_IEnvironment::getUseGuestCart()
+                -> \OnlineShop\Framework\IEnvironment::getUseGuestCart()
             -->
             <guest class="\OnlineShop\Framework\CartManager\SessionCart"/>
         </cart>
@@ -31,7 +31,7 @@ The configuration takes place in the OnlineShopConfig.xml
         <!--
             special configuration for specific checkout tenants
             - for not specified elements the default configuration is used as fallback 
-            - active tenant is set at OnlineShop_Framework_IEnvironment::setCurrentCheckoutTenant()
+            - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant()
         -->
         <tenants>
             <noShipping>

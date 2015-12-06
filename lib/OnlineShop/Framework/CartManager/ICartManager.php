@@ -23,7 +23,7 @@ interface ICartManager extends Framework\IComponent {
      * returns cart class name configured in the xml
      *
      * Is also responsible for checking if guest cart class should be used or not,
-     * by calling OnlineShop_Framework_IEnvironment::getUseGuestCart();
+     * by calling \OnlineShop\Framework\IEnvironment::getUseGuestCart();
      *
      *
      * @return string

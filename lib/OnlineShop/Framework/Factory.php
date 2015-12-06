@@ -71,7 +71,7 @@ class OnlineShop_Framework_Factory {
     private $allTenants;
 
     /**
-     * @var OnlineShop_Framework_IEnvironment
+     * @var \OnlineShop\Framework\IEnvironment
      */
     private $environment;
 
@@ -145,8 +145,8 @@ class OnlineShop_Framework_Factory {
         } else {
             if (class_exists($config->onlineshop->environment->class)) {
                 $this->environment = new $config->onlineshop->environment->class($config->onlineshop->environment->config);
-                if (!($this->environment instanceof OnlineShop_Framework_IEnvironment)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Environment class " . $config->onlineshop->environment->class . " does not implement OnlineShop_Framework_IEnvironment.");
+                if (!($this->environment instanceof \OnlineShop\Framework\IEnvironment)) {
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Environment class " . $config->onlineshop->environment->class . ' does not implement \OnlineShop\Framework\IEnvironment.');
                 }
             } else {
                 throw new OnlineShop_Framework_Exception_InvalidConfigException("Environment class " . $config->onlineshop->environment->class . " not found.");
@@ -413,7 +413,7 @@ class OnlineShop_Framework_Factory {
     }
 
     /**
-     * @return OnlineShop_Framework_IEnvironment
+     * @return \OnlineShop\Framework\IEnvironment
      */
     public function getEnvironment() {
         if(!$this->environment) {
