@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\OfferTool;
 
 /**
  * Abstract base class for pimcore objects who should be used as custom products in the offer tool
  */
-class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements OnlineShop_Framework_ProductInterfaces_ICheckoutable {
+class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements \OnlineShop_Framework_ProductInterfaces_ICheckoutable {
 
 // =============================================
 //     ICheckoutable Methods
@@ -23,21 +24,21 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Objec
     /**
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
      * @return string
      */
     public function getOSName() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getOSName is not supported for " . get_class($this));
+        throw new \OnlineShop_Framework_Exception_UnsupportedException("getOSName is not supported for " . get_class($this));
     }
 
     /**
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
      * @return string
      */
     public function getOSProductNumber() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
+        throw new \OnlineShop_Framework_Exception_UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
     }
 
 
@@ -45,7 +46,7 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Objec
      * defines the name of the availability system for this product.
      * for offline tool there are no availability systems implemented
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
      * @return string
      */
     public function getAvailabilitySystemName() {
@@ -79,26 +80,26 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Objec
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return OnlineShop_Framework_IPriceSystem
+     * @return \OnlineShop_Framework_IPriceSystem
      */
     public function getPriceSystemImplementation() {
-        return OnlineShop_Framework_Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
+        return \OnlineShop_Framework_Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return OnlineShop_Framework_IAvailabilitySystem
+     * @return \OnlineShop_Framework_IAvailabilitySystem
      */
     public function getAvailabilitySystemImplementation() {
-        return OnlineShop_Framework_Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
+        return \OnlineShop_Framework_Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
     /**
      * returns price for given quantity scale
      *
      * @param int $quantityScale
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop_Framework_IPrice
      */
     public function getOSPrice($quantityScale = 1) {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
@@ -110,7 +111,7 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Objec
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
-     * @return OnlineShop_Framework_AbstractPriceInfo
+     * @return \OnlineShop_Framework_AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1) {
         return $this->getPriceSystemImplementation()->getPriceInfo($this,$quantityScale);
@@ -120,7 +121,7 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Objec
      * returns availability info based on given quantity
      *
      * @param int $quantity
-     * @return OnlineShop_Framework_IAvailability
+     * @return \OnlineShop_Framework_IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null) {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
@@ -135,7 +136,7 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Objec
     public static function getById($id) {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof OnlineShop_OfferTool_AbstractOfferToolProduct) {
+        if ($object instanceof AbstractOfferToolProduct) {
             return $object;
         }
         return null;
@@ -143,11 +144,11 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Model\Objec
 
 
     /**
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
      * @return string
      */
     public function getProductGroup() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getProductGroup is not implemented for " . get_class($this));
+        throw new \OnlineShop_Framework_Exception_UnsupportedException("getProductGroup is not implemented for " . get_class($this));
     }
 
 

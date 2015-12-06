@@ -27,7 +27,7 @@ class DefaultService implements IService {
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param \OnlineShop\Framework\CartManager\ICartItem[] $excludeItems
-     * @return \OnlineShop_OfferTool_AbstractOffer
+     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
      */
     public function createNewOfferFromCart(\OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array()) {
         $tempOfferNumber = uniqid("offer_");
@@ -71,7 +71,7 @@ class DefaultService implements IService {
     }
 
     /**
-     * @return \OnlineShop_OfferTool_AbstractOffer
+     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
      * @throws \Exception
      */
     protected function getNewOfferObject($tempOfferNumber) {
@@ -81,7 +81,7 @@ class DefaultService implements IService {
         $offer = new $this->offerClass();
 
         /**
-         * @var $offer \OnlineShop_OfferTool_AbstractOffer
+         * @var $offer \OnlineShop\Framework\OfferTool\AbstractOffer
          */
         $offer->setParent(\Pimcore\Model\Object\Folder::getByPath($this->parentFolderPath));
         $offer->setCreationDate(\Zend_Date::now()->get());
@@ -93,7 +93,7 @@ class DefaultService implements IService {
     }
 
     /**
-     * @return \OnlineShop_OfferTool_AbstractOfferItem
+     * @return \OnlineShop\Framework\OfferTool\AbstractOfferItem
      * @throws \Exception
      */
     public function getNewOfferItemObject() {
@@ -106,7 +106,7 @@ class DefaultService implements IService {
     /**
      * @param \OnlineShop\Framework\CartManager\ICartItem $item
      * @param $parent
-     * @return \OnlineShop_OfferTool_AbstractOfferItem
+     * @return \OnlineShop\Framework\OfferTool\AbstractOfferItem
      */
     protected function createOfferItem(\OnlineShop\Framework\CartManager\ICartItem $item, $parent) {
         $offerItem = $this->getNewOfferItemObject();
@@ -153,7 +153,7 @@ class DefaultService implements IService {
         return $offerItem;
     }
 
-    protected function updateOfferItem(\OnlineShop\Framework\CartManager\ICartItem $cartItem, \OnlineShop_OfferTool_AbstractOfferItem $offerItem) {
+    protected function updateOfferItem(\OnlineShop\Framework\CartManager\ICartItem $cartItem, \OnlineShop\Framework\OfferTool\AbstractOfferItem $offerItem) {
         $offerItem->setAmount($cartItem->getCount());
         $offerItem->setProduct($cartItem->getProduct());
         if($offerItem->getProduct()) {
@@ -211,7 +211,7 @@ class DefaultService implements IService {
         return $price;
     }
 
-    protected function setCurrentCustomer(\OnlineShop_OfferTool_AbstractOffer $offer) {
+    protected function setCurrentCustomer(\OnlineShop\Framework\OfferTool\AbstractOffer $offer) {
         $env = \OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
         if(@class_exists("Object_Customer")) {
@@ -222,7 +222,7 @@ class DefaultService implements IService {
         return $offer;
     }
 
-    public function updateOfferFromCart(\OnlineShop_OfferTool_AbstractOffer $offer, \OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array(), $save = true) {
+    public function updateOfferFromCart(\OnlineShop\Framework\OfferTool\AbstractOffer $offer, \OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array(), $save = true) {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
 
 
@@ -268,7 +268,7 @@ class DefaultService implements IService {
         return $offer;
     }
 
-    public function updateTotalPriceOfOffer(\OnlineShop_OfferTool_AbstractOffer $offer) {
+    public function updateTotalPriceOfOffer(\OnlineShop\Framework\OfferTool\AbstractOffer $offer) {
 
         $totalPrice = 0;
 

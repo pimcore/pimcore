@@ -22,32 +22,32 @@ interface IService {
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param \OnlineShop\Framework\CartManager\ICartItem[] $excludeItems
-     * @return \OnlineShop_OfferTool_AbstractOffer
+     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
      */
     public function createNewOfferFromCart(\OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array());
 
     /**
-     * @param \OnlineShop_OfferTool_AbstractOffer $offer
+     * @param \OnlineShop\Framework\OfferTool\AbstractOffer $offer
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param array $excludeItems
-     * @return \OnlineShop_OfferTool_AbstractOffer
+     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
      */
-    public function updateOfferFromCart(\OnlineShop_OfferTool_AbstractOffer $offer, \OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array());
+    public function updateOfferFromCart(\OnlineShop\Framework\OfferTool\AbstractOffer $offer, \OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array());
 
     /**
-     * @param \OnlineShop_OfferTool_AbstractOffer $offer
-     * @return \OnlineShop_OfferTool_AbstractOffer
+     * @param \OnlineShop\Framework\OfferTool\AbstractOffer $offer
+     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
      */
-    public function updateTotalPriceOfOffer(\OnlineShop_OfferTool_AbstractOffer $offer);
+    public function updateTotalPriceOfOffer(\OnlineShop\Framework\OfferTool\AbstractOffer $offer);
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop_OfferTool_AbstractOffer[]
+     * @return \OnlineShop\Framework\OfferTool\AbstractOffer[]
      */
     public function getOffersForCart(\OnlineShop\Framework\CartManager\ICart $cart);
 
     /**
-     * @return \OnlineShop_OfferTool_AbstractOfferItem
+     * @return \OnlineShop\Framework\OfferTool\AbstractOfferItem
      */
     public function getNewOfferItemObject();
 
