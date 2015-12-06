@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
  * Interface for prices returned by price modifcators
  */
-interface OnlineShop_Framework_IModificatedPrice extends OnlineShop_Framework_IPrice {
+interface IModificatedPrice extends IPrice {
 
     /**
      * @return string

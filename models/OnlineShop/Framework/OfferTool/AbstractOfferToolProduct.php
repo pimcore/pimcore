@@ -80,7 +80,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \OnlineShop_Framework_IPriceSystem
+     * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
     public function getPriceSystemImplementation() {
         return \OnlineShop_Framework_Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
@@ -99,7 +99,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * returns price for given quantity scale
      *
      * @param int $quantityScale
-     * @return \OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = 1) {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
@@ -111,7 +111,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
-     * @return \OnlineShop_Framework_AbstractPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1) {
         return $this->getPriceSystemImplementation()->getPriceInfo($this,$quantityScale);

@@ -14,11 +14,11 @@
 interface OnlineShop_Framework_IPricingManager
 {
     /**
-     * @param OnlineShop_Framework_IPriceInfo $priceinfo
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceinfo
      *
      * @return OnlineShop_Framework_Pricing_IPriceInfo
      */
-    public function applyProductRules(OnlineShop_Framework_IPriceInfo $priceinfo);
+    public function applyProductRules(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceinfo);
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
@@ -56,9 +56,9 @@ interface OnlineShop_Framework_IPricingManager
     public function getEnvironment();
 
     /**
-     * @param OnlineShop_Framework_IPriceInfo $priceInfo
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo
      *
      * @return OnlineShop_Framework_Pricing_IPriceInfo
      */
-    public function getPriceInfo(OnlineShop_Framework_IPriceInfo $priceInfo);
+    public function getPriceInfo(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo);
 }

@@ -137,7 +137,7 @@ class OnlineShop_Framework_Impl_Pricing_Environment implements OnlineShop_Framew
     }
 
     /**
-     * @return OnlineShop_Framework_IPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function getPriceInfo()
     {

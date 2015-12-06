@@ -37,11 +37,11 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
 
 
     /**
-     * @param OnlineShop_Framework_IPriceInfo $priceInfo
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo
      *
      * @return OnlineShop_Framework_Pricing_IPriceInfo
      */
-    public function applyProductRules(OnlineShop_Framework_IPriceInfo $priceInfo)
+    public function applyProductRules(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo)
     {
         if((string)$this->config->disabled == "true") {
             return $priceInfo;
@@ -181,12 +181,12 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
     }
 
     /**
-     * @param OnlineShop_Framework_IPriceInfo $priceInfo
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo
      *
      * @return OnlineShop_Framework_Pricing_IPriceInfo
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
-    public function getPriceInfo(OnlineShop_Framework_IPriceInfo $priceInfo)
+    public function getPriceInfo(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo)
     {
         if((string)$this->config->disabled == "true") {
             return $priceInfo;

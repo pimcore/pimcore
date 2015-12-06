@@ -51,15 +51,15 @@ class Discount implements IDiscount
     /**
      * modify price
      *
-     * @param \OnlineShop_Framework_IPrice $currentSubTotal
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal
      * @param ICart  $cart
      *
-     * @return \OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
-    public function modify(\OnlineShop_Framework_IPrice $currentSubTotal, ICart $cart)
+    public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
         if($this->getAmount() != 0) {
-            return new \OnlineShop_Framework_Impl_ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+            return new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
         }
     }
 

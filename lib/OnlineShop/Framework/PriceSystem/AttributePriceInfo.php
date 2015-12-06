@@ -10,26 +10,27 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
- * Class OnlineShop_Framework_Impl_AttributePriceInfo
+ * Class AttributePriceInfo
  *
  * attribute info for attribute price system
  */
-class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo {
+class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo {
 
     /**
-     * @var OnlineShop_Framework_IPrice
+     * @var IPrice
      */
     protected $price;
 
     /**
-     * @var OnlineShop_Framework_IPrice
+     * @var IPrice
      */
     protected $totalPrice;
 
 
-    public function __construct(OnlineShop_Framework_IPrice $price, $quantity, OnlineShop_Framework_IPrice $totalPrice) {
+    public function __construct(IPrice $price, $quantity, IPrice $totalPrice) {
         $this->price = $price;
         $this->totalPrice = $totalPrice;
         $this->quantity = $quantity;

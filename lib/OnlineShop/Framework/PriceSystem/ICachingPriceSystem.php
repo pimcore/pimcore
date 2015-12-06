@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
- * Interface OnlineShop_Framework_ICachingPriceSystem
+ * Interface ICachingPriceSystem
  */
-interface OnlineShop_Framework_ICachingPriceSystem extends OnlineShop_Framework_IPriceSystem {
+interface ICachingPriceSystem extends IPriceSystem {
 
     /**
      * load price infos once for gives product entries and caches them

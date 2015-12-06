@@ -135,7 +135,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
 
     /**
-     * @return \OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getPrice()
     {
@@ -145,7 +145,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
 
     /**
-     * @return \OnlineShop_Framework_IPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function getPriceInfo() {
 
@@ -206,7 +206,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
 
     /**
-     * @return \OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getTotalPrice() {
         return $this->getPriceInfo()->getTotalPrice();

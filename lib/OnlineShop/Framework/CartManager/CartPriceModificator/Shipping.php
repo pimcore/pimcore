@@ -43,14 +43,14 @@ class Shipping implements IShipping
     }
 
     /**
-     * @param \OnlineShop_Framework_IPrice $currentSubTotal
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal
      * @param ICart  $cart
      *
      * @return \OnlineShop_Framework_IModificatedPrice
      */
-    public function modify(\OnlineShop_Framework_IPrice $currentSubTotal, ICart $cart)
+    public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
-        return new \OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        return new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
     }
 
     /**

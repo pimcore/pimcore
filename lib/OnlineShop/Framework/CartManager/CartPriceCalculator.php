@@ -24,12 +24,12 @@ class CartPriceCalculator implements ICartPriceCalculator {
     protected $isCalculated = false;
 
     /**
-     * @var \OnlineShop_Framework_IPrice
+     * @var \OnlineShop\Framework\PriceSystem\IPrice
      */
     protected $subTotal;
 
     /**
-     * @var \OnlineShop_Framework_IPrice
+     * @var \OnlineShop\Framework\PriceSystem\IPrice
      */
     protected $gradTotal;
 
@@ -126,14 +126,14 @@ class CartPriceCalculator implements ICartPriceCalculator {
      *
      * @param $amount
      * @param \Zend_Currency $currency
-     * @return \OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     protected function getDefaultPriceObject($amount, \Zend_Currency $currency) {
-        return new \OnlineShop_Framework_Impl_Price($amount, $currency);
+        return new \OnlineShop\Framework\PriceSystem\Price($amount, $currency);
     }
 
     /**
-     * @return \OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
      */
     public function getGrandTotal() {
         if(!$this->isCalculated) {
@@ -154,7 +154,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
     }
 
     /**
-     * @return \OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
      */
     public function getSubTotal() {
         if(!$this->isCalculated) {

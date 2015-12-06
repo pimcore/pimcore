@@ -10,18 +10,19 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
  * Interface for PriceInfo implementations of online shop framework
  */
-interface OnlineShop_Framework_IPriceInfo {
+interface IPriceInfo {
     const MIN_PRICE = "min";
 
     /**
      * returns single price
      *
      * @abstract
-     * @return OnlineShop_Framework_IPrice
+     * @return IPrice
      */
     public function getPrice();
 
@@ -29,7 +30,7 @@ interface OnlineShop_Framework_IPriceInfo {
      * returns total price (single price * quantity)
      *
      * @abstract
-     * @return OnlineShop_Framework_IPrice
+     * @return IPrice
      */
     public function getTotalPrice();
 
@@ -51,7 +52,7 @@ interface OnlineShop_Framework_IPriceInfo {
 
     /**
      * @param int|string $quantity
-     * numeric quantity or constant OnlineShop_Framework_IPriceInfo::MIN_PRICE
+     * numeric quantity or constant IPriceInfo::MIN_PRICE
      */
     public function setQuantity($quantity);
 
@@ -59,24 +60,24 @@ interface OnlineShop_Framework_IPriceInfo {
      * relation to price system
      *
      * @abstract
-     * @param OnlineShop_Framework_IPriceSystem $priceSystem
-     * @return OnlineShop_Framework_Pricing_IPriceInfo
+     * @param \OnlineShop\Framework\PriceSystem\IPriceSystem $priceSystem
+     * @return IPriceInfo
      */
     public function setPriceSystem($priceSystem);
 
     /**
      * relation to product
      *
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
      *
-     * @return OnlineShop_Framework_Pricing_IPriceInfo
+     * @return IPriceInfo
      */
-    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product);
+    public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product);
 
     /**
      * returns product
      *
-     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop_Framework_ProductInterfaces_ICheckoutable
      */
     public function getProduct();
 }

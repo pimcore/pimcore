@@ -74,7 +74,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
      * @param int $quantityScale
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
     public function getCalculatedPrice($products, $quantityScale = 1) {
@@ -102,7 +102,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param null $quantityScale
      * @param null $products
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = null, $products = null) {
         if( $this->getOSPriceInfo($quantityScale,$products)) {
@@ -117,7 +117,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param int $quantityScale
      * @param null $products
-     * @return OnlineShop_Framework_IPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function getOSPriceInfo($quantityScale = null, $products = null) {
         if (!is_array($products)) {

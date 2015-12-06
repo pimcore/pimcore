@@ -36,7 +36,7 @@ class OnlineShop_Framework_Factory {
     private $cartManager;
 
     /**
-     * @var OnlineShop_Framework_IPriceSystem
+     * @var \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
     private $priceSystems;
 
@@ -215,8 +215,8 @@ class OnlineShop_Framework_Factory {
                 }*/
                 $class = $priceSystemConfig->class;
                 $priceSystem = new $class($priceSystemConfig->config);
-                if (!$priceSystem instanceof OnlineShop_Framework_IPriceSystem){
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . " does not implement OnlineShop_Framework_IPriceSystem.");
+                if (!$priceSystem instanceof \OnlineShop\Framework\PriceSystem\IPriceSystem){
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . ' does not implement \OnlineShop\Framework\PriceSystem\IPriceSystem.');
                 }
                 $this->priceSystems->$name=$priceSystem;
             }
@@ -255,7 +255,7 @@ class OnlineShop_Framework_Factory {
                 $class = $availabilitySystemConfig->class;
                 $availabilitySystem = new $class();
                 if (! $availabilitySystem instanceof OnlineShop_Framework_IAvailabilitySystem){
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("AvailabilitySystem class " . $availabilitySystemConfig->class . " does not implement OnlineShop_Framework_IPriceSystem.");
+                    throw new OnlineShop_Framework_Exception_InvalidConfigException("AvailabilitySystem class " . $availabilitySystemConfig->class . ' does not implement \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem.');
                 }
                 $this->availabilitySystems->$name= $availabilitySystem;
             }
@@ -425,7 +425,7 @@ class OnlineShop_Framework_Factory {
     /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param null $name
-     * @return OnlineShop_Framework_IPriceSystem
+     * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
     public function getPriceSystem($name = null) {
         if ($name == null) {

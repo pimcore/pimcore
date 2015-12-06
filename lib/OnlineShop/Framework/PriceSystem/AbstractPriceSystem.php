@@ -10,13 +10,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
- * Class OnlineShop_Framework_Impl_AbstractPriceSystem
+ * Class AbstractPriceSystem
  *
  * abstract implementation for price systems
  */
-abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineShop_Framework_IPriceSystem {
+abstract class AbstractPriceSystem implements IPriceSystem {
 
     protected $config;
 
@@ -26,13 +27,13 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineSh
 
 
      /**
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
+     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
      * @param int | string $quantityScale
-     *    quantityScale - numeric or string (allowed values: OnlineShop_Framework_IPriceInfo::MIN_PRICE
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable[] $products
-     * @return OnlineShop_Framework_Pricing_IPriceInfo
+     *    quantityScale - numeric or string (allowed values: \OnlineShop\Framework\PriceSystem\IPriceInfo::MIN_PRICE
+     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable[] $products
+     * @return IPriceInfo
      */
-    public function getPriceInfo(OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = null, $products = null) {
+    public function getPriceInfo(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = null, $products = null) {
         return $this->initPriceInfoInstance($quantityScale,$abstractProduct,$products);
     }
 
@@ -43,12 +44,12 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineSh
      * @param $quantityScale
      * @param $product
      * @param $products
-     * @return OnlineShop_Framework_Pricing_IPriceInfo
+     * @return IPriceInfo
      */
     protected function initPriceInfoInstance($quantityScale,$product,$products) {
         $priceInfo = $this->createPriceInfoInstance($quantityScale,$product,$products);
 
-        if($quantityScale !== OnlineShop_Framework_IPriceInfo::MIN_PRICE)
+        if($quantityScale !== IPriceInfo::MIN_PRICE)
         {
             $priceInfo->setQuantity($quantityScale);
         }
@@ -58,7 +59,7 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineSh
         $priceInfo->setPriceSystem($this);
 
         // apply pricing rules
-        $priceInfoWithRules = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
+        $priceInfoWithRules = \OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
 
         return $priceInfoWithRules;
 
@@ -72,7 +73,7 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem implements OnlineSh
      * @param $products
      *
      * @internal param $infoConstructorParams
-     * @return OnlineShop_Framework_AbstractPriceInfo
+     * @return AbstractPriceInfo
      */
     abstract function createPriceInfoInstance($quantityScale,$product,$products);
 }

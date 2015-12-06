@@ -45,10 +45,10 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
 
 
     /**
-     * @param OnlineShop_Framework_IPriceInfo           $priceInfo
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo           $priceInfo
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
      */
-    public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo, OnlineShop_Framework_Pricing_IEnvironment $environment)
+    public function __construct(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo, OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
         $this->priceInfo = $priceInfo;
         $this->environment = $environment;
@@ -58,7 +58,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     /**
      * @param OnlineShop_Framework_Pricing_IRule $rule
      *
-     * @return OnlineShop_Framework_IPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function addRule(OnlineShop_Framework_Pricing_IRule $rule)
     {
@@ -120,7 +120,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getPrice()
     {
@@ -155,7 +155,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getTotalPrice()
     {
@@ -186,7 +186,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
 
     /**
      * @param int|string $quantity
-     * numeric quantity or constant OnlineShop_Framework_IPriceInfo::MIN_PRICE
+     * numeric quantity or constant \OnlineShop\Framework\PriceSystem\IPriceInfo::MIN_PRICE
      */
     public function setQuantity($quantity)
     {
@@ -194,7 +194,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
-     * @param OnlineShop_Framework_IPriceSystem $priceSystem
+     * @param \OnlineShop\Framework\PriceSystem\IPriceSystem $priceSystem
      *
      * @return OnlineShop_Framework_Pricing_IPriceInfo
      */
@@ -257,7 +257,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getOriginalPrice()
     {
@@ -265,7 +265,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
     }
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getOriginalTotalPrice()
     {
@@ -284,7 +284,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
 
     /**
      * get discount rate
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getDiscount()
     {
@@ -299,7 +299,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo implements OnlineShop_Framewor
 
     /**
      * get total discount rate
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getTotalDiscount()
     {

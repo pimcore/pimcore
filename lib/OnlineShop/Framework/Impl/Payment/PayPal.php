@@ -78,14 +78,14 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
 
     /**
      * start payment
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param array                       $config
      *
      * @return string
      * @throws Exception
      * @link https://devtools-paypal.com/apiexplorer/PayPalAPIs
      */
-    public function initPayment(OnlineShop_Framework_IPrice $price, array $config)
+    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
     {
         // check params
         $required = [  'ReturnURL' => null
@@ -183,7 +183,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
 
 
         // restore price object for payment status
-        $price = new OnlineShop_Framework_Impl_Price($response['amount'], new Zend_Currency($response['currency']));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'], new Zend_Currency($response['currency']));
 
 
         // execute
@@ -218,12 +218,12 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
     /**
      * execute payment
      *
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
      * @return OnlineShop_Framework_Payment_IStatus
      */
-    public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
+    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
         // Execute payment
         $x = new stdClass;
@@ -284,24 +284,24 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
     /**
      * execute credit
      *
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      * @param                             $transactionId
      *
      * @return OnlineShop_Framework_Payment_IStatus
      */
-    public function executeCredit(OnlineShop_Framework_IPrice $price, $reference, $transactionId)
+    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
     }
 
 
     /**
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      *
      * @return stdClass
      */
-    protected function createPaymentDetails(OnlineShop_Framework_IPrice $price) # OnlineShop_Framework_AbstractOrder $order
+    protected function createPaymentDetails(\OnlineShop\Framework\PriceSystem\IPrice $price) # OnlineShop_Framework_AbstractOrder $order
     {
         // create order total
         $paymentDetails = new stdClass();

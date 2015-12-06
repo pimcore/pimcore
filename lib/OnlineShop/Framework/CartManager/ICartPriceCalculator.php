@@ -38,7 +38,7 @@ interface ICartPriceCalculator {
     /**
      * returns sub total of cart
      *
-     * @return \OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
      */
     public function getSubTotal();
 
@@ -52,7 +52,7 @@ interface ICartPriceCalculator {
     /**
      * returns grand total of cart
      *
-     * @return \OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
      */
     public function getGrandTotal();
 

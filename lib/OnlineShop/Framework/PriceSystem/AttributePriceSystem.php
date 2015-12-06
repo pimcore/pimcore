@@ -10,13 +10,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
- * Class OnlineShop_Framework_Impl_AttributePriceSystem
+ * Class AttributePriceSystem
  *
  * price system implementation for attribute price system
  */
-class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framework_Impl_CachingPriceSystem implements OnlineShop_Framework_IPriceSystem {
+class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
 
     /**
      * @param $productIds
@@ -25,10 +26,10 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
      * @param $order
      * @param $offset
      * @param $limit
-     * @throws Exception
+     * @throws \Exception
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit) {
-        throw new Exception("not supported yet");
+        throw new \Exception("not supported yet");
     }
 
     /**
@@ -37,7 +38,7 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
      * @param $products
      *
      * @internal param $infoConstructorParams
-     * @return OnlineShop_Framework_AbstractPriceInfo
+     * @return AbstractPriceInfo
      */
     function createPriceInfoInstance($quantityScale, $product, $products) {
 
@@ -45,7 +46,7 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
         $price = $this->getPriceClassInstance($amount);
         $totalPrice = $this->getPriceClassInstance($amount * $quantityScale);
 
-        return new OnlineShop_Framework_Impl_AttributePriceInfo($price, $quantityScale, $totalPrice);
+        return new AttributePriceInfo($price, $quantityScale, $totalPrice);
     }
 
     /**
@@ -54,7 +55,7 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
      * @param $product
      * @param $products
      * @return float
-     * @throws Exception
+     * @throws \Exception
      */
     protected function calculateAmount($product, $products) {
         $getter = "get" . ucfirst($this->config->attributename);
@@ -64,7 +65,7 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
                 $sum = 0;
                 foreach($products as $p) {
 
-                    if($p instanceof OnlineShop_Framework_AbstractSetProductEntry) {
+                    if($p instanceof \OnlineShop_Framework_AbstractSetProductEntry) {
                         $sum += $p->getProduct()->$getter() * $p->getQuantity();
                     } else {
                         $sum += $p->$getter();
@@ -81,27 +82,27 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
     /**
      * returns default currency based on environment settings
      *
-     * @return Zend_Currency
+     * @return \Zend_Currency
      */
     protected function getDefaultCurrency() {
-        return new \Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return new \Zend_Currency(\OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
     }
 
     /**
-     * creates instance of OnlineShop_Framework_IPrice
+     * creates instance of \OnlineShop\Framework\PriceSystem\IPrice
      *
      * @param $amount
-     * @return OnlineShop_Framework_IPrice
-     * @throws Exception
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @throws \Exception
      */
     protected function getPriceClassInstance($amount) {
         if($this->config->priceclass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);
-            if(!$price instanceof OnlineShop_Framework_IPrice) {
-                throw new Exception("Price Class does not implement OnlineShop_Framework_IPrice");
+            if(!$price instanceof \OnlineShop\Framework\PriceSystem\IPrice) {
+                throw new \Exception('Price Class does not implement \OnlineShop\Framework\PriceSystem\IPrice');
             }
         } else {
-            $price = new OnlineShop_Framework_Impl_Price($amount, $this->getDefaultCurrency(), false);
+            $price = new Price($amount, $this->getDefaultCurrency(), false);
         }
         return $price;
     }

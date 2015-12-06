@@ -77,19 +77,19 @@ interface ICartItem {
 
     /**
      * @abstract
-     * @return \OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getPrice();
 
     /**
      * @abstract
-     * @return \OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getTotalPrice();
 
     /**
      * @abstract
-     * @return \OnlineShop_Framework_IPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function getPriceInfo();
 

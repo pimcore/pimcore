@@ -171,7 +171,7 @@ $paymentInfo = $orderAgent->startPayment();
 
 
 // execute payment
-$amount = new OnlineShop_Framework_Impl_Price( 125.95, $orderAgent->getCurrency() );
+$amount = new \OnlineShop\Framework\PriceSystem\Price( 125.95, $orderAgent->getCurrency() );
 $paymentStatus = $paymentProvider->executeDebit( $amount, $paymentInfo->getInternalPaymentId() );
 
 

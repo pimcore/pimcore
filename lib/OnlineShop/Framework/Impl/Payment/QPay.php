@@ -81,14 +81,14 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
     /**
      * start payment
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param array                       $config
      *
      * @return Zend_Form
      * @throws Exception
      * @throws Zend_Form_Exception
      */
-    public function initPayment(OnlineShop_Framework_IPrice $price, array $config)
+    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
     {
         // check params
         $required = [  'successURL' => null
@@ -235,7 +235,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
 
         // restore price object for payment status
-        $price = new OnlineShop_Framework_Impl_Price($authorizedData['amount'], new Zend_Currency($authorizedData['currency'], OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new Zend_Currency($authorizedData['currency'], OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
 
 
         return new OnlineShop_Framework_Impl_Payment_Status(
@@ -277,13 +277,13 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
     /**
      * execute payment
      *
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
      * @return OnlineShop_Framework_Payment_IStatus
      * @throws Exception
      */
-    public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
+    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
         # https://integration.wirecard.at/doku.php/wcp:toolkit_light:start
         # https://integration.wirecard.at/doku.php/wcs:backend_operations?s[]=deposit
@@ -324,7 +324,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         else
         {
             // default clearing auth
-            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'], new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
+            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'], new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             $request = [
                 'customerId' => $this->customer
@@ -405,13 +405,13 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
     /**
      * execute credit
      *
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      * @param                             $transactionId
      *
      * @return OnlineShop_Framework_Payment_IStatus
      */
-    public function executeCredit(OnlineShop_Framework_IPrice $price, $reference, $transactionId)
+    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
     }

@@ -11,18 +11,18 @@
  */
 
 
-interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_IPriceInfo
+interface OnlineShop_Framework_Pricing_IPriceInfo extends \OnlineShop\Framework\PriceSystem\IPriceInfo
 {
     /**
-     * @param OnlineShop_Framework_IPriceInfo           $priceInfo
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo           $priceInfo
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
      */
-    public function __construct(OnlineShop_Framework_IPriceInfo $priceInfo, OnlineShop_Framework_Pricing_IEnvironment $environment);
+    public function __construct(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo, OnlineShop_Framework_Pricing_IEnvironment $environment);
 
     /**
      * @param OnlineShop_Framework_Pricing_IRule $rule
      *
-     * @return OnlineShop_Framework_IPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function addRule(OnlineShop_Framework_Pricing_IRule $rule);
 
@@ -47,12 +47,12 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
     public function getAmount();
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getOriginalPrice();
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getOriginalTotalPrice();
 
@@ -64,7 +64,7 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
     /**
      * @param OnlineShop_Framework_Pricing_IEnvironment $environment
      *
-     * @return OnlineShop_Framework_IPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function setEnvironment(OnlineShop_Framework_Pricing_IEnvironment $environment);
 
@@ -74,12 +74,12 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends OnlineShop_Framework_I
     public function hasDiscount();
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getDiscount();
 
     /**
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getTotalDiscount();
 

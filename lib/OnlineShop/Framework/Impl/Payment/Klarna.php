@@ -77,14 +77,14 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
 
     /**
      * start payment
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param array                       $config
      * @param \OnlineShop\Framework\CartManager\ICart  $cart
      *
      * @return string
      * @throws Exception
      */
-    public function initPayment(OnlineShop_Framework_IPrice $price, array $config, \OnlineShop\Framework\CartManager\ICart $cart = null)
+    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
         // check params
         $required = [  'purchase_country' => null
@@ -196,13 +196,13 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
     /**
      * execute payment
      *
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
      * @return OnlineShop_Framework_Payment_IStatus
      * @throws Exception
      */
-    public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
+    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
         if( $price )
         {
@@ -242,14 +242,14 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
     /**
      * execute credit
      *
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      * @param                             $transactionId
      *
      * @return OnlineShop_Framework_Payment_IStatus
      * @see http://developers.klarna.com/en/at+php/kco-v2/order-management-api#introduction
      */
-    public function executeCredit(OnlineShop_Framework_IPrice $price, $reference, $transactionId)
+    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
         throw new \Exception('not implemented');

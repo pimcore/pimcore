@@ -10,15 +10,16 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
  * Abstract base class price info
  */
- class OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo {
+ class AbstractPriceInfo implements IPriceInfo {
 
      /**
       * @static
-      * @return OnlineShop_Framework_AbstractPriceInfo
+      * @return AbstractPriceInfo
       */
     public static function getInstance(){
         return new static(func_get_args());
@@ -26,7 +27,7 @@
 
 
      /**
-     * @var \OnlineShop_Framework_IPriceSystem
+     * @var \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
     private $priceSystem;
 
@@ -35,18 +36,18 @@
      protected $quantity;
 
      /**
-      * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
+      * @var \OnlineShop_Framework_ProductInterfaces_ICheckoutable
       */
      protected $product;
 
      /**
-      * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
+      * @var \OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
       */
      protected $products;
 
     /**
      * @param int|string $quantity
-     * numeric quantity or constant OnlineShop_Framework_IPriceInfo::MIN_PRICE
+     * numeric quantity or constant IPriceInfo::MIN_PRICE
      */
     public function setQuantity($quantity) {
         $this->quantity = $quantity;
@@ -69,36 +70,36 @@
     }
 
     /**
-     * @param \OnlineShop_Framework_IPriceSystem $priceSystem
+     * @param IPriceSystem $priceSystem
      */
     public function setPriceSystem($priceSystem) {
         $this->priceSystem = $priceSystem;
     }
 
     /**
-     * @return \OnlineShop_Framework_IPriceSystem
+     * @return IPriceSystem
      */
     protected  function getPriceSystem() {
         return $this->priceSystem;
     }
 
      /**
-      * @throws OnlineShop_Framework_Exception_UnsupportedException
-      * @return OnlineShop_Framework_IPrice
+      * @throws \OnlineShop_Framework_Exception_UnsupportedException
+      * @return IPrice
       */
      public function getPrice() {
-         throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+         throw new \OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
      /**
-      * @throws OnlineShop_Framework_Exception_UnsupportedException
-      * @return OnlineShop_Framework_IPrice
+      * @throws \OnlineShop_Framework_Exception_UnsupportedException
+      * @return IPrice
       */
      public function getTotalPrice() {
-         throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+         throw new \OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
-     public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
+     public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
          $this->product = $product;
      }
 

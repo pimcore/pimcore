@@ -61,11 +61,11 @@
 
         <pricesystems>
             <!-- Define one or more price systems. The products getPriceSystemName method need to return a name here defined -->
-            <pricesystem name="default" class="OnlineShop_Framework_Impl_AttributePriceSystem">
+            <pricesystem name="default" class="\OnlineShop\Framework\PriceSystem\AttributePriceSystem">
                 <config attributename="price" />
             </pricesystem>
 
-            <pricesystem name="defaultOfferToolPriceSystem" class="OnlineShop_Framework_Impl_AttributePriceSystem">
+            <pricesystem name="defaultOfferToolPriceSystem" class="\OnlineShop\Framework\PriceSystem\AttributePriceSystem">
                 <config attributename="price" />
             </pricesystem>
 

@@ -26,10 +26,10 @@ interface ICartPriceModificator {
     /**
      * function which modifies the current sub total price
      *
-     * @param \OnlineShop_Framework_IPrice  $currentSubTotal  - current sub total which is modified and returned
+     * @param \OnlineShop\Framework\PriceSystem\IPrice  $currentSubTotal  - current sub total which is modified and returned
      * @param ICart                         $cart             - cart
      * @return \OnlineShop_Framework_IModificatedPrice
      */
-    public function modify(\OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart);
 
 }

@@ -147,7 +147,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return OnlineShop_Framework_IPriceSystem
+     * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
     public function getPriceSystemImplementation() {
         return OnlineShop_Framework_Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
@@ -166,7 +166,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * returns price for given quantity scale
      *
      * @param int $quantityScale
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop\Framework\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = 1) {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
@@ -178,7 +178,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
-     * @return OnlineShop_Framework_AbstractPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1) {
         return $this->getPriceSystemImplementation()->getPriceInfo($this,$quantityScale);

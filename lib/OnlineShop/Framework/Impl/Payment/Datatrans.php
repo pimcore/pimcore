@@ -95,7 +95,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
     /**
      * start payment
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param array                       $config
      *
      * @return Zend_Form
@@ -104,7 +104,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @see https://pilot.datatrans.biz/showcase/doc/Technical_Implementation_Guide.pdf
      * @see http://pilot.datatrans.biz/showcase/doc/XML_Authorisation.pdf
      */
-    public function initPayment(OnlineShop_Framework_IPrice $price, array $config)
+    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
     {
         // check params
         $required = [  'successUrl' => null
@@ -252,7 +252,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
         // restore price object for payment status
-        $price = new OnlineShop_Framework_Impl_Price($response['amount'] / 100, new Zend_Currency($response['currency'], $this->currencyLocale));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'] / 100, new Zend_Currency($response['currency'], $this->currencyLocale));
 
 
         $paymentState = null;
@@ -289,13 +289,13 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
     /**
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
      * @return OnlineShop_Framework_Impl_Payment_Status|OnlineShop_Framework_Payment_IStatus
      * @throws Exception
      */
-    public function executeDebit(OnlineShop_Framework_IPrice $price = null, $reference = null)
+    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
         $uppTransactionId = null;
 
@@ -303,7 +303,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
             // restore price object for payment status
-            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
+            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
@@ -376,18 +376,18 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
     /**
      * gutschrift ausführen
-     * @param OnlineShop_Framework_IPrice $price
+     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      * @param string                      $transactionId
      *
      * @return OnlineShop_Framework_Payment_IStatus
      */
-    public function executeCredit(OnlineShop_Framework_IPrice $price, $reference, $transactionId)
+    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
             // restore price object for payment status
-            $price = new OnlineShop_Framework_Impl_Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
+            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(

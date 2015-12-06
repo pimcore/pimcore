@@ -10,14 +10,15 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PriceSystem;
 
 /**
- * Class OnlineShop_Framework_Impl_LazyLoadingPriceInfo
+ * Class LazyLoadingPriceInfo
  *
  * Base implementation for a lazy loading price info
  *
  */
-class OnlineShop_Framework_Impl_LazyLoadingPriceInfo extends OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo
+class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
 {
     public static function getInstance()
     {
@@ -45,7 +46,7 @@ class OnlineShop_Framework_Impl_LazyLoadingPriceInfo extends OnlineShop_Framewor
                 $priceInfo = $this->getPriceSystem()->$method($this->getProduct(), $this->getQuantity(), $this->getProducts());
 
             } else {
-                throw new OnlineShop_Framework_Exception_UnsupportedException($name . " is not supported for " . get_class($this));
+                throw new \OnlineShop_Framework_Exception_UnsupportedException($name . " is not supported for " . get_class($this));
             }
             if ($priceInfo != null && method_exists($priceInfo, "setPriceSystem")) {
                 $priceInfo->setPriceSystem($this->getPriceSystem());
