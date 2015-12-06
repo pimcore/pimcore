@@ -10,8 +10,11 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CartManager\CartPriceModificator;
 
-class OnlineShop_Framework_Impl_CartPriceModificator_Discount implements OnlineShop_Framework_CartPriceModificator_IDiscount
+use OnlineShop\Framework\CartManager\ICart;
+
+class Discount implements IDiscount
 {
     /**
      * @var float
@@ -19,15 +22,15 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Discount implements OnlineS
     protected $amount = 0;
 
     /**
-     * @var null|OnlineShop_Framework_Pricing_IRule
+     * @var null|\OnlineShop_Framework_Pricing_IRule
      */
     protected $rule = null;
 
 
     /**
-     * @param OnlineShop_Framework_Pricing_IRule $rule
+     * @param \OnlineShop_Framework_Pricing_IRule $rule
      */
-    public function __construct(OnlineShop_Framework_Pricing_IRule $rule) {
+    public function __construct(\OnlineShop_Framework_Pricing_IRule $rule) {
         $this->rule = $rule;
     }
 
@@ -48,22 +51,22 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Discount implements OnlineS
     /**
      * modify price
      *
-     * @param OnlineShop_Framework_IPrice $currentSubTotal
-     * @param \OnlineShop\Framework\CartManager\ICart  $cart
+     * @param \OnlineShop_Framework_IPrice $currentSubTotal
+     * @param ICart  $cart
      *
-     * @return OnlineShop_Framework_IPrice
+     * @return \OnlineShop_Framework_IPrice
      */
-    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function modify(\OnlineShop_Framework_IPrice $currentSubTotal, ICart $cart)
     {
         if($this->getAmount() != 0) {
-            return new OnlineShop_Framework_Impl_ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+            return new \OnlineShop_Framework_Impl_ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
         }
     }
 
     /**
      * @param float $amount
      *
-     * @return OnlineShop_Framework_CartPriceModificator_IDiscount
+     * @return \OnlineShop\Framework\CartManager\CartPriceModificator\IDiscount
      */
     public function setAmount($amount)
     {

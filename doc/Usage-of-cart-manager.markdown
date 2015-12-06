@@ -17,11 +17,11 @@ The configuration takes place in the OnlineShopConfig.xml
         </cart>
 
         <!-- default price calculator for cart -->
-        <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
+        <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
             <config>
                 <!-- price modificators for cart, e.g. for shipping-cost, special discounts, ... -->
                 <modificators>
-                    <shipping class="OnlineShop_Framework_Impl_CartPriceModificator_Shipping">
+                    <shipping class="\OnlineShop\Framework\CartManager\CartPriceModificator\Shipping">
                         <config charge="5.90"/>
                     </shipping>
                 </modificators>
@@ -35,7 +35,7 @@ The configuration takes place in the OnlineShopConfig.xml
         -->
         <tenants>
             <noShipping>
-                <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
+                <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
                     <config>
                         <modificators>
                         </modificators>

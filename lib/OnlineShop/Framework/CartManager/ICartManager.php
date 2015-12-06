@@ -106,7 +106,7 @@ interface ICartManager extends Framework\IComponent {
     /**
      * creates price calculator for given cart
      *
-     * @return \OnlineShop_Framework_ICartPriceCalculator
+     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
      */
     public function getCartPriceCalculator(\OnlineShop\Framework\CartManager\ICart $cart);
 
@@ -116,7 +116,7 @@ interface ICartManager extends Framework\IComponent {
      * use getCartPriceCalculator instead
      *
      * @abstract
-     * @return \OnlineShop_Framework_ICartPriceCalculator
+     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
      */
     public function getCartPriceCalcuator(\OnlineShop\Framework\CartManager\ICart $cart);
 

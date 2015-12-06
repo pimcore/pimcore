@@ -10,13 +10,15 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CartManager;
+use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
 
 /**
- * Interface OnlineShop_Framework_ICartPriceCalculator
+ * Interface ICartPriceCalculator
  */
-interface OnlineShop_Framework_ICartPriceCalculator {
+interface ICartPriceCalculator {
 
-    public function __construct($config, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function __construct($config, ICart $cart);
 
     /**
      * calculates cart sums and saves results
@@ -36,46 +38,46 @@ interface OnlineShop_Framework_ICartPriceCalculator {
     /**
      * returns sub total of cart
      *
-     * @return OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop_Framework_IPrice $price
      */
     public function getSubTotal();
 
     /**
      * returns all price modifications which apply for this cart
      *
-     * @return OnlineShop_Framework_IModificatedPrice[] $priceModification
+     * @return \OnlineShop_Framework_IModificatedPrice[] $priceModification
      */
     public function getPriceModifications();
 
     /**
      * returns grand total of cart
      *
-     * @return OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop_Framework_IPrice $price
      */
     public function getGrandTotal();
 
     /**
      * manually add a modificator to this cart. by default they are loaded from the configuration
      *
-     * @param OnlineShop_Framework_ICartPriceModificator $modificator
+     * @param ICartPriceModificator $modificator
      *
-     * @return OnlineShop_Framework_ICartPriceCalculator
+     * @return ICartPriceCalculator
      */
-    public function addModificator(OnlineShop_Framework_ICartPriceModificator $modificator);
+    public function addModificator(ICartPriceModificator $modificator);
 
     /**
      * returns all modificators
      *
-     * @return OnlineShop_Framework_ICartPriceModificator[]
+     * @return \OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator[]
      */
     public function getModificators();
 
     /**
      * manually remove a modificator from this cart.
      *
-     * @param OnlineShop_Framework_ICartPriceModificator $modificator
+     * @param ICartPriceModificator $modificator
      *
-     * @return OnlineShop_Framework_ICartPriceCalculator
+     * @return ICartPriceCalculator
      */
-    public function removeModificator(OnlineShop_Framework_ICartPriceModificator $modificator);
+    public function removeModificator(ICartPriceModificator $modificator);
 }

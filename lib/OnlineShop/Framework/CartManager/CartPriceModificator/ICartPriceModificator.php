@@ -10,11 +10,13 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CartManager\CartPriceModificator;
+use OnlineShop\Framework\CartManager\ICart;
 
 /**
- * Interface OnlineShop_Framework_ICartPriceModificator
+ * Interface ICartPriceModificator
  */
-interface OnlineShop_Framework_ICartPriceModificator {
+interface ICartPriceModificator {
 
     /**
      * @return string
@@ -24,10 +26,10 @@ interface OnlineShop_Framework_ICartPriceModificator {
     /**
      * function which modifies the current sub total price
      *
-     * @param OnlineShop_Framework_IPrice  $currentSubTotal  - current sub total which is modified and returned
-     * @param OnlineShop_Framework_ICart   $cart             - cart
-     * @return OnlineShop_Framework_IModificatedPrice
+     * @param \OnlineShop_Framework_IPrice  $currentSubTotal  - current sub total which is modified and returned
+     * @param ICart                         $cart             - cart
+     * @return \OnlineShop_Framework_IModificatedPrice
      */
-    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function modify(\OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart);
 
 }

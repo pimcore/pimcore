@@ -67,7 +67,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     protected $giftItems = array();
 
     /**
-     * @var \OnlineShop_Framework_ICartPriceCalculator
+     * @var \OnlineShop\Framework\CartManager\ICartPriceCalculator
      */
     protected $priceCalcuator;
 
@@ -638,7 +638,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
 
     /**
-     * @return \OnlineShop_Framework_ICartPriceCalculator
+     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
      */
     public function getPriceCalculator() {
 

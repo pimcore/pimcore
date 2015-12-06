@@ -10,36 +10,24 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CartManager\CartPriceModificator;
 
 /**
- * Interface for price implementations of online shop framework
+ * Interface IShipping
+ *
+ * special interface for shipping price modifications - needed for pricing rule that remove shipping costs
  */
-interface OnlineShop_Framework_IPrice {
+interface IShipping extends ICartPriceModificator
+{
+    /**
+     * @param float $charge
+     *
+     * @return ICartPriceModificator
+     */
+    public function setCharge($charge);
 
     /**
-     * @abstract
      * @return float
      */
-    public function getAmount();
-
-    /**
-     * @abstract
-     * @return Zend_Currency
-     */
-    public function getCurrency();
-
-    /**
-     * @abstract
-     * @return bool
-     */
-    public function isMinPrice();
-
-    /**
-     * @abstract
-     * @param float $amount
-     * @return void
-     */
-    public function setAmount($amount);
-
+    public function getCharge();
 }
- 

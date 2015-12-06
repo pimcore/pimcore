@@ -39,7 +39,11 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CartManager\Cart\Listing\Dao' => 'OnlineShop_Framework_Impl_Cart_List_Resource',
         'OnlineShop\Framework\CartManager\Cart\Listing' => 'OnlineShop_Framework_Impl_Cart_List',
         'OnlineShop\Framework\CartManager\Cart\Dao' => 'OnlineShop_Framework_Impl_Cart_Resource',
-        'OnlineShop\Framework\CartManager\MultiCartManager' => 'OnlineShop_Framework_Impl_MultiCartManager'
+        'OnlineShop\Framework\CartManager\MultiCartManager' => 'OnlineShop_Framework_Impl_MultiCartManager',
+        'OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator' => 'OnlineShop_Framework_ICartPriceModificator',
+        'OnlineShop\Framework\CartManager\CartPriceModificator\Discount' => 'OnlineShop_Framework_CartPriceModificator_Discount',
+        'OnlineShop\Framework\CartManager\CartPriceModificator\Shipping' => 'OnlineShop_Framework_CartPriceModificator_Shipping',
+        'OnlineShop\Framework\CartManager\CartPriceCalculator' => 'OnlineShop_Framework_CartPriceCalculator',
 
     ];
 
@@ -49,18 +53,21 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CartManager\ICartManager' => 'OnlineShop_Framework_ICartManager',
         'OnlineShop\Framework\CartManager\ICart' => 'OnlineShop_Framework_ICart',
         'OnlineShop\Framework\CartManager\ICartItem' => 'OnlineShop_Framework_ICartItem',
+        'OnlineShop\Framework\CartManager\CartPriceModificator\IDiscount' => 'OnlineShop_Framework_CartPriceModificator_IDiscount',
+        'OnlineShop\Framework\CartManager\CartPriceModificator\IShipping' => 'OnlineShop_Framework_CartPriceModificator_IShipping',
+        'OnlineShop\Framework\CartManager\ICartPriceCalculator' => 'OnlineShop_Framework_ICartPriceCalculator',
 
     ];
 
 
 
     public static function loadMapping() {
-        foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
+        foreach(self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
             class_alias($withNamespace, $withoutNamespace);
 //            class_alias($withoutNamespace, $withoutNamespace);
         }
 
-        foreach(self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
+        foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
             class_alias($withNamespace, $withoutNamespace);
 //            class_alias($withoutNamespace, $withoutNamespace);
         }

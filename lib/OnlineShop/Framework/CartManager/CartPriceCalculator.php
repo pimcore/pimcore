@@ -10,11 +10,13 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CartManager;
+use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
 
 /**
- * Class OnlineShop_Framework_Impl_CartPriceCalculator
+ * Class CartPriceCalculator
  */
-class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framework_ICartPriceCalculator {
+class CartPriceCalculator implements ICartPriceCalculator {
 
     /**
      * @var bool
@@ -22,36 +24,36 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     protected $isCalculated = false;
 
     /**
-     * @var OnlineShop_Framework_IPrice
+     * @var \OnlineShop_Framework_IPrice
      */
     protected $subTotal;
 
     /**
-     * @var OnlineShop_Framework_IPrice
+     * @var \OnlineShop_Framework_IPrice
      */
     protected $gradTotal;
 
     /**
-     * @var OnlineShop_Framework_ICartPriceModificator[]
+     * @var ICartPriceModificator[]
      */
     protected $modificators;
 
     /**
-     * @var OnlineShop_Framework_IModificatedPrice[]
+     * @var \OnlineShop_Framework_IModificatedPrice[]
      */
     protected $modifications;
 
     /**
-     * @var \OnlineShop\Framework\CartManager\ICart
+     * @var ICart
      */
     protected $cart;
 
 
     /**
      * @param $config
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      */
-    public function __construct($config, \OnlineShop\Framework\CartManager\ICart $cart) {
+    public function __construct($config, ICart $cart) {
         $this->modificators = array();
         if(!empty($config->modificators) && is_object($config->modificators)) {
             foreach($config->modificators as $modificator) {
@@ -66,7 +68,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
 
 
     /**
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop_Framework_Exception_UnsupportedException
      */
     public function calculate() {
 
@@ -80,7 +82,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
                 }
 
                 if($currency->compare( $item->getPrice()->getCurrency() ) != 0) {
-                    throw new OnlineShop_Framework_Exception_UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
+                    throw new \OnlineShop_Framework_Exception_UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
                 }
 
                 $subTotal += $item->getTotalPrice()->getAmount();
@@ -97,7 +99,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
 
         $this->modifications = array();
         foreach($this->getModificators() as $modificator) {
-            /* @var OnlineShop_Framework_ICartPriceModificator $modificator */
+            /* @var \OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator $modificator */
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;
@@ -113,25 +115,25 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     /**
      * gets default currency object based on the default currency locale defined in the environment
      *
-     * @return Zend_Currency
+     * @return \Zend_Currency
      */
     protected function getDefaultCurrency() {
-        return new \Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return new \Zend_Currency(\OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
     }
 
     /**
      * possibility to overwrite the price object with should be used
      *
      * @param $amount
-     * @param Zend_Currency $currency
-     * @return OnlineShop_Framework_IPrice
+     * @param \Zend_Currency $currency
+     * @return \OnlineShop_Framework_IPrice
      */
     protected function getDefaultPriceObject($amount, \Zend_Currency $currency) {
-        return new OnlineShop_Framework_Impl_Price($amount, $currency);
+        return new \OnlineShop_Framework_Impl_Price($amount, $currency);
     }
 
     /**
-     * @return OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop_Framework_IPrice $price
      */
     public function getGrandTotal() {
         if(!$this->isCalculated) {
@@ -141,7 +143,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     }
 
     /**
-     * @return OnlineShop_Framework_IModificatedPrice[] $priceModification
+     * @return \OnlineShop_Framework_IModificatedPrice[] $priceModification
      */
     public function getPriceModifications() {
         if(!$this->isCalculated) {
@@ -152,7 +154,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     }
 
     /**
-     * @return OnlineShop_Framework_IPrice $price
+     * @return \OnlineShop_Framework_IPrice $price
      */
     public function getSubTotal() {
         if(!$this->isCalculated) {
@@ -170,11 +172,11 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     }
 
     /**
-     * @param OnlineShop_Framework_ICartPriceModificator $modificator
+     * @param ICartPriceModificator $modificator
      *
-     * @return OnlineShop_Framework_ICartPriceCalculator
+     * @return ICartPriceCalculator
      */
-    public function addModificator(OnlineShop_Framework_ICartPriceModificator $modificator)
+    public function addModificator(ICartPriceModificator $modificator)
     {
         $this->reset();
         $this->modificators[] = $modificator;
@@ -183,7 +185,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     }
 
     /**
-     * @return OnlineShop_Framework_ICartPriceModificator[]
+     * @return ICartPriceModificator[]
      */
     public function getModificators()
     {
@@ -191,11 +193,11 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
     }
 
     /**
-     * @param OnlineShop_Framework_ICartPriceModificator $modificator
+     * @param ICartPriceModificator $modificator
      *
-     * @return OnlineShop_Framework_ICartPriceCalculator
+     * @return ICartPriceCalculator
      */
-    public function removeModificator(OnlineShop_Framework_ICartPriceModificator $modificator)
+    public function removeModificator(ICartPriceModificator $modificator)
     {
         foreach($this->modificators as $key => $mod) {
             if($mod === $modificator) {

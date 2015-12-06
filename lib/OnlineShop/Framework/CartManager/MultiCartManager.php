@@ -67,7 +67,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
             if(Tool::classExists($config->pricecalculator->class)) {
 
                 $tempCalc = new $config->pricecalculator->class($config->pricecalculator->config, $tempCart);
-                if(!($tempCalc instanceof \OnlineShop_Framework_ICartPriceCalculator)) {
+                if(!($tempCalc instanceof \OnlineShop\Framework\CartManager\ICartPriceCalculator)) {
                     throw new \OnlineShop_Framework_Exception_InvalidConfigException("Cart class " . $config->pricecalculator->class . " does not implement OnlineShop_Framework_ICartPriceCalculator.");
                 }
 
@@ -286,7 +286,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
      *
      * use getCartPriceCalculator instead
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop_Framework_ICartPriceCalculator
+     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
      */
     public function getCartPriceCalcuator(\OnlineShop\Framework\CartManager\ICart $cart) {
         return $this->getCartPriceCalculator($cart);
@@ -294,7 +294,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop_Framework_ICartPriceCalculator
+     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
      */
     public function getCartPriceCalculator(\OnlineShop\Framework\CartManager\ICart $cart) {
         return new $this->config->pricecalculator->class($this->config->pricecalculator->config, $cart);

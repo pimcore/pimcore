@@ -35,10 +35,10 @@ class OnlineShop_Framework_Impl_Pricing_Action_FreeShipping implements OnlineSho
         $list = $priceCalculator->getModificators();
         foreach($list as &$modificator)
         {
-            /* @var OnlineShop_Framework_ICartPriceModificator $modificator_ */
+            /* @var \OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator $modificator_ */
 
             // remove shipping charge
-            if($modificator instanceof OnlineShop_Framework_CartPriceModificator_IShipping) {
+            if($modificator instanceof \OnlineShop\Framework\CartManager\CartPriceModificator\IShipping) {
                 $modificator->setCharge(0);
                 $priceCalculator->reset();
             }

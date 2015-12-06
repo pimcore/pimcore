@@ -10,11 +10,13 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CartManager\CartPriceModificator;
+use OnlineShop\Framework\CartManager\ICart;
 
 /**
- * Class OnlineShop_Framework_Impl_CartPriceModificator_Shipping
+ * Class Shipping
  */
-class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineShop_Framework_CartPriceModificator_IShipping
+class Shipping implements IShipping
 {
     /**
      * @var float
@@ -22,9 +24,9 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
     protected $charge = 0;
 
     /**
-     * @param Zend_Config $config
+     * @param \Zend_Config $config
      */
-    public function __construct(Zend_Config $config = null)
+    public function __construct(\Zend_Config $config = null)
     {
         if($config && $config->charge)
         {
@@ -41,20 +43,20 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping implements OnlineS
     }
 
     /**
-     * @param OnlineShop_Framework_IPrice $currentSubTotal
-     * @param \OnlineShop\Framework\CartManager\ICart  $cart
+     * @param \OnlineShop_Framework_IPrice $currentSubTotal
+     * @param ICart  $cart
      *
-     * @return OnlineShop_Framework_IModificatedPrice
+     * @return \OnlineShop_Framework_IModificatedPrice
      */
-    public function modify(OnlineShop_Framework_IPrice $currentSubTotal, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function modify(\OnlineShop_Framework_IPrice $currentSubTotal, ICart $cart)
     {
-        return new OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new Zend_Currency(OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        return new \OnlineShop_Framework_Impl_ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
     }
 
     /**
      * @param float $charge
      *
-     * @return OnlineShop_Framework_ICartPriceModificator
+     * @return \OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator
      */
     public function setCharge($charge)
     {

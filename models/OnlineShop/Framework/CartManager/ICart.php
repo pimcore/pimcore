@@ -166,7 +166,7 @@ interface ICart {
      * returns price calculator of cart
      *
      * @abstract
-     * @return \OnlineShop_Framework_ICartPriceCalculator
+     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
      */
     public function getPriceCalculator();
 

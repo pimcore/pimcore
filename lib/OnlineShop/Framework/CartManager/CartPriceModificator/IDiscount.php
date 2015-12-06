@@ -10,23 +10,24 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CartManager\CartPriceModificator;
 
 /**
- * Interface OnlineShop_Framework_CartPriceModificator_IShipping
+ * Interface IDiscount
  *
- * special interface for shipping price modifications - needed for pricing rule that remove shipping costs
+ * special interface for price modifications added by discount pricing rules for carts
  */
-interface OnlineShop_Framework_CartPriceModificator_IShipping extends OnlineShop_Framework_ICartPriceModificator
+interface IDiscount extends ICartPriceModificator
 {
     /**
-     * @param float $charge
+     * @param float $amount
      *
-     * @return OnlineShop_Framework_ICartPriceModificator
+     * @return IDiscount
      */
-    public function setCharge($charge);
+    public function setAmount($amount);
 
     /**
      * @return float
      */
-    public function getCharge();
+    public function getAmount();
 }
