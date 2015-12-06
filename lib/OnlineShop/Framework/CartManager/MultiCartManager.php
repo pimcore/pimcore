@@ -54,7 +54,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
             if(Tool::classExists($config->cart->class)) {
                 $tempCart = new $config->cart->class($config->cart);
                 if(!($tempCart instanceof \OnlineShop\Framework\CartManager\ICart)) {
-                    throw new \OnlineShop_Framework_Exception_InvalidConfigException("Cart class " . $config->cart->class . " does not implement \OnlineShop\Framework\CartManager\ICart.");
+                    throw new \OnlineShop_Framework_Exception_InvalidConfigException("Cart class " . $config->cart->class . ' does not implement \OnlineShop\Framework\CartManager\ICart.');
                 }
             } else {
                 throw new \OnlineShop_Framework_Exception_InvalidConfigException("Cart class " . $config->cart->class . " not found.");
@@ -68,7 +68,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
 
                 $tempCalc = new $config->pricecalculator->class($config->pricecalculator->config, $tempCart);
                 if(!($tempCalc instanceof \OnlineShop\Framework\CartManager\ICartPriceCalculator)) {
-                    throw new \OnlineShop_Framework_Exception_InvalidConfigException("Cart class " . $config->pricecalculator->class . " does not implement OnlineShop_Framework_ICartPriceCalculator.");
+                    throw new \OnlineShop_Framework_Exception_InvalidConfigException("Cart class " . $config->pricecalculator->class . ' does not implement \OnlineShop\Framework\CartManager\ICartPriceCalculator.');
                 }
 
             } else {
