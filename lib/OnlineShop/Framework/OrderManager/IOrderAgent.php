@@ -13,7 +13,7 @@
 
 namespace OnlineShop\Framework\OrderManager;
 
-use OnlineShop_Framework_Factory;
+use \OnlineShop\Framework\Factory;
 use OnlineShop_Framework_IPayment;
 use OnlineShop_Framework_Payment_IStatus;
 
@@ -28,10 +28,10 @@ use Pimcore\Model\Element\Note;
 interface IOrderAgent
 {
     /**
-     * @param OnlineShop_Framework_Factory $factory
+     * @param \OnlineShop\Framework\Factory $factory
      * @param Order                        $order
      */
-    public function __construct(OnlineShop_Framework_Factory $factory, Order $order);
+    public function __construct(\OnlineShop\Framework\Factory $factory, Order $order);
 
 
     /**
@@ -136,7 +136,7 @@ interface IOrderAgent
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
      * @return \OnlineShop_Framework_AbstractOrder
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();
 

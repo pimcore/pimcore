@@ -60,7 +60,7 @@ Following elements are configured:
 #### Creating carts
 ```php
 <?php
-$manager = OnlineShop_Framework_Factory::getInstance()->getCartManager();
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
 $cartId = $manager->createCart(array('name' => $cartName));
 $cart = $manager->getCart( $cartId );
 ```
@@ -68,7 +68,7 @@ $cart = $manager->getCart( $cartId );
 #### Adding and removing products
 ```php
 <?php
-$manager = OnlineShop_Framework_Factory::getInstance()->getCartManager();
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
 $cart = $manager->getCartByName($cartName);
 
 $id = $cart->addItem( $product, $amount );
@@ -88,7 +88,7 @@ $manager->removeFromCart($cartItemId, $cartId);
 #### List products of cart
 ```php
 <?php
-$manager = OnlineShop_Framework_Factory::getInstance()->getCartManager();
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
 $cart = $manager->getCartByName($cartName);
 
 if (count($cart->getItems()) > 0) {
@@ -132,7 +132,7 @@ The current checkout tenant is set in the framework environment as follows. Once
 
 ```php
 <?php
-$environment = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+$environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 $environment->setCurrentCheckoutTenant('default');
 $environment->save();
 

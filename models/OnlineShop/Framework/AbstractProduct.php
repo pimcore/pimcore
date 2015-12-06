@@ -37,11 +37,11 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
      *
      * @param bool $inProductList
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return bool
      */
     public function isActive($inProductList = false) {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("isActive is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("isActive is not supported for " . get_class($this));
     }
 
 
@@ -50,11 +50,11 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getPriceSystemName() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
     }
 
 
@@ -83,11 +83,11 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * returns array of categories.
      * has to be overwritten either in pimcore object or mapped sub class.
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return array
      */
     public function getCategories() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getCategories is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getCategories is not supported for " . get_class($this));
     }
 
 
@@ -99,22 +99,22 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * called by default CommitOrderProcessor to get the product name to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getOSName() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getOSName is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOSName is not supported for " . get_class($this));
     }
 
     /**
      * called by default CommitOrderProcessor to get the product number to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getOSProductNumber() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
     }
 
 
@@ -123,7 +123,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getAvailabilitySystemName() {
@@ -150,7 +150,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
     public function getPriceSystemImplementation() {
-        return OnlineShop_Framework_Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
+        return \OnlineShop\Framework\Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
     /**
@@ -159,7 +159,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
      * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
      */
     public function getAvailabilitySystemImplementation() {
-        return OnlineShop_Framework_Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
+        return \OnlineShop\Framework\Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
     /**

@@ -66,7 +66,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
             $this->paymenttype = $settings->paymenttype;
         }
 
-        $this->currencyLocale = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale();
+        $this->currencyLocale = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale();
     }
 
 
@@ -235,7 +235,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new Zend_Currency($authorizedData['currency'], OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new Zend_Currency($authorizedData['currency'], \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
 
 
         return new OnlineShop_Framework_Impl_Payment_Status(

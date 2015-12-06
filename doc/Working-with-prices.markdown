@@ -124,7 +124,7 @@ if ($token = strip_tags($this->getParam('voucherToken'))) {
 
 	try{
         $this->cart->addVoucherToken($token);
-    } catch( OnlineShop_Framework_Exception_VoucherServiceException $e ){
+    } catch( \OnlineShop\Framework\Exception\VoucherServiceException $e ){
         $voucherError = $this->view->t('cart.msg-error.' . $e->getCode());
     }
 }

@@ -59,7 +59,7 @@ abstract class AbstractPriceSystem implements IPriceSystem {
         $priceInfo->setPriceSystem($this);
 
         // apply pricing rules
-        $priceInfoWithRules = \OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
+        $priceInfoWithRules = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
 
         return $priceInfoWithRules;
 

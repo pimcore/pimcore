@@ -20,7 +20,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     public $carts;
 
     public function __construct() {
-        $this->getDao()->setCartClass(\OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCartClassName());
+        $this->getDao()->setCartClass(\OnlineShop\Framework\Factory::getInstance()->getCartManager()->getCartClassName());
     }
 
     /**

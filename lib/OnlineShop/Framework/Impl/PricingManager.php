@@ -157,13 +157,13 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
      * @param string $type
      *
      * @return OnlineShop_Framework_Pricing_ICondition
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getCondition($type)
     {
         $class = $this->config->condition->$type->class;
         if($class == '')
-            throw new OnlineShop_Framework_Exception_InvalidConfigException(sprintf('getCondition class "%s" not found.', $class));
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException(sprintf('getCondition class "%s" not found.', $class));
 
         return new $class();
     }
@@ -184,7 +184,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
      * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo
      *
      * @return OnlineShop_Framework_Pricing_IPriceInfo
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getPriceInfo(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo)
     {
@@ -195,7 +195,7 @@ class OnlineShop_Framework_Impl_PricingManager implements OnlineShop_Framework_I
         $class = $this->config->priceInfo->class;
         if($class == '')
         {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));
         }
 
 

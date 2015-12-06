@@ -33,7 +33,7 @@ class IndexFieldSelectionCombo extends Select {
 
         $indexColumns = array();
         try {
-            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexColumns = $indexService->getIndexAttributes(true);
         } catch (\Exception $e) {
             \Logger::err($e);

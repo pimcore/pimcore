@@ -38,7 +38,7 @@ interface OnlineShop_Framework_IPricingManager
      * @param string $type
      *
      * @return OnlineShop_Framework_Pricing_ICondition
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getCondition($type);
 

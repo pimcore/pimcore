@@ -87,7 +87,7 @@ interface OnlineShop_Framework_ICheckoutManager {
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
      * @return null|\OnlineShop_Framework_AbstractOrder
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();
 

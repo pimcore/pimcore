@@ -24,21 +24,21 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
     /**
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getOSName() {
-        throw new \OnlineShop_Framework_Exception_UnsupportedException("getOSName is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOSName is not supported for " . get_class($this));
     }
 
     /**
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getOSProductNumber() {
-        throw new \OnlineShop_Framework_Exception_UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
     }
 
 
@@ -46,7 +46,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * defines the name of the availability system for this product.
      * for offline tool there are no availability systems implemented
      *
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getAvailabilitySystemName() {
@@ -83,7 +83,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
     public function getPriceSystemImplementation() {
-        return \OnlineShop_Framework_Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
+        return \OnlineShop\Framework\Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
     /**
@@ -92,7 +92,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
      */
     public function getAvailabilitySystemImplementation() {
-        return \OnlineShop_Framework_Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
+        return \OnlineShop\Framework\Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
     /**
@@ -144,11 +144,11 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
 
 
     /**
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return string
      */
     public function getProductGroup() {
-        throw new \OnlineShop_Framework_Exception_UnsupportedException("getProductGroup is not implemented for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getProductGroup is not implemented for " . get_class($this));
     }
 
 

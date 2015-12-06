@@ -69,7 +69,7 @@ class OrderManager implements IOrderManager
      */
     public function createOrderAgent(Order $order)
     {
-        return new $this->config->orderAgent->class( \OnlineShop_Framework_Factory::getInstance(), $order );
+        return new $this->config->orderAgent->class( \OnlineShop\Framework\Factory::getInstance(), $order );
     }
 
 
@@ -181,7 +181,7 @@ class OrderManager implements IOrderManager
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return \OnlineShop_Framework_AbstractOrder
      * @throws \Exception
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      *
      */
     public function getOrCreateOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart) {
@@ -278,7 +278,7 @@ class OrderManager implements IOrderManager
         if (is_array($voucherTokens)) {
             $flippedVoucherTokens = array_flip($voucherTokens);
 
-            $service = \OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+            $service = \OnlineShop\Framework\Factory::getInstance()->getVoucherService();
 
             if($tokenObjects = $order->getVoucherTokens()) {
                 foreach ($tokenObjects as $tokenObject) {
@@ -316,11 +316,11 @@ class OrderManager implements IOrderManager
      *
      * @param Order $order
      * @return Order
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     protected function setCurrentCustomerToOrder(\OnlineShop_Framework_AbstractOrder $order) {
         //sets customer to order - if available
-        $env = \OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 
         if(@\Pimcore\Tool::classExists("\\Pimcore\\Model\\Object\\Customer")) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
@@ -371,7 +371,7 @@ class OrderManager implements IOrderManager
      *
      * @return \OnlineShop_Framework_AbstractOrderItem
      * @throws \Exception
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item,  $parent) {
 

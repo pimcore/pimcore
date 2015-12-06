@@ -10,16 +10,13 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Exception;
 
 /**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 30.05.11
- * Time: 15:34
- * To change this template use File | Settings | File Templates.
+ * Class UnsupportedException
+ * @package OnlineShop\Framework\Exception
  */
- 
-class OnlineShop_Framework_Exception_UnsupportedException extends Exception {
+class UnsupportedException extends \Exception {
 
 
 }

@@ -85,7 +85,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      * @return \Zend_Currency
      */
     protected function getDefaultCurrency() {
-        return new \Zend_Currency(\OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale());
     }
 
     /**

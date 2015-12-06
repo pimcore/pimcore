@@ -16,7 +16,7 @@ namespace OnlineShop\Framework\Impl\OrderManager\Order;
 use OnlineShop\Framework\OrderManager\IOrderAgent;
 use OnlineShop_Framework_Payment_IStatus;
 use OnlineShop_Framework_IPayment;
-use OnlineShop_Framework_Factory;
+use \OnlineShop\Framework\Factory;
 use Exception;
 
 use Zend_Date;
@@ -45,7 +45,7 @@ class Agent implements IOrderAgent
     protected $paymentProvider;
 
     /**
-     * @var OnlineShop_Framework_Factory
+     * @var \OnlineShop\Framework\Factory
      */
     protected $factory;
 
@@ -56,10 +56,10 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @param OnlineShop_Framework_Factory $factory
+     * @param \OnlineShop\Framework\Factory $factory
      * @param Order                        $order
      */
-    public function __construct(OnlineShop_Framework_Factory $factory, Order $order)
+    public function __construct(\OnlineShop\Framework\Factory $factory, Order $order)
     {
         $this->order = $order;
         $this->factory = $factory;
@@ -367,7 +367,7 @@ class Agent implements IOrderAgent
     /**
      * @return null|\OnlineShop_Framework_AbstractPaymentInformation|PaymentInfo
      * @throws Exception
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function startPayment()
     {
@@ -437,7 +437,7 @@ class Agent implements IOrderAgent
      *  - all product numbers
      *
      * @return int
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     protected function getFingerprintOfOrder() {
         $order = $this->getOrder();
@@ -453,7 +453,7 @@ class Agent implements IOrderAgent
     /**
      * @return Order
      * @throws Exception
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment() {
         $order = $this->getOrder();
@@ -465,7 +465,7 @@ class Agent implements IOrderAgent
             $order->setOrderState(null);
             $order->save();
         } else {
-            throw new \OnlineShop_Framework_Exception_UnsupportedException("Cancel started order payment not possible");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Cancel started order payment not possible");
         }
 
 
@@ -477,7 +477,7 @@ class Agent implements IOrderAgent
      * @param OnlineShop_Framework_Payment_IStatus $status
      * @return $this
      * @throws Exception
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function updatePayment(OnlineShop_Framework_Payment_IStatus $status)
     {
@@ -539,7 +539,7 @@ class Agent implements IOrderAgent
             $currentPaymentInformation->setMessage( $currentPaymentInformation->getMessage() . " -> order fingerprint changed since start payment. throwing exception!");
             $order->setOrderState(null);
             $order->save();
-            throw new \OnlineShop_Framework_Exception_UnsupportedException("order fingerprint changed since start payment. Old internal status = " . $status->getInternalPaymentId() . " -> current internal status id = " . $currentOrderFingerPrint);
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("order fingerprint changed since start payment. Old internal status = " . $status->getInternalPaymentId() . " -> current internal status id = " . $currentOrderFingerPrint);
 
         } else {
 

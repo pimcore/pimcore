@@ -48,7 +48,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
 
         // init
-        $this->orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $this->orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
     }
 
 

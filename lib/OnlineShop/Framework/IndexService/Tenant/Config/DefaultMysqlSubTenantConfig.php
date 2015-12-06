@@ -35,7 +35,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfi
 
 
     public function getJoins() {
-        $currentSubTenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
+        $currentSubTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
         if($currentSubTenant) {
             return " INNER JOIN " . $this->getTenantRelationTablename() . " b ON a.o_id = b.o_id ";
         } else {
@@ -45,7 +45,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfi
     }
 
     public function getCondition() {
-        $currentSubTenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
+        $currentSubTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
         if($currentSubTenant) {
             return "b.subtenant_id = " . $currentSubTenant;
         } else {

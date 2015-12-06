@@ -19,21 +19,21 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     /**
      * returns mandatory products for a set product
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return OnlineShop_Framework_AbstractSetProductEntry[]
      */
     public function getMandatoryProductEntries() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
     }
 
     /**
      * returns optional products for a set product
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return OnlineShop_Framework_AbstractSetProductEntry[]
      */
     public function getOptionalProductEntries() {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
     }
 
 
@@ -71,7 +71,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     /**
      * Delivers price of set product with given products
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
      * @param int $quantityScale
      * @return \OnlineShop\Framework\PriceSystem\IPrice
@@ -84,7 +84,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     /**
      * Delivers priceInfo of setproduct with given products
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
      * @param int $quantityScale
      * @return stdClass
@@ -99,7 +99,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     /**
     * Delivers min price for given products or with default mandatory products of set product
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @param null $quantityScale
      * @param null $products
      * @return \OnlineShop\Framework\PriceSystem\IPrice
@@ -114,7 +114,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     /**
      * Delivers priceinfo with min price for given products or with  default mandatory products of set product
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @param int $quantityScale
      * @param null $products
      * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
@@ -142,7 +142,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     /**
      * checks if all mandatory of set products are set in given product list
      *
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @param  OnlineShop_Framework_AbstractSetProductEntry[] $products
      * @return void
      */
@@ -163,7 +163,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
         }
 
         if (count($mandatoryProductIds) > 0) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Not all mandatory Products in product list.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Not all mandatory Products in product list.");
         }
     }
 }

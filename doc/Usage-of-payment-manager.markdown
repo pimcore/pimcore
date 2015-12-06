@@ -151,7 +151,7 @@ $paymentInfo = $payment->handleResponse( $this->getAllParams() );
 $order = $this->checkoutManager->commitOrderPayment( $paymentInfo );
 
 // save payment provider
-$orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+$orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
 $orderAgent->setPaymentProvider( $payment );
 
 ```
@@ -162,7 +162,7 @@ cron.php
 
 // init
 $order = OnlineShopOrder::getById( $this->getParam('id') );
-$orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+$orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
 
 
 // start payment

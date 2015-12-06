@@ -155,7 +155,7 @@ class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\Impl\O
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return OnlineShop_Framework_AbstractOrder
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order)
     {
@@ -163,7 +163,7 @@ class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\Impl\O
 
         /* @var OnlineShop_Framework_AbstractOrder $order*/
 
-        $checkout = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager( $cart );
+        $checkout = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager( $cart );
         $deliveryAddress = $checkout->getCheckoutStep('deliveryaddress')->getData();
         /* @var Website_OnlineShop_Order_DeliveryAddress $deliveryAddress */
 
@@ -258,7 +258,7 @@ A client side handling could look like as follows:
     {
         // init
         $cart = $this->getCart();
-        $checkoutManager = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager( $cart );
+        $checkoutManager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager( $cart );
 
         if($this->getParam('mode') == "cancel") {
             $checkoutManager->cancelStartedOrderPayment();
@@ -277,7 +277,7 @@ A client side handling could look like as follows:
             // its possible to execute this later (e.g. when shipment is done) - which is preferred
             $payment = $checkoutManager->getPayment();
             $paymentStatus = $payment->executeDebit();
-            $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+            $orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
             $orderAgent->updatePayment($paymentStatus);
 
             if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
@@ -308,8 +308,8 @@ A server side handling could look as follows:
 
         $params = $this->getAllParams();
 
-        $commitOrderProcessor = OnlineShop_Framework_Factory::getInstance()->getCommitOrderProcessor();
-        $paymentProvider = OnlineShop_Framework_Factory::getInstance()->getPaymentManager()->getProvider("qpay");
+        $commitOrderProcessor = \OnlineShop\Framework\Factory::getInstance()->getCommitOrderProcessor();
+        $paymentProvider = \OnlineShop\Framework\Factory::getInstance()->getPaymentManager()->getProvider("qpay");
 
         if($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($params, $paymentProvider)) {
             \Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());
@@ -335,7 +335,7 @@ So different checkout steps, different payment providers etc. can be implemented
 
 ```php
 <?php
-$environment = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+$environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 $environment->setCurrentCheckoutTenant('default');
 $environment->save();
 

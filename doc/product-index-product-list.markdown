@@ -193,7 +193,7 @@ The API for getting (and filtering, ...) products out of the product index are s
 For getting a ProdutList instance suitable for the product index implementation and filter for products see following code: 
 ```php 
 <?php 
-$list = OnlineShop_Framework_Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
+$list = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
 $list->addCondition("name = 'testproduct'", 'name');
 $list->addRelationCondition('category', "dest IN (1024,1025,1026)");
 $list->setOrder("ASC");

@@ -69,7 +69,7 @@ class HelperContainer {
 
 
     public function __get($name) {
-        $currentCheckoutTenant = \OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentCheckoutTenant();
+        $currentCheckoutTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentCheckoutTenant();
 
         if($currentCheckoutTenant && $this->tenantConfigs[$currentCheckoutTenant]) {
             $option = $this->tenantConfigs[$currentCheckoutTenant]->$name;

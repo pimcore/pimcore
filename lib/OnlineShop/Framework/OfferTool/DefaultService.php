@@ -212,7 +212,7 @@ class DefaultService implements IService {
     }
 
     protected function setCurrentCustomer(\OnlineShop\Framework\OfferTool\AbstractOffer $offer) {
-        $env = \OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 
         if(@class_exists("Object_Customer")) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());

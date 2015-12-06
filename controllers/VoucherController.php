@@ -98,7 +98,7 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
     /**
      * Removes token reservations due to given duration.
      *
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function cleanupReservationsAction()
     {

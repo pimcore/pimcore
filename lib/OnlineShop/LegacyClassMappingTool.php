@@ -17,6 +17,10 @@ class LegacyClassMappingTool {
     private static $mappingClasses = [
         'OnlineShop\Plugin' => 'OnlineShop_Plugin',
         'OnlineShop\Framework\Environment' => 'OnlineShop_Framework_Impl_Environment',
+        'OnlineShop\Framework\Factory' => 'OnlineShop_Framework_Factory',
+        'OnlineShop\Framework\Exception\InvalidConfigException' => 'OnlineShop_Framework_Exception_InvalidConfigException',
+        'OnlineShop\Framework\Exception\UnsupportedException' => 'OnlineShop_Framework_Exception_UnsupportedException',
+        'OnlineShop\Framework\Exception\VoucherServiceException' => 'OnlineShop_Framework_Exception_VoucherServiceException',
         'OnlineShop\Framework\OfferTool\DefaultService' => 'OnlineShop_OfferTool_Impl_DefaultService',
         'OnlineShop\Framework\OfferTool\AbstractOffer' => 'OnlineShop_OfferTool_AbstractOffer',
         'OnlineShop\Framework\OfferTool\AbstractOfferItem' => 'OnlineShop_OfferTool_AbstractOfferItem',

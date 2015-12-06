@@ -10,10 +10,11 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework;
 
 use OnlineShop\Framework\IOrderManager;
 
-class OnlineShop_Framework_Factory {
+class Factory {
 
     /**
      * framework configuration file
@@ -21,12 +22,12 @@ class OnlineShop_Framework_Factory {
     const CONFIG_PATH = "/OnlineShop/conf/OnlineShopConfig.xml";
 
     /**
-     * @var OnlineShop_Framework_Factory
+     * @var Factory
      */
     private static $instance;
 
     /**
-     * @var Zend_Config_Xml
+     * @var \Zend_Config_Xml
      */
     private $config;
 
@@ -46,12 +47,12 @@ class OnlineShop_Framework_Factory {
     private $availabilitySystems;
 
     /**
-     * @var OnlineShop_Framework_ICheckoutManager
+     * @var \OnlineShop_Framework_ICheckoutManager
      */
     private $checkoutManagers;
 
     /**
-     * @var OnlineShop_Framework_IPricingManager
+     * @var \OnlineShop_Framework_IPricingManager
      */
     private $pricingManager;
 
@@ -76,25 +77,25 @@ class OnlineShop_Framework_Factory {
     private $environment;
 
     /**
-     * @var OnlineShop_Framework_IPaymentManager
+     * @var \OnlineShop_Framework_IPaymentManager
      */
     private $paymentManager;
 
 
     /**
-     * @var OnlineShop_Framework_IVoucherService
+     * @var \OnlineShop_Framework_IVoucherService
      */
     private $voucherService;
 
     /**
-     * @var OnlineShop_Framework_VoucherService_ITokenManager[]
+     * @var \OnlineShop_Framework_VoucherService_ITokenManager[]
      */
     private $tokenManagers = array();
 
 
     public static function getInstance() {
         if (self::$instance === null) {
-            self::$instance = new OnlineShop_Framework_Factory();
+            self::$instance = new Factory();
             self::$instance->init();
         }
         return self::$instance;
@@ -104,7 +105,7 @@ class OnlineShop_Framework_Factory {
      * creates new factory instance and optionally resets environment too
      *
      * @param bool|true $keepEnvironment
-     * @return OnlineShop_Framework_Factory
+     * @return Factory
      */
     public static function resetInstance($keepEnvironment = true) {
         if($keepEnvironment) {
@@ -113,7 +114,7 @@ class OnlineShop_Framework_Factory {
             $environment = null;
         }
 
-        self::$instance = new OnlineShop_Framework_Factory($environment);
+        self::$instance = new Factory($environment);
         self::$instance->init();
         return self::$instance;
     }
@@ -141,15 +142,15 @@ class OnlineShop_Framework_Factory {
 
         //Environment
         if (empty($config->onlineshop->environment->class)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("No Environment class defined.");
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException("No Environment class defined.");
         } else {
             if (class_exists($config->onlineshop->environment->class)) {
                 $this->environment = new $config->onlineshop->environment->class($config->onlineshop->environment->config);
                 if (!($this->environment instanceof \OnlineShop\Framework\IEnvironment)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Environment class " . $config->onlineshop->environment->class . ' does not implement \OnlineShop\Framework\IEnvironment.');
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Environment class " . $config->onlineshop->environment->class . ' does not implement \OnlineShop\Framework\IEnvironment.');
                 }
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Environment class " . $config->onlineshop->environment->class . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Environment class " . $config->onlineshop->environment->class . " not found.");
             }
         }
     }
@@ -174,22 +175,22 @@ class OnlineShop_Framework_Factory {
 
     private function configureCartManager($config) {
         if (empty($config->onlineshop->cartmanager->class)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("No Cartmanager class defined.");
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException("No Cartmanager class defined.");
         } else {
             if (class_exists($config->onlineshop->cartmanager->class)) {
                 $this->cartManager = new $config->onlineshop->cartmanager->class($config->onlineshop->cartmanager->config);
-                if (!($this->cartManager instanceof OnlineShop\Framework\CartManager\ICartManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " does not implement OnlineShop\Framework\CartManager\ICartManager.");
+                if (!($this->cartManager instanceof \OnlineShop\Framework\CartManager\ICartManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " does not implement OnlineShop\Framework\CartManager\ICartManager.");
                 }
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " not found.");
             }
         }
     }
 
     private function configurePriceSystem($config) {
         if (empty($config->onlineshop->pricesystems)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("No Pricesystems defined.");
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException("No Pricesystems defined.");
         }
         //$this->priceSystems=array();
         $priceSystemConfigs = $config->onlineshop->pricesystems->pricesystem;
@@ -197,26 +198,26 @@ class OnlineShop_Framework_Factory {
             $priceSystemConfigs = array($priceSystemConfigs);
         }
 
-        $this->priceSystems = new stdClass();
+        $this->priceSystems = new \stdClass();
         if(!empty($priceSystemConfigs)) {
             foreach ($priceSystemConfigs as $priceSystemConfig) {
                 if (empty($priceSystemConfig->class)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("No Pricesystem class defined.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("No Pricesystem class defined.");
                 }
                 if (empty($priceSystemConfig->name)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("No Pricesystem name defined.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("No Pricesystem name defined.");
                 }
                 $name = $priceSystemConfig->name;
                 if (!empty($this->priceSystems->$name)){
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("More than one Pricesystem ".$name . " is defined!");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("More than one Pricesystem ".$name . " is defined!");
                 }
                 /* if (!class_exists($priceSystemConfig->class)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
                 }*/
                 $class = $priceSystemConfig->class;
                 $priceSystem = new $class($priceSystemConfig->config);
                 if (!$priceSystem instanceof \OnlineShop\Framework\PriceSystem\IPriceSystem){
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . ' does not implement \OnlineShop\Framework\PriceSystem\IPriceSystem.');
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . ' does not implement \OnlineShop\Framework\PriceSystem\IPriceSystem.');
                 }
                 $this->priceSystems->$name=$priceSystem;
             }
@@ -227,7 +228,7 @@ class OnlineShop_Framework_Factory {
     private function configureAvailabilitySystem($config) {
 
         if (empty($config->onlineshop->availablitysystems)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("No AvailabilitySystem defined.");
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException("No AvailabilitySystem defined.");
         }
         //$this->priceSystems=array();
         $availabilitySystemConfigs = $config->onlineshop->availablitysystems->availablitysystem;
@@ -235,27 +236,27 @@ class OnlineShop_Framework_Factory {
             $availabilitySystemConfigs = array($availabilitySystemConfigs);
         }
 
-        $this->availabilitySystems = new stdClass();
+        $this->availabilitySystems = new \stdClass();
         if(!empty($availabilitySystemConfigs)) {
             foreach ($availabilitySystemConfigs as $availabilitySystemConfig) {
                 if (empty($availabilitySystemConfig->class)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("No AvailabilitySystem class defined.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("No AvailabilitySystem class defined.");
                 }
                 if (empty($availabilitySystemConfig->name)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("No AvailabilitySystem name defined.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("No AvailabilitySystem name defined.");
                 }
                 $name = $availabilitySystemConfig->name;
                 if (!empty($this->availablitysystems->$name)){
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("More than one AvailabilitySystem ".$name . " is defined!");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("More than one AvailabilitySystem ".$name . " is defined!");
                 }
                 /* if (!class_exists($priceSystemConfig->class)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
                 }*/
 
                 $class = $availabilitySystemConfig->class;
                 $availabilitySystem = new $class();
                 if (! $availabilitySystem instanceof \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem){
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("AvailabilitySystem class " . $availabilitySystemConfig->class . ' does not implement \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem.');
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("AvailabilitySystem class " . $availabilitySystemConfig->class . ' does not implement \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem.');
                 }
                 $this->availabilitySystems->$name= $availabilitySystem;
             }
@@ -267,30 +268,30 @@ class OnlineShop_Framework_Factory {
 
     private function configureCheckoutManager($config) {
         if (empty($config->onlineshop->checkoutmanager->class)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("No Checkoutmanager class defined.");
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException("No Checkoutmanager class defined.");
         } else {
             if (!class_exists($config->onlineshop->checkoutmanager->class)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Checkoutmanager class " . $config->onlineshop->checkoutmanager->class . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Checkoutmanager class " . $config->onlineshop->checkoutmanager->class . " not found.");
             }
         }
     }
 
     /**
-     * @param Zend_Config_Xml $config
+     * @param \Zend_Config_Xml $config
      *
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     private function configurePricingManager(\Zend_Config_Xml $config) {
         if (empty($config->onlineshop->pricingmanager->class)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("No PricingManager class defined.");
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException("No PricingManager class defined.");
         } else {
             if (class_exists($config->onlineshop->pricingmanager->class)) {
                 $this->pricingManager = new $config->onlineshop->pricingmanager->class($config->onlineshop->pricingmanager->config);
-                if (!($this->pricingManager instanceof OnlineShop_Framework_IPricingManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " does not implement OnlineShop_Framework_IPricingManager.");
+                if (!($this->pricingManager instanceof \OnlineShop_Framework_IPricingManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " does not implement OnlineShop_Framework_IPricingManager.");
                 }
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " not found.");
             }
         }
     }
@@ -299,22 +300,22 @@ class OnlineShop_Framework_Factory {
     private function configureOfferToolService($config) {
         if(!empty($config->onlineshop->offertool->class)) {
             if (!class_exists($config->onlineshop->offertool->class)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferTool class " . $config->onlineshop->offertool->class . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("OfferTool class " . $config->onlineshop->offertool->class . " not found.");
             }
             if (!class_exists($config->onlineshop->offertool->orderstorage->offerClass)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferToolOffer class " . $config->onlineshop->offertool->orderstorage->offerClass . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("OfferToolOffer class " . $config->onlineshop->offertool->orderstorage->offerClass . " not found.");
             }
             if (!class_exists($config->onlineshop->offertool->orderstorage->offerItemClass)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("OfferToolOfferItem class " . $config->onlineshop->offertool->orderstorage->offerItemClass . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("OfferToolOfferItem class " . $config->onlineshop->offertool->orderstorage->offerItemClass . " not found.");
             }
         }
     }
 
 
     /**
-     * @param Zend_Config $config
+     * @param \Zend_Config $config
      *
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     private function configurePaymentManager(\Zend_Config $config)
     {
@@ -323,23 +324,23 @@ class OnlineShop_Framework_Factory {
             if (class_exists($config->onlineshop->paymentmanager->class))
             {
                 $this->paymentManager = new $config->onlineshop->paymentmanager->class($config->onlineshop->paymentmanager->config);
-                if (!($this->paymentManager instanceof OnlineShop_Framework_IPaymentManager))
+                if (!($this->paymentManager instanceof \OnlineShop_Framework_IPaymentManager))
                 {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " does not implement OnlineShop_Framework_IPaymentManager.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " does not implement OnlineShop_Framework_IPaymentManager.");
                 }
             }
             else
             {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " not found.");
             }
         }
     }
 
 
     /**
-     * @param Zend_Config $config
+     * @param \Zend_Config $config
      *
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     private function configureOrderManager(\Zend_Config $config)
     {
@@ -348,14 +349,14 @@ class OnlineShop_Framework_Factory {
             if (class_exists($config->onlineshop->ordermanager->class))
             {
                 $this->orderManager = new $config->onlineshop->ordermanager->class( $config->onlineshop->ordermanager->config );
-                if (!($this->orderManager instanceof OnlineShop\Framework\IOrderManager))
+                if (!($this->orderManager instanceof \OnlineShop\Framework\IOrderManager))
                 {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " does not implement OnlineShop\\Framework\\IOrderManager.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " does not implement OnlineShop\\Framework\\IOrderManager.");
                 }
             }
             else
             {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " not found.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " not found.");
             }
         }
     }
@@ -366,10 +367,10 @@ class OnlineShop_Framework_Factory {
     }
 
     /**
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param string $name optional name of checkout manager, in case there are more than one configured
-     * @return OnlineShop_Framework_ICheckoutManager
+     * @return \OnlineShop_Framework_ICheckoutManager
      */
     public function getCheckoutManager(\OnlineShop\Framework\CartManager\ICart $cart, $name = null) {
 
@@ -377,13 +378,13 @@ class OnlineShop_Framework_Factory {
             if($name) {
                 $managerConfigName = "checkoutmanager_" . $name;
                 $manager = new $this->config->onlineshop->$managerConfigName->class($cart, $this->config->onlineshop->$managerConfigName->config);
-                if (!($manager instanceof OnlineShop_Framework_ICheckoutManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->$managerConfigName->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
+                if (!($manager instanceof \OnlineShop_Framework_ICheckoutManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->$managerConfigName->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
                 }
             } else {
                 $manager = new $this->config->onlineshop->checkoutmanager->class($cart, $this->config->onlineshop->checkoutmanager->config);
-                if (!($manager instanceof OnlineShop_Framework_ICheckoutManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->checkoutmanager->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
+                if (!($manager instanceof \OnlineShop_Framework_ICheckoutManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->checkoutmanager->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
                 }
             }
 
@@ -395,7 +396,7 @@ class OnlineShop_Framework_Factory {
 
     /**
      * @param string $checkoutManagerName
-     * @return OnlineShop_Framework_ICommitOrderProcessor
+     * @return \OnlineShop_Framework_ICommitOrderProcessor
      */
     public function getCommitOrderProcessor($checkoutManagerName = null) {
         $originalConfig = $this->config->onlineshop->checkoutmanager->config;
@@ -423,7 +424,7 @@ class OnlineShop_Framework_Factory {
     }
 
     /**
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @param null $name
      * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
      */
@@ -436,12 +437,12 @@ class OnlineShop_Framework_Factory {
             return $ps;
         }
         else {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("priceSystem " . $name . " is not supported, check configuration!");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("priceSystem " . $name . " is not supported, check configuration!");
         }
 
     }
     /**
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @param null $name
      * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
      */
@@ -454,23 +455,23 @@ class OnlineShop_Framework_Factory {
             return $ps;
         }
         else {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("availabilitySystem " . $name . " is not supported, check configuration!");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("availabilitySystem " . $name . " is not supported, check configuration!");
         }
 
     }
 
 
     /**
-     * @var OnlineShop_Framework_IndexService
+     * @var \OnlineShop_Framework_IndexService
      */
     private $indexService = null;
 
     /**
-     * @return OnlineShop_Framework_IndexService
+     * @return \OnlineShop_Framework_IndexService
      */
     public function getIndexService() {
         if(empty($this->indexService)) {
-            $this->indexService = new OnlineShop_Framework_IndexService($this->config->onlineshop->productindex);
+            $this->indexService = new \OnlineShop_Framework_IndexService($this->config->onlineshop->productindex);
         }
         return $this->indexService;
     }
@@ -490,9 +491,9 @@ class OnlineShop_Framework_Factory {
 
 
     /**
-     * @param Zend_View $view
+     * @param \Zend_View $view
      *
-     * @return OnlineShop_Framework_FilterService
+     * @return \OnlineShop_Framework_FilterService
      */
     public function getFilterService(\Zend_View $view) {
 
@@ -502,7 +503,7 @@ class OnlineShop_Framework_Factory {
             $filterTypes = $this->config->onlineshop->filtertypes;
         }
 
-        return new OnlineShop_Framework_FilterService($filterTypes, $view);
+        return new \OnlineShop_Framework_FilterService($filterTypes, $view);
     }
 
 
@@ -514,7 +515,7 @@ class OnlineShop_Framework_Factory {
 
 
     /**
-     * @return OnlineShop_Framework_IPricingManager
+     * @return \OnlineShop_Framework_IPricingManager
      */
     public function getPricingManager()
     {
@@ -539,7 +540,7 @@ class OnlineShop_Framework_Factory {
 
 
     /**
-     * @return OnlineShop_Framework_IPaymentManager
+     * @return \OnlineShop_Framework_IPaymentManager
      */
     public function getPaymentManager()
     {
@@ -557,15 +558,15 @@ class OnlineShop_Framework_Factory {
 
 
     /**
-     * @return OnlineShop_Framework_IVoucherService
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @return \OnlineShop_Framework_IVoucherService
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getVoucherService() {
 
         if(empty($this->voucherService)) {
             $this->voucherService = new $this->config->onlineshop->voucherservice->class($this->config->onlineshop->voucherservice->config);
-            if (!($this->voucherService instanceof OnlineShop_Framework_IVoucherService)) {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Voucher Service class " . $this->config->onlineshop->voucherservice->class . " does not implement OnlineShop_Framework_IVoucherService.");
+            if (!($this->voucherService instanceof \OnlineShop_Framework_IVoucherService)) {
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Voucher Service class " . $this->config->onlineshop->voucherservice->class . " does not implement OnlineShop_Framework_IVoucherService.");
             }
 
         }
@@ -575,11 +576,11 @@ class OnlineShop_Framework_Factory {
 
 
     /**
-     * @param OnlineShop_Framework_AbstractVoucherTokenType $configuration
-     * @return OnlineShop_Framework_VoucherService_ITokenManager
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @param \OnlineShop_Framework_AbstractVoucherTokenType $configuration
+     * @return \OnlineShop_Framework_VoucherService_ITokenManager
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    public function getTokenManager(OnlineShop_Framework_AbstractVoucherTokenType $configuration) {
+    public function getTokenManager(\OnlineShop_Framework_AbstractVoucherTokenType $configuration) {
         $id   = $configuration->getObject()->getId();
         $type = $configuration->getType();
 
@@ -589,14 +590,14 @@ class OnlineShop_Framework_Factory {
 
             if($tokenManagerClass) {
                 $tokenManager = new $tokenManagerClass->class($configuration);
-                if (!($tokenManager instanceof OnlineShop_Framework_VoucherService_ITokenManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Token Manager class " . $tokenManagerClass->class . " does not implement OnlineShop_Framework_VoucherService_ITokenManager.");
+                if (!($tokenManager instanceof \OnlineShop_Framework_VoucherService_ITokenManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Token Manager class " . $tokenManagerClass->class . " does not implement OnlineShop_Framework_VoucherService_ITokenManager.");
                 }
 
                 $this->tokenManagers[$id] = $tokenManager;
 
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Token Manager for " . $type . " not defined.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Token Manager for " . $type . " not defined.");
             }
 
         }

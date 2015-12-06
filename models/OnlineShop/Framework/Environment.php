@@ -303,7 +303,7 @@ class Environment implements IEnvironment {
     {
         if($this->currentCheckoutTenant != $tenant) {
             $this->currentCheckoutTenant = $tenant;
-            \OnlineShop_Framework_Factory::resetInstance();
+            \OnlineShop\Framework\Factory::resetInstance();
         }
     }
 

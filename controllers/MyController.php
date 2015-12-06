@@ -19,7 +19,7 @@ class OnlineShop_MyController extends Website_Controller_Action {
 //        $t = new OnlineShop_Framework_AbstractProduct();
 //        p_r($t);
 
-        $x = OnlineShop_Framework_Factory::getInstance();
+        $x = \OnlineShop\Framework\Factory::getInstance();
 //        p_r($x);
 
         $e = $x->getEnvironment();

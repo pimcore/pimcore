@@ -119,7 +119,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Bracket implements OnlineShop_
 
         foreach($json->conditions as $setting)
         {
-            $subcond = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getCondition( $setting->type );
+            $subcond = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getCondition( $setting->type );
             $subcond->fromJSON( json_encode($setting) );
 
             $this->addCondition($subcond, $setting->operator);

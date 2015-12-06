@@ -21,7 +21,7 @@ The configuration takes place in the OnlineShopConfig.xml
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 // get the newest 10 orders
@@ -53,7 +53,7 @@ foreach($paginator as $order)
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -74,7 +74,7 @@ $orderList->addFilter( $filterDate );
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -92,7 +92,7 @@ $orderList->setOrderState( OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMI
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -117,7 +117,7 @@ $query->where('order.comment like ?', '%hallo world%');
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -173,7 +173,7 @@ $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
 $order = $orderItem->getOrder();
 
 // create new order agent
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderAgent = $orderManager->createOrderAgent( $order );
 
 // change amount to 5
@@ -195,7 +195,7 @@ $log->save();
 $order = Object_OnlineShopOrder::getById( $this->getParam('id') );
 
 // create new order agent
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderAgent = $orderManager->createOrderAgent( $order );
 
 // get changelog

@@ -80,7 +80,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
             $this->endpoint['xmlProcessor'] = 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp';
         }
 
-        $this->currencyLocale = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale();
+        $this->currencyLocale = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale();
     }
 
 

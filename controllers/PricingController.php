@@ -235,7 +235,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
             }
 
             // create rule condition
-            $condition = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getCondition( $rootContainer->type );
+            $condition = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getCondition( $rootContainer->type );
             $condition->fromJSON( json_encode($rootContainer) );
             $rule->setCondition( $condition );
 
@@ -244,7 +244,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
             $arrActions = array();
             foreach($data->actions as $setting)
             {
-                $action = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getAction( $setting->type );
+                $action = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getAction( $setting->type );
                 $action->fromJSON( json_encode($setting) );
                 $arrActions[] = $action;
             }
@@ -302,7 +302,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
         );
 
         // get config
-        $pricingConfig = OnlineShop_Framework_Factory::getInstance()->getConfig()->get('onlineshop')->get('pricingmanager');
+        $pricingConfig = \OnlineShop\Framework\Factory::getInstance()->getConfig()->get('onlineshop')->get('pricingmanager');
         if($pricingConfig)
         {
             $list = $pricingConfig->get('config')->get( 'condition' );
@@ -326,17 +326,17 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
 
     public function testAction()
     {
-//        $dateRange = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getCondition('DateRange');
-//        $action = OnlineShop_Framework_Factory::getInstance()->getPricingManager()->getAction('Gift');
+//        $dateRange = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getCondition('DateRange');
+//        $action = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getAction('Gift');
 //        var_dump($dateRange,$action);exit;
 
 
         // test normal
-//        $cart = OnlineShop_Framework_Factory::getInstance()->getCartManager()->createCart(array('name' => 'pricingTest'));
-//        $cart = OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCart(2);
+//        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->createCart(array('name' => 'pricingTest'));
+//        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->getCart(2);
 //
 //
-//        $pricingManager = OnlineShop_Framework_Factory::getInstance()->getPricingManager();
+//        $pricingManager = \OnlineShop\Framework\Factory::getInstance()->getPricingManager();
 //        $pricingManager->applyCartRules( $cart );
 
 
@@ -396,12 +396,12 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
      */
     public function testCartAction()
     {
-        $cart = OnlineShop_Framework_Factory::getInstance()->getCartManager()->createCart(array('name' => 'pricingTest'));
+        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->createCart(array('name' => 'pricingTest'));
 
 
-        $cart = OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCart(2);
+        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->getCart(2);
 
-        $pricingManager = OnlineShop_Framework_Factory::getInstance()->getPricingManager();
+        $pricingManager = \OnlineShop\Framework\Factory::getInstance()->getPricingManager();
         $pricingManager->applyCartRules( $cart );
 
         exit;

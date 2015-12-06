@@ -73,10 +73,10 @@ $params = $this->getAllParams();
 $this->view->filterDefinitionObject = $filterDefinition;
 
 // create product list
-$products = OnlineShop_Framework_Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
+$products = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
 
 // create and init filter service
-$filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
+$filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
 OnlineShop_Framework_FilterService_Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
 $this->view->filterService = $filterService;

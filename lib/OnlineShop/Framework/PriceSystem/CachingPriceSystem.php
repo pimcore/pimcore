@@ -24,11 +24,11 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
     protected $priceInfos = array();
 
     public function loadPriceInfos($productEntries, $options) {
-        throw new \OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
 
     public function clearPriceInfos($productEntries, $options) {
-        throw new \OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
 
     public function getPriceInfo(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
@@ -44,7 +44,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
     }
 
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit) {
-        throw new \OnlineShop_Framework_Exception_UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
 
 }

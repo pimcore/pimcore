@@ -26,7 +26,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Tenant implements OnlineShop_F
      */
     public function check(OnlineShop_Framework_Pricing_IEnvironment $environment)
     {
-        $currentTenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+        $currentTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         return in_array($currentTenant, $this->getTenant());
     }
 

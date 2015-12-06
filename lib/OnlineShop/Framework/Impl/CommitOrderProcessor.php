@@ -76,7 +76,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      * @param OnlineShop_Framework_IPayment $paymentProvider
      * @return null|OnlineShop_Framework_AbstractOrder
      * @throws Exception
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function committedOrderWithSamePaymentExists($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
 
@@ -86,7 +86,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             $paymentStatus = $paymentResponseParams;
         }
 
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
@@ -113,7 +113,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      * @param OnlineShop_Framework_IPayment $paymentProvider
      * @return OnlineShop_Framework_AbstractOrder
      * @throws Exception
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider) {
 
@@ -123,7 +123,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             return $committedOrder;
         }
 
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if(empty($order)) {

@@ -307,7 +307,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
      */
     public function postAddObject(\Pimcore\Model\Object\AbstractObject $object) {
         if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
-            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
     }
@@ -318,20 +318,20 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
      */
     public function postUpdateObject(\Pimcore\Model\Object\AbstractObject $object) {
         if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
-            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
     }
 
     public function preDeleteObject(\Pimcore\Model\Object\AbstractObject $object) {
         if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
-            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexService->deleteFromIndex($object);
         }
 
         // Delete tokens when a a configuration object gets removed.
         if($object instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries){
-            $voucherService = \OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+            $voucherService = \OnlineShop\Framework\Factory::getInstance()->getVoucherService();
             $voucherService->cleanUpVoucherSeries($object);
         }
     }
@@ -490,10 +490,10 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
 
 
     public function maintenance() {
-        $checkoutManager = \OnlineShop_Framework_Factory::getInstance()->getCheckoutManager(new \OnlineShop\Framework\CartManager\Cart());
+        $checkoutManager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager(new \OnlineShop\Framework\CartManager\Cart());
         $checkoutManager->cleanUpPendingOrders();
 
-        \OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpReservations();
-        \OnlineShop_Framework_Factory::getInstance()->getVoucherService()->cleanUpStatistics();
+        \OnlineShop\Framework\Factory::getInstance()->getVoucherService()->cleanUpReservations();
+        \OnlineShop\Framework\Factory::getInstance()->getVoucherService()->cleanUpStatistics();
     }
 }

@@ -20,11 +20,11 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         $filterDefinition = \Pimcore\Model\Object\Fieldcollection::getById(intval($this->_getParam("filterdef")));
         $this->view->filterDefinitionObject = $filterDefinition;
 
-        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         $productList = $indexService->getProductListForCurrentTenant();
         $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
-        $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
+        $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
 
         $orderByOptions = array();
@@ -60,11 +60,11 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         }
         $this->view->filterDefinitionObject = $filterDefinition;
 
-        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         $productList = $indexService->getProductListForCurrentTenant();
         $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
-        $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
+        $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
 
         $orderByOptions = array();

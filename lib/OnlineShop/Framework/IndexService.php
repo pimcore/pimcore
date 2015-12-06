@@ -68,7 +68,7 @@ class OnlineShop_Framework_IndexService {
      *
      * @param null $tenant
      * @return array
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getGeneralSearchColumns($tenant = null) {
         return $this->getGeneralSearchAttributes($tenant);
@@ -79,18 +79,18 @@ class OnlineShop_Framework_IndexService {
      *
      * @param string $tenant
      * @return array
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getGeneralSearchAttributes($tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getGeneralSearchAttributes();
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -155,18 +155,18 @@ class OnlineShop_Framework_IndexService {
      * @param bool $considerHideInFieldList
      * @param string $tenant
      * @return array
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getIndexAttributes($considerHideInFieldList = false, $tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getIndexAttributes($considerHideInFieldList);
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -183,7 +183,7 @@ class OnlineShop_Framework_IndexService {
      * @param bool $considerHideInFieldList
      * @param null $tenant
      * @return mixed
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getIndexColumns($considerHideInFieldList = false, $tenant = null) {
         return $this->getIndexAttributes($considerHideInFieldList, $tenant);
@@ -194,18 +194,18 @@ class OnlineShop_Framework_IndexService {
      *
      * @param string $tenant
      * @return array
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getAllFilterGroups($tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getAllFilterGroups();
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -223,18 +223,18 @@ class OnlineShop_Framework_IndexService {
      * @param $filterType
      * @param string $tenant
      * @return array
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getIndexAttributesByFilterGroup($filterType, $tenant = null) {
         if(empty($tenant)) {
-            $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getIndexAttributesByFilterGroup($filterType);
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -251,7 +251,7 @@ class OnlineShop_Framework_IndexService {
      * @param $filterType
      * @param null $tenant
      * @return mixed
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getIndexColumnsByFilterGroup($filterType, $tenant = null) {
         return $this->getIndexAttributesByFilterGroup($filterType, $tenant);
@@ -262,7 +262,7 @@ class OnlineShop_Framework_IndexService {
      * returns current tenant configuration
      *
      * @return OnlineShop_Framework_IndexService_Tenant_IConfig
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getCurrentTenantConfig() {
         return $this->getCurrentTenantWorker()->getTenantConfig();
@@ -270,16 +270,16 @@ class OnlineShop_Framework_IndexService {
 
     /**
      * @return OnlineShop_Framework_IndexService_Tenant_IWorker
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getCurrentTenantWorker() {
-        $tenant = OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+        $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant];
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         } else {
             return $this->defaultWorker;
@@ -288,7 +288,7 @@ class OnlineShop_Framework_IndexService {
 
     /**
      * @return OnlineShop_Framework_IProductList
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getProductListForCurrentTenant() {
         return $this->getCurrentTenantWorker()->getProductList();
@@ -297,14 +297,14 @@ class OnlineShop_Framework_IndexService {
 
     /**
      * @return OnlineShop_Framework_IProductList
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getProductListForTenant($tenant) {
         if($tenant) {
             if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getProductList();
             } else {
-                throw new OnlineShop_Framework_Exception_InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         } else {
             return $this->defaultWorker->getProductList();

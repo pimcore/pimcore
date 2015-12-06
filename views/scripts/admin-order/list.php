@@ -102,7 +102,7 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
     </thead>
     <tbody>
     <?php
-    $totalSum = new Zend_Currency( OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale() );
+    $totalSum = new Zend_Currency( \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale() );
     foreach($paginator as $item):
         /* @var \OnlineShop\Framework\OrderManager\IOrderListItem $item */
         $totalSum->add( $item->getTotalPrice() );

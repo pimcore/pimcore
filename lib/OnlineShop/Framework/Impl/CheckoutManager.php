@@ -97,7 +97,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
         //getting state information for checkout from custom environment items
-        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
         $this->currentStep = $this->checkoutSteps[$env->getCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId())];
 
         //if no step is set and cart is not finished -> set current step to first step of checkout
@@ -107,7 +107,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
         // init payment provider
         if ($config->payment) {
-            $this->payment = OnlineShop_Framework_Factory::getInstance()->getPaymentManager()->getProvider($config->payment->provider);
+            $this->payment = \OnlineShop\Framework\Factory::getInstance()->getPaymentManager()->getProvider($config->payment->provider);
         }
 
     }
@@ -132,7 +132,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function hasActivePayment()
     {
-        $orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
         if($order) {
             $paymentInfo = $orderManager->createOrderAgent($order)->getCurrentPendingPaymentInfo();
@@ -144,27 +144,27 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * @return OnlineShop_Framework_AbstractPaymentInformation
      * @throws Exception
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function startOrderPayment()
     {
         if (!$this->isFinished()) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
         }
 
         if (!$this->payment) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Payment is not activated");
         }
 
         //Create Order
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
         if ($order->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed");
         }
 
-        $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        $orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
         $paymentInfo = $orderAgent->startPayment();
 
         return $paymentInfo;
@@ -175,7 +175,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function cancelStartedOrderPayment()
     {
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
         if($order) {
             $orderAgent = $orderManager->createOrderAgent( $order );
@@ -190,7 +190,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function getOrder()
     {
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         return $orderManager->getOrCreateOrderFromCart($this->cart);
     }
 
@@ -198,10 +198,10 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      * updates and cleans up environment after order is committed
      *
      * @param OnlineShop_Framework_AbstractOrder $order
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     protected function updateEnvironmentAfterOrderCommit(OnlineShop_Framework_AbstractOrder $order) {
-        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
         if(empty($order->getOrderState())) {
             //if payment not successful -> set current checkout step to last step and checkout to not finished
             //last step must be committed again in order to restart payment or e.g. commit without payment?
@@ -223,7 +223,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * @param $paymentResponseParams
      * @return OnlineShop_Framework_AbstractOrder
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams) {
 
@@ -234,15 +234,15 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         }
 
         if (!$this->payment) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Payment is not activated");
         }
 
         if ($this->isCommitted()) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed.");
         }
 
         if (!$this->isFinished()) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
         }
 
         //delegate commit order to commit order processor
@@ -255,20 +255,20 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * @param OnlineShop_Framework_Payment_IStatus $status
      * @return OnlineShop_Framework_AbstractOrder
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status)
     {
         if (!$this->payment) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Payment is not activated");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Payment is not activated");
         }
 
         if ($this->isCommitted()) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed.");
         }
 
         if (!$this->isFinished()) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
         }
 
         //delegate commit order to commit order processor
@@ -280,20 +280,20 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
     /**
      * @return OnlineShop_Framework_AbstractOrder
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function commitOrder()
     {
         if ($this->isCommitted()) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Order already committed.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed.");
         }
 
         if (!$this->isFinished()) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("Checkout not finished yet.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
         }
 
         //delegate commit order to commit order processor
-        $order = \OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrCreateOrderFromCart($this->cart);
+        $order = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->getOrCreateOrderFromCart($this->cart);
         $order = $this->getCommitOrderProcessor()->commitOrder($order);
 
         $this->updateEnvironmentAfterOrderCommit($order);
@@ -306,7 +306,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      *
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return string
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     protected function generateGaEcommerceCode(OnlineShop_Framework_AbstractOrder $order)
     {
@@ -374,7 +374,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      *
      * @param OnlineShop_Framework_AbstractOrder $order
      * @return string
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     protected function generateUniversalEcommerceCode(OnlineShop_Framework_AbstractOrder $order)
     {
@@ -438,7 +438,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      * @param OnlineShop_Framework_ICheckoutStep $step
      * @param mixed $data
      * @return bool
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function commitStep(OnlineShop_Framework_ICheckoutStep $step, $data)
     {
@@ -448,14 +448,14 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
         // if indexCurrentStep is < index -> there are uncommitted previous steps
         if ($indexCurrentStep < $index) {
-            throw new OnlineShop_Framework_Exception_UnsupportedException("There are uncommitted previous steps.");
+            throw new \OnlineShop\Framework\Exception\UnsupportedException("There are uncommitted previous steps.");
         }
 
         //delegate commit to step implementation (for data storage etc.)
         $result = $step->commit($data);
 
         if ($result) {
-            $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+            $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 
             $index++;
             if (count($this->checkoutStepOrder) > $index) {
@@ -519,7 +519,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      */
     public function isCommitted()
     {
-        $orderManager = \OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
 
         return $order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED;

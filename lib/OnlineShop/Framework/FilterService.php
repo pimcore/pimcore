@@ -38,7 +38,7 @@ class OnlineShop_Framework_FilterService {
         if($this->config->$name) {
             return new $this->config->$name->class($this->view, $this->config->$name->script,$this->config->$name);
         } else {
-            return $name; //throw new OnlineShop_Framework_Exception_UnsupportedException($name . " not as filter type configured.");
+            return $name; //throw new \OnlineShop\Framework\Exception\UnsupportedException($name . " not as filter type configured.");
         }
     }
 

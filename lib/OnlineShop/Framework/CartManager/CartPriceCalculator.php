@@ -68,7 +68,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
 
 
     /**
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function calculate() {
 
@@ -82,7 +82,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
                 }
 
                 if($currency->compare( $item->getPrice()->getCurrency() ) != 0) {
-                    throw new \OnlineShop_Framework_Exception_UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
+                    throw new \OnlineShop\Framework\Exception\UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
                 }
 
                 $subTotal += $item->getTotalPrice()->getAmount();
@@ -118,7 +118,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
      * @return \Zend_Currency
      */
     protected function getDefaultCurrency() {
-        return new \Zend_Currency(\OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale());
     }
 
     /**

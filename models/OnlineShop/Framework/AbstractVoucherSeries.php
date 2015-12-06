@@ -22,7 +22,7 @@ abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Model
 
     /**
      * @return bool|OnlineShop_Framework_VoucherService_ITokenManager
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getTokenManager()
     {
@@ -32,7 +32,7 @@ abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Model
 
             // name of fieldcollection class
             $configuration = $items->get(0);
-            return OnlineShop_Framework_Factory::getInstance()->getTokenManager($configuration);
+            return \OnlineShop\Framework\Factory::getInstance()->getTokenManager($configuration);
 
         }
         return false;

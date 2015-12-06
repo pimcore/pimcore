@@ -28,7 +28,7 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryDate extends OnlineShop_Framewo
      */
     public function commit($data) {
         if(empty($data->instantly) && empty($data->date)) {
-            throw new OnlineShop_Framework_Exception_InvalidConfigException("Instantly or Date not set.");
+            throw new \OnlineShop\Framework\Exception\InvalidConfigException("Instantly or Date not set.");
         }
 
         $this->cart->setCheckoutData(self::INSTANTLY, $data->instantly);

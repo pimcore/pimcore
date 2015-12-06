@@ -349,7 +349,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
         }
         if(count($priceSystemArrays) == 1) {
             $priceSystemName = key($priceSystemArrays);
-            $priceSystem = OnlineShop_Framework_Factory::getInstance()->getPriceSystem($priceSystemName);
+            $priceSystem = \OnlineShop\Framework\Factory::getInstance()->getPriceSystem($priceSystemName);
             $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
         } else if(count($priceSystemArrays) == 0) {
             //nothing to do

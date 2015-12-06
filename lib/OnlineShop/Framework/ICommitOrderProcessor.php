@@ -24,7 +24,7 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      * @param OnlineShop_Framework_IPayment $paymentProvider
      * @return null|OnlineShop_Framework_AbstractOrder
      * @throws Exception
-     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function committedOrderWithSamePaymentExists($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
 

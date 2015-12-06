@@ -109,7 +109,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
 
     public function isCartReadOnly() {
-        $order = \OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+        $order = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
         return !empty($order) && !empty($order->getOrderState());
     }
 
@@ -585,7 +585,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getUserId()
     {
-        return $this->userId ?: \OnlineShop_Framework_Factory::getInstance()->getEnvironment()->getCurrentUserId();
+        return $this->userId ?: \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentUserId();
     }
 
     /**
@@ -643,7 +643,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     public function getPriceCalculator() {
 
         if(empty($this->priceCalcuator)) {
-            $this->priceCalcuator = \OnlineShop_Framework_Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);
+            $this->priceCalcuator = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);
         }
 
         return $this->priceCalcuator;
@@ -659,7 +659,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         $this->validateVoucherTokenReservations();
 
         // apply pricing rules
-        \OnlineShop_Framework_Factory::getInstance()->getPricingManager()->applyCartRules($this);
+        \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->applyCartRules($this);
     }
 
 
@@ -700,13 +700,13 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      *
      * @return bool
      *
-     * @throws \OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      * @throws \Exception
      */
     public function addVoucherToken($code){
         $this->checkCartIsReadOnly();
 
-        $service = \OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+        $service = \OnlineShop\Framework\Factory::getInstance()->getVoucherService();
         if($service->checkToken($code, $this)){
             if($service->reserveToken($code, $this)){
                 $index = 'voucher_' . $code;
@@ -743,7 +743,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      *
      * @param string $code
      *
-     * @throws \OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      * @throws \Exception
      *
      * @return bool
@@ -752,7 +752,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     {
         $this->checkCartIsReadOnly();
 
-        $service = \OnlineShop_Framework_Factory::getInstance()->getVoucherService();
+        $service = \OnlineShop\Framework\Factory::getInstance()->getVoucherService();
         $key = array_search($code, $this->getVoucherTokenCodes());
 
         if ($key !== false) {
@@ -762,7 +762,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
                 return true;
             }
         } else {
-            throw new \OnlineShop_Framework_Exception_VoucherServiceException("No Token with code " . $code . " in this cart." , 7);
+            throw new \OnlineShop\Framework\Exception\VoucherServiceException("No Token with code " . $code . " in this cart." , 7);
         }
     }
 
@@ -789,7 +789,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         if($this->getVoucherTokenCodes()) {
 
-            $order = \OnlineShop_Framework_Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+            $order = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
             $appliedVoucherCodes = [];
             if($order) {
                 foreach($order->getVoucherTokens() as $voucherToken) {

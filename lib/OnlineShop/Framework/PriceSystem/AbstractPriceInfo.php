@@ -84,19 +84,19 @@ namespace OnlineShop\Framework\PriceSystem;
     }
 
      /**
-      * @throws \OnlineShop_Framework_Exception_UnsupportedException
+      * @throws \OnlineShop\Framework\Exception\UnsupportedException
       * @return IPrice
       */
      public function getPrice() {
-         throw new \OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+         throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
      /**
-      * @throws \OnlineShop_Framework_Exception_UnsupportedException
+      * @throws \OnlineShop\Framework\Exception\UnsupportedException
       * @return IPrice
       */
      public function getTotalPrice() {
-         throw new \OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+         throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
      public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
