@@ -11,11 +11,8 @@
  */
 
 
-namespace OnlineShop\Framework\Impl;
+namespace OnlineShop\Framework\OrderManager;
 
-use OnlineShop\Framework\IOrderManager;
-use OnlineShop\Framework\OrderManager\IOrderList;
-use OnlineShop\Framework\OrderManager\IOrderAgent;
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use Zend_Config;
 

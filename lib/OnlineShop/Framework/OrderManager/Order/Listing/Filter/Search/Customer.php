@@ -11,17 +11,17 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search;
+namespace OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search;
 
-use OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\AbstractSearch;
+use OnlineShop\Framework\OrderManager\Order\Listing\Filter\AbstractSearch;
 
-class CustomerEmail extends AbstractSearch
+class Customer extends AbstractSearch
 {
     /**
      * @return string
      */
     protected function getConditionColumn()
     {
-        return 'order.invoiceEmail';
+        return 'CONCAT(order.invoiceFirstName, " ", order.invoiceLastName)';
     }
 }

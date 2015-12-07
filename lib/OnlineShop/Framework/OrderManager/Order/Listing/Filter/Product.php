@@ -11,7 +11,7 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter;
+namespace OnlineShop\Framework\OrderManager\Order\Listing\Filter;
 
 use OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\AbstractItem;
 use OnlineShop\Framework\OrderManager\IOrderList;
@@ -20,14 +20,14 @@ use OnlineShop\Framework\OrderManager\IOrderListFilter;
 class Product implements IOrderListFilter
 {
     /**
-     * @var \Object_Concrete
+     * @var \Pimcore\Model\Object\Concrete
      */
     protected $product;
 
     /**
-     * @param \Object_Concrete $product
+     * @param \Pimcore\Model\Object\Concrete $product
      */
-    public function __construct(\Object_Concrete $product)
+    public function __construct(\Pimcore\Model\Object\Concrete $product)
     {
         $this->product = $product;
     }
@@ -43,10 +43,10 @@ class Product implements IOrderListFilter
         ];
 
         $variants = $this->product->getChilds([
-            \Object_Concrete::OBJECT_TYPE_VARIANT
+            \Pimcore\Model\Object\Concrete::OBJECT_TYPE_VARIANT
         ]);
 
-        /** @var \Object_Concrete $variant */
+        /** @var \Pimcore\Model\Object\Concrete $variant */
         foreach ($variants as $variant) {
             $ids[] = $variant->getId();
         }

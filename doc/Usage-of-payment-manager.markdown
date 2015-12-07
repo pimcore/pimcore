@@ -17,7 +17,7 @@
 The configuration takes place in the OnlineShopConfig.xml
 ```xml
 <!-- general settings for cart manager -->
-<paymentmanager class="\OnlineShop\Framework\PaymentManager\PaymentManager" statusClass="OnlineShop_Framework_Impl_Checkout_Payment_Status">
+<paymentmanager class="\OnlineShop\Framework\PaymentManager\PaymentManager" statusClass="\OnlineShop\Framework\PaymentManager\Status">
     <config>
         <provider name="datatrans" class="\OnlineShop\Framework\PaymentManager\Payment\Datatrans" mode="sandbox">
             <config>

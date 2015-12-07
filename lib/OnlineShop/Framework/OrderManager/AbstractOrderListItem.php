@@ -11,7 +11,7 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager;
+namespace OnlineShop\Framework\OrderManager;
 
 
 /**

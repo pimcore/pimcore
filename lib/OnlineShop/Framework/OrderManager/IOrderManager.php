@@ -11,7 +11,7 @@
  */
 
 
-namespace OnlineShop\Framework;
+namespace OnlineShop\Framework\OrderManager;
 
 use OnlineShop\Framework\OrderManager;
 use \OnlineShop\Framework\Model\AbstractOrder as Order;

@@ -11,7 +11,7 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager;
+namespace OnlineShop\Framework\OrderManager;
 
 use Zend_Paginator_Adapter_Interface;
 use OnlineShop\Framework\OrderManager\IOrderList;

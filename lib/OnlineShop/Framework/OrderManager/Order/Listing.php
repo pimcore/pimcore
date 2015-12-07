@@ -11,9 +11,9 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order;
+namespace OnlineShop\Framework\OrderManager\Order;
 
-use OnlineShop\Framework\Impl\OrderManager;
+use OnlineShop\Framework\OrderManager\AbstractOrderList;
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListFilter;
 use Pimcore\Model\Object\OnlineShopOrderItem;
@@ -21,9 +21,9 @@ use Pimcore\Model\Object\OnlineShopOrder;
 use Zend_Db_Expr;
 use Zend_Db_Select;
 
-use \Pimcore\Resource;
+use \Pimcore\Db;
 
-class Listing extends OrderManager\AbstractOrderList implements IOrderList
+class Listing extends AbstractOrderList implements IOrderList
 {
     /**
      * @var Zend_Db_Select
@@ -66,7 +66,7 @@ class Listing extends OrderManager\AbstractOrderList implements IOrderList
         if(!$this->query)
         {
             // init
-            $select = Resource::getConnection()->select();
+            $select = Db::getConnection()->select();
 
 
             // base order
@@ -368,7 +368,7 @@ SUBQUERY
             $query = str_replace('GROUP BY orderItem', '', $query);
 
 
-            $conn = \Pimcore\Resource::getConnection();
+            $conn = \Pimcore\Db::getConnection();
             $conn->query( 'SET SESSION group_concat_max_len = 1000000' );
             $this->availableFilterValues = $conn->fetchRow( $query );
         }

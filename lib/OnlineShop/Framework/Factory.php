@@ -12,7 +12,7 @@
 
 namespace OnlineShop\Framework;
 
-use OnlineShop\Framework\IOrderManager;
+use OnlineShop\Framework\OrderManager\IOrderManager;
 
 class Factory {
 
@@ -349,9 +349,9 @@ class Factory {
             if (class_exists($config->onlineshop->ordermanager->class))
             {
                 $this->orderManager = new $config->onlineshop->ordermanager->class( $config->onlineshop->ordermanager->config );
-                if (!($this->orderManager instanceof \OnlineShop\Framework\IOrderManager))
+                if (!($this->orderManager instanceof \OnlineShop\Framework\OrderManager\IOrderManager))
                 {
-                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " does not implement OnlineShop\\Framework\\IOrderManager.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " does not implement OnlineShop\\Framework\\OrderManager\\IOrderManager.");
                 }
             }
             else

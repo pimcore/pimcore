@@ -155,6 +155,23 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CheckoutManager\DeliveryDate' => 'OnlineShop_Framework_Impl_Checkout_DeliveryDate',
         'OnlineShop\Framework\CheckoutManager\CheckoutManager' => 'OnlineShop_Framework_Impl_CheckoutManager',
         'OnlineShop\Framework\CheckoutManager\CommitOrderProcessor' => 'OnlineShop_Framework_Impl_CommitOrderProcessor',
+        'OnlineShop\Framework\OrderManager\OrderManager' => 'OnlineShop\Framework\Impl\OrderManager',
+        'OnlineShop\Framework\OrderManager\AbstractOrderList' => 'OnlineShop\Framework\Impl\OrderManager\AbstractOrderList',
+        'OnlineShop\Framework\OrderManager\AbstractOrderListItem' => 'OnlineShop\Framework\Impl\OrderManager\AbstractOrderListItem',
+        'OnlineShop\Framework\OrderManager\Order\Listing' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing',
+        'OnlineShop\Framework\OrderManager\Order\Agent' => 'OnlineShop\Framework\Impl\OrderManager\Order\Agent',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Item' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Item',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\AbstractSearch' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\AbstractSearch',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\OrderDateTime' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\OrderDateTime',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\OrderSearch' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\OrderSearch',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Payment' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Payment',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Product' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Product',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\ProductType' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\ProductType',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search\Customer' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search\Customer',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search\CustomerEmail' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search\CustomerEmail',
+        'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search\PaymentReference' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search\PaymentReference',
+//        'OnlineShop\Framework\OrderManager\OrderManager' => 'OnlineShop\Framework\Impl\OrderManager',
 
 
 
@@ -215,6 +232,7 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CheckoutManager\ICheckoutStep' => 'OnlineShop_Framework_ICheckoutStep',
         'OnlineShop\Framework\CheckoutManager\ICheckoutManager' => 'OnlineShop_Framework_ICheckoutManager',
         'OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor' => 'OnlineShop_Framework_ICommitOrderProcessor',
+        'OnlineShop\Framework\OrderManager\IOrderManager' => 'OnlineShop\Framework\IOrderManager',
 
 
 

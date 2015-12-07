@@ -11,7 +11,7 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter;
+namespace OnlineShop\Framework\OrderManager\Order\Listing\Filter;
 
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListFilter;

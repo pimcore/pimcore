@@ -11,12 +11,12 @@
  */
 
 
-use OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter;
+use OnlineShop\Framework\OrderManager\Order\Listing\Filter;
 
 class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 {
     /**
-     * @var OnlineShop\Framework\IOrderManager
+     * @var OnlineShop\Framework\OrderManager\IOrderManager
      */
     protected $orderManager;
 

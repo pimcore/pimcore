@@ -11,9 +11,9 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search;
+namespace OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search;
 
-use OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\AbstractSearch;
+use OnlineShop\Framework\OrderManager\Order\Listing\Filter\AbstractSearch;
 use OnlineShop\Framework\OrderManager\IOrderList;
 
 class PaymentReference extends AbstractSearch

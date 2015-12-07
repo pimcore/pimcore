@@ -4,10 +4,10 @@
 
 The configuration takes place in the OnlineShopConfig.xml
 ```xml
-<ordermanager class="OnlineShop\Framework\Impl\OrderManager">
+<ordermanager class="OnlineShop\Framework\OrderManager\OrderManager">
     <config>
-        <orderList class="OnlineShop\Framework\Impl\OrderManager\Order\Listing" classItem="OnlineShop\Framework\Impl\OrderManager\Order\Listing\Item"/>
-        <orderAgent class="OnlineShop\Framework\Impl\OrderManager\Order\Agent" />
+        <orderList class="OnlineShop\Framework\OrderManager\Order\Listing" classItem="OnlineShop\Framework\OrderManager\Order\Listing\Item"/>
+        <orderAgent class="OnlineShop\Framework\OrderManager\Order\Agent" />
     </config>
 </ordermanager>
 ```
@@ -31,7 +31,7 @@ $orderList->setLimit( 10, 0 );
 // iterate
 foreach($orderList as $order)
 {
-    /* @var OnlineShop\Framework\Impl\OrderManager\Order\Listing\IOrderListItem $order */
+    /* @var OnlineShop\Framework\OrderManager\Order\Listing\IOrderListItem $order */
 
     echo $order->orderNumber();
 }
@@ -58,7 +58,7 @@ $orderList = $orderManager->createOrderList();
 
 
 // create date time filter
-$filterDate = new \OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\OrderDateTime();
+$filterDate = new \OnlineShop\Framework\OrderManager\Order\Listing\Filter\OrderDateTime();
 $filterDate->setFrom( new Zend_Date('20.01.2015') );
 $filterDate->setTill( new Zend_Date('31.01.2015') );
 
@@ -148,7 +148,7 @@ $orderList->getQuery()->where('product.productNumber = ?', 'CMD1191');
 
 ### Generic filter
 
-> Namespace: \OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter
+> Namespace: \OnlineShop\Framework\OrderManager\Order\Listing\Filter
 
 | Filter          | Description |
 | --------------- | ----------- |

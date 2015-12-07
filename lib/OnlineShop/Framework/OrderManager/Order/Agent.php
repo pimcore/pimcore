@@ -11,7 +11,7 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order;
+namespace OnlineShop\Framework\OrderManager\Order;
 
 use OnlineShop\Framework\OrderManager\IOrderAgent;
 use \OnlineShop\Framework\PaymentManager\IStatus;
@@ -20,7 +20,6 @@ use \OnlineShop\Framework\Factory;
 use Exception;
 
 use Zend_Date;
-use OnlineShop\Framework\Impl\OrderManager;
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 

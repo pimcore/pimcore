@@ -328,10 +328,10 @@
         </offertool>
 
         <!-- order manager -->
-        <ordermanager class="OnlineShop\Framework\Impl\OrderManager">
+        <ordermanager class="OnlineShop\Framework\OrderManager">
             <config>
-                <orderList class="OnlineShop\Framework\Impl\OrderManager\Order\Listing" classItem="OnlineShop\Framework\Impl\OrderManager\Order\Listing\Item"/>
-                <orderAgent class="OnlineShop\Framework\Impl\OrderManager\Order\Agent" />
+                <orderList class="OnlineShop\Framework\OrderManager\Order\Listing" classItem="OnlineShop\Framework\OrderManager\Order\Listing\Item"/>
+                <orderAgent class="OnlineShop\Framework\OrderManager\Order\Agent" />
 
                 <!-- settings for order storage - pimcore class names for oder and order items -->
                 <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>

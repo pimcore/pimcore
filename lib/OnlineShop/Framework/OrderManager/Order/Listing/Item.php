@@ -11,11 +11,11 @@
  */
 
 
-namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing;
+namespace OnlineShop\Framework\OrderManager\Order\Listing;
 
 use OnlineShop\Framework\OrderManager;
 use OnlineShop\Framework\OrderManager\IOrderListItem;
-use OnlineShop\Framework\Impl\OrderManager\AbstractOrderListItem;
+use OnlineShop\Framework\OrderManager\AbstractOrderListItem;
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 

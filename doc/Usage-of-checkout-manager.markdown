@@ -138,10 +138,10 @@ While committing the order, the checkout manager delegates it to the specified c
 This is the place where all functionality for committing the order (e.g. sending orders to erp systems, sending order confirmation mails, ...) is bundled. 
 
 The default implementation `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` provides basic functionality like creating an order object and sending a order confirmation mail.
- Order creation it self is delegated to the `\OnlineShop\Framework\IOrderManager`. 
+ Order creation it self is delegated to the `\OnlineShop\Framework\OrderManager\IOrderManager`. 
 In simple use cases a website specific implementation needs 
 
-* to extend `\OnlineShop\Framework\Impl\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` to add additional fields to the order object and 
+* to extend `\OnlineShop\Framework\OrderManager\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` to add additional fields to the order object and 
 * to extend `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` and overwrite the method `processOrder` where website specific functionality is integrated (sending orders to erp systems, ...).
 
 If additional information needs to be stored into the order, the OrderManager has to be 
@@ -151,7 +151,7 @@ A simple implementation of `Website_OnlineShop_Order_OrderManager` could look li
 
 ```php
 <?php
-class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\Impl\OrderManager {
+class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\OrderManager\OrderManager {
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart

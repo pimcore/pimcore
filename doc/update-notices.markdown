@@ -25,7 +25,7 @@ For details see [Class Defintiion](/install/class_source/class_OnlineShopOrder_e
     * `getOrderFromCart()`: added
     * `protected applyCustomCheckoutDataToOrder()`: use this method for adding custom checkout information to order objects.
     
-     For details see [IOrderManager](/lib/OnlineShop/Framework/IOrderManager.php) and [OrderManager](/lib/OnlineShop/Framework/Impl/OrderManager.php).
+     For details see [IOrderManager](/lib/OnlineShop/Framework/OrderManager/IOrderManager.php) and [OrderManager](/lib/OnlineShop/Framework/OrderManager/OrderManager.php).
 
 
 
@@ -38,7 +38,7 @@ For details see [Class Defintiion](/install/class_source/class_OnlineShopOrder_e
     * The constants `FINISHED`, `CART_READONLY_PREFIX` and `COMMITTED` were removed, use the getter methods instead. The information 
     for these states is now calcualted based on the order object.
     
-     For details see [ICheckoutManager](/lib/OnlineShop/Framework/ICheckoutManager.php) and  [CheckoutManager](/lib/OnlineShop/Framework/Impl/CheckoutManager.php). 
+     For details see [ICheckoutManager](/lib/OnlineShop/Framework/CheckoutManager/ICheckoutManager.php) and  [CheckoutManager](/lib/OnlineShop/Framework/CheckoutManager/CheckoutManager.php). 
 
 
 
@@ -53,4 +53,4 @@ For details see [Class Defintiion](/install/class_source/class_OnlineShopOrder_e
     * `handlePaymentResponseAndCommitOrderPayment()`: added, basically does the work of handling payment response and commit the order
     * `processOrder` and `sendConfirmationMail` do not have access to the cart anymore.  
     
-     For details see [ICommitOrderProcessor](/lib/OnlineShop/Framework/ICommitOrderProcessor.php) and [CommitOrderProcessor](/lib/OnlineShop/Framework/Impl/CommitOrderProcessor.php)
+     For details see [ICommitOrderProcessor](/lib/OnlineShop/Framework/CheckoutManager/ICommitOrderProcessor.php) and [CommitOrderProcessor](/lib/OnlineShop/Framework/CheckoutManager/CommitOrderProcessor.php)
