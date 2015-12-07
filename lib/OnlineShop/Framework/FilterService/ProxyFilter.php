@@ -33,7 +33,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
     }
 
     public function getFilterFrontend(
-        OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition,
+        \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition,
         OnlineShop_Framework_IProductList $productList, $currentFilter
     )
     {
@@ -42,7 +42,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
     }
 
     public function addCondition(
-        OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition,
+        \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition,
         OnlineShop_Framework_IProductList $productList, $currentFilter, $params,
         $isPrecondition = false
     ) {

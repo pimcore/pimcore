@@ -88,21 +88,21 @@ class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends Onli
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @return bool
      */
-    public function inIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         return true;
     }
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subObjectId = null) {
+    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null) {
         return null;
     }
 
@@ -163,7 +163,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends Onli
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable | array
+     * @return \OnlineShop\Framework\Model\IIndexable | array
      */
     public function getObjectMockupById($objectId) {
         return $this->getTenantWorker()->getMockupFromCache($objectId);

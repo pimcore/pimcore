@@ -1,5 +1,5 @@
 {
-	"parentClass":"OnlineShop_Framework_AbstractFilterDefinitionType",
+	"parentClass":"\OnlineShop\Framework\Model\AbstractFilterDefinitionType",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,

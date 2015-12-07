@@ -10,22 +10,23 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for order item pimcore objects
  */
-class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
+class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop\Framework\Model\ICheckoutable
      */
     public function getProduct() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getProduct is not implemented for " . get_class($this));
     }
 
     /**
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function setProduct($product) {
@@ -101,7 +102,7 @@ class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concr
 
 
     /**
-     * @return OnlineShop_Framework_AbstractOrderItem[]
+     * @return AbstractOrderItem[]
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function getSubItems() {
@@ -109,7 +110,7 @@ class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concr
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractOrderItem[] $subItems
+     * @param AbstractOrderItem[] $subItems
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function setSubItems($subItems) {
@@ -184,16 +185,16 @@ class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Model\Object\Concr
      */
     public function isCanceled()
     {
-        return $this->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_CANCELLED;
+        return $this->getOrderState() == AbstractOrder::ORDER_STATE_CANCELLED;
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return AbstractOrder
      */
     public function getOrder()
     {
         $parent = $this;
-        while(!$parent instanceof OnlineShop_Framework_AbstractOrder)
+        while(!$parent instanceof AbstractOrder)
         {
             $parent = $parent->getParent();
         }

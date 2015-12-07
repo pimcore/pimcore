@@ -55,26 +55,26 @@ interface OnlineShop_Framework_IndexService_Tenant_IConfig {
      *
      * @return bool
      */
-    public function isActive(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
+    public function isActive(\OnlineShop\Framework\Model\IIndexable $object);
 
 
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @return bool
      */
-    public function inIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
+    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object);
 
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subObjectId = null);
+    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null);
 
 
     /**
@@ -100,31 +100,31 @@ interface OnlineShop_Framework_IndexService_Tenant_IConfig {
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @return \OnlineShop\Framework\Model\IIndexable[]
      */
-    public function createSubIdsForObject(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
+    public function createSubIdsForObject(\OnlineShop\Framework\Model\IIndexable $object);
 
 
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param array $subIds
      * @return mixed
      */
-    public function getSubIdsToCleanup(OnlineShop_Framework_ProductInterfaces_IIndexable $object, array $subIds);
+    public function getSubIdsToCleanup(\OnlineShop\Framework\Model\IIndexable $object, array $subIds);
 
 
     /**
      * creates virtual parent id for given sub id
      * default is getOSParentId
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param $subId
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subId);
+    public function createVirtualParentIdForSubId(\OnlineShop\Framework\Model\IIndexable $object, $subId);
 
 
     /**
@@ -143,7 +143,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IConfig {
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable | array
+     * @return \OnlineShop\Framework\Model\IIndexable | array
      */
     public function getObjectMockupById($objectId);
 }

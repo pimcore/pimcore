@@ -13,7 +13,7 @@
 
 class OnlineShop_Framework_FilterService_Input extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
-    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
         $field = $filterDefinition->getField($filterDefinition);
 
         if ($filterDefinition->getScriptPath()) {
@@ -30,7 +30,7 @@ class OnlineShop_Framework_FilterService_Input extends OnlineShop_Framework_Filt
         ));
     }
 
-    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 

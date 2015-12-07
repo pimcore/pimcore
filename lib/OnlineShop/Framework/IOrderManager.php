@@ -52,7 +52,7 @@ interface IOrderManager
      *
      * move to ordermanagers
      *
-     * @return \OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function getOrCreateOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart);
 
@@ -60,7 +60,7 @@ interface IOrderManager
      * Looks if order object for given cart exists and returns it - it does not create it!
      *
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function getOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart);
 
@@ -68,7 +68,7 @@ interface IOrderManager
      * gets order based on given payment status
      *
      * @param \OnlineShop_Framework_Payment_IStatus $paymentStatus
-     * @return \OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function getOrderByPaymentStatus(\OnlineShop_Framework_Payment_IStatus $paymentStatus);
 }

@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for order pimcore objects
  */
-class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete {
+class AbstractOrder extends \Pimcore\Model\Object\Concrete {
 
     const ORDER_STATE_COMMITTED = "committed";
     const ORDER_STATE_CANCELLED = "cancelled";
@@ -72,7 +73,7 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return Zend_Date
+     * @return \Zend_Date
      */
     public function getOrderdate() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getOrderdate is not implemented for " . get_class($this));
@@ -80,7 +81,7 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @param Zend_Date $orderdate
+     * @param \Zend_Date $orderdate
      */
     public function setOrderdate($orderdate) {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setOrderdate is not implemented for " . get_class($this));
@@ -88,14 +89,14 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Model\Object\Concrete 
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return OnlineShop_Framework_AbstractOrderItem[]
+     * @return \OnlineShop\Framework\Model\AbstractOrderItem[]
      */
     public function getItems() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getItems is not implemented for " . get_class($this));
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractOrderItem[] $items
+     * @param \OnlineShop\Framework\Model\AbstractOrderItem[] $items
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function setItems($items) {

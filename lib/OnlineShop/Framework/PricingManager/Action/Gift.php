@@ -15,7 +15,7 @@ namespace OnlineShop\Framework\PricingManager\Action;
 class Gift implements IGift
 {
     /**
-     * @var \OnlineShop_Framework_AbstractProduct
+     * @var \OnlineShop\Framework\Model\AbstractProduct
      */
     protected $product;
 
@@ -42,18 +42,18 @@ class Gift implements IGift
 
     /**
      * set gift product
-     * @param \OnlineShop_Framework_AbstractProduct $product
+     * @param \OnlineShop\Framework\Model\AbstractProduct $product
      *
      * @return IGift
      */
-    public function setProduct(\OnlineShop_Framework_AbstractProduct $product)
+    public function setProduct(\OnlineShop\Framework\Model\AbstractProduct $product)
     {
         $this->product = $product;
         return $this;
     }
 
     /**
-     * @return \OnlineShop_Framework_AbstractProduct
+     * @return \OnlineShop\Framework\Model\AbstractProduct
      */
     public function getProduct()
     {
@@ -80,7 +80,7 @@ class Gift implements IGift
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        $product = \OnlineShop_Framework_AbstractProduct::getByPath( $json->product );
+        $product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $json->product );
 
         if($product)
             $this->setProduct( $product );
@@ -106,7 +106,7 @@ class Gift implements IGift
     public function __wakeup()
     {
         if($this->product != '')
-            $this->product = \OnlineShop_Framework_AbstractProduct::getByPath( $this->product );
+            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->product );
 
     }
 }

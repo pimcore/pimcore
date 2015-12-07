@@ -40,11 +40,11 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder
     /**
      * deletes given element from index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      *
      * @return void
      */
-    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object)
+    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object)
     {
         // TODO: Implement deleteFromIndex() method.
     }
@@ -54,11 +54,11 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder
     /**
      * updates given element in index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      *
      * @return void
      */
-    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object)
+    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object)
     {
         if(!$this->tenantConfig->isActive($object))
         {
@@ -118,7 +118,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder
      * @param int $objectId
      * @todo
      */
-    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null)
+    protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null)
     {
 
     }

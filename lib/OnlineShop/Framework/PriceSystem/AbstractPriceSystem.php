@@ -27,13 +27,13 @@ abstract class AbstractPriceSystem implements IPriceSystem {
 
 
      /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
+     * @param \OnlineShop\Framework\Model\ICheckoutable $abstractProduct
      * @param int | string $quantityScale
      *    quantityScale - numeric or string (allowed values: \OnlineShop\Framework\PriceSystem\IPriceInfo::MIN_PRICE
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable[] $products
+     * @param \OnlineShop\Framework\Model\ICheckoutable[] $products
      * @return IPriceInfo
      */
-    public function getPriceInfo(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = null, $products = null) {
+    public function getPriceInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null) {
         return $this->initPriceInfoInstance($quantityScale,$abstractProduct,$products);
     }
 

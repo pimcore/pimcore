@@ -18,7 +18,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
 {
 
     /**
-     * @var null|OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @var null|\OnlineShop\Framework\Model\IIndexable[]
      */
     protected $products = null;
 
@@ -53,7 +53,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
     protected $offset;
 
     /**
-     * @var OnlineShop_Framework_AbstractCategory
+     * @var \OnlineShop\Framework\Model\AbstractCategory
      */
     protected $category;
 
@@ -75,7 +75,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct[]
+     * @return \OnlineShop\Framework\Model\AbstractProduct[]
      */
     public function getProducts() {
         if ($this->products === null) {
@@ -256,7 +256,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql implements OnlineShop_Framew
     }
 
 
-    public function setCategory(OnlineShop_Framework_AbstractCategory $category) {
+    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category) {
         $this->products = null;
         $this->category = $category;
     }

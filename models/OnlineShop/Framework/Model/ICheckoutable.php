@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
- * Class OnlineShop_Framework_ProductInterfaces_ICheckoutable
+ * Class ICheckoutable
  */
-interface OnlineShop_Framework_ProductInterfaces_ICheckoutable {
+interface ICheckoutable {
 
 
     /**

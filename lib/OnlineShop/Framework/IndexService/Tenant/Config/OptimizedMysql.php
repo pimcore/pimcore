@@ -52,7 +52,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql extends Onl
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable | array
+     * @return \OnlineShop\Framework\Model\IIndexable | array
      */
     public function getObjectMockupById($objectId) {
         $mockup = $this->getTenantWorker()->getMockupFromCache($objectId);

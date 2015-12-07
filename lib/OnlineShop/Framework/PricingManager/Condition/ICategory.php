@@ -15,14 +15,14 @@ namespace OnlineShop\Framework\PricingManager\Condition;
 interface ICategory extends \OnlineShop\Framework\PricingManager\ICondition
 {
     /**
-     * @param \OnlineShop_Framework_AbstractCategory[] $categories
+     * @param \OnlineShop\Framework\Model\AbstractCategory[] $categories
      *
      * @return ICategory
      */
     public function setCategories(array $categories);
 
     /**
-     * @return \OnlineShop_Framework_AbstractCategory[]
+     * @return \OnlineShop\Framework\Model\AbstractCategory[]
      */
     public function getCategories();
 }

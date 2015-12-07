@@ -207,11 +207,11 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      *
      * @return IPriceInfo
      */
-    public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product)
+    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product)
     {
         $this->priceInfo->setProduct($product);
 
@@ -219,7 +219,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop\Framework\Model\ICheckoutable
      */
     public function getProduct()
     {

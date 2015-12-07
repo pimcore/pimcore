@@ -59,7 +59,7 @@ class VoucherToken implements \OnlineShop\Framework\PricingManager\ICondition
 
         // add categories
         foreach ($this->getWhiteList() as $series) {
-            /* @var \OnlineShop_Framework_AbstractVoucherSeries $series */
+            /* @var \OnlineShop\Framework\Model\AbstractVoucherSeries $series */
             $json['whiteList'][] = array(
                 $series->id,
                 $series->path

@@ -13,7 +13,7 @@
 
 class OnlineShop_Framework_FilterService_Findologic_MultiSelect extends OnlineShop_Framework_FilterService_MultiSelect
 {
-    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
         //return "";
         $field = $this->getField($filterDefinition);
 
@@ -69,7 +69,7 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelect extends OnlineSh
     }
 
     /**
-     * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
+     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
      * @param OnlineShop_Framework_IProductList                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
@@ -77,7 +77,7 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelect extends OnlineSh
      *
      * @return mixed
      */
-    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false)
     {
         // init
         $field = $this->getField($filterDefinition);

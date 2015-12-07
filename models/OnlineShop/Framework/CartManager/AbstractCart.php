@@ -128,7 +128,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param $count
      * @param null $itemKey
      * @param bool $replace
@@ -137,7 +137,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      * @param null $comment
      * @return mixed
      */
-    public function addItem(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+    public function addItem(\OnlineShop\Framework\Model\ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
 
         $this->checkCartIsReadOnly();
 
@@ -154,7 +154,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
     /**
      * @param $itemKey
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param $count
      * @param bool $replace
      * @param array $params
@@ -162,7 +162,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      * @param null $comment
      * @return mixed
      */
-    public function updateItem($itemKey, \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+    public function updateItem($itemKey, \OnlineShop\Framework\Model\ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
 
         $this->checkCartIsReadOnly();
 
@@ -231,7 +231,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     }
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param int                                  $count
      * @param null                                 $itemKey
      * @param bool                                 $replace
@@ -241,7 +241,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      *
      * @return string
      */
-    public function addGiftItem(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null)
+    public function addGiftItem(\OnlineShop\Framework\Model\ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null)
     {
         $this->checkCartIsReadOnly();
 
@@ -258,7 +258,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
     /**
      * @param string                               $itemKey
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param int                                  $count
      * @param bool                                 $replace
      * @param array                                $params
@@ -267,7 +267,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      *
      * @return string
      */
-    public function updateGiftItem($itemKey, \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null)
+    public function updateGiftItem($itemKey, \OnlineShop\Framework\Model\ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null)
     {
         $this->checkCartIsReadOnly();
 
@@ -666,7 +666,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * @param int $count
      *
-     * @return \OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
+     * @return \OnlineShop\Framework\Model\ICheckoutable[]
      */
     public function getRecentlyAddedItems($count)
     {

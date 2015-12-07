@@ -10,17 +10,18 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for pimcore objects who should be used as set products in the online shop framework
  */
-class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_AbstractProduct {
+class AbstractSetProduct extends AbstractProduct {
 
     /**
      * returns mandatory products for a set product
      *
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return OnlineShop_Framework_AbstractSetProductEntry[]
+     * @return AbstractSetProductEntry[]
      */
     public function getMandatoryProductEntries() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
@@ -30,7 +31,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * returns optional products for a set product
      *
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return OnlineShop_Framework_AbstractSetProductEntry[]
+     * @return AbstractSetProductEntry[]
      */
     public function getOptionalProductEntries() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
@@ -43,7 +44,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * if no products given, mandatory products are used
      *
      * @param int $quantityScale
-     * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
+     * @param AbstractSetProductEntry[] $products
      * @return bool
      */
     public function getOSIsBookable($quantityScale = 1, $products = null) {
@@ -72,7 +73,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * Delivers price of set product with given products
      *
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
+     * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      * @return \OnlineShop\Framework\PriceSystem\IPrice
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
@@ -85,7 +86,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * Delivers priceInfo of setproduct with given products
      *
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
+     * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      * @return stdClass
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
@@ -128,7 +129,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
 
     /**
      * @param int $quantity
-     * @param $products OnlineShop_Framework_AbstractSetProductEntry[]
+     * @param $products AbstractSetProductEntry[]
      * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null, $products = null) {
@@ -143,7 +144,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * checks if all mandatory of set products are set in given product list
      *
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @param  OnlineShop_Framework_AbstractSetProductEntry[] $products
+     * @param  AbstractSetProductEntry[] $products
      * @return void
      */
     protected function checkMandatoryProducts($products) {

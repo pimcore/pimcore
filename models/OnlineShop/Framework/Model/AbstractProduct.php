@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concrete implements OnlineShop_Framework_ProductInterfaces_IIndexable, OnlineShop_Framework_ProductInterfaces_ICheckoutable {
+class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexable, ICheckoutable {
 
 // =============================================
 //     IIndexable Methods
@@ -210,7 +211,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Model\Object\Concret
     public static function getById($id) {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof OnlineShop_Framework_AbstractProduct) {
+        if ($object instanceof AbstractProduct) {
             return $object;
         }
         return null;

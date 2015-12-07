@@ -74,7 +74,7 @@ interface OnlineShop_Framework_ICheckoutManager {
      * starts payment for checkout - only possible if payment provider is configured
      * sets cart to read only mode since it must not changed during ongoing payment process
      *
-     * @return OnlineShop_Framework_AbstractPaymentInformation
+     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
      */
     public function startOrderPayment();
 
@@ -86,7 +86,7 @@ interface OnlineShop_Framework_ICheckoutManager {
      *
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return null|\OnlineShop_Framework_AbstractOrder
+     * @return null|\OnlineShop\Framework\Model\AbstractOrder
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();

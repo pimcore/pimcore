@@ -31,7 +31,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
         throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
 
-    public function getPriceInfo(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
+    public function getPriceInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
         $pId = $abstractProduct->getId();
         if (!is_array($this->priceInfos[$pId])){
             $this->priceInfos[$pId] = array();

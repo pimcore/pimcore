@@ -52,11 +52,11 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      *
      * @return bool
      */
-    public function inIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object)
+    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object)
     {
         return true;
     }
@@ -64,12 +64,12 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param null                                              $subObjectId
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null)
     {
 
     }

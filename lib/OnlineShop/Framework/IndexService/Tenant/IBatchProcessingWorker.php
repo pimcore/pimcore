@@ -21,9 +21,9 @@ interface OnlineShop_Framework_IndexService_Tenant_IBatchProcessingWorker extend
     /**
      * fills queue based on path
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      */
-    public function fillupPreparationQueue(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
+    public function fillupPreparationQueue(\OnlineShop\Framework\Model\IIndexable $object);
 
 
     /**

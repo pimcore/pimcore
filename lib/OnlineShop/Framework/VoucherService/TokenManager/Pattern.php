@@ -28,7 +28,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
         'alpha' => "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
     ];
 
-    public function __construct(OnlineShop_Framework_AbstractVoucherTokenType $configuration)
+    public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration)
     {
         parent::__construct($configuration);
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern) {

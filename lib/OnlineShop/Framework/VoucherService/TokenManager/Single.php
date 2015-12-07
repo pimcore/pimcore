@@ -16,7 +16,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single extends OnlineShop
 
     protected $template;
 
-    public function __construct(OnlineShop_Framework_AbstractVoucherTokenType $configuration)
+    public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration)
     {
         parent::__construct($configuration);
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle) {

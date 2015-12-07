@@ -105,7 +105,7 @@ $currency = $orderAgent->getCurrency();
                 </tfoot>
                 <tbody>
                 <?php foreach($order->getItems() as $item):
-                    /* @var OnlineShop_Framework_AbstractOrderItem $item */
+                    /* @var \OnlineShop\Framework\Model\AbstractOrderItem $item */
                     ?>
                     <tr>
                         <td>

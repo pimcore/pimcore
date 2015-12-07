@@ -20,12 +20,12 @@ interface IPriceSystem {
     /**
      * creates price info object for given product and quantity scale
      *
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
+     * @param \OnlineShop\Framework\Model\ICheckoutable $abstractProduct
      * @param null|int|string $quantityScale - numeric or string (allowed values: \OnlineShop\Framework\PriceSystem\IPriceInfo::MIN_PRICE)
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable[] $products
+     * @param \OnlineShop\Framework\Model\ICheckoutable[] $products
      * @return IPriceInfo
      */
-    public function getPriceInfo(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = null, $products = null);
+    public function getPriceInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null);
 
     /**
      * filters and orders given product ids based on price information

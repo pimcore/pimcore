@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Class for product entry of a set product - container for product and quantity
  */
-class OnlineShop_Framework_AbstractSetProductEntry {
+class AbstractSetProductEntry {
 
     /**
      * @var int
@@ -22,26 +23,26 @@ class OnlineShop_Framework_AbstractSetProductEntry {
     private $quantity;
 
     /**
-     * @var OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @var \OnlineShop\Framework\Model\ICheckoutable
      */
     private $product;
 
-    public function __construct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $quantity = 1) {
+    public function __construct(\OnlineShop\Framework\Model\ICheckoutable $product, $quantity = 1) {
         $this->product = $product;
         $this->quantity = $quantity;
     }
 
 
     /**
-     * @param OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @return void
      */
-    public function setProduct(OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
+    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product) {
         $this->product = $product;
     }
 
     /**
-     * @return OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop\Framework\Model\ICheckoutable
      */
     public function getProduct() {
         return $this->product;

@@ -79,7 +79,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
     /**
      * @return bool
      */
-    public function isActive(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function isActive(\OnlineShop\Framework\Model\IIndexable $object) {
         return true;
     }
 
@@ -87,21 +87,21 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @return \OnlineShop\Framework\Model\IIndexable[]
      */
-    public function createSubIdsForObject(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function createSubIdsForObject(\OnlineShop\Framework\Model\IIndexable $object) {
         return array($object->getId() => $object);
     }
 
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param array $subIds
      * @return mixed
      */
-    public function getSubIdsToCleanup(OnlineShop_Framework_ProductInterfaces_IIndexable $object, array $subIds) {
+    public function getSubIdsToCleanup(\OnlineShop\Framework\Model\IIndexable $object, array $subIds) {
         return array();
     }
 
@@ -109,11 +109,11 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
      * creates virtual parent id for given sub id
      * default is getOSParentId
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param $subId
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subId) {
+    public function createVirtualParentIdForSubId(\OnlineShop\Framework\Model\IIndexable $object, $subId) {
         return $object->getOSParentId();
     }
 
@@ -136,7 +136,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig im
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable | array
+     * @return \OnlineShop\Framework\Model\IIndexable | array
      */
     public function getObjectMockupById($objectId) {
         return $this->getObjectById($objectId);

@@ -140,7 +140,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
     }
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param float $count
      * @param null $key
      * @param null $itemKey
@@ -151,7 +151,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
      * @return null|string
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    public function addToCart(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count,  $key = null, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+    public function addToCart(\OnlineShop\Framework\Model\ICheckoutable $product, $count,  $key = null, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
         $this->checkForInit();
         if(empty($key) || !array_key_exists($key, $this->carts)) {
             throw new \OnlineShop\Framework\Exception\InvalidConfigException("Cart " . $key . " not found.");

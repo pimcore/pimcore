@@ -15,7 +15,7 @@ namespace OnlineShop\Framework\OfferTool;
 /**
  * Abstract base class for pimcore objects who should be used as custom products in the offer tool
  */
-class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements \OnlineShop_Framework_ProductInterfaces_ICheckoutable {
+class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements \OnlineShop\Framework\Model\ICheckoutable {
 
 // =============================================
 //     ICheckoutable Methods

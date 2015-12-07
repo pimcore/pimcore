@@ -33,18 +33,18 @@ interface ICartManager extends Framework\IComponent {
     /**
      * adds item to given cart
      *
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable  $product   - product to add
+     * @param \OnlineShop\Framework\Model\ICheckoutable  $product   - product to add
      * @param float                                                 $count
      * @param string                                                $key       - optional key of cart where the item should be added to
      * @param null|string                                           $itemKey   - optional item key
      * @param bool                                                  $replace   - replace item if same key already exists
      * @param array                                                 $params    - optional addtional item information
-     * @param \OnlineShop_Framework_AbstractSetProductEntry[]        $subProducts
+     * @param \OnlineShop\Framework\Model\AbstractSetProductEntry[]        $subProducts
      * @param null|string                                           $comment
      *
      * @return string - item key
      */
-    public function addToCart(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count,  $key = null, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addToCart(\OnlineShop\Framework\Model\ICheckoutable $product, $count,  $key = null, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * removes item from given cart

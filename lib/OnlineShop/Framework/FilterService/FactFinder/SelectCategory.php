@@ -14,7 +14,7 @@
 class OnlineShop_Framework_FilterService_FactFinder_SelectCategory extends OnlineShop_Framework_FilterService_SelectCategory
 {
     /**
-     * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
+     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
      * @param OnlineShop_Framework_IProductList                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
@@ -22,7 +22,7 @@ class OnlineShop_Framework_FilterService_FactFinder_SelectCategory extends Onlin
      *
      * @return mixed
      */
-    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
 
         // init
         $field = $this->getField($filterDefinition);
@@ -63,7 +63,7 @@ class OnlineShop_Framework_FilterService_FactFinder_SelectCategory extends Onlin
     }
 
 
-    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter)
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter)
     {
         // init
         $script = $filterDefinition->getScriptPath() ?: $this->script;

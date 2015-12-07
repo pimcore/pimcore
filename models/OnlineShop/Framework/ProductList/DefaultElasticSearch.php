@@ -6,7 +6,7 @@
 class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineShop_Framework_IProductList {
 
     /**
-     * @var null|OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @var null|\OnlineShop\Framework\Model\IIndexable[]
      */
     protected $products = null;
 
@@ -56,7 +56,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     protected $offset;
 
     /**
-     * @var OnlineShop_Framework_AbstractCategory
+     * @var \OnlineShop\Framework\Model\AbstractCategory
      */
     protected $category;
 
@@ -115,7 +115,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     /**
      * Returns all products valid for this search
      *
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @return \OnlineShop\Framework\Model\IIndexable[]
      */
     public function getProducts()
     {
@@ -312,14 +312,14 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * @param $category
      * @return void
      */
-    public function setCategory(OnlineShop_Framework_AbstractCategory $category) {
+    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category) {
         $this->category = $category;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractCategory
+     * @return \OnlineShop\Framework\Model\AbstractCategory
      */
     public function getCategory() {
         return $this->category;
@@ -345,7 +345,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
     /**
      * loads search results from index and returns them
      *
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @return \OnlineShop\Framework\Model\IIndexable[]
      */
     public function load() {
 
@@ -651,7 +651,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch implements OnlineSho
      * loads element by id
      *
      * @param $elementId
-     * @return array|OnlineShop_Framework_ProductInterfaces_IIndexable
+     * @return array|\OnlineShop\Framework\Model\IIndexable
      */
     protected function loadElementById($elementId) {
         return $this->tenantConfig->getObjectMockupById($elementId);

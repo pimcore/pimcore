@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
-abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
+abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
 {
 
     /**
@@ -21,7 +22,7 @@ abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Model
 
 
     /**
-     * @return bool|OnlineShop_Framework_VoucherService_ITokenManager
+     * @return bool|\OnlineShop_Framework_VoucherService_ITokenManager
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getTokenManager()
@@ -42,7 +43,7 @@ abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Model
      * @return bool|string
      */
     public function getExistingLengths(){
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         $query = "
             SELECT length FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . "
@@ -51,7 +52,7 @@ abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Model
 
         try {
             return $db->fetchAssoc($query, $this->getId());
-        }catch (Exception $e){
+        }catch (\Exception $e){
             return false;
         }
     }

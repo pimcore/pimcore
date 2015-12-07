@@ -19,14 +19,14 @@ interface IGift extends \OnlineShop\Framework\PricingManager\IAction
 {
     /**
      * set gift product
-     * @param \OnlineShop_Framework_AbstractProduct $product
+     * @param \OnlineShop\Framework\Model\AbstractProduct $product
      *
      * @return IGift
      */
-    public function setProduct(\OnlineShop_Framework_AbstractProduct $product);
+    public function setProduct(\OnlineShop\Framework\Model\AbstractProduct $product);
 
     /**
-     * @return \OnlineShop_Framework_AbstractProduct
+     * @return \OnlineShop\Framework\Model\AbstractProduct
      */
     public function getProduct();
 }

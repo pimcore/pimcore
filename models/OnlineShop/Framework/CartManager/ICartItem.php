@@ -19,7 +19,7 @@ interface ICartItem {
 
     /**
      * @abstract
-     * @return \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop\Framework\Model\ICheckoutable
      */
     public function getProduct();
 
@@ -37,10 +37,10 @@ interface ICartItem {
 
     /**
      * @abstract
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @return void
      */
-    public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product);
+    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product);
 
     /**
      * @abstract
@@ -106,7 +106,7 @@ interface ICartItem {
     public function getComment();
 
     /**
-     * @return \OnlineShop_Framework_AbstractSetProductEntry[]
+     * @return \OnlineShop\Framework\Model\AbstractSetProductEntry[]
      */
     public function getSetEntries();
 

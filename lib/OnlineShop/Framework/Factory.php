@@ -576,11 +576,11 @@ class Factory {
 
 
     /**
-     * @param \OnlineShop_Framework_AbstractVoucherTokenType $configuration
+     * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
      * @return \OnlineShop_Framework_VoucherService_ITokenManager
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    public function getTokenManager(\OnlineShop_Framework_AbstractVoucherTokenType $configuration) {
+    public function getTokenManager(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration) {
         $id   = $configuration->getObject()->getId();
         $type = $configuration->getType();
 

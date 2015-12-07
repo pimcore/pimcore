@@ -15,14 +15,14 @@ namespace OnlineShop\Framework\PricingManager\Condition;
 interface ICatalogProduct extends \OnlineShop\Framework\PricingManager\ICondition
 {
     /**
-     * @param \OnlineShop_Framework_AbstractProduct[] $products
+     * @param \OnlineShop\Framework\Model\AbstractProduct[] $products
      *
      * @return ICatalogProduct
      */
     public function setProducts(array $products);
 
     /**
-     * @return \OnlineShop_Framework_AbstractProduct[]
+     * @return \OnlineShop\Framework\Model\AbstractProduct[]
      */
     public function getProducts();
 }

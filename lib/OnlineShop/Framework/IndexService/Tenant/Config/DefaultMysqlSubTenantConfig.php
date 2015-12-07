@@ -53,7 +53,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfi
         }
     }
 
-    public function inIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         $tenants = $object->getTenants();
         return !empty($tenants);
     }
@@ -61,11 +61,11 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfi
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(OnlineShop_Framework_ProductInterfaces_IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null)
     {
         $subTenantData = array();
         if($this->inIndex($object)) {

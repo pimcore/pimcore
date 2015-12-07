@@ -65,7 +65,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
                 $sum = 0;
                 foreach($products as $p) {
 
-                    if($p instanceof \OnlineShop_Framework_AbstractSetProductEntry) {
+                    if($p instanceof \OnlineShop\Framework\Model\AbstractSetProductEntry) {
                         $sum += $p->getProduct()->$getter() * $p->getQuantity();
                     } else {
                         $sum += $p->$getter();

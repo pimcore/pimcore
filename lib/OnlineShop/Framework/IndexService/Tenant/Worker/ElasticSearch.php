@@ -283,10 +283,10 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
     /**
      * deletes given element from index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @return void
      */
-    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -302,7 +302,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
 
     }
 
-    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null) {
+    protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
         $esClient = $this->getElasticSearchClient();
 
         if($object) {
@@ -343,10 +343,10 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends Onli
     /**
      * updates given element in index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @return void
      */
-    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;

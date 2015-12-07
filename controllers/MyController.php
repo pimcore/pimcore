@@ -16,7 +16,7 @@ class OnlineShop_MyController extends Website_Controller_Action {
 
     public function testAction() {
 
-//        $t = new OnlineShop_Framework_AbstractProduct();
+//        $t = new \OnlineShop\Framework\Model\AbstractProduct();
 //        p_r($t);
 
         $x = \OnlineShop\Framework\Factory::getInstance();

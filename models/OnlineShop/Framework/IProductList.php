@@ -43,7 +43,7 @@ interface OnlineShop_Framework_IProductList extends Zend_Paginator_Adapter_Inter
     /**
      * Returns all products valid for this search
      *
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @return \OnlineShop\Framework\Model\IIndexable[]
      */
     public function getProducts();
 
@@ -178,10 +178,10 @@ interface OnlineShop_Framework_IProductList extends Zend_Paginator_Adapter_Inter
      * @param $category
      * @return void
      */
-    public function setCategory(OnlineShop_Framework_AbstractCategory $category);
+    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category);
 
     /**
-     * @return OnlineShop_Framework_AbstractCategory
+     * @return \OnlineShop\Framework\Model\AbstractCategory
      */
     public function getCategory();
 
@@ -199,7 +199,7 @@ interface OnlineShop_Framework_IProductList extends Zend_Paginator_Adapter_Inter
     /**
      * loads search results from index and returns them
      *
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @return \OnlineShop\Framework\Model\IIndexable[]
      */
     public function load();
 

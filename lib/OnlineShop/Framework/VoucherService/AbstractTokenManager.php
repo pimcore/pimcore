@@ -14,21 +14,21 @@
 abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implements OnlineShop_Framework_VoucherService_ITokenManager
 {
 
-    /* @var OnlineShop_Framework_AbstractVoucherTokenType */
+    /* @var \OnlineShop\Framework\Model\AbstractVoucherTokenType */
     public $configuration;
 
     public $seriesId;
 
-    /* @var OnlineShop_Framework_AbstractVoucherSeries */
+    /* @var \OnlineShop\Framework\Model\AbstractVoucherSeries */
     public $series;
 
     /**
-     * @param OnlineShop_Framework_AbstractVoucherTokenType $configuration
+     * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
      * @throws Exception
      */
-    public function __construct(OnlineShop_Framework_AbstractVoucherTokenType $configuration)
+    public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration)
     {
-        if ($configuration instanceof OnlineShop_Framework_AbstractVoucherTokenType) {
+        if ($configuration instanceof \OnlineShop\Framework\Model\AbstractVoucherTokenType) {
             $this->configuration = $configuration;
             $this->seriesId = $configuration->getObject()->getId();
             $this->series = $configuration->getObject();
@@ -140,7 +140,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
     public abstract function getStatistics($usagePeriod = null);
 
     /**
-     * @return OnlineShop_Framework_AbstractVoucherTokenType
+     * @return \OnlineShop\Framework\Model\AbstractVoucherTokenType
      */
     public abstract function getConfiguration();
 

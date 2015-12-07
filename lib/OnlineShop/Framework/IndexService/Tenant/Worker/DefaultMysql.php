@@ -124,7 +124,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
 
     }
 
-    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object){
+    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object){
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -141,7 +141,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
 
     }
 
-    protected function doDeleteFromIndex($subObjectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null) {
+    protected function doDeleteFromIndex($subObjectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
         $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
         $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
         if($this->tenantConfig->getTenantRelationTablename()) {
@@ -149,7 +149,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
         }
     }
 
-    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -175,7 +175,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends Onlin
 
                         if ($parent != null) {
                             if($parent->getOSProductsInParentCategoryVisible()) {
-                                while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
+                                while($parent && $parent instanceof \OnlineShop\Framework\Model\AbstractCategory) {
                                     $parentCategoryIds[$parent->getId()] = $parent->getId();
                                     $parent = $parent->getParent();
                                 }

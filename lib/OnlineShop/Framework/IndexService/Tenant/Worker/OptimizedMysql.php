@@ -34,7 +34,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
         $this->createOrUpdateStoreTable();
     }
 
-    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object){
+    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object){
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -50,7 +50,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
 
     }
 
-    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null) {
+    protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
         try {
             $this->db->beginTransaction();
             $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($objectId));
@@ -70,7 +70,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends Onl
 
 
 
-    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;

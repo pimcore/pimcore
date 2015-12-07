@@ -52,14 +52,14 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      */
-    public function prepareDataForIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function prepareDataForIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach($subObjectIds as $subObjectId => $object) {
             /**
-             * @var OnlineShop_Framework_ProductInterfaces_IIndexable $object
+             * @var \OnlineShop\Framework\Model\IIndexable $object
              */
             if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = Pimcore::inAdmin();
@@ -77,7 +77,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
 
                         if ($parent != null) {
                             if($parent->getOSProductsInParentCategoryVisible()) {
-                                while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
+                                while($parent && $parent instanceof \OnlineShop\Framework\Model\AbstractCategory) {
                                     $parentCategoryIds[$parent->getId()] = $parent->getId();
                                     $parent = $parent->getParent();
                                 }
@@ -233,9 +233,9 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
     /**
      * fills queue based on path
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      */
-    public function fillupPreparationQueue(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function fillupPreparationQueue(\OnlineShop\Framework\Model\IIndexable $object) {
         if($object instanceof \Pimcore\Model\Object\Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
@@ -270,7 +270,7 @@ trait OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing {
                 Logger::info("Worker $workerId preparing data for index for element " . $objectId);
 
                 $object = $this->tenantConfig->getObjectById($objectId, true);
-                if($object instanceof OnlineShop_Framework_ProductInterfaces_IIndexable) {
+                if($object instanceof \OnlineShop\Framework\Model\IIndexable) {
                     $this->prepareDataForIndex($object);
                 } else {
                     //delete entry with id which was retrieved from index before

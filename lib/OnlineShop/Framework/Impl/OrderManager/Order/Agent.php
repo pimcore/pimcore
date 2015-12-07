@@ -22,7 +22,7 @@ use Exception;
 use Zend_Date;
 use OnlineShop\Framework\Impl\OrderManager;
 use OnlineShop_Framework_AbstractOrder as Order;
-use OnlineShop_Framework_AbstractOrderItem as OrderItem;
+use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
@@ -346,7 +346,7 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @return null|\OnlineShop_Framework_AbstractPaymentInformation
+     * @return null|\OnlineShop\Framework\Model\AbstractPaymentInformation
      */
     public function getCurrentPendingPaymentInfo() {
 
@@ -365,7 +365,7 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @return null|\OnlineShop_Framework_AbstractPaymentInformation|PaymentInfo
+     * @return null|\OnlineShop\Framework\Model\AbstractPaymentInformation|PaymentInfo
      * @throws Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */

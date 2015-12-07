@@ -124,9 +124,9 @@ class OnlineShop_Framework_IndexService {
     /**
      * deletes given element from index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      */
-    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object){
+    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object){
         if($this->defaultWorker) {
             $this->defaultWorker->deleteFromIndex($object);
         }
@@ -138,9 +138,9 @@ class OnlineShop_Framework_IndexService {
     /**
      * updates given element in index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      */
-    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object) {
+    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if($this->defaultWorker) {
             $this->defaultWorker->updateIndex($object);
         }

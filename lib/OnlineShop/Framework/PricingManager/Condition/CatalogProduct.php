@@ -15,7 +15,7 @@ namespace OnlineShop\Framework\PricingManager\Condition;
 class CatalogProduct implements ICatalogProduct
 {
     /**
-     * @var \OnlineShop_Framework_AbstractProduct[]
+     * @var \OnlineShop\Framework\Model\AbstractProduct[]
      */
     protected $products;
 
@@ -51,10 +51,10 @@ class CatalogProduct implements ICatalogProduct
             // check all valid products
             foreach($this->getProducts() as $product)
             {
-                /* @var \OnlineShop_Framework_AbstractProduct $allow */
+                /* @var \OnlineShop\Framework\Model\AbstractProduct $allow */
 
                 $currentProductCheck = $currentProduct;
-                while($currentProductCheck instanceof \OnlineShop_Framework_ProductInterfaces_ICheckoutable) {
+                while($currentProductCheck instanceof \OnlineShop\Framework\Model\ICheckoutable) {
                     if($currentProductCheck->getId() === $product->getId())
                     {
                         return true;
@@ -81,7 +81,7 @@ class CatalogProduct implements ICatalogProduct
         // add categories
         foreach($this->getProducts() as $product)
         {
-            /* @var \OnlineShop_Framework_AbstractProduct $product */
+            /* @var \OnlineShop\Framework\Model\AbstractProduct $product */
             $json['products'][] = array(
                 $product->getId(),
                 $product->getFullPath()
@@ -122,7 +122,7 @@ class CatalogProduct implements ICatalogProduct
     {
         foreach($this->products as $key => $product)
         {
-            /* @var \OnlineShop_Framework_AbstractProduct $product */
+            /* @var \OnlineShop\Framework\Model\AbstractProduct $product */
             $this->products[ $key ] = $product->getId();
         }
 
@@ -145,7 +145,7 @@ class CatalogProduct implements ICatalogProduct
     }
 
     /**
-     * @param \OnlineShop_Framework_AbstractProduct[] $products
+     * @param \OnlineShop\Framework\Model\AbstractProduct[] $products
      *
      * @return ICatalogProduct
      */
@@ -156,7 +156,7 @@ class CatalogProduct implements ICatalogProduct
     }
 
     /**
-     * @return \OnlineShop_Framework_AbstractProduct[]
+     * @return \OnlineShop\Framework\Model\AbstractProduct[]
      */
     public function getProducts()
     {

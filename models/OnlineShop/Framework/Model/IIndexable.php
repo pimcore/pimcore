@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
- * Class OnlineShop_Framework_ProductInterfaces_IIndexable
+ * Class IIndexable
  */
-interface OnlineShop_Framework_ProductInterfaces_IIndexable {
+interface IIndexable {
 
     /**
      * @return int
@@ -71,7 +72,7 @@ interface OnlineShop_Framework_ProductInterfaces_IIndexable {
      * returns array of categories.
      * has to be overwritten either in pimcore object or mapped sub class.
      *
-     * @return OnlineShop_Framework_AbstractCategory[]
+     * @return \OnlineShop\Framework\Model\AbstractCategory[]
      */
     public function getCategories();
 

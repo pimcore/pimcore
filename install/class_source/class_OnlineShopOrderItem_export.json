@@ -1,6 +1,6 @@
 {
 	"description":null,
-	"parentClass":"OnlineShop_Framework_AbstractOrderItem",
+	"parentClass":"\OnlineShop\Framework\Model\AbstractOrderItem",
 	"useTraits":null,
 	"allowInherit":false,
 	"allowVariants":false,

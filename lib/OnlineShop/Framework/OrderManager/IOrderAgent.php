@@ -20,7 +20,7 @@ use OnlineShop_Framework_Payment_IStatus;
 use Zend_Currency;
 
 use OnlineShop_Framework_AbstractOrder as Order;
-use OnlineShop_Framework_AbstractOrderItem as OrderItem;
+use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\Element\Note;
 
@@ -116,14 +116,14 @@ interface IOrderAgent
      * if true -> returns existing payment info
      * if false -> creates new payment info (and aborts existing PENDING payment infos)
      *
-     * @return \OnlineShop_Framework_AbstractPaymentInformation
+     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
      */
     public function startPayment();
 
     /**
      * Returns current payment info of order, or null if none exists
      *
-     * @return null|\OnlineShop_Framework_AbstractPaymentInformation
+     * @return null|\OnlineShop\Framework\Model\AbstractPaymentInformation
      */
     public function getCurrentPendingPaymentInfo();
 
@@ -135,7 +135,7 @@ interface IOrderAgent
      *
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return \OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();

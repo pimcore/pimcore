@@ -25,7 +25,7 @@ class Environment implements IEnvironment
     protected $cartItem;
 
     /**
-     * @var \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @var \OnlineShop\Framework\Model\ICheckoutable
      */
     protected $product;
 
@@ -40,7 +40,7 @@ class Environment implements IEnvironment
     protected $priceInfo;
 
     /**
-     * @var \OnlineShop_Framework_AbstractCategory[]
+     * @var \OnlineShop\Framework\Model\AbstractCategory[]
      */
     protected $categories = array();
 
@@ -89,18 +89,18 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      *
      * @return IEnvironment
      */
-    public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product = null)
+    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product = null)
     {
         $this->product = $product;
         return $this;
     }
 
     /**
-     * @return \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop\Framework\Model\ICheckoutable
      */
     public function getProduct()
     {
@@ -157,7 +157,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return array|\OnlineShop_Framework_AbstractCategory
+     * @return array|\OnlineShop\Framework\Model\AbstractCategory
      */
     public function getCategories()
     {

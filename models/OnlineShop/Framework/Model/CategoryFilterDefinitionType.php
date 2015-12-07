@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for filter definition type field collections for category filter
  */
-abstract class OnlineShop_Framework_CategoryFilterDefinitionType extends OnlineShop_Framework_AbstractFilterDefinitionType {
+abstract class CategoryFilterDefinitionType extends \OnlineShop\Framework\Model\AbstractFilterDefinitionType {
 
     /**
      * @return string

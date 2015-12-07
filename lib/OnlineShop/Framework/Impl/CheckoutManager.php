@@ -142,7 +142,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractPaymentInformation
+     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
      * @throws Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */

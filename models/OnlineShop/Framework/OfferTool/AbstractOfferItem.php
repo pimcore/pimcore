@@ -26,7 +26,7 @@ class AbstractOfferItem extends \Pimcore\Model\Object\Concrete {
     }
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function setProduct($product) {

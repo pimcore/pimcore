@@ -36,12 +36,12 @@ namespace OnlineShop\Framework\PriceSystem;
      protected $quantity;
 
      /**
-      * @var \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+      * @var \OnlineShop\Framework\Model\ICheckoutable
       */
      protected $product;
 
      /**
-      * @var \OnlineShop_Framework_ProductInterfaces_ICheckoutable[]
+      * @var \OnlineShop\Framework\Model\ICheckoutable[]
       */
      protected $products;
 
@@ -99,7 +99,7 @@ namespace OnlineShop\Framework\PriceSystem;
          throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
-     public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
+     public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product) {
          $this->product = $product;
      }
 

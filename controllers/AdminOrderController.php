@@ -317,7 +317,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
 
             // load reference
             $reference = Pimcore\Model\Object\Concrete::getById( $note->getCid() );
-            $title = $reference instanceof OnlineShop_Framework_AbstractOrderItem
+            $title = $reference instanceof \OnlineShop\Framework\Model\AbstractOrderItem
                 ? $reference->getProduct()->getOSName()
                 : null
             ;

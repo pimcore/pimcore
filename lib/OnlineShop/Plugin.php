@@ -306,7 +306,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
      * @return void
      */
     public function postAddObject(\Pimcore\Model\Object\AbstractObject $object) {
-        if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
+        if ($object instanceof \OnlineShop\Framework\Model\IIndexable) {
             $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
@@ -317,14 +317,14 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
      * @return void
      */
     public function postUpdateObject(\Pimcore\Model\Object\AbstractObject $object) {
-        if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
+        if ($object instanceof \OnlineShop\Framework\Model\IIndexable) {
             $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
     }
 
     public function preDeleteObject(\Pimcore\Model\Object\AbstractObject $object) {
-        if ($object instanceof \OnlineShop_Framework_ProductInterfaces_IIndexable) {
+        if ($object instanceof \OnlineShop\Framework\Model\IIndexable) {
             $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexService->deleteFromIndex($object);
         }

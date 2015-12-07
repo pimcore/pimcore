@@ -17,12 +17,12 @@ namespace OnlineShop\Framework\AvailabilitySystem;
  */
 class AttributeAvailabilitySystem implements IAvailabilitySystem {
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct
+     * @param \OnlineShop\Framework\Model\ICheckoutable $abstractProduct
      * @param int $quantityScale
      * @param null $products
      * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
-    public function getAvailabilityInfo(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
+    public function getAvailabilityInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
         return $abstractProduct;
     }
 

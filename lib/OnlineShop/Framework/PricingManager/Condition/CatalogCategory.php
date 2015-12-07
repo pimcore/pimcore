@@ -15,12 +15,12 @@ namespace OnlineShop\Framework\PricingManager\Condition;
 class CatalogCategory implements ICategory
 {
     /**
-     * @var \OnlineShop_Framework_AbstractCategory[]
+     * @var \OnlineShop\Framework\Model\AbstractCategory[]
      */
     protected $categories = array();
 
     /**
-     * @param \OnlineShop_Framework_AbstractCategory[] $categories
+     * @param \OnlineShop\Framework\Model\AbstractCategory[] $categories
      *
      * @return ICategory
      */
@@ -31,7 +31,7 @@ class CatalogCategory implements ICategory
     }
 
     /**
-     * @return \OnlineShop_Framework_AbstractCategory[]
+     * @return \OnlineShop\Framework\Model\AbstractCategory[]
      */
     public function getCategories()
     {
@@ -52,7 +52,7 @@ class CatalogCategory implements ICategory
         // add categories
         foreach($this->getCategories() as $category)
         {
-            /* @var \OnlineShop_Framework_AbstractCategory $category */
+            /* @var \OnlineShop\Framework\Model\AbstractCategory $category */
             $json['categories'][] = array(
                 $category->getId(),
                 $category->getFullPath()
@@ -93,7 +93,7 @@ class CatalogCategory implements ICategory
     {
         foreach($this->categories as $key => $cat)
         {
-            /* @var \OnlineShop_Framework_AbstractCategory $cat */
+            /* @var \OnlineShop\Framework\Model\AbstractCategory $cat */
             $this->categories[ $key ] = $cat->getId();
         }
 
@@ -124,10 +124,10 @@ class CatalogCategory implements ICategory
     {
         foreach($environment->getCategories() as $category)
         {
-            /* @var \OnlineShop_Framework_AbstractCategory $category */
+            /* @var \OnlineShop\Framework\Model\AbstractCategory $category */
             foreach($this->getCategories() as $allow)
             {
-                /* @var \OnlineShop_Framework_AbstractCategory $allow */
+                /* @var \OnlineShop\Framework\Model\AbstractCategory $allow */
                 if(strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }

@@ -149,7 +149,7 @@ class OrderManager implements IOrderManager
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return null|\OnlineShop_Framework_AbstractOrder
+     * @return null|\OnlineShop\Framework\Model\AbstractOrder
      * @throws \Exception
      */
     public function getOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart) {
@@ -179,7 +179,7 @@ class OrderManager implements IOrderManager
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      *
@@ -272,7 +272,7 @@ class OrderManager implements IOrderManager
     }
 
 
-    protected function applyVoucherTokens(\OnlineShop_Framework_AbstractOrder $order, \OnlineShop\Framework\CartManager\ICart $cart){
+    protected function applyVoucherTokens(\OnlineShop\Framework\Model\AbstractOrder $order, \OnlineShop\Framework\CartManager\ICart $cart){
 
         $voucherTokens = $cart->getVoucherTokenCodes();
         if (is_array($voucherTokens)) {
@@ -318,7 +318,7 @@ class OrderManager implements IOrderManager
      * @return Order
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    protected function setCurrentCustomerToOrder(\OnlineShop_Framework_AbstractOrder $order) {
+    protected function setCurrentCustomerToOrder(\OnlineShop\Framework\Model\AbstractOrder $order) {
         //sets customer to order - if available
         $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 
@@ -341,7 +341,7 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @return \OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \Exception
      */
     protected function getNewOrderObject() {
@@ -353,7 +353,7 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @return \OnlineShop_Framework_AbstractOrderItem
+     * @return \OnlineShop\Framework\Model\AbstractOrderItem
      * @throws \Exception
      */
     protected function getNewOrderItemObject() {
@@ -367,9 +367,9 @@ class OrderManager implements IOrderManager
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICartItem $item
-     * @param \OnlineShop_Framework_AbstractOrder | \OnlineShop_Framework_AbstractOrderItem $parent
+     * @param \OnlineShop\Framework\Model\AbstractOrder | \OnlineShop\Framework\Model\AbstractOrderItem $parent
      *
-     * @return \OnlineShop_Framework_AbstractOrderItem
+     * @return \OnlineShop\Framework\Model\AbstractOrderItem
      * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
@@ -443,7 +443,7 @@ class OrderManager implements IOrderManager
 
     /**
      * @param \OnlineShop_Framework_Payment_IStatus $paymentStatus
-     * @return \OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function getOrderByPaymentStatus(\OnlineShop_Framework_Payment_IStatus $paymentStatus)
     {

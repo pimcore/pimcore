@@ -14,16 +14,16 @@
 /**
  * Interface OnlineShop_Framework_VoucherService_ITokenManager
  *
- * Manager for specific token settings object of type OnlineShop_Framework_AbstractVoucherTokenType.
+ * Manager for specific token settings object of type \OnlineShop\Framework\Model\AbstractVoucherTokenType.
  * Provides functionality for generating, checking, removing, applying, reserving tokens.
  * Also prepares the view of the Voucher Code Tab and specifies its template.
  */
 interface OnlineShop_Framework_VoucherService_ITokenManager
 {
     /**
-     * @param OnlineShop_Framework_AbstractVoucherTokenType $configuration
+     * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
      */
-    public function __construct(OnlineShop_Framework_AbstractVoucherTokenType $configuration);
+    public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration);
 
     /**
      * Checks if the configuration objects contains valid values to
@@ -140,7 +140,7 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
 
 
     /**
-     * @return OnlineShop_Framework_AbstractVoucherTokenType
+     * @return \OnlineShop\Framework\Model\AbstractVoucherTokenType
      */
     public function getConfiguration();
 }

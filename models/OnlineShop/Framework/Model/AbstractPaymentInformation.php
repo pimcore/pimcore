@@ -10,30 +10,31 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for payment information field collection
  */
-abstract class OnlineShop_Framework_AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
+abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
 
     /**
-     * @return Zend_Date
+     * @return \Zend_Date
      */
     public abstract function getPaymentStart ();
 
     /**
-     * @param Zend_Date $paymentStart
+     * @param \Zend_Date $paymentStart
      * @return void
      */
     public abstract function setPaymentStart ($paymentStart);
 
     /**
-     * @return Zend_Date
+     * @return \Zend_Date
      */
     public abstract function getPaymentFinish ();
 
     /**
-     * @param Zend_Date $paymentStart
+     * @param \Zend_Date $paymentStart
      * @return void
      */
     public abstract function setPaymentFinish ($paymentFinish);

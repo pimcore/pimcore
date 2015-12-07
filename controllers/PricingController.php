@@ -351,7 +351,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
 //
 //        // test action
 //        $giftAction = new \OnlineShop\Framework\PricingManager\Action\Gift();
-//        $giftAction->setProduct( OnlineShop_Framework_AbstractProduct::getById(18149) );
+//        $giftAction->setProduct( \OnlineShop\Framework\Model\AbstractProduct::getById(18149) );
 //
 //        // test rule
 //        $priceRule = new \OnlineShop\Framework\PricingManager\Rule();

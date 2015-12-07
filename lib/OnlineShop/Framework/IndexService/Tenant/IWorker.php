@@ -37,18 +37,18 @@ interface OnlineShop_Framework_IndexService_Tenant_IWorker {
     /**
      * deletes given element from index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @return void
      */
-    function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
+    function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object);
 
     /**
      * updates given element in index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      * @return void
      */
-    function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object);
+    function updateIndex(\OnlineShop\Framework\Model\IIndexable $object);
 
     /**
      * returns all index attributes

@@ -1,6 +1,6 @@
 {
 	"description":null,
-	"parentClass":"OnlineShop_Framework_AbstractVoucherSeries",
+	"parentClass":"\OnlineShop\Framework\Model\AbstractVoucherSeries",
 	"useTraits":null,
 	"allowInherit":false,
 	"allowVariants":false,

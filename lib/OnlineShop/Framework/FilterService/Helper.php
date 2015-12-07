@@ -148,7 +148,7 @@ class OnlineShop_Framework_FilterService_Helper
 
     /**
      * @param $conditions
-     * @return OnlineShop_Framework_AbstractCategory
+     * @return \OnlineShop\Framework\Model\AbstractCategory
      */
     public static function getFirstFilteredCategory($conditions) {
         if(!empty($conditions)) {

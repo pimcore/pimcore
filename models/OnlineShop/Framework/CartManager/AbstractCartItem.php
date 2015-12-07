@@ -15,7 +15,7 @@ namespace OnlineShop\Framework\CartManager;
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements ICartItem {
 
     /**
-     * @var \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @var \OnlineShop\Framework\Model\ICheckoutable
      */
     protected $product;
     protected $productId;
@@ -52,13 +52,13 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->count;
     }
 
-    public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product) {
+    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product) {
         $this->product = $product;
         $this->productId = $product->getId();
     }
 
     /**
-     * @return \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop\Framework\Model\ICheckoutable
      */
     public function getProduct() {
         if ($this->product) {
@@ -149,7 +149,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function getPriceInfo() {
 
-        if ($this->getProduct() instanceof \OnlineShop_Framework_AbstractSetProduct) {
+        if ($this->getProduct() instanceof \OnlineShop\Framework\Model\AbstractSetProduct) {
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount(),$this->getSetEntries());
         } else {
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
@@ -168,7 +168,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
     public function getAvailabilityInfo() {
-        if ($this->getProduct() instanceof \OnlineShop_Framework_AbstractSetProduct) {
+        if ($this->getProduct() instanceof \OnlineShop\Framework\Model\AbstractSetProduct) {
             return $this->getProduct()->getOSAvailabilityInfo($this->getCount(),$this->getSetEntries());
 
         } else {
@@ -177,13 +177,13 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return \OnlineShop_Framework_AbstractSetProductEntry[]
+     * @return \OnlineShop\Framework\Model\AbstractSetProductEntry[]
      */
     public function getSetEntries() {
         $products = array();
         if($this->getSubItems()) {
             foreach ($this->getSubItems() as $item) {
-                $products[] = new \OnlineShop_Framework_AbstractSetProductEntry($item->getProduct(), $item->getCount());
+                $products[] = new \OnlineShop\Framework\Model\AbstractSetProductEntry($item->getProduct(), $item->getCount());
             }
         }
         return $products;

@@ -39,14 +39,14 @@ interface IEnvironment
     public function getCartItem();
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      *
      * @return IEnvironment
      */
-    public function setProduct(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product);
+    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product);
 
     /**
-     * @return \OnlineShop_Framework_ProductInterfaces_ICheckoutable
+     * @return \OnlineShop\Framework\Model\ICheckoutable
      */
     public function getProduct();
 
@@ -82,7 +82,7 @@ interface IEnvironment
     public function setCategories(array $categories);
 
     /**
-     * @return \OnlineShop_Framework_AbstractCategory[]
+     * @return \OnlineShop\Framework\Model\AbstractCategory[]
      */
     public function getCategories();
 

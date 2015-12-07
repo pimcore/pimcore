@@ -65,11 +65,11 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
     /**
      * deletes given element from index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      *
      * @return void
      */
-    public function deleteFromIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object)
+    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object)
     {
         $this->doDeleteFromIndex( $object->getId(), $object );
     }
@@ -78,11 +78,11 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
     /**
      * updates given element in index
      *
-     * @param OnlineShop_Framework_ProductInterfaces_IIndexable $object
+     * @param \OnlineShop\Framework\Model\IIndexable $object
      *
      * @return void
      */
-    public function updateIndex(OnlineShop_Framework_ProductInterfaces_IIndexable $object)
+    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object)
     {
         if(!$this->tenantConfig->isActive($object))
         {
@@ -184,7 +184,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
                                 {
                                     if($parent->getOSProductsInParentCategoryVisible())
                                     {
-                                        while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory)
+                                        while($parent && $parent instanceof \OnlineShop\Framework\Model\AbstractCategory)
                                         {
                                             $categoryIds[$parent->getId()] = $parent->getId();
                                             $parent = $parent->getParent();
@@ -240,7 +240,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic
     /**
      * @param int $objectId
      */
-    protected function doDeleteFromIndex($objectId, OnlineShop_Framework_ProductInterfaces_IIndexable $object = null)
+    protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null)
     {
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getStoreTableName(), $objectId));

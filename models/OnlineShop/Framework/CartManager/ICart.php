@@ -69,22 +69,22 @@ interface ICart {
 
     /**
      * @abstract
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
-     * @param \OnlineShop_Framework_AbstractSetProductEntry[] $subProducts
+     * @param \OnlineShop\Framework\Model\AbstractSetProductEntry[] $subProducts
      * @param string $comment
      * @return string $itemKey
      */
-    public function addItem(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addItem(\OnlineShop\Framework\Model\ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
 
     /**
      * @abstract
      * @param string $itemKey
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -92,7 +92,7 @@ interface ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateItem($itemKey, \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateItem($itemKey, \OnlineShop\Framework\Model\ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * updates count of specific cart item
@@ -104,21 +104,21 @@ interface ICart {
     public function updateItemCount($itemKey, $count);
 
     /**
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
-     * @param \OnlineShop_Framework_AbstractSetProductEntry[] $subProducts
+     * @param \OnlineShop\Framework\Model\AbstractSetProductEntry[] $subProducts
      * @param string $comment
      * @return string $itemKey
      */
-    public function addGiftItem(\OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addGiftItem(\OnlineShop\Framework\Model\ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
 
     /**
      * @param string $itemKey
-     * @param \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product
+     * @param \OnlineShop\Framework\Model\ICheckoutable $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -126,7 +126,7 @@ interface ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateGiftItem($itemKey, \OnlineShop_Framework_ProductInterfaces_ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateGiftItem($itemKey, \OnlineShop\Framework\Model\ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * @abstract

@@ -14,7 +14,7 @@
 class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_Framework_IProductList
 {
     /**
-     * @var \OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @var \OnlineShop\Framework\Model\IIndexable[]
      */
     protected $products = null;
 
@@ -55,7 +55,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
     protected $offset = 0;
 
     /**
-     * @var \OnlineShop_Framework_AbstractCategory
+     * @var \OnlineShop\Framework\Model\AbstractCategory
      */
     protected $category;
 
@@ -147,7 +147,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
     }
 
     /**
-     * @return \OnlineShop_Framework_AbstractProduct[]
+     * @return \OnlineShop\Framework\Model\AbstractProduct[]
      */
     public function getProducts()
     {
@@ -316,7 +316,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
     }
 
 
-    public function setCategory(\OnlineShop_Framework_AbstractCategory $category)
+    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category)
     {
         $this->products = null;
         $this->category = $category;
@@ -338,7 +338,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder implements \OnlineShop_
 
 
     /**
-     * @return OnlineShop_Framework_ProductInterfaces_IIndexable[]
+     * @return \OnlineShop\Framework\Model\IIndexable[]
      */
     public function load()
     {

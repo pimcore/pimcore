@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for filter definition pimcore objects
  */
-abstract class OnlineShop_Framework_AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
+abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @static
@@ -24,7 +25,7 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends \Pimcore\Mo
     public static function getById($id) {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if($object instanceof OnlineShop_Framework_AbstractFilterDefinition) {
+        if($object instanceof AbstractFilterDefinition) {
             return $object;
         }
         return null;

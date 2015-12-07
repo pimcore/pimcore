@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Model;
 
 /**
  * Abstract base class for pimcore objects who should be used as product categories in the online shop framework
  */
-class OnlineShop_Framework_AbstractCategory extends \Pimcore\Model\Object\Concrete {
+class AbstractCategory extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @static
@@ -24,7 +25,7 @@ class OnlineShop_Framework_AbstractCategory extends \Pimcore\Model\Object\Concre
     public static function getById($id) {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if($object instanceof OnlineShop_Framework_AbstractCategory) {
+        if($object instanceof AbstractCategory) {
             return $object;
         }
         return null;
