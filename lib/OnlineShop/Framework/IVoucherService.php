@@ -53,10 +53,10 @@ interface OnlineShop_Framework_IVoucherService
      *
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return bool
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order);
+    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order);
 
 
     /**
@@ -64,10 +64,10 @@ interface OnlineShop_Framework_IVoucherService
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return mixed
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order);
 
 
     /**

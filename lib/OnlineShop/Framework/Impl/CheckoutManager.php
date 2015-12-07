@@ -160,7 +160,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
-        if ($order->getOrderState() == OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED) {
+        if ($order->getOrderState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed");
         }
 
@@ -171,7 +171,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @return null|OnlineShop_Framework_AbstractOrder
+     * @return null|\OnlineShop\Framework\Model\AbstractOrder
      */
     public function cancelStartedOrderPayment()
     {
@@ -186,7 +186,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function getOrder()
     {
@@ -197,10 +197,10 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * updates and cleans up environment after order is committed
      *
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    protected function updateEnvironmentAfterOrderCommit(OnlineShop_Framework_AbstractOrder $order) {
+    protected function updateEnvironmentAfterOrderCommit(\OnlineShop\Framework\Model\AbstractOrder $order) {
         $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
         if(empty($order->getOrderState())) {
             //if payment not successful -> set current checkout step to last step and checkout to not finished
@@ -222,7 +222,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
     /**
      * @param $paymentResponseParams
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams) {
@@ -254,7 +254,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
     /**
      * @param OnlineShop_Framework_Payment_IStatus $status
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status)
@@ -279,7 +279,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function commitOrder()
@@ -304,11 +304,11 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * generates classic google analytics e-commerce tracking code
      *
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return string
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    protected function generateGaEcommerceCode(OnlineShop_Framework_AbstractOrder $order)
+    protected function generateGaEcommerceCode(\OnlineShop\Framework\Model\AbstractOrder $order)
     {
         $code = "";
 
@@ -372,11 +372,11 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * generates universal google analytics e-commerce tracking code
      *
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return string
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    protected function generateUniversalEcommerceCode(OnlineShop_Framework_AbstractOrder $order)
+    protected function generateUniversalEcommerceCode(\OnlineShop\Framework\Model\AbstractOrder $order)
     {
         $code = "ga('require', 'ecommerce', 'ecommerce.js');\n";
 

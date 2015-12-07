@@ -71,13 +71,13 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
      *
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      *
      * @throws Exception
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order);
+    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order);
 
     /**
      * Removes the reservation of a token code.
@@ -92,10 +92,10 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
      * cleans up the token usage and the ordered token object if necessary
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order);
 
     /**
      * Get the codes of a voucher series, optionally a filter array can be passed.

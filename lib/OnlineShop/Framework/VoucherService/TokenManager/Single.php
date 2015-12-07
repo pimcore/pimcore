@@ -162,11 +162,11 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single extends OnlineShop
     /**
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order)
+    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages(), true)) {
@@ -196,10 +196,10 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single extends OnlineShop
      * cleans up the token usage and the ordered token object if necessary
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
         if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($tokenObject->getToken())) {
             return $token->unuse();

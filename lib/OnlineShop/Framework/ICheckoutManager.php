@@ -95,7 +95,7 @@ interface OnlineShop_Framework_ICheckoutManager {
      * returns order (creates it if not available yet)
      * - delegates to commit order processor
      *
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function getOrder();
 
@@ -110,7 +110,7 @@ interface OnlineShop_Framework_ICheckoutManager {
      * delegates to commit order processor
      *
      * @param $paymentResponseParams
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams);
 
@@ -123,7 +123,7 @@ interface OnlineShop_Framework_ICheckoutManager {
      *
      * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
      * @param OnlineShop_Framework_Payment_IStatus $status
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status);
 
@@ -134,7 +134,7 @@ interface OnlineShop_Framework_ICheckoutManager {
      *
      * delegates to commit order processor
      *
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function commitOrder();
 

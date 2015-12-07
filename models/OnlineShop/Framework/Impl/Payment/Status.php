@@ -14,7 +14,7 @@
 class OnlineShop_Framework_Impl_Payment_Status implements OnlineShop_Framework_Payment_IStatus
 {
     /**
-     * internal pimcore order status - see also constants OnlineShop_Framework_AbstractOrder::ORDER_STATE_*
+     * internal pimcore order status - see also constants \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_*
      *
      * @var string
      */

@@ -261,15 +261,15 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
             // success
             $paymentState = $response['reqtype'] == 'CAA'
                 // CAA - authorization with immediate settlement
-                ? OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED
-                : OnlineShop_Framework_AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED;
+                ? \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED
+                : \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED;
 
             $message = $response['responseMessage'];
         }
         else
         {
             // failed
-            $paymentState = OnlineShop_Framework_AbstractOrder::ORDER_STATE_ABORTED;
+            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED;
             $message = $response['errorDetail'];
         }
 
@@ -347,12 +347,12 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         $paymentState = null;
         if($status == 'response' && in_array($response->responseCode,['01', '02']))
         {
-            $paymentState = OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED;
+            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
             $message = (string)$response->responseMessage;
         }
         else
         {
-            $paymentState = OnlineShop_Framework_AbstractOrder::ORDER_STATE_ABORTED;
+            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED;
             $message = (string)$response->errorMessage.' | '.(string)$response->errorDetail;
         }
 
@@ -420,12 +420,12 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         $paymentState = null;
         if($status == 'response' && in_array($response->responseCode,['01', '02']))
         {
-            $paymentState = OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED;
+            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
             $message = (string)$response->responseMessage;
         }
         else
         {
-            $paymentState = OnlineShop_Framework_AbstractOrder::ORDER_STATE_ABORTED;
+            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED;
             $message = (string)$response->errorMessage.' | '.(string)$response->errorDetail;
         }
 

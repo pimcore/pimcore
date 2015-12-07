@@ -44,7 +44,7 @@ interface OnlineShop_Framework_Payment_IStatus
     public function getMessage();
 
     /**
-     * internal pimcore order status - see also constants OnlineShop_Framework_AbstractOrder::ORDER_STATE_*
+     * internal pimcore order status - see also constants \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_*
      *
      * @return string
      */

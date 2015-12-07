@@ -19,7 +19,7 @@ use OnlineShop_Framework_Payment_IStatus;
 
 use Zend_Currency;
 
-use OnlineShop_Framework_AbstractOrder as Order;
+use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\Element\Note;

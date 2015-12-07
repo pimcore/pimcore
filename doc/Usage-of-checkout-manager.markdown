@@ -153,15 +153,15 @@ class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\Impl\O
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param OnlineShop_Framework_AbstractOrder $order
-     * @return OnlineShop_Framework_AbstractOrder
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order)
+    public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 
-        /* @var OnlineShop_Framework_AbstractOrder $order*/
+        /* @var \OnlineShop\Framework\Model\AbstractOrder $order*/
 
         $checkout = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager( $cart );
         $deliveryAddress = $checkout->getCheckoutStep('deliveryaddress')->getData();

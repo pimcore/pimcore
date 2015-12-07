@@ -17,7 +17,7 @@ use Zend_Paginator_Adapter_Interface;
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListItem;
 
-use OnlineShop_Framework_AbstractOrder;
+use \OnlineShop\Framework\Model\AbstractOrder;
 
 use Pimcore\Resource;
 
@@ -47,7 +47,7 @@ abstract class AbstractOrderList implements IOrderList
     /**
      * @var string
      */
-    protected $orderState = OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED;
+    protected $orderState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
      * @var \ArrayIterator

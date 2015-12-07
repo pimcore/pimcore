@@ -13,7 +13,7 @@
 
 namespace OnlineShop\Framework\OrderManager;
 
-use OnlineShop_Framework_AbstractOrder as Order;
+use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 
 interface IOrderListItem

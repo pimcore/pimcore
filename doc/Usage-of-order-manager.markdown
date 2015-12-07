@@ -80,7 +80,7 @@ $orderList = $orderManager->createOrderList();
 
 // get only orders that are commited
 $orderList->setListType( $orderList::LIST_TYPE_ORDER_ITEM );
-$orderList->setOrderState( OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED );
+$orderList->setOrderState( \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED );
 
 
 ```

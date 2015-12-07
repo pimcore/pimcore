@@ -112,7 +112,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
         $list->setListType( $this->getParam('type', $list::LIST_TYPE_ORDER) );
 
         // set order state
-        $list->setOrderState( OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED );
+        $list->setOrderState( \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED );
 
 
         // add select fields
@@ -204,7 +204,7 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
     {
         // init
         $order = Object_OnlineShopOrder::getById( $this->getParam('id') );
-        /* @var OnlineShop_Framework_AbstractOrder $order */
+        /* @var \OnlineShop\Framework\Model\AbstractOrder $order */
         $orderAgent = $this->view->orderAgent = $this->orderManager->createOrderAgent( $order );
 
 

@@ -66,10 +66,10 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     /**
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return bool
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, Onlineshop_Framework_AbstractOrder $order)
+    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {
@@ -89,10 +89,10 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, OnlineShop_Framework_AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
         if ($tokenManager = $tokenObject->getVoucherSeries()->getTokenManager()) {
             $tokenManager->removeAppliedTokenFromOrder($tokenObject, $order);

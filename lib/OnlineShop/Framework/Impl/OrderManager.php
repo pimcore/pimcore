@@ -16,7 +16,7 @@ namespace OnlineShop\Framework\Impl;
 use OnlineShop\Framework\IOrderManager;
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderAgent;
-use OnlineShop_Framework_AbstractOrder as Order;
+use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use Zend_Config;
 
 class OrderManager implements IOrderManager

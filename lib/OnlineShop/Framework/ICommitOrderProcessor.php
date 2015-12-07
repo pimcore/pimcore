@@ -22,7 +22,7 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      *
      * @param array|OnlineShop_Framework_Payment_IStatus $paymentResponseParams
      * @param OnlineShop_Framework_IPayment $paymentProvider
-     * @return null|OnlineShop_Framework_AbstractOrder
+     * @return null|\OnlineShop\Framework\Model\AbstractOrder
      * @throws Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
@@ -37,7 +37,7 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      *
      * @param $paymentResponseParams
      * @param OnlineShop_Framework_IPayment $paymentProvider
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
 
@@ -50,17 +50,17 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      *
      * @param OnlineShop_Framework_Payment_IStatus $paymentStatus
      * @param OnlineShop_Framework_IPayment $paymentProvider
-     * @return OnlineShop_Framework_AbstractOrder
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider);
 
     /**
      * commits order
      *
-     * @param OnlineShop_Framework_AbstractOrder $order
-     * @return OnlineShop_Framework_AbstractOrder
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @return \OnlineShop\Framework\Model\AbstractOrder
      */
-    public function commitOrder(OnlineShop_Framework_AbstractOrder $order);
+    public function commitOrder(\OnlineShop\Framework\Model\AbstractOrder $order);
 
     /**
      * @param string $confirmationMail

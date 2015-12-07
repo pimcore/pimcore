@@ -249,7 +249,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
                 $reference
                 , $paymentInfo->TransactionID
                 , null
-                , OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED
+                , \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED
                 , [
                     'paypal_TransactionType' => $paymentInfo->TransactionType
                     , 'paypal_PaymentType' => $paymentInfo->PaymentType
@@ -276,7 +276,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
                 $reference
                 , $ret->CorrelationID
                 , $message
-                , OnlineShop_Framework_AbstractOrder::ORDER_STATE_ABORTED
+                , \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED
             );
         }
     }
@@ -301,7 +301,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
      *
      * @return stdClass
      */
-    protected function createPaymentDetails(\OnlineShop\Framework\PriceSystem\IPrice $price) # OnlineShop_Framework_AbstractOrder $order
+    protected function createPaymentDetails(\OnlineShop\Framework\PriceSystem\IPrice $price) # \OnlineShop\Framework\Model\AbstractOrder $order
     {
         // create order total
         $paymentDetails = new stdClass();

@@ -115,10 +115,10 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
     /**
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param OnlineShop_Framework_AbstractOrder $order
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
      * @return bool
      */
-    public abstract function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, OnlineShop_Framework_AbstractOrder $order);
+    public abstract function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order);
 
     /**
      * @param string $code
