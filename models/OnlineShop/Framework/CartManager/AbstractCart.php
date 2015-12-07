@@ -696,7 +696,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * Adds a voucher token to the cart's checkout data and reserves it.
      *
-     * @param \OnlineShop_Framework_VoucherService_Token $code
+     * @param \OnlineShop\Framework\VoucherService\Token $code
      *
      * @return bool
      *
@@ -799,7 +799,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
             //check for each voucher token if reservation is valid or it is already applied to order
             foreach($this->getVoucherTokenCodes() as $code){
-                $reservation = \OnlineShop_Framework_VoucherService_Reservation::get($code, $this);
+                $reservation = \OnlineShop\Framework\VoucherService\Reservation::get($code, $this);
                 if(!$reservation->check($this->getId()) && !array_key_exists($code, $appliedVoucherCodes)){
                     unset($this->checkoutData["voucher_".$code]);
                 }

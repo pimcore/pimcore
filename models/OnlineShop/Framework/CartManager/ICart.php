@@ -286,14 +286,14 @@ interface ICart {
     public static function getAllCartsForUser($userId);
 
     /**
-     * @param \OnlineShop_Framework_VoucherService_Token $token
+     * @param \OnlineShop\Framework\VoucherService\Token $token
      * @throws \Exception
      * @return bool
      */
     public function addVoucherToken($token);
 
     /**
-     * @param \OnlineShop_Framework_VoucherService_Token $token
+     * @param \OnlineShop\Framework\VoucherService\Token $token
      * @return bool
      */
     public function removeVoucherToken($token);

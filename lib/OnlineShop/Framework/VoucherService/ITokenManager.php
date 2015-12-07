@@ -10,15 +10,16 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService;
 
 /**
- * Interface OnlineShop_Framework_VoucherService_ITokenManager
+ * Interface ITokenManager
  *
  * Manager for specific token settings object of type \OnlineShop\Framework\Model\AbstractVoucherTokenType.
  * Provides functionality for generating, checking, removing, applying, reserving tokens.
  * Also prepares the view of the Voucher Code Tab and specifies its template.
  */
-interface OnlineShop_Framework_VoucherService_ITokenManager
+interface ITokenManager
 {
     /**
      * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
@@ -48,7 +49,7 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
      *
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws Exception
+     * @throws \Exception
      * @return bool
      */
     public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
@@ -59,7 +60,7 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return bool
      */
@@ -73,7 +74,7 @@ interface OnlineShop_Framework_VoucherService_ITokenManager
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param \OnlineShop\Framework\Model\AbstractOrder $order
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */

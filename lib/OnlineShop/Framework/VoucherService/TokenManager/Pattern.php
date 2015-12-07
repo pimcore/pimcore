@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService\TokenManager;
 
 /**
- * Class OnlineShop_Framework_VoucherService_TokenManager_Pattern
+ * Class Pattern
  */
-class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineShop_Framework_VoucherService_AbstractTokenManager
+class Pattern extends AbstractTokenManager
 {
     /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
 
@@ -34,7 +35,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern) {
             $this->template = "voucher/voucher-code-tab-pattern.php";
         } else {
-            throw new Exception("Invalid Configuration Class for Type VoucherTokenTypePattern.");
+            throw new \Exception("Invalid Configuration Class for Type VoucherTokenTypePattern.");
         }
     }
 
@@ -55,24 +56,24 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     public function cleanUpCodes($filter = [])
     {
-        return OnlineShop_Framework_VoucherService_Token_List::cleanUpTokens($this->seriesId, $filter);
+        return \OnlineShop\Framework\VoucherService\Token\Listing::cleanUpTokens($this->seriesId, $filter);
     }
 
     /**
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws Exception
+     * @throws \Exception
      * @return bool|int
      */
     public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         parent::checkToken($code, $cart);
-        if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
+        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
             if ($token->isUsed()) {
-                throw new Exception('Token has already been used.', 1);
+                throw new \Exception('Token has already been used.', 1);
             }
             if ($token->isReserved()) {
-                throw new Exception('Token has already been reserved.', 2);
+                throw new \Exception('Token has already been reserved.', 2);
             }
         }
 
@@ -82,19 +83,19 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
     /**
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws Exception
+     * @throws \Exception
      * @return bool
      */
     public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
-        if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
-            if (OnlineShop_Framework_VoucherService_Reservation::create($code, $cart)) {
+        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
+            if (\OnlineShop\Framework\VoucherService\Reservation::create($code, $cart)) {
                 return true;
             } else {
-                throw new Exception("Token Reservation not possible.", 3);
+                throw new \Exception("Token Reservation not possible.", 3);
             }
         }
-        throw new Exception("No Token for this code exists.", 4);
+        throw new \Exception("No Token for this code exists.", 4);
     }
 
     /**
@@ -102,15 +103,15 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param \OnlineShop\Framework\Model\AbstractOrder $order
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
     public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
-        if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
+        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
             if ($token->isUsed()) {
-                throw new Exception('Token has already been used.', 1);
+                throw new \Exception('Token has already been used.', 1);
             }
             if ($token->apply()) {
                 $orderToken = new \Pimcore\Model\Object\OnlineShopVoucherToken();
@@ -140,7 +141,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
-        if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($tokenObject->getToken())) {
+        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($tokenObject->getToken())) {
                 $token->unuse();
             $tokenObject->delete();
             return true;
@@ -157,7 +158,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
-        return OnlineShop_Framework_VoucherService_Reservation::releaseToken($code);
+        return \OnlineShop\Framework\VoucherService\Reservation::releaseToken($code);
     }
 
     /**
@@ -166,7 +167,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     public function getCodes($filter = null)
     {
-        return OnlineShop_Framework_VoucherService_Token_List::getCodes($this->seriesId, $filter);
+        return \OnlineShop\Framework\VoucherService\Token\Listing::getCodes($this->seriesId, $filter);
     }
 
 
@@ -175,11 +176,11 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     public function getStatistics($usagePeriod = null)
     {
-        $overallCount = OnlineShop_Framework_VoucherService_Token_List::getCountBySeriesId($this->seriesId);
-        $usageCount = OnlineShop_Framework_VoucherService_Token_List::getCountByUsages(1, $this->seriesId);
-        $reservedTokenCount = OnlineShop_Framework_VoucherService_Token_List::getCountByReservation($this->seriesId);
+        $overallCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountBySeriesId($this->seriesId);
+        $usageCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountByUsages(1, $this->seriesId);
+        $reservedTokenCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountByReservation($this->seriesId);
 
-        $usage = OnlineShop_Framework_VoucherService_Statistic::getBySeriesId($this->seriesId, $usagePeriod);
+        $usage = \OnlineShop\Framework\VoucherService\Statistic::getBySeriesId($this->seriesId, $usagePeriod);
         if (is_array($usage)) {
             $this->prepareUsageStatisticData($usage, $usagePeriod);
         }
@@ -201,7 +202,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     public function insertOrUpdateVoucherSeries()
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         try {
             $codeSets = $this->generateCodes();
 
@@ -214,7 +215,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
             }
             return $codeSets;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 //            var_dump($e);
 //            \Pimcore\Log\Simple::log('VoucherSystem', $e);
             return false;
@@ -251,7 +252,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
     {
         $maxCount = $this->getMaxCount();
 
-        $dbCount = OnlineShop_Framework_VoucherService_Token_List::getCountByLength($this->getFinalTokenLength(), $this->seriesId);
+        $dbCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountByLength($this->getFinalTokenLength(), $this->seriesId);
 
         if ($dbCount !== null && $maxCount >= 0) {
             return ((int)$dbCount + $this->configuration->getCount()) / $maxCount;
@@ -349,7 +350,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     protected function buildInsertQuery($insertTokens)
     {
-        $query = 'INSERT INTO ' . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . '(token,length,voucherSeriesId) ';
+        $query = 'INSERT INTO ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) ';
         $finalLength = $this->getFinalTokenLength();
 
         if (sizeof($insertTokens) > 0) {
@@ -424,7 +425,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
                     // Check if any of the tokens in the temporary array checkTokens already exists,
                     // if not so, merge the checkTokens array with the array of tokens to insert and
                     // increase the overall count by the length of the checkArray i.e. the checkTokenStep
-                    if (!OnlineShop_Framework_VoucherService_Token_List::tokensExist($checkTokens)) {
+                    if (!\OnlineShop\Framework\VoucherService\Token\Listing::tokensExist($checkTokens)) {
                         $insertTokens = array_merge($insertTokens, $checkTokens);
                         $insertCount += $tokenCheckStep;
                     }
@@ -464,7 +465,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     protected function prepareUsageStatisticData(&$data, $usagePeriod)
     {
-        $now = new DateTime("NOW");
+        $now = new \DateTime("NOW");
         $periodData = [];
         for ($i = $usagePeriod; $i > 0; $i--) {
             $index = $now->format("Y-m-d");
@@ -480,24 +481,24 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      * @param $view
      * @param array $params
      * @return string
-     * @throws Zend_Paginator_Exception
+     * @throws \Zend_Paginator_Exception
      */
     public function prepareConfigurationView($view, $params)
     {
         $view->msg = [];
 
-        $tokens = new OnlineShop_Framework_VoucherService_Token_List();
+        $tokens = new \OnlineShop\Framework\VoucherService\Token\Listing();
 
         try {
             $tokens->setFilterConditions($params['id'], $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->template = "voucher/voucher-code-tab-error.php";
             $view->errors[] = $e->getMessage() . " | Error-Code: " . $e->getCode();
         }
 
         if ($tokens) {
 
-            $paginator = Zend_Paginator::factory($tokens);
+            $paginator = \Zend_Paginator::factory($tokens);
 
             if ($params['tokensPerPage']) {
                 $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
@@ -546,7 +547,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends OnlineSho
      */
     public function cleanUpReservations($duration = 0)
     {
-        return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($duration, $this->seriesId);
+        return \OnlineShop\Framework\VoucherService\Reservation::cleanUpReservations($duration, $this->seriesId);
     }
 
     /**

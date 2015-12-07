@@ -351,11 +351,11 @@
 
 
         <!-- voucher service - define voucher service implementation class and map token managers -->
-        <voucherservice class="OnlineShop_Framework_VoucherService_Default">
+        <voucherservice class="\OnlineShop\Framework\VoucherService\DefaultService">
             <!-- assign backend implementations to voucher token type field collections -->
             <tokenmanagers>
-                <VoucherTokenTypePattern class="OnlineShop_Framework_VoucherService_TokenManager_Pattern" />
-                <VoucherTokenTypeSingle class="OnlineShop_Framework_VoucherService_TokenManager_Single" />
+                <VoucherTokenTypePattern class="\OnlineShop\Framework\VoucherService\TokenManager\Pattern" />
+                <VoucherTokenTypeSingle class="\OnlineShop\Framework\VoucherService\TokenManager\Single" />
             </tokenmanagers>
 
             <config>

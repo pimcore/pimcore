@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService\Token\Listing;
 
-class OnlineShop_Framework_VoucherService_Token_List_Resource extends \Pimcore\Model\Listing\Resource\AbstractResource
+class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
 
     public function load()
@@ -19,14 +20,14 @@ class OnlineShop_Framework_VoucherService_Token_List_Resource extends \Pimcore\M
         $tokens = array();
 
         $unitIds = $this->db->fetchAll("SELECT * FROM " .
-            OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME .
+            \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME .
             $this->getCondition() .
             $this->getOrder() .
             $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($unitIds as $row) {
-            $item = new OnlineShop_Framework_VoucherService_Token();
-            $item->getResource()->assignVariablesToModel($row);
+            $item = new \OnlineShop\Framework\VoucherService\Token();
+            $item->getDao()->assignVariablesToModel($row);
             $tokens[] = $item;
         }
 
@@ -39,7 +40,7 @@ class OnlineShop_Framework_VoucherService_Token_List_Resource extends \Pimcore\M
     {
         try {
             $amount = (int)$this->db->fetchOne("SELECT COUNT(*) as amount FROM " .
-                OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME .
+                \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME .
                 $this->getCondition(),
                 $this->model->getConditionVariables());
         } catch (\Exception $e) {

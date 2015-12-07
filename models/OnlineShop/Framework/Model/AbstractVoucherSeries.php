@@ -22,7 +22,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
 
 
     /**
-     * @return bool|\OnlineShop_Framework_VoucherService_ITokenManager
+     * @return bool|\OnlineShop\Framework\VoucherService\ITokenManager
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getTokenManager()
@@ -46,7 +46,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
         $db = \Pimcore\Db::get();
 
         $query = "
-            SELECT length FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . "
+            SELECT length FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . "
             WHERE voucherSeriesId = ?
             GROUP BY length";
 

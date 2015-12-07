@@ -10,10 +10,11 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService\Token;
 
 // TODO - Log Errors
 
-class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\Resource\AbstractResource
+class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_tokens";
 
@@ -33,12 +34,12 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
         try {
             $result = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE token = ?", $code);
             if (empty($result)) {
-                throw new Exception("Token " . $code . " not found.");
+                throw new \Exception("Token " . $code . " not found.");
             }
             $this->assignVariablesToModel($result);
             $this->model->setValue('id', $result['id']);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
@@ -51,7 +52,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
      */
     public function isReserved(\OnlineShop\Framework\CartManager\ICart $cart = null)
     {
-        $reservation = OnlineShop_Framework_VoucherService_Reservation::get($this->model->getToken(), $cart);
+        $reservation = \OnlineShop\Framework\VoucherService\Reservation::get($this->model->getToken(), $cart);
         if (!$reservation->exists()) {
             return false;
         }
@@ -62,7 +63,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
     {
         try {
             return $this->db->fetchOne("SELECT usages FROM " . self::TABLE_NAME . " WHERE token = ?", $code);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -75,7 +76,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
      */
     public static function isUsedToken($token, $usages = 1)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         $query = "SELECT usages, seriesId FROM " . self::TABLE_NAME . " WHERE token = ? ";
         $params[] = $token;
@@ -89,7 +90,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
                 return false;
             }
             // If an Error occurs the token is defined as used.
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return true;
         }
     }
@@ -102,7 +103,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
         try {
             $this->db->query("UPDATE " . self::TABLE_NAME . " SET usages=usages+1 WHERE token = ?", [$this->model->getToken()]);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -115,7 +116,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Model\
         try {
             $this->db->query("UPDATE " . self::TABLE_NAME . " SET usages=usages-1 WHERE token = ?", [$this->model->getToken()]);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

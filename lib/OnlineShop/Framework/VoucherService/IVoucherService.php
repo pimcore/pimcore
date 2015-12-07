@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService;
 
-interface OnlineShop_Framework_IVoucherService
+interface IVoucherService
 {
     /**
      * Voucherservice get initialized with config settings from Onlineshop Config.

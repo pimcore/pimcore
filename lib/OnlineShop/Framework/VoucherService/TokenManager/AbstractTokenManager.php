@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService\TokenManager;
 
-abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implements OnlineShop_Framework_VoucherService_ITokenManager
+abstract class AbstractTokenManager implements ITokenManager
 {
 
     /* @var \OnlineShop\Framework\Model\AbstractVoucherTokenType */
@@ -24,7 +25,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration)
     {
@@ -33,7 +34,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
             $this->seriesId = $configuration->getObject()->getId();
             $this->series = $configuration->getObject();
         } else {
-            throw new Exception("Invalid Configuration Class.");
+            throw new \Exception("Invalid Configuration Class.");
         }
     }
 
@@ -63,16 +64,16 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
      *
      * @param $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws Exception
+     * @throws \Exception
      */
     protected function checkAllowOncePerCart($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         if (method_exists($this->configuration, 'getAllowOncePerCart') && $this->configuration->getAllowOncePerCart()) {
-            $token = OnlineShop_Framework_VoucherService_Token::getByCode($code);
+            $token = \OnlineShop\Framework\VoucherService\Token::getByCode($code);
             if (is_array($cartCodes)) {
                 foreach ($cartCodes as $cartCode) {
-                    $cartToken = OnlineShop_Framework_VoucherService_Token::getByCode($cartCode);
+                    $cartToken = \OnlineShop\Framework\VoucherService\Token::getByCode($cartCode);
                     if ($token->getVoucherSeriesId() == $cartToken->getVoucherSeriesId()) {
                         throw new \OnlineShop\Framework\Exception\VoucherServiceException("OncePerCart: Only one token of this series is allowed per cart.", 5);
                     }
@@ -86,7 +87,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
      *
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function checkOnlyToken(\OnlineShop\Framework\CartManager\ICart $cart)
     {
@@ -97,7 +98,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager implemen
                 throw new \OnlineShop\Framework\Exception\VoucherServiceException("OnlyTokenPerCart: This token is only allowed as only token in this cart.", 6);
             }
 
-            $cartToken = OnlineShop_Framework_VoucherService_Token::getByCode($cartCodes[0]);
+            $cartToken = \OnlineShop\Framework\VoucherService\Token::getByCode($cartCodes[0]);
             $cartTokenSettings = Object_OnlineShopVoucherSeries::getById($cartToken->getVoucherSeriesId())->getTokenSettings()->getItems()[0];
             if ($cartTokenSettings->getOnlyTokenPerCart()) {
                 throw new \OnlineShop\Framework\Exception\VoucherServiceException("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);

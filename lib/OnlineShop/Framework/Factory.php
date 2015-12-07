@@ -83,12 +83,12 @@ class Factory {
 
 
     /**
-     * @var \OnlineShop_Framework_IVoucherService
+     * @var \OnlineShop\Framework\VoucherService\IVoucherService
      */
     private $voucherService;
 
     /**
-     * @var \OnlineShop_Framework_VoucherService_ITokenManager[]
+     * @var \OnlineShop\Framework\VoucherService\ITokenManager[]
      */
     private $tokenManagers = array();
 
@@ -558,15 +558,15 @@ class Factory {
 
 
     /**
-     * @return \OnlineShop_Framework_IVoucherService
+     * @return \OnlineShop\Framework\VoucherService\IVoucherService
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getVoucherService() {
 
         if(empty($this->voucherService)) {
             $this->voucherService = new $this->config->onlineshop->voucherservice->class($this->config->onlineshop->voucherservice->config);
-            if (!($this->voucherService instanceof \OnlineShop_Framework_IVoucherService)) {
-                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Voucher Service class " . $this->config->onlineshop->voucherservice->class . " does not implement OnlineShop_Framework_IVoucherService.");
+            if (!($this->voucherService instanceof \OnlineShop\Framework\VoucherService\IVoucherService)) {
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Voucher Service class " . $this->config->onlineshop->voucherservice->class . ' does not implement \OnlineShop\Framework\VoucherService\IVoucherService.');
             }
 
         }
@@ -577,7 +577,7 @@ class Factory {
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
-     * @return \OnlineShop_Framework_VoucherService_ITokenManager
+     * @return \OnlineShop\Framework\VoucherService\ITokenManager
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getTokenManager(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration) {
@@ -590,8 +590,8 @@ class Factory {
 
             if($tokenManagerClass) {
                 $tokenManager = new $tokenManagerClass->class($configuration);
-                if (!($tokenManager instanceof \OnlineShop_Framework_VoucherService_ITokenManager)) {
-                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Token Manager class " . $tokenManagerClass->class . " does not implement OnlineShop_Framework_VoucherService_ITokenManager.");
+                if (!($tokenManager instanceof \OnlineShop\Framework\VoucherService\ITokenManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Token Manager class " . $tokenManagerClass->class . ' does not implement \OnlineShop\Framework\VoucherService\ITokenManager.');
                 }
 
                 $this->tokenManagers[$id] = $tokenManager;

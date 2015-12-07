@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService\Token;
 
-class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
 {
 
     public $tokens;
@@ -31,14 +32,14 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
     /**
      * @param $seriesId
      * @param array $filter
-     * @throws Exception
+     * @throws \Exception
      */
     public function setFilterConditions($seriesId, $filter = [])
     {
         if(isset($seriesId)){
             $this->addConditionParam("voucherSeriesId = ?", $seriesId);
         }else{
-            throw new Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
+            throw new \Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
         }
 
         if (sizeof($filter)) {
@@ -84,9 +85,9 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
         try {
             $config = new self();
             $config->setCondition('series_id', $seriesId);
-            $config->getResource()->load();
+            $config->getDao()->load();
             return $config;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
 //            Logger::debug($ex->getMessage());
             return false;
         }
@@ -97,17 +98,17 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
      */
     public function getTokenList()
     {
-        if (empty($this->$tokens)) {
+        if (empty($this->tokens)) {
             $this->load();
         }
-        return $this->$tokens;
+        return $this->tokens;
     }
 
     public static function getCodes($seriesId, $params)
     {
 
-        $db = \Pimcore\Resource::get();
-        $query = "SELECT * FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " WHERE voucherSeriesId = ?";
+        $db = \Pimcore\Db::get();
+        $query = "SELECT * FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?";
         $queryParams[] = $seriesId;
 
         if (!empty($params['token'])) {
@@ -151,7 +152,7 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
 
         try {
             $codes = $db->fetchAll($query, array_values($queryParams));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -161,47 +162,47 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
 
     public static function getCountByUsages($usages = 1, $seriesId = null)
     {
-        $query = 'SELECT COUNT(*) as count FROM ' . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " WHERE usages >= ? ";
+        $query = 'SELECT COUNT(*) as count FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " WHERE usages >= ? ";
         $params[] = $usages;
         if (isset($seriesId)) {
             $query .= " AND voucherSeriesId = ?";
             $params[] = $seriesId;
         }
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         try {
             return $db->fetchOne($query, $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
 
     public static function getCountBySeriesId($seriesId)
     {
-        $query = 'SELECT COUNT(*) as count FROM ' . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . ' WHERE voucherSeriesId = ?';
+        $query = 'SELECT COUNT(*) as count FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
         $params[] = $seriesId;
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         try {
             return $db->fetchOne($query, $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
 
     public static function getCountByReservation($seriesId = null)
     {
-        $query = 'SELECT COUNT(t.id) FROM ' . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " as t
-            INNER JOIN " . OnlineShop_Framework_VoucherService_Reservation_Resource::TABLE_NAME . " as r ON t.token = r.token";
+        $query = 'SELECT COUNT(t.id) FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " as t
+            INNER JOIN " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " as r ON t.token = r.token";
         if (isset($seriesId)) {
             $query .= " WHERE voucherSeriesId = ?";
             $params[] = $seriesId;
         }
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         try {
             return $db->fetchOne($query, $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -213,19 +214,19 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
      */
     public static function getCountByLength($length, $seriesId = null)
     {
-        $query = 'SELECT COUNT(*) as count FROM ' . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . ' WHERE length = ?';
+        $query = 'SELECT COUNT(*) as count FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . ' WHERE length = ?';
         $params = [$length];
         if (isset($seriesId)) {
             $query .= " AND voucherSeriesId = ?";
             $params[] = $seriesId;
         }
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         try {
             $result = $db->fetchOne($query, $params);
             return $result;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -250,15 +251,15 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
      */
     public static function cleanUpTokens($seriesId, $filter = [], $maxUsages = 1)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
-        $reservationsQuery = "DELETE r FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " AS t
-                        JOIN " . OnlineShop_Framework_VoucherService_Reservation_Resource::TABLE_NAME . " AS r
+        $reservationsQuery = "DELETE r FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " AS t
+                        JOIN " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " AS r
                         ON t.token = r.token
                         WHERE t.voucherSeriesId = ?";
 
 
-        $tokensQuery = "DELETE t FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " AS t WHERE t.voucherSeriesId = ?";
+        $tokensQuery = "DELETE t FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " AS t WHERE t.voucherSeriesId = ?";
         $params[] = $seriesId;
 
         $queryParts = [];
@@ -292,7 +293,7 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
             $db->query($tokensQuery, $params);
             $db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $db->rollBack();
             return false;
         }
@@ -305,13 +306,13 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
      */
     public static function tokensExist($codes)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         if (!is_array($codes)) {
             $token = [$codes];
         }
 
-        $query = "SELECT EXISTS(SELECT id FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " WHERE token IN ('" . implode("', '", $codes) . "'))";
+        $query = "SELECT EXISTS(SELECT id FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " WHERE token IN ('" . implode("', '", $codes) . "'))";
 
         $result = $db->fetchOne($query);
 
@@ -340,7 +341,7 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Model\List
 
 
     /**
-     * @return Model\Object\Listing|\Zend_Paginator_Adapter_Interface
+     * @return \Pimcore\Model\Object\Listing|\Zend_Paginator_Adapter_Interface
      */
     public function getPaginatorAdapter()
     {

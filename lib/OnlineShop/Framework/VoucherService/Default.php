@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService;
 
 /**
- * Class OnlineShop_Framework_VoucherService_Default
+ * Class DefaultService
  */
-class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framework_IVoucherService
+class DefaultService implements IVoucherService
 {
 
     public $sysConfig;
@@ -120,9 +121,9 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
     public function cleanUpReservations($seriesId = null)
     {
         if (isset($seriesId)) {
-            return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($this->sysConfig->reservations->duration, $seriesId);
+            return \OnlineShop\Framework\VoucherService\Reservation::cleanUpReservations($this->sysConfig->reservations->duration, $seriesId);
         } else {
-            return OnlineShop_Framework_VoucherService_Reservation::cleanUpReservations($this->sysConfig->reservations->duration);
+            return \OnlineShop\Framework\VoucherService\Reservation::cleanUpReservations($this->sysConfig->reservations->duration);
         }
     }
 
@@ -132,7 +133,7 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
      */
     public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series)
     {
-        return OnlineShop_Framework_VoucherService_Token_List::cleanUpAllTokens($series->getId());
+        return \OnlineShop\Framework\VoucherService\Token\Listing::cleanUpAllTokens($series->getId());
     }
 
     /**
@@ -141,19 +142,19 @@ class OnlineShop_Framework_VoucherService_Default implements OnlineShop_Framewor
      */
     public function cleanUpStatistics($seriesId = null){
         if (isset($seriesId) ) {
-            return OnlineShop_Framework_VoucherService_Statistic::cleanUpStatistics($this->sysConfig->statistics->duration, $seriesId);
+            return \OnlineShop\Framework\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration, $seriesId);
         } else {
-            return OnlineShop_Framework_VoucherService_Statistic::cleanUpStatistics($this->sysConfig->statistics->duration);
+            return \OnlineShop\Framework\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration);
         }
     }
 
     /**
      * @param $code
-     * @return bool|OnlineShop_Framework_VoucherService_ITokenManager
+     * @return bool|\OnlineShop\Framework\VoucherService\ITokenManager
      */
     public function getTokenManager($code)
     {
-        if ($token = OnlineShop_Framework_VoucherService_Token::getByCode($code)) {
+        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
             if ($series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId())) {
                 return $series->getTokenManager();
             }

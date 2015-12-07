@@ -10,17 +10,18 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService\Reservation;
 
 // TODO - Log Exceptions
 
-class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\Model\Resource\AbstractResource
+class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_reservations";
     protected $db;
 
     public function __construct()
     {
-        $this->db = \Pimcore\Resource::get();
+        $this->db = \Pimcore\Db::get();
     }
 
     /**
@@ -48,7 +49,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
             $this->model->setValue('id', $result['id']);
             $this->model->setCartId($result['cart_id']);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             var_dump($e);
             return false;
         }
@@ -56,7 +57,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
 
     public function create($code, $cart)
     {
-        if (OnlineShop_Framework_VoucherService_Reservation::reservationExists($code, $cart)) {
+        if (\OnlineShop\Framework\VoucherService\Reservation::reservationExists($code, $cart)) {
             return true;
         }
         try {
@@ -77,7 +78,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
         try {
             $this->db->delete(self::TABLE_NAME, ["token" => $this->model->getToken()]);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -89,7 +90,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
      */
     public static function getReservedTokenCount($seriesId = null)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         $query = "SELECT COUNT(*) FROM " . self::TABLE_NAME;
 
@@ -104,7 +105,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
                 return false;
             }
             return $count;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return true;
         }
     }
@@ -115,7 +116,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
      */
     public static function isReservedToken($token)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         $query = "SELECT isReserved FROM " . self::TABLE_NAME . " WHERE token = ? ";
         $params[] = $token;
@@ -125,7 +126,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
                 return false;
             }
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return true;
         }
     }

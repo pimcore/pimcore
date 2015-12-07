@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService;
 
-class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\AbstractModel
+class Statistic extends \Pimcore\Model\AbstractModel
 {
 
     /**
@@ -29,15 +30,15 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
 
     /**
      * @param int $id
-     * @return bool|OnlineShop_Framework_VoucherService_Statistic
+     * @return bool|Statistic
      */
     public function getById($id)
     {
         try {
             $config = new self();
-            $config->getResource()->getById($id);
+            $config->getDao()->getById($id);
             return $config;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
 //            Logger::debug($ex->getMessageN());
             return false;
         }
@@ -45,15 +46,15 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
 
     /**
      * @param $seriesId
-     * @throws Exception
+     * @throws \Exception
      *
      * @return bool
      */
     public static function getBySeriesId($seriesId, $usagePeriod = null)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
-        $query = "SELECT date, COUNT(*) as count FROM " . OnlineShop_Framework_VoucherService_Statistic_Resource::TABLE_NAME . " WHERE voucherSeriesId = ?";
+        $query = "SELECT date, COUNT(*) as count FROM " . \OnlineShop\Framework\VoucherService\Statistic\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?";
         $params[] = $seriesId;
         if ($usagePeriod) {
             $query .= " AND (TO_DAYS(NOW()) - TO_DAYS(date)) < ?";
@@ -65,7 +66,7 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
         try {
             $result = $db->fetchPairs($query, $params);
             return $result;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
@@ -77,11 +78,11 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
      */
     public static function increaseUsageStatistic($seriesId)
     {
-        $db = $db = \Pimcore\Resource::get();
+        $db = $db = \Pimcore\Db::get();
         try {
-            $db->query("INSERT INTO " . OnlineShop_Framework_VoucherService_Statistic_Resource::TABLE_NAME . " (voucherSeriesId,date) VALUES (?,NOW())", $seriesId);
+            $db->query("INSERT INTO " . \OnlineShop\Framework\VoucherService\Statistic\Dao::TABLE_NAME . " (voucherSeriesId,date) VALUES (?,NOW())", $seriesId);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
@@ -94,7 +95,7 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
      * @return bool
      */
     public static function cleanUpStatistics($duration, $seriesId = null){
-        $query = "DELETE FROM " . OnlineShop_Framework_VoucherService_Statistic_Resource::TABLE_NAME . " WHERE DAY(DATEDIFF(date, NOW())) >= ?";
+        $query = "DELETE FROM " . \OnlineShop\Framework\VoucherService\Statistic\Dao::TABLE_NAME . " WHERE DAY(DATEDIFF(date, NOW())) >= ?";
         $params[] = $duration;
 
         if (isset($seriesId)) {
@@ -102,11 +103,11 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Model\Abstr
             $params[] = $seriesId;
         }
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         try {
             $db->query($query, $params);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
