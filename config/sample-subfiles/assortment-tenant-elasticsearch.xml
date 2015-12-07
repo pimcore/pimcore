@@ -56,8 +56,8 @@
             <column name="Rating" fieldname="ESRating">
                 <json>{"type": "object"}</json>
             </column>
-            <column name="herst" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects"/>
-            <column name="marke" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects"/>
+            <column name="herst" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects"/>
+            <column name="marke" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects"/>
             <column name="properties" fieldname="ESProperties">
                 <json>
                     {

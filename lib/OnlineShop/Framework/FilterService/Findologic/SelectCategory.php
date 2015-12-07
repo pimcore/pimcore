@@ -15,11 +15,11 @@ class OnlineShop_Framework_FilterService_Findologic_SelectCategory extends Onlin
 
     const FIELDNAME = 'cat';
 
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
         //$productList->prepareGroupBySystemValues($filterDefinition->getField(), true);
     }
 
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -49,7 +49,7 @@ class OnlineShop_Framework_FilterService_Findologic_SelectCategory extends Onlin
         ));
     }
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $value = $params[$filterDefinition->getField()];
 
         if($value == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {

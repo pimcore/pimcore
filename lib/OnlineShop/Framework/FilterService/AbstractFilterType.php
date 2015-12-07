@@ -56,32 +56,32 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
      *
      * @abstract
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      * @param $currentFilter
      * @return string
      */
-    public abstract function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter);
+    public abstract function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter);
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.
      *
      * @abstract
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      * @param $currentFilter
      * @param $params
      * @param bool $isPrecondition
      * @return array
      */
-    public abstract function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false);
+    public abstract function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false);
 
     /**
      * calls prepareGroupByValues of productlist if necessary
      *
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      */
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
         //by default do thing here
     }
 }

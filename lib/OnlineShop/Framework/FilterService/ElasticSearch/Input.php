@@ -13,7 +13,7 @@
 
 class OnlineShop_Framework_FilterService_ElasticSearch_Input extends OnlineShop_Framework_FilterService_Input {
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $filterDefinition->getField($filterDefinition);
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);
 

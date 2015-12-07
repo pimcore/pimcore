@@ -24,9 +24,9 @@ The configuration of the product index defines the content of the product index 
 		<column name="name" type="varchar(255)" locale="en_GB" filtergroup="string"/>
 		<column name="seoname" type="varchar(255)" filtergroup="string"/>
 
-	 	<column name="features" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" filtergroup="relation" />
+	 	<column name="features" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects" filtergroup="relation" />
 		<column name="tentTentPegs" type="varchar(50)"
-				getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+				getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
 			<config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="tentPegs"/>
 		</column>
 	</columns>
@@ -50,19 +50,19 @@ Each attribute can have an additional ```<config>```-Element for additional conf
 
 #### Relations in product index
 Relations are treated in a special way within the product index and also need to be filtered in a different way in the product list. 
-In order to store relations correctly in the product index, relation attributes must have a interpreter defined, which implements the interface ```OnlineShop_Framework_IndexService_RelationInterpreter```. 
+In order to store relations correctly in the product index, relation attributes must have a interpreter defined, which implements the interface ```\OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter```. 
 
 
 #### Selection of available getters:
-- OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter: Gets data of an object brick
+- \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter: Gets data of an object brick
 needed configuration: brickfield (fieldname of object brick), bricktype (type of object brick), fieldname (fieldname of attribute in object brick)
-- OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence: same as DefaultBrickGetter, but can use more than one source definition. Stores first found value in the product index. 
-- OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMultiselect: like DefaultBrickGetterSequence, but stores all found values as a multi select into the product index. 
+- \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetterSequence: same as DefaultBrickGetter, but can use more than one source definition. Stores first found value in the product index. 
+- \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect: like DefaultBrickGetterSequence, but stores all found values as a multi select into the product index. 
 
 
 #### Selection of available interpreters
-- OnlineShop_Framework_IndexService_Interpreter_AssetId: stores only asset-id into product index. 
-OnlineShop_Framework_IndexService_Interpreter_DefaultObjects: default interpreter to store object relations as relations to the product index.
+- \OnlineShop\Framework\IndexService\Interpreter\AssetId: stores only asset-id into product index. 
+\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects: default interpreter to store object relations as relations to the product index.
 
 
 > Depending on the product index implementation, the product index configuration can be different. see sample configurations for specific product index implemenations. 
@@ -82,11 +82,11 @@ By default the system always one heavy-weight tenant (= DefaultMysql), but the d
 ### Configuration of tenants
 For setting up a tenant, following things are necessary: 
 - **Implementation of a tenant config**
-The tenant config class is the central configuration of the tenant, defines which products are available for the tenant and provides the connection to the used product index implementation. It needs to implement ``` OnlineShop_Framework_IndexService_Tenant_IConfig ```. For detailed information see insource documentation of the interface. Following implementations are provided by the framework and may be extended: 
-  - ```OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql```: provides a simple mysql implementation of the product index.
-  - ```OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql```: provides an optimized mysql implementation of the product index.
-  - ```OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch```: provides a default elastic search implementation of the product index.
-  - ```OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder```: provides a default fact finder implementation of the product index.
+The tenant config class is the central configuration of the tenant, defines which products are available for the tenant and provides the connection to the used product index implementation. It needs to implement ``` \OnlineShop\Framework\IndexService\Config\IConfig ```. For detailed information see insource documentation of the interface. Following implementations are provided by the framework and may be extended: 
+  - ```\OnlineShop\Framework\IndexService\Config\DefaultMysql```: provides a simple mysql implementation of the product index.
+  - ```\OnlineShop\Framework\IndexService\Config\OptimizedMysql```: provides an optimized mysql implementation of the product index.
+  - ```\OnlineShop\Framework\IndexService\Config\ElasticSearch```: provides a default elastic search implementation of the product index.
+  - ```\OnlineShop\Framework\IndexService\Config\DefaultFactFinder```: provides a default fact finder implementation of the product index.
 
 
 - **Configuring tenants within OnlineShopConfig.xml:** 
@@ -132,7 +132,7 @@ The current tenants have to be set in the application controllers, e.g. after th
 
 
 ## 4 - Data architecture and indexing
-Depending on the product index implementation, there are two different product index data architectures and ways for indexing. For indexing itself the helper class ```OnlineShop_Framework_IndexService_Tool_IndexUpdater``` can be used. 
+Depending on the product index implementation, there are two different product index data architectures and ways for indexing. For indexing itself the helper class ```\OnlineShop\Framework\IndexService\Tool\IndexUpdater``` can be used. 
 
 ### Simple Mysql Architecture
 - In the simple architecture, object data is transferred directly to the product index. 
@@ -142,10 +142,10 @@ Depending on the product index implementation, there are two different product i
 
 ```php
 <?php
-OnlineShop_Framework_IndexService_Tool_IndexUpdater::updateIndex("Object_Product_List");
+\OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
 ```
 
-- Only used for OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql
+- Only used for \OnlineShop\Framework\IndexService\Config\DefaultMysql
 
 
 ![productindex-simple](images/productindex-simple.png)
@@ -165,21 +165,21 @@ OnlineShop_Framework_IndexService_Tool_IndexUpdater::updateIndex("Object_Product
 
 ```php
 <?php
-OnlineShop_Framework_IndexService_Tool_IndexUpdater::updateIndex("Object_Product_List");
+\OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
 ```
 
 - For process the preparation queue and update pimcore objects to the index store use following command. This command should be executed periodically (e.g. all 10 mins) 
 
 ```php
 <?php
-OnlineShop_Framework_IndexService_Tool_IndexUpdater::processPreparationQueue();
+\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processPreparationQueue();
 ```
 
 - To update the product index based on changes stored in the store table use the following command. This command should be executed periodically (e.g. all 10 mins)  
 
 ```php
 <?php
-OnlineShop_Framework_IndexService_Tool_IndexUpdater::processUpdateIndexQueue();
+\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processUpdateIndexQueue();
 ```
 
 - Used for optimized mysql, elastic search, ...
@@ -189,7 +189,7 @@ OnlineShop_Framework_IndexService_Tool_IndexUpdater::processUpdateIndexQueue();
 
 
 ## 5 - Usage of product list
-The API for getting (and filtering, ...) products out of the product index are so called ProductLists. The all implement the interface ```OnlineShop_Framework_IProductList``` and need to be product index implementation specific. Detailed method documentation is available in in-source documentation. 
+The API for getting (and filtering, ...) products out of the product index are so called ProductLists. The all implement the interface ```\OnlineShop\Framework\IndexService\ProductList\IProductList``` and need to be product index implementation specific. Detailed method documentation is available in in-source documentation. 
 For getting a ProdutList instance suitable for the product index implementation and filter for products see following code: 
 ```php 
 <?php 

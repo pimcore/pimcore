@@ -116,7 +116,7 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
         }
 
         if($this->_getParam("specific_price_field") == "true") {
-            $fields[OnlineShop_Framework_IProductList::ORDERKEY_PRICE] = array("key" => OnlineShop_Framework_IProductList::ORDERKEY_PRICE, "name" => $adminTranslator->translateAdmin(OnlineShop_Framework_IProductList::ORDERKEY_PRICE));
+            $fields[\OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE] = array("key" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE, "name" => $adminTranslator->translateAdmin(\OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE));
         }
 
         ksort($fields);

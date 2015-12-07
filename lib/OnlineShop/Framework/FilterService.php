@@ -64,11 +64,11 @@ class OnlineShop_Framework_FilterService {
      * Initializes the FilterService, adds all conditions to the ProductList and returns an array of the currently set filters
      *
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinition $filterObject filter definition object to use
-     * @param OnlineShop_Framework_IProductList $productList product list to use and add conditions to
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList product list to use and add conditions to
      * @param array $params request params with eventually set filter conditions
      * @return array returns set filters
      */
-    public function initFilterService(\OnlineShop\Framework\Model\AbstractFilterDefinition $filterObject, OnlineShop_Framework_IProductList $productList, $params = array()) {
+    public function initFilterService(\OnlineShop\Framework\Model\AbstractFilterDefinition $filterObject, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $params = array()) {
         $currentFilter = array();
 
         if ($filterObject->getFilters()) {
@@ -102,11 +102,11 @@ class OnlineShop_Framework_FilterService {
      * Returns filter frontend script for given filter type (delegates )
      *
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition filter definition to get frontend script for
-     * @param OnlineShop_Framework_IProductList $productList current product list (with all set filters) to get available options and counts
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList current product list (with all set filters) to get available options and counts
      * @param $currentFilter array current filter for this filter definition
      * @return string view snippet
      */
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
 
         $frontend = $this->getFilterDefinitionClass($filterDefinition->getType())->getFilterFrontend($filterDefinition, $productList, $currentFilter);
 
@@ -117,13 +117,13 @@ class OnlineShop_Framework_FilterService {
      * Adds condition - delegates it to the OnlineShop_Framework_FilterService_AbstractFilterType instance
      *
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      * @param $currentFilter
      * @param $params
      * @param bool $isPrecondition
      * @return array updated currentFilter array
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         return $this->getFilterDefinitionClass($filterDefinition->getType())->addCondition($filterDefinition, $productList, $currentFilter, $params, $isPrecondition);
     }
 

@@ -21,7 +21,7 @@ class OnlineShop_Framework_FilterService_Helper
 {
     /**
      * @param \Pimcore\Model\Object\FilterDefinition $filterDefinition
-     * @param OnlineShop_Framework_IProductList $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      * @param $params
      * @param Zend_View $view
      * @param OnlineShop_Framework_FilterService $filterService
@@ -29,7 +29,7 @@ class OnlineShop_Framework_FilterService_Helper
      * @param bool $excludeLimitOfFirstpage
      */
     public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
-                                            OnlineShop_Framework_IProductList $productList,
+                                            \OnlineShop\Framework\IndexService\ProductList\IProductList $productList,
                                             $params, \Zend_View $view,
                                             OnlineShop_Framework_FilterService $filterService,
                                             $loadFullPage, $excludeLimitOfFirstpage = false) {

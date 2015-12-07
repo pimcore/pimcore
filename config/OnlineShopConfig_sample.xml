@@ -187,67 +187,67 @@
 
                 <column name="color" type="varchar(255)" filtergroup="multiselect" />
                 <column name="gender" type="varchar(100)" filtergroup="multiselect"/>
-                <column name="features" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" filtergroup="relation" />
-                <column name="technologies" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" filtergroup="relation" />
+                <column name="features" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects" filtergroup="relation" />
+                <column name="technologies" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects" filtergroup="relation" />
 
 
                 <column name="tentTentPegs" type="varchar(50)"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="tentPegs"/>
                 </column>
                 <column name="tentWaterproofRain" type="varchar(50)"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="waterproofRain"/>
                 </column>
                 <column name="tentWaterproofGround" type="varchar(50)"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="waterproofGround"/>
                 </column>
 
 
-                <column name="rucksacksVolume" type="double" interpreter="OnlineShop_Framework_IndexService_Interpreter_Numeric"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                <column name="rucksacksVolume" type="double" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Numeric"
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="rucksackSpecs" fieldname="volume"/>
                 </column>
-                <column name="rucksacksWeight" type="double" interpreter="OnlineShop_Framework_IndexService_Interpreter_Numeric"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                <column name="rucksacksWeight" type="double" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Numeric"
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="rucksackSpecs" fieldname="weight"/>
                 </column>
-                <column name="rucksacksLoad" type="double" interpreter="OnlineShop_Framework_IndexService_Interpreter_Numeric"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                <column name="rucksacksLoad" type="double" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Numeric"
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="rucksackSpecs" fieldname="load"/>
                 </column>
 
 
                 <column name="matsWidth" type="double"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="matsSpecs" fieldname="width"/>
                 </column>
                 <column name="matsLength" type="double"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="matsSpecs" fieldname="length"/>
                 </column>
                 <column name="matsHeight" type="double"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="matsSpecs" fieldname="height"/>
                 </column>
 
 
 
-                <column name="simularity_color" fieldname="color" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />
-                <column name="simularity_gender" fieldname="gender" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />
-                <column name="simularity_category" fieldname="categories" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-                <column name="simularity_feature" fieldname="features" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-                <column name="simularity_technolgy" fieldname="technologies" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-                <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
+                <column name="simularity_color" fieldname="color" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Soundex" />
+                <column name="simularity_gender" fieldname="gender" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Soundex" />
+                <column name="simularity_category" fieldname="categories" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
+                <column name="simularity_feature" fieldname="features" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
+                <column name="simularity_technolgy" fieldname="technologies" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
+                <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
                 -->
             </columns>
 
             <!-- configuration of different tenants -->
             <tenants>
-                <!--  <elasticsearch class="OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch" file="/website/var/plugins/OnlineShop/assortment-tenant-elasticsearch.xml"> -->
+                <!--  <elasticsearch class="\OnlineShop\Framework\IndexService\Config\ElasticSearch" file="/website/var/plugins/OnlineShop/assortment-tenant-elasticsearch.xml"> -->
 
-                <!-- <sampletenant class="OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig">
+                <!-- <sampletenant class="\OnlineShop\Framework\IndexService\Config\DefaultMysqlSubTenantConfig">
                       <generalSearchColumns>
                           <column name="name"/>
                           <column name="shortDescription"/>
@@ -256,11 +256,11 @@
                           <column name="name" type="varchar(255)" />
                           <column name="shortDescription" type="varchar(255)" />
                           <column name="supplierRemoteId" type="varchar(255)"/>
-                          <column name="mainImage" type="int" interpreter="OnlineShop_Framework_IndexService_Interpreter_AssetId"/>
+                          <column name="mainImage" type="int" interpreter="\OnlineShop\Framework\IndexService\Interpreter\AssetId"/>
 
                           <column name="hardDiskDriveCapacity" type="DOUBLE"
-                                  getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
-                                  interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                                  getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter"
+                                  interpreter="\OnlineShop\Framework\IndexService\Interpreter\DimensionUnitField">
                               <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskDriveCapacity"/>
                           </column>
                       </columns>

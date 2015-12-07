@@ -13,11 +13,11 @@
 
 class OnlineShop_Framework_FilterService_Findologic_NumberRange extends OnlineShop_Framework_FilterService_NumberRange {
 
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -42,7 +42,7 @@ class OnlineShop_Framework_FilterService_Findologic_NumberRange extends OnlineSh
         ));
     }
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $value = $params[$field];
 

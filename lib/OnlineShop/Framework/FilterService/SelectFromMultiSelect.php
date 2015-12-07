@@ -13,7 +13,7 @@
 
 class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
         //return "";
         $field = $this->getField($filterDefinition);
 
@@ -27,7 +27,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
 
         $values = array();
         foreach($rawValues as $v) {
-            $explode = explode(OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER, $v['value']);
+            $explode = explode(\OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER, $v['value']);
             foreach($explode as $e) {
                 if(!empty($e)) {
                     if($values[$e]) {
@@ -49,7 +49,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
         ));
     }
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
@@ -67,7 +67,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
 
 
         if(!empty($value)) {
-            $value =  "%" . OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER  . $value .  OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER . "%";
+            $value =  "%" . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER  . $value .  \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . "%";
             if($isPrecondition) {
                 $productList->addCondition($field . " LIKE " . $productList->quote($value), "PRECONDITION_" . $field);
             } else {

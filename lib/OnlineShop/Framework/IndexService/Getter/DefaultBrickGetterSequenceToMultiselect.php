@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Getter;
 
-class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMultiselect implements OnlineShop_Framework_IndexService_Getter {
+class DefaultBrickGetterSequenceToMultiselect implements IGetter {
 
     public static function get($object, $config = null) {
         $sourceList = $config->source;
@@ -67,9 +68,9 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
 
         }
         if(!empty($values)) {
-            return OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER .
-                implode(OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER, $values) .
-            OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER;
+            return \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER .
+                implode(\OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER, $values) .
+            \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
         } else {
             return null;
         }

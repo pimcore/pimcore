@@ -50,8 +50,8 @@ class IndexFieldSelectionCombo extends Select {
 
         if($this->getSpecificPriceField()) {
             $options[] = array(
-                "key" => \OnlineShop_Framework_IProductList::ORDERKEY_PRICE,
-                "value" => \OnlineShop_Framework_IProductList::ORDERKEY_PRICE
+                "key" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE,
+                "value" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE
             );            
         }
 

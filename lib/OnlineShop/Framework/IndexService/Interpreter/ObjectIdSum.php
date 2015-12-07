@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Interpreter;
 
-class OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum implements OnlineShop_Framework_IndexService_Interpreter {
+class ObjectIdSum implements IInterpreter {
 
     public static function interpret($value, $config = null) {
 

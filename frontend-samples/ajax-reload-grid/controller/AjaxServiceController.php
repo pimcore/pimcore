@@ -22,7 +22,7 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
 
         $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         $productList = $indexService->getProductListForCurrentTenant();
-        $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
+        $productList->setVariantMode(\OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
         $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
@@ -62,7 +62,7 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
 
         $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         $productList = $indexService->getProductListForCurrentTenant();
-        $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
+        $productList->setVariantMode(\OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
         $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 

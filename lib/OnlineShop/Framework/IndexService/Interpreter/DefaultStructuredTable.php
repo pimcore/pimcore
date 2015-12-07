@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Interpreter;
 
-class OnlineShop_Framework_IndexService_Interpreter_DefaultStructuredTable implements OnlineShop_Framework_IndexService_Interpreter {
+class DefaultStructuredTable implements IInterpreter {
 
     public static function interpret($value, $config = null) {
         if($value instanceof \Pimcore\Model\Object\Data\StructuredTable) {

@@ -462,16 +462,16 @@ class Factory {
 
 
     /**
-     * @var \OnlineShop_Framework_IndexService
+     * @var \OnlineShop\Framework\IndexService\IndexService
      */
     private $indexService = null;
 
     /**
-     * @return \OnlineShop_Framework_IndexService
+     * @return \OnlineShop\Framework\IndexService\IndexService
      */
     public function getIndexService() {
         if(empty($this->indexService)) {
-            $this->indexService = new \OnlineShop_Framework_IndexService($this->config->onlineshop->productindex);
+            $this->indexService = new \OnlineShop\Framework\IndexService\IndexService($this->config->onlineshop->productindex);
         }
         return $this->indexService;
     }

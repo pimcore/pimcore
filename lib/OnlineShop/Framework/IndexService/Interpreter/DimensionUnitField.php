@@ -10,12 +10,13 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Interpreter;
 
-class OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField implements OnlineShop_Framework_IndexService_Interpreter {
+class DimensionUnitField implements IInterpreter {
 
     public static function interpret($value, $config = null) {
 
-        if(!empty($value) && $value instanceof Object_Data_DimensionUnitField) {
+        if(!empty($value) && $value instanceof \Object_Data_DimensionUnitField) {
 
             if($config->onlyDimensionValue == "true") {
                 $unit = $value->getUnit();

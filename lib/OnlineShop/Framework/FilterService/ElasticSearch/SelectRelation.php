@@ -13,7 +13,7 @@
 
 class OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation extends OnlineShop_Framework_FilterService_SelectRelation {
 
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
         $productList->prepareGroupByValues($filterDefinition->getField(), true);
     }
 
@@ -29,7 +29,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation extends On
     }
 
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 

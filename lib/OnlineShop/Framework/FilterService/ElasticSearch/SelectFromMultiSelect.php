@@ -13,11 +13,11 @@
 
 class OnlineShop_Framework_FilterService_ElasticSearch_SelectFromMultiSelect extends OnlineShop_Framework_FilterService_SelectFromMultiSelect {
 
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
         $productList->prepareGroupByValues($filterDefinition->getField(), true);
     }
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
@@ -35,7 +35,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_SelectFromMultiSelect ext
 
 
         if(!empty($value)) {
-            $value =  ".*\"" . OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER  . $value .  OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER . "\".*";
+            $value =  ".*\"" . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER  . $value .  \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . "\".*";
             $productList->addCondition(['regexp' => ["attributes." . $field => $value]], $field);
         }
         return $currentFilter;

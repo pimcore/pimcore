@@ -16,12 +16,12 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList                  $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                  $productList
      * @param                                                   $currentFilter
      *
      * @return string[]
      */
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
 
         $field = $this->getField($filterDefinition);
 
@@ -35,7 +35,7 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
 
         $values = array();
         foreach($rawValues as $v) {
-            $explode = explode(OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER, $v['value']);
+            $explode = explode(\OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER, $v['value']);
             foreach($explode as $e) {
                 if(!empty($e)) {
                     if($values[$e]) {
@@ -60,14 +60,14 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList                  $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                  $productList
      * @param array                                             $currentFilter
      * @param                                                   $params
      * @param bool                                              $isPrecondition
      *
      * @return string[]
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
@@ -100,7 +100,7 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends Onli
 
             $quotedValues = array();
             foreach($value as $v) {
-                $v =   "%" . OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER  . $v .  OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER . "%" ;
+                $v =   "%" . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER  . $v .  \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . "%" ;
                 $quotedValues[] = $field . ' like '.$productList->quote($v);
             }
 

@@ -15,9 +15,9 @@ class OnlineShop_Framework_FilterService_FactFinder_MultiSelect extends OnlineSh
 {
     /**
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList                 $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                 $productList
      */
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList)
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList)
     {
 
     }
@@ -25,14 +25,14 @@ class OnlineShop_Framework_FilterService_FactFinder_MultiSelect extends OnlineSh
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList                 $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
      * @param bool                                              $isPrecondition
      *
      * @return mixed
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false)
     {
         // init
         $field = $this->getField($filterDefinition);

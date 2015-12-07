@@ -7,9 +7,9 @@
 /**
  * @deprecated
  * 
- * Class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter
+ * Class \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter
  */
-//class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter extends OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter { }
+//class \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter extends OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter { }
 
 
 /**

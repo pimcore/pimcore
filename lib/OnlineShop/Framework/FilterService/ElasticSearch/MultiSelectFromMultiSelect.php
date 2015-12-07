@@ -14,7 +14,7 @@
 class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelect extends OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect
 {
 
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList) {
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
         $field = $this->getField($filterDefinition);
         $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
     }
@@ -22,14 +22,14 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelec
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param OnlineShop_Framework_IProductList                  $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                  $productList
      * @param array                                             $currentFilter
      * @param                                                   $params
      * @param bool                                              $isPrecondition
      *
      * @return string[]
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
@@ -60,7 +60,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelec
             $quotedValues = array();
             foreach($value as $v) {
                 if($v) {
-                    $v =  ".*\"" . OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER  . $v .  OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER . "\".*";
+                    $v =  ".*\"" . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER  . $v .  \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . "\".*";
                     $quotedValues[] = $v;
                 }
             }

@@ -13,7 +13,7 @@
 
 class OnlineShop_Framework_FilterService_NumberRangeSelection extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -87,7 +87,7 @@ class OnlineShop_Framework_FilterService_NumberRangeSelection extends OnlineShop
         }
     }
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $rawValue = $params[$filterDefinition->getField()];
 
         if(!empty($rawValue) && $rawValue != OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {

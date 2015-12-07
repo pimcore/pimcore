@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Interpreter;
 
-class OnlineShop_Framework_IndexService_Interpreter_DefaultRelations implements OnlineShop_Framework_IndexService_RelationInterpreter {
+class DefaultRelations implements IRelationInterpreter {
 
     public static function interpret($value, $config = null) {
         $result = array();
