@@ -58,6 +58,32 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\PriceSystem\AttributePriceInfo' => 'OnlineShop_Framework_Impl_AttributePriceInfo',
         'OnlineShop\Framework\PriceSystem\LazyLoadingPriceInfo' => 'OnlineShop_Framework_Impl_LazyLoadingPriceInfo',
         'OnlineShop\Framework\AvailabilitySystem\AttributeAvailabilitySystem' => 'OnlineShop_Framework_Impl_AttributeAvailabilitySystem',
+        'OnlineShop\Framework\PricingManager\PricingManager' => 'OnlineShop_Framework_Impl_PricingManager',
+        'OnlineShop\Framework\PricingManager\Rule' => 'OnlineShop_Framework_Impl_Pricing_Rule',
+        'OnlineShop\Framework\PricingManager\Rule\Listing\Dao' => 'OnlineShop_Framework_Impl_Pricing_Rule_List_Resource',
+        'OnlineShop\Framework\PricingManager\Rule\Dao' => 'OnlineShop_Framework_Impl_Pricing_Rule_Resource',
+        'OnlineShop\Framework\PricingManager\Rule\Listing' => 'OnlineShop_Framework_Impl_Pricing_Rule_List',
+        'OnlineShop\Framework\PricingManager\PriceInfo' => 'OnlineShop_Framework_Impl_Pricing_PriceInfo',
+        'OnlineShop\Framework\PricingManager\Environment' => 'OnlineShop_Framework_Impl_Pricing_Environment',
+        'OnlineShop\Framework\PricingManager\Action\CartDiscount' => 'OnlineShop_Framework_Impl_Pricing_Action_CartDiscount',
+        'OnlineShop\Framework\PricingManager\Action\FreeShipping' => 'OnlineShop_Framework_Impl_Pricing_Action_FreeShipping',
+        'OnlineShop\Framework\PricingManager\Action\Gift' => 'OnlineShop_Framework_Impl_Pricing_Action_Gift',
+        'OnlineShop\Framework\PricingManager\Action\ProductDiscount' => 'OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount',
+        'OnlineShop\Framework\PricingManager\Condition\AbstractOrder' => 'OnlineShop_Framework_Impl_Pricing_Condition_AbstractOrder',
+        'OnlineShop\Framework\PricingManager\Condition\Bracket' => 'OnlineShop_Framework_Impl_Pricing_Condition_Bracket',
+        'OnlineShop\Framework\PricingManager\Condition\CartAmount' => 'OnlineShop_Framework_Impl_Pricing_Condition_CartAmount',
+        'OnlineShop\Framework\PricingManager\Condition\CatalogCategory' => 'OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory',
+        'OnlineShop\Framework\PricingManager\Condition\CatalogProduct' => 'OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct',
+        'OnlineShop\Framework\PricingManager\Condition\ClientIp' => 'OnlineShop_Framework_Impl_Pricing_Condition_ClientIp',
+        'OnlineShop\Framework\PricingManager\Condition\DateRange' => 'OnlineShop_Framework_Impl_Pricing_Condition_DateRange',
+        'OnlineShop\Framework\PricingManager\Condition\Sales' => 'OnlineShop_Framework_Impl_Pricing_Condition_Sales',
+        'OnlineShop\Framework\PricingManager\Condition\Sold' => 'OnlineShop_Framework_Impl_Pricing_Condition_Sold',
+        'OnlineShop\Framework\PricingManager\Condition\Tenant' => 'OnlineShop_Framework_Impl_Pricing_Condition_Tenant',
+        'OnlineShop\Framework\PricingManager\Condition\Token' => 'OnlineShop_Framework_Impl_Pricing_Condition_Token',
+        'OnlineShop\Framework\PricingManager\Condition\VoucherToken' => 'OnlineShop_Framework_Impl_Pricing_Condition_VoucherToken',
+
+
+
 
 
     ];
@@ -79,6 +105,24 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\PriceSystem\IPriceInfo' => 'OnlineShop_Framework_IPriceInfo',
         'OnlineShop\Framework\AvailabilitySystem\IAvailability' => 'OnlineShop_Framework_IAvailability',
         'OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem' => 'OnlineShop_Framework_IAvailabilitySystem',
+        'OnlineShop\Framework\PricingManager\IRule' => 'OnlineShop_Framework_Pricing_IRule',
+        'OnlineShop\Framework\PricingManager\IPriceInfo' => 'OnlineShop_Framework_Pricing_IPriceInfo',
+        'OnlineShop\Framework\PricingManager\IEnvironment' => 'OnlineShop_Framework_Pricing_IEnvironment',
+        'OnlineShop\Framework\PricingManager\ICondition' => 'OnlineShop_Framework_Pricing_ICondition',
+        'OnlineShop\Framework\PricingManager\IAction' => 'OnlineShop_Framework_Pricing_IAction',
+        'OnlineShop\Framework\PricingManager\IPricingManager' => 'OnlineShop_Framework_IPricingManager',
+        'OnlineShop\Framework\PricingManager\Action\IGift' => 'OnlineShop_Framework_Pricing_Action_IGift',
+        'OnlineShop\Framework\PricingManager\Action\IDiscount' => 'OnlineShop_Framework_Pricing_Action_IDiscount',
+        'OnlineShop\Framework\PricingManager\Condition\IBracket' => 'OnlineShop_Framework_Pricing_Condition_IBracket',
+        'OnlineShop\Framework\PricingManager\Condition\ICartAmount' => 'OnlineShop_Framework_Pricing_Condition_ICartAmount',
+        'OnlineShop\Framework\PricingManager\Condition\ICartProduct' => 'OnlineShop_Framework_Pricing_Condition_ICartProduct',
+        'OnlineShop\Framework\PricingManager\Condition\ICatalogProduct' => 'OnlineShop_Framework_Pricing_Condition_ICatalogProduct',
+        'OnlineShop\Framework\PricingManager\Condition\ICategory' => 'OnlineShop_Framework_Pricing_Condition_ICategory',
+        'OnlineShop\Framework\PricingManager\Condition\IDateRange' => 'OnlineShop_Framework_Pricing_Condition_IDateRange',
+
+
+
+
 
 
 

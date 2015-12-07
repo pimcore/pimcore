@@ -65,7 +65,7 @@ $this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v
                     </div>
                 </div>
                 <?php
-                $listPricingRule = new OnlineShop_Framework_Impl_Pricing_Rule_List();
+                $listPricingRule = new \OnlineShop\Framework\PricingManager\Rule\Listing();
                 $list = $listPricingRule->load();
                 if(count($list) > 0): ?>
                     <div class="form-group col-sm-4">

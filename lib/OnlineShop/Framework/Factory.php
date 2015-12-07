@@ -52,7 +52,7 @@ class Factory {
     private $checkoutManagers;
 
     /**
-     * @var \OnlineShop_Framework_IPricingManager
+     * @var \OnlineShop\Framework\PricingManager\IPricingManager
      */
     private $pricingManager;
 
@@ -287,8 +287,8 @@ class Factory {
         } else {
             if (class_exists($config->onlineshop->pricingmanager->class)) {
                 $this->pricingManager = new $config->onlineshop->pricingmanager->class($config->onlineshop->pricingmanager->config);
-                if (!($this->pricingManager instanceof \OnlineShop_Framework_IPricingManager)) {
-                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " does not implement OnlineShop_Framework_IPricingManager.");
+                if (!($this->pricingManager instanceof \OnlineShop\Framework\PricingManager\IPricingManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . ' does not implement \OnlineShop\Framework\PricingManager\IPricingManager.');
                 }
             } else {
                 throw new \OnlineShop\Framework\Exception\InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " not found.");
@@ -515,7 +515,7 @@ class Factory {
 
 
     /**
-     * @return \OnlineShop_Framework_IPricingManager
+     * @return \OnlineShop\Framework\PricingManager\IPricingManager
      */
     public function getPricingManager()
     {

@@ -35,14 +35,14 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
      */
     public function listAction()
     {
-        $rules = new OnlineShop_Framework_Impl_Pricing_Rule_List();
+        $rules = new \OnlineShop\Framework\PricingManager\Rule\Listing();
         $rules->setOrderKey('prio');
         $rules->setOrder('ASC');
 
         $json = array();
         foreach($rules->load() as $rule)
         {
-            /* @var  OnlineShop_Framework_Pricing_IRule $rule */
+            /* @var  \OnlineShop\Framework\PricingManager\IRule $rule */
 
             if($rule->getActive())
             {
@@ -76,7 +76,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
      */
     public function getAction()
     {
-        $rule = OnlineShop_Framework_Impl_Pricing_Rule::getById( (int)$this->getParam('id') );
+        $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$this->getParam('id') );
         if($rule)
         {
             // get data
@@ -123,7 +123,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
         // save rule
         try
         {
-            $rule = new OnlineShop_Framework_Impl_Pricing_Rule();
+            $rule = new \OnlineShop\Framework\PricingManager\Rule();
             $rule->setName( $this->getParam('name') );
             $rule->save();
 
@@ -154,7 +154,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
         // delete rule
         try
         {
-            $rule = OnlineShop_Framework_Impl_Pricing_Rule::getById( (int)$this->getParam('id') );
+            $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$this->getParam('id') );
             $rule->delete();
             $return['success'] = true;
         }
@@ -183,7 +183,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
         try
         {
             $data = json_decode($this->getParam('data'));
-            $rule = OnlineShop_Framework_Impl_Pricing_Rule::getById( (int)$this->getParam('id') );
+            $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$this->getParam('id') );
 
             // apply basic settings
             $rule->setBehavior( $data->settings->behavior )
@@ -279,7 +279,7 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
         $rules = json_decode($this->getParam('rules'));
         foreach($rules as $id => $prio)
         {
-            $rule = OnlineShop_Framework_Impl_Pricing_Rule::getById( (int)$id );
+            $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$id );
             if($rule)
                 $rule->setPrio( (int)$prio )->save();
         }
@@ -340,48 +340,48 @@ class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
 //        $pricingManager->applyCartRules( $cart );
 
 
-        $env = new OnlineShop_Framework_Impl_Pricing_Environment;
+        $env = new \OnlineShop\Framework\PricingManager\Environment;
 //
 //        // test daterange
-//        $dateRange = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();
+//        $dateRange = new \OnlineShop\Framework\PricingManager\Condition\DateRange();
 //        $dateRange->setStarting(new Zend_Date('2013-02-03'));
 //        $dateRange->setEnding(new Zend_Date('2013-07-04'));
 //        var_dump($dateRange->check($env)); exit;
 //
 //
 //        // test action
-//        $giftAction = new OnlineShop_Framework_Impl_Pricing_Action_Gift();
+//        $giftAction = new \OnlineShop\Framework\PricingManager\Action\Gift();
 //        $giftAction->setProduct( OnlineShop_Framework_AbstractProduct::getById(18149) );
 //
 //        // test rule
-//        $priceRule = new OnlineShop_Framework_Impl_Pricing_Rule();
+//        $priceRule = new \OnlineShop\Framework\PricingManager\Rule();
 //        $priceRule->addCondition($dateRange);
 //        $priceRule->setAction($giftAction);
 
 //        var_dump($priceRule->check($env)); exit;
 
         // test conditionlist OR
-        $dateRange = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();   // true
+        $dateRange = new \OnlineShop\Framework\PricingManager\Condition\DateRange();   // true
         $dateRange->setStarting(new \Zend_Date('2013-02-03'));
         $dateRange->setEnding(new \Zend_Date('2013-20-04'));
-        $dateRange2 = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();  // false
+        $dateRange2 = new \OnlineShop\Framework\PricingManager\Condition\DateRange();  // false
         $dateRange2->setStarting(new \Zend_Date('2012-02-03'));
         $dateRange2->setEnding(new \Zend_Date('2012-30-04'));
 
-        $bracket = new OnlineShop_Framework_Impl_Pricing_Condition_Bracket();
+        $bracket = new \OnlineShop\Framework\PricingManager\Condition\Bracket();
         $bracket->addCondition($dateRange, null);
-        $bracket->addCondition($dateRange2, OnlineShop_Framework_Pricing_Condition_IBracket::OPERATOR_AND_NOT); // true
+        $bracket->addCondition($dateRange2, \OnlineShop\Framework\PricingManager\Condition\IBracket::OPERATOR_AND_NOT); // true
 
 
 
         // bracket test
-        $dateRange3 = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();  // false
+        $dateRange3 = new \OnlineShop\Framework\PricingManager\Condition\DateRange();  // false
         $dateRange3->setStarting(new \Zend_Date('2012-02-03'));
         $dateRange3->setEnding(new \Zend_Date('2012-30-04'));
 
-        $bracket2 = new OnlineShop_Framework_Impl_Pricing_Condition_Bracket();
+        $bracket2 = new \OnlineShop\Framework\PricingManager\Condition\Bracket();
         $bracket2->addCondition($bracket, null);
-        $bracket2->addCondition($dateRange3, OnlineShop_Framework_Pricing_Condition_IBracket::OPERATOR_AND_NOT);
+        $bracket2->addCondition($dateRange3, \OnlineShop\Framework\PricingManager\Condition\IBracket::OPERATOR_AND_NOT);
 
         # var_dump($bracket2->check($env) );die();
 

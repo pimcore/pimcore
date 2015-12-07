@@ -421,7 +421,7 @@ class OrderManager implements IOrderManager
 
         // save active pricing rules
         $priceInfo = $item->getPriceInfo();
-        if($priceInfo instanceof \OnlineShop_Framework_Pricing_IPriceInfo && method_exists($orderItem, 'setPricingRules'))
+        if($priceInfo instanceof \OnlineShop\Framework\PricingManager\IPriceInfo && method_exists($orderItem, 'setPricingRules'))
         {
             $priceRules = new \Pimcore\Model\Object\Fieldcollection();
             foreach($priceInfo->getRules() as $rule)

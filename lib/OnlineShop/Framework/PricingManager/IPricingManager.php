@@ -1,0 +1,65 @@
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is subject to the GNU General Public License version 3 (GPLv3)
+ * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
+ * files that are distributed with this source code.
+ *
+ * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ */
+
+namespace OnlineShop\Framework\PricingManager;
+
+interface IPricingManager
+{
+    /**
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceinfo
+     *
+     * @return IPriceInfo
+     */
+    public function applyProductRules(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceinfo);
+
+    /**
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     *
+     * @return IPricingManager
+     */
+    public function applyCartRules(\OnlineShop\Framework\CartManager\ICart $cart);
+
+    /**
+     * Factory
+     * @return IRule
+     */
+    public function getRule();
+
+    /**
+     * Factory
+     * @param string $type
+     *
+     * @return ICondition
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     */
+    public function getCondition($type);
+
+    /**
+     * Factory
+     * @param $type
+     *
+     * @return IAction
+     */
+    public function getAction($type);
+
+    /**
+     * @return IEnvironment
+     */
+    public function getEnvironment();
+
+    /**
+     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo
+     *
+     * @return IPriceInfo
+     */
+    public function getPriceInfo(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo);
+}

@@ -288,33 +288,35 @@
         </filtertypes>
 
         <!-- pricing manager -->
-        <pricingmanager class="OnlineShop_Framework_Impl_PricingManager">
+        <pricingmanager class="\OnlineShop\Framework\PricingManager\PricingManager">
             <config>
                 <!--<disabled>true</disabled>-->
 
                 <!-- rule and priceinfo -->
-                <rule class="OnlineShop_Framework_Impl_Pricing_Rule" />
-                <priceInfo class="OnlineShop_Framework_Impl_Pricing_PriceInfo" />
+                <rule class="\OnlineShop\Framework\PricingManager\Rule" />
+                <priceInfo class="\OnlineShop\Framework\PricingManager\PriceInfo" />
 
                 <!-- rule conditions -->
                 <condition>
-                    <Bracket class="OnlineShop_Framework_Impl_Pricing_Condition_Bracket" />
-                    <DateRange class="OnlineShop_Framework_Impl_Pricing_Condition_DateRange" />
-                    <CartAmount class="OnlineShop_Framework_Impl_Pricing_Condition_CartAmount" />
-                    <CatalogProduct class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct" />
-                    <CatalogCategory class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory" />
-                    <Token class="OnlineShop_Framework_Impl_Pricing_Condition_Token" />
-                    <Sold class="OnlineShop_Framework_Impl_Pricing_Condition_Sold" />
-                    <Sales class="OnlineShop_Framework_Impl_Pricing_Condition_Sales" />
-                    <ClientIp class="OnlineShop_Framework_Impl_Pricing_Condition_ClientIp" />
+                    <Bracket class="\OnlineShop\Framework\PricingManager\Condition\Bracket" />
+                    <DateRange class="\OnlineShop\Framework\PricingManager\Condition\DateRange" />
+                    <CartAmount class="\OnlineShop\Framework\PricingManager\Condition\CartAmount" />
+                    <CatalogProduct class="\OnlineShop\Framework\PricingManager\Condition\CatalogProduct" />
+                    <CatalogCategory class="\OnlineShop\Framework\PricingManager\Condition\CatalogCategory" />
+                    <Token class="\OnlineShop\Framework\PricingManager\Condition\Token" />
+                    <VoucherToken class="\OnlineShop\Framework\PricingManager\Condition\VoucherToken" />
+                    <Sold class="\OnlineShop\Framework\PricingManager\Condition\Sold" />
+                    <Tenant class="\OnlineShop\Framework\PricingManager\Condition\Tenant" />
+                    <Sales class="\OnlineShop\Framework\PricingManager\Condition\Sales" />
+                    <ClientIp class="\OnlineShop\Framework\PricingManager\Condition\ClientIp" />
                 </condition>
 
                 <!-- rule actions -->
                 <action>
-                    <ProductDiscount class="OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount" />
-                    <CartDiscount class="OnlineShop_Framework_Impl_Pricing_Action_CartDiscount" />
-                    <Gift class="OnlineShop_Framework_Impl_Pricing_Action_Gift" />
-                    <FreeShipping class="OnlineShop_Framework_Impl_Pricing_Action_FreeShipping" />
+                    <ProductDiscount class="\OnlineShop\Framework\PricingManager\Action\ProductDiscount" />
+                    <CartDiscount class="\OnlineShop\Framework\PricingManager\Action\CartDiscount" />
+                    <Gift class="\OnlineShop\Framework\PricingManager\Action\Gift" />
+                    <FreeShipping class="\OnlineShop\Framework\PricingManager\Action\FreeShipping" />
                 </action>
 
             </config>

@@ -155,7 +155,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
         }
 
-        if($priceInfo instanceof \OnlineShop_Framework_Pricing_IPriceInfo)
+        if($priceInfo instanceof \OnlineShop\Framework\PricingManager\IPriceInfo)
         {
             $priceInfo->getEnvironment()->setCart( $this->getCart() );
             $priceInfo->getEnvironment()->setCartItem( $this );

@@ -22,15 +22,15 @@ class Discount implements IDiscount
     protected $amount = 0;
 
     /**
-     * @var null|\OnlineShop_Framework_Pricing_IRule
+     * @var null|\OnlineShop\Framework\PricingManager\IRule
      */
     protected $rule = null;
 
 
     /**
-     * @param \OnlineShop_Framework_Pricing_IRule $rule
+     * @param \OnlineShop\Framework\PricingManager\IRule $rule
      */
-    public function __construct(\OnlineShop_Framework_Pricing_IRule $rule) {
+    public function __construct(\OnlineShop\Framework\PricingManager\IRule $rule) {
         $this->rule = $rule;
     }
 

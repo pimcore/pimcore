@@ -52,17 +52,17 @@ To print the applied rules in the frontend, the developer needs add some lines o
 		<ul>
 			<?php foreach($priceInfo->getRules() as $rule ) { ?>
 				<?php foreach($rule->getActions() as $action) { ?>
-					<?php if($action instanceof OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount) { ?>
+					<?php if($action instanceof \OnlineShop\Framework\PricingManager\Action\ProductDiscount) { ?>
 						<?php if($action->getAmount() > 0) { ?>
 							<li><?= $rule->getLabel() ?> <?= $this->translate("shop.detail.your_benefit.discount.amount", new Zend_Currency(array("value" => $action->getAmount()))) ?></li>
 						<?php } else if($action->getPercent() > 0) { ?>
 							<li><?= $rule->getLabel() ?> <?= $this->translate("shop.detail.your_benefit.discount.percent", $action->getPercent()) ?></li>
 						<?php } ?>
-					<?php } else if($action instanceof OnlineShop_Framework_Pricing_Action_IGift) { ?>
+					<?php } else if($action instanceof \OnlineShop\Framework\PricingManager\Action\IGift) { ?>
 							<li>
 								<?= $this->translate("shop.detail.your_benefit.discount.gift", '<a href="' . $action->getProduct()->getShopDetailLink($this, true) . '"> ' . $action->getProduct()->getName() . '</a>') ?>
 							</li>
-					<?php } else if($action instanceof OnlineShop_Framework_Impl_Pricing_Action_FreeShipping) { ?>
+					<?php } else if($action instanceof \OnlineShop\Framework\PricingManager\Action\FreeShipping) { ?>
 						<li>
 							<?= $this->translate("shop.detail.your_benefit.discount.freeshipping") ?>
 						</li>

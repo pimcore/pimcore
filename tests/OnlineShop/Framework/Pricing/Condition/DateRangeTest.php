@@ -10,7 +10,7 @@
 class OnlineShop_Framework_Pricing_Condition_DateRange_Test extends Test_Base
 {
     /**
-     * @var OnlineShop_Framework_Pricing_IEnvironment
+     * @var \OnlineShop\Framework\PricingManager\IEnvironment
      */
     protected $environment;
 
@@ -24,7 +24,7 @@ class OnlineShop_Framework_Pricing_Condition_DateRange_Test extends Test_Base
 
         set_include_path(get_include_path() . PATH_SEPARATOR . '/plugins/onlineshop/www/plugins/OnlineShop/lib');
 
-        $this->environment = new OnlineShop_Framework_Impl_Pricing_Environment;
+        $this->environment = new \OnlineShop\Framework\PricingManager\Environment;
     }
 
 
@@ -33,7 +33,7 @@ class OnlineShop_Framework_Pricing_Condition_DateRange_Test extends Test_Base
      */
     public function testParentIdentical()
     {
-        $dateRange = new OnlineShop_Framework_Impl_Pricing_Condition_DateRange();   // true
+        $dateRange = new \OnlineShop\Framework\PricingManager\Condition\DateRange();   // true
         $dateRange->setStarting(new Zend_Date('2013-02-03'));
         $dateRange->setEnding(new Zend_Date('2013-20-04'));
         $this->assertTrue($dateRange->check($this->environment));
