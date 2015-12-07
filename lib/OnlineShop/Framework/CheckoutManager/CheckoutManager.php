@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Class OnlineShop_Framework_Impl_CheckoutManager
+ * Class \OnlineShop\Framework\CheckoutManager\CheckoutManager
  */
-class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_ICheckoutManager
+class CheckoutManager implements ICheckoutManager
 {
 
     /**
@@ -28,19 +29,19 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * needed for effective access to one specific checkout step
      *
-     * @var OnlineShop_Framework_ICheckoutStep[]
+     * @var ICheckoutStep[]
      */
     protected $checkoutSteps;
 
     /**
      * needed for preserving order of checkout steps
      *
-     * @var OnlineShop_Framework_ICheckoutStep[]
+     * @var ICheckoutStep[]
      */
     protected $checkoutStepOrder;
 
     /**
-     * @var OnlineShop_Framework_ICheckoutStep
+     * @var ICheckoutStep
      */
     protected $currentStep;
 
@@ -55,7 +56,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     protected $confirmationMail;
 
     /**
-     * @var OnlineShop_Framework_ICommitOrderProcessor
+     * @var ICommitOrderProcessor
      */
     protected $commitOrderProcessor;
 
@@ -115,7 +116,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * creates, configures and returns commit order processor
      *
-     * @return OnlineShop_Framework_ICommitOrderProcessor
+     * @return ICommitOrderProcessor
      */
     protected function getCommitOrderProcessor()
     {
@@ -435,12 +436,12 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @param OnlineShop_Framework_ICheckoutStep $step
+     * @param ICheckoutStep $step
      * @param mixed $data
      * @return bool
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    public function commitStep(OnlineShop_Framework_ICheckoutStep $step, $data)
+    public function commitStep(ICheckoutStep $step, $data)
     {
         //get index of current step and index of step to commit
         $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
@@ -482,7 +483,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
     /**
      * @param string $stepname
-     * @return OnlineShop_Framework_ICheckoutStep
+     * @return ICheckoutStep
      */
     public function getCheckoutStep($stepname)
     {
@@ -490,7 +491,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @return OnlineShop_Framework_ICheckoutStep[]
+     * @return ICheckoutStep[]
      */
     public function getCheckoutSteps()
     {
@@ -498,7 +499,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @return OnlineShop_Framework_ICheckoutStep
+     * @return ICheckoutStep
      */
     public function getCurrentStep()
     {

@@ -132,7 +132,7 @@ class MultiCartManager implements \OnlineShop\Framework\CartManager\ICartManager
                     $c->delete();
 
                     $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
-                    $env->removeCustomItem(\OnlineShop_Framework_Impl_CheckoutManager::CURRENT_STEP . "_" . $c->getId());
+                    $env->removeCustomItem(\OnlineShop\Framework\CheckoutManager\CheckoutManager::CURRENT_STEP . "_" . $c->getId());
                     $env->save();
                 }
             }

@@ -10,13 +10,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Class OnlineShop_Framework_Impl_Checkout_DeliveryAddress
+ * Class \OnlineShop\Framework\CheckoutManager\DeliveryAddress
  *
  * sample implementation for delivery address
  */
-class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Framework_Impl_Checkout_AbstractStep implements OnlineShop_Framework_ICheckoutStep {
+class DeliveryAddress extends AbstractStep implements ICheckoutStep {
 
     /**
      * namespace key

@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Class OnlineShop_Framework_Impl_Checkout_AbstractStep
+ * Class \OnlineShop\Framework\CheckoutManager\AbstractStep
  */
-abstract class OnlineShop_Framework_Impl_Checkout_AbstractStep implements OnlineShop_Framework_ICheckoutStep {
+abstract class AbstractStep implements ICheckoutStep {
 
     /**
      * @var \OnlineShop\Framework\CartManager\ICart

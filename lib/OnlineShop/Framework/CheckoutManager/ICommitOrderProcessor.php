@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Interface OnlineShop_Framework_ICommitOrderProcessor
+ * Interface \OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor
  */
-interface OnlineShop_Framework_ICommitOrderProcessor {
+interface ICommitOrderProcessor {
 
 
     /**
@@ -23,7 +24,7 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      * @param array|\OnlineShop\Framework\PaymentManager\IStatus $paymentResponseParams
      * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return null|\OnlineShop\Framework\Model\AbstractOrder
-     * @throws Exception
+     * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function committedOrderWithSamePaymentExists($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);

@@ -77,11 +77,11 @@
         </availablitysystems>
 
         <!-- general settings for checkout manager -->
-        <checkoutmanager class="OnlineShop_Framework_Impl_CheckoutManager">
+        <checkoutmanager class="\OnlineShop\Framework\CheckoutManager\CheckoutManager">
             <config>
                 <!-- define different checkout steps which need to be committed before commit of order is possible -->
                 <steps>
-                    <deliveryaddress class="OnlineShop_Framework_Impl_Checkout_DeliveryAddress"/>
+                    <deliveryaddress class="\OnlineShop\Framework\CheckoutManager\DeliveryAddress"/>
                     <confirm class="Website_OnlineShop_Checkout_Confirm"/>
                 </steps>
 

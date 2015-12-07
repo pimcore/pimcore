@@ -10,16 +10,17 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Interface OnlineShop_Framework_ICheckoutManager
+ * Interface \OnlineShop\Framework\CheckoutManager\ICheckoutManager
  */
-interface OnlineShop_Framework_ICheckoutManager {
+interface ICheckoutManager {
 
     /**
      * returns all checkout steps defined for this checkout
      *
-     * @return OnlineShop_Framework_ICheckoutStep[]
+     * @return ICheckoutStep[]
      */
     public function getCheckoutSteps();
 
@@ -27,14 +28,14 @@ interface OnlineShop_Framework_ICheckoutManager {
      * returns checkout step with given name
      *
      * @param  string $stepName
-     * @return OnlineShop_Framework_ICheckoutStep
+     * @return ICheckoutStep
      */
     public function getCheckoutStep($stepName);
 
     /**
      * returns current checkout step
      *
-     * @return OnlineShop_Framework_ICheckoutStep
+     * @return ICheckoutStep
      */
     public function getCurrentStep();
 
@@ -49,11 +50,11 @@ interface OnlineShop_Framework_ICheckoutManager {
      * commits checkout step
      * all previous steps must be committed, otherwise committing step is not allowed
      *
-     * @param OnlineShop_Framework_ICheckoutStep $step
+     * @param ICheckoutStep $step
      * @param  mixed                             $data
      * @return bool
      */
-    public function commitStep(OnlineShop_Framework_ICheckoutStep $step, $data);
+    public function commitStep(ICheckoutStep $step, $data);
 
     /**
      * checks if checkout is finished (= all checkout steps are committed)

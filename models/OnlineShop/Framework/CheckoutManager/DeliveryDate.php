@@ -10,13 +10,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Class OnlineShop_Framework_Impl_Checkout_DeliveryDate
+ * Class \OnlineShop\Framework\CheckoutManager\DeliveryDate
  *
  * sample implementation for delivery date
  */
-class OnlineShop_Framework_Impl_Checkout_DeliveryDate extends OnlineShop_Framework_Impl_Checkout_AbstractStep implements OnlineShop_Framework_ICheckoutStep {
+class DeliveryDate extends AbstractStep implements ICheckoutStep {
 
     CONST INSTANTLY = "delivery_instantly";
     CONST DATE = "delivery_date";
@@ -33,8 +34,8 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryDate extends OnlineShop_Framewo
 
         $this->cart->setCheckoutData(self::INSTANTLY, $data->instantly);
         $date = null;
-        if($data->date instanceof Zend_Date) {
-            $date = $data->date->get(Zend_Date::TIMESTAMP);
+        if($data->date instanceof \Zend_Date) {
+            $date = $data->date->get(\Zend_Date::TIMESTAMP);
         }
         $this->cart->setCheckoutData(self::DATE, $date);
         return true;
@@ -44,10 +45,10 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryDate extends OnlineShop_Framewo
      * @return mixed
      */
     public function getData() {
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->instantly = $this->cart->getCheckoutData(self::INSTANTLY);
         if($this->cart->getCheckoutData(self::DATE)) {
-            $data->date = new Zend_Date($this->cart->getCheckoutData(self::DATE), Zend_Date::TIMESTAMP);
+            $data->date = new \Zend_Date($this->cart->getCheckoutData(self::DATE), \Zend_Date::TIMESTAMP);
         } else {
             $data->instantly = true;
         }

@@ -47,7 +47,7 @@ class Factory {
     private $availabilitySystems;
 
     /**
-     * @var \OnlineShop_Framework_ICheckoutManager
+     * @var \OnlineShop\Framework\CheckoutManager\ICheckoutManager
      */
     private $checkoutManagers;
 
@@ -370,7 +370,7 @@ class Factory {
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param string $name optional name of checkout manager, in case there are more than one configured
-     * @return \OnlineShop_Framework_ICheckoutManager
+     * @return \OnlineShop\Framework\CheckoutManager\ICheckoutManager
      */
     public function getCheckoutManager(\OnlineShop\Framework\CartManager\ICart $cart, $name = null) {
 
@@ -378,13 +378,13 @@ class Factory {
             if($name) {
                 $managerConfigName = "checkoutmanager_" . $name;
                 $manager = new $this->config->onlineshop->$managerConfigName->class($cart, $this->config->onlineshop->$managerConfigName->config);
-                if (!($manager instanceof \OnlineShop_Framework_ICheckoutManager)) {
-                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->$managerConfigName->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
+                if (!($manager instanceof \OnlineShop\Framework\CheckoutManager\ICheckoutManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->$managerConfigName->class . ' does not implement \OnlineShop\Framework\CheckoutManager\ICheckoutManager.');
                 }
             } else {
                 $manager = new $this->config->onlineshop->checkoutmanager->class($cart, $this->config->onlineshop->checkoutmanager->config);
-                if (!($manager instanceof \OnlineShop_Framework_ICheckoutManager)) {
-                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->checkoutmanager->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
+                if (!($manager instanceof \OnlineShop\Framework\CheckoutManager\ICheckoutManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->checkoutmanager->class . ' does not implement \OnlineShop\Framework\CheckoutManager\ICheckoutManager.');
                 }
             }
 
@@ -396,7 +396,7 @@ class Factory {
 
     /**
      * @param string $checkoutManagerName
-     * @return \OnlineShop_Framework_ICommitOrderProcessor
+     * @return \OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor
      */
     public function getCommitOrderProcessor($checkoutManagerName = null) {
         $originalConfig = $this->config->onlineshop->checkoutmanager->config;

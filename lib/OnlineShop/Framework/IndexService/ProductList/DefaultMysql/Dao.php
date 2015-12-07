@@ -72,10 +72,10 @@ class Dao {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
         $result = $this->db->fetchAll($query);
         $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
-        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
+        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
         return $result;
     }
 

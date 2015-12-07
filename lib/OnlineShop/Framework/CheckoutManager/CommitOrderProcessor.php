@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Class OnlineShop_Framework_Impl_CommitOrderProcessor
+ * Class \OnlineShop\Framework\CheckoutManager\CommitOrderProcessor
  */
-class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Framework_ICommitOrderProcessor {
+class CommitOrderProcessor implements ICommitOrderProcessor {
 
     /**
      * @var string
@@ -40,7 +41,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         // this needs to be in a try-catch block
         try {
             $paymentStatus = $paymentProvider->handleResponse($paymentResponseParams);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             \Logger::err($e);
 
             //create payment status with error message and cancelled payment
@@ -55,7 +56,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      * @param $paymentResponseParams
      * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws Exception
+     * @throws \Exception
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
 
@@ -75,7 +76,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      * @param array|\OnlineShop\Framework\PaymentManager\IStatus $paymentResponseParams
      * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return null|\OnlineShop\Framework\Model\AbstractOrder
-     * @throws Exception
+     * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function committedOrderWithSamePaymentExists($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
@@ -99,7 +100,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
                         } else {
                             $message = "Payment state of order " . $order->getId() . " does not match with new request!";
                             \Logger::error($message);
-                            throw new Exception($message);
+                            throw new \Exception($message);
                         }
                     }
                 }
@@ -112,7 +113,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
      * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws Exception
+     * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
@@ -129,7 +130,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         if(empty($order)) {
             $message = "No order found for payment status: " . print_r($paymentStatus, true);
             \Logger::error($message);
-            throw new Exception($message);
+            throw new \Exception($message);
         }
 
         $orderAgent = $orderManager->createOrderAgent( $order );
@@ -153,7 +154,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
      * @param \OnlineShop\Framework\Model\AbstractOrder $order
      *
      * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws Exception
+     * @throws \Exception
      */
     public function commitOrder(\OnlineShop\Framework\Model\AbstractOrder $order) {
         $this->processOrder($order);
@@ -162,8 +163,8 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
         try {
             $this->sendConfirmationMail($order);
-        } catch(Exception $e) {
-            Logger::err("Error during sending confirmation e-mail", $e);
+        } catch(\Exception $e) {
+            \Logger::err("Error during sending confirmation e-mail", $e);
         }
         return $order;
     }
@@ -179,7 +180,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             $mail->addTo($order->getCustomer()->getEmail());
             $mail->send();
         } else {
-            Logger::err("No Customer found!");
+            \Logger::err("No Customer found!");
         }
     }
 
@@ -193,12 +194,12 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function cleanUpPendingOrders() {
         $orderListClass = $this->orderClass . "_List";
         if(!class_exists($orderListClass)) {
-            throw new Exception("Class $orderListClass does not exist.");
+            throw new \Exception("Class $orderListClass does not exist.");
         }
 
         $timestamp = \Zend_Date::now()->sub(1, \Zend_Date::HOUR)->get();
@@ -209,7 +210,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $list->setCondition("orderState = ? AND orderdate < ?", array(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
 
         foreach($list as $order) {
-            Logger::warn("Setting order " . $order->getId() . " to " . \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
+            \Logger::warn("Setting order " . $order->getId() . " to " . \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
             $order->setOrderState(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
             $order->save();
         }
@@ -222,7 +223,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             $payments = $order->getPaymentInfo();
             foreach($payments as $payment) {
                 if($payment->getPaymentState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING && $payment->getPaymentStart()->get() < $timestamp) {
-                    Logger::warn("Setting order " . $order->getId() . " payment " . $payment->getInternalPaymentId() . " to " . \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
+                    \Logger::warn("Setting order " . $order->getId() . " payment " . $payment->getInternalPaymentId() . " to " . \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
                     $payment->setPaymentState(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
                 }
             }

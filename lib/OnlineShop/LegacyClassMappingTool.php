@@ -112,44 +112,51 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\PaymentManager\Payment\QPay' => 'OnlineShop_Framework_Impl_Payment_QPay',
         'OnlineShop\Framework\PaymentManager\PaymentManager' => 'OnlineShop_Framework_Impl_PaymentManager',
         'OnlineShop\Framework\IndexService\IndexService' => 'OnlineShop_Framework_IndexService',
-        'OnlineShop\Framework\IndexService\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect' => 'OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMultiselect',
-        'OnlineShop\Framework\IndexService\IndexService\Getter\DefaultBrickGetterSequence' => 'OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence',
-        'OnlineShop\Framework\IndexService\IndexService\Getter\DefaultBrickGetter' => 'OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\AssetId' => 'OnlineShop_Framework_IndexService_Interpreter_AssetId',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\DefaultObjects' => 'OnlineShop_Framework_IndexService_Interpreter_DefaultObjects',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\DefaultRelations' => 'OnlineShop_Framework_IndexService_Interpreter_DefaultRelations',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\DefaultStructuredTable' => 'OnlineShop_Framework_IndexService_Interpreter_DefaultStructuredTable',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\DimensionUnitField' => 'OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\Numeric' => 'OnlineShop_Framework_IndexService_Interpreter_Numeric',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\ObjectId' => 'OnlineShop_Framework_IndexService_Interpreter_ObjectId',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\ObjectIdSum' => 'OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\ObjectValue' => 'OnlineShop_Framework_IndexService_Interpreter_ObjectValue',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\Round' => 'OnlineShop_Framework_IndexService_Interpreter_Round',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\Soundex' => 'OnlineShop_Framework_IndexService_Interpreter_Soundex',
-        'OnlineShop\Framework\IndexService\IndexService\Interpreter\StructuredTable' => 'OnlineShop_Framework_IndexService_Interpreter_StructuredTable',
-        'OnlineShop\Framework\IndexService\IndexService\Tool\IndexUpdater' => 'OnlineShop_Framework_IndexService_Tool_IndexUpdater',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\AbstractWorker' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Abstract',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\DefaultFactFinder' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\DefaultFindologic' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\DefaultMysql' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\ElasticSearch' => 'OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\OptimizedMysql' => 'OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\WorkerTraits\BatchProcessing' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing',
-        'OnlineShop\Framework\IndexService\IndexService\Worker\WorkerTraits\MockupCache' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache',
-        'OnlineShop\Framework\IndexService\IndexService\Config\AbstractConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig',
-        'OnlineShop\Framework\IndexService\IndexService\Config\DefaultFactFinder' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder',
-        'OnlineShop\Framework\IndexService\IndexService\Config\DefaultFindologic' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultFindologic',
-        'OnlineShop\Framework\IndexService\IndexService\Config\DefaultMysql' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql',
-        'OnlineShop\Framework\IndexService\IndexService\Config\DefaultMysqlInheritColumnConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlInheritColumnConfig',
-        'OnlineShop\Framework\IndexService\IndexService\Config\DefaultMysqlSubTenantConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig',
-        'OnlineShop\Framework\IndexService\IndexService\Config\ElasticSearch' => 'OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch',
-        'OnlineShop\Framework\IndexService\IndexService\Config\OptimizedMysql' => 'OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql',
+        'OnlineShop\Framework\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect' => 'OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMultiselect',
+        'OnlineShop\Framework\IndexService\Getter\DefaultBrickGetterSequence' => 'OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence',
+        'OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter' => 'OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter',
+        'OnlineShop\Framework\IndexService\Interpreter\AssetId' => 'OnlineShop_Framework_IndexService_Interpreter_AssetId',
+        'OnlineShop\Framework\IndexService\Interpreter\DefaultObjects' => 'OnlineShop_Framework_IndexService_Interpreter_DefaultObjects',
+        'OnlineShop\Framework\IndexService\Interpreter\DefaultRelations' => 'OnlineShop_Framework_IndexService_Interpreter_DefaultRelations',
+        'OnlineShop\Framework\IndexService\Interpreter\DefaultStructuredTable' => 'OnlineShop_Framework_IndexService_Interpreter_DefaultStructuredTable',
+        'OnlineShop\Framework\IndexService\Interpreter\DimensionUnitField' => 'OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField',
+        'OnlineShop\Framework\IndexService\Interpreter\Numeric' => 'OnlineShop_Framework_IndexService_Interpreter_Numeric',
+        'OnlineShop\Framework\IndexService\Interpreter\ObjectId' => 'OnlineShop_Framework_IndexService_Interpreter_ObjectId',
+        'OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum' => 'OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum',
+        'OnlineShop\Framework\IndexService\Interpreter\ObjectValue' => 'OnlineShop_Framework_IndexService_Interpreter_ObjectValue',
+        'OnlineShop\Framework\IndexService\Interpreter\Round' => 'OnlineShop_Framework_IndexService_Interpreter_Round',
+        'OnlineShop\Framework\IndexService\Interpreter\Soundex' => 'OnlineShop_Framework_IndexService_Interpreter_Soundex',
+        'OnlineShop\Framework\IndexService\Interpreter\StructuredTable' => 'OnlineShop_Framework_IndexService_Interpreter_StructuredTable',
+        'OnlineShop\Framework\IndexService\Tool\IndexUpdater' => 'OnlineShop_Framework_IndexService_Tool_IndexUpdater',
+        'OnlineShop\Framework\IndexService\Worker\AbstractWorker' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Abstract',
+        'OnlineShop\Framework\IndexService\Worker\DefaultFactFinder' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder',
+        'OnlineShop\Framework\IndexService\Worker\DefaultFindologic' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic',
+        'OnlineShop\Framework\IndexService\Worker\DefaultMysql' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql',
+        'OnlineShop\Framework\IndexService\Worker\ElasticSearch' => 'OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch',
+        'OnlineShop\Framework\IndexService\Worker\OptimizedMysql' => 'OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql',
+        'OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing',
+        'OnlineShop\Framework\IndexService\Worker\WorkerTraits\MockupCache' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache',
+        'OnlineShop\Framework\IndexService\Config\AbstractConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig',
+        'OnlineShop\Framework\IndexService\Config\DefaultFactFinder' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder',
+        'OnlineShop\Framework\IndexService\Config\DefaultFindologic' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultFindologic',
+        'OnlineShop\Framework\IndexService\Config\DefaultMysql' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql',
+        'OnlineShop\Framework\IndexService\Config\DefaultMysqlInheritColumnConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlInheritColumnConfig',
+        'OnlineShop\Framework\IndexService\Config\DefaultMysqlSubTenantConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig',
+        'OnlineShop\Framework\IndexService\Config\ElasticSearch' => 'OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch',
+        'OnlineShop\Framework\IndexService\Config\OptimizedMysql' => 'OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql',
         'OnlineShop\Framework\Model\DefaultMockup' => 'OnlineShop_Framework_ProductList_DefaultMockup',
         'OnlineShop\Framework\IndexService\ProductList\DefaultMysql\Dao' => 'OnlineShop_Framework_ProductList_DefaultMysql_Resource',
         'OnlineShop\Framework\IndexService\ProductList\DefaultElasticSearch' => 'OnlineShop_Framework_ProductList_DefaultElasticSearch',
         'OnlineShop\Framework\IndexService\ProductList\DefaultFactFinder' => 'OnlineShop_Framework_ProductList_DefaultFactFinder',
         'OnlineShop\Framework\IndexService\ProductList\DefaultFindologic' => 'OnlineShop_Framework_ProductList_DefaultFindologic',
         'OnlineShop\Framework\IndexService\ProductList\DefaultMysql' => 'OnlineShop_Framework_ProductList_DefaultMysql',
+        'OnlineShop\Framework\CheckoutManager\AbstractStep' => 'OnlineShop_Framework_Impl_Checkout_AbstractStep',
+        'OnlineShop\Framework\CheckoutManager\DeliveryAddress' => 'OnlineShop_Framework_Impl_Checkout_DeliveryAddress',
+        'OnlineShop\Framework\CheckoutManager\DeliveryDate' => 'OnlineShop_Framework_Impl_Checkout_DeliveryDate',
+        'OnlineShop\Framework\CheckoutManager\CheckoutManager' => 'OnlineShop_Framework_Impl_CheckoutManager',
+        'OnlineShop\Framework\CheckoutManager\CommitOrderProcessor' => 'OnlineShop_Framework_Impl_CommitOrderProcessor',
+
+
 
 
     ];
@@ -189,7 +196,7 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\Model\ICheckoutable' => 'OnlineShop_Framework_ProductInterfaces_ICheckoutable',
         'OnlineShop\Framework\VoucherService\TokenManager\ITokenManager' => 'OnlineShop_Framework_VoucherService_ITokenManager',
         'OnlineShop\Framework\VoucherService\IVoucherService' => 'OnlineShop_Framework_IVoucherService',
-        'OnlineShop\Framework\PaymentManager\IPayment' => 'OnlineShop_Framework_IPayment',
+        'OnlineShop\Framework\PaymentManager\Payment\IPayment' => 'OnlineShop_Framework_IPayment',
         'OnlineShop\Framework\PaymentManager\IPaymentManager' => 'OnlineShop_Framework_IPaymentManager',
         'OnlineShop\Framework\PaymentManager\IStatus' => 'OnlineShop_Framework_Payment_IStatus',
         'OnlineShop\Framework\IndexService\Getter\IGetter' => 'OnlineShop_Framework_IndexService_Getter',
@@ -205,6 +212,11 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\IndexService\Config\IMockupConfig' => 'OnlineShop_Framework_IndexService_Tenant_IMockupConfig',
         'OnlineShop\Framework\IndexService\Config\IMysqlConfig' => 'OnlineShop_Framework_IndexService_Tenant_IMysqlConfig',
         'OnlineShop\Framework\IndexService\ProductList\IProductList' => 'OnlineShop_Framework_IProductList',
+        'OnlineShop\Framework\CheckoutManager\ICheckoutStep' => 'OnlineShop_Framework_ICheckoutStep',
+        'OnlineShop\Framework\CheckoutManager\ICheckoutManager' => 'OnlineShop_Framework_ICheckoutManager',
+        'OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor' => 'OnlineShop_Framework_ICommitOrderProcessor',
+
+
 
     ];
 
@@ -218,7 +230,7 @@ class LegacyClassMappingTool {
 
         foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
             class_alias($withNamespace, $withoutNamespace);
-//            class_alias($withoutNamespace, $withoutNamespace);
+//            class_alias($withoutNamespace, $withNamespace);
         }
 
     }

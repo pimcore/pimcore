@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\CheckoutManager;
 
 /**
  * Interface for checkout step implementations of online shop framework
  */
-interface OnlineShop_Framework_ICheckoutStep {
+interface ICheckoutStep {
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICart $cart
