@@ -13,7 +13,7 @@ Each product listing has different filters like dropdowns, multi selects, input 
 - special presentation in the view
 - special filter conditions for the product index
 
-The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which implement the abstract class ```OnlineShop_Framework_FilterService_AbstractFilterType``` and responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```OnlineShop_Framework_FilterService_AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented. 
+The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which implement the abstract class ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` and responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented. 
 
 
 The configuration of the FilterTypes takes place in the OnlineShopConfig.xml
@@ -24,16 +24,16 @@ The configuration of the FilterTypes takes place in the OnlineShopConfig.xml
 	helper = tool for pimcore backend controller to get possible group by values for a certain field
 			 (used by object data type IndexFieldSelection, e.g. in filter definitions)
 -->
-<filtertypes helper="OnlineShop_Framework_FilterService_FilterGroupHelper">
-	<FilterNumberRange class="OnlineShop_Framework_FilterService_NumberRange" script="/shop/filters/range.php"/>
-	<FilterNumberRangeSelection class="OnlineShop_Framework_FilterService_NumberRangeSelection" script="/shop/filters/numberrange.php"/>
-	<FilterSelect class="OnlineShop_Framework_FilterService_Select" script="/shop/filters/select.php"/>
-	<FilterSelectFromMultiSelect class="OnlineShop_Framework_FilterService_SelectFromMultiSelect" script="/shop/filters/select.php"/>
-	<FilterMultiSelect class="OnlineShop_Framework_FilterService_MultiSelect" script="/shop/filters/multiselect.php"/>
-	<FilterMultiSelectFromMultiSelect class="OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect" script="/shop/filters/multiselect.php"/>
-	<FilterMultiRelation class="OnlineShop_Framework_FilterService_MultiSelectRelation" script="/shop/filters/multiselect-relation.php"/>
-	<FilterCategory class="OnlineShop_Framework_FilterService_SelectCategory" script="/shop/filters/select_category.php"/>
-	<FilterRelation class="OnlineShop_Framework_FilterService_SelectRelation" script="/shop/filters/object_relation.php"/>
+<filtertypes helper="\OnlineShop\Framework\FilterService\FilterGroupHelper">
+	<FilterNumberRange class="\OnlineShop\Framework\FilterService\FilterType\NumberRange" script="/shop/filters/range.php"/>
+	<FilterNumberRangeSelection class="\OnlineShop\Framework\FilterService\FilterType\NumberRangeSelection" script="/shop/filters/numberrange.php"/>
+	<FilterSelect class="\OnlineShop\Framework\FilterService\FilterType\Select" script="/shop/filters/select.php"/>
+	<FilterSelectFromMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\SelectFromMultiSelect" script="/shop/filters/select.php"/>
+	<FilterMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\MultiSelect" script="/shop/filters/multiselect.php"/>
+	<FilterMultiSelectFromMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\MultiSelectFromMultiSelect" script="/shop/filters/multiselect.php"/>
+	<FilterMultiRelation class="\OnlineShop\Framework\FilterService\FilterType\MultiSelectRelation" script="/shop/filters/multiselect-relation.php"/>
+	<FilterCategory class="\OnlineShop\Framework\FilterService\FilterType\SelectCategory" script="/shop/filters/select_category.php"/>
+	<FilterRelation class="\OnlineShop\Framework\FilterService\FilterType\SelectRelation" script="/shop/filters/object_relation.php"/>
 </filtertypes>
 ```
 
@@ -78,7 +78,7 @@ $products = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->get
 // create and init filter service
 $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
-OnlineShop_Framework_FilterService_Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
+\OnlineShop\Framework\FilterService\Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
 $this->view->filterService = $filterService;
 
 

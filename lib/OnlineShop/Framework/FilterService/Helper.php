@@ -10,28 +10,29 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\FilterService;
 
 /**
- * Class OnlineShop_Framework_FilterService_Helper
+ * Class \OnlineShop\Framework\FilterService\Helper
  *
  * Helper Class for setting up a product list utilizing the filter service
  * based on a filter definition and set filter parameters
  */
-class OnlineShop_Framework_FilterService_Helper
+class Helper
 {
     /**
      * @param \Pimcore\Model\Object\FilterDefinition $filterDefinition
      * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      * @param $params
-     * @param Zend_View $view
-     * @param OnlineShop_Framework_FilterService $filterService
+     * @param \Zend_View $view
+     * @param FilterService $filterService
      * @param $loadFullPage
      * @param bool $excludeLimitOfFirstpage
      */
     public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
                                             \OnlineShop\Framework\IndexService\ProductList\IProductList $productList,
                                             $params, \Zend_View $view,
-                                            OnlineShop_Framework_FilterService $filterService,
+                                            FilterService $filterService,
                                             $loadFullPage, $excludeLimitOfFirstpage = false) {
 
         $orderByOptions = array();

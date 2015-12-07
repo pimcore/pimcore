@@ -32,7 +32,7 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         if($filterDefinition) {
 
             // set up product list
-            OnlineShop_Framework_FilterService_Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, true, true);
+            \OnlineShop\Framework\FilterService\Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, true, true);
             // end set up product list
 
         }
@@ -69,7 +69,7 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
 
         $orderByOptions = array();
         $this->view->orderByOptions = $orderByOptions;
-        OnlineShop_Framework_FilterService_Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, $this->_getParam("fullpage"));
+        \OnlineShop\Framework\FilterService\Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, $this->_getParam("fullpage"));
 
         $this->view->productList = $productList;
         $this->view->filterService = $filterService;
@@ -79,14 +79,14 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         $grid_seo_headline = $this->view->input("grid_seo_headline")->getValue();
 
         if(empty($grid_seo_headline)) {
-            $category = OnlineShop_Framework_FilterService_Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
+            $category = \OnlineShop\Framework\FilterService\Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
             if($category) {
                 $grid_seo_headline = $category->getSeoname();
             }
         }
         $grid_seo_text = $this->view->wysiwyg("grid_seo_text")->getValue();
         if(empty($grid_seo_text)) {
-            $category = OnlineShop_Framework_FilterService_Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
+            $category = \OnlineShop\Framework\FilterService\Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
             if($category) {
                 $grid_seo_text = $category->getSeotext();
             }

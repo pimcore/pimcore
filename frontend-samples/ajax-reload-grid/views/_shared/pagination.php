@@ -14,7 +14,7 @@
 if($this->pageCount > 1) { ?>
     <div class="paginationCol">
         <?php if (isset($this->previous)) { ?>
-            <a href="<?= OnlineShop_Framework_FilterService_Helper::createPagingQuerystring($this->previous) ?>"
+            <a href="<?= \OnlineShop\Framework\FilterService\Helper::createPagingQuerystring($this->previous) ?>"
                class="pageLeft"
             >
                 back
@@ -25,7 +25,7 @@ if($this->pageCount > 1) { ?>
             <?php if($this->current == $page) { ?>
                 <span><?= $page ?></span>
             <?php } else { ?>
-                <a href="<?= OnlineShop_Framework_FilterService_Helper::createPagingQuerystring($page) ?>">
+                <a href="<?= \OnlineShop\Framework\FilterService\Helper::createPagingQuerystring($page) ?>">
                     <?= $page ?>
                 </a>
             <?php } ?>
@@ -33,7 +33,7 @@ if($this->pageCount > 1) { ?>
         <?php } ?>
 
         <?php if (isset($this->next)) { ?>
-            <a href="<?= OnlineShop_Framework_FilterService_Helper::createPagingQuerystring($this->next) ?>"
+            <a href="<?= \OnlineShop\Framework\FilterService\Helper::createPagingQuerystring($this->next) ?>"
                class="pageRight"
             >
                 next

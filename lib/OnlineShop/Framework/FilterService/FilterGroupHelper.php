@@ -10,9 +10,10 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\FilterService;
 
 /**
- * Class OnlineShop_Framework_FilterService_FilterGroupHelper
+ * Class \OnlineShop\Framework\FilterService\FilterGroupHelper
  *
  * Helper for getting possible group by values based on different column groups
  *
@@ -25,7 +26,7 @@
  *  - other
  *
  */
-class OnlineShop_Framework_FilterService_FilterGroupHelper
+class FilterGroupHelper
 {
 
     /**

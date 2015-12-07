@@ -493,7 +493,7 @@ class Factory {
     /**
      * @param \Zend_View $view
      *
-     * @return \OnlineShop_Framework_FilterService
+     * @return \OnlineShop\Framework\FilterService\FilterService
      */
     public function getFilterService(\Zend_View $view) {
 
@@ -503,7 +503,7 @@ class Factory {
             $filterTypes = $this->config->onlineshop->filtertypes;
         }
 
-        return new \OnlineShop_Framework_FilterService($filterTypes, $view);
+        return new \OnlineShop\Framework\FilterService\FilterService($filterTypes, $view);
     }
 
 

@@ -171,8 +171,50 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search\Customer' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search\Customer',
         'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search\CustomerEmail' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search\CustomerEmail',
         'OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search\PaymentReference' => 'OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search\PaymentReference',
-//        'OnlineShop\Framework\OrderManager\OrderManager' => 'OnlineShop\Framework\Impl\OrderManager',
+        'OnlineShop\Framework\FilterService\FilterService' => 'OnlineShop_Framework_FilterService',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType' => 'OnlineShop_Framework_FilterService_AbstractFilterType',
+        'OnlineShop\Framework\FilterService\FilterType\Input' => 'OnlineShop_Framework_FilterService_Input',
+        'OnlineShop\Framework\FilterService\FilterType\MultiSelect' => 'OnlineShop_Framework_FilterService_MultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\MultiSelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\MultiSelectRelation' => 'OnlineShop_Framework_FilterService_MultiSelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\NumberRange' => 'OnlineShop_Framework_FilterService_NumberRange',
+        'OnlineShop\Framework\FilterService\FilterType\NumberRangeSelection' => 'OnlineShop_Framework_FilterService_NumberRangeSelection',
+        'OnlineShop\Framework\FilterService\FilterType\ProxyFilter' => 'OnlineShop_Framework_FilterService_ProxyFilter',
+        'OnlineShop\Framework\FilterService\FilterType\SelectRelation' => 'OnlineShop_Framework_FilterService_SelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\SelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_SelectFromMultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\SelectCategory' => 'OnlineShop_Framework_FilterService_SelectCategory',
+        'OnlineShop\Framework\FilterService\FilterType\Select' => 'OnlineShop_Framework_FilterService_Select',
+        'OnlineShop\Framework\FilterService\FilterGroupHelper' => 'OnlineShop_Framework_FilterService_FilterGroupHelper',
+        'OnlineShop\Framework\FilterService\Helper' => 'OnlineShop_Framework_FilterService_Helper',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\MultiSelect' => 'OnlineShop_Framework_FilterService_FactFinder_MultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\NumberRange' => 'OnlineShop_Framework_FilterService_FactFinder_NumberRange',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\Select' => 'OnlineShop_Framework_FilterService_FactFinder_Select',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\SelectCategory' => 'OnlineShop_Framework_FilterService_FactFinder_SelectCategory',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\Input' => 'OnlineShop_Framework_FilterService_ElasticSearch_Input',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\MultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\MultiSelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\MultiSelectRelation' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\NumberRange' => 'OnlineShop_Framework_FilterService_ElasticSearch_NumberRange',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\NumberRangeSelection' => 'OnlineShop_Framework_FilterService_ElasticSearch_NumberRangeSelection',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\Select' => 'OnlineShop_Framework_FilterService_ElasticSearch_Select',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\SelectCategory' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectCategory',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\SelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectFromMultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\SelectRelation' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\MultiSelect' => 'OnlineShop_Framework_FilterService_Findologic_MultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\MultiSelectRelation' => 'OnlineShop_Framework_FilterService_Findologic_MultiSelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\NumberRange' => 'OnlineShop_Framework_FilterService_Findologic_NumberRange',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\NumberRangeSelection' => 'OnlineShop_Framework_FilterService_Findologic_NumberRangeSelection',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\Select' => 'OnlineShop_Framework_FilterService_Findologic_Select',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\SelectCategory' => 'OnlineShop_Framework_FilterService_Findologic_SelectCategory',
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\SelectRelation' => 'OnlineShop_Framework_FilterService_Findologic_SelectRelation',
 
+
+
+
+
+
+
+        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType' => 'OnlineShop_Framework_FilterService',
 
 
 
