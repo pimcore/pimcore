@@ -122,10 +122,10 @@ interface OnlineShop_Framework_ICheckoutManager {
      * delegates to commit order processor
      *
      * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
-     * @param OnlineShop_Framework_Payment_IStatus $status
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
      * @return \OnlineShop\Framework\Model\AbstractOrder
      */
-    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status);
+    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $status);
 
     /**
      * commits order - does not consider any payment
@@ -149,7 +149,7 @@ interface OnlineShop_Framework_ICheckoutManager {
     /**
      * returns payment adapter
      *
-     * @return OnlineShop_Framework_IPayment|null
+     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment|null
      */
     public function getPayment();
 

@@ -10,14 +10,15 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager\Payment;
 
 /**
  * Interface for checkout payment provider
  */
-interface OnlineShop_Framework_IPayment
+interface IPayment
 {
     /**
-     * @param Zend_Config $xml
+     * @param \Zend_Config $xml
      */
     public function __construct(\Zend_Config $xml);
 
@@ -42,9 +43,9 @@ interface OnlineShop_Framework_IPayment
     /**
      * Handles response of payment provider and creates payment status object
      *
-     * @param OnlineShop_Framework_Payment_IStatus $response
+     * @param IStatus $response
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return IStatus
      */
     public function handleResponse($response);
 
@@ -68,7 +69,7 @@ interface OnlineShop_Framework_IPayment
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return IStatus
      */
     public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null);
 
@@ -79,7 +80,7 @@ interface OnlineShop_Framework_IPayment
      * @param string                      $reference
      * @param                             $transactionId
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return IStatus
      */
     public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId);
 }

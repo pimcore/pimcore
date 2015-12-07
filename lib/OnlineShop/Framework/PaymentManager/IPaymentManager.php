@@ -10,13 +10,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager;
 
-interface OnlineShop_Framework_IPaymentManager
+interface IPaymentManager
 {
     /**
      * @param $name
      *
-     * @return OnlineShop_Framework_IPayment
+     * @return IPayment
      */
     public function getProvider($name);
 }

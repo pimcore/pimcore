@@ -34,10 +34,10 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
 
     /**
      * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries
-     * @param \OnlineShop\Framework\VoucherService\ITokenManager $tokenManager
+     * @param \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager $tokenManager
      * @param array $params
      */
-    public function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \OnlineShop\Framework\VoucherService\ITokenManager $tokenManager, $params = [])
+    public function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
     {
         $this->view->series = $onlineShopVoucherSeries;
         $viewParams = array_merge($params, $this->getAllParams());

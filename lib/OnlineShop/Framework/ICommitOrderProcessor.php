@@ -20,13 +20,13 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
     /**
      * check if order is already committed and payment information with same internal payment id has same state
      *
-     * @param array|OnlineShop_Framework_Payment_IStatus $paymentResponseParams
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param array|\OnlineShop\Framework\PaymentManager\IStatus $paymentResponseParams
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return null|\OnlineShop\Framework\Model\AbstractOrder
      * @throws Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
 
     /**
      * facade method for
@@ -36,10 +36,10 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      * can be used by controllers to commit orders with payment
      *
      * @param $paymentResponseParams
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return \OnlineShop\Framework\Model\AbstractOrder
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider);
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
 
     /**
      * commits order payment
@@ -48,11 +48,11 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
      *
      * use this for committing order when payment is activated
      *
-     * @param OnlineShop_Framework_Payment_IStatus $paymentStatus
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return \OnlineShop\Framework\Model\AbstractOrder
      */
-    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider);
+    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
 
     /**
      * commits order

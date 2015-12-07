@@ -77,7 +77,7 @@ class Factory {
     private $environment;
 
     /**
-     * @var \OnlineShop_Framework_IPaymentManager
+     * @var \OnlineShop\Framework\PaymentManager\IPaymentManager
      */
     private $paymentManager;
 
@@ -88,7 +88,7 @@ class Factory {
     private $voucherService;
 
     /**
-     * @var \OnlineShop\Framework\VoucherService\ITokenManager[]
+     * @var \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager[]
      */
     private $tokenManagers = array();
 
@@ -324,9 +324,9 @@ class Factory {
             if (class_exists($config->onlineshop->paymentmanager->class))
             {
                 $this->paymentManager = new $config->onlineshop->paymentmanager->class($config->onlineshop->paymentmanager->config);
-                if (!($this->paymentManager instanceof \OnlineShop_Framework_IPaymentManager))
+                if (!($this->paymentManager instanceof \OnlineShop\Framework\PaymentManager\IPaymentManager))
                 {
-                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " does not implement OnlineShop_Framework_IPaymentManager.");
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . ' does not implement \OnlineShop\Framework\PaymentManager\IPaymentManager.');
                 }
             }
             else
@@ -540,7 +540,7 @@ class Factory {
 
 
     /**
-     * @return \OnlineShop_Framework_IPaymentManager
+     * @return \OnlineShop\Framework\PaymentManager\IPaymentManager
      */
     public function getPaymentManager()
     {
@@ -577,7 +577,7 @@ class Factory {
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
-     * @return \OnlineShop\Framework\VoucherService\ITokenManager
+     * @return \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getTokenManager(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration) {
@@ -590,8 +590,8 @@ class Factory {
 
             if($tokenManagerClass) {
                 $tokenManager = new $tokenManagerClass->class($configuration);
-                if (!($tokenManager instanceof \OnlineShop\Framework\VoucherService\ITokenManager)) {
-                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Token Manager class " . $tokenManagerClass->class . ' does not implement \OnlineShop\Framework\VoucherService\ITokenManager.');
+                if (!($tokenManager instanceof \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager)) {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException("Token Manager class " . $tokenManagerClass->class . ' does not implement \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager.');
                 }
 
                 $this->tokenManagers[$id] = $tokenManager;

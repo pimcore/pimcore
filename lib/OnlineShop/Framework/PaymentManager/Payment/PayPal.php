@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager\Payment;
 
-class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_IPayment
+class PayPal implements IPayment
 {
     /**
      * @var string  sandbox|null
@@ -19,7 +20,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
     protected $environment;
 
     /**
-     * @var SoapClient
+     * @var \SoapClient
      */
     protected $client;
 
@@ -40,9 +41,9 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
 
 
     /**
-     * @param Zend_Config $xml
+     * @param \Zend_Config $xml
      */
-    public function __construct(Zend_Config $xml)
+    public function __construct(\Zend_Config $xml)
     {
         // init
         $this->environment = $xml->mode == 'sandbox' ? 'sandbox' : '';
@@ -52,16 +53,16 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
         // create paypal interface
         $wsdl = sprintf('https://www.sandbox.paypal.com/wsdl/PayPalSvc.wsdl', $this->environment);
         $location = sprintf('https://api-3t.sandbox.paypal.com/2.0', $this->environment);
-        $this->client = new SoapClient($wsdl, array('location' => $location));
+        $this->client = new \SoapClient($wsdl, array('location' => $location));
 
         // auth
-        $auth = new stdClass();
-        $auth->Credentials = new stdClass();
+        $auth = new \stdClass();
+        $auth->Credentials = new \stdClass();
         $auth->Credentials->Username = $credentials->api_username;
         $auth->Credentials->Password = $credentials->api_password;
         $auth->Credentials->Signature = $credentials->api_signature;
 
-        $header = new SoapHeader('urn:ebay:api:PayPalAPI', 'RequesterCredentials', $auth);
+        $header = new \SoapHeader('urn:ebay:api:PayPalAPI', 'RequesterCredentials', $auth);
 
         $this->client->__setSoapHeaders($header);
     }
@@ -82,7 +83,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
      * @param array                       $config
      *
      * @return string
-     * @throws Exception
+     * @throws \Exception
      * @link https://devtools-paypal.com/apiexplorer/PayPalAPIs
      */
     public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
@@ -97,15 +98,15 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
 
         if(count($required) != count($config))
         {
-            throw new Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
+            throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
 
 
         // create request
-        $x = new stdClass;
-        $x->SetExpressCheckoutRequest = new stdClass();
+        $x = new \stdClass;
+        $x->SetExpressCheckoutRequest = new \stdClass();
         $x->SetExpressCheckoutRequest->Version = $this->protocol;
-        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails = new stdClass();
+        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails = new \stdClass();
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->ReturnURL = $config['ReturnURL'];
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->CancelURL = $config['CancelURL'];
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->NoShipping = "1";
@@ -142,7 +143,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
             {
                 $messages .= $error->LongMessage ."\n";
             }
-            throw new Exception( $messages );
+            throw new \Exception( $messages );
         }
     }
 
@@ -151,8 +152,8 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
      * execute payment
      * @param mixed $response
      *
-     * @return OnlineShop_Framework_Payment_IStatus
-     * @throws Exception
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @throws \Exception
      */
     public function handleResponse($response)
     {
@@ -173,7 +174,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
         $response = array_intersect_key($response, $required);
         if(count($required) != count($response))
         {
-            throw new Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
+            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
         }
 
 
@@ -183,7 +184,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'], new Zend_Currency($response['currency']));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'], new \Zend_Currency($response['currency']));
 
 
         // execute
@@ -221,15 +222,15 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
      */
     public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
         // Execute payment
-        $x = new stdClass;
-        $x->DoExpressCheckoutPaymentRequest = new stdClass();
+        $x = new \stdClass;
+        $x->DoExpressCheckoutPaymentRequest = new \stdClass();
         $x->DoExpressCheckoutPaymentRequest->Version = $this->protocol;
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails = new stdClass();
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails = new \stdClass();
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->Token = $this->authorizedData['token'];
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PayerID = $this->authorizedData['PayerID'];
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails( $price );
@@ -245,7 +246,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
             // success
 
             $paymentInfo = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo;
-            return new OnlineShop_Framework_Impl_Payment_Status(
+            return new \OnlineShop\Framework\PaymentManager\Status(
                 $reference
                 , $paymentInfo->TransactionID
                 , null
@@ -272,7 +273,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
             }
 
 
-            return new OnlineShop_Framework_Impl_Payment_Status(
+            return new \OnlineShop\Framework\PaymentManager\Status(
                 $reference
                 , $ret->CorrelationID
                 , $message
@@ -288,7 +289,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
      * @param string                      $reference
      * @param                             $transactionId
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
      */
     public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
@@ -299,13 +300,13 @@ class OnlineShop_Framework_Impl_Payment_PayPal implements OnlineShop_Framework_I
     /**
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function createPaymentDetails(\OnlineShop\Framework\PriceSystem\IPrice $price) # \OnlineShop\Framework\Model\AbstractOrder $order
     {
         // create order total
-        $paymentDetails = new stdClass();
-        $paymentDetails->OrderTotal = new stdClass();
+        $paymentDetails = new \stdClass();
+        $paymentDetails->OrderTotal = new \stdClass();
         $paymentDetails->OrderTotal->_ = $price->getAmount();
         $paymentDetails->OrderTotal->currencyID = $price->getCurrency()->getShortName();
 

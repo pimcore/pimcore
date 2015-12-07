@@ -10,24 +10,25 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager;
 
 /**
- * Class OnlineShop_Framework_Impl_PaymentManager
+ * Class PaymentManager
  */
-class OnlineShop_Framework_Impl_PaymentManager implements OnlineShop_Framework_IPaymentManager
+class PaymentManager implements IPaymentManager
 {
     /**
-     * @var Zend_Config
+     * @var \Zend_Config
      */
     protected $config;
 
     /**
-     * @var OnlineShop_Framework_IPayment[]
+     * @var \OnlineShop\Framework\PaymentManager\Payment\IPayment[]
      */
     protected $instance = [];
 
     /**
-     * @param Zend_Config $config
+     * @param \Zend_Config $config
      */
     public function __construct(\Zend_Config $config)
     {
@@ -38,7 +39,7 @@ class OnlineShop_Framework_Impl_PaymentManager implements OnlineShop_Framework_I
     /**
      * @param $name
      *
-     * @return OnlineShop_Framework_IPayment
+     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
      */
     public function getProvider($name)
     {

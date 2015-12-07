@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager\Payment;
 
-class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_IPayment
+class Klarna implements IPayment
 {
     /**
      * @var string
@@ -35,16 +36,16 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
 
 
     /**
-     * @param Zend_Config $xml
+     * @param \Zend_Config $xml
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function __construct(Zend_Config $xml)
+    public function __construct(\Zend_Config $xml)
     {
         $settings = $xml->config->{$xml->mode};
         if($settings->eid == '' || $settings->{'shared-secret-key'} == '')
         {
-            throw new Exception('payment configuration is wrong. eid or shared-secret-key is empty !');
+            throw new \Exception('payment configuration is wrong. eid or shared-secret-key is empty !');
         }
 
         $this->eid = $settings->eid;
@@ -82,7 +83,7 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
      * @param \OnlineShop\Framework\CartManager\ICart  $cart
      *
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
     public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
@@ -95,7 +96,7 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
 
         if(count($required) != count($check))
         {
-            throw new Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $check)))));
+            throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $check)))));
         }
 
 
@@ -123,8 +124,8 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
     /**
      * @param mixed $response
      *
-     * @return OnlineShop_Framework_Payment_IStatus
-     * @throws Exception
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @throws \Exception
      */
     public function handleResponse($response)
     {
@@ -141,7 +142,7 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
         $check = array_intersect_key($response, $required);
         if(count($required) != count($check))
         {
-            throw new Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
+            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
         }
 
 
@@ -154,16 +155,16 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
 
 
         $statMap = [
-            'checkout_complete' => OnlineShop_Framework_Payment_IStatus::STATUS_AUTHORIZED
-            , 'created' => OnlineShop_Framework_Payment_IStatus::STATUS_CLEARED
+            'checkout_complete' => \OnlineShop\Framework\PaymentManager\IStatus::STATUS_AUTHORIZED
+            , 'created' => \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
         ];
-        return new OnlineShop_Framework_Impl_Payment_Status(
+        return new \OnlineShop\Framework\PaymentManager\Status(
             $order['merchant_reference']['orderid2']
             , $order['id']
             , $order['status']
             , array_key_exists($order['status'], $statMap)
                 ? $statMap[ $order['status'] ]
-                : OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+                : \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
             , [
                 'klarna_amount' => $order['cart']['total_price_including_tax']
                 , 'klarna_marshal' => json_encode( $order->marshal() )
@@ -199,8 +200,8 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
-     * @return OnlineShop_Framework_Payment_IStatus
-     * @throws Exception
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @throws \Exception
      */
     public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
@@ -224,13 +225,13 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
             }
 
 
-            return new OnlineShop_Framework_Impl_Payment_Status(
+            return new \OnlineShop\Framework\PaymentManager\Status(
                 $reference
                 , $order['id']
                 , $order['status']
                 , $order['status'] == 'created'
-                ? OnlineShop_Framework_Payment_IStatus::STATUS_CLEARED
-                : OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+                ? \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
+                : \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
                 , [
                     'klarna_amount' => $order['cart']['total_price_including_tax']
                     , 'klarna_marshal' => json_encode( $order->marshal() )
@@ -246,7 +247,7 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
      * @param string                      $reference
      * @param                             $transactionId
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
      * @see http://developers.klarna.com/en/at+php/kco-v2/order-management-api#introduction
      */
     public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
@@ -259,16 +260,16 @@ class OnlineShop_Framework_Impl_Payment_Klarna implements OnlineShop_Framework_I
     /**
      * @param string $uri
      *
-     * @return Klarna_Checkout_Order
+     * @return \Klarna_Checkout_Order
      */
     public function createOrder($uri = null)
     {
         // init
-        Klarna_Checkout_Order::$baseUri = $this->endpoint;
-        Klarna_Checkout_Order::$contentType = 'application/vnd.klarna.checkout.aggregated-order-v2+json';
+        \Klarna_Checkout_Order::$baseUri = $this->endpoint;
+        \Klarna_Checkout_Order::$contentType = 'application/vnd.klarna.checkout.aggregated-order-v2+json';
 
-        $connector = Klarna_Checkout_Connector::create( $this->sharedSecretKey );
+        $connector = \Klarna_Checkout_Connector::create( $this->sharedSecretKey );
 
-        return new Klarna_Checkout_Order($connector, $uri);
+        return new \Klarna_Checkout_Order($connector, $uri);
     }
 }

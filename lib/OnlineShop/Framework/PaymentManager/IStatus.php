@@ -10,11 +10,12 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager;
 
 /**
- * Interface OnlineShop_Framework_Payment_IStatus
+ * Interface IStatus
  */
-interface OnlineShop_Framework_Payment_IStatus
+interface IStatus
 {
     const STATUS_PENDING = 'paymentPending';
     const STATUS_AUTHORIZED = 'paymentAuthorized';

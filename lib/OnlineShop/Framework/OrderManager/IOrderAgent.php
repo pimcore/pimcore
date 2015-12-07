@@ -14,8 +14,8 @@
 namespace OnlineShop\Framework\OrderManager;
 
 use \OnlineShop\Framework\Factory;
-use OnlineShop_Framework_IPayment;
-use OnlineShop_Framework_Payment_IStatus;
+use \OnlineShop\Framework\PaymentManager\Payment\IPayment;
+use \OnlineShop\Framework\PaymentManager\IStatus;
 
 use Zend_Currency;
 
@@ -97,17 +97,17 @@ interface IOrderAgent
 
 
     /**
-     * @return OnlineShop_Framework_IPayment
+     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
      */
     public function getPaymentProvider();
 
 
     /**
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      *
      * @return Order
      */
-    public function setPaymentProvider(OnlineShop_Framework_IPayment $paymentProvider);
+    public function setPaymentProvider(\OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
 
 
     /**
@@ -142,11 +142,11 @@ interface IOrderAgent
 
 
     /**
-     * @param OnlineShop_Framework_Payment_IStatus $status
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
      *
      * @return IOrderAgent
      */
-    public function updatePayment(OnlineShop_Framework_Payment_IStatus $status);
+    public function updatePayment(\OnlineShop\Framework\PaymentManager\IStatus $status);
 
 
     /**

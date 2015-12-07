@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager;
 
-class OnlineShop_Framework_Impl_Payment_Status implements OnlineShop_Framework_Payment_IStatus
+class Status implements IStatus
 {
     /**
      * internal pimcore order status - see also constants \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_*

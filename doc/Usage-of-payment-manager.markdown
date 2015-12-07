@@ -17,9 +17,9 @@
 The configuration takes place in the OnlineShopConfig.xml
 ```xml
 <!-- general settings for cart manager -->
-<paymentmanager class="OnlineShop_Framework_Impl_PaymentManager" statusClass="OnlineShop_Framework_Impl_Checkout_Payment_Status">
+<paymentmanager class="\OnlineShop\Framework\PaymentManager\PaymentManager" statusClass="OnlineShop_Framework_Impl_Checkout_Payment_Status">
     <config>
-        <provider name="datatrans" class="OnlineShop_Framework_Impl_Payment_Datatrans" mode="sandbox">
+        <provider name="datatrans" class="\OnlineShop\Framework\PaymentManager\Payment\Datatrans" mode="sandbox">
             <config>
                 <sandbox>
                     <merchantId>1000011011</merchantId>
@@ -39,7 +39,7 @@ The configuration takes place in the OnlineShopConfig.xml
             </config>
         </provider>
 
-        <provider name="qpay" class="OnlineShop_Framework_Impl_Payment_QPay" mode="sandbox">
+        <provider name="qpay" class="\OnlineShop\Framework\PaymentManager\Payment\QPay" mode="sandbox">
             <config>
                 <sandbox>
                     <secret>B8AKTPWBRMNBV455FG6M2DANE99WU2</secret>
@@ -53,7 +53,7 @@ The configuration takes place in the OnlineShopConfig.xml
             </config>
         </provider>
 
-        <provider name="paypal" class="OnlineShop_Framework_Impl_Payment_PayPal" mode="sandbox">
+        <provider name="paypal" class="\OnlineShop\Framework\PaymentManager\Payment\PayPal" mode="sandbox">
             <config>
                 <sandbox>
                     <api_username>paypal-facilitator_api1.i-2xdream.de</api_username>

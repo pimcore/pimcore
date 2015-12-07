@@ -14,8 +14,8 @@
 namespace OnlineShop\Framework\Impl\OrderManager\Order;
 
 use OnlineShop\Framework\OrderManager\IOrderAgent;
-use OnlineShop_Framework_Payment_IStatus;
-use OnlineShop_Framework_IPayment;
+use \OnlineShop\Framework\PaymentManager\IStatus;
+use \OnlineShop\Framework\PaymentManager\Payment\IPayment;
 use \OnlineShop\Framework\Factory;
 use Exception;
 
@@ -40,7 +40,7 @@ class Agent implements IOrderAgent
     protected $order;
 
     /**
-     * @var OnlineShop_Framework_IPayment
+     * @var \OnlineShop\Framework\PaymentManager\Payment\IPayment
      */
     protected $paymentProvider;
 
@@ -253,7 +253,7 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @return OnlineShop_Framework_IPayment
+     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
      */
     public function getPaymentProvider()
     {
@@ -299,11 +299,11 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      *
      * @return $this
      */
-    public function setPaymentProvider(OnlineShop_Framework_IPayment $paymentProvider)
+    public function setPaymentProvider(\OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider)
     {
         $this->paymentProvider = $paymentProvider;
 
@@ -474,12 +474,12 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @param OnlineShop_Framework_Payment_IStatus $status
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
      * @return $this
      * @throws Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    public function updatePayment(OnlineShop_Framework_Payment_IStatus $status)
+    public function updatePayment(\OnlineShop\Framework\PaymentManager\IStatus $status)
     {
         //log this for documentation
         \Pimcore\Log\Simple::log("update-payment", "Update payment called with status: " . print_r($status, true));

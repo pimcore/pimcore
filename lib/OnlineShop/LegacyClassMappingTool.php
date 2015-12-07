@@ -105,6 +105,13 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\VoucherService\TokenManager\AbstractTokenManager' => 'OnlineShop_Framework_VoucherService_AbstractTokenManager',
         'OnlineShop\Framework\VoucherService\TokenManager\Single' => 'OnlineShop_Framework_VoucherService_TokenManager_Single',
         'OnlineShop\Framework\VoucherService\TokenManager\Pattern' => 'OnlineShop_Framework_VoucherService_TokenManager_Pattern',
+        'OnlineShop\Framework\PaymentManager\Status' => 'OnlineShop_Framework_Payment_Status',
+        'OnlineShop\Framework\PaymentManager\Payment\Datatrans' => 'OnlineShop_Framework_Impl_Payment_Datatrans',
+        'OnlineShop\Framework\PaymentManager\Payment\Klarna' => 'OnlineShop_Framework_Impl_Payment_Klarna',
+        'OnlineShop\Framework\PaymentManager\Payment\PayPal' => 'OnlineShop_Framework_Impl_Payment_PayPal',
+        'OnlineShop\Framework\PaymentManager\Payment\QPay' => 'OnlineShop_Framework_Impl_Payment_QPay',
+        'OnlineShop\Framework\PaymentManager\PaymentManager' => 'OnlineShop_Framework_Impl_PaymentManager',
+
 
 
     ];
@@ -142,9 +149,11 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\PricingManager\Condition\IDateRange' => 'OnlineShop_Framework_Pricing_Condition_IDateRange',
         'OnlineShop\Framework\Model\IIndexable' => 'OnlineShop_Framework_ProductInterfaces_IIndexable',
         'OnlineShop\Framework\Model\ICheckoutable' => 'OnlineShop_Framework_ProductInterfaces_ICheckoutable',
-        'OnlineShop\Framework\VoucherService\ITokenManager' => 'OnlineShop_Framework_VoucherService_ITokenManager',
+        'OnlineShop\Framework\VoucherService\TokenManager\ITokenManager' => 'OnlineShop_Framework_VoucherService_ITokenManager',
         'OnlineShop\Framework\VoucherService\IVoucherService' => 'OnlineShop_Framework_IVoucherService',
-
+        'OnlineShop\Framework\PaymentManager\IPayment' => 'OnlineShop_Framework_IPayment',
+        'OnlineShop\Framework\PaymentManager\IPaymentManager' => 'OnlineShop_Framework_IPaymentManager',
+        'OnlineShop\Framework\PaymentManager\IStatus' => 'OnlineShop_Framework_Payment_IStatus',
 
 
     ];

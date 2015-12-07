@@ -72,7 +72,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     /**
      * Payment Provider
      *
-     * @var OnlineShop_Framework_IPayment
+     * @var \OnlineShop\Framework\PaymentManager\Payment\IPayment
      */
     protected $payment;
 
@@ -253,11 +253,11 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @param OnlineShop_Framework_Payment_IStatus $status
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
      * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $status)
+    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $status)
     {
         if (!$this->payment) {
             throw new \OnlineShop\Framework\Exception\UnsupportedException("Payment is not activated");
@@ -527,7 +527,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
 
     /**
-     * @return OnlineShop_Framework_IPayment
+     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
      */
     public function getPayment()
     {

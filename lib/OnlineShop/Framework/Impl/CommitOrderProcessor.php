@@ -32,10 +32,10 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
     /**
      * @param $paymentResponseParams
-     * @param OnlineShop_Framework_IPayment $paymentProvider
-     * @return OnlineShop_Framework_Impl_Payment_Status|OnlineShop_Framework_Payment_IStatus
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     * @return \OnlineShop\Framework\PaymentManager\Status|\OnlineShop\Framework\PaymentManager\IStatus
      */
-    protected function getPaymentStatus($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
+    protected function getPaymentStatus($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
         //since handle response can throw exceptions and commitOrderPayment must be executed,
         // this needs to be in a try-catch block
         try {
@@ -44,8 +44,8 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             \Logger::err($e);
 
             //create payment status with error message and cancelled payment
-            $paymentStatus = new OnlineShop_Framework_Impl_Payment_Status(
-                $paymentResponseParams['orderIdent'], "unknown", "there was an error: " . $e->getMessage(), OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+            $paymentStatus = new \OnlineShop\Framework\PaymentManager\Status(
+                $paymentResponseParams['orderIdent'], "unknown", "there was an error: " . $e->getMessage(), \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
             );
         }
         return $paymentStatus;
@@ -53,11 +53,11 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
     /**
      * @param $paymentResponseParams
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws Exception
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
 
         //check if order is already committed and payment information with same internal payment id has same state
         //if so, do nothing and return order
@@ -72,15 +72,15 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     /**
      * check if order is already committed and payment information with same internal payment id has same state
      *
-     * @param array|OnlineShop_Framework_Payment_IStatus $paymentResponseParams
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param array|\OnlineShop\Framework\PaymentManager\IStatus $paymentResponseParams
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return null|\OnlineShop\Framework\Model\AbstractOrder
      * @throws Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, OnlineShop_Framework_IPayment $paymentProvider) {
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
 
-        if(!$paymentResponseParams instanceof OnlineShop_Framework_Payment_IStatus) {
+        if(!$paymentResponseParams instanceof \OnlineShop\Framework\PaymentManager\IStatus) {
             $paymentStatus = $this->getPaymentStatus($paymentResponseParams, $paymentProvider);
         } else {
             $paymentStatus = $paymentResponseParams;
@@ -109,13 +109,13 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
     /**
-     * @param OnlineShop_Framework_Payment_IStatus $paymentStatus
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      * @return \OnlineShop\Framework\Model\AbstractOrder
      * @throws Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    public function commitOrderPayment(OnlineShop_Framework_Payment_IStatus $paymentStatus, OnlineShop_Framework_IPayment $paymentProvider) {
+    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
 
         //check if order is already committed and payment information with same internal payment id has same state
         //if so, do nothing and return order

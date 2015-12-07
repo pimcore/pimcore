@@ -22,7 +22,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
 
 
     /**
-     * @return bool|\OnlineShop\Framework\VoucherService\ITokenManager
+     * @return bool|\OnlineShop\Framework\VoucherService\TokenManager\ITokenManager
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function getTokenManager()

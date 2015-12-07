@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager\Payment;
 
-class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framework_IPayment
+class Datatrans implements IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
     const TRANS_TYPE_CREDIT = '06';
@@ -38,27 +39,27 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
     protected $authorizedData;
 
     /**
-     * @var OnlineShop_Framework_Payment_IStatus
+     * @var \OnlineShop\Framework\PaymentManager\IStatus
      */
     protected $paymentStatus;
 
     /**
-     * @var Zend_Locale
+     * @var \Zend_Locale
      */
     protected $currencyLocale;
 
 
     /**
-     * @param Zend_Config $xml
+     * @param \Zend_Config $xml
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function __construct(Zend_Config $xml)
+    public function __construct(\Zend_Config $xml)
     {
         $settings = $xml->config->{$xml->mode};
         if($settings->sign == '' || $settings->merchantId == '')
         {
-            throw new Exception('payment configuration is wrong. secret or customer is empty !');
+            throw new \Exception('payment configuration is wrong. secret or customer is empty !');
         }
 
         $this->merchantId = $settings->merchantId;
@@ -98,8 +99,8 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param array                       $config
      *
-     * @return Zend_Form
-     * @throws Exception
+     * @return \Zend_Form
+     * @throws \Exception
      *
      * @see https://pilot.datatrans.biz/showcase/doc/Technical_Implementation_Guide.pdf
      * @see http://pilot.datatrans.biz/showcase/doc/XML_Authorisation.pdf
@@ -119,7 +120,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
         if(count($required) != count($config))
         {
-            throw new Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
+            throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
 
 
@@ -133,7 +134,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
         // create form
-        $form = new Zend_Form();
+        $form = new \Zend_Form();
         $form->setAction( $this->endpoint['form'] );
         $form->setMethod( 'post' );
 
@@ -188,8 +189,8 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      *
      * @param mixed $response
      *
-     * @return OnlineShop_Framework_Payment_IStatus
-     * @throws Exception
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @throws \Exception
      *
      * @see http://pilot.datatrans.biz/showcase/doc/XML_Authorisation.pdf : Page 7 > 2.3 Authorisation response
      */
@@ -242,7 +243,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         $response = array_intersect_key($response, $required);
         if(count($required) != count($response))
         {
-            throw new Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
+            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
         }
 
 
@@ -252,7 +253,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'] / 100, new Zend_Currency($response['currency'], $this->currencyLocale));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'] / 100, new \Zend_Currency($response['currency'], $this->currencyLocale));
 
 
         $paymentState = null;
@@ -274,7 +275,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
         }
 
 
-        return new OnlineShop_Framework_Impl_Payment_Status(
+        return new \OnlineShop\Framework\PaymentManager\Status(
             $response['refno']
             , $response['uppTransactionId']
             , $message
@@ -292,7 +293,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
-     * @return OnlineShop_Framework_Impl_Payment_Status|OnlineShop_Framework_Payment_IStatus
+     * @return \OnlineShop\Framework\PaymentManager\Status|\OnlineShop\Framework\PaymentManager\IStatus
      * @throws Exception
      */
     public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
@@ -358,7 +359,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
         // create and return status
-        $status = new OnlineShop_Framework_Impl_Payment_Status(
+        $status = new \OnlineShop\Framework\PaymentManager\Status(
               (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId ?: $uppTransactionId
             , $message
@@ -380,7 +381,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @param string                      $reference
      * @param string                      $transactionId
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
      */
     public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
@@ -431,7 +432,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
 
 
         // create and return status
-        $status = new OnlineShop_Framework_Impl_Payment_Status(
+        $status = new \OnlineShop\Framework\PaymentManager\Status(
             (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId
             , $message
@@ -475,7 +476,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans implements OnlineShop_Framewor
      * @param string $expireMonth
      * @param string $expireYear
      *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      * @see https://www.datatrans.ch/showcase/authorisation/xml-authorisation
      */
     protected function xmlAuthorisation($reqType, $transType, $amount, $currency, $refno, $aliasCC, $expireMonth, $expireYear)
@@ -544,7 +545,7 @@ XML;
      * @param string            $reference
      * @param string            $transactionId
      *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      */
     protected function xmlSettlement($transType, $amount, $currency, $reference, $transactionId)
     {

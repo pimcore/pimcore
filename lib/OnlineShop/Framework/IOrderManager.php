@@ -67,8 +67,8 @@ interface IOrderManager
     /**
      * gets order based on given payment status
      *
-     * @param \OnlineShop_Framework_Payment_IStatus $paymentStatus
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
      * @return \OnlineShop\Framework\Model\AbstractOrder
      */
-    public function getOrderByPaymentStatus(\OnlineShop_Framework_Payment_IStatus $paymentStatus);
+    public function getOrderByPaymentStatus(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus);
 }

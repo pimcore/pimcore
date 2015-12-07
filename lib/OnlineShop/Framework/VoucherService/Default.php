@@ -150,7 +150,7 @@ class DefaultService implements IVoucherService
 
     /**
      * @param $code
-     * @return bool|\OnlineShop\Framework\VoucherService\ITokenManager
+     * @return bool|\OnlineShop\Framework\VoucherService\TokenManager\ITokenManager
      */
     public function getTokenManager($code)
     {

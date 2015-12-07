@@ -10,7 +10,7 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-namespace OnlineShop\Framework\VoucherService;
+namespace OnlineShop\Framework\VoucherService\TokenManager;
 
 /**
  * Interface ITokenManager

@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\PaymentManager\Payment;
 
-class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPayment
+class QPay implements IPayment
 {
     /**
      * @var string
@@ -39,22 +40,22 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
     protected $authorizedData;
 
     /**
-     * @var Zend_Locale
+     * @var \Zend_Locale
      */
     protected $currencyLocale;
 
 
     /**
-     * @param Zend_Config $xml
+     * @param \Zend_Config $xml
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function __construct(Zend_Config $xml)
+    public function __construct(\Zend_Config $xml)
     {
         $settings = $xml->config->{$xml->mode};
         if($settings->secret == '' || $settings->customer == '')
         {
-            throw new Exception('payment configuration is wrong. secret or customer is empty !');
+            throw new \Exception('payment configuration is wrong. secret or customer is empty !');
         }
 
         $this->secret = $settings->secret;
@@ -84,9 +85,9 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param array                       $config
      *
-     * @return Zend_Form
-     * @throws Exception
-     * @throws Zend_Form_Exception
+     * @return \Zend_Form
+     * @throws \Exception
+     * @throws \Zend_Form_Exception
      */
     public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
     {
@@ -103,7 +104,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
         if(count($required) != count($check))
         {
-            throw new Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $check)))));
+            throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $check)))));
         }
 
 
@@ -137,7 +138,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
 
         // create form
-        $form = new Zend_Form(array('disableLoadDefaultDecorators' => false));
+        $form = new \Zend_Form(array('disableLoadDefaultDecorators' => false));
         $form->setAction( 'https://www.qenta.com/qpay/init.php' );
         $form->setMethod( 'post' );
         $form->addElement( 'hidden', 'customerId', array('value' => $this->customer) );
@@ -179,8 +180,8 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
     /**
      * @param mixed $response
      *
-     * @return OnlineShop_Framework_Payment_IStatus
-     * @throws Exception
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @throws \Exception
      */
     public function handleResponse($response)
     {
@@ -204,7 +205,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         $check = array_intersect_key($response, $required);
         if(count($required) != count($check))
         {
-            throw new Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
+            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
         }
 
 
@@ -220,11 +221,11 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         if($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint'])
         {
             // fingerprint is wrong, ignore this response
-            return new OnlineShop_Framework_Impl_Payment_Status(
+            return new \OnlineShop\Framework\PaymentManager\Status(
                 $response['orderIdent']
                 , $response['orderNumber']
                 , $response['avsResponseMessage'] ?: $response['message']
-                , OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
             );
         }
 
@@ -235,16 +236,16 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new Zend_Currency($authorizedData['currency'], \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new \Zend_Currency($authorizedData['currency'], \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
 
 
-        return new OnlineShop_Framework_Impl_Payment_Status(
+        return new \OnlineShop\Framework\PaymentManager\Status(
             $response['orderIdent']
             , $response['orderNumber']
             , $response['avsResponseMessage'] ?: $response['message']
             , $response['orderNumber'] !== NULL && $response['paymentState'] == 'SUCCESS'
-                ? OnlineShop_Framework_Payment_IStatus::STATUS_AUTHORIZED
-                : OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+                ? \OnlineShop\Framework\PaymentManager\IStatus::STATUS_AUTHORIZED
+                : \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
             , [
                 'qpay_amount' => (string)$price
                 , 'qpay_paymentType' => $response['paymentType']
@@ -280,8 +281,8 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
-     * @return OnlineShop_Framework_Payment_IStatus
-     * @throws Exception
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @throws \Exception
      */
     public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
@@ -324,7 +325,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         else
         {
             // default clearing auth
-            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'], new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
+            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'], new \Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             $request = [
                 'customerId' => $this->customer
@@ -362,11 +363,11 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         {
             // Operation successfully done.
 
-            return new OnlineShop_Framework_Impl_Payment_Status(
+            return new \OnlineShop\Framework\PaymentManager\Status(
                 $reference
                 , $response['paymentNumber'] ?: $response['orderNumber']
                 , ''
-                , OnlineShop_Framework_Payment_IStatus::STATUS_CLEARED
+                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
@@ -384,11 +385,11 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
                 $error[] = $response['error_' . $e . '_error_message'];
             }
 
-            return new OnlineShop_Framework_Impl_Payment_Status(
+            return new \OnlineShop\Framework\PaymentManager\Status(
                 $reference
                 , $response['paymentNumber'] ?: $response['orderNumber']
                 , implode("\n", $error)
-                , OnlineShop_Framework_Payment_IStatus::STATUS_CANCELLED
+                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
@@ -398,7 +399,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
         }
         else
         {
-            throw new Exception( print_r($response, true) );
+            throw new \Exception( print_r($response, true) );
         }
     }
 
@@ -409,7 +410,7 @@ class OnlineShop_Framework_Impl_Payment_QPay implements OnlineShop_Framework_IPa
      * @param string                      $reference
      * @param                             $transactionId
      *
-     * @return OnlineShop_Framework_Payment_IStatus
+     * @return \OnlineShop\Framework\PaymentManager\IStatus
      */
     public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
