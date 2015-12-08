@@ -42,7 +42,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
 
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE id=" . $this->db->quote($id));
         if(empty($classRaw)) {
-            throw new Exception("Cart " . $id . " not found.");
+            throw new \Exception("Cart " . $id . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
     }

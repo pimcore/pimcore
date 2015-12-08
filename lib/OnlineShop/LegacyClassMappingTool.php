@@ -207,17 +207,6 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\Select' => 'OnlineShop_Framework_FilterService_Findologic_Select',
         'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\SelectCategory' => 'OnlineShop_Framework_FilterService_Findologic_SelectCategory',
         'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\SelectRelation' => 'OnlineShop_Framework_FilterService_Findologic_SelectRelation',
-
-
-
-
-
-
-
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType' => 'OnlineShop_Framework_FilterService',
-
-
-
     ];
 
     private static $mappingInterfaces = [
@@ -275,9 +264,6 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CheckoutManager\ICheckoutManager' => 'OnlineShop_Framework_ICheckoutManager',
         'OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor' => 'OnlineShop_Framework_ICommitOrderProcessor',
         'OnlineShop\Framework\OrderManager\IOrderManager' => 'OnlineShop\Framework\IOrderManager',
-
-
-
     ];
 
 
@@ -285,12 +271,10 @@ class LegacyClassMappingTool {
     public static function loadMapping() {
         foreach(self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
             class_alias($withNamespace, $withoutNamespace);
-//            class_alias($withoutNamespace, $withoutNamespace);
         }
 
         foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
             class_alias($withNamespace, $withoutNamespace);
-//            class_alias($withoutNamespace, $withNamespace);
         }
 
     }

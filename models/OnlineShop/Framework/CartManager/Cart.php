@@ -92,7 +92,7 @@ class Cart extends AbstractCart implements ICart {
                 /* @var \OnlineShop\Framework\CartManager\ICart $cart */
                 $cart = new $cartClass;
                 $cart->setIgnoreReadonly();
-                $cart->getResource()->getById($id);
+                $cart->getDao()->getById($id);
 
                 $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
                 $itemList->setCartItemClassName( $cart->getCartItemClassName() );
