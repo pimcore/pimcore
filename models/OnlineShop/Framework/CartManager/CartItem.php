@@ -54,7 +54,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
                 $item->save();
             }
         }
-        $this->getResource()->save();
+        $this->getDao()->save();
     }
 
     public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "") {
@@ -66,7 +66,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
         catch (\Exception $e) {
             try {
                 $cartItem = new static();
-                $cartItem->getResource()->getByCartIdItemKey($cartId, $itemKey, $parentKey);
+                $cartItem->getDao()->getByCartIdItemKey($cartId, $itemKey, $parentKey);
                 $cartItem->getSubItems();
                 \Zend_Registry::set($cacheKey, $cartItem);
             } catch (\Exception $ex) {
@@ -81,7 +81,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
 
     public static function removeAllFromCart($cartId) {
         $cartItem = new static();
-        $cartItem->getResource()->removeAllFromCart($cartId);
+        $cartItem->getDao()->removeAllFromCart($cartId);
     }
 
     /**
@@ -101,14 +101,14 @@ class CartItem extends AbstractCartItem implements ICartItem {
             }
             $itemList = new $itemClass();
 
-            $db = \Pimcore\Resource::get();
+            $db = \Pimcore\Db::get();
             $itemList->setCondition("cartId = " . $db->quote($this->getCartId()) . " AND parentItemKey = " . $db->quote($this->getItemKey()));
 
             foreach ($itemList->getCartItems() as $item) {
                 if ($item->getProduct() != null) {
                     $this->subItems[] = $item;
                 } else {
-                    Logger::warn("product " . $item->getProductId() . " not found");
+                    \Logger::warn("product " . $item->getProductId() . " not found");
                 }
             }
         }

@@ -30,7 +30,7 @@ class CartCheckoutData extends AbstractCartCheckoutData {
                 $checkoutDataItem = new self();
                 $checkoutDataItem->getDao()->getByKeyCartId($key, $cartId);
                 \Zend_Registry::set($cacheKey, $checkoutDataItem);
-            } catch(Exception $ex) {
+            } catch(\Exception $ex) {
                 \Logger::debug($ex->getMessage());
                 return null;
             }

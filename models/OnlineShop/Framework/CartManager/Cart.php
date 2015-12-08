@@ -101,6 +101,7 @@ class Cart extends AbstractCart implements ICart {
                 $items = array();
                 foreach ($itemList->getCartItems() as $item) {
                     if(static::isValidCartItem($item)){
+                        $item->setCart($cart);
                         $items[$item->getItemKey()] = $item;
                     }
                 }

@@ -12,8 +12,6 @@
 
 namespace OnlineShop\Framework;
 
-use OnlineShop\Framework\OrderManager\IOrderManager;
-
 class Factory {
 
     /**
@@ -57,7 +55,7 @@ class Factory {
     private $pricingManager;
 
     /**
-     * @var IOrderManager
+     * @var \OnlineShop\Framework\OrderManager\IOrderManager
      */
     private $orderManager;
 
@@ -549,7 +547,7 @@ class Factory {
 
 
     /**
-     * @return IOrderManager
+     * @return \OnlineShop\Framework\OrderManager\IOrderManager
      */
     public function getOrderManager()
     {

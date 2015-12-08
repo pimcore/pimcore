@@ -45,7 +45,6 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CartManager\Cart\Listing' => 'OnlineShop_Framework_Impl_Cart_List',
         'OnlineShop\Framework\CartManager\Cart\Dao' => 'OnlineShop_Framework_Impl_Cart_Resource',
         'OnlineShop\Framework\CartManager\MultiCartManager' => 'OnlineShop_Framework_Impl_MultiCartManager',
-        'OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator' => 'OnlineShop_Framework_ICartPriceModificator',
         'OnlineShop\Framework\CartManager\CartPriceModificator\Discount' => 'OnlineShop_Framework_Impl_CartPriceModificator_Discount',
         'OnlineShop\Framework\CartManager\CartPriceModificator\Shipping' => 'OnlineShop_Framework_Impl_CartPriceModificator_Shipping',
         'OnlineShop\Framework\CartManager\CartPriceCalculator' => 'OnlineShop_Framework_Impl_CartPriceCalculator',
@@ -186,27 +185,27 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\FilterService\FilterType\Select' => 'OnlineShop_Framework_FilterService_Select',
         'OnlineShop\Framework\FilterService\FilterGroupHelper' => 'OnlineShop_Framework_FilterService_FilterGroupHelper',
         'OnlineShop\Framework\FilterService\Helper' => 'OnlineShop_Framework_FilterService_Helper',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\MultiSelect' => 'OnlineShop_Framework_FilterService_FactFinder_MultiSelect',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\NumberRange' => 'OnlineShop_Framework_FilterService_FactFinder_NumberRange',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\Select' => 'OnlineShop_Framework_FilterService_FactFinder_Select',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\FactFinder\SelectCategory' => 'OnlineShop_Framework_FilterService_FactFinder_SelectCategory',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\Input' => 'OnlineShop_Framework_FilterService_ElasticSearch_Input',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\MultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\MultiSelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelect',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\MultiSelectRelation' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectRelation',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\NumberRange' => 'OnlineShop_Framework_FilterService_ElasticSearch_NumberRange',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\NumberRangeSelection' => 'OnlineShop_Framework_FilterService_ElasticSearch_NumberRangeSelection',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\Select' => 'OnlineShop_Framework_FilterService_ElasticSearch_Select',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\SelectCategory' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectCategory',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\SelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectFromMultiSelect',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\ElasticSearch\SelectRelation' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\MultiSelect' => 'OnlineShop_Framework_FilterService_Findologic_MultiSelect',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\MultiSelectRelation' => 'OnlineShop_Framework_FilterService_Findologic_MultiSelectRelation',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\NumberRange' => 'OnlineShop_Framework_FilterService_Findologic_NumberRange',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\NumberRangeSelection' => 'OnlineShop_Framework_FilterService_Findologic_NumberRangeSelection',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\Select' => 'OnlineShop_Framework_FilterService_Findologic_Select',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\SelectCategory' => 'OnlineShop_Framework_FilterService_Findologic_SelectCategory',
-        'OnlineShop\Framework\FilterService\FilterType\AbstractFilterType\Findologic\SelectRelation' => 'OnlineShop_Framework_FilterService_Findologic_SelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\FactFinder\MultiSelect' => 'OnlineShop_Framework_FilterService_FactFinder_MultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\FactFinder\NumberRange' => 'OnlineShop_Framework_FilterService_FactFinder_NumberRange',
+        'OnlineShop\Framework\FilterService\FilterType\FactFinder\Select' => 'OnlineShop_Framework_FilterService_FactFinder_Select',
+        'OnlineShop\Framework\FilterService\FilterType\FactFinder\SelectCategory' => 'OnlineShop_Framework_FilterService_FactFinder_SelectCategory',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\Input' => 'OnlineShop_Framework_FilterService_ElasticSearch_Input',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\MultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\MultiSelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\MultiSelectRelation' => 'OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\NumberRange' => 'OnlineShop_Framework_FilterService_ElasticSearch_NumberRange',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\NumberRangeSelection' => 'OnlineShop_Framework_FilterService_ElasticSearch_NumberRangeSelection',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\Select' => 'OnlineShop_Framework_FilterService_ElasticSearch_Select',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\SelectCategory' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectCategory',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\SelectFromMultiSelect' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectFromMultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\ElasticSearch\SelectRelation' => 'OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\Findologic\MultiSelect' => 'OnlineShop_Framework_FilterService_Findologic_MultiSelect',
+        'OnlineShop\Framework\FilterService\FilterType\Findologic\MultiSelectRelation' => 'OnlineShop_Framework_FilterService_Findologic_MultiSelectRelation',
+        'OnlineShop\Framework\FilterService\FilterType\Findologic\NumberRange' => 'OnlineShop_Framework_FilterService_Findologic_NumberRange',
+        'OnlineShop\Framework\FilterService\FilterType\Findologic\NumberRangeSelection' => 'OnlineShop_Framework_FilterService_Findologic_NumberRangeSelection',
+        'OnlineShop\Framework\FilterService\FilterType\Findologic\Select' => 'OnlineShop_Framework_FilterService_Findologic_Select',
+        'OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory' => 'OnlineShop_Framework_FilterService_Findologic_SelectCategory',
+        'OnlineShop\Framework\FilterService\FilterType\Findologic\SelectRelation' => 'OnlineShop_Framework_FilterService_Findologic_SelectRelation',
     ];
 
     private static $mappingInterfaces = [
@@ -264,6 +263,7 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CheckoutManager\ICheckoutManager' => 'OnlineShop_Framework_ICheckoutManager',
         'OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor' => 'OnlineShop_Framework_ICommitOrderProcessor',
         'OnlineShop\Framework\OrderManager\IOrderManager' => 'OnlineShop\Framework\IOrderManager',
+        'OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator' => 'OnlineShop_Framework_ICartPriceModificator',
     ];
 
 
@@ -276,8 +276,42 @@ class LegacyClassMappingTool {
         foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
             class_alias($withNamespace, $withoutNamespace);
         }
-
     }
 
+    public static function createNamespaceCompatibilityFile() {
+        $fileContent = "<?php \n";
+        $fileContent .= '
+/**
+ * This file is only for IDE auto complete and deprecated visualization
+ */';
+
+        foreach(self::$mappingInterfaces as $interfaceNew => $interfaceOld) {
+
+            $fileContent .= '
+/**
+ * @deprecated
+ * Interface ' . $interfaceOld . '
+ */
+interface ' . $interfaceOld . ' extends \\' . $interfaceNew . ' {};
+';
+
+            $fileContent .= "\n\n";
+        }
+
+        foreach(self::$mappingClasses as $classNew => $classOld) {
+
+            $fileContent .= '
+/**
+ * @deprecated
+ * Class ' . $classOld . '
+ */
+class ' . $classOld . ' extends \\' . $classNew . ' {};
+';
+
+            $fileContent .= "\n\n";
+        }
+
+        file_put_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/config/namespace_compatibility.php', $fileContent);
+    }
 
 }
