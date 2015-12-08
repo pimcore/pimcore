@@ -15,6 +15,8 @@ chdir(__DIR__);
 include_once("../../../pimcore/cli/startup.php");
 chdir($workingDirectory);
 
-\OnlineShop\LegacyClassMappingTool::createNamespaceCompatibilityFile();
+//\OnlineShop\LegacyClassMappingTool::createNamespaceCompatibilityFile();
+
+\OnlineShop\LegacyClassMappingTool::generateMarkdownTable();
 
 die("done.\n\n");

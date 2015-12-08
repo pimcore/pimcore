@@ -314,4 +314,15 @@ class ' . $classOld . ' extends \\' . $classNew . ' {};
         file_put_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/config/namespace_compatibility.php', $fileContent);
     }
 
+    public static function generateMarkdownTable() {
+
+        foreach(self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
+            echo "|" . $withoutNamespace . " | " . $withNamespace . " | \n";
+        }
+
+        foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
+            echo "|" . $withoutNamespace . " | " . $withNamespace . " | \n";
+        }
+    }
+
 }
