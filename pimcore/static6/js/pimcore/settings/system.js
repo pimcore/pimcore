@@ -448,7 +448,8 @@ pimcore.settings.system = Class.create({
                                 displayField: 'username',
                                 valueField: 'id',
                                 name: 'general.logrecipient',
-                                mode: 'local'
+                                mode: 'local',
+                                forceSelection: true
                             },
                             {
                                 xtype: "displayfield",
