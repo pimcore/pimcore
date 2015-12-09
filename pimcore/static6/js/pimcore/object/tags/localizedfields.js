@@ -211,46 +211,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 panelConf.autoHeight = false;
             }
 
-            // this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
-            //panelConf.listeners = {
-            //
-            //    afterlayout: function () {
-            //        if (this.component.heightAlreadyFixed) {
-            //            return;
-            //        }
-            //
-            //        this.tabPanelAdjustIntervalCounter = 0;
-            //        this.tabPanelAdjustInterval = window.setInterval(function () {
-            //            if(!this.fieldConfig.height && !this.fieldConfig.region) {
-            //                this.tabPanelAdjustIntervalCounter++;
-            //                if(this.tabPanelAdjustIntervalCounter > 20) {
-            //                    clearInterval(this.tabPanelAdjustInterval);
-            //                }
-            //
-            //                try {
-            //                    var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
-            //                    var panelBody = Ext.get(panelBodies[0]);
-            //                    panelBody.applyStyles("height: auto;");
-            //                    var height = panelBody.getHeight();
-            //                    if (height > 0) {
-            //                        // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
-            //                        this.component.setHeight(height+100);
-            //                        clearInterval(this.tabPanelAdjustInterval);
-            //
-            //                        //this.tabPanel.getEl().applyStyles("position:relative;");
-            //                        this.component.updateLayout();
-            //                        this.component.heightAlreadyFixed = true;
-            //
-            //                    }
-            //
-            //                } catch (e) {
-            //                    console.log(e);
-            //                }
-            //            }
-            //        }.bind(this), 100);
-            //    }.bind(this)
-            //};
-
             for (var i=0; i < nrOfLanguages; i++) {
                 this.currentLanguage = this.frontendLanguages[i];
                 this.languageElements[this.currentLanguage] = [];
@@ -278,13 +238,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 panelConf.items.push(item);
             }
 
-
-
             this.tabPanel = new Ext.TabPanel(panelConf);
 
             wrapperConfig.items = [this.tabPanel];
         }
-
 
         wrapperConfig.border = true;
         wrapperConfig.style = "margin-bottom: 10px";
@@ -476,7 +433,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 this.referencedFields[r].dataIsNotInherited();
             }
         }
-
 
         if (!this.inherited) {
             return true;
