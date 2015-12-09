@@ -30,7 +30,7 @@ class Csv_Reader_String extends Csv_Reader {
     
     }
 	
-	protected function initStream($string) {
+	protected function initStream($string = '') {
 	
         $this->handle = fopen("php://memory", 'w+'); // not sure if I should use php://memory or php://temp here
         fwrite($this->handle, $string);
