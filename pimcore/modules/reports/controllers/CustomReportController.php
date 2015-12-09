@@ -187,7 +187,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
     public function chartAction() {
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
-        $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+        $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
         $drillDownFilters = $this->getParam("drillDownFilters", null);
 
         $config = CustomReport\Config::getByName($this->getParam("name"));
@@ -210,7 +210,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
-        $filters = ($this->_getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
+        $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
         $drillDownFilters = $this->getParam("drillDownFilters", null);
 
         $config = CustomReport\Config::getByName($this->getParam("name"));
