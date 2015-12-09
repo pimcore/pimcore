@@ -169,8 +169,8 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin {
                 Tool\Session::regenerateId();
             });
 
-            if($this->_getParam('deeplink')){
-                $this->redirect('/admin/login/deeplink/?' . $this->_getParam('deeplink'));
+            if($this->getParam('deeplink')){
+                $this->redirect('/admin/login/deeplink/?' . $this->getParam('deeplink'));
             } else {
                 $this->redirect("/admin/?_dc=" . time());
             }
