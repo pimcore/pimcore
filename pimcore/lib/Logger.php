@@ -140,6 +140,22 @@ class Logger {
     }
 
     /**
+     * @return array
+     */
+    public static function getZendLoggerPsr3Mapping() {
+        return [
+            \Zend_Log::DEBUG => LogLevel::DEBUG,
+            \Zend_Log::INFO => LogLevel::INFO,
+            \Zend_Log::NOTICE => LogLevel::NOTICE,
+            \Zend_Log::WARN => LogLevel::WARNING,
+            \Zend_Log::ERR => LogLevel::ERROR,
+            \Zend_Log::CRIT => LogLevel::CRITICAL,
+            \Zend_Log::ALERT => LogLevel::ALERT,
+            \Zend_Log::EMERG => LogLevel::EMERGENCY
+        ];
+    }
+
+    /**
      * @param $message
      * @param string $code
      * @param array $context
@@ -152,16 +168,7 @@ class Logger {
 
         // backward compatibility of level definitions
         // Zend_Logger compatibility
-        $zendLoggerPsr3Mapping = array(
-            \Zend_Log::DEBUG => LogLevel::DEBUG,
-            \Zend_Log::INFO => LogLevel::INFO,
-            \Zend_Log::NOTICE => LogLevel::NOTICE,
-            \Zend_Log::WARN => LogLevel::WARNING,
-            \Zend_Log::ERR => LogLevel::ERROR,
-            \Zend_Log::CRIT => LogLevel::CRITICAL,
-            \Zend_Log::ALERT => LogLevel::ALERT,
-            \Zend_Log::EMERG => LogLevel::EMERGENCY
-        );
+        $zendLoggerPsr3Mapping = self::getZendLoggerPsr3Mapping();
 
         if(array_key_exists($level, $zendLoggerPsr3Mapping)) {
             $level = $zendLoggerPsr3Mapping[$level];
