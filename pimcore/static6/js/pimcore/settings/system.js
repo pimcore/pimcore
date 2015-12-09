@@ -435,7 +435,8 @@ pimcore.settings.system = Class.create({
                                     ["error", "ERROR"]
                                 ],
                                 mode: "local",
-                                triggerAction: "all"
+                                triggerAction: "all",
+                                forceSelection: true
                             },
                             {
                                 fieldLabel: t('log_messages_user_mail_recipient'),
