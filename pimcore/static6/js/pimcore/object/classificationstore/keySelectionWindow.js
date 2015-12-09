@@ -234,16 +234,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             handler: function () {
                 var formValue = this.searchfield.getValue();
 
-                var filter = [{
-                    "property": "description",
-                    "value" :formValue},
-                    {
-                        "property": "name",
-                        "value" :formValue}
-                ];
-
-                this.encodedFilter = Ext.util.JSON.encode(filter);
-                this.store.getProxy().setExtraParam("filter", this.encodedFilter);
+                this.store.getProxy().setExtraParam("searchfilter", formValue);
 
 
                 var lastOptions = this.store.lastOptions;

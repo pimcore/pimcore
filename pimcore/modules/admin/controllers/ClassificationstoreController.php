@@ -222,12 +222,17 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             $condition = "";
+            $db = Db::get();
+
+            $searchfilter = $this->getParam("searchfilter");
+            if ($searchfilter) {
+                $condition = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
+            }
 
             if($this->_getParam("filter")) {
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
-                $db = Db::get();
                 $count = 0;
 
                 foreach($filters as $f) {
@@ -348,12 +353,17 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrderKey($orderKey);
 
             $condition = "";
+            $db = Db::get();
+
+            $searchfilter = $this->getParam("searchfilter");
+            if ($searchfilter) {
+                $condition = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
+            }
 
             if($this->_getParam("filter")) {
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
-                $db = Db::get();
                 $count = 0;
 
                 foreach($filters as $f) {
@@ -839,9 +849,15 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
+            $condition = "";
+            $db = \Pimcore\Db::get();
+
+            $searchfilter = $this->getParam("searchfilter");
+            if ($searchfilter) {
+                $condition = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
+            }
+
             if($this->_getParam("filter")) {
-                $db = Db::get();
-                $condition = "";
                 $filterString = $this->_getParam("filter");
                 $filters = json_decode($filterString);
 
@@ -859,10 +875,9 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                         $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                     }
                 }
-
-
-                $list->setCondition($condition);
             }
+
+            $list->setCondition($condition);
 
             if ($this->_getParam("groupIds") || $this->_getParam("keyIds")) {
                 $db = Db::get();
