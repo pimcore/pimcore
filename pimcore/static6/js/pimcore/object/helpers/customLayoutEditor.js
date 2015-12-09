@@ -459,7 +459,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         if (!this.editPanel) {
             this.editPanel = new Ext.Panel({
                 region: "east",
-                bodyStyle: "padding: 20px;",
                 autoScroll: true,
                 width: 700,
                 split: true
@@ -472,7 +471,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     getRootPanel: function() {
-        
+
         this.rootPanel = new Ext.form.Panel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
