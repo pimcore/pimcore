@@ -94,6 +94,7 @@
 
 .x-panel-header-default {
     background-color: #ececec;
+    border: none;
 }
 
 .x-panel-header-title-default {
