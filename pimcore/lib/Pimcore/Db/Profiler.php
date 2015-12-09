@@ -38,6 +38,9 @@ class Profiler extends \Zend_Db_Profiler
      */
     protected $_totalElapsedTime = 0;
 
+    /**
+     * @var int
+     */
     protected $_totalQueries = 0;
 
     /**
@@ -98,8 +101,12 @@ class Profiler extends \Zend_Db_Profiler
         $this->_totalElapsedTime += $profile->getElapsedSecs();
         $this->_totalQueries++;
 
-        $logEntry = "Process: " . $this->getConnectionId() . " | DB Query (#" . $this->_totalQueries . "): " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
-        \Logger::debug($logEntry);
+        $logEntry = $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
+        \Logger::debug($logEntry, [
+            "connection" => $this->getConnectionId(),
+            "queryNum" => $this->_totalQueries,
+            "time" => (string)round($profile->getElapsedSecs(),5)
+        ]);
 
         $this->queries[] = array(
             "time" => $profile->getElapsedSecs(),

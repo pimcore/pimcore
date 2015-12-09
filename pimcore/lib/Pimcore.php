@@ -348,36 +348,20 @@ class Pimcore {
             }
         }
 
-        $prioMapping = array(
-            "debug" => \Zend_Log::DEBUG,
-            "info" => \Zend_Log::INFO,
-            "notice" => \Zend_Log::NOTICE,
-            "warning" => \Zend_Log::WARN,
-            "error" => \Zend_Log::ERR,
-            "critical" => \Zend_Log::CRIT,
-            "alert" => \Zend_Log::ALERT,
-            "emergency" => \Zend_Log::EMERG
-        );
-
-        $prios = array();
+        $prios = [];
+        $availablePrios = \Logger::getAvailablePriorities();
 
         if($conf && $conf->general->debugloglevel) {
-            $prioMapping = array_reverse($prioMapping);
-            foreach ($prioMapping as $level => $state) {
-                $prios[] = $prioMapping[$level];
+            foreach ($availablePrios as $level) {
+                $prios[] = $level;
                 if($level == $conf->general->debugloglevel) {
                     break;
                 }
             }
+            \Logger::setPriorities($prios);
+        } else {
+            \Logger::setVerbosePriorities();
         }
-        else {
-            // log everything if config isn't loaded (eg. at the installer)
-            foreach ($prioMapping as $p) {
-                $prios[] = $p;
-            }
-        }
-
-        \Logger::setPriorities($prios);
 
         if (is_writable(PIMCORE_LOG_DEBUG)) {
 
@@ -387,9 +371,10 @@ class Pimcore {
                 File::put(PIMCORE_LOG_DEBUG, "");
             }
 
+            // set default core logger (debug.log)
             if(!empty($prios)) {
-                $writerFile = new \Zend_Log_Writer_Stream(PIMCORE_LOG_DEBUG);
-                $loggerFile = new \Zend_Log($writerFile);
+                $loggerFile = new \Monolog\Logger('core');
+                $loggerFile->pushHandler(new \Monolog\Handler\StreamHandler(PIMCORE_LOG_DEBUG));
                 \Logger::addLogger($loggerFile);
             }
 
@@ -417,14 +402,15 @@ class Pimcore {
         } else {
             // try to use syslog instead
             try {
-                $writerSyslog = new \Zend_Log_Writer_Syslog(array('application' => 'pimcore'));
-                $loggerSyslog = new \Zend_Log($writerSyslog);
+                $loggerSyslog = new \Monolog\Logger('core');
+                $loggerSyslog->pushHandler(new \Monolog\Handler\SyslogHandler("pimcore"));
                 \Logger::addLogger($loggerSyslog);
             } catch (\Exception $e) {
-
+                // nothing to do here
             }
         }
 
+        // special request log -> if parameter pimcore_log is set
         if(array_key_exists("pimcore_log", $_REQUEST) && self::inDebugMode()) {
 
             if(empty($_REQUEST["pimcore_log"])) {
@@ -438,8 +424,8 @@ class Pimcore {
                 File::put($requestLogFile,"");
             }
 
-            $writerRequestLog = new \Zend_Log_Writer_Stream($requestLogFile);
-            $loggerRequest = new \Zend_Log($writerRequestLog);
+            $loggerRequest = new \Monolog\Logger('request');
+            $loggerRequest->pushHandler(new \Monolog\Handler\StreamHandler($requestLogFile));
             \Logger::addLogger($loggerRequest);
 
             \Logger::setVerbosePriorities();

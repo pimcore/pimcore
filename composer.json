@@ -24,7 +24,9 @@
         "hybridauth/hybridauth": "~2",
         "google/apiclient": "~1",
         "oyejorge/less.php": "~1.7",
-        "geoip2/geoip2": "~2"
+        "geoip2/geoip2": "~2",
+        "psr/log": "*",
+        "monolog/monolog": "~1"
     },
     "autoload": {
         "psr-4": {
