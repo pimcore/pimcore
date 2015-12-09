@@ -29,7 +29,12 @@ pimcore.settings.system = Class.create({
                     this.adminUsersStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         data: this.data,
-                        root: 'adminUsers',
+                        proxy: {
+                            type: 'memory',
+                            reader: {
+                                rootProperty: 'adminUsers'
+                            }
+                        },
                         fields: ['id', 'username']
                     });
                 } catch (e) {
@@ -434,8 +439,7 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 fieldLabel: t('log_messages_user_mail_recipient'),
-                                //xtype: "combo",     // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
-                                editable: false,
+                                xtype: "combo",
                                 triggerAction: 'all',
                                 store: this.adminUsersStore,
                                 value: this.getValue("general.logrecipient"),
@@ -443,9 +447,7 @@ pimcore.settings.system = Class.create({
                                 displayField: 'username',
                                 valueField: 'id',
                                 name: 'general.logrecipient',
-                                typeAhead: true,
-                                mode: 'local',
-                                forceSelection: true
+                                mode: 'local'
                             },
                             {
                                 xtype: "displayfield",
