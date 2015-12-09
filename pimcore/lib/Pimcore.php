@@ -386,15 +386,10 @@ class Pimcore {
                     if($user instanceof User && $user->isAdmin()) {
                         $email = $user->getEmail();
                         if(!empty($email)){
-                            $mail = Tool::getMail(array($email),"pimcore log notification");
-                            $mail->setIgnoreDebugMode(true);
-                            if(!is_dir(PIMCORE_LOG_MAIL_TEMP)){
-                                File::mkdir(PIMCORE_LOG_MAIL_TEMP);
-                            }
-                            $tempfile = PIMCORE_LOG_MAIL_TEMP."/log-".uniqid().".log";
-                            $writerEmail = new \Pimcore\Log\Writer\Mail($tempfile,$mail);
-                            $loggerEmail = new \Zend_Log($writerEmail);
-                            \Logger::addLogger($loggerEmail);
+                            $loggerMail = new \Monolog\Logger('email');
+                            $mailHandler = new \Pimcore\Log\Handler\Mail($email);
+                            $loggerMail->pushHandler(new \Monolog\Handler\BufferHandler($mailHandler));
+                            \Logger::addLogger($loggerMail);
                         }
                     }
                 }
