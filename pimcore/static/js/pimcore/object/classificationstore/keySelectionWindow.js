@@ -233,18 +233,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             icon: "/pimcore/static/img/icon/magnifier.png",
             handler: function () {
                 var formValue = this.searchfield.getValue();
-
-                var filter = [{
-                    "field": "description",
-                    "value" :formValue},
-                    {
-                        "field": "name",
-                        "value" :formValue}
-                ];
-
-                this.encodedFilter = Ext.util.JSON.encode(filter);
-                this.store.setBaseParam("filter", this.encodedFilter);
-
+                this.store.setBaseParam("searchfilter", formValue);
 
                 var lastOptions = this.store.lastOptions;
                 Ext.apply(lastOptions.params, {
