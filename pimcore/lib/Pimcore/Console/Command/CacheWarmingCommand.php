@@ -112,7 +112,6 @@ class CacheWarmingCommand extends AbstractCommand
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         parent::initialize($input, $output);
-        $this->initializePimcoreLogging();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

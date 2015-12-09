@@ -16,7 +16,7 @@ use Monolog\Logger;
 use Monolog\Handler\MailHandler;
 use Pimcore\Tool;
 
-class Mail extends MailHandler{
+class Mail extends MailHandler {
 
     /**
      * @var null
