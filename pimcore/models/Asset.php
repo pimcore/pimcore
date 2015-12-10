@@ -20,7 +20,6 @@ use Pimcore\File;
 use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\Element;
-use Pimcore\Cache as CacheManager;
 
 class Asset extends Element\AbstractElement {
 
@@ -253,7 +252,7 @@ class Asset extends Element\AbstractElement {
         }
         catch (\Exception $e) {
             try {
-                if (!$asset = CacheManager::load($cacheKey)) {
+                if (!$asset = \Pimcore\Cache::load($cacheKey)) {
                     $asset = new Asset();
                     $asset->getDao()->getById($id);
 
@@ -265,7 +264,7 @@ class Asset extends Element\AbstractElement {
                         \Zend_Registry::set($cacheKey, $asset);
                         $asset->getDao()->getById($id);
 
-                        CacheManager::save($asset, $cacheKey);
+                        \Pimcore\Cache::save($asset, $cacheKey);
                     }
                 }
                 else {
@@ -951,7 +950,7 @@ class Asset extends Element\AbstractElement {
             $tags = array("asset_" . $this->getId(), "asset_properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
-            CacheManager::clearTags($tags);
+            \Pimcore\Cache::clearTags($tags);
         }
         catch (\Exception $e) {
             \Logger::crit($e);
@@ -1213,12 +1212,12 @@ class Asset extends Element\AbstractElement {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "asset_properties_" . $this->getId();
-            $properties = CacheManager::load($cacheKey);
+            $properties = \Pimcore\Cache::load($cacheKey);
             if (!is_array($properties)) {
                 $properties = $this->getDao()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("asset_properties" => "asset_properties", $elementCacheTag => $elementCacheTag);
-                CacheManager::save($properties, $cacheKey, $cacheTags);
+                \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
             }
 
             $this->setProperties($properties);

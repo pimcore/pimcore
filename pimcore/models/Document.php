@@ -17,7 +17,6 @@ namespace Pimcore\Model;
 
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
-use Pimcore\Cache;
 
 class Document extends Element\AbstractElement {
 
@@ -248,7 +247,7 @@ class Document extends Element\AbstractElement {
         }
         catch (\Exception $e) {
             try {
-                if (!$document = Cache::load($cacheKey)) {
+                if (!$document = \Pimcore\Cache::load($cacheKey)) {
                     $document = new Document();
                     $document->getDao()->getById($id);
 
@@ -256,9 +255,9 @@ class Document extends Element\AbstractElement {
 
                     // this is the fallback for custom document types using prefixes
                     // so we need to check if the class exists first
-                    if(!\Pimcore\Tool::classExists($mappingClass)) {
+                    if(!Tool::classExists($mappingClass)) {
                         $oldStyleClass = "Document_" . ucfirst($document->getType());
-                        if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                        if(Tool::classExists($oldStyleClass)) {
                             $mappingClass = $oldStyleClass;
                         }
                     }
@@ -269,7 +268,7 @@ class Document extends Element\AbstractElement {
                         \Zend_Registry::set($cacheKey, $document);
                         $document->getDao()->getById($id);
 
-                        Cache::save($document, $cacheKey);
+                        \Pimcore\Cache::save($document, $cacheKey);
                     }
                 }
                 else {
@@ -591,7 +590,7 @@ class Document extends Element\AbstractElement {
             $tags = array("document_" . $this->getId(), "document_properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
-            Cache::clearTags($tags);
+            \Pimcore\Cache::clearTags($tags);
         }
         catch (\Exception $e) {
             \Logger::crit($e);
@@ -1059,12 +1058,12 @@ class Document extends Element\AbstractElement {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
-            $properties = Cache::load($cacheKey);
+            $properties = \Pimcore\Cache::load($cacheKey);
             if (!is_array($properties)) {
                 $properties = $this->getDao()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("document_properties" => "document_properties", $elementCacheTag => $elementCacheTag);
-                Cache::save($properties, $cacheKey, $cacheTags);
+                \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
             }
 
             $this->setProperties($properties);
