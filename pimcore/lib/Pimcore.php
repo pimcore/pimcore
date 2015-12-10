@@ -11,7 +11,7 @@
  */
 
 use Pimcore\Config;
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Controller;
 use Pimcore\Tool;
 use Pimcore\File;

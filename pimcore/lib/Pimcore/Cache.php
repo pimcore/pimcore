@@ -10,7 +10,7 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-namespace Pimcore\Model;
+namespace Pimcore;
 
 class Cache {
 

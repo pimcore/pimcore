@@ -12,7 +12,7 @@
 
 namespace Pimcore\Cache\Tool;
 
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Model\Listing\AbstractListing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;

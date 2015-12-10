@@ -14,6 +14,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Cache;
+
 class Site extends AbstractModel {
 
     /**

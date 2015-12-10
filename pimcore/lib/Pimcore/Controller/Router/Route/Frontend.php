@@ -14,7 +14,7 @@ namespace Pimcore\Controller\Router\Route;
 
 use Pimcore\Tool;
 use Pimcore\Config; 
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Redirect;

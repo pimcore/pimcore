@@ -15,7 +15,7 @@
 namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Tool;
 
 class AbstractObject extends Model\Element\AbstractElement {

@@ -209,6 +209,6 @@ class WebsiteSetting extends AbstractModel {
      * @return void
      */
     public function clearDependentCache() {
-        Cache::clearTag("website_config");
+        \Pimcore\Cache::clearTag("website_config");
     }
 }

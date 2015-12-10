@@ -76,7 +76,7 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin {
         if($this->getParam("type") == "files") {
             Update::installData($this->getParam("revision"));
         } else if ($this->getParam("type") == "clearcache") {
-            \Pimcore\Model\Cache::clearAll();
+            \Pimcore\Cache::clearAll();
         } else if ($this->getParam("type") == "preupdate") {
             $status = Update::executeScript($this->getParam("revision"), "preupdate");
         } else if ($this->getParam("type") == "postupdate") {

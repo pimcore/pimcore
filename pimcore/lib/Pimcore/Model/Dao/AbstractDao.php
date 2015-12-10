@@ -12,7 +12,7 @@
 
 namespace Pimcore\Model\Dao;
 
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 
 abstract class AbstractDao implements DaoInterface {
 

@@ -20,6 +20,7 @@ use Pimcore\File;
 use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use Pimcore\Cache;
 
 class Asset extends Element\AbstractElement {
 

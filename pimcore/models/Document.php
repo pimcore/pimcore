@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
+use Pimcore\Cache;
 
 class Document extends Element\AbstractElement {
 

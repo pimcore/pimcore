@@ -385,7 +385,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
             $list = new $listClass();
             $list->cleanup();
 
-            \Pimcore\Model\Cache::clearTags(array("translator","translate"));
+            \Pimcore\Cache::clearTags(array("translator","translate"));
 
             $this->_helper->json(array("success" => true));
         }

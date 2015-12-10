@@ -12,7 +12,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Model\Cache; 
+use Pimcore\Cache;
 
 class Translate extends \Zend_Translate_Adapter {
 

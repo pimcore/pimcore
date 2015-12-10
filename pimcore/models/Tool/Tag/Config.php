@@ -14,7 +14,7 @@
 
 namespace Pimcore\Model\Tool\Tag;
 
-use Pimcore\Model\Cache; 
+use Pimcore\Cache;
 
 class Config {
 

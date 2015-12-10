@@ -299,7 +299,7 @@ class Update {
         @ini_set("max_execution_time", $maxExecutionTime);
         set_time_limit($maxExecutionTime);
 
-        Model\Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
+        Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
 
         if(is_file($script)) {
             ob_start();

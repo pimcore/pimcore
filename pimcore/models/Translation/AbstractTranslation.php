@@ -136,7 +136,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @return void
      */
     public static function clearDependentCache () {
-        \Pimcore\Model\Cache::clearTags(array("translator","translate"));
+        \Pimcore\Cache::clearTags(array("translator","translate"));
     }
 
     /**

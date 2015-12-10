@@ -516,7 +516,7 @@ abstract class Frontend extends Action {
                     // check if we have the error page already in the cache
                     // the cache is written in Pimcore_Controller_Plugin_HttpErrorLog::dispatchLoopShutdown()
                     $cacheKey = "error_page_response_" . \Pimcore\Tool\Frontend::getSiteKey();
-                    if($responseBody = \Pimcore\Model\Cache::load($cacheKey)) {
+                    if($responseBody = \Pimcore\Cache::load($cacheKey)) {
                         $this->getResponse()->setBody($responseBody);
                         $this->getResponse()->sendResponse();
 

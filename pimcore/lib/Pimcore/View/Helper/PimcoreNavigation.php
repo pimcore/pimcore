@@ -14,7 +14,7 @@
 namespace Pimcore\View\Helper;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Cache as CacheManager;
+use Pimcore\Cache as CacheManager;
 use Pimcore\Model\Site;
 use Pimcore\Navigation\Page\Uri;
 

@@ -10,7 +10,7 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-use Pimcore\Model\Cache; 
+use Pimcore\Cache;
 use Pimcore\Tool;
 use Pimcore\Config;
 use Pimcore\Model\Metadata;

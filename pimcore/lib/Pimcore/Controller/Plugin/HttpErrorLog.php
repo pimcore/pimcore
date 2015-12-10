@@ -27,7 +27,7 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract {
             $responseData = $this->getResponse()->getBody();
             if(strlen($responseData) > 20) {
                 $cacheKey = "error_page_response_" . \Pimcore\Tool\Frontend::getSiteKey();
-                \Pimcore\Model\Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
+                \Pimcore\Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
             }
         }
     }
