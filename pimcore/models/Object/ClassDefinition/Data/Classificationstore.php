@@ -841,9 +841,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $classificationStore = $object->$getter();
         $mapping = $classificationStore->getGroupCollectionMappings();
 
-        foreach ($mapping as $groupId => $collectionId) {
-            if (!isset($mergedMapping[$groupId]) && $collectionId) {
-                $mergedMapping[$groupId] = $collectionId;
+        if (is_array($mapping)) {
+            foreach ($mapping as $groupId => $collectionId) {
+                if (!isset($mergedMapping[$groupId]) && $collectionId) {
+                    $mergedMapping[$groupId] = $collectionId;
+                }
             }
         }
 
@@ -873,9 +875,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $classificationStore = $object->$getter();
         $activeGroupIds = $classificationStore->getActiveGroups();
 
-        foreach ($activeGroupIds as $groupId => $enabled) {
-            if ($enabled) {
-                $activeGroups[$groupId] = $enabled;
+        if ($activeGroupIds) {
+            foreach ($activeGroupIds as $groupId => $enabled) {
+                if ($enabled) {
+                    $activeGroups[$groupId] = $enabled;
+                }
             }
         }
 
