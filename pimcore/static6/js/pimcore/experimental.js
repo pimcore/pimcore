@@ -20,6 +20,31 @@ Ext.override(Ext.dd.DragDropMgr, {
     }
 );
 
+/**
+ * Undesired behaviour: submenu is hidden on clicking owner menu item
+ * fix see https://www.sencha.com/forum/showthread.php?305492-Undesired-behaviour-submenu-is-hidden-on-clicking-owner-menu-item
+ * @param e
+ */
+Ext.menu.Manager.checkActiveMenus = function(e) {
+    var allMenus = this.visible,
+        len = allMenus.length,
+        i, menu,
+        mousedownCmp = Ext.Component.fromElement(e.target);
+    if (len) {
+        // Clone here, we may modify this collection while the loop is active
+        allMenus = allMenus.slice();
+        for (i = 0; i < len; ++i) {
+            menu = allMenus[i];
+            // Hide the menu if:
+            //      The menu does not own the clicked upon element AND
+            //      The menu is not the child menu of a clicked upon MenuItem
+            if (!(menu.owns(e) || (mousedownCmp && mousedownCmp.isMenuItem && mousedownCmp.menu === menu))) {
+                menu.hide();
+            }
+        }
+    }
+};
+
 
 Ext.define('overrides.Component', {
     override: 'Ext.Component'
