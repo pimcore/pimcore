@@ -6590,5 +6590,9 @@
     {
         "term": "language_order",
         "definition": "Language Order"
+    },
+    {
+        "term": "click_to_edit",
+        "definition": "Click to edit"
     }
 ]

@@ -205,7 +205,7 @@ pimcore.element.replace_assignments = Class.create({
                     columns: [
                         //selectionColumn,
                         {header: "ID", sortable: true, dataIndex: 'id', width: 60},
-                        {header: t("type"), sortable: true, dataIndex: 'type', width: 60},
+                        {header: t("type"), sortable: true, dataIndex: 'type', width: 100},
                         {header: t("path"), sortable: true, dataIndex: 'path', id:"path", flex: 1}
                     ],
                     columnLines: true,

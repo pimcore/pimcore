@@ -76,7 +76,7 @@ pimcore.settings.translation.word = Class.create({
                     Ext.create('Ext.grid.column.Check', {
                         header: t("children"),
                         dataIndex: "children",
-                        width: 50
+                        width: 100
                     }),
                     {
                         xtype: 'actioncolumn',
