@@ -84,7 +84,7 @@ pimcore.extensionmanager.admin = Class.create({
         this.store.load();
 
         var typesColumns = [
-            {header: t("type"), width: 30, sortable: false, dataIndex: 'type', renderer:
+            {header: t("type"), width: 50, sortable: false, dataIndex: 'type', renderer:
                                         function (value, metaData, record, rowIndex, colIndex, store) {
 
                 var icon = "";
@@ -103,7 +103,7 @@ pimcore.extensionmanager.admin = Class.create({
             {
                 header: t('enable') + " / " + t("disable"),
                 xtype: 'actioncolumn',
-                width: 70,
+                width: 100,
                 items: [{
                     tooltip: t('enable') + " / " + t("disable"),
                     getClass: function (v, meta, rec) {
@@ -147,7 +147,7 @@ pimcore.extensionmanager.admin = Class.create({
             {
                 header: t('install') + "/" + t("uninstall"),
                 xtype: 'actioncolumn',
-                width: 70,
+                width: 100,
                 items: [{
                     tooltip: t('install') + "/" + t("uninstall"),
                     getClass: function (v, meta, rec) {
