@@ -223,4 +223,19 @@ class Admin {
 
         return false;
     }
+
+    public static function reorderWebsiteLanguages($user, $languages) {
+        if (!is_array($languages)) {
+            $languages = explode(",", $languages);
+        }
+
+        $contentLanguages = $user->getContentLanguages();
+        if ($contentLanguages) {
+            $contentLanguages = array_intersect($contentLanguages, $languages);
+            $newLanguages = array_diff($languages, $contentLanguages);
+            $languages = array_merge($contentLanguages, $newLanguages);
+
+        }
+        return implode(",", $languages);
+    }
 }

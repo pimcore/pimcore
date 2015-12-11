@@ -55,6 +55,7 @@ pimcore.settings.user.usertab = Class.create({
         this.workspaces = new pimcore.settings.user.workspaces(this);
         this.objectrelations = new pimcore.settings.user.user.objectrelations(this);
 
+
         this.panel.add(this.settings.getPanel());
         this.panel.add(this.workspaces.getPanel());
         this.panel.add(this.objectrelations.getPanel());
@@ -70,7 +71,7 @@ pimcore.settings.user.usertab = Class.create({
     },
 
     activate: function () {
-        this.parentPanel.getEditPanel().activate(this.panel);
+        this.parentPanel.getEditPanel().setActiveTab(this.panel);
     },
 
     save: function () {
@@ -78,9 +79,11 @@ pimcore.settings.user.usertab = Class.create({
         var data = {
             id: this.id
         };
+        var contentLanguages;
 
         try {
             var values = this.settings.getValues();
+            contentLanguages = values.contentLanguages;
             data.data = Ext.encode(values);
         } catch (e) {
             console.log(e);
@@ -101,6 +104,9 @@ pimcore.settings.user.usertab = Class.create({
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
                         pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        if (this.id == pimcore.currentuser.id && contentLanguages) {
+                                pimcore.settings.websiteLanguages = contentLanguages;
+                        }
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
                     }

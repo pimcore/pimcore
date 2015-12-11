@@ -84,6 +84,11 @@ class User extends User\UserRole {
      */
     public $apiKey;
 
+    /**
+     * @var string|null
+     */
+    public $contentLanguages;
+
 
     /**
      * @return string
@@ -451,4 +456,28 @@ class User extends User\UserRole {
 
         return PIMCORE_PATH . "/static/img/avatar.png";
     }
+
+    /**
+     * @return null|string
+     */
+    public function getContentLanguages()
+    {
+        if (strlen($this->contentLanguages)) {
+            return explode(',', $this->contentLanguages);
+        }
+        return array();
+    }
+
+    /**
+     * @param null|string $contentLanguages
+     */
+    public function setContentLanguages($contentLanguages)
+    {
+        if ($contentLanguages && is_array($contentLanguages)) {
+            $contentLanguages = implode(',', $contentLanguages);
+        }
+        $this->contentLanguages = $contentLanguages;
+    }
+
+
 }

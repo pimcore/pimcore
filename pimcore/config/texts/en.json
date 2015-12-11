@@ -6582,5 +6582,13 @@
     {
       "term": "reset",
       "definition": "Reset"
+    },
+    {
+        "term": "editor_settings",
+        "definition": "Editor Settings"
+    },
+    {
+        "term": "language_order",
+        "definition": "Language Order"
     }
 ]

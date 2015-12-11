@@ -365,9 +365,11 @@ pimcore.settings.user.user.settings = Class.create({
             hidden:this.currentUser.admin
         });
 
+        this.editorSettings = new pimcore.settings.user.editorSettings(this, this.data.user.contentLanguages);
+
         this.panel = new Ext.form.FormPanel({
             title:t("settings"),
-            items:[this.generalSet, this.adminSet, this.permissionsSet , this.typesSet],
+            items:[this.generalSet, this.adminSet, this.permissionsSet , this.typesSet, this.editorSettings.getPanel()],
             bodyStyle:"padding:10px;",
             autoScroll:true
         });
@@ -392,6 +394,8 @@ pimcore.settings.user.user.settings = Class.create({
                 Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
             }
         }
+
+        values.contentLanguages = this.editorSettings.getContentLanguages();
 
         return values;
     }
