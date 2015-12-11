@@ -21,25 +21,17 @@ class AdminStyle {
     protected $elementCssClass;
     protected $elementIcon;
     protected $elementIconClass;
-    protected $elementQtipConfig;
+
 
     public function __construct($element) {
         if($element->getType() == "folder") {
             $this->elementIconClass = "pimcore_icon_folder";
-            $this->elementQtipConfig = array(
-                "title" => "ID: " . $element->getId()
-            );
         } else {
             if($element->getClass()->getIcon()) {
                 $this->elementIcon = $element->getClass()->getIcon();
             } else {
                 $this->elementIconClass = "pimcore_icon_object";
             }
-
-            $this->elementQtipConfig = array(
-                "title" => "ID: " . $element->getId(),
-                "text" => 'Type: ' . $element->getClass()->getName()
-            );
         }
     }
 
@@ -68,14 +60,6 @@ class AdminStyle {
 
     public function getElementIconClass() {
         return $this->elementIconClass;
-    }
-
-    public function getElementQtipConfig() {
-        return $this->elementQtipConfig;
-    }
-
-    public function setElementQtipConfig($elementQtipConfig) {
-        $this->elementQtipConfig = $elementQtipConfig;
     }
 
 

@@ -175,12 +175,17 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
         $tmpObject["cls"] = "";
 
-        $tmpObject["qtipCfg"] = $child->getElementAdminStyle()->getElementQtipConfig();
-
-        if ($child->getType() != "folder") {
+        if ($child->getType() == "folder") {
+            $tmpObject["qtipCfg"] = array(
+                "title" => "ID: " . $child->getId()
+            );
+        } else {
             $tmpObject["published"] = $child->isPublished();
             $tmpObject["className"] = $child->getClass()->getName();
-
+            $tmpObject["qtipCfg"] = array(
+                "title" => "ID: " . $child->getId(),
+                "text" => 'Type: ' . $child->getClass()->getName()
+            );
 
             if (!$child->isPublished()) {
                 $tmpObject["cls"] .= "pimcore_unpublished ";
@@ -344,7 +349,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $objectData["childdata"]["data"]["classes"] = $object->getDao()->getClasses();
 
             $currentLayoutId = $this->getParam("layoutId", null);
-            
+
             $validLayouts = Object\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
@@ -1072,15 +1077,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
 
 
-        $treeData = array();
-        $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
-
         if (($this->getParam("task") == "publish" && $object->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $object->isAllowed("unpublish"))) {
 
             try {
                 $object->save();
-
-                $this->_helper->json(array("success" => true, "treeData" => $treeData));
+                $this->_helper->json(array("success" => true));
             } catch (\Exception $e) {
                 \Logger::log($e);
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
@@ -1100,7 +1101,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             if ($object->isAllowed("save")) {
                 try {
                     $object->saveVersion();
-
                     $this->_helper->json(array("success" => true));
                 } catch (\Exception $e) {
                     \Logger::log($e);
