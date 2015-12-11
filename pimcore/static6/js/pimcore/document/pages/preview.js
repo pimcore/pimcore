@@ -107,9 +107,9 @@ pimcore.document.pages.preview = Class.create({
                             title: t("qr_codes"),
                             modal: true,
                             autoScroll: true,
-                            bodyStyle: "padding: 10px;",
+                            bodyStyle: "padding: 10px; text-align:center;",
                             items: [{
-                                    html: '<img src="' + codeUrl + '" style="padding:10px; width:228px;" />',
+                                    html: '<img src="' + codeUrl + '" style="padding:10px; height:250px;" />',
                                     border: true,
                                     height: 250
                                 }, {
