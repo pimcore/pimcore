@@ -292,7 +292,7 @@ abstract class AbstractListing extends AbstractModel {
         if($groupBy) {
             $this->groupBy = $groupBy;
 
-            if ($qoute) {
+            if ($qoute && strpos($groupBy, "`") !== 0) {
                 $this->groupBy = "`" . $this->groupBy . "`";
             }
         }
