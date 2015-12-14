@@ -34,10 +34,10 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
 
     /**
      * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries
-     * @param OnlineShop_Framework_VoucherService_ITokenManager $tokenManager
+     * @param \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager $tokenManager
      * @param array $params
      */
-    public function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, OnlineShop_Framework_VoucherService_ITokenManager $tokenManager, $params = [])
+    public function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
     {
         $this->view->series = $onlineShopVoucherSeries;
         $viewParams = array_merge($params, $this->getAllParams());
@@ -98,7 +98,7 @@ class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
     /**
      * Removes token reservations due to given duration.
      *
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public function cleanupReservationsAction()
     {

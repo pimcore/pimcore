@@ -3,7 +3,7 @@
     <onlineshop>
 
         <!-- general settings for onlineshop environment -->
-        <environment class="OnlineShop_Framework_Impl_Environment">
+        <environment class="\OnlineShop\Framework\Environment">
             <config>
                 <!--
                     default locale defines locale for currency for the whole system.
@@ -15,23 +15,23 @@
         </environment>
 
         <!-- general settings for cart manager -->
-        <cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
+        <cartmanager class="\OnlineShop\Framework\CartManager\MultiCartManager">
             <config>
                 <!-- default cart implementation that is used -->
-                <cart class="OnlineShop_Framework_Impl_Cart">
+                <cart class="\OnlineShop\Framework\CartManager\Cart">
                     <!--
                         cart implementation that is used when system is in guest-checkout mode
-                        -> OnlineShop_Framework_IEnvironment::getUseGuestCart()
+                        -> \OnlineShop\Framework\IEnvironment::getUseGuestCart()
                     -->
-                    <guest class="OnlineShop_Framework_Impl_SessionCart"/>
+                    <guest class="\OnlineShop\Framework\CartManager\SessionCart"/>
                 </cart>
 
                 <!-- default price calculator for cart -->
-                <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
+                <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
                     <config>
                         <!-- price modificators for cart, e.g. for shipping-cost, special discounts, ... -->
                         <modificators>
-                            <shipping class="OnlineShop_Framework_Impl_CartPriceModificator_Shipping">
+                            <shipping class="\OnlineShop\Framework\CartManager\CartPriceModificator\Shipping">
                                 <config charge="5.90"/>
                             </shipping>
                         </modificators>
@@ -41,11 +41,11 @@
                 <!--
                     special configuration for specific checkout tenants
                     - for not specified elements the default configuration is used as fallback
-                    - active tenant is set at OnlineShop_Framework_IEnvironment::setCurrentCheckoutTenant()
+                    - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant()
                 -->
                 <tenants>
                     <noShipping>
-                        <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
+                        <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
                             <config>
                                 <modificators>
                                 </modificators>
@@ -61,11 +61,11 @@
 
         <pricesystems>
             <!-- Define one or more price systems. The products getPriceSystemName method need to return a name here defined -->
-            <pricesystem name="default" class="OnlineShop_Framework_Impl_AttributePriceSystem">
+            <pricesystem name="default" class="\OnlineShop\Framework\PriceSystem\AttributePriceSystem">
                 <config attributename="price" />
             </pricesystem>
 
-            <pricesystem name="defaultOfferToolPriceSystem" class="OnlineShop_Framework_Impl_AttributePriceSystem">
+            <pricesystem name="defaultOfferToolPriceSystem" class="\OnlineShop\Framework\PriceSystem\AttributePriceSystem">
                 <config attributename="price" />
             </pricesystem>
 
@@ -73,15 +73,15 @@
 
         <availablitysystems>
             <!-- Define one or more availability systems. The products getAvailabilitySystemName method need to return a name here defined -->
-            <availablitysystem name="default" class="OnlineShop_Framework_Impl_AttributeAvailabilitySystem"/>
+            <availablitysystem name="default" class="\OnlineShop\Framework\AvailabilitySystem\AttributeAvailabilitySystem"/>
         </availablitysystems>
 
         <!-- general settings for checkout manager -->
-        <checkoutmanager class="OnlineShop_Framework_Impl_CheckoutManager">
+        <checkoutmanager class="\OnlineShop\Framework\CheckoutManager\CheckoutManager">
             <config>
                 <!-- define different checkout steps which need to be committed before commit of order is possible -->
                 <steps>
-                    <deliveryaddress class="OnlineShop_Framework_Impl_Checkout_DeliveryAddress"/>
+                    <deliveryaddress class="\OnlineShop\Framework\CheckoutManager\DeliveryAddress"/>
                     <confirm class="Website_OnlineShop_Checkout_Confirm"/>
                 </steps>
 
@@ -112,9 +112,9 @@
             </config>
         </checkoutmanager>
 
-        <paymentmanager class="OnlineShop_Framework_Impl_PaymentManager" statusClass="OnlineShop_Framework_Impl_Checkout_Payment_Status">
+        <paymentmanager class="\OnlineShop\Framework\PaymentManager\PaymentManager" statusClass="\OnlineShop\Framework\PaymentManager\Status">
             <config>
-                <provider name="datatrans" class="OnlineShop_Framework_Impl_Payment_Datatrans" mode="sandbox">
+                <provider name="datatrans" class="\OnlineShop\Framework\PaymentManager\Payment\Datatrans" mode="sandbox">
                     <config>
                         <sandbox>
                             <merchantId>1000011011</merchantId>
@@ -127,7 +127,7 @@
                     </config>
                 </provider>
 
-                <provider name="qpay" class="OnlineShop_Framework_Impl_Payment_QPay" mode="sandbox">
+                <provider name="qpay" class="\OnlineShop\Framework\PaymentManager\Payment\QPay" mode="sandbox">
                     <config>
                         <!-- https://integration.wirecard.at/doku.php/wcp:integration -->
                         <!-- https://integration.wirecard.at/doku.php/demo:demo_data -->
@@ -149,7 +149,7 @@
                     </config>
                 </provider>
 
-                <provider name="paypal" class="OnlineShop_Framework_Impl_Payment_PayPal" mode="sandbox">
+                <provider name="paypal" class="\OnlineShop\Framework\PaymentManager\Payment\PayPal" mode="sandbox">
                     <config>
                         <sandbox>
                             <api_username>paypal-facilitator_api1.i-2xdream.de</api_username>
@@ -187,67 +187,67 @@
 
                 <column name="color" type="varchar(255)" filtergroup="multiselect" />
                 <column name="gender" type="varchar(100)" filtergroup="multiselect"/>
-                <column name="features" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" filtergroup="relation" />
-                <column name="technologies" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" filtergroup="relation" />
+                <column name="features" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects" filtergroup="relation" />
+                <column name="technologies" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects" filtergroup="relation" />
 
 
                 <column name="tentTentPegs" type="varchar(50)"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="tentPegs"/>
                 </column>
                 <column name="tentWaterproofRain" type="varchar(50)"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="waterproofRain"/>
                 </column>
                 <column name="tentWaterproofGround" type="varchar(50)"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="waterproofGround"/>
                 </column>
 
 
-                <column name="rucksacksVolume" type="double" interpreter="OnlineShop_Framework_IndexService_Interpreter_Numeric"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                <column name="rucksacksVolume" type="double" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Numeric"
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="rucksackSpecs" fieldname="volume"/>
                 </column>
-                <column name="rucksacksWeight" type="double" interpreter="OnlineShop_Framework_IndexService_Interpreter_Numeric"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                <column name="rucksacksWeight" type="double" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Numeric"
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="rucksackSpecs" fieldname="weight"/>
                 </column>
-                <column name="rucksacksLoad" type="double" interpreter="OnlineShop_Framework_IndexService_Interpreter_Numeric"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                <column name="rucksacksLoad" type="double" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Numeric"
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="rucksackSpecs" fieldname="load"/>
                 </column>
 
 
                 <column name="matsWidth" type="double"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="matsSpecs" fieldname="width"/>
                 </column>
                 <column name="matsLength" type="double"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="matsSpecs" fieldname="length"/>
                 </column>
                 <column name="matsHeight" type="double"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter" filtergroup="string">
+                        getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
                     <config brickfield="specificAttributes" bricktype="matsSpecs" fieldname="height"/>
                 </column>
 
 
 
-                <column name="simularity_color" fieldname="color" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />
-                <column name="simularity_gender" fieldname="gender" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />
-                <column name="simularity_category" fieldname="categories" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-                <column name="simularity_feature" fieldname="features" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-                <column name="simularity_technolgy" fieldname="technologies" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
-                <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
+                <column name="simularity_color" fieldname="color" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Soundex" />
+                <column name="simularity_gender" fieldname="gender" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\Soundex" />
+                <column name="simularity_category" fieldname="categories" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
+                <column name="simularity_feature" fieldname="features" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
+                <column name="simularity_technolgy" fieldname="technologies" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
+                <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="\OnlineShop\Framework\IndexService\Interpreter\ObjectIdSum" />
                 -->
             </columns>
 
             <!-- configuration of different tenants -->
             <tenants>
-                <!--  <elasticsearch class="OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch" file="/website/var/plugins/OnlineShop/assortment-tenant-elasticsearch.xml"> -->
+                <!--  <elasticsearch class="\OnlineShop\Framework\IndexService\Config\ElasticSearch" file="/website/var/plugins/OnlineShop/assortment-tenant-elasticsearch.xml"> -->
 
-                <!-- <sampletenant class="OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig">
+                <!-- <sampletenant class="\OnlineShop\Framework\IndexService\Config\DefaultMysqlSubTenantConfig">
                       <generalSearchColumns>
                           <column name="name"/>
                           <column name="shortDescription"/>
@@ -256,11 +256,11 @@
                           <column name="name" type="varchar(255)" />
                           <column name="shortDescription" type="varchar(255)" />
                           <column name="supplierRemoteId" type="varchar(255)"/>
-                          <column name="mainImage" type="int" interpreter="OnlineShop_Framework_IndexService_Interpreter_AssetId"/>
+                          <column name="mainImage" type="int" interpreter="\OnlineShop\Framework\IndexService\Interpreter\AssetId"/>
 
                           <column name="hardDiskDriveCapacity" type="DOUBLE"
-                                  getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
-                                  interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                                  getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter"
+                                  interpreter="\OnlineShop\Framework\IndexService\Interpreter\DimensionUnitField">
                               <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskDriveCapacity"/>
                           </column>
                       </columns>
@@ -275,61 +275,63 @@
             helper = tool for pimcore backend controller to get possible group by values for a certain field
                      (used by object data type IndexFieldSelection, e.g. in filter definitions)
         -->
-        <filtertypes helper="OnlineShop_Framework_FilterService_FilterGroupHelper">
-            <FilterNumberRange class="OnlineShop_Framework_FilterService_NumberRange" script="/shop/filters/range.php"/>
-            <FilterNumberRangeSelection class="OnlineShop_Framework_FilterService_NumberRangeSelection" script="/shop/filters/numberrange.php"/>
-            <FilterSelect class="OnlineShop_Framework_FilterService_Select" script="/shop/filters/select.php"/>
-            <FilterSelectFromMultiSelect class="OnlineShop_Framework_FilterService_SelectFromMultiSelect" script="/shop/filters/select.php"/>
-            <FilterMultiSelect class="OnlineShop_Framework_FilterService_MultiSelect" script="/shop/filters/multiselect.php"/>
-            <FilterMultiSelectFromMultiSelect class="OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect" script="/shop/filters/multiselect.php"/>
-            <FilterMultiRelation class="OnlineShop_Framework_FilterService_MultiSelectRelation" script="/shop/filters/multiselect-relation.php"/>
-            <FilterCategory class="OnlineShop_Framework_FilterService_SelectCategory" script="/shop/filters/select_category.php"/>
-            <FilterRelation class="OnlineShop_Framework_FilterService_SelectRelation" script="/shop/filters/object_relation.php"/>
+        <filtertypes helper="\OnlineShop\Framework\FilterService\FilterGroupHelper">
+            <FilterNumberRange class="\OnlineShop\Framework\FilterService\FilterType\NumberRange" script="/shop/filters/range.php"/>
+            <FilterNumberRangeSelection class="\OnlineShop\Framework\FilterService\FilterType\NumberRangeSelection" script="/shop/filters/numberrange.php"/>
+            <FilterSelect class="\OnlineShop\Framework\FilterService\FilterType\Select" script="/shop/filters/select.php"/>
+            <FilterSelectFromMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\SelectFromMultiSelect" script="/shop/filters/select.php"/>
+            <FilterMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\MultiSelect" script="/shop/filters/multiselect.php"/>
+            <FilterMultiSelectFromMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\MultiSelectFromMultiSelect" script="/shop/filters/multiselect.php"/>
+            <FilterMultiRelation class="\OnlineShop\Framework\FilterService\FilterType\MultiSelectRelation" script="/shop/filters/multiselect-relation.php"/>
+            <FilterCategory class="\OnlineShop\Framework\FilterService\FilterType\SelectCategory" script="/shop/filters/select_category.php"/>
+            <FilterRelation class="\OnlineShop\Framework\FilterService\FilterType\SelectRelation" script="/shop/filters/object_relation.php"/>
         </filtertypes>
 
         <!-- pricing manager -->
-        <pricingmanager class="OnlineShop_Framework_Impl_PricingManager">
+        <pricingmanager class="\OnlineShop\Framework\PricingManager\PricingManager">
             <config>
                 <!--<disabled>true</disabled>-->
 
                 <!-- rule and priceinfo -->
-                <rule class="OnlineShop_Framework_Impl_Pricing_Rule" />
-                <priceInfo class="OnlineShop_Framework_Impl_Pricing_PriceInfo" />
+                <rule class="\OnlineShop\Framework\PricingManager\Rule" />
+                <priceInfo class="\OnlineShop\Framework\PricingManager\PriceInfo" />
 
                 <!-- rule conditions -->
                 <condition>
-                    <Bracket class="OnlineShop_Framework_Impl_Pricing_Condition_Bracket" />
-                    <DateRange class="OnlineShop_Framework_Impl_Pricing_Condition_DateRange" />
-                    <CartAmount class="OnlineShop_Framework_Impl_Pricing_Condition_CartAmount" />
-                    <CatalogProduct class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct" />
-                    <CatalogCategory class="OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory" />
-                    <Token class="OnlineShop_Framework_Impl_Pricing_Condition_Token" />
-                    <Sold class="OnlineShop_Framework_Impl_Pricing_Condition_Sold" />
-                    <Sales class="OnlineShop_Framework_Impl_Pricing_Condition_Sales" />
-                    <ClientIp class="OnlineShop_Framework_Impl_Pricing_Condition_ClientIp" />
+                    <Bracket class="\OnlineShop\Framework\PricingManager\Condition\Bracket" />
+                    <DateRange class="\OnlineShop\Framework\PricingManager\Condition\DateRange" />
+                    <CartAmount class="\OnlineShop\Framework\PricingManager\Condition\CartAmount" />
+                    <CatalogProduct class="\OnlineShop\Framework\PricingManager\Condition\CatalogProduct" />
+                    <CatalogCategory class="\OnlineShop\Framework\PricingManager\Condition\CatalogCategory" />
+                    <Token class="\OnlineShop\Framework\PricingManager\Condition\Token" />
+                    <VoucherToken class="\OnlineShop\Framework\PricingManager\Condition\VoucherToken" />
+                    <Sold class="\OnlineShop\Framework\PricingManager\Condition\Sold" />
+                    <Tenant class="\OnlineShop\Framework\PricingManager\Condition\Tenant" />
+                    <Sales class="\OnlineShop\Framework\PricingManager\Condition\Sales" />
+                    <ClientIp class="\OnlineShop\Framework\PricingManager\Condition\ClientIp" />
                 </condition>
 
                 <!-- rule actions -->
                 <action>
-                    <ProductDiscount class="OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount" />
-                    <CartDiscount class="OnlineShop_Framework_Impl_Pricing_Action_CartDiscount" />
-                    <Gift class="OnlineShop_Framework_Impl_Pricing_Action_Gift" />
-                    <FreeShipping class="OnlineShop_Framework_Impl_Pricing_Action_FreeShipping" />
+                    <ProductDiscount class="\OnlineShop\Framework\PricingManager\Action\ProductDiscount" />
+                    <CartDiscount class="\OnlineShop\Framework\PricingManager\Action\CartDiscount" />
+                    <Gift class="\OnlineShop\Framework\PricingManager\Action\Gift" />
+                    <FreeShipping class="\OnlineShop\Framework\PricingManager\Action\FreeShipping" />
                 </action>
 
             </config>
         </pricingmanager>
 
         <!-- Offertool -->
-        <offertool class="OnlineShop_OfferTool_Impl_DefaultService">
+        <offertool class="\OnlineShop\Framework\OfferTool\DefaultService">
             <orderstorage offerClass="Object_OfferToolOffer" offerItemClass="Object_OfferToolOfferItem" parentFolderPath="/offertool/offers/%Y/%m"/>
         </offertool>
 
         <!-- order manager -->
-        <ordermanager class="OnlineShop\Framework\Impl\OrderManager">
+        <ordermanager class="OnlineShop\Framework\OrderManager">
             <config>
-                <orderList class="OnlineShop\Framework\Impl\OrderManager\Order\Listing" classItem="OnlineShop\Framework\Impl\OrderManager\Order\Listing\Item"/>
-                <orderAgent class="OnlineShop\Framework\Impl\OrderManager\Order\Agent" />
+                <orderList class="OnlineShop\Framework\OrderManager\Order\Listing" classItem="OnlineShop\Framework\OrderManager\Order\Listing\Item"/>
+                <orderAgent class="OnlineShop\Framework\OrderManager\Order\Agent" />
 
                 <!-- settings for order storage - pimcore class names for oder and order items -->
                 <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
@@ -349,11 +351,11 @@
 
 
         <!-- voucher service - define voucher service implementation class and map token managers -->
-        <voucherservice class="OnlineShop_Framework_VoucherService_Default">
+        <voucherservice class="\OnlineShop\Framework\VoucherService\DefaultService">
             <!-- assign backend implementations to voucher token type field collections -->
             <tokenmanagers>
-                <VoucherTokenTypePattern class="OnlineShop_Framework_VoucherService_TokenManager_Pattern" />
-                <VoucherTokenTypeSingle class="OnlineShop_Framework_VoucherService_TokenManager_Single" />
+                <VoucherTokenTypePattern class="\OnlineShop\Framework\VoucherService\TokenManager\Pattern" />
+                <VoucherTokenTypeSingle class="\OnlineShop\Framework\VoucherService\TokenManager\Single" />
             </tokenmanagers>
 
             <config>

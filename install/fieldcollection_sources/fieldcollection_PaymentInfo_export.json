@@ -1,5 +1,5 @@
 {
-	"parentClass":"OnlineShop_Framework_AbstractPaymentInformation",
+	"parentClass":"\OnlineShop\Framework\Model\AbstractPaymentInformation",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,

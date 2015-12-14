@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService;
 
-class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractModel
+class Token extends \Pimcore\Model\AbstractModel
 {
     /**
      * @var int
@@ -45,15 +46,15 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
 
     /**
      * @param string $code
-     * @return bool|OnlineShop_Framework_VoucherService_Token
+     * @return bool|Token
      */
     public static function getByCode($code)
     {
         try {
             $config = new self();
-            $config->getResource()->getByCode($code);
+            $config->getDao()->getByCode($code);
             return $config;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
 //            Logger::debug($ex->getMessage());
             return false;
         }
@@ -74,9 +75,9 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
     public static function isUsedToken($code, $maxUsages = 1)
     {
         try {
-            $usages = self::getResource()->getTokenUsages($code);
+            $usages = self::getDao()->getTokenUsages($code);
             return $usages <= $maxUsages;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
 //            Logger::debug($ex->getMessage());
             return true;
         }
@@ -91,7 +92,7 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
     public function check($maxUsages = null, $isCheckout = false)
     {
         if (isset($maxUsages)) {
-            if ($this->getUsages() + OnlineShop_Framework_VoucherService_Reservation::getReservationCount($this->getToken()) - (int)$isCheckout < $maxUsages) {
+            if ($this->getUsages() + \OnlineShop\Framework\VoucherService\Reservation::getReservationCount($this->getToken()) - (int)$isCheckout < $maxUsages) {
                 return true;
             }
             return false;
@@ -105,7 +106,7 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
      */
     public function isReserved()
     {
-        return $this->getResource()->isReserved();
+        return $this->getDao()->isReserved();
     }
 
 
@@ -115,7 +116,7 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
      */
     public static function tokenExists($code)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
         $query = "SELECT EXISTS(SELECT id FROM " . self::TABLE_NAME . " WHERE token = ?)";
 
@@ -130,13 +131,13 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
 
     public function release($cart)
     {
-        return OnlineShop_Framework_VoucherService_Reservation::releaseToken($this, $cart);
+        return \OnlineShop\Framework\VoucherService\Reservation::releaseToken($this, $cart);
     }
 
     public function apply()
     {
-        if ($this->getResource()->apply()) {
-            OnlineShop_Framework_VoucherService_Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
+        if ($this->getDao()->apply()) {
+            \OnlineShop\Framework\VoucherService\Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
             return true;
         }
         return false;
@@ -144,7 +145,7 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Model\AbstractM
 
     public function unuse()
     {
-        if ($this->getResource()->unuse()) {
+        if ($this->getDao()->unuse()) {
             //TODO eventually remove from statistics
             return true;
         }

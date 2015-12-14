@@ -7,11 +7,11 @@ It is a tool for the developer to create a use case specific checkout process an
 The configuration takes place in the OnlineShopConfig.xml
 ```xml
 <!-- general settings for checkout manager -->
-<checkoutmanager class="OnlineShop_Framework_Impl_CheckoutManager">
+<checkoutmanager class="\OnlineShop\Framework\CheckoutManager\CheckoutManager">
     <config>
         <!-- define different checkout steps which need to be committed before commit of order is possible -->
         <steps>
-            <deliveryaddress class="OnlineShop_Framework_Impl_Checkout_DeliveryAddress"/>
+            <deliveryaddress class="\OnlineShop\Framework\CheckoutManager\DeliveryAddress"/>
             <confirm class="Website_OnlineShop_Checkout_Confirm"/>
         </steps>
 
@@ -54,7 +54,7 @@ Following elements are configured:
    * Mail configuration
 
 ## 2 - Setting up Checkout Steps
-For each checkout step (e.g. delivery address, delivery date, ...) there has to be a concrete checkout step implementation. This implementation is responsible for storage and loading of neccessary checkout data for each step. It needs to extend `OnlineShop_Framework_Impl_Checkout_AbstractStep` and implement `OnlineShop_Framework_ICheckoutStep`. 
+For each checkout step (e.g. delivery address, delivery date, ...) there has to be a concrete checkout step implementation. This implementation is responsible for storage and loading of neccessary checkout data for each step. It needs to extend `\OnlineShop\Framework\CheckoutManager\AbstractStep` and implement `\OnlineShop\Framework\CheckoutManager\ICheckoutStep`. 
 
 Following methods have to be implemented: 
 * commit($data): is called when step is finished and data needs to be saved
@@ -66,12 +66,14 @@ Following methods have to be implemented:
 ```php
 <?php
 
+namespace OnlineShop\Framework\CheckoutManager;
+
 /**
- * Class OnlineShop_Framework_Impl_Checkout_DeliveryAddress
+ * Class \OnlineShop\Framework\CheckoutManager\DeliveryAddress
  *
  * sample implementation for delivery address
  */
-class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Framework_Impl_Checkout_AbstractStep implements OnlineShop_Framework_ICheckoutStep {
+class DeliveryAddress extends AbstractStep implements ICheckoutStep {
 
     /**
      * namespace key
@@ -132,15 +134,15 @@ After each checkout step is completed, the order can be committed. If no payment
 $manager = $this->of->getCheckoutManager($cart);
 $order = $manager->commitOrder();
 ```
-While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `OnlineShop_Framework_ICommitOrderProcessor`. 
+While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `\OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor`. 
 This is the place where all functionality for committing the order (e.g. sending orders to erp systems, sending order confirmation mails, ...) is bundled. 
 
-The default implementation `OnlineShop_Framework_Impl_CommitOrderProcessor` provides basic functionality like creating an order object and sending a order confirmation mail.
- Order creation it self is delegated to the `\OnlineShop\Framework\IOrderManager`. 
+The default implementation `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` provides basic functionality like creating an order object and sending a order confirmation mail.
+ Order creation it self is delegated to the `\OnlineShop\Framework\OrderManager\IOrderManager`. 
 In simple use cases a website specific implementation needs 
 
-* to extend `\OnlineShop\Framework\Impl\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` to add additional fields to the order object and 
-* to extend `OnlineShop_Framework_Impl_CommitOrderProcessor` and overwrite the method `processOrder` where website specific functionality is integrated (sending orders to erp systems, ...).
+* to extend `\OnlineShop\Framework\OrderManager\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` to add additional fields to the order object and 
+* to extend `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` and overwrite the method `processOrder` where website specific functionality is integrated (sending orders to erp systems, ...).
 
 If additional information needs to be stored into the order, the OrderManager has to be 
  extended. For more Information 
@@ -149,21 +151,21 @@ A simple implementation of `Website_OnlineShop_Order_OrderManager` could look li
 
 ```php
 <?php
-class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\Impl\OrderManager {
+class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\OrderManager\OrderManager {
 
     /**
-     * @param OnlineShop_Framework_ICart $cart
-     * @param OnlineShop_Framework_AbstractOrder $order
-     * @return OnlineShop_Framework_AbstractOrder
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    public function applyCustomCheckoutDataToOrder(\OnlineShop_Framework_ICart $cart, OnlineShop_Framework_AbstractOrder $order)
+    public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
     {
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 
-        /* @var OnlineShop_Framework_AbstractOrder $order*/
+        /* @var \OnlineShop\Framework\Model\AbstractOrder $order*/
 
-        $checkout = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager( $cart );
+        $checkout = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager( $cart );
         $deliveryAddress = $checkout->getCheckoutStep('deliveryaddress')->getData();
         /* @var Website_OnlineShop_Order_DeliveryAddress $deliveryAddress */
 
@@ -185,7 +187,7 @@ A simple implementation of `Website_OnlineShop_Order_Processor` could look like:
 
 ```php
 <?php
-class OnlineShop_CommitOrderProcessor extends OnlineShop_Framework_Impl_CommitOrderProcessor {
+class OnlineShop_CommitOrderProcessor extends \OnlineShop\Framework\CheckoutManager\CommitOrderProcessor {
  
    protected function processOrder(Object_OnlineShopOrder $order) {
       //send order to ERP-System
@@ -258,7 +260,7 @@ A client side handling could look like as follows:
     {
         // init
         $cart = $this->getCart();
-        $checkoutManager = OnlineShop_Framework_Factory::getInstance()->getCheckoutManager( $cart );
+        $checkoutManager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager( $cart );
 
         if($this->getParam('mode') == "cancel") {
             $checkoutManager->cancelStartedOrderPayment();
@@ -277,7 +279,7 @@ A client side handling could look like as follows:
             // its possible to execute this later (e.g. when shipment is done) - which is preferred
             $payment = $checkoutManager->getPayment();
             $paymentStatus = $payment->executeDebit();
-            $orderAgent = OnlineShop_Framework_Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+            $orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
             $orderAgent->updatePayment($paymentStatus);
 
             if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
@@ -308,8 +310,8 @@ A server side handling could look as follows:
 
         $params = $this->getAllParams();
 
-        $commitOrderProcessor = OnlineShop_Framework_Factory::getInstance()->getCommitOrderProcessor();
-        $paymentProvider = OnlineShop_Framework_Factory::getInstance()->getPaymentManager()->getProvider("qpay");
+        $commitOrderProcessor = \OnlineShop\Framework\Factory::getInstance()->getCommitOrderProcessor();
+        $paymentProvider = \OnlineShop\Framework\Factory::getInstance()->getPaymentManager()->getProvider("qpay");
 
         if($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($params, $paymentProvider)) {
             \Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());
@@ -335,7 +337,7 @@ So different checkout steps, different payment providers etc. can be implemented
 
 ```php
 <?php
-$environment = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+$environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 $environment->setCurrentCheckoutTenant('default');
 $environment->save();
 

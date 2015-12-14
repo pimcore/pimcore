@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Interpreter;
 
-class OnlineShop_Framework_IndexService_Interpreter_ObjectValue implements OnlineShop_Framework_IndexService_Interpreter
+class ObjectValue implements IInterpreter
 {
 
     public static function interpret($value, $config = null)
@@ -19,7 +20,7 @@ class OnlineShop_Framework_IndexService_Interpreter_ObjectValue implements Onlin
         $targetList = $config->target;
 
         if (empty($targetList->fieldname)) {
-            throw new Exception("target fieldname missing.");
+            throw new \Exception("target fieldname missing.");
         }
 
         if ($value instanceof \Pimcore\Model\Object\AbstractObject) {

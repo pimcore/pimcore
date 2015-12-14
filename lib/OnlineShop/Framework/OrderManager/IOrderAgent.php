@@ -13,14 +13,14 @@
 
 namespace OnlineShop\Framework\OrderManager;
 
-use OnlineShop_Framework_Factory;
-use OnlineShop_Framework_IPayment;
-use OnlineShop_Framework_Payment_IStatus;
+use \OnlineShop\Framework\Factory;
+use \OnlineShop\Framework\PaymentManager\Payment\IPayment;
+use \OnlineShop\Framework\PaymentManager\IStatus;
 
 use Zend_Currency;
 
-use OnlineShop_Framework_AbstractOrder as Order;
-use OnlineShop_Framework_AbstractOrderItem as OrderItem;
+use \OnlineShop\Framework\Model\AbstractOrder as Order;
+use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\Element\Note;
 
@@ -28,10 +28,10 @@ use Pimcore\Model\Element\Note;
 interface IOrderAgent
 {
     /**
-     * @param OnlineShop_Framework_Factory $factory
+     * @param \OnlineShop\Framework\Factory $factory
      * @param Order                        $order
      */
-    public function __construct(OnlineShop_Framework_Factory $factory, Order $order);
+    public function __construct(\OnlineShop\Framework\Factory $factory, Order $order);
 
 
     /**
@@ -97,17 +97,17 @@ interface IOrderAgent
 
 
     /**
-     * @return OnlineShop_Framework_IPayment
+     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
      */
     public function getPaymentProvider();
 
 
     /**
-     * @param OnlineShop_Framework_IPayment $paymentProvider
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
      *
      * @return Order
      */
-    public function setPaymentProvider(OnlineShop_Framework_IPayment $paymentProvider);
+    public function setPaymentProvider(\OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
 
 
     /**
@@ -116,14 +116,14 @@ interface IOrderAgent
      * if true -> returns existing payment info
      * if false -> creates new payment info (and aborts existing PENDING payment infos)
      *
-     * @return \OnlineShop_Framework_AbstractPaymentInformation
+     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
      */
     public function startPayment();
 
     /**
      * Returns current payment info of order, or null if none exists
      *
-     * @return null|\OnlineShop_Framework_AbstractPaymentInformation
+     * @return null|\OnlineShop\Framework\Model\AbstractPaymentInformation
      */
     public function getCurrentPendingPaymentInfo();
 
@@ -135,18 +135,18 @@ interface IOrderAgent
      *
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return \OnlineShop_Framework_AbstractOrder
-     * @throws \OnlineShop_Framework_Exception_UnsupportedException
+     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();
 
 
     /**
-     * @param OnlineShop_Framework_Payment_IStatus $status
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
      *
      * @return IOrderAgent
      */
-    public function updatePayment(OnlineShop_Framework_Payment_IStatus $status);
+    public function updatePayment(\OnlineShop\Framework\PaymentManager\IStatus $status);
 
 
     /**

@@ -10,16 +10,17 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Interpreter;
 
-class OnlineShop_Framework_IndexService_Interpreter_StructuredTable implements OnlineShop_Framework_IndexService_Interpreter {
+class StructuredTable implements IInterpreter {
 
     public static function interpret($value, $config = null) {
 
         if(empty($config->tablerow)) {
-            throw new Exception("Table row config missing.");
+            throw new \Exception("Table row config missing.");
         }
         if(empty($config->tablecolumn)) {
-            throw new Exception("Table column config missing.");
+            throw new \Exception("Table column config missing.");
         }
 
         $getter = "get" . ucfirst($config->tablerow) . "__" . ucfirst($config->tablecolumn);

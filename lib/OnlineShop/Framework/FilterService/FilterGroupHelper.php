@@ -10,9 +10,10 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\FilterService;
 
 /**
- * Class OnlineShop_Framework_FilterService_FilterGroupHelper
+ * Class \OnlineShop\Framework\FilterService\FilterGroupHelper
  *
  * Helper for getting possible group by values based on different column groups
  *
@@ -25,7 +26,7 @@
  *  - other
  *
  */
-class OnlineShop_Framework_FilterService_FilterGroupHelper
+class FilterGroupHelper
 {
 
     /**
@@ -44,11 +45,11 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
      * returns all possible group by values for given column group, product list and field combination
      *
      * @param $columnGroup
-     * @param OnlineShop_Framework_IProductList $productList
+     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      * @param string $field
      * @return array
      */
-    public static function getGroupByValuesForFilterGroup($columnGroup, OnlineShop_Framework_IProductList $productList, $field) {
+    public static function getGroupByValuesForFilterGroup($columnGroup, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $field) {
         $columnType = self::getColumnTypeForColumnGroup($columnGroup);
 
         $data = array();
@@ -74,7 +75,7 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper
             sort($values);
 
             foreach($values as $v) {
-                $helper = explode(OnlineShop_Framework_IndexService_Tenant_IWorker::MULTISELECT_DELIMITER, $v);
+                $helper = explode(\OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER, $v);
                 foreach($helper as $h) {
                     $data[$h] = array("key" => $h, "value" => $h);
                 }

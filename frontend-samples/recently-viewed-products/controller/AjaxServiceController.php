@@ -17,7 +17,7 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
     const MAX_PRODUCTS = 2;
 
     public function recentlyViewedProductsAction() {
-        $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 
         $recentlyViewed = $env->getCustomItem(self::RECENTLY_VIEWED_PRODUCTS);
         if (!$recentlyViewed) {

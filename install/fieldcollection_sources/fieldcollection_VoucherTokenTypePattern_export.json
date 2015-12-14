@@ -1,5 +1,5 @@
 {
-	"parentClass":"OnlineShop_Framework_AbstractVoucherTokenType",
+	"parentClass":"\OnlineShop\Framework\Model\AbstractVoucherTokenType",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,

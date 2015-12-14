@@ -10,8 +10,13 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\Exception;
 
-class OnlineShop_Framework_Exception_VoucherServiceException extends Exception
+/**
+ * Class VoucherServiceException
+ * @package OnlineShop\Framework\Exception
+ */
+class VoucherServiceException extends \Exception
 {
 
 }

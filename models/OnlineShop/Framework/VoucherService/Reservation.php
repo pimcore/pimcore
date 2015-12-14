@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\VoucherService;
 
-class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\AbstractModel
+class Reservation extends \Pimcore\Model\AbstractModel
 {
 
     public $id;
@@ -21,16 +22,16 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
 
     /**
      * @param $code
-     * @param OnlineShop_Framework_ICart $cart
-     * @return bool|OnlineShop_Framework_VoucherService_Reservation
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @return bool|Reservation
      */
-    public static function get($code, OnlineShop_Framework_ICart $cart = null)
+    public static function get($code, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
         try {
             $config = new self();
-            $config->getResource()->get($code, $cart);
+            $config->getDao()->get($code, $cart);
             return $config;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
 //            Logger::debug($ex->getMessage());
             return false;
         }
@@ -54,9 +55,9 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
     {
         try {
             $config = new self();
-            $config->getResource()->create($code, $cart_id);
+            $config->getDao()->create($code, $cart_id);
             return $config;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
 //            Logger::debug($ex->getMessage());
             return false;
         }
@@ -64,14 +65,14 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
 
     /**
      * @param string $code
-     * @param OnlineShop_Framework_ICart $cart
+     * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
      */
-    public static function releaseToken($code, OnlineShop_Framework_ICart $cart = null)
+    public static function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart = null)
     {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
 
-        $query = "DELETE FROM " . OnlineShop_Framework_VoucherService_Reservation_Resource::TABLE_NAME . " WHERE token = ?";
+        $query = "DELETE FROM " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " WHERE token = ?";
         $params[] = $code;
 
         if (isset($cart)) {
@@ -82,7 +83,7 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
         try {
             $db->query($query, $params);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -92,7 +93,7 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
      */
     public function remove()
     {
-        return $this->getResource()->remove();
+        return $this->getDao()->remove();
     }
 
     /**
@@ -103,31 +104,31 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
      */
     public static function cleanUpReservations($duration, $seriesId = null)
     {
-        $query = "DELETE FROM " . OnlineShop_Framework_VoucherService_Reservation_Resource::TABLE_NAME . " WHERE MINUTE(TIMEDIFF(timestamp, NOW())) >= ?";
+        $query = "DELETE FROM " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " WHERE MINUTE(TIMEDIFF(timestamp, NOW())) >= ?";
         $params[] = $duration;
 
         if (isset($seriesId)) {
-            $query .= " AND token in (SELECT token FROM " . OnlineShop_Framework_VoucherService_Token_Resource::TABLE_NAME . " WHERE voucherSeriesId = ?)";
+            $query .= " AND token in (SELECT token FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?)";
             $params[] = $seriesId;
         }
 
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         try {
             $db->query($query, $params);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
 
     public static function reservationExists($code, $cart)
     {
-        $db = \Pimcore\Resource::get();
-        $query = "SELECT EXISTS(SELECT id FROM " . OnlineShop_Framework_VoucherService_Reservation_Resource::TABLE_NAME . " WHERE token = ? and cart_id = ?)";
+        $db = \Pimcore\Db::get();
+        $query = "SELECT EXISTS(SELECT id FROM " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " WHERE token = ? and cart_id = ?)";
 
         try {
             return (bool)$db->fetchOne($query, [$code, $cart->getId()]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -139,13 +140,13 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Model\Abs
     public static function getReservationCount($code)
     {
 
-        $db = \Pimcore\Resource::get();
-        $query = "SELECT COUNT(*) FROM " . OnlineShop_Framework_VoucherService_Reservation_Resource::TABLE_NAME . " WHERE token = ? ";
+        $db = \Pimcore\Db::get();
+        $query = "SELECT COUNT(*) FROM " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " WHERE token = ? ";
 
         try {
             $count = $db->fetchOne($query, $code);
             return (int)$count;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

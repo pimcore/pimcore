@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Getter;
 
-class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence implements OnlineShop_Framework_IndexService_Getter {
+class DefaultBrickGetterSequence implements IGetter {
 
     public static function get($object, $config = null) {
         $sourceList = $config->source;

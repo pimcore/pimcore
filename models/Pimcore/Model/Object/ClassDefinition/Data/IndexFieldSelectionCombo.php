@@ -33,7 +33,7 @@ class IndexFieldSelectionCombo extends Select {
 
         $indexColumns = array();
         try {
-            $indexService = \OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $indexColumns = $indexService->getIndexAttributes(true);
         } catch (\Exception $e) {
             \Logger::err($e);
@@ -50,8 +50,8 @@ class IndexFieldSelectionCombo extends Select {
 
         if($this->getSpecificPriceField()) {
             $options[] = array(
-                "key" => \OnlineShop_Framework_IProductList::ORDERKEY_PRICE,
-                "value" => \OnlineShop_Framework_IProductList::ORDERKEY_PRICE
+                "key" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE,
+                "value" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE
             );            
         }
 

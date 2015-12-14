@@ -1,0 +1,63 @@
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is subject to the GNU General Public License version 3 (GPLv3)
+ * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
+ * files that are distributed with this source code.
+ *
+ * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ */
+
+namespace OnlineShop\Framework\FilterService\FilterType\ElasticSearch;
+
+class SelectRelation extends \OnlineShop\Framework\FilterService\FilterType\SelectRelation {
+
+    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
+        $productList->prepareGroupByValues($filterDefinition->getField(), true);
+    }
+
+    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
+        foreach($availableRelations as $rel) {
+            if($rel instanceof \Pimcore\Model\Object\Folder) {
+                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
+            } else {
+                $availableRelationsArray[$rel->getId()] = true;
+            }
+        }
+        return $availableRelationsArray;
+    }
+
+
+    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+        $field = $this->getField($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
+
+
+        $value = $params[$field];
+
+        if(empty($value) && !$params['is_reload']) {
+            $o = $preSelect;
+            if(!empty($o)) {
+                if(is_object($o)) {
+                    $value = $o->getId();
+                } else {
+                    $value = $o;
+                }
+
+            }
+        } else if($value == \OnlineShop\Framework\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+            $value = null;
+        }
+
+        $currentFilter[$field] = $value;
+
+
+        if(!empty($value)) {
+            $productList->addRelationCondition($field, $value);
+        }
+
+        return $currentFilter;
+    }
+}

@@ -16,10 +16,10 @@ class OnlineShop_MyController extends Website_Controller_Action {
 
     public function testAction() {
 
-//        $t = new OnlineShop_Framework_AbstractProduct();
+//        $t = new \OnlineShop\Framework\Model\AbstractProduct();
 //        p_r($t);
 
-        $x = OnlineShop_Framework_Factory::getInstance();
+        $x = \OnlineShop\Framework\Factory::getInstance();
 //        p_r($x);
 
         $e = $x->getEnvironment();

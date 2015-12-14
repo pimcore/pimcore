@@ -20,11 +20,11 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         $filterDefinition = \Pimcore\Model\Object\Fieldcollection::getById(intval($this->_getParam("filterdef")));
         $this->view->filterDefinitionObject = $filterDefinition;
 
-        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         $productList = $indexService->getProductListForCurrentTenant();
-        $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
+        $productList->setVariantMode(\OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
-        $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
+        $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
 
         $orderByOptions = array();
@@ -32,7 +32,7 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         if($filterDefinition) {
 
             // set up product list
-            OnlineShop_Framework_FilterService_Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, true, true);
+            \OnlineShop\Framework\FilterService\Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, true, true);
             // end set up product list
 
         }
@@ -60,16 +60,16 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         }
         $this->view->filterDefinitionObject = $filterDefinition;
 
-        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         $productList = $indexService->getProductListForCurrentTenant();
-        $productList->setVariantMode(OnlineShop_Framework_IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
+        $productList->setVariantMode(\OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT);
 
-        $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
+        $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
 
         $orderByOptions = array();
         $this->view->orderByOptions = $orderByOptions;
-        OnlineShop_Framework_FilterService_Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, $this->_getParam("fullpage"));
+        \OnlineShop\Framework\FilterService\Helper::setupProductList($filterDefinition, $productList, $this->_getAllParams(), $this->view, $filterService, $this->_getParam("fullpage"));
 
         $this->view->productList = $productList;
         $this->view->filterService = $filterService;
@@ -79,14 +79,14 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         $grid_seo_headline = $this->view->input("grid_seo_headline")->getValue();
 
         if(empty($grid_seo_headline)) {
-            $category = OnlineShop_Framework_FilterService_Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
+            $category = \OnlineShop\Framework\FilterService\Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
             if($category) {
                 $grid_seo_headline = $category->getSeoname();
             }
         }
         $grid_seo_text = $this->view->wysiwyg("grid_seo_text")->getValue();
         if(empty($grid_seo_text)) {
-            $category = OnlineShop_Framework_FilterService_Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
+            $category = \OnlineShop\Framework\FilterService\Helper::getFirstFilteredCategory($this->view->filterDefinitionObject->getConditions());
             if($category) {
                 $grid_seo_text = $category->getSeotext();
             }

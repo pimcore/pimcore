@@ -4,10 +4,10 @@
 
 The configuration takes place in the OnlineShopConfig.xml
 ```xml
-<ordermanager class="OnlineShop\Framework\Impl\OrderManager">
+<ordermanager class="OnlineShop\Framework\OrderManager\OrderManager">
     <config>
-        <orderList class="OnlineShop\Framework\Impl\OrderManager\Order\Listing" classItem="OnlineShop\Framework\Impl\OrderManager\Order\Listing\Item"/>
-        <orderAgent class="OnlineShop\Framework\Impl\OrderManager\Order\Agent" />
+        <orderList class="OnlineShop\Framework\OrderManager\Order\Listing" classItem="OnlineShop\Framework\OrderManager\Order\Listing\Item"/>
+        <orderAgent class="OnlineShop\Framework\OrderManager\Order\Agent" />
     </config>
 </ordermanager>
 ```
@@ -21,7 +21,7 @@ The configuration takes place in the OnlineShopConfig.xml
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 // get the newest 10 orders
@@ -31,7 +31,7 @@ $orderList->setLimit( 10, 0 );
 // iterate
 foreach($orderList as $order)
 {
-    /* @var OnlineShop\Framework\Impl\OrderManager\Order\Listing\IOrderListItem $order */
+    /* @var OnlineShop\Framework\OrderManager\Order\Listing\IOrderListItem $order */
 
     echo $order->orderNumber();
 }
@@ -53,12 +53,12 @@ foreach($paginator as $order)
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
 // create date time filter
-$filterDate = new \OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\OrderDateTime();
+$filterDate = new \OnlineShop\Framework\OrderManager\Order\Listing\Filter\OrderDateTime();
 $filterDate->setFrom( new Zend_Date('20.01.2015') );
 $filterDate->setTill( new Zend_Date('31.01.2015') );
 
@@ -74,13 +74,13 @@ $orderList->addFilter( $filterDate );
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
 // get only orders that are commited
 $orderList->setListType( $orderList::LIST_TYPE_ORDER_ITEM );
-$orderList->setOrderState( OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMITTED );
+$orderList->setOrderState( \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED );
 
 
 ```
@@ -92,7 +92,7 @@ $orderList->setOrderState( OnlineShop_Framework_AbstractOrder::ORDER_STATE_COMMI
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -117,7 +117,7 @@ $query->where('order.comment like ?', '%hallo world%');
 <?php
 
 // create new order list
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -148,7 +148,7 @@ $orderList->getQuery()->where('product.productNumber = ?', 'CMD1191');
 
 ### Generic filter
 
-> Namespace: \OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter
+> Namespace: \OnlineShop\Framework\OrderManager\Order\Listing\Filter
 
 | Filter          | Description |
 | --------------- | ----------- |
@@ -173,7 +173,7 @@ $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
 $order = $orderItem->getOrder();
 
 // create new order agent
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderAgent = $orderManager->createOrderAgent( $order );
 
 // change amount to 5
@@ -195,7 +195,7 @@ $log->save();
 $order = Object_OnlineShopOrder::getById( $this->getParam('id') );
 
 // create new order agent
-$orderManager = OnlineShop_Framework_Factory::getInstance()->getOrderManager();
+$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
 $orderAgent = $orderManager->createOrderAgent( $order );
 
 // get changelog

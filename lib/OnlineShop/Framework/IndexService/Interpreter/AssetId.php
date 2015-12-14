@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Interpreter;
 
-class OnlineShop_Framework_IndexService_Interpreter_AssetId implements OnlineShop_Framework_IndexService_Interpreter {
+class AssetId implements IInterpreter {
 
     public static function interpret($value, $config = null) {
         if(!empty($value) && $value instanceof Asset) {

@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework\IndexService\Tool;
 
-class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
+class IndexUpdater {
 
     /**
      * Runs update index for all tenants
@@ -23,7 +24,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
      * @param string $loggername
      */
     public static function updateIndex($objectListClass, $condition = "", $updateIndexStructures = false, $loggername = "indexupdater") {
-        $updater = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $updater = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         if($updateIndexStructures) {
             \Pimcore\Model\Cache::clearTag("ecommerceconfig");
             $updater->createOrUpdateIndexStructures();
@@ -55,7 +56,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
 
             $count = count($products->getObjects());
 
-            Pimcore::collectGarbage();
+            \Pimcore::collectGarbage();
         }
     }
 
@@ -67,11 +68,11 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
      *
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater") {
         if($tenants == null) {
-            $tenants = OnlineShop_Framework_Factory::getInstance()->getAllTenants();
+            $tenants = \OnlineShop\Framework\Factory::getInstance()->getAllTenants();
         }
 
         if(!is_array($tenants)) {
@@ -84,13 +85,13 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
             self::log($loggername, "Processing preparation queue for tenant: " . $tenant);
             self::log($loggername, "=========================");
 
-            $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+            $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
             $env->setCurrentAssortmentTenant($tenant);
 
-            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
 
-            if($worker instanceof OnlineShop_Framework_IndexService_Tenant_IBatchProcessingWorker) {
+            if($worker instanceof \OnlineShop\Framework\IndexService\Worker\IBatchProcessingWorker) {
                 $round = 0;
                 $result = true;
                 while($result) {
@@ -100,7 +101,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
                     $result = $worker->processPreparationQueue();
                     self::log($loggername, "processed preparation queue elements: " . $result);
 
-                    Pimcore::collectGarbage();
+                    \Pimcore::collectGarbage();
 
                     if($maxRounds && $maxRounds == $round) {
                         self::log($loggername, "skipping process after $round rounds.");
@@ -118,11 +119,11 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
      * @param int $indexItemsPerRound - number of items to index per round
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
     public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater",$indexItemsPerRound = 100) {
         if($tenants == null) {
-            $tenants = OnlineShop_Framework_Factory::getInstance()->getAllTenants();
+            $tenants = \OnlineShop\Framework\Factory::getInstance()->getAllTenants();
         }
 
         if(!is_array($tenants)) {
@@ -135,14 +136,14 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
             self::log($loggername, "Processing update index elements for tenant: " . $tenant);
             self::log($loggername, "=========================");
 
-            $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+            $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
             $env->setCurrentAssortmentTenant($tenant);
 
-            $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
 
 
-            if($worker instanceof OnlineShop_Framework_IndexService_Tenant_IBatchProcessingWorker) {
+            if($worker instanceof \OnlineShop\Framework\IndexService\Worker\IBatchProcessingWorker) {
                 $result = true;
                 $round = 0;
                 while($result) {
@@ -152,7 +153,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater {
                     $result = $worker->processUpdateIndexQueue();
                     self::log($loggername, "processed update index elements: " . $result);
 
-                    Pimcore::collectGarbage();
+                    \Pimcore::collectGarbage();
 
                     if($maxRounds && $maxRounds == $round) {
                         self::log($loggername, "skipping process after $round rounds.");

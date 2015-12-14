@@ -5,23 +5,23 @@
 The configuration takes place in the OnlineShopConfig.xml
 ```xml
 <!-- general settings for cart manager -->
-<cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
+<cartmanager class="\OnlineShop\Framework\CartManager\MultiCartManager">
     <config>
         <!-- default cart implementation that is used -->
-        <cart class="OnlineShop_Framework_Impl_Cart">
+        <cart class="\OnlineShop\Framework\CartManager\Cart">
             <!--
                 cart implementation that is used when system is in guest-checkout mode
-                -> OnlineShop_Framework_IEnvironment::getUseGuestCart()
+                -> \OnlineShop\Framework\IEnvironment::getUseGuestCart()
             -->
-            <guest class="OnlineShop_Framework_Impl_SessionCart"/>
+            <guest class="\OnlineShop\Framework\CartManager\SessionCart"/>
         </cart>
 
         <!-- default price calculator for cart -->
-        <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
+        <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
             <config>
                 <!-- price modificators for cart, e.g. for shipping-cost, special discounts, ... -->
                 <modificators>
-                    <shipping class="OnlineShop_Framework_Impl_CartPriceModificator_Shipping">
+                    <shipping class="\OnlineShop\Framework\CartManager\CartPriceModificator\Shipping">
                         <config charge="5.90"/>
                     </shipping>
                 </modificators>
@@ -31,11 +31,11 @@ The configuration takes place in the OnlineShopConfig.xml
         <!--
             special configuration for specific checkout tenants
             - for not specified elements the default configuration is used as fallback 
-            - active tenant is set at OnlineShop_Framework_IEnvironment::setCurrentCheckoutTenant()
+            - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant()
         -->
         <tenants>
             <noShipping>
-                <pricecalculator class="OnlineShop_Framework_Impl_CartPriceCalculator">
+                <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
                     <config>
                         <modificators>
                         </modificators>
@@ -60,7 +60,7 @@ Following elements are configured:
 #### Creating carts
 ```php
 <?php
-$manager = OnlineShop_Framework_Factory::getInstance()->getCartManager();
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
 $cartId = $manager->createCart(array('name' => $cartName));
 $cart = $manager->getCart( $cartId );
 ```
@@ -68,7 +68,7 @@ $cart = $manager->getCart( $cartId );
 #### Adding and removing products
 ```php
 <?php
-$manager = OnlineShop_Framework_Factory::getInstance()->getCartManager();
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
 $cart = $manager->getCartByName($cartName);
 
 $id = $cart->addItem( $product, $amount );
@@ -88,7 +88,7 @@ $manager->removeFromCart($cartItemId, $cartId);
 #### List products of cart
 ```php
 <?php
-$manager = OnlineShop_Framework_Factory::getInstance()->getCartManager();
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
 $cart = $manager->getCartByName($cartName);
 
 if (count($cart->getItems()) > 0) {
@@ -132,7 +132,7 @@ The current checkout tenant is set in the framework environment as follows. Once
 
 ```php
 <?php
-$environment = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
+$environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
 $environment->setCurrentCheckoutTenant('default');
 $environment->save();
 

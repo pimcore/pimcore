@@ -10,8 +10,9 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+namespace OnlineShop\Framework;
 
-interface OnlineShop_Framework_IComponent {
+interface IComponent {
 
     /**
      * @return mixed

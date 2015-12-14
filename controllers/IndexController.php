@@ -14,8 +14,8 @@
 class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
 
     public function getFilterGroupsAction() {
-        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-        $tenants = OnlineShop_Framework_Factory::getInstance()->getAllTenants();
+        $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
+        $tenants = \OnlineShop\Framework\Factory::getInstance()->getAllTenants();
 
         $filterGroups = $indexService->getAllFilterGroups();
         if($tenants) {
@@ -44,11 +44,11 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
             if($this->getParam("field")) {
 
                 if($this->getParam("tenant")) {
-                    OnlineShop_Framework_Factory::getInstance()->getEnvironment()->setCurrentAssortmentTenant($this->getParam("tenant"));
+                    \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->setCurrentAssortmentTenant($this->getParam("tenant"));
                 }
 
-                $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-                $filterService = OnlineShop_Framework_Factory::getInstance()->getFilterService($this->view);
+                $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
+                $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
 
                 $columnGroup = "";
                 $filterGroups = $indexService->getAllFilterGroups();
@@ -62,7 +62,7 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
                     }
                 }
 
-                $productList = OnlineShop_Framework_Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
+                $productList = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
                 $helper = $filterService->getFilterGroupHelper();
                 $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $this->getParam("field"));
 
@@ -78,7 +78,7 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
 
     public function getFieldsAction() {
 
-        $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
+        $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
 
         if($this->getParam("filtergroup")) {
             $filtergroups = $this->getParam("filtergroup");
@@ -116,7 +116,7 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
         }
 
         if($this->_getParam("specific_price_field") == "true") {
-            $fields[OnlineShop_Framework_IProductList::ORDERKEY_PRICE] = array("key" => OnlineShop_Framework_IProductList::ORDERKEY_PRICE, "name" => $adminTranslator->translateAdmin(OnlineShop_Framework_IProductList::ORDERKEY_PRICE));
+            $fields[\OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE] = array("key" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE, "name" => $adminTranslator->translateAdmin(\OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE));
         }
 
         ksort($fields);
@@ -128,7 +128,7 @@ class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
     public function getAllTenantsAction() {
         $adminTranslator = new Pimcore\View\Helper\TranslateAdmin();
 
-        $tenants = OnlineShop_Framework_Factory::getInstance()->getAllTenants();
+        $tenants = \OnlineShop\Framework\Factory::getInstance()->getAllTenants();
         $data = array(array("key" => "", "name" => $adminTranslator->translateAdmin("default")));
         if($tenants) {
             foreach($tenants as $tenant) {
