@@ -44,12 +44,21 @@ class CartDiscount implements IDiscount
     public function executeOnCart(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
-        $modDiscount = new Discount($environment->getRule());
-
 
         $amount = round($this->getAmount() !== 0 ? $this->getAmount() : ($priceCalculator->getSubTotal()->getAmount() * ($this->getPercent() / 100)), 2);
-        $modDiscount->setAmount( '-'.$amount );
-        $priceCalculator->addModificator( $modDiscount );
+        $amount *= -1;
+
+        foreach($priceCalculator->getModificators() as &$modificator) {
+            if($modificator instanceof OnlineShop_Framework_Impl_CartPriceModificator_Discount) {
+                $modificator->setAmount($amount);
+                $priceCalculator->reset();
+                return $this;
+            }
+        }
+
+        $modDiscount = new OnlineShop_Framework_Impl_CartPriceModificator_Discount($environment->getRule());
+        $modDiscount->setAmount($amount);
+        $priceCalculator->addModificator($modDiscount);
 
         return $this;
     }
