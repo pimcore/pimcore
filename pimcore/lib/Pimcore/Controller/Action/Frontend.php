@@ -511,6 +511,10 @@ abstract class Frontend extends Action {
 
                 \Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
                 \Logger::error($error->exception);
+                if(method_exists($this,'handle404Error')){
+                    $this->handle404Error();
+                }
+                \Logger::error("No Custom handler for URL: " . $_SERVER["REQUEST_URI"]);
 
                 try {
                     // check if we have the error page already in the cache
