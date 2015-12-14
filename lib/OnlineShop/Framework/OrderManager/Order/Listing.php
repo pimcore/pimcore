@@ -98,7 +98,12 @@ class Listing extends AbstractOrderList implements IOrderList
 
             // filter order state
             if(!is_null($this->getOrderState())) {
-                $select->where('`order`.orderState IN(?)', implode(',',(array)$this->getOrderState()));
+                $orderStates = [];
+                foreach((array)$this->getOrderState() as $orderState) {
+                    $orderStates[] = $select->getAdapter()->quote($orderState);
+                }
+
+                $select->where('`order`.orderState IN('. implode(',',$orderStates) .')' );
             }
 
 
