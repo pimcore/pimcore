@@ -327,10 +327,19 @@ class Tool {
      * @return string
      */
     public static function getHostname() {
+
         if(isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && !empty($_SERVER["HTTP_X_FORWARDED_HOST"])) {
-            return $_SERVER["HTTP_X_FORWARDED_HOST"];
+            $hostname = $_SERVER["HTTP_X_FORWARDED_HOST"];
+        } else {
+            $hostname = $_SERVER["HTTP_HOST"];
         }
-        return $_SERVER["HTTP_HOST"];
+
+        // remove port if set
+        if(strpos($hostname, ":") !== false) {
+            $hostname = preg_replace("@:[0-9]+@", "", $hostname);
+        }
+
+        return $hostname;
     }
 
 
