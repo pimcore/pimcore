@@ -184,7 +184,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract {
             $code = '';
             // check if persona or target group requires geoip to be included
             if($this->checkPersonasAndTargetGroupForGeoIPRequirement($personas,$targets)){
-                $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/geoip.js/"></script>';
+                $code .= '<script type="text/javascript" src="/pimcore/static6/js/frontend/geoip.js/"></script>';
             }
 
             $code .= '<script type="text/javascript">';
@@ -194,7 +194,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract {
                 $code .= 'pimcore["targeting"]["targetingRules"] = ' . \Zend_Json::encode($targets) . ';';
                 $code .= 'pimcore["targeting"]["personas"] = ' . \Zend_Json::encode($personas) . ';';
             $code .= '</script>';
-            $code .= '<script type="text/javascript" src="/pimcore/static/js/frontend/targeting.js"></script>';
+            $code .= '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting.js"></script>';
             $code .= "\n";
             // analytics
             $body = $this->getResponse()->getBody();
