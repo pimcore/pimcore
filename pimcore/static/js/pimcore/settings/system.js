@@ -207,12 +207,6 @@ pimcore.settings.system = Class.create({
                                 forceSelection: true,
                                 triggerAction: 'all',
                                 hiddenName: 'general.language'
-                            },{
-                                fieldLabel: t("contact_email"),
-                                xtype: "textfield",
-                                name: "general.contactemail",
-                                value: this.getValue("general.contactemail"),
-                                width: 300
                             },
                             {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
