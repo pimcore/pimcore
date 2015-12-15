@@ -587,10 +587,14 @@ Ext.onReady(function () {
                         });
                     loadMask.enable();
                     pimcore.globalmanager.add("loadingmask", loadMask);
+
+                    // update statusbar styling
+                    window.setTimeout(function () {
+                        statusbar.updateLayout();
+                    }, 1000);
                 }
             }
         });
-
 
         // add sidebar panels
 
