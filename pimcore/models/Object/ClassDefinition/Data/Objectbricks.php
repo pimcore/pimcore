@@ -601,7 +601,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
         $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($class->getName()) . "\\" . ucfirst($this->getName());
 
-        $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . $classname . '")) { ' . "\n";
+        $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . str_replace("\\","\\\\",$classname) . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
         $code .= "\t\t\t" . '$this->' . $key . ' = $data;' . "\n";
         $code .= "\t\t" . '} else {' . "\n";
