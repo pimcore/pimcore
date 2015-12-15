@@ -102,7 +102,6 @@ return array (
   'Pimcore\\Controller\\Plugin\\HttpErrorLog' => $pdr . '/pimcore/lib/Pimcore/Controller/Plugin/HttpErrorLog.php',
   'Pimcore\\Controller\\Plugin\\ErrorHandler' => $pdr . '/pimcore/lib/Pimcore/Controller/Plugin/ErrorHandler.php',
   'Pimcore\\Controller\\Plugin\\Maintenance' => $pdr . '/pimcore/lib/Pimcore/Controller/Plugin/Maintenance.php',
-  'Pimcore\\Controller\\Plugin\\AdminButton' => $pdr . '/pimcore/lib/Pimcore/Controller/Plugin/AdminButton.php',
   'Pimcore\\Controller\\Plugin\\CommonFilesFilter' => $pdr . '/pimcore/lib/Pimcore/Controller/Plugin/CommonFilesFilter.php',
   'Pimcore\\Controller\\Plugin\\Webmastertools' => $pdr . '/pimcore/lib/Pimcore/Controller/Plugin/Webmastertools.php',
   'Pimcore\\Controller\\Plugin\\QrCode' => $pdr . '/pimcore/lib/Pimcore/Controller/Plugin/QrCode.php',

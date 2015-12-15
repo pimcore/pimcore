@@ -104,7 +104,6 @@ class Pimcore {
         if ($frontend) {
             $front->registerPlugin(new Controller\Plugin\Thumbnail(), 795);
             $front->registerPlugin(new Controller\Plugin\Less(), 799);
-            $front->registerPlugin(new Controller\Plugin\AdminButton(), 806);
         }
 
         if (Tool::useFrontendOutputFilters(new \Zend_Controller_Request_Http())) {
