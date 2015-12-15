@@ -159,7 +159,6 @@ class Dao extends Model\Dao\AbstractDao {
             array("key" => "redirects"),
             array("key" => "glossary" ),
             array("key" => "reports"),
-            array("key" => "document_style_editor"),
             array("key" => "recyclebin"),
             array("key" => "seo_document_editor"),
             array("key" => "robots.txt"),
