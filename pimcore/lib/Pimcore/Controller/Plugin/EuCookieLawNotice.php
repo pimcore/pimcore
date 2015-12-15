@@ -37,13 +37,14 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
 
         $translations = $this->getTranslations();
 
-        foreach ($translations as $key => $value) {
+        foreach ($translations as $key => &$value) {
+            $value = htmlentities($value, ENT_COMPAT, "UTF-8");
             $template = str_replace("%" . $key . "%", $value, $template);
         }
 
         $linkContent = "";
         if(array_key_exists("linkTarget", $translations)) {
-            $linkContent = '<a href="' . $translations["linkTarget"] . '">' . $translations["linkText"] . '</a>';
+            $linkContent = '<a href="' . $translations["linkTarget"] . '" data-content="' . $translations["linkText"] . '"></a>';
         }
         $template = str_replace("%link%", $linkContent, $template);
 
