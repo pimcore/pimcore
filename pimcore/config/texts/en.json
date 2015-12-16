@@ -5281,7 +5281,7 @@
     },
     {
         "term": "csv_object_export_warning",
-        "definition": "Please note that the CSV export does not support all data types. Consequently, re-importing an export CSV to pimcore might lead to data loss. Press OK to continue with export."
+        "definition": "Please note that the CSV export does not support all data types. Consequently, re-importing an exported CSV to pimcore might lead to data loss. Press OK to continue with the export."
     },
     {
         "term": "Initializing",
