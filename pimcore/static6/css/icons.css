@@ -615,6 +615,11 @@
     background: url(/pimcore/static6/img/icon/picture.png) center center no-repeat !important;
 }
 
+.pimcore_icon_externalImage {
+    background: url(/pimcore/static6/img/icon/picture_link.png) center center no-repeat !important;
+}
+
+
 .pimcore_icon_hotspotimage {
     background: url(/pimcore/static6/img/icon/pictures_thumbs.png) center center no-repeat !important;
 }

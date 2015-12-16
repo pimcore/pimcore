@@ -6590,5 +6590,21 @@
     {
         "term": "click_to_edit",
         "definition": "Click to edit"
+    },
+    {
+        "term": "preview_width",
+        "definition": "Preview Width"
+    },
+    {
+        "term": "preview_height",
+        "definition": "Preview Height"
+    },
+    {
+        "term": "url_width",
+        "definition": "URL Width"
+    },
+    {
+        "term": "externalImage",
+        "definition": "External Image"
     }
 ]
