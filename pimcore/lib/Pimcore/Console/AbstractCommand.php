@@ -77,13 +77,13 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * Get log level - default to info, but show all messages in verbose mode
+     * Get log level - default to warning, but show all messages in verbose mode
      *
      * @return null|string
      */
     protected function getLogLevel()
     {
-        $logLevel = LogLevel::INFO;
+        $logLevel = LogLevel::WARNING;
         if ($this->output->isVerbose()) {
             $logLevel = null;
         }
