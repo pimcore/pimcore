@@ -318,7 +318,7 @@ class KeyConfig extends Model\AbstractModel {
             \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.preAdd", $this);
         }
 
-        $model = parent::save();
+        $model = $this->getDao()->save();
 
         if ($isUpdate) {
             \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postUpdate", $this);
