@@ -109,11 +109,6 @@ class CacheWarmingCommand extends AbstractCommand
         ;
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        parent::initialize($input, $output);
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->enableMaintenanceMode();
