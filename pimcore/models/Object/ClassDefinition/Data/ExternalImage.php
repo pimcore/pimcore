@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -174,8 +174,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @return string
      */
     public function getVersionPreview($data) {
-        if ($data instanceof Model\Object\Data\ExternalImage) {
-            return '<img style="max-width:200px;max-height:200px" src="' . $data  . '" />';
+        if ($data instanceof Model\Object\Data\ExternalImage && $data->getUrl()) {
+            return '<img style="max-width:200px;max-height:200px" src="' . $data->getUrl()  . '" /><br><a href="' . $data->getUrl() . '">' . $data->getUrl() . '</>';
         }
 
         return $data;
