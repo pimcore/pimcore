@@ -276,10 +276,9 @@ pimcore.settings.translation.word = Class.create({
                         }
                     }.bind(this),
                     failure: function (message) {
-                        this.exportProgressWin.close();
-                        pimcore.helpers.showNotification(t("error"), t("error"),
-                            "error", t(message));
+                        console.error("Word export: " + message);
                     }.bind(this),
+                    stopOnError: false,
                     jobs: res.jobs
                 });
             }.bind(this)
