@@ -122,7 +122,7 @@ class Cart extends AbstractCart implements ICart {
     }
 
     public function getItems() {
-        if($this->items == null) {
+        if($this->items === null) {
             $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
             $itemList->setCartItemClassName( $this->getCartItemClassName() );
             $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");

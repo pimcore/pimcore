@@ -426,7 +426,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      * @return \OnlineShop\Framework\CartManager\ICartItem[]
      */
     public function getItems() {
-        return $this->items;
+        return $this->items ? $this->items : [];
     }
 
     /**
