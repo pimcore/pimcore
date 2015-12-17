@@ -193,6 +193,20 @@ pimcore.helpers.closeObject = function (id) {
     }
 };
 
+pimcore.helpers.updateObjectQTip = function (id, treeData) {
+    if (treeData) {
+        var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+        var store = tree.getStore();
+        var record = store.getById(id);
+        if (record) {
+            record.set("qtitle", treeData.qtipCfg.title);
+            record.set("qtip", treeData.qtipCfg.text);
+        }
+    }
+};
+
+
+
 pimcore.helpers.getHistory = function() {
     var history = localStorage.getItem("pimcore_element_history");
     if (!history) {

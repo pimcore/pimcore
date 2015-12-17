@@ -53,14 +53,8 @@ pimcore.object.versions = Class.create({
                     reader: {
                         type: 'json',
                         rootProperty: 'versions'
-
-                        //totalProperty:'total',            // default
-                        //successProperty:'success'         // default
                     }
-                    //,                                     // default
-                    //writer: {
-                    //    type: 'json'
-                    //}
+
                 }
             });
 
@@ -222,7 +216,15 @@ pimcore.object.versions = Class.create({
         Ext.Ajax.request({
             url: "/admin/object/publish-version",
             params: {id: versionId},
-            success: this.object.reload.bind(this.object)
+            success: function(response) {
+                this.object.reload.bind(this.object);
+
+                var rdata = Ext.decode(response.responseText);
+                if (rdata && rdata.success) {
+                    pimcore.helpers.updateObjectQTip(this.object.id, rdata.treeData);
+                }
+
+            }.bind(this)
         });
     },
 
