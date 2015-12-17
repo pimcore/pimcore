@@ -93,13 +93,13 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
                     + data.ne.lng();
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.y + ','
                     + center.x + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&sensor=false&maptype=' + fieldConfig.mapType;
+                    + '&path=' + path + '&maptype=' + fieldConfig.mapType;
             }
             else {
                 mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                     + fieldConfig.lat + ',' + fieldConfig.lng
                     + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&sensor=false&maptype=' + fieldConfig.mapType;
+                    + px + 'x' + py + '&maptype=' + fieldConfig.mapType;
             }
 
             if (pimcore.settings.google_maps_api_key) {

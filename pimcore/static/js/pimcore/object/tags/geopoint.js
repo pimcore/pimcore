@@ -35,7 +35,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                     var mapUrl = 'https://maps.google.com/staticmap?center=' + value.latitude + ','
                             + value.longitude + '&zoom=' + mapZoom + '&size=' + width + 'x80&markers='
                             + value.latitude + ',' + value.longitude
-                            + ',red&sensor=false';
+                            + ',red';
 
                     if (pimcore.settings.google_maps_api_key) {
                         mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
@@ -143,12 +143,12 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
                 + '&markers=color:red|' + lat + ',' + lng
-                + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                + '&maptype=' + this.fieldConfig.mapType;
         } else {
             mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
                 + lat + "," + lng + "&zoom=" + mapZoom +
                 '&size=' + px + 'x' + py
-                + '&sensor=false&maptype=' + this.fieldConfig.mapType;
+                + '&maptype=' + this.fieldConfig.mapType;
         }
 
         if (pimcore.settings.google_maps_api_key) {

@@ -548,7 +548,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     (function() {
         var script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
         document.body.appendChild(script);
     })();
 </script>
