@@ -16,6 +16,10 @@ pimcore.tool.paralleljobs = Class.create({
 
         this.config = config;
 
+        if(this.config["stopOnError"] !== false) {
+            this.config["stopOnError"] = true;
+        }
+
         this.groupsFinished = 0;
         this.groupsTotal = this.config.jobs.length;
         this.alloverJobs = 0;
@@ -24,7 +28,7 @@ pimcore.tool.paralleljobs = Class.create({
         for(var i=0; i<this.groupsTotal; i++) {
             this.alloverJobs += this.config.jobs[i].length;
         }
-        
+
         this.groupStart();
     },
 
@@ -53,6 +57,11 @@ pimcore.tool.paralleljobs = Class.create({
     },
 
     error: function (message) {
+
+        if(this.config["stopOnError"]) {
+            clearInterval(this.jobsInterval);
+        }
+
         if(typeof this.config.failure == "function") {
             this.config.failure(message);
         }
@@ -84,11 +93,14 @@ pimcore.tool.paralleljobs = Class.create({
                             throw res;
                         }
                     } catch (e) {
-                        clearInterval(this.jobsInterval);
                         console.log(e);
                         console.log(response);
-                        this.error( (res && res["message"]) ? res["message"] : response.responseText);
-                        return;
+                        this.error((res && res["message"]) ? res["message"] : response.responseText);
+
+                        if(this.config["stopOnError"]) {
+                            // stop here
+                            return;
+                        }
                     }
 
                     this.jobsFinished++;
@@ -107,7 +119,6 @@ pimcore.tool.paralleljobs = Class.create({
 
                 }.bind(this),
                 failure: function (response) {
-                    clearInterval(this.jobsInterval);
                     this.error(response.responseText);
                 }.bind(this),
                 params: this.config.jobs[this.groupsFinished][this.jobsStarted].params
