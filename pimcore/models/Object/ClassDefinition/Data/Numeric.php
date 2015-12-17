@@ -306,7 +306,7 @@ class Numeric extends Model\Object\ClassDefinition\Data {
         }
 
         if(!$this->isEmpty($data) and !is_numeric($data)){
-            throw new \Exception("invalid numeric data");
+            throw new \Exception("invalid numeric data [" . $data . "]");
         }
 
         if(!$omitMandatoryCheck ) {
