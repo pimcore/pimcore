@@ -12,6 +12,7 @@
 
 namespace OnlineShop\Framework\CartManager;
 use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
+use OnlineShop\Framework\PriceSystem\IModificatedPrice;
 
 /**
  * Class CartPriceCalculator
@@ -39,7 +40,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
     protected $modificators;
 
     /**
-     * @var \OnlineShop_Framework_IModificatedPrice[]
+     * @var IModificatedPrice[]
      */
     protected $modifications;
 
@@ -143,7 +144,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
     }
 
     /**
-     * @return \OnlineShop_Framework_IModificatedPrice[] $priceModification
+     * @return IModificatedPrice[] $priceModification
      */
     public function getPriceModifications() {
         if(!$this->isCalculated) {
