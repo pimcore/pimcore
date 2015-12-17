@@ -12,6 +12,7 @@
 
 namespace OnlineShop\Framework\CartManager;
 use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
+use OnlineShop\Framework\PriceSystem\IModificatedPrice;
 
 /**
  * Interface ICartPriceCalculator
@@ -45,7 +46,7 @@ interface ICartPriceCalculator {
     /**
      * returns all price modifications which apply for this cart
      *
-     * @return \OnlineShop_Framework_IModificatedPrice[] $priceModification
+     * @return IModificatedPrice[] $priceModification
      */
     public function getPriceModifications();
 

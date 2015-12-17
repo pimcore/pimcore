@@ -24,7 +24,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * @var \OnlineShop\Framework\CartManager\ICartItem[]
      */
-    protected $items = array();
+    protected $items = null;
 
     /**
      * @var array
@@ -80,6 +80,16 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      * @var int
      */
     protected $subItemAmount;
+
+    /**
+     * @var int
+     */
+    protected $itemCount;
+
+    /**
+     * @var int
+     */
+    protected $subItemCount;
 
 
     public function __construct() {
@@ -166,6 +176,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         $this->checkCartIsReadOnly();
 
+        //load items first in order to lazyload items (if they are lazy loaded)
+        $this->getItems();
+
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
@@ -224,6 +237,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      * @param $count
      */
     public function updateItemCount($itemKey, $count) {
+        //load items first in order to lazyload items (if they are lazy loaded)
+        $this->getItems();
+
         if($this->items[$itemKey]) {
             $this->items[$itemKey]->setCount($count);
         }
@@ -376,6 +392,35 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         }
     }
 
+    /**
+     * @param bool|false $countSubItems
+     * @return int
+     */
+    public function getItemCount($countSubItems = false) {
+        if($countSubItems) {
+            if($this->subItemCount == null) {
+
+                $items = $this->getItems();
+                $count = count($items);
+
+                if(!empty($items)) {
+                    foreach($items as $item) {
+                        $subItems = $item->getSubItems();
+                        $count += count($subItems);
+                    }
+                }
+                $this->subItemCount = $count;
+            }
+            return $this->subItemCount;
+        } else {
+            if($this->itemCount == null) {
+                $items = $this->getItems();
+                $this->itemCount = count($items);
+            }
+            return $this->itemCount;
+        }
+    }
+
 
     /**
      * @return \OnlineShop\Framework\CartManager\ICartItem[]
@@ -391,6 +436,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getItem($itemKey)
     {
+        //load items first in order to lazyload items (if they are lazy loaded)
+        $this->getItems();
         return array_key_exists($itemKey, $this->items) ? $this->items[ $itemKey ] : null;
     }
 
@@ -444,6 +491,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function removeItem($itemKey) {
         $this->checkCartIsReadOnly();
+
+        //load items first in order to lazyload items (if they are lazy loaded)
+        $this->getItems();
 
         $this->itemAmount = null;
         $this->subItemAmount = null;
@@ -658,6 +708,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         $this->validateVoucherTokenReservations();
 
+        $this->giftItems = array();
         // apply pricing rules
         \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->applyCartRules($this);
     }

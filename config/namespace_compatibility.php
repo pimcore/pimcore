@@ -87,9 +87,9 @@ interface OnlineShop_Framework_IPrice extends \OnlineShop\Framework\PriceSystem\
 
 /**
  * @deprecated
- * Interface OnlineShop_Framework_Impl_IModificatedPrice
+ * Interface OnlineShop_Framework_IModificatedPrice
  */
-interface OnlineShop_Framework_Impl_IModificatedPrice extends \OnlineShop\Framework\PriceSystem\IModificatedPrice {};
+interface OnlineShop_Framework_IModificatedPrice extends \OnlineShop\Framework\PriceSystem\IModificatedPrice {};
 
 
 

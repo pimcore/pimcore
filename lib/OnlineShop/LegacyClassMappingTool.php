@@ -219,7 +219,7 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\CartManager\CartPriceModificator\IShipping' => 'OnlineShop_Framework_CartPriceModificator_IShipping',
         'OnlineShop\Framework\CartManager\ICartPriceCalculator' => 'OnlineShop_Framework_ICartPriceCalculator',
         'OnlineShop\Framework\PriceSystem\IPrice' => 'OnlineShop_Framework_IPrice',
-        'OnlineShop\Framework\PriceSystem\IModificatedPrice' => 'OnlineShop_Framework_Impl_IModificatedPrice',
+        'OnlineShop\Framework\PriceSystem\IModificatedPrice' => 'OnlineShop_Framework_IModificatedPrice',
         'OnlineShop\Framework\PriceSystem\IPriceSystem' => 'OnlineShop_Framework_IPriceSystem',
         'OnlineShop\Framework\PriceSystem\ICachingPriceSystem' => 'OnlineShop_Framework_ICachingPriceSystem',
         'OnlineShop\Framework\PriceSystem\IPriceInfo' => 'OnlineShop_Framework_IPriceInfo',

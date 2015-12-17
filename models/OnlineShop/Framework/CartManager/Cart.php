@@ -65,6 +65,9 @@ class Cart extends AbstractCart implements ICart {
      */
     public function sortItems(callable $value_compare_func)
     {
+        //call get items to lazy load items
+        $this->getItems();
+
         uasort($this->items, $value_compare_func);
 
         $arrayKeys = array_keys($this->items);
@@ -94,19 +97,7 @@ class Cart extends AbstractCart implements ICart {
                 $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);
 
-                $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
-                $itemList->setCartItemClassName( $cart->getCartItemClassName() );
-                $itemList->setCondition("cartId = " . $itemList->quote($cart->getId()) . " AND parentItemKey = ''");
-                $itemList->setOrderKey('sortIndex');
-                $items = array();
-                foreach ($itemList->getCartItems() as $item) {
-                    if(static::isValidCartItem($item)){
-                        $item->setCart($cart);
-                        $items[$item->getItemKey()] = $item;
-                    }
-                }
                 $mod = $cart->getModificationDate();
-                $cart->setItems($items);
                 $cart->setModificationDate( $mod );
 
                 $dataList = new \OnlineShop\Framework\CartManager\CartCheckoutData\Listing();
@@ -129,6 +120,44 @@ class Cart extends AbstractCart implements ICart {
 
         return $cart;
     }
+
+    public function getItems() {
+        if($this->items == null) {
+            $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
+            $itemList->setCartItemClassName( $this->getCartItemClassName() );
+            $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
+            $itemList->setOrderKey('sortIndex');
+            $items = array();
+            foreach ($itemList->getCartItems() as $item) {
+                if(static::isValidCartItem($item)){
+                    $item->setCart($this);
+                    $items[$item->getItemKey()] = $item;
+                }
+            }
+            $this->items = $items;
+        }
+        return $this->items;
+    }
+
+
+    /**
+     * @param bool|false $countSubItems
+     * @return int
+     */
+    public function getItemCount($countSubItems = false) {
+        if($countSubItems) {
+            return parent::getItemCount($countSubItems);
+        } else {
+            if($this->itemCount == null) {
+                $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
+                $itemList->setCartItemClassName( $this->getCartItemClassName() );
+                $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
+                $this->itemCount = $itemList->getTotalCount();
+            }
+            return $this->itemCount;
+        }
+    }
+
 
     /**
      * @static
