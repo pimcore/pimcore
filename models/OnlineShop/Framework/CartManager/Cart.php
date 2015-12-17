@@ -31,7 +31,7 @@ class Cart extends AbstractCart implements ICart {
     public function save() {
         $this->getDao()->save();
         \OnlineShop\Framework\CartManager\CartItem::removeAllFromCart($this->getId());
-        foreach ($this->items as $item) {
+        foreach ((array)$this->items as $item) {
             $item->save();
         }
 
