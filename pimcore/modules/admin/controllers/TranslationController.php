@@ -462,8 +462,17 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
         $elements = array_values($elements);
 
-        // one job = 10 elements
-        $elements = array_chunk($elements, 10);
+        $elementsPerJob = 10;
+        if($type == "word") {
+            // the word export can only handle one document per request
+            // the problem is Document\Service::render(), ... in the action can be a $this->redirect() or exit;
+            // nobody knows what's happening in an action ;-) So we need to isolate them in isolated processes
+            // so that the export doesn't stop completely after a "redirect" or any other unexpected behavior of an action
+            $elementsPerJob = 1;
+        }
+
+        // one job = X elements
+        $elements = array_chunk($elements, $elementsPerJob);
         foreach($elements as $chunk) {
             $jobs[] = array(array(
                 "url" => "/admin/translation/" . $type . "-export",
@@ -869,12 +878,6 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
         if(!is_file($exportFile)) {
-            /*file_put_contents($exportFile, '<!DOCTYPE html>' . "\n" . '<html>
-                <head>
-                    <style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static/css/word-export.css") . '</style>
-                </head>
-                <body>
-            ');*/
             File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") . '</style>');
         }
 
