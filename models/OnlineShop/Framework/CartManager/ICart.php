@@ -153,6 +153,14 @@ interface ICart {
      */
     public function getItemAmount($countSubItems = false);
 
+    /**
+     * counts items in cart (does not consider item amount)
+     *
+     * @param bool|false $countSubItems
+     * @return int
+     */
+    public function getItemCount($countSubItems = false);
+
 
     /**
      * @param int $count
