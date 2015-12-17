@@ -97,6 +97,9 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
                 height: options["height"] + "px"
             })
         }
+        if (options["placeholder"]) {
+            this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
+        }
     },
 
     checkValue: function () {

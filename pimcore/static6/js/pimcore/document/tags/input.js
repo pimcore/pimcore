@@ -78,6 +78,9 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
                 overflow: "auto"
             });
         }
+        if (options["placeholder"]) {
+            this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
+        }
     },
 
     checkValue: function () {

@@ -344,6 +344,20 @@
     display: inline-block;
 }
 
+/* support for placeholders as in EXTJS3,4 */
+.pimcore_tag_input[contenteditable=true]:empty:before,
+.pimcore_tag_textarea[contenteditable=true]:empty:before,
+.pimcore_wysiwyg.empty[contenteditable=true]:before {
+    cursor: text; /* For chrome */
+    content: attr(data-placeholder);
+    display: block; /* For firefox */
+    color:#BABABA;
+}
+
+.pimcore_wysiwyg.empty[contenteditable=true]:before {
+    height: 0; /* For firefox and Edge */
+}
+
 /* text fields: hover, focus, ... states */
 .pimcore_tag_input, .pimcore_tag_wysiwyg, .pimcore_tag_textarea, .pimcore_tag_textarea:focus .pimcore_wysiwyg:focus {
     outline:0 auto;

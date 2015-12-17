@@ -44,6 +44,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         if (options.height) {
             textareaHeight = options.height;
         }
+        if (options.placeholder) {
+            this.textarea.setAttribute('data-placeholder', options["placeholder"]);
+        }
 
         var inactiveContainerWidth = options.width + "px";
         if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
