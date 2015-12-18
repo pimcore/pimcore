@@ -158,6 +158,19 @@ class Cart extends AbstractCart implements ICart {
         }
     }
 
+    public function getItemAmount($countSubItems = false) {
+        if($countSubItems) {
+            return parent::getItemCount($countSubItems);
+        } else {
+            if($this->itemCount == null) {
+                $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
+                $itemList->setCartItemClassName( $this->getCartItemClassName() );
+                $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
+                $this->itemCount = $itemList->getTotalAmount();
+            }
+            return $this->itemCount;
+        }
+    }
 
     /**
      * @static
