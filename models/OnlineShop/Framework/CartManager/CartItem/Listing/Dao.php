@@ -40,9 +40,9 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao {
         return $amount["amount"];
     }
 
-    public function getAmountSum() {
-        $amount = $this->db->fetchRow("SELECT SUM(`count`) as amountSum FROM `" . \OnlineShop\Framework\CartManager\CartItem\Dao::TABLE_NAME . "`" . $this->getCondition());
-        return $amount["amountSum"];
+    public function getTotalAmount()
+    {
+        return (int)$this->db->fetchOne("SELECT SUM(count) FROM `" . OnlineShop_Framework_Impl_CartItem_Resource::TABLE_NAME . "`" . $this->getCondition());
     }
 
 

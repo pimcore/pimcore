@@ -31,7 +31,7 @@ class Cart extends AbstractCart implements ICart {
     public function save() {
         $this->getDao()->save();
         \OnlineShop\Framework\CartManager\CartItem::removeAllFromCart($this->getId());
-        foreach ($this->items as $item) {
+        foreach ((array)$this->items as $item) {
             $item->save();
         }
 
@@ -158,24 +158,19 @@ class Cart extends AbstractCart implements ICart {
         }
     }
 
-    /**
-     * @param bool|false $countSubItems
-     * @return int
-     */
     public function getItemAmount($countSubItems = false) {
         if($countSubItems) {
             return parent::getItemCount($countSubItems);
         } else {
-            if($this->itemAmount == null) {
+            if($this->itemCount == null) {
                 $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
                 $itemList->setCartItemClassName( $this->getCartItemClassName() );
                 $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
-                $this->itemAmount = $itemList->getAmountSum();
+                $this->itemCount = $itemList->getTotalAmount();
             }
-            return $this->itemAmount;
+            return $this->itemCount;
         }
     }
-
 
     /**
      * @static
