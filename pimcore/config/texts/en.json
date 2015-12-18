@@ -6606,5 +6606,9 @@
     {
         "term": "externalImage",
         "definition": "External Image"
+    },
+    {
+        "term": "loading_texts",
+        "definition": "Loading Texts"
     }
 ]
