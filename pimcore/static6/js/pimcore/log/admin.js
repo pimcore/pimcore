@@ -12,7 +12,7 @@
 pimcore.registerNS("pimcore.log.admin");
 pimcore.log.admin = Class.create({
 
-    searchParams: {start: 0, limit: 25},
+    searchParams: {},
 
 	initialize: function () {
 		this.getTabPanel();
@@ -264,7 +264,6 @@ pimcore.log.admin = Class.create({
 
             this.panel.add(this.layout);
             this.store.load();
-            //this.store.load({params:this.searchParams});
             pimcore.layout.refresh();
 		}
 		return this.panel;
@@ -304,8 +303,6 @@ pimcore.log.admin = Class.create({
         //this.store.baseParams = this.searchParams;
 
         this.pagingToolbar.moveFirst();
-
-        //this.store.reload();
     }
 
 
