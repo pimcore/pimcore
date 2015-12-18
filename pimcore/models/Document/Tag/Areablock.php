@@ -435,6 +435,11 @@ class Areablock extends Model\Document\Tag {
         $this->outputEditmode('<div class="pimcore_block_down_' . $this->getName() . ' pimcore_block_down"></div>');
         $this->outputEditmode('<div class="pimcore_block_type_' . $this->getName() . ' pimcore_block_type"></div>');
         $this->outputEditmode('<div class="pimcore_block_options_' . $this->getName() . ' pimcore_block_options"></div>');
+        $path = $this->getPathForBrick($this->currentIndex["type"]);
+        if(file_exists($path . '/help.php')) {
+            $helpPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $path);
+            $this->outputEditmode('<div class="pimcore_block_help_' . $this->getName() . ' pimcore_block_help" data-path="'.$helpPath.'/help.php"></div>');
+        }
         $this->outputEditmode('<div class="pimcore_block_clear_' . $this->getName() . ' pimcore_block_clear"></div>');
         $this->outputEditmode('</div>');
     }

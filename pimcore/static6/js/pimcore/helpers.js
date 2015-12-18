@@ -451,6 +451,29 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
 
 };
 
+pimcore.helpers.showMessagebox = function (title, text) {
+    var win = new Ext.Window({
+        modal: true,
+        iconCls: "icon_notification_info",
+        title: title,
+        width: 700,
+        height: 500,
+        html: text,
+        autoScroll: true,
+        bodyStyle: "padding: 10px; background:#fff;",
+        buttonAlign: "center",
+        shadow: false,
+        closable: false,
+        buttons: [{
+            text: "OK",
+            handler: function () {
+                win.close();
+            }
+        }]
+    });
+    win.show();
+};
+
 
 pimcore.helpers.handleCtrlS = function (keyCode, e) {
 

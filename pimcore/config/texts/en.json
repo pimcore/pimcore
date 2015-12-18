@@ -6610,5 +6610,9 @@
     {
         "term": "loading_texts",
         "definition": "Loading Texts"
+    },
+    {
+        "term": "help_window_title",
+        "definition": "Area Help"
     }
 ]
