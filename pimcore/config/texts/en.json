@@ -5161,7 +5161,7 @@
     },
     {
         "term": "webservice",
-        "definition": "Web Service API (Beta Feature)"
+        "definition": "Web Service API"
     },
     {
         "term": "webservice_enabled",
