@@ -1,6 +1,6 @@
 {
     "description":null,
-    "parentClass":"OnlineShop_OfferTool_AbstractOffer",
+    "parentClass":"\\OnlineShop\\Framework\\OfferTool\\AbstractOffer",
     "allowInherit":false,
     "allowVariants":false,
     "showVariants":false,
