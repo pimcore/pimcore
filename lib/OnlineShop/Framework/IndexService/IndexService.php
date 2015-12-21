@@ -32,7 +32,7 @@ class IndexService {
         $this->tenantWorkers = array();
         if($config->tenants && $config->tenants instanceof \Zend_Config) {
             foreach($config->tenants as $name => $tenant) {
-                $tenantConfigClass = (string) $tenant->class;
+                $tenantConfigClass = str_replace('\\','_', (string) $tenant->class);
 
                 $tenantConfig = $tenant;
                 if($tenant->file) {
