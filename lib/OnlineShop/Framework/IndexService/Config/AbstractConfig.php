@@ -33,8 +33,9 @@ abstract class AbstractConfig implements IConfig {
         $this->attributeConfig = $tenantConfigXml->columns;
         $this->filterTypeConfig = $tenantConfigXml->filtertypes;
 
-        $this->searchAttributeConfig = array();
-        if($tenantConfigXml->generalSearchColumns->column) {
+        if(sizeof($tenantConfigXml->generalSearchColumns->column) == 1) {
+            $this->searchAttributeConfig[] = (string)$tenantConfigXml->generalSearchColumns->column->name;
+        } elseif($tenantConfigXml->generalSearchColumns->column) {
             foreach($tenantConfigXml->generalSearchColumns->column as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }

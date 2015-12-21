@@ -93,8 +93,8 @@ class DefaultMysql extends AbstractWorker implements IWorker {
 
             try {
                 $this->dbexec('ALTER TABLE ' . $this->tenantConfig->getTablename() . ' DROP INDEX search;');
-            } catch(Exception $e) {
-                Logger::info($e);
+            } catch(\Exception $e) {
+                \Logger::info($e);
             }
 
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = MyISAM;');
