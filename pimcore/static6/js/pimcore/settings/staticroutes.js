@@ -255,7 +255,7 @@ pimcore.settings.staticroutes = Class.create({
 
     onAdd:function (btn, ev) {
         var u = {
-            name: "gaga"
+            name: ""
         };
 
         this.grid.store.add(u);
