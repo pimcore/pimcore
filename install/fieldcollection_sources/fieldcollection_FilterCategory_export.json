@@ -1,5 +1,5 @@
 {
-	"parentClass":"\OnlineShop\Framework\Model\CategoryFilterDefinitionType",
+	"parentClass":"\\OnlineShop\\Framework\\Model\\CategoryFilterDefinitionType",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,

@@ -1,6 +1,6 @@
 {
 	"description":null,
-	"parentClass":"\OnlineShop\Framework\Model\AbstractFilterDefinition",
+	"parentClass":"\\OnlineShop\\Framework\\Model\\AbstractFilterDefinition",
 	"allowInherit":true,
 	"allowVariants":false,
 	"layoutDefinitions":{
