@@ -37,7 +37,7 @@ class IndexService {
 
                 $tenantConfig = $tenant;
                 if($tenant->file) {
-                    if(!$tenantConfig = \Pimcore\Model\Cache::load()) {
+                    if(!$tenantConfig = \Pimcore\Model\Cache::load($cachekey)) {
                         $tenantConfig = new \Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), null, true);
                         $tenantConfig = $tenantConfig->tenant;
                         \Pimcore\Model\Cache::save($tenantConfig, $cachekey, array("ecommerceconfig"), 9999);
