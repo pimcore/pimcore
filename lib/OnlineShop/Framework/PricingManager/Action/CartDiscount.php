@@ -49,14 +49,14 @@ class CartDiscount implements IDiscount
         $amount *= -1;
 
         foreach($priceCalculator->getModificators() as &$modificator) {
-            if($modificator instanceof OnlineShop_Framework_Impl_CartPriceModificator_Discount) {
+            if($modificator instanceof Discount) {
                 $modificator->setAmount($amount);
                 $priceCalculator->reset();
                 return $this;
             }
         }
 
-        $modDiscount = new OnlineShop_Framework_Impl_CartPriceModificator_Discount($environment->getRule());
+        $modDiscount = new Discount($environment->getRule());
         $modDiscount->setAmount($amount);
         $priceCalculator->addModificator($modDiscount);
 
