@@ -29,10 +29,10 @@
 }
 
 #pimcore_navigation li {
-    display:block;
+    display: block;
     list-style: none;
     width: 46px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     cursor: pointer;
     color: #d7d7d7;
     font-size: 10px;
@@ -40,6 +40,7 @@
     font-family: Arial;
     overflow: hidden;
     word-wrap: break-word;
+    line-height: 12px;
 }
 
 #pimcore_navigation li:hover {
