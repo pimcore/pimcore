@@ -29,9 +29,12 @@ class Cart extends AbstractCart implements ICart {
     }
 
     public function save() {
+        //make sure the items have been loaded otherwise we might loose the products (e.g. when a voucher is added)
+        $items = $this->getItems();
+
         $this->getDao()->save();
         \OnlineShop\Framework\CartManager\CartItem::removeAllFromCart($this->getId());
-        foreach ((array)$this->items as $item) {
+        foreach ((array)$items as $item) {
             $item->save();
         }
 
@@ -135,6 +138,7 @@ class Cart extends AbstractCart implements ICart {
                 }
             }
             $this->items = $items;
+            $this->modified();
         }
         return $this->items;
     }
