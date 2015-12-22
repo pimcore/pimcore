@@ -135,6 +135,7 @@ class Cart extends AbstractCart implements ICart {
                 }
             }
             $this->items = $items;
+            $this->modified();
         }
         return $this->items;
     }
