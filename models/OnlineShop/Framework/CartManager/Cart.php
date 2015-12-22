@@ -138,7 +138,9 @@ class Cart extends AbstractCart implements ICart {
                 }
             }
             $this->items = $items;
+            $this->setIgnoreReadonly();
             $this->modified();
+            $this->unsetIgnoreReadonly();
         }
         return $this->items;
     }
