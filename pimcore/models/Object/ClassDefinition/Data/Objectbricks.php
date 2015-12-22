@@ -880,7 +880,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
-                $definition = Object\Objectbrick\Definition::getByKey($allowedType);
+                try {
+                    $definition = Object\Objectbrick\Definition::getByKey($allowedType);
+                } catch (\Exception $e) {
+                    \Logger::info("Unknown allowed type [ $allowedType ] ignored.");
+                }
+
                 if ($definition) {
                     $fieldDefinition = $definition->getFieldDefinitions();
 
