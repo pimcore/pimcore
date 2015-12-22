@@ -53,7 +53,8 @@
                         </pricecalculator>
                     </noShipping>
 
-                    <expensiveShipping file="/website/var/plugins/OnlineShopConfig/cartmanager-expensiveShipping.xml" />
+                    <!-- you also can use external files for additional configuration -->
+                    <!-- <expensiveShipping file="/website/var/plugins/OnlineShopConfig/cartmanager-expensiveShipping.xml" /> -->
                 </tenants>
 
             </config>
