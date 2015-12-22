@@ -135,39 +135,10 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
             ;"
         );
 
+        self::createFieldCollections();
+        self::createClasses();
+        self::createObjectBricks();
 
-        // Add FieldCollections
-        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources');
-        foreach ($sourceFiles as $filename) {
-            if (!is_dir($filename)) {
-
-                preg_match('/_(.*)_/', $filename, $matches);
-                $key = $matches[1];
-
-                try {
-                    $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
-                } catch(\Exception $e) {
-                    $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
-                    $fieldCollection->setKey($key);
-                }
-
-                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
-                $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
-                if(!$success){
-                    \Logger::err("Could not import $key FieldCollection.");
-                }
-            }
-        }
-
-        // Add classes
-        self::createClass("FilterDefinition", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.json');
-        self::createClass("OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrderItem_export.json');
-        self::createClass("OnlineShopVoucherSeries", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherSeries_export.json');
-        self::createClass("OnlineShopVoucherToken", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherToken_export.json');
-        self::createClass("OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrder_export.json');
-        self::createClass("OfferToolOfferItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOfferItem_export.json');
-        self::createClass("OfferToolOffer", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOffer_export.json');
-        self::createClass("OfferToolCustomProduct", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolCustomProduct_export.json');
 
         //copy config file
         if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/OnlineShopConfig.xml")) {
@@ -176,6 +147,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
             copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/.htaccess", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/.htaccess");
         }
         self::setConfig("/website/var/plugins/OnlineShop/OnlineShopConfig.xml");
+
 
 
         // execute installations from subsystems
@@ -399,9 +371,49 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
 
 
     /**
-     * @todo
+     * installs all field collections
      */
-    private static function installObjectBricks()
+    private static function createFieldCollections() {
+        // Add FieldCollections
+        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources');
+        foreach ($sourceFiles as $filename) {
+            if (!is_dir($filename)) {
+
+                preg_match('/_(.*)_/', $filename, $matches);
+                $key = $matches[1];
+
+                try {
+                    $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
+                } catch(\Exception $e) {
+                    $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
+                    $fieldCollection->setKey($key);
+                }
+
+                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
+                $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
+                if(!$success){
+                    \Logger::err("Could not import $key FieldCollection.");
+                }
+            }
+        }
+    }
+
+    private static function createClasses() {
+        // Add classes
+        self::createClass("FilterDefinition", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.json');
+        self::createClass("OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrderItem_export.json');
+        self::createClass("OnlineShopVoucherSeries", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherSeries_export.json');
+        self::createClass("OnlineShopVoucherToken", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherToken_export.json');
+        self::createClass("OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrder_export.json');
+        self::createClass("OfferToolOfferItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOfferItem_export.json');
+        self::createClass("OfferToolOffer", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOffer_export.json');
+        self::createClass("OfferToolCustomProduct", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolCustomProduct_export.json');
+    }
+
+    /**
+     * installs all object bricks
+     */
+    private static function createObjectBricks()
     {
         $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/objectbrick_sources');
         foreach ($sourceFiles as $filename) {
