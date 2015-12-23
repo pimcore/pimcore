@@ -176,7 +176,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('language_admin'),
                                 typeAhead: true,
                                 value: this.getValue("general.language"),
-                                mode: 'local',
+                                queryMode: 'local',
                                 listWidth: 100,
                                 //editable: true,     // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
                                 store: pimcore.globalmanager.get("pimcorelanguages"),
@@ -265,7 +265,7 @@ pimcore.settings.system = Class.create({
                                     id: "system_settings_general_languageSelection",
                                     triggerAction: 'all',
                                     //resizable: true,
-                                    mode: 'local',
+                                    queryMode: 'local',
                                     store: this.languagesStore,
                                     displayField: 'display',
                                     valueField: 'language',
