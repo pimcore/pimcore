@@ -34,7 +34,11 @@ class Dao extends Model\Dao\AbstractDao {
 
         $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_GROUPS . " WHERE id = ?", $this->model->getId());
 
-        $this->assignVariablesToModel($data);
+        if ($data) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception("GroupConfig with id: " . $this->model->getId() . " does not exist");
+        }
     }
 
     /**
