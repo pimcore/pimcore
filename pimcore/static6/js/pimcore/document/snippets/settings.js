@@ -125,7 +125,7 @@ pimcore.document.snippets.settings = Class.create({
                                     fields: ["name"]
                                 }),
                                 triggerAction: "all",
-                                mode: "local",
+                                queryMode: "local",
                                 value: this.snippet.data.action,
                                 listeners: {
                                     "focus": function (el) {
@@ -133,6 +133,9 @@ pimcore.document.snippets.settings = Class.create({
                                             params: {
                                                 controllerName: Ext.getCmp("pimcore_document_settings_controller_"
                                                                         + this.snippet.id).getValue()
+                                            },
+                                            callback: function() {
+                                                el.expand();
                                             }
                                         });
                                     }.bind(this)

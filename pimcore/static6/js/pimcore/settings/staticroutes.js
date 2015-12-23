@@ -137,19 +137,22 @@ pimcore.settings.staticroutes = Class.create({
                         },
                         fields:["name"]
                     }),
+                    queryMode: 'local',
                     triggerAction:"all",
                     displayField:'name',
                     valueField:'name',
                     listeners:{
-                        "focus":function (field, x1, x2, x3, x4, x5) {
+                        "focus":function (el) {
                             var currentRecord = this.grid.getSelection();
-                            console.log(currentRecord[0]);
-                            field.getStore().reload({
+                            el.getStore().reload({
                                 params:{
                                     controllerName:currentRecord[0].data.controller
+                                },
+                                callback: function() {
+                                    el.expand();
                                 }
                             });
-                        }.bind(this)
+                        }.bind(this),
                     }
                 })},
             {header:t("variables"), flex:50, sortable:false, dataIndex:'variables',
