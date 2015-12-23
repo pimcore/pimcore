@@ -183,7 +183,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject);
             }
             if($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
+                $backup = Object\AbstractObject::getGetInheritedValues();
+                Object\AbstractObject::setGetInheritedValues(true);
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
+                Object\AbstractObject::setGetInheritedValues($backup);
                 if(!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
