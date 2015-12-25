@@ -205,7 +205,7 @@ CREATE TABLE `documents_email` (
 
 DROP TABLE IF EXISTS `documents_hardlink`;
 CREATE TABLE `documents_hardlink` (
-  `id` int(11) DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL default '0',
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
   `childsFromSource` tinyint(1) DEFAULT NULL,
