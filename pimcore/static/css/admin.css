@@ -174,9 +174,10 @@ body {
 }
 
 #pimcore_panel_tabs > .x-tab-panel-bwrap > .x-tab-panel-body {
-    background-image: url(/pimcore/static/img/logo-gray.png);
+    background-image: url(/pimcore/static6/img/logo.svg);
     background-repeat: no-repeat;
     background-position: center center;
+    background-size: 300px auto;
 }
 
 #pimcore_logo {
@@ -186,8 +187,11 @@ body {
 }
 
 #pimcore_logo img {
-    width:50%;
+    width: 110px;
+    height: 26px;
     padding-left: 2px;
+    transform: rotate(270deg);
+    transform-origin: 14px 12px;
 }
 
 #pimcore_logo img.activity {

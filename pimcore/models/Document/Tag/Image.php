@@ -458,6 +458,11 @@ class Image extends Model\Document\Tag {
     public function setImage($image)
     {
         $this->image = $image;
+
+        if($image instanceof Asset) {
+            $this->setId($image->getId());
+        }
+
         return $this;
     }
 

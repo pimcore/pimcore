@@ -150,7 +150,7 @@ class Ffmpeg extends Adapter {
             $timeOffset = 5;
         }
 
-        $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
+        $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -vf scale=iw*sar:ih -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
         Console::exec($cmd, null, 60);
     }
 

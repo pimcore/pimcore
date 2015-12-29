@@ -123,7 +123,7 @@ Ext.onReady(function () {
 
         xhrActive--;
         if (xhrActive < 1) {
-            Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static/img/logo.png"/>';
+            Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static6/img/logo-white.svg"/>';
         }
     });
     Ext.Ajax.on("beforerequest", function () {
@@ -135,7 +135,7 @@ Ext.onReady(function () {
     Ext.Ajax.on("requestcomplete", function (conn, response, options) {
         xhrActive--;
         if (xhrActive < 1) {
-            Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static/img/logo.png"/>';
+            Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static6/img/logo-white.svg"/>';
         }
 
         // redirect to login-page if session is expired

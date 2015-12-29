@@ -27,7 +27,7 @@
 <body>
 
 <div id="pimcore_logo" style="display: none;">
-    <img src="/pimcore/static/img/logo.png"/>
+    <img src="/pimcore/static6/img/logo-white.svg"/>
 </div>
 
 <div id="pimcore_loading">
