@@ -37,7 +37,6 @@ pimcore.settings.user.panels.abstract = Class.create({
             'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
                 newChildNode.data.qtip = t('id') +  ": " + newChildNode.data.id;
             }
-
         };
 
         return treeNodeListeners;

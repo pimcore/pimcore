@@ -74,6 +74,11 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                         ptype: 'treeviewdragdrop',
                         appendOnly: true,
                         ddGroup: "roles"
+                    },
+                    listeners: {
+                        drop: function(node, data, overModel) {
+                            this.update(data.records[0].id, {parentId: overModel.id})
+                        }.bind(this)
                     }
                 }
                 ,
