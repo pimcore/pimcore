@@ -230,7 +230,7 @@ Ext.onReady(function () {
     });
     Ext.Ajax.on("beforerequest", function () {
         if (xhrActive < 1) {
-            Ext.get("pimcore_logo").dom.innerHTML = '<img class="activity" src="/pimcore/static6/img/loading.gif"/>';
+            Ext.get("pimcore_logo").dom.innerHTML = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>';
         }
         xhrActive++;
     });

@@ -82,12 +82,17 @@
     padding-left: 2px;
     transform: rotate(270deg);
     transform-origin: 14px 12px;
+
 }
 
-#pimcore_logo img.activity {
-    width: 31px;
-    height: 31px;
-    padding-left: 0;
+#pimcore_logo .spinner {
+    margin: 0;
+    transform: rotate(90deg);
+    transform-origin: 40px -17px;
+}
+
+#pimcore_logo .spinner > div {
+    background-color: #fff;
 }
 
 .pimcore_hidden {
