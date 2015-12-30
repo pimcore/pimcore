@@ -527,6 +527,15 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         exit;
     }
 
+    public function getAreaHelpAction() {
+        $helpFile = $this->getParam("helpFile");
+        if (is_file(PIMCORE_DOCUMENT_ROOT . $helpFile)) {
+            include PIMCORE_DOCUMENT_ROOT . $helpFile;
+        }
+
+        exit;
+    }
+
     public function testAction()
     {
 

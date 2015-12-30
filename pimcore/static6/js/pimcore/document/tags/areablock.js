@@ -26,7 +26,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
 
         var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typemenu, typeDiv, typebuttontext, editDiv, editButton;
+            typemenu, typeDiv, typebuttontext, editDiv, editButton, helpDiv, helpButton;
         this.elements = Ext.get(id).query("div." + name + "[key]");
 
         // reload or not => default not
@@ -200,6 +200,18 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 });
                 optionsButton.render(optionsDiv);
 
+                helpDiv = Ext.get(this.elements[i]).query(".pimcore_block_help_" + this.name);
+                if(helpDiv.length > 0) {
+                    helpButton = new Ext.Button({
+                        cls: "pimcore_block_button_help",
+                        iconCls: "pimcore_icon_info",
+                        listeners: {
+                            "click": this.helpClickhandler.bind(this, this.elements[i])
+                        }
+                    });
+                    helpButton.render(helpDiv[0]);
+                }
+
 
                 /*
                 Ext.get(this.elements[i]).on("mouseenter", function () {
@@ -211,6 +223,16 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 */
             }
         }
+    },
+
+    helpClickhandler: function (element, btn, e) {
+        Ext.Ajax.request({
+            url: '/admin/misc/get-area-help/',
+            params: {helpFile: this.options.areaDir + '/' + element.getAttribute('type') + '/help.php'},
+            success: function(response) {
+                pimcore.helpers.showMessagebox(t('help_window_title'), response.responseText);
+            }
+        });
     },
 
     copyToClipboard: function (element) {
@@ -408,11 +430,15 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var optionsEl = document.createElement("div");
         optionsEl.setAttribute("class", "pimcore_block_options");
 
+        var helpEl = document.createElement("div");
+        helpEl.setAttribute("class", "pimcore_block_help");
+
         var clearEl = document.createElement("div");
         clearEl.setAttribute("class", "pimcore_block_clear");
 
         Ext.get(this.id).appendChild(plusEl);
         Ext.get(this.id).appendChild(optionsEl);
+        Ext.get(this.id).appendChild(helpEl);
         Ext.get(this.id).appendChild(clearEl);
 
         // plus button
