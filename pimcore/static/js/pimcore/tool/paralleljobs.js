@@ -67,6 +67,22 @@ pimcore.tool.paralleljobs = Class.create({
         }
     },
 
+    continue: function () {
+        this.jobsFinished++;
+        this.jobsRunning-=1;
+        this.alloverJobsFinished++;
+
+        // update
+        var status = this.alloverJobsFinished / this.alloverJobs;
+        var percent = Math.ceil(status * 100);
+
+        try {
+            if(typeof this.config.update == "function") {
+                this.config.update(this.alloverJobsFinished, this.alloverJobs, percent);
+            }
+        } catch (e2) {}
+    },
+
     processJob: function () {
 
         var maxConcurrentJobs = 10;
@@ -103,23 +119,14 @@ pimcore.tool.paralleljobs = Class.create({
                         }
                     }
 
-                    this.jobsFinished++;
-                    this.jobsRunning-=1;
-                    this.alloverJobsFinished++;
-
-                    // update
-                    var status = this.alloverJobsFinished / this.alloverJobs;
-                    var percent = Math.ceil(status * 100);
-
-                    try {
-                        if(typeof this.config.update == "function") {
-                            this.config.update(this.alloverJobsFinished, this.alloverJobs, percent);
-                        }
-                    } catch (e2) {}
-
+                    this.continue();
                 }.bind(this),
                 failure: function (response) {
                     this.error(response.responseText);
+
+                    if(!this.config["stopOnError"]) {
+                        this.continue();
+                    }
                 }.bind(this),
                 params: this.config.jobs[this.groupsFinished][this.jobsStarted].params
             });
