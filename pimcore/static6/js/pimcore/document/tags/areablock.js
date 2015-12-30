@@ -200,15 +200,17 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 });
                 optionsButton.render(optionsDiv);
 
-                helpDiv = Ext.get(this.elements[i]).query(".pimcore_block_help_" + this.name)[0];
-                helpButton = new Ext.Button({
-                    cls: "pimcore_block_button_help",
-                    iconCls: "pimcore_icon_info",
-                    listeners: {
-                        "click": this.helpClickhandler.bind(this, this.elements[i])
-                    }
-                });
-                helpButton.render(helpDiv);
+                helpDiv = Ext.get(this.elements[i]).query(".pimcore_block_help_" + this.name);
+                if(helpDiv.length > 0) {
+                    helpButton = new Ext.Button({
+                        cls: "pimcore_block_button_help",
+                        iconCls: "pimcore_icon_info",
+                        listeners: {
+                            "click": this.helpClickhandler.bind(this, this.elements[i])
+                        }
+                    });
+                    helpButton.render(helpDiv[0]);
+                }
 
 
                 /*
