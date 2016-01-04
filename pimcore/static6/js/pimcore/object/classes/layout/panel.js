@@ -33,6 +33,14 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
     getLayout: function ($super) {
         $super();
 
+        var layouts = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                {"abbr":"", "name":"Default"},
+                {"abbr":"fit", "name":"Fit"}
+            ]
+        });
+
         this.layout.add({
             xtype: "form",
             bodyStyle: "padding: 10px;",
@@ -43,9 +51,11 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
                     fieldLabel: t("layout"),
                     name: "layout",
                     value: this.datax.layout,
-                    store: ["","fit"],
+                    store: layouts,
                     triggerAction: 'all',
-                    editable: false
+                    editable: false,
+                    displayField: 'name',
+                    valueField: 'abbr',
                 },{
                     xtype: "numberfield",
                     name: "labelWidth",
