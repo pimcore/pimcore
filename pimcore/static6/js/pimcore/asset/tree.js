@@ -628,7 +628,7 @@ pimcore.asset.tree = Class.create({
             }));
         }
 
-        menu.showAt(e.pageX, e.pageY);
+        menu.showAt(e.pageX+1, e.pageY+1);
     },
 
 
