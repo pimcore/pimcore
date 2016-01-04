@@ -1443,3 +1443,7 @@
 .pimcore_icon_calculatedValue {
     background: url("/pimcore/static6/img/icon/calculator.png") center center no-repeat !important;
 }
+
+.pimcore_icon_element_tags {
+    background: url("/pimcore/static6/img/icon/tag_yellow.png") center center no-repeat !important;
+}

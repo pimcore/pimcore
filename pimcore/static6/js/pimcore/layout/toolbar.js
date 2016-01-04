@@ -732,6 +732,15 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        // tags for elements
+        if(user.isAllowed("tags_config")) {
+            settingsItems.push({
+                text: t("element_tag_configuration"),
+                iconCls: "pimcore_icon_element_tags",
+                handler: this.showTagConfiguration
+            });
+        }
+
         // help menu
         if (settingsItems.length > 0) {
             this.settingsMenu = new Ext.menu.Menu({
@@ -1406,6 +1415,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("email_blacklist", new pimcore.settings.email.blacklist());
+        }
+    },
+
+    showTagConfiguration: function() {
+        try {
+            pimcore.globalmanager.get("element_tag_configuration").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("element_tag_configuration", new pimcore.element.tag.configuration());
         }
     },
 

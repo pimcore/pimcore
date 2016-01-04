@@ -177,6 +177,25 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         }
 
 
+        //filtering for tags
+        $tagIds = $this->getParam("tagIds");
+        if($tagIds) {
+            foreach($tagIds as $tagId) {
+                foreach($types as $type) {
+                    if($this->getParam("considerChildTags") =="true") {
+                        $tag = Pimcore\Model\Element\Tag::getById($tagId);
+                        if($tag) {
+                            $tagPath = $tag->getFullIdPath();
+                            $conditionParts[] = "id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = " . $db->quote($type) . " AND (id = " . intval($tagId) . " OR idPath LIKE " . $db->quote($tagPath . "%") . "))";
+                        }
+                    } else {
+                        $conditionParts[] = "id IN (SELECT cId FROM tags_assignment WHERE ctype = " . $db->quote($type) . " AND tagid = " . intval($tagId) . ")";
+                    }
+                }
+            }
+        }
+
+
         if (count($conditionParts) > 0) {
             $condition = implode(" AND ", $conditionParts);
 

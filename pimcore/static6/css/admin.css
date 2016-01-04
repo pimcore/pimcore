@@ -1243,3 +1243,14 @@ span.warning {
     color: white;
 }
 
+.tag-tree-topbar .x-form-field, .tag-tree-topbar .x-form-cb-label {
+    margin-top: 0;
+}
+
+.tag-tree-topbar .x-form-item-body {
+    height: 20px;
+}
+
+.tag-tree-toolbar-collapsed {
+    border: none;
+}

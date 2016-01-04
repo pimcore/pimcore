@@ -40,6 +40,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         }
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
     },
 
     getSaveData : function () {
@@ -201,6 +202,12 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         if (this.isAllowed("settings")) {
             items.push(this.notes.getLayout());
         }
+
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
+        }
+
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",

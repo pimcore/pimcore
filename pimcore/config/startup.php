@@ -107,5 +107,5 @@ register_shutdown_function(function () {
     \Pimcore::getEventManager()->trigger("system.shutdown");
 });
 
-// attach global shutdown event
-Pimcore::getEventManager()->attach("system.shutdown", array("Pimcore", "shutdown"), 9999);
+include_once("event-listeners.php");
+

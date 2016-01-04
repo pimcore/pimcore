@@ -2332,13 +2332,19 @@ INSERT INTO `staticroutes` VALUES (2,'blog','/(.*)_b([\\d]+)/','%prefix/%text_b%
 INSERT INTO `staticroutes` VALUES (3,'category-example','@/category\\-example@','/en/category-example','','category_example','test',NULL,NULL,NULL,1,1419933908,1419933931);
 
 
-
-
-
-
-
-
-
+INSERT INTO `tags` VALUES (12, 0, '/', 'imagetype');
+INSERT INTO `tags` VALUES (13, 0, '/', 'format');
+INSERT INTO `tags` VALUES (14, 0, '/', 'country');
+INSERT INTO `tags` VALUES (15, 13, '/13/', 'portrait');
+INSERT INTO `tags` VALUES (16, 13, '/13/', 'landscape');
+INSERT INTO `tags` VALUES (17, 12, '/12/', 'jpg');
+INSERT INTO `tags` VALUES (18, 12, '/12/', 'png');
+INSERT INTO `tags` VALUES (19, 14, '/14/', 'italy');
+INSERT INTO `tags` VALUES (20, 14, '/14/', 'panama');
+INSERT INTO `tags` VALUES (21, 14, '/14/', 'singapore');
+INSERT INTO `tags` VALUES (22, 14, '/14/', 'south-africa');
+INSERT INTO `tags` VALUES (23, 12, '/12/', 'screenshot');
+INSERT INTO `tags` VALUES (25, 12, '/12/', 'svg');
 
 
 

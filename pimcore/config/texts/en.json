@@ -6610,5 +6610,49 @@
     {
         "term": "loading_texts",
         "definition": "Loading Texts"
+    },
+    {
+        "term": "element_tag_configuration",
+        "definition": "Tag Configuration"
+    },
+    {
+        "term": "element_tag_all_tags",
+        "definition": "All Tags"
+    },
+    {
+        "term": "rename_tag",
+        "definition": "Rename Tag"
+    },
+    {
+        "term": "enter_new_name_of_the_tag",
+        "definition": "Enter new name of the Tag"
+    },
+    {
+        "term": "assigned_tags",
+        "definition": "Assigned Tags"
+    },
+    {
+        "term": "element_tag_tree",
+        "definition": "Tag Tree"
+    },
+    {
+        "term": "filter_tags",
+        "definition": "Filter for Tags"
+    },
+    {
+        "term": "consider_child_tags",
+        "definition": "Consider child tags too"
+    },
+    {
+        "term": "tags_assignment",
+        "definition": "Tags Assignment"
+    },
+    {
+        "term": "tags_configuration",
+        "definition": "Tags Configuration"
+    },
+    {
+        "term": "tags_search",
+        "definition": "Tags Search"
     }
 ]

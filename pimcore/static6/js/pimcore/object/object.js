@@ -30,6 +30,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.notes = new pimcore.element.notes(this, "object");
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
         this.getData();
     },
 
@@ -257,6 +258,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
         }
+
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
+        }
+
 
         //
         if(this.data.childdata.data.classes.length > 0) {

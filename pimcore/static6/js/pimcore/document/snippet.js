@@ -40,6 +40,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.reports = new pimcore.report.panel("document_snippet", this);
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
     },
 
 
@@ -71,6 +72,11 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
         if (this.isAllowed("settings")) {
             items.push(this.notes.getLayout());
+        }
+
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({

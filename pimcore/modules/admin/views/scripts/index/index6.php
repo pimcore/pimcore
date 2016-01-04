@@ -267,6 +267,9 @@ $scripts = array(
     "pimcore/object/helpers/customLayoutEditor.js",
     "pimcore/object/helpers/optionEditor.js",
     "pimcore/element/selector/object.js",
+    "pimcore/element/tag/configuration.js",
+    "pimcore/element/tag/assignment.js",
+    "pimcore/element/tag/tree.js",
 
     // documents
     "pimcore/document/properties.js",

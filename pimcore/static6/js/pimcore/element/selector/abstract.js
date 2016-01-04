@@ -21,7 +21,7 @@ pimcore.element.selector.abstract = Class.create({
         if(this.parent.multiselect) {
             this.searchPanel = new Ext.Panel({
                 layout: "border",
-                items: [this.getForm(), this.getSelectionPanel(), this.getResultPanel()],
+                items: [this.getForm(), this.getSelectionPanel(), this.getResultPanel()]
             });
         } else {
             this.searchPanel = new Ext.Panel({
@@ -29,6 +29,12 @@ pimcore.element.selector.abstract = Class.create({
                 items: [this.getForm(), this.getResultPanel()]
             });
         }
+
+        var user = pimcore.globalmanager.get("user");
+        if(user.isAllowed("tags_search")) {
+            this.searchPanel.add(this.getTagsPanel());
+        }
+
         
         this.parent.setSearch(this.searchPanel);
     },
@@ -41,6 +47,55 @@ pimcore.element.selector.abstract = Class.create({
         if(existingItem < 0) {
             this.selectionStore.add(data);
         }
+    },
+
+    getTagsPanel: function() {
+
+        if(!this.tagsPanel) {
+
+            var considerAllChildTags = Ext.create("Ext.form.Checkbox", {
+                style: "margin-bottom: 0; margin-left: 5px",
+                fieldStyle: "margin-top: 0",
+                cls: "tag-tree-topbar",
+                boxLabel: t("consider_child_tags"),
+                listeners: {
+                    change: function (field, checked) {
+                        var proxy = this.store.getProxy();
+                        proxy.setExtraParam("considerChildTags", checked);
+                        this.search();
+                    }.bind(this)
+                }
+            });
+
+
+            var tree = new pimcore.element.tag.tree();
+            tree.setAllowAdd(false);
+            tree.setAllowDelete(false);
+            tree.setAllowDnD(false);
+            tree.setAllowRename(false);
+            tree.setShowSelection(true);
+            tree.setCheckChangeCallback(function(tree) {
+                var tagIds = tree.getCheckedTagIds();
+                var proxy = this.store.getProxy();
+                proxy.setExtraParam("tagIds[]", tagIds);
+                this.search();
+            }.bind(this, tree));
+
+            this.tagsPanel = Ext.create("Ext.Panel", {
+                region: "west",
+                width: 300,
+                collapsedCls: "tag-tree-toolbar-collapsed",
+                collapsible: true,
+                collapsed: true,
+                autoScroll: true,
+                items: [tree.getLayout()],
+                title: t('filter_tags'),
+                tbar: [considerAllChildTags],
+                iconCls: "pimcore_icon_element_tags"
+            });
+        }
+
+        return this.tagsPanel;
     },
     
     getData: function () {
