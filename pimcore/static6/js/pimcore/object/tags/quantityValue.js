@@ -52,7 +52,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         var input = {
             fieldLabel: this.fieldConfig.title,
-            itemCls: "object_field",
+            componentCls: "object_field",
             labelWidth: 100
         };
 
