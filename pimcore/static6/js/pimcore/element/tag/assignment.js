@@ -117,7 +117,16 @@ pimcore.element.tag.assignment = Class.create({
                 items: [this.grid],
                 layout: "border",
                 region: 'west',
-                width: 460
+                width: 460,
+                buttons: [{
+                    text: t("apply_tags"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: this.prepareBatchUpdate.bind(this, false)
+                },{
+                    text: t("remove_and_apply_tags"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: this.prepareBatchUpdate.bind(this, true)
+                }]
             });
 
             this.layout = Ext.create("Ext.Panel", {
@@ -142,6 +151,97 @@ pimcore.element.tag.assignment = Class.create({
                 tagId: tagId
             }
         });
+    },
+
+
+    prepareBatchUpdate: function(removeAndApply) {
+        Ext.Ajax.request({
+            url: "/admin/tags/get-batch-assignment-jobs",
+            params: {
+                elementId: this.element.id,
+                elementType: this.elementType
+            },
+            success: function(response) {
+                var responseJson = Ext.decode(response.responseText);
+
+                if(responseJson.totalCount == 0) {
+                    Ext.MessageBox.alert(t("error"), t("no_children_found"));
+                } else {
+                    // get selected elements
+                    var jobs = [];
+
+                    var assignedTags = [];
+                    this.grid.getStore().each(function(record) {
+                        assignedTags.push(record.id);
+                    });
+
+                    var params = {
+                        elementId: this.element.id,
+                        elementType: this.elementType,
+                        removeAndApply: removeAndApply,
+                        assignedTags: Ext.encode(assignedTags)
+                    };
+
+                    for (var i=0; i<responseJson.idLists.length; i++) {
+                        jobs.push({
+                            url: "/admin/tags/do-batch-assignment",
+                            params: array_merge(params, {
+                                childrenIds: Ext.encode(responseJson.idLists[i])
+                            })
+                        });
+                    }
+
+                    if(jobs.length) {
+                        this.progressBar = new Ext.ProgressBar({
+                            text: t('initializing')
+                        });
+
+                        this.progressBarWin = new Ext.Window({
+                            title: t("batch_assignment"),
+                            layout:'fit',
+                            width:500,
+                            bodyStyle: "padding: 10px;",
+                            closable:false,
+                            plain: true,
+                            modal: true,
+                            items: [this.progressBar]
+                        });
+
+                        this.progressBarWin.show();
+
+                        var pj = new pimcore.tool.paralleljobs({
+                            success: function () {
+
+                                if(this.progressBarWin) {
+                                    this.progressBarWin.close();
+                                }
+
+                                this.progressBar = null;
+                                this.progressBarWin = null;
+
+                                if(typeof callback == "function") {
+                                    callback();
+                                }
+                            }.bind(this),
+                            update: function (currentStep, steps, percent) {
+                                if(this.progressBar) {
+                                    var status = currentStep / steps;
+                                    this.progressBar.updateProgress(status, percent + "%");
+                                }
+                            }.bind(this),
+                            failure: function (message) {
+                                this.progressBarWin.close();
+                                pimcore.helpers.showNotification(t("error"), "", "error", t(message));
+                            }.bind(this),
+                            jobs: [jobs]
+                        });
+                    } else {
+                        Ext.MessageBox.alert(t("error"), t("batch_assignment_error"));
+                    }
+                }
+            }.bind(this)
+        });
     }
+
 
 });

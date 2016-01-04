@@ -6656,6 +6656,26 @@
         "definition": "Tags Search"
     },
     {
+        "term": "apply_tags",
+        "definition": "apply Tags to Children"
+    },
+    {
+        "term": "remove_and_apply_tags",
+        "definition": "remove and apply Tags to Children"
+    },
+    {
+        "term": "batch_assignment",
+        "definition": "Tag batch assignment"
+    },
+    {
+        "term": "batch_assignment_error",
+        "definition": "Tag batch assignment error"
+    },
+    {
+        "term": "no_children_found",
+        "definition": "No Children found."
+    },
+    {
         "term": "apply_all",
         "definition": "Apply all"
     },

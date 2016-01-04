@@ -112,6 +112,16 @@ class Tag extends Model\AbstractModel {
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
     }
 
+    /**
+     * @param $cType
+     * @param array $cIds
+     * @param array $tagIds
+     * @param bool|false $replace
+     */
+    public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false) {
+        $tag = new Tag();
+        $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
+    }
 
     public function save() {
         $this->correctPath();
