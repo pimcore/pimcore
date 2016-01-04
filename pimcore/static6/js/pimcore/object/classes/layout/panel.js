@@ -47,7 +47,7 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
                     triggerAction: 'all',
                     editable: false
                 },{
-                    xtype: "spinnerfield",
+                    xtype: "numberfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
