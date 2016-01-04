@@ -99,7 +99,7 @@ pimcore.object.tree = Class.create({
             id: this.config.treeId,
             title: this.config.treeTitle,
             autoScroll: true,
-            animate: true,
+            animate: false,
             rootVisible: true,
             bufferedRenderer: false,
             border: false,

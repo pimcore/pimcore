@@ -91,7 +91,7 @@ pimcore.asset.tree = Class.create({
             title: this.config.treeTitle,
             iconCls: this.config.treeIconCls,
             autoScroll:true,
-            animate:true,
+            animate:false,
             containerScroll: true,
             ddAppendOnly: true,
             rootVisible: this.config.rootVisible,
