@@ -1140,18 +1140,20 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin {
     public function mergeItemAction() {
 
         $translationType = $this->getParam("translationType");
-        $success = true;
 
-        $data = json_decode($this->getParam("data"), true);
+        $dataList = json_decode($this->getParam("data"), true);
 
         $classname = "\\Pimcore\\Model\\Translation\\" . ucfirst($translationType);
-        $t = $classname::getByKey($data["key"],true);
-        $t->addTranslation($data["lg"], $data["current"]);
-        $t->setModificationDate(time());$t->save();
+        foreach ($dataList as $data) {
+            $t = $classname::getByKey($data["key"], true);
+            $t->addTranslation($data["lg"], $data["current"]);
+            $t->setModificationDate(time());
+            $t->save();
+        }
 
 
         $this->_helper->json(array(
-            "success" => $success
+            "success" => true
         ));
     }
 }

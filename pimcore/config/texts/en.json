@@ -6654,5 +6654,17 @@
     {
         "term": "tags_search",
         "definition": "Tags Search"
+    },
+    {
+        "term": "apply_all",
+        "definition": "Apply all"
+    },
+    {
+        "term": "revert_all",
+        "definition": "Revert all"
+    },
+    {
+        "term": "batch_applied",
+        "definition": "Batch applied"
     }
 ]

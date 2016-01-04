@@ -263,12 +263,12 @@ pimcore.settings.translations = Class.create({
                     handler: this.doMerge.bind(this),
                     iconCls: "pimcore_icon_merge"
                 },
-                "-",
-                {
-                    text: t('import_csv'),
-                    handler: this.doImport.bind(this),
-                    iconCls: "pimcore_icon_import"
-                },
+                //"-",
+                //{
+                //    text: t('import_csv'),
+                //    handler: this.doImport.bind(this),
+                //    iconCls: "pimcore_icon_import"
+                //},
                 '-',
                 {
                     text: t('export_csv'),
