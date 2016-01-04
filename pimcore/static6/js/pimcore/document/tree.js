@@ -973,10 +973,10 @@ pimcore.document.tree = Class.create({
                 bodyStyle: "padding: 10px;",
                 items: [{
                     xtype: "textfield",
+                    width: "100%",
                     fieldLabel: t('key'),
                     itemId: "key",
                     name: 'key',
-                    width: 300,
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
@@ -993,13 +993,13 @@ pimcore.document.tree = Class.create({
                     itemId: "name",
                     fieldLabel: t('navigation'),
                     name: 'name',
-                    width: 300
+                    width: "100%"
                 },{
                     xtype: "textfield",
                     itemId: "title",
                     fieldLabel: t('title'),
                     name: 'title',
-                    width: 300
+                    width: "100%"
                 }]
             });
 
@@ -1019,6 +1019,7 @@ pimcore.document.tree = Class.create({
             var messageBox = new Ext.Window({
                 modal: true,
                 width: 400,
+                title: t(textKeyTitle),
                 items: pageForm,
                 buttons: [{
                     text: t('OK'),
