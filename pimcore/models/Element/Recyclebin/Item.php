@@ -211,6 +211,8 @@ class Item extends Model\AbstractModel {
         
         $element->_fulldump = true;
 
+        // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
+        // with the property _fulldump set, because this would cause major issues in wakeUp()
         \Pimcore\Cache::addClearedTag($element->getCacheTag());
 
         if(method_exists($element,"getChilds")) {
