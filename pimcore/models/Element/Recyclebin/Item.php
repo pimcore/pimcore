@@ -144,7 +144,6 @@ class Item extends Model\AbstractModel {
 
         // serialize data
         Element\Service::loadAllFields($this->element);
-        $this->element->_fulldump = true;
         $data = Serialize::serialize($this->getElement());
         
         $this->getDao()->save();
@@ -211,7 +210,9 @@ class Item extends Model\AbstractModel {
         }
         
         $element->_fulldump = true;
-        
+
+        \Pimcore\Cache::addClearedTag($element->getCacheTag());
+
         if(method_exists($element,"getChilds")) {
             if($element instanceof Object\AbstractObject) {
                 // because we also want variants

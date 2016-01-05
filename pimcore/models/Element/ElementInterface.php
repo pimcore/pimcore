@@ -21,24 +21,20 @@ interface ElementInterface {
      */
     public function getId();
 
-
     /**
      * @return string
      */
     public function getKey();
-
 
     /**
      * @return string
      */
     public function getPath();
 
-
     /**
      * @return string
      */
     public function getType();
-
 
     /**
      * @return integer
@@ -50,7 +46,6 @@ interface ElementInterface {
      * @return void
      */
     public function setCreationDate($creationDate);
-
 
     /**
      * @return integer
@@ -74,12 +69,10 @@ interface ElementInterface {
      */
     public function setUserOwner($userOwner);
 
-
     /**
      * @return integer
      */
     public function getUserModification();
-
 
     /**
      * @param integer $userModification
@@ -90,10 +83,9 @@ interface ElementInterface {
     /**
      *
      * @param $id
-     * @return Element\ElementInterface $resource
+     * @return ElementInterface $resource
      */
     public static function getById($id);
-
 
     /**
      * get possible types 
@@ -124,7 +116,13 @@ interface ElementInterface {
     public function getParentId();
 
     /**
-     *
+     * @return string
      */
+    public function getCacheTag();
 
+    /**
+     * @param array $tags
+     * @return array
+     */
+    public function getCacheTags($tags = array());
 }
