@@ -83,20 +83,20 @@ class Area extends Model\Document\Tag {
     public function frontend() {
 
         $count = 0;
+        $options = $this->getOptions();
+        // don't show disabled bricks
+        if(!ExtensionManager::isEnabled("brick", $options["type"]) && $options['dontCheckEnabled'] != true) {
+            return;
+        }
 
         $this->setupStaticEnvironment();
         $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         $suffixes[] = $this->getName();
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
-        $options = $this->getOptions();
 
         $this->current = $count;
 
-        // don't show disabled bricks
-        if(!ExtensionManager::isEnabled("brick", $options["type"]) && $options['dontCheckEnabled'] != true) {
-            return;
-        }
 
         // create info object and assign it to the view
         $info = null;
