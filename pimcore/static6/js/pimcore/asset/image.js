@@ -245,7 +245,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     bodyStyle: "background: url(/admin/asset/get-image-thumbnail/id/" + this.id +
                         "/treepreview/true_dc=" + dc + ") center center no-repeat;"
                 },{
-                    title: t("image_details"),
                     region: "east",
                     width: 300,
                     items: details,
