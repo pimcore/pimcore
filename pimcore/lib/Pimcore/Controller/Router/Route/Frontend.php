@@ -520,7 +520,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
                         // replace escaped % signs so that they didn't have effects to vsprintf (PIMCORE-1215)
                         $target = str_replace("\\%","###URLENCODE_PLACEHOLDER###", $target);
-                        $url = vsprintf($target, $matches);
+                        $url = @vsprintf($target, $matches);
+                        if(empty($url)) {
+                            // vsprintf() failed, just ose the original again
+                            $url = $target;
+                        }
                         $url = str_replace("###URLENCODE_PLACEHOLDER###", "%", $url);
 
                         // support for pcre backreferences
