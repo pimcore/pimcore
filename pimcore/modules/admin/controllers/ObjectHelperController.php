@@ -243,7 +243,13 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             return ($a["position"] < $b["position"]) ? -1 : 1;
         });
 
-        $language = $this->getLanguage();
+        $config = \Pimcore\Config::getSystemConfig();
+        $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config->general->validLanguages);
+        if ($frontendLanguages) {
+            $language = explode(',', $frontendLanguages)[0];
+        } else {
+            $language = $this->getLanguage();
+        }
 
         if(!Tool::isValidLanguage($language)) {
             $validLanguages = Tool::getValidLanguages();
