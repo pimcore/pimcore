@@ -91,6 +91,7 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin {
                 $fileobject = str_replace(PIMCORE_DOCUMENT_ROOT, "", $r['fileobject']);
 
                 $errorData =  array("id"=>$r['id'],
+                                    "pid" => $r['pid'],
                                     "message"=>$r['message'],
                                     "timestamp"=>$r['timestamp'],
                                     "priority"=>$this->getPriorityName($r['priority']),

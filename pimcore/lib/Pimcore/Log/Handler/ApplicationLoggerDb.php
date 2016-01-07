@@ -53,6 +53,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler {
         $db = Database::get();
 
         $data = [
+            'pid' => getmypid(),
             'priority' => strtolower($record["level_name"]),
             'message' => $record["message"],
             'timestamp' => $record["datetime"]->format("Y-m-d H:i:s"),

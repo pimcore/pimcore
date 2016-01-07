@@ -6228,6 +6228,10 @@
         "definition": "Logentry"
     },
     {
+        "term": "log_pid",
+        "definition": "PID"
+    },
+    {
         "term": "log_filelink",
         "definition": "Filelink"
     },

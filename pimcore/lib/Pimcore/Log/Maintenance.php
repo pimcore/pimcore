@@ -191,6 +191,7 @@ class Maintenance {
 
         $db->query("CREATE TABLE IF NOT EXISTS " . $tablename . " (
                        id BIGINT(20) NOT NULL,
+                       `pid` INT(11) NULL DEFAULT NULL,
                        `timestamp` DATETIME NOT NULL,
                        message VARCHAR(1024),
                        `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
