@@ -20,6 +20,10 @@
     background-color: #fff;
 }
 
+.x-tree-view .x-grid-item-container {
+    overflow: visible;
+}
+
 /* Style overrides */
 
 .x-tab-default-top {
