@@ -1012,11 +1012,6 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 600},
                         items: [
                             {
-                                fieldLabel: t('hostname_for_webdav'),
-                                name: 'assets.webdav.hostname',
-                                value: this.getValue("assets.webdav.hostname"),
-                            },
-                            {
                                 fieldLabel: t('store_version_history_in_days'),
                                 name: 'assets.versions.days',
                                 value: this.getValue("assets.versions.days"),

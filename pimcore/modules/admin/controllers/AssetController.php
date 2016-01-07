@@ -682,6 +682,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
+            $server->setBaseUri("/admin/asset/webdav/");
 
             // lock plugin
             $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_WEBDAV_TEMP . '/locks.dat');

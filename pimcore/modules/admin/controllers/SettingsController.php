@@ -409,9 +409,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                 )
             ),
             "assets" => array(
-                "webdav" => array(
-                    "hostname" => $values["assets.webdav.hostname"]
-                ),
                 "versions" => array(
                     "days" => $values["assets.versions.days"],
                     "steps" => $values["assets.versions.steps"]

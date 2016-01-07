@@ -3724,10 +3724,6 @@
         "definition": "CHMOD Files"
     },
     {
-        "term": "hostname_for_webdav",
-        "definition": "Hostname for WebDAV"
-    },
-    {
         "term": "api_key",
         "definition": "API Key"
     },
