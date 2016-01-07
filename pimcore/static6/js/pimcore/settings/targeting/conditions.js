@@ -635,7 +635,7 @@ pimcore.settings.targeting.conditions = {
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
             items: [{
-                xtype:'spinnerfield',
+                xtype:'numberfield',
                 fieldLabel: t("number"),
                 name: "number",
                 value: data.number,
@@ -669,19 +669,19 @@ pimcore.settings.targeting.conditions = {
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
             items: [{
-                xtype:'spinnerfield',
+                xtype:'numberfield',
                 fieldLabel: t("hours"),
                 name: "hours",
                 value: data.hours ? data.hours : 0,
                 width: 200
             },{
-                xtype:'spinnerfield',
+                xtype:'numberfield',
                 fieldLabel: t("minutes"),
                 name: "minutes",
                 value: data.minutes ? data.minutes : 0,
                 width: 200
             },{
-                xtype:'spinnerfield',
+                xtype:'numberfield',
                 fieldLabel: t("seconds"),
                 name: "seconds",
                 value: data.seconds ? data.seconds : 0,
@@ -749,7 +749,7 @@ pimcore.settings.targeting.conditions = {
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
             items: [{
-                xtype:'spinnerfield',
+                xtype:'numberfield',
                 fieldLabel: t("number"),
                 name: "number",
                 value: data.number,

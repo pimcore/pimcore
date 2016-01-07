@@ -216,7 +216,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                         value: "ga:pageviews",
                         itemCls: "pimcore_analytics_filter_form_item"
                     },{
-                        xtype: "spinnerfield",
+                        xtype: "numberfield",
                         value: 10,
                         width: 150,
                         name: "limit",

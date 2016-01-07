@@ -70,7 +70,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             }, {
                 name: "threshold",
                 fieldLabel: t("threshold"),
-                xtype: "spinnerfield",
+                xtype: "numberfield",
                 value: this.data["threshold"]
             }, {
                 name: "active",
