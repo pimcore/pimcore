@@ -71,7 +71,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
                 store: store,
                 region: "west",
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 width: 250,
                 split: true,

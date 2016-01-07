@@ -130,7 +130,7 @@ pimcore.document.seopanel = Class.create({
                 store: store,
                 columns: columns,
                 enableSort: false,
-                animate: true,
+                animate: false,
                 rootVisible: true,
                 root: rootNodeConfig,
                 border: false,

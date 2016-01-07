@@ -65,7 +65,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 store: this.store,
                 region: "west",
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 width: 200,
                 split: true,

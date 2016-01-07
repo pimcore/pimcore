@@ -51,7 +51,7 @@ pimcore.settings.targeting.personas.panel= Class.create({
                 store: store,
                 region: "west",
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 width: 200,
                 split: true,

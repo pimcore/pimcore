@@ -72,7 +72,7 @@ pimcore.object.fieldcollection = Class.create({
                 store: this.store,
                 region: "west",
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 width: 200,
                 split: true,

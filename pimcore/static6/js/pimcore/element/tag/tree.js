@@ -93,7 +93,7 @@ pimcore.element.tag.tree = Class.create({
                 forceLayout: true,
                 region: "center",
                 autoScroll: true,
-                animate: true,
+                animate: false,
                 viewConfig: {
                     plugins: treePlugins,
                     listeners: {

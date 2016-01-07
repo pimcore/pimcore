@@ -55,7 +55,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                 store: store,
                 region: "west",
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 border: true,
                 split:true,

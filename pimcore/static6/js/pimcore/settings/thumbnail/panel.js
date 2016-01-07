@@ -76,7 +76,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                 id: "pimcore_panel_thumbnail_tree",
                 region: "west",
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 width: 200,
                 split: true,

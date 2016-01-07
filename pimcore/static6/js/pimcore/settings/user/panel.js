@@ -55,7 +55,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 store: store,
                 region: "west",
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 split:true,
                 width: 180,
