@@ -630,14 +630,10 @@ class Pimcore {
 
         $autoloader->registerNamespace('Logger');
         $autoloader->registerNamespace('Pimcore');
-        $autoloader->registerNamespace('Sabre');
         $autoloader->registerNamespace('Net_');
         $autoloader->registerNamespace('Website');
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Search');
-        $autoloader->registerNamespace('Whoops');
-        $autoloader->registerNamespace('Google');
-        $autoloader->registerNamespace('Symfony');
 
         // these are necessary to be backward compatible
         // so if e.g. plugins use the namespace Object but do not include them in their own autoloader definition (plugin.xml)
