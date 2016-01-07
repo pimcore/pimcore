@@ -20,6 +20,9 @@ class QueryParams {
      */
     public static function extractSortingSettings($params) {
 
+        $orderKey = null;
+        $order = null;
+
         if (\Pimcore\Tool\Admin::isExtJS6()) {
             $sortParam = $params["sort"];
             if ($sortParam) {
