@@ -80,13 +80,13 @@ pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layou
                             value: this.datax.handler
                         },
                         {
-                            xtype: "spinnerfield",
+                            xtype: "numberfield",
                             fieldLabel: t("width"),
                             name: "width",
                             value: this.datax.width
                         },
                         {
-                            xtype: "spinnerfield",
+                            xtype: "numberfield",
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height
