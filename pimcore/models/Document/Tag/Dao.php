@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao {
             "type" => $this->model->getType()
         );
 
-        $this->db->insert("documents_elements", $element);
+        $this->db->insertOrUpdate("documents_elements", $element);
     }
 
     /**
