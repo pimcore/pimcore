@@ -22,7 +22,7 @@ pimcore.element.notes = Class.create({
             this.type = type;
             this.inElementContext = true;
         } else {
-            // standalone version
+            // global view
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.getLayout());
             tabPanel.setActiveTab(this.getLayout());
@@ -105,51 +105,73 @@ pimcore.element.notes = Class.create({
                 items: tbarItems
             });
 
-            this.grid = new Ext.grid.GridPanel({
-                store: this.store,
-                region: "center",
-                columns: [
-                    {header: "ID", sortable: true, dataIndex: 'id', hidden: true, flex: 60},
-                    {header: t("type"), sortable: true, dataIndex: 'type', flex: 60},
-                    {header: t("element"), sortable: true, dataIndex: 'cpath', flex: 200,
-                                hidden: this.inElementContext,
-                                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                                    if(record.get("cid")) {
-                                        return t(record.get("ctype")) + ": " + record.get("cpath");
-                                    }
-                                    return "";
-                                }
-                    },
-                    {header: t("title"), sortable: true, dataIndex: 'title', flex: 200},
-                    {header: t("description"), sortable: true, dataIndex: 'description'},
-                    {header: t("fields"), sortable: true, dataIndex: 'data', renderer: function(v) {
-                        if(v) {
-                            return v.length;
+            var columns = [
+                {header: "ID", sortable: true, dataIndex: 'id', hidden: true, flex: 60},
+                {header: t("type"), sortable: true, dataIndex: 'type', flex: 60},
+                {header: t("element"), sortable: true, dataIndex: 'cpath', flex: 200,
+                    hidden: this.inElementContext,
+                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                        if(record.get("cid")) {
+                            return t(record.get("ctype")) + ": " + record.get("cpath");
                         }
                         return "";
-                    }},
-                    {header: t("user"), sortable: true, dataIndex: 'user', flex: 100, renderer: function(v) {
-                        if(v && v["name"]) {
-                            return v["name"];
-                        }
-                        return "";
-                    }},
-                    {header: t("date"), sortable: true, dataIndex: 'date', flex: 100, renderer: function(d) {
-                        var date = new Date(d * 1000);
-                        return Ext.Date.format(date, "Y-m-d H:i:s");
-                    }},
+                    }
+                },
+                {header: t("title"), sortable: true, dataIndex: 'title', flex: 200},
+                {header: t("description"), sortable: true, dataIndex: 'description'},
+                {header: t("fields"), sortable: true, dataIndex: 'data', renderer: function(v) {
+                    if(v) {
+                        return v.length;
+                    }
+                    return "";
+                }},
+                {header: t("user"), sortable: true, dataIndex: 'user', flex: 100, renderer: function(v) {
+                    if(v && v["name"]) {
+                        return v["name"];
+                    }
+                    return "";
+                }},
+                {header: t("date"), sortable: true, dataIndex: 'date', flex: 100, renderer: function(d) {
+                    var date = new Date(d * 1000);
+                    return Ext.Date.format(date, "Y-m-d H:i:s");
+                }}
+            ];
+
+            if (!this.inElementContext) {
+                columns.push(
                     {
                         xtype: 'actioncolumn',
                         width: 30,
                         items: [{
-                            tooltip: t('details'),
-                            icon: "/pimcore/static6/img/icon/info.png",
+                            tooltip: t('element'),
+                            iconCls: "pimcore_icon_edit",
                             handler: function (grid, rowIndex, event) {
-                                this.showDetailedData(grid, rowIndex, event);
+                                var record = this.store.getAt(rowIndex);
+                                var id = record.get("cid");
+                                var type = record.get("ctype");
+                                pimcore.helpers.openElement(id, type, null);
                             }.bind(this)
                         }]
                     }
-                ],
+                );
+            }
+
+            columns.push({
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [{
+                    tooltip: t('details'),
+                    icon: "/pimcore/static6/img/icon/info.png",
+                    handler: function (grid, rowIndex, event) {
+                        this.showDetailedData(grid, rowIndex, event);
+                    }.bind(this)
+                }]
+            });
+
+            this.grid = new Ext.grid.GridPanel({
+                store: this.store,
+                region: "center",
+                columns: columns,
                 columnLines: true,
                 bbar: this.pagingtoolbar,
                 tbar: tbar,
@@ -212,26 +234,26 @@ pimcore.element.notes = Class.create({
             columns: [
                 {header: t("name"), sortable: true, dataIndex: 'name', width: 60},
                 {header: t("type"), sortable: true, dataIndex: 'type',
-                                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                                    return t(value);
-                                }
+                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                        return t(value);
+                    }
                 },
                 {header: t("value"), sortable: true, dataIndex: 'data',
-                                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                                            if(record.get("type") == "document" || record.get("type") == "asset"
-                                                                            || record.get("type") == "object") {
-                                                if(value && value["path"]) {
-                                                    return value["path"];
-                                                }
-                                            } else if (record.get("type") == "date") {
-                                                if(value) {
-                                                    var date = new Date(value * 1000);
-                                                    return Ext.Date.format(date, "Y-m-d H:i:s");
-                                                }
-                                            }
+                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                        if(record.get("type") == "document" || record.get("type") == "asset"
+                            || record.get("type") == "object") {
+                            if(value && value["path"]) {
+                                return value["path"];
+                            }
+                        } else if (record.get("type") == "date") {
+                            if(value) {
+                                var date = new Date(value * 1000);
+                                return Ext.Date.format(date, "Y-m-d H:i:s");
+                            }
+                        }
 
-                                            return value;
-                                        }
+                        return value;
+                    }
                 },
                 {
                     xtype: 'actioncolumn',
@@ -242,16 +264,16 @@ pimcore.element.notes = Class.create({
                         handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
                             if(rec.get("type") == "document" || rec.get("type") == "asset"
-                                                                                || rec.get("type") == "object") {
+                                || rec.get("type") == "object") {
                                 if(rec.get("data") && rec.get("data")["id"]) {
                                     pimcore.helpers.openElement(rec.get("data").id,
-                                                                    rec.get("type"),rec.get("data").type);
+                                        rec.get("type"),rec.get("data").type);
                                 }
                             }
                         }.bind(this),
                         getClass: function(v, meta, rec) {  // Or return a class from a function
                             if(rec.get('type') != "object"
-                                                && rec.get('type') != "document" && rec.get('type') != "asset") {
+                                && rec.get('type') != "document" && rec.get('type') != "asset") {
                                 return "pimcore_hidden";
                             }
                         }
