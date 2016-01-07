@@ -13,6 +13,7 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Model\User;
+use Pimcore\Tool;
 
 class Authentication {
 
@@ -67,18 +68,24 @@ class Authentication {
      */
     public static function authenticateHttpBasic () {
 
-        $auth = new \Sabre\HTTP\BasicAuth();
-        $auth->setRealm("pimcore");
-        $result = $auth->getUserPass();
+        // we're using Sabre\HTTP for basic auth
+        $request = \Sabre\HTTP\Sapi::getRequest();
+        $response = new \Sabre\HTTP\Response();
+        $auth = new \Sabre\HTTP\Auth\Basic(Tool::getHostname(), $request, $response);
+        $result = $auth->getCredentials();
 
         if(is_array($result)) {
             list($username, $password) = $result;
-            return self::authenticatePlaintext($username, $password);
+            $user = self::authenticatePlaintext($username, $password);
+            if($user) {
+                return $user;
+            }
         }
 
         $auth->requireLogin();
+        $response->setBody("Authentication required");
         \Logger::error("Authentication Basic (WebDAV) required");
-        echo "Authentication required\n";
+        \Sabre\HTTP\Sapi::sendResponse($response);
         die();
     }
 
