@@ -274,7 +274,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             this.selectionPanel = Ext.create('Ext.tree.Panel', {
                 rootVisible: true,
                 region:'center',
-                useArrows: true,
                 title: t('custom_layout'),
                 layout:'fit',
                 width: 428,
@@ -513,7 +512,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             title: t('class_definitions'),
             region: "west",
             autoScroll: true,
-            useArrows: true,
             split: true,
             disabled: true,
             root: {

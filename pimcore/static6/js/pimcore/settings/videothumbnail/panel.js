@@ -74,7 +74,6 @@ pimcore.settings.videothumbnail.panel = Class.create({
                 store: store,
                 id: "pimcore_panel_videothumbnail_tree",
                 region: "west",
-                useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,

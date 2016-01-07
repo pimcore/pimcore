@@ -129,7 +129,6 @@ pimcore.document.seopanel = Class.create({
         var tree = Ext.create('Ext.tree.Panel', {
                 store: store,
                 columns: columns,
-                useArrows: true,
                 enableSort: false,
                 animate: true,
                 rootVisible: true,

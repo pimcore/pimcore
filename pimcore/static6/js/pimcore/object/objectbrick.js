@@ -64,7 +64,6 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 id: "pimcore_panel_objectbricks_tree",
                 store: this.store,
                 region: "west",
-                useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,

@@ -949,7 +949,6 @@ pimcore.asset.tree = Class.create({
             width: 300,
             rootVisible: true,
             enableDD: false,
-            useArrows: true,
             autoScroll: true,
             store: store,
             root: {

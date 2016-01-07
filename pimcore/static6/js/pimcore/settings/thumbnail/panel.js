@@ -75,7 +75,6 @@ pimcore.settings.thumbnail.panel = Class.create({
                 store: store,
                 id: "pimcore_panel_thumbnail_tree",
                 region: "west",
-                useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,

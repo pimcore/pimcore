@@ -90,7 +90,6 @@ pimcore.element.tag.tree = Class.create({
 
             this.tree = Ext.create('Ext.tree.Panel', {
                 store: store,
-                useArrows: true,
                 forceLayout: true,
                 region: "center",
                 autoScroll: true,

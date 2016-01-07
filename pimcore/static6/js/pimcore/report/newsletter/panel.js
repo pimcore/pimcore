@@ -70,7 +70,6 @@ pimcore.report.newsletter.panel = Class.create({
                 id: "pimcore_panel_newsletter_tree",
                 store: store,
                 region: "west",
-                useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,

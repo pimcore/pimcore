@@ -72,7 +72,6 @@ pimcore.object.klass = Class.create({
                 id: "pimcore_panel_classes_tree",
                 store: this.store,
                 region: "west",
-                useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,

@@ -50,7 +50,6 @@ pimcore.settings.targeting.personas.panel= Class.create({
             this.tree = new Ext.tree.TreePanel({
                 store: store,
                 region: "west",
-                useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,

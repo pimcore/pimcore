@@ -60,7 +60,6 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                 width: 300,
                 rootVisible: true,
                 enableDD: false,
-                useArrows: true,
                 autoScroll: true,
                 folderSort:true,
                 split: true,

@@ -71,7 +71,6 @@ pimcore.object.fieldcollection = Class.create({
                 id: "pimcore_panel_fieldcollections_tree",
                 store: this.store,
                 region: "west",
-                useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,

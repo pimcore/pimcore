@@ -54,7 +54,6 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 id: "pimcore_panel_users_tree",
                 store: store,
                 region: "west",
-               // useArrows:true,
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,
