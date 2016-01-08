@@ -70,6 +70,12 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             componentCls:"object_field"
         };
 
+        if (this.fieldConfig.labelWidth) {
+            checkbox.labelWidth = this.fieldConfig.labelWidth;
+        }
+        checkbox.width += checkbox.labelWidth;
+
+
 
         if (this.fieldConfig.width) {
             checkbox.width = this.fieldConfig.width;
