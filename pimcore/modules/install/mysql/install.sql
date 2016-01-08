@@ -4,6 +4,7 @@ SET NAMES UTF8;
 DROP TABLE IF EXISTS `application_logs`;
 CREATE TABLE `application_logs` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pid` INT(11) NULL DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   `message` varchar(1024) DEFAULT NULL,
   `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
