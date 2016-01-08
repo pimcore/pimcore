@@ -25,6 +25,7 @@ body {
 
 .navbar-brand img {
     height: 30px;
+    margin-left: 10px;
 }
 
 .navbar-wrapper ul {

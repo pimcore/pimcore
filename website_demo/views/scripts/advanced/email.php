@@ -58,7 +58,7 @@
 
     <div id="site">
         <div id="logo">
-            <img src="/pimcore/static/img/loading-logo.png" />
+            <img src="http://demo.pimcore.org/website/static/img/logo-standard.png" width="300" />
         </div>
 
         <h1><?= $this->input("headline"); ?></h1>
