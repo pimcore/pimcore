@@ -6,11 +6,17 @@
 
         while ($block->loop()) { ?>
             <div class="col-md-3 col-xs-6">
-                <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
+                <?php if(!$this->editmode) { ?>
+                    <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
+                <?php } ?>
+
                     <?= $this->image("image", [
                         "thumbnail" => "galleryThumbnail"
                     ]); ?>
-                </a>
+
+                <?php if(!$this->editmode) { ?>
+                    </a>
+                <?php } ?>
             </div>
         <?php } ?>
     </div>
