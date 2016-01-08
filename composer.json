@@ -1,6 +1,6 @@
 {
     "name": "pimcore/pimcore",
-    "description": "The premier Open-Source Multi-Channel Experience and Engagement Management Platform",
+    "description": "Content & Product Management Framework (CMS/PIM/E-Commerce)",
     "keywords": ["CMS","PIM","DAM","E-Commerce","RAD","Product Information Management"],
     "homepage": "http://www.pimcore.org/",
     "license": "GPL-3.0+",
@@ -12,6 +12,11 @@
             "role": "Developer"
         }
     ],
+    "support": {
+        "issues": "https://github.com/pimcore/pimcore/issues",
+        "wiki": "https://www.pimcore.org/wiki/",
+        "source": "https://github.com/pimcore/pimcore"
+    },
     "require": {
         "php": ">=5.5.0",
         "ext-mcrypt" : "*",
