@@ -65,8 +65,8 @@
     width: 46px;
 }
 
-[class^="icon-"]:before, [class*=" icon-"]:before {
-    font-size: 22px;
+#pimcore_navigation [class^="icon-"]:before, #pimcore_navigation [class*=" icon-"]:before {
+    font-size: 28px;
     padding-bottom: 2px;
 }
 
