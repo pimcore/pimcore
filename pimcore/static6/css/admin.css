@@ -132,6 +132,10 @@
     color: #6dc1fd!important;
 }
 
+.pimcore_overflow_scrolling {
+    -webkit-overflow-scrolling:touch;
+    overflow: auto;
+}
 
 /* objects */
 

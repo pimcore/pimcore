@@ -103,7 +103,7 @@ pimcore.object.versions = Class.create({
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" frameborder="0" id="object_version_iframe_' + this.object.id
                                                                 + '"></iframe>'
             });

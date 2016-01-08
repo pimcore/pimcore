@@ -140,7 +140,8 @@ pimcore.document.pages.preview = Class.create({
                 border: false,
                 region: "center",
                 scrollable: false,
-                bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
+                bodyStyle: "background:#323232;",
+                bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="'
                     + this.iframeName + '" name="' + this.iframeName + '"' +
                     'style="background: #fff;"></iframe>'

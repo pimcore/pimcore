@@ -30,7 +30,7 @@ pimcore.object.preview = Class.create({
                 autoScroll: true,
                 closable: false,
                 iconCls: "pimcore_icon_tab_preview",
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad
                     + '" frameborder="0" id="object_preview_iframe_' + this.object.data.general.o_id + '"></iframe>'
             });
