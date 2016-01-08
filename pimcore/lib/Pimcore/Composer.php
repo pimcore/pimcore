@@ -27,15 +27,11 @@ class Composer
         @unlink($rootPath . '/.travis.yml');
 
         if( !is_dir(  $rootPath . '/plugins'  )) {
-
             rename($rootPath . '/plugins_example', $rootPath . '/plugins');
-
         }
 
         if( !is_dir(  $rootPath . '/website'  )) {
-
             rename($rootPath . '/website_example', $rootPath . '/website');
-
         }
 
         $filesystem = new Filesystem();
