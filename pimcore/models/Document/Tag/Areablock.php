@@ -161,9 +161,8 @@ class Areablock extends Model\Document\Tag {
     public function content () {
 
         // create info object and assign it to the view
-        $info = null;
+        $info = new Area\Info();
         try {
-            $info = new Area\Info();
             $info->setTag($this);
             $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
@@ -172,7 +171,6 @@ class Areablock extends Model\Document\Tag {
             $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
         } catch (\Exception $e) {
             \Logger::err($e);
-            $info = null;
         }
 
         if($this->getView() instanceof \Zend_View) {
