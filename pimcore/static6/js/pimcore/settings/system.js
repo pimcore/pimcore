@@ -334,7 +334,6 @@ pimcore.settings.system = Class.create({
                                 triggerAction: "all",
                                 listeners: {
                                     "select": function (el) {
-                                        console.log(el);
                                         if (el.getValue() == "production") {
                                             var ipField = Ext.getCmp("system_settings_general_debug_ip");
                                             if (empty(ipField.getValue())) {
@@ -355,7 +354,6 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.debug"),
                                 listeners: {
                                     change: function (el, checked) {
-                                        console.log("check");
                                         // set the current client ip to the debug ip field
                                         var ipField = Ext.getCmp("system_settings_general_debug_ip");
                                         if (checked && empty(ipField.getValue())) {
