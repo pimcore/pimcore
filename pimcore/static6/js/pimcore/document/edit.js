@@ -134,7 +134,7 @@ pimcore.document.edit = Class.create({
                 id: "document_content_" + this.document.id,
                 html: html,
                 title: t('edit'),
-                autoScroll: true,
+                scrollable: false,
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
                 forceLayout: true,
                 hideMode: "offsets",
