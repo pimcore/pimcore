@@ -1014,6 +1014,23 @@ class AbstractObject extends Model\Element\AbstractElement {
     }
 
     /**
+     * @param $fieldname
+     * @return array
+     */
+    public function getOptionsForSelectField($fieldname) {
+        return Service::getOptionsForSelectField($this, $fieldname);
+    }
+
+    /**
+     * alias of getOptionsForSelectField
+     * @param $fieldname
+     * @return array
+     */
+    public static function getOptionsForMultiSelectField($fieldname) {
+        return $this->getOptionsForSelectField($fieldname);
+    }
+
+    /**
      * @return Model\Element\AdminStyle
      */
     public function getElementAdminStyle() {
