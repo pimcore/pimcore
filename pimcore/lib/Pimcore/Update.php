@@ -284,6 +284,8 @@ class Update {
                 }
             }
         }
+
+        self::clearOPCaches();
     }
 
     /**
@@ -313,11 +315,22 @@ class Update {
             }
             $outputMessage = ob_get_clean();
         }
- 
+
+        self::clearOPCaches();
+
         return array(
             "message" => $outputMessage,
             "success" => true
         );
+    }
+
+    /**
+     *
+     */
+    public static function clearOPCaches() {
+        if(function_exists("opcache_reset")) {
+            opcache_reset();
+        }
     }
 
     /**
