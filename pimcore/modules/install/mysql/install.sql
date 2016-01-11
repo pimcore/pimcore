@@ -4,9 +4,10 @@ SET NAMES UTF8;
 DROP TABLE IF EXISTS `application_logs`;
 CREATE TABLE `application_logs` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pid` INT(11) NULL DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   `message` varchar(1024) DEFAULT NULL,
-  `priority` int(10) DEFAULT NULL,
+  `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
   `fileobject` varchar(1024) DEFAULT NULL,
   `info` varchar(1024) DEFAULT NULL,
   `component` varchar(255) DEFAULT NULL,
@@ -205,7 +206,7 @@ CREATE TABLE `documents_email` (
 
 DROP TABLE IF EXISTS `documents_hardlink`;
 CREATE TABLE `documents_hardlink` (
-  `id` int(11) DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL default '0',
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
   `childsFromSource` tinyint(1) DEFAULT NULL,
@@ -568,6 +569,28 @@ CREATE TABLE `staticroutes` (
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS  `tags`;
+CREATE TABLE `tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `parentId` int(10) unsigned DEFAULT NULL,
+  `idPath` varchar(255) DEFAULT NULL,
+  `name` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idpath` (`idPath`),
+  KEY `parentid` (`parentId`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS  `tags_assignment`;
+CREATE TABLE `tags_assignment` (
+  `tagid` int(10) unsigned NOT NULL DEFAULT '0',
+  `cid` int(10) NOT NULL DEFAULT '0',
+  `ctype` enum('document','asset','object') NOT NULL,
+  PRIMARY KEY (`tagid`,`cid`,`ctype`),
+  KEY `ctype` (`ctype`),
+  KEY `ctype_cid` (`cid`,`ctype`),
+  KEY `tagid` (`tagid`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `targeting_personas`;

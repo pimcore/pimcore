@@ -182,9 +182,11 @@ pimcore.settings.profile.panel = Class.create({
             checked:this.currentUser.memorizeTabs
         });
 
+        this.editorSettings = new pimcore.settings.user.editorSettings(this, this.currentUser.contentLanguages);
+
         this.userPanel = new Ext.form.FormPanel({
             border:false,
-            items:generalItems,
+            items: [{ items: generalItems}, this.editorSettings.getPanel()],
             labelWidth:130,
             buttons:[
                 {
@@ -201,6 +203,9 @@ pimcore.settings.profile.panel = Class.create({
 
     saveCurrentUser:function () {
         var values = this.userPanel.getForm().getFieldValues();
+        var contentLanguages = this.editorSettings.getContentLanguages();
+        values.contentLanguages = contentLanguages;
+
         if(values["new_password"]) {
             if(!/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(values["new_password"]) || values["new_password"] != values["retype_password"]) {
                 delete values["new_password"];
@@ -232,6 +237,10 @@ pimcore.settings.profile.panel = Class.create({
                         }
 
                         pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        if (contentLanguages) {
+                            pimcore.settings.websiteLanguages = contentLanguages;
+                            pimcore.currentuser.contentLanguages = contentLanguages.join(',');
+                        }
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error", t(res.message));
                     }

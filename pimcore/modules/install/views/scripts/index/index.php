@@ -11,6 +11,18 @@
         body {
             min-height: 600px;
         }
+
+        .invalid .x-form-trigger-wrap-default {
+            border-right-color: #a61717;
+        }
+
+        #credential_error {
+            color: #a61717;
+        }
+
+        .icon_generate {
+            background: url(/pimcore/static6/img/icon/cog.png) center center no-repeat !important;
+        }
     </style>
     
 </head>
@@ -49,8 +61,99 @@ $scripts = array(
 
     Ext.onReady(function() {
 
+        Ext.tip.QuickTipManager.init();
         Ext.Ajax.setDisableCaching(true);
         Ext.Ajax.setTimeout(900000);
+
+
+        var passwordGenerator = function ( len ) {
+            var length = (len)?(len):(10);
+            var string = "abcdefghijklmnopqrstuvwxyz"; //to upper
+            var numeric = '0123456789';
+            var punctuation = '!@#$%^&*()_+~`|}{[]\:;?><,./-=';
+            var password = "";
+            var character = "";
+            while( password.length<length ) {
+                entity1 = Math.ceil(string.length * Math.random()*Math.random());
+                entity2 = Math.ceil(numeric.length * Math.random()*Math.random());
+                entity3 = Math.ceil(punctuation.length * Math.random()*Math.random());
+                hold = string.charAt( entity1 );
+                hold = (entity1%2==0)?(hold.toUpperCase()):(hold);
+                character += hold;
+                character += numeric.charAt( entity2 );
+                character += punctuation.charAt( entity3 );
+                password = character;
+            }
+            return password;
+        };
+
+        var isValidPassword = function (pass) {
+            var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
+            if(!pass.match(passRegExp)) {
+                return false;
+            }
+            return true;
+        };
+
+        var validateInput = function () {
+
+            var validInstall = true;
+            var validCheckReq = true;
+            var credentialError;
+
+
+            $.each(["mysql_host_socket","mysql_username","mysql_database"], function (index, value) {
+                var item = Ext.getCmp(value);
+                if(item.getValue().length < 1) {
+                    validCheckReq = false;
+                    item.addCls("invalid");
+                } else {
+                    item.removeCls("invalid");
+                }
+            });
+
+            $.each(["admin_username","admin_password"], function (index, value) {
+                var item = Ext.getCmp(value);
+                if(item.getValue().length < 1) {
+                    validInstall = false;
+                    item.addCls("invalid");
+                } else {
+                    item.removeCls("invalid");
+                }
+            });
+
+            if(validInstall) {
+                var adminPassword = Ext.getCmp("admin_password");
+                if (!isValidPassword(adminPassword.getValue())) {
+                    validInstall = false;
+                    credentialError = "Password must contain at least 10 characters, one lowercase letter, one uppercase letter, one numeric digit, and one special character!";
+                }
+            }
+
+            var credentialErrorEl = Ext.getCmp("credential_error");
+            if(credentialError) {
+                credentialErrorEl.update(credentialError);
+                credentialErrorEl.show();
+            } else {
+                credentialErrorEl.hide();
+            }
+
+            if(!validCheckReq) {
+                validInstall = false;
+            }
+
+            if(validInstall) {
+                Ext.getCmp("install_button").enable();
+            } else {
+                Ext.getCmp("install_button").disable();
+            }
+
+            if(validCheckReq) {
+                Ext.getCmp("check_button").enable();
+            } else {
+                Ext.getCmp("check_button").disable();
+            }
+        };
 
         var win = new Ext.Window({
             width: 450,
@@ -101,8 +204,13 @@ $scripts = array(
                                 {
                                     xtype: "textfield",
                                     name: "mysql_host_socket",
+                                    id: "mysql_host_socket",
                                     fieldLabel: "Host / Socket",
-                                    value: "localhost"
+                                    value: "localhost",
+                                    enableKeyEvents: true,
+                                    listeners: {
+                                        "keyup": validateInput
+                                    }
                                 },
                                 {
                                     xtype: "textfield",
@@ -113,7 +221,12 @@ $scripts = array(
                                 {
                                     xtype: "textfield",
                                     name: "mysql_username",
-                                    fieldLabel: "Username"
+                                    id: "mysql_username",
+                                    fieldLabel: "Username",
+                                    enableKeyEvents: true,
+                                    listeners: {
+                                        "keyup": validateInput
+                                    }
                                 },
                                 {
                                     xtype: "textfield",
@@ -123,7 +236,12 @@ $scripts = array(
                                 {
                                     xtype: "textfield",
                                     name: "mysql_database",
-                                    fieldLabel: "Database"
+                                    id: "mysql_database",
+                                    fieldLabel: "Database",
+                                    enableKeyEvents: true,
+                                    listeners: {
+                                        "keyup": validateInput
+                                    }
                                 }
                             ]
                         },
@@ -137,13 +255,51 @@ $scripts = array(
                                 {
                                     xtype: "textfield",
                                     name: "admin_username",
+                                    id: "admin_username",
                                     fieldLabel: "Username",
-                                    value: "admin"
+                                    value: "admin",
+                                    enableKeyEvents: true,
+                                    listeners: {
+                                        "keyup": validateInput
+                                    }
                                 },
                                 {
-                                    xtype: "textfield",
-                                    name: "admin_password",
-                                    fieldLabel: "Password"
+                                    xtype: "fieldcontainer",
+                                    layout: 'hbox',
+                                    items: [{
+                                        xtype: "textfield",
+                                        width: 340,
+                                        name: "admin_password",
+                                        id: "admin_password",
+                                        fieldLabel: "Password",
+                                        enableKeyEvents: true,
+                                        listeners: {
+                                            "keyup": validateInput
+                                        }
+                                    }, {
+                                        xtype: "button",
+                                        width: 32,
+                                        style: "margin-left: 8px",
+                                        iconCls: "icon_generate",
+                                        handler: function () {
+
+                                            var pass;
+
+                                            while(true) {
+                                                pass = passwordGenerator(15);
+                                                if(isValidPassword(pass)) {
+                                                    break;
+                                                }
+                                            }
+
+                                            Ext.getCmp("admin_password").setValue(pass);
+                                            validateInput();
+                                        }
+                                    }]
+                                }, {
+                                    xtype: "container",
+                                    id: "credential_error",
+                                    hidden: true
                                 }
                             ]
                         }
@@ -154,14 +310,16 @@ $scripts = array(
                     id: "check_button",
                     text: "Check Requirements",
                     icon: "/pimcore/static6/img/icon/laptop_magnify.png",
+                    disabled: true,
                     handler: function () {
                         window.open("/install/check/?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
                     }
                 },"->",
                 {
+                    id: "install_button",
                     text: "<b>Install Now!</b>",
                     icon: "/pimcore/static6/img/icon/accept.png",
-                    disabled: installdisabled,
+                    disabled: true,
                     handler: function (btn) {
 
                         btn.disable();
@@ -204,6 +362,8 @@ $scripts = array(
                     // no idea why this is necessary to layout the window correctly
                     window.setTimeout(function () {
                         win.updateLayout();
+
+                        validateInput();
                     }, 1000);
                 }
             }

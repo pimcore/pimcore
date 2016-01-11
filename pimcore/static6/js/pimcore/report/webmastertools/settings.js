@@ -54,12 +54,11 @@ pimcore.report.webmastertools.settings = Class.create({
 
         sites.each(function (record) {
             var id = record.data.id;
-            var key = "site_" + id;
-            if(!id) {
-                id = "default";
+            if (id == "default") {
                 key = "default";
+            } else {
+                key = "site_" + id;
             }
-
             configs.push(this.getConfiguration(key, record.data.domain, id));
         }, this);
 
@@ -99,14 +98,15 @@ pimcore.report.webmastertools.settings = Class.create({
 
         sites.each(function (record) {
             var id = record.data.id;
-            var key = "site_" + id;
-            if(!id) {
-                id = "default";
+            if (id == "default") {
                 key = "default";
+            } else {
+                key = "site_" + id;
             }
+            var itemId = id.replace(/\./g, '_');
 
             sitesData[key] = {
-                verification: Ext.getCmp("report_settings_webmastertools_verification_" + id).getValue()
+                verification: Ext.getCmp("report_settings_webmastertools_verification_" + itemId).getValue()
             };
         }, this);
 

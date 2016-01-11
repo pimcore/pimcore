@@ -89,7 +89,7 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
                 listeners: {
                     "resize": this.framePanelResize.bind(this)
                 },
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" frameborder="0" id="' + this.iframeId + '" width="100%"></iframe>',
                 region: "center"
             });
@@ -126,19 +126,19 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
                         fieldLabel: t('from'),
                         name: 'datefrom',
                         value: fromDate,
-                        itemCls: "pimcore_analytics_filter_form_item"
+                        cls: "pimcore_analytics_filter_form_item"
                     },
                     {
                         xtype: "datefield",
                         fieldLabel: t('to'),
                         name: 'dateto',
                         value: today,
-                        itemCls: "pimcore_analytics_filter_form_item"
+                        cls: "pimcore_analytics_filter_form_item"
                     },
                     {
                         xtype: "button",
                         text: "apply",
-                        itemCls: "pimcore_analytics_filter_form_item",
+                        cls: "pimcore_analytics_filter_form_item",
                         handler: this.setFrameUrl.bind(this)
                     }
                 ]

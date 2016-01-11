@@ -378,7 +378,7 @@ class Imagick extends Adapter {
             $newRes = ["x" => $width * $x_ratio, "y" => $height * $y_ratio];
 
             // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
-            // this is because sometimes the quality is much better when using the "native" resulution from the metadata
+            // this is because sometimes the quality is much better when using the "native" resolution from the metadata
             if($newRes["x"] > $res["x"] && $newRes["y"] > $res["y"]) {
                 $this->resource->setResolution($newRes["x"], $newRes["y"]);
             } else {
@@ -764,20 +764,26 @@ class Imagick extends Adapter {
      */
     public function isVectorGraphic ($imagePath = null) {
 
-        if($imagePath) {
-            // use file-extension if filename is provided
-            return in_array(File::getFileExtension($imagePath), ["svg","svgz","eps","pdf","ps"]);
-        } else {
-            try {
-                $type = $this->resource->getimageformat();
-                $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ","MVG");
+        if(!$imagePath) {
+            $imagePath = $this->imagePath;
+        }
 
-                if(in_array(strtoupper($type),$vectorTypes)) {
-                    return true;
-                }
-            } catch (\Exception $e) {
-                \Logger::err($e);
+        // we need to do this check first, because ImageMagick using the inkscape delegate returns "PNG" when calling
+        // getimageformat() onto SVG graphics, this is a workaround to avoid problems
+        if(in_array(File::getFileExtension($imagePath), ["svg","svgz","eps","pdf","ps"])) {
+            // use file-extension if filename is provided
+            return true;
+        }
+
+        try {
+            $type = $this->resource->getimageformat();
+            $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ","MVG");
+
+            if(in_array(strtoupper($type),$vectorTypes)) {
+                return true;
             }
+        } catch (\Exception $e) {
+            \Logger::err($e);
         }
 
         return false;

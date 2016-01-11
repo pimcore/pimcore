@@ -44,9 +44,11 @@ pimcore.settings.tagmanagement.item = Class.create({
         }); 
 
         this.itemContainer = new Ext.Panel({
-            title: t("tags"),
             style: "margin: 20px 0 0 0;",
             tbar: [{
+                xtype: "tbtext",
+                html: t("tags")
+            }, {
                 iconCls: "pimcore_icon_add",
                 handler: this.addItem.bind(this)
             }],

@@ -245,19 +245,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function __sleep() {
 
-        // we need to remove all closures out of the options
-        // e.g. "hotspotCallback" in Pdf editable
-        // otherwise this can cause problems when used in combination with hardlinks (upper-cast / serialization)
-        if(is_array($this->options)) {
-            foreach($this->options as &$value) {
-                if(is_object($value) && ($value instanceof Closure)) {
-                    $value = null;
-                }
-            }
-        }
-
         // here the "normal" task of __sleep ;-)
-        $blockedVars = array("dao", "controller", "view", "editmode");
+        $blockedVars = array("dao", "controller", "view", "editmode", "options");
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {

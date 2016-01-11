@@ -13,11 +13,17 @@
         </div>
         <div class="col-sm-4">
             <?php while ($this->block("images")->loop()) { ?>
-                <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
+                <?php if(!$this->editmode) { ?>
+                    <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
+                <?php } ?>
+
                     <?= $this->image("image", [
                         "thumbnail" => "galleryThumbnail"
                     ]); ?>
-                </a>
+
+                <?php if(!$this->editmode) { ?>
+                    </a>
+                <?php } ?>
             <?php } ?>
         </div>
     </div>

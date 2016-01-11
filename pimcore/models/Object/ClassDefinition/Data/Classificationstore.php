@@ -805,7 +805,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function setLabelWidth($labelWidth)
     {
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int) $labelWidth;
     }
 
     /**
@@ -841,9 +841,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $classificationStore = $object->$getter();
         $mapping = $classificationStore->getGroupCollectionMappings();
 
-        foreach ($mapping as $groupId => $collectionId) {
-            if (!isset($mergedMapping[$groupId]) && $collectionId) {
-                $mergedMapping[$groupId] = $collectionId;
+        if (is_array($mapping)) {
+            foreach ($mapping as $groupId => $collectionId) {
+                if (!isset($mergedMapping[$groupId]) && $collectionId) {
+                    $mergedMapping[$groupId] = $collectionId;
+                }
             }
         }
 
@@ -873,9 +875,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $classificationStore = $object->$getter();
         $activeGroupIds = $classificationStore->getActiveGroups();
 
-        foreach ($activeGroupIds as $groupId => $enabled) {
-            if ($enabled) {
-                $activeGroups[$groupId] = $enabled;
+        if ($activeGroupIds) {
+            foreach ($activeGroupIds as $groupId => $enabled) {
+                if ($enabled) {
+                    $activeGroups[$groupId] = $enabled;
+                }
             }
         }
 
@@ -923,7 +927,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
             $relation->setCondition("groupId = " . $relation->quote($group->getId()));
             $relation->setOrderKey(array("sorter", "id"));
-            $relation->setOrder(array("DESC", "ASC"));
+            $relation->setOrder(array("ASC", "ASC"));
             $relation = $relation->load();
             foreach ($relation as $key) {
                 $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);

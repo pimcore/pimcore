@@ -60,9 +60,9 @@ pimcore.element.selector.selector = Class.create({
             layout: "fit"
         });
 
-        var windowWidth = 850;
+        var windowWidth = 1000;
         if(this.multiselect) {
-            windowWidth = 1010;
+            windowWidth = 1250;
         }
 
         var windowConfig = {

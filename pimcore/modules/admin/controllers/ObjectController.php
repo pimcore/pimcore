@@ -175,17 +175,12 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
         $tmpObject["cls"] = "";
 
-        if ($child->getType() == "folder") {
-            $tmpObject["qtipCfg"] = array(
-                "title" => "ID: " . $child->getId()
-            );
-        } else {
+        $tmpObject["qtipCfg"] = $child->getElementAdminStyle()->getElementQtipConfig();
+
+        if ($child->getType() != "folder") {
             $tmpObject["published"] = $child->isPublished();
             $tmpObject["className"] = $child->getClass()->getName();
-            $tmpObject["qtipCfg"] = array(
-                "title" => "ID: " . $child->getId(),
-                "text" => 'Type: ' . $child->getClass()->getName()
-            );
+
 
             if (!$child->isPublished()) {
                 $tmpObject["cls"] .= "pimcore_unpublished ";
@@ -349,7 +344,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $objectData["childdata"]["data"]["classes"] = $object->getDao()->getClasses();
 
             $currentLayoutId = $this->getParam("layoutId", null);
-            
+
             $validLayouts = Object\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
@@ -1076,12 +1071,14 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $object->setOmitMandatoryCheck(true);
         }
 
-
         if (($this->getParam("task") == "publish" && $object->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $object->isAllowed("unpublish"))) {
 
             try {
                 $object->save();
-                $this->_helper->json(array("success" => true));
+                $treeData = array();
+                $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
+
+                $this->_helper->json(array("success" => true, "treeData" => $treeData));
             } catch (\Exception $e) {
                 \Logger::log($e);
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
@@ -1101,6 +1098,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             if ($object->isAllowed("save")) {
                 try {
                     $object->saveVersion();
+
                     $this->_helper->json(array("success" => true));
                 } catch (\Exception $e) {
                     \Logger::log($e);
@@ -1204,7 +1202,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $object->setUserModification($this->getUser()->getId());
             try {
                 $object->save();
-                $this->_helper->json(array("success" => true));
+                $treeData = array();
+                $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
+                $this->_helper->json(array("success" => true, "treeData" => $treeData));
             } catch (\Exception $e) {
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }
@@ -1666,7 +1666,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         // replace named variables
         $vars = get_object_vars($object);
         foreach ($vars as $key => $value) {
-            if (!empty($value)) {
+            if (!empty($value) && (is_string($value) || is_numeric($value))) {
                 $url = str_replace("%" . $key, urlencode($value), $url);
             } else {
                 if (strpos($url, "%" . $key) !== false) {
@@ -1674,6 +1674,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
             }
         }
+
+        // replace all remainaing % signs
+        $url = str_replace("%","%25", $url);
 
         $urlParts = parse_url($url);
         $this->redirect($urlParts["path"] . "?pimcore_object_preview=" . $id . "&_dc=" . time() . "&" . $urlParts["query"]);

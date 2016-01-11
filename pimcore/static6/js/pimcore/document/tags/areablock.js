@@ -717,6 +717,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         groupMenu = new Ext.Button({
                             xtype: "button",
                             text: groups[g],
+                            textAlign: "left",
                             iconCls: "pimcore_icon_area",
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,
@@ -829,6 +830,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         var button = {
             xtype: "button",
+            textAlign: "left",
             icon: brick.icon,
             text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
                 : brick.name,

@@ -1170,7 +1170,7 @@ pimcore.settings.thumbnail.items = {
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
-                xtype: 'spinnerfield',
+                xtype: 'numberfield',
                 name: 'radius',
                 fieldLabel: t('radius'),
                 width: 210,
@@ -1180,7 +1180,7 @@ pimcore.settings.thumbnail.items = {
                 incrementValue: 0.1,
                 value: data.radius || 0
             },{
-                xtype: 'spinnerfield',
+                xtype: 'numberfield',
                 name: 'sigma',
                 width: 210,
                 fieldLabel: t('sigma'),
@@ -1218,7 +1218,7 @@ pimcore.settings.thumbnail.items = {
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
-                xtype: 'spinnerfield',
+                xtype: 'numberfield',
                 name: 'brightness',
                 fieldLabel: t('brightness'),
                 width: 210,
@@ -1226,7 +1226,7 @@ pimcore.settings.thumbnail.items = {
                 incrementValue: 1,
                 value: data.brightness || 100
             },{
-                xtype: 'spinnerfield',
+                xtype: 'numberfield',
                 name: 'saturation',
                 fieldLabel: t('saturation'),
                 width: 210,
@@ -1234,7 +1234,7 @@ pimcore.settings.thumbnail.items = {
                 incrementValue: 1,
                 value: data.saturation || 100
             },{
-                xtype: 'spinnerfield',
+                xtype: 'numberfield',
                 name: 'hue',
                 fieldLabel: t('hue'),
                 width: 210,

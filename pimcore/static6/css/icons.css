@@ -9,6 +9,10 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+[class*="pimcore_icon"] {
+    image-rendering: pixelated;
+}
+
 .pimcore_icon_clone  {
     background: url(/pimcore/static6/img/icon/application_double.png) center center no-repeat !important;
 }
@@ -610,6 +614,11 @@
 .pimcore_icon_image {
     background: url(/pimcore/static6/img/icon/picture.png) center center no-repeat !important;
 }
+
+.pimcore_icon_externalImage {
+    background: url(/pimcore/static6/img/icon/picture_link.png) center center no-repeat !important;
+}
+
 
 .pimcore_icon_hotspotimage {
     background: url(/pimcore/static6/img/icon/pictures_thumbs.png) center center no-repeat !important;
@@ -1433,4 +1442,8 @@
 
 .pimcore_icon_calculatedValue {
     background: url("/pimcore/static6/img/icon/calculator.png") center center no-repeat !important;
+}
+
+.pimcore_icon_element_tags {
+    background: url("/pimcore/static6/img/icon/tag_yellow.png") center center no-repeat !important;
 }

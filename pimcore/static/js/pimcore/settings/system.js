@@ -207,12 +207,6 @@ pimcore.settings.system = Class.create({
                                 forceSelection: true,
                                 triggerAction: 'all',
                                 hiddenName: 'general.language'
-                            },{
-                                fieldLabel: t("contact_email"),
-                                xtype: "textfield",
-                                name: "general.contactemail",
-                                value: this.getValue("general.contactemail"),
-                                width: 300
                             },
                             {
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
@@ -1015,11 +1009,6 @@ pimcore.settings.system = Class.create({
                         defaultType: 'textfield',
                         defaults: {width: 150},
                         items :[
-                            {
-                                fieldLabel: t('hostname_for_webdav'),
-                                name: 'assets.webdav.hostname',
-                                value: this.getValue("assets.webdav.hostname")
-                            },
                             {
                                 fieldLabel: t('store_version_history_in_days'),
                                 name: 'assets.versions.days',

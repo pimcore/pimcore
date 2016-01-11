@@ -48,7 +48,7 @@ pimcore.tool.genericiframewindow = Class.create({
                 border: false,
                 layout: "fit",
                 closable:true,
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" frameborder="0" width="100%" id="pimcore_iframe_frame_'
                                     + this.id + '"></iframe>',
                 tbar: toolbar

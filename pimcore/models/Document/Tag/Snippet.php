@@ -15,7 +15,7 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Model\Document;
 
 class Snippet extends Model\Document\Tag {

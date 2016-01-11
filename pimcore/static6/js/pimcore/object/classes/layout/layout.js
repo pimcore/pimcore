@@ -89,13 +89,13 @@ pimcore.object.classes.layout.layout = Class.create({
                             value: this.datax.title
                         },
                         {
-                            xtype: "spinnerfield",
+                            xtype: "numberfield",
                             fieldLabel: t("width"),
                             name: "width",
                             value: this.datax.width
                         },
                         {
-                            xtype: "spinnerfield",
+                            xtype: "numberfield",
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height

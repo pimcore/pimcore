@@ -33,7 +33,10 @@ pimcore.settings.user.panels.abstract = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick' : this.onTreeNodeClick.bind(this),
-            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this)
+            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this),
+            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
+                newChildNode.data.qtip = t('id') +  ": " + newChildNode.data.id;
+            }
         };
 
         return treeNodeListeners;

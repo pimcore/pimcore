@@ -158,18 +158,6 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             }
         }
 
-        // styles
-        try {
-            var styles = this.preview.getValues();
-            if(!settings) {
-                settings = {};
-            }
-            settings.css = styles.css;
-        }
-        catch (e6) {
-            //console.log(e6);
-        }
-
         if(settings) {
             parameters.settings = Ext.encode(settings);
         }

@@ -17,7 +17,7 @@ namespace Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\File;
-use Pimcore\Model\Cache; 
+use Pimcore\Cache;
 
 class ClassDefinition extends Model\AbstractModel {
 
@@ -266,7 +266,7 @@ class ClassDefinition extends Model\AbstractModel {
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (!(method_exists($def,"isRemoteOwner") and $def->isRemoteOwner())) {
-                    $cd .= "* @method static \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . ' getBy' . ucfirst($def->getName()) . ' ($value, $limit = 0) ' ."\n";
+                    $cd .= "* @method static \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . '\Listing getBy' . ucfirst($def->getName()) . ' ($value, $limit = 0) ' ."\n";
                 }
             }
         }

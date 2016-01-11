@@ -51,15 +51,15 @@ pimcore.report.panel = Class.create({
             this.tree = Ext.create('Ext.tree.Panel', {
                 region: "west",
                 title: t("select_a_report"),
-                width: 200,
+                width: 250,
                 enableDD: false,
+                split: true,
                 autoScroll: true,
                 collapsible: true,
                 rootVisible: false,
                 root: {
                     id: 0
                 },
-                bodyStyle: "padding: 5px;",
                 listeners: {
                     //"click": function () {
                     //    this.expand();

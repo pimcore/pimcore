@@ -169,7 +169,7 @@ class View extends \Zend_View {
                 });
 
                 $cacheKey = "tag_inc__" . md5(serialize($cacheParams));
-                if($content = Model\Cache::load($cacheKey)) {
+                if($content = Cache::load($cacheKey)) {
                     return $content;
                 }
             }
@@ -256,7 +256,7 @@ class View extends \Zend_View {
 
         // write contents to the cache, if output-cache is enabled
         if($cacheConfig) {
-            Model\Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
+            Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
         }
 
         return $content;

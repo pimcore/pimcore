@@ -16,6 +16,14 @@
     color: #f0f0f0;
 }
 
+.x-fieldset .x-fieldset-header {
+    background-color: #fff;
+}
+
+.x-tree-view .x-grid-item-container {
+    overflow: visible;
+}
+
 /* Style overrides */
 
 .x-tab-default-top {
@@ -92,6 +100,10 @@
     background-color: #ececec;
 }
 
+.x-panel-header.x-region-collapsed-placeholder {
+    border:0;
+}
+
 .x-panel-header-title-default {
     color: #606060;
 }
@@ -147,6 +159,7 @@ body > .x-mask {
 
 .x-toolbar-default {
     background-color: #ececec;
+    padding: 7px 0 6px 8px;
 }
 
 .x-btn-default-small, .x-btn-default-medium, .x-btn-default-large {

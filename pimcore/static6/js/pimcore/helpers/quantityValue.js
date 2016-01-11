@@ -16,29 +16,36 @@ pimcore.helpers.quantityValue.storeLoaded = false;
 pimcore.helpers.quantityValue.store = null;
 
 pimcore.helpers.quantityValue.initUnitStore = function(callback, filters) {
-    if(!pimcore.helpers.quantityValue.storeLoaded) {
-        pimcore.helpers.quantityValue.storeLoaded = true;
-        pimcore.helpers.quantityValue.store = new Ext.data.JsonStore({
-            autoDestroy: true,
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/admin/quantity-value/unit-list',
-                reader: {
-                    type: 'json',
-                    rootProperty: 'data'
+    if (!pimcore.helpers.quantityValue.storeLoaded) {
+        var newListener = function () {
+            pimcore.helpers.quantityValue.storeLoaded = true;
+            pimcore.helpers.quantityValue.storeLoading = false;
+            pimcore.helpers.quantityValue.getData(callback, filters);
+        }.bind(this);
+
+        if (!pimcore.helpers.quantityValue.store) {
+            pimcore.helpers.quantityValue.store = new Ext.data.JsonStore({
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/quantity-value/unit-list',
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'data'
+                    },
+                    writer: {
+                        type: 'json'
+                    }
                 },
-                writer: {
-                    type: 'json'
+                fields: ['id', 'abbreviation'],
+                listeners: {
+                    load: newListener
                 }
-            },
-            fields: ['id', 'abbreviation'],
-            listeners: {
-                load: function() {
-                    pimcore.helpers.quantityValue.getData(callback, filters);
-                }.bind(this)
-            }
-        });
+            });
+        } else {
+            pimcore.helpers.quantityValue.store.addListener("load", newListener);
+        }
+
     } else {
         pimcore.helpers.quantityValue.getData(callback, filters);
     }

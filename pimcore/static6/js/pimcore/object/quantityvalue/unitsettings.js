@@ -94,7 +94,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {flex: 1, dataIndex: 'baseunit', header: t("baseunit"), editor: new Ext.form.TextField({}), hidden: true},
             {flex: 1, dataIndex: 'factor', header: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
             {flex: 1, dataIndex: 'conversionOffset', header: t("conversionOffset"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
-            {flex: 1, dataIndex: 'reference', header: t("reference"), editor: new Ext.form.TextField({}), hidden: true}
+            {flex: 1, dataIndex: 'reference', header: t("reference"), editor: new Ext.form.TextField({}), hidden: true, filter: 'string'}
         ];
 
         typesColumns.push({

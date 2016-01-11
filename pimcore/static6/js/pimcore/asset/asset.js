@@ -294,7 +294,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             //console.log(e);
         }
 
-
         return parameters;
     },
 

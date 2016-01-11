@@ -161,11 +161,11 @@ class Install_CheckController extends \Pimcore\Controller\Action {
             "state" => class_exists("Imagick") ? "ok" : "warning"
         );
 
-        // APC
+        // OPcache
         $checksPHP[] = array(
-            "name" => "APC / opcache",
+            "name" => "OPcache",
             "link" => "http://www.php.net/opcache",
-            "state" => (function_exists("apc_add") || function_exists("opcache_reset")) ? "ok" : "warning"
+            "state" => function_exists("opcache_reset") ? "ok" : "warning"
         );
 
         // memcache
@@ -173,6 +173,13 @@ class Install_CheckController extends \Pimcore\Controller\Action {
             "name" => "Memcache",
             "link" => "http://www.php.net/memcache",
             "state" => class_exists("Memcache") ? "ok" : "warning"
+        );
+
+        // Redis
+        $checksPHP[] = array(
+            "name" => "Redis",
+            "link" => "https://pecl.php.net/package/redis",
+            "state" => class_exists("Redis") ? "ok" : "warning"
         );
 
         // curl for google api sdk

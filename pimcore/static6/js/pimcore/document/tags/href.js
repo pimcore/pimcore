@@ -157,14 +157,12 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         //subtype check  (folder,page,snippet ... )
         if (this.options.subtypes) {
             found = false;
-            var typeKeys = Object.keys(this.options.subtypes);
-            for (var st = 0; st < typeKeys.length; st++) {
-                for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
-                    if (this.options.subtypes[typeKeys[st]][i] == data.data.type) {
-                        found = true;
-                        break;
-                    }
+            for (i = 0; i < this.options.subtypes.length; i++) {
+                if (this.options.subtypes[i] == data.data.type) {
+                    found = true;
+                    break;
                 }
+
             }
             if (!found) {
                 return false;

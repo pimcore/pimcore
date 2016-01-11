@@ -183,7 +183,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject);
             }
             if($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
+                $backup = Object\AbstractObject::getGetInheritedValues();
+                Object\AbstractObject::setGetInheritedValues(true);
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
+                Object\AbstractObject::setGetInheritedValues($backup);
                 if(!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
@@ -601,7 +604,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
         $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($class->getName()) . "\\" . ucfirst($this->getName());
 
-        $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . $classname . '")) { ' . "\n";
+        $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . str_replace("\\","\\\\",$classname) . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
         $code .= "\t\t\t" . '$this->' . $key . ' = $data;' . "\n";
         $code .= "\t\t" . '} else {' . "\n";
@@ -880,7 +883,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
-                $definition = Object\Objectbrick\Definition::getByKey($allowedType);
+                try {
+                    $definition = Object\Objectbrick\Definition::getByKey($allowedType);
+                } catch (\Exception $e) {
+                    \Logger::info("Unknown allowed type [ $allowedType ] ignored.");
+                }
+
                 if ($definition) {
                     $fieldDefinition = $definition->getFieldDefinitions();
 

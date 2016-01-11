@@ -63,7 +63,7 @@ pimcore.asset.versions = Class.create({
             var grid = Ext.create('Ext.grid.Panel', {
                 store: this.store,
                 columns: [
-                    {header: t("date"), width:130, sortable: true, dataIndex: 'date', renderer: function(d) {
+                    {header: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }},
@@ -76,9 +76,10 @@ pimcore.asset.versions = Class.create({
                     }, editable: false}
                 ],
                 stripeRows: true,
-                width:370,
+                width:380,
                 title: t('available_versions'),
                 region: "west",
+                split: true,
                 viewConfig: {
                     getRowClass: function(record, rowIndex, rp, ds) {
                         if (record.data.date == this.asset.data.modificationDate) {
@@ -100,7 +101,7 @@ pimcore.asset.versions = Class.create({
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" frameborder="0" id="asset_version_iframe_'
                                                                     + this.asset.id + '"></iframe>'
             });

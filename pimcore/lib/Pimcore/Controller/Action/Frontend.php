@@ -59,6 +59,11 @@ abstract class Frontend extends Action {
      */
     public function init() {
 
+        // this is only executed once per request (first request)
+        if(self::$isInitial) {
+            \Pimcore::getEventManager()->trigger("frontend.controller.preInit", $this);
+        }
+
         parent::init();
 
         // log exceptions if handled by error_handler
@@ -257,6 +262,8 @@ abstract class Frontend extends Action {
                     $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
                 }
             }
+
+            \Pimcore::getEventManager()->trigger("frontend.controller.postInit", $this);
         }
 
 
@@ -512,11 +519,15 @@ abstract class Frontend extends Action {
                 \Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
                 \Logger::error($error->exception);
 
+                \Pimcore::getEventManager()->trigger("frontend.error", $this, [
+                    "exception" => $error->exception
+                ]);
+
                 try {
                     // check if we have the error page already in the cache
                     // the cache is written in Pimcore_Controller_Plugin_HttpErrorLog::dispatchLoopShutdown()
                     $cacheKey = "error_page_response_" . \Pimcore\Tool\Frontend::getSiteKey();
-                    if($responseBody = \Pimcore\Model\Cache::load($cacheKey)) {
+                    if($responseBody = \Pimcore\Cache::load($cacheKey)) {
                         $this->getResponse()->setBody($responseBody);
                         $this->getResponse()->sendResponse();
 
@@ -535,8 +546,7 @@ abstract class Frontend extends Action {
 
                         // http_error log writing is done in Pimcore_Controller_Plugin_HttpErrorLog in this case
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $m = "Unable to load error document";
                     Tool::exitWithError($m);
                 }

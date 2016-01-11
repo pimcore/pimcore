@@ -574,7 +574,7 @@ class Staticroute extends AbstractModel {
         
         // this is mostly called in Staticroute\Dao not here
         try {
-            \Pimcore\Model\Cache::clearTag("staticroute");
+            \Pimcore\Cache::clearTag("staticroute");
         }
         catch (\Exception $e) {
             \Logger::crit($e);

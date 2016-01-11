@@ -35,8 +35,8 @@ pimcore.element.dependencies = Class.create({
             this.layout = new Ext.Panel({
                 title: t('dependencies'),
                 border: false,
+                scrollable: "y",
                 iconCls: "pimcore_icon_tab_dependencies",
-                autoScroll: true,
                 listeners:{
                     activate: this.getData.bind(this)
                 }

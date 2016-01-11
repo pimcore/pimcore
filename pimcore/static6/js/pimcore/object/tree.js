@@ -99,7 +99,7 @@ pimcore.object.tree = Class.create({
             id: this.config.treeId,
             title: this.config.treeTitle,
             autoScroll: true,
-            animate: true,
+            animate: false,
             rootVisible: true,
             bufferedRenderer: false,
             border: false,
@@ -711,7 +711,7 @@ pimcore.object.tree = Class.create({
         }));
 
 
-        menu.showAt(e.pageX, e.pageY);
+        menu.showAt(e.pageX+1, e.pageY+1);
     },
 
     reloadNode: function(tree, record) {

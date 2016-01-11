@@ -91,7 +91,7 @@ pimcore.asset.tree = Class.create({
             title: this.config.treeTitle,
             iconCls: this.config.treeIconCls,
             autoScroll:true,
-            animate:true,
+            animate:false,
             containerScroll: true,
             ddAppendOnly: true,
             rootVisible: this.config.rootVisible,
@@ -628,7 +628,7 @@ pimcore.asset.tree = Class.create({
             }));
         }
 
-        menu.showAt(e.pageX, e.pageY);
+        menu.showAt(e.pageX+1, e.pageY+1);
     },
 
 
@@ -949,7 +949,6 @@ pimcore.asset.tree = Class.create({
             width: 300,
             rootVisible: true,
             enableDD: false,
-            useArrows: true,
             autoScroll: true,
             store: store,
             root: {
@@ -1120,20 +1119,29 @@ pimcore.asset.tree = Class.create({
                 }
 
                 value = pimcore.helpers.getValidFilename(value);
+                record.getOwnerTree().loadMask.enable();
+
+                var originalText = record.get("text");
+                var originalPath = record.get("path");
 
                 record.set("text", value);
                 record.set("path", record.data.basePath + value);
 
-                record.getOwnerTree().loadMask.enable();
-
                 this.updateAsset(record.data.id, {filename: value}, function (response) {
+
+                    var rdata = Ext.decode(response.responseText);
+                    if (!rdata || !rdata.success) {
+                        record.set("text", originalText);
+                        record.set("path", originalPath);
+                        pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_renaming_a_folder"),
+                            "error");
+                        return;
+                    }
 
                     //record.getOwnerTree().loadMask.disable();
                     this.refresh(record);
-
                     if (pimcore.globalmanager.exists("asset_" + record.data.id)) {
                         try {
-                            var rdata = Ext.decode(response.responseText);
 
                             if (rdata && rdata.success) {
                                 pimcore.helpers.closeAsset(record.data.id);

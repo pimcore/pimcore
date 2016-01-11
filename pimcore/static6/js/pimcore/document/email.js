@@ -47,6 +47,8 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.preview = new pimcore.document.pages.preview(this);
         this.reports = new pimcore.report.panel("document_snippet", this);
+
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
     },
 
     getTabPanel: function () {
@@ -79,6 +81,10 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
         if (this.isAllowed("settings")) {
             items.push(this.notes.getLayout());
+        }
+
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({

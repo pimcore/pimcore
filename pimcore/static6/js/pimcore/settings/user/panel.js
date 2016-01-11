@@ -54,9 +54,8 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 id: "pimcore_panel_users_tree",
                 store: store,
                 region: "west",
-               // useArrows:true,
                 autoScroll:true,
-                animate:true,
+                animate:false,
                 containerScroll: true,
                 split:true,
                 width: 180,
@@ -73,6 +72,11 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                         ptype: 'treeviewdragdrop',
                         appendOnly: true,
                         ddGroup: "users"
+                    },
+                    listeners: {
+                        drop: function(node, data, overModel) {
+                            this.update(data.records[0].id, {parentId: overModel.id})
+                        }.bind(this)
                     }
                 },
                 tbar: ["->", {

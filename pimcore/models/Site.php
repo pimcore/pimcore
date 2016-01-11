@@ -99,7 +99,7 @@ class Site extends AbstractModel {
         
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
         $cacheKey = "site_domain_". md5($domain);
-        if (!$site = Cache::load($cacheKey)) {
+        if (!$site = \Pimcore\Cache::load($cacheKey)) {
             $site = new self();
             
             try {
@@ -109,7 +109,7 @@ class Site extends AbstractModel {
                 $site = "failed";
             }
             
-            Cache::save($site, $cacheKey, array("system","site"));
+            \Pimcore\Cache::save($site, $cacheKey, array("system","site"));
         }
         
         if($site == "failed" || !$site) {
@@ -321,7 +321,7 @@ class Site extends AbstractModel {
         
         // this is mostly called in Site\Dao not here
         try {
-            Cache::clearTag("site");
+            \Pimcore\Cache::clearTag("site");
         }
         catch (\Exception $e) {
             \Logger::crit($e);

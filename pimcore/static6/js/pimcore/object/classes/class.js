@@ -49,7 +49,6 @@ pimcore.object.classes.klass = Class.create({
             width: 300,
             split: true,
             enableDD: true,
-            useArrows: true,
             autoScroll: true,
             root: {
                 id: "0",
@@ -851,7 +850,7 @@ pimcore.object.classes.klass = Class.create({
 
     changeDataType: function (tree, record, type, initData, removeExisting) {
         try {
-           record.data.editor.applyData();
+            this.saveCurrentNode();
 
             var nodeLabel = record.data.text;
 

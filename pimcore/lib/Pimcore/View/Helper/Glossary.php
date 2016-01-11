@@ -13,6 +13,7 @@
 namespace Pimcore\View\Helper;
 
 use Pimcore\Model;
+use Pimcore\Cache as CacheManger;
 
 class Glossary extends \Zend_View_Helper_Abstract {
 
@@ -191,7 +192,7 @@ class GlossaryController {
         }
 
 
-        if (!$data = Model\Cache::load($cacheKey)) {
+        if (!$data = CacheManger::load($cacheKey)) {
 
             $list = new Model\Glossary\Listing();
             $list->setCondition("(language = ? OR language IS NULL OR language = '') AND (site = ? OR site IS NULL OR site = '')", array($locale, $siteId));
@@ -201,7 +202,7 @@ class GlossaryController {
 
             $data = $this->prepareData($data);
 
-            Model\Cache::save($data, $cacheKey, array("glossary"), null, 995);
+            CacheManger::save($data, $cacheKey, array("glossary"), null, 995);
             \Zend_Registry::set($cacheKey, $data);
         }
 

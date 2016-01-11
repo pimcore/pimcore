@@ -54,7 +54,7 @@ pimcore.object.classes.data.data = Class.create({
     },
 
     getGroup: function () {
-        return "other";   
+        return "other";
     },
 
     getType: function () {
@@ -69,7 +69,10 @@ pimcore.object.classes.data.data = Class.create({
             title: t("specific_settings") + " (" + niceName + ")",
             bodyStyle: "padding: 10px;",
             style: "margin: 10px 0 10px 0",
-            items: []
+            items: [],
+            defaults: {
+                labelWidth: 140
+            }
         });
 
 
@@ -308,7 +311,5 @@ pimcore.object.classes.data.data = Class.create({
     applySpecialData: function(source) {
 
     }
-
-
 
 });

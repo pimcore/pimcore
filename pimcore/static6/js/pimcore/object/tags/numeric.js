@@ -69,6 +69,11 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             input.width = 350;
         }
 
+        if (this.fieldConfig.labelWidth) {
+            input.labelWidth = this.fieldConfig.labelWidth;
+        }
+        input.width += input.labelWidth;
+
         if (this.fieldConfig["unsigned"]) {
             input.minValue = 0;
         }
@@ -99,7 +104,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel:this.fieldConfig.title,
             name:this.fieldConfig.name,
-            itemCls:"object_field"
+            componentCls:"object_field"
         };
 
         if (!isNaN(this.data)) {
@@ -109,6 +114,12 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
         }
+
+        if (this.fieldConfig.labelWidth) {
+            input.labelWidth = this.fieldConfig.labelWidth;
+        }
+
+        input.width += input.labelWidth;
 
         this.component = new Ext.form.TextField(input);
         this.component.disable();

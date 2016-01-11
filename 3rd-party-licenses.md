@@ -48,3 +48,6 @@ http://code.google.com/p/sabredav/wiki/License
 License: MIT  
 http://opensource.org/licenses/mit-license.php
 
+## famfamfam.com Silk Icons by Mark James
+License: Creative Commons Attribution 2.5 License 
+http://www.famfamfam.com/lab/icons/silk/

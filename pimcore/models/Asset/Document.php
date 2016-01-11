@@ -14,7 +14,7 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Tool;
 

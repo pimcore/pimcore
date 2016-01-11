@@ -27,7 +27,7 @@
 <body>
 
 <div id="pimcore_logo" style="display: none;">
-    <img src="/pimcore/static/img/logo.png"/>
+    <img src="/pimcore/static6/img/logo-white.svg"/>
 </div>
 
 <div id="pimcore_loading">
@@ -428,7 +428,6 @@ $scripts = array(
     "pimcore/report/analytics/settings.js",
     "pimcore/report/analytics/elementoverview.js",
     "pimcore/report/analytics/elementexplorer.js",
-    "pimcore/report/analytics/elementnavigation.js",
     "pimcore/report/webmastertools/settings.js",
     "pimcore/report/custom/item.js",
     "pimcore/report/custom/panel.js",
@@ -531,7 +530,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     (function() {
         var script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
         document.body.appendChild(script);
     })();
 </script>

@@ -115,7 +115,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
                 dateString += " 00:00";
             }
 
-            var date = Date.parse(dateString, "Y-m-d H:i");
+            var date = Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime();
             return date;
         }
         return false;

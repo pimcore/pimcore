@@ -18,7 +18,7 @@ if($_SERVER["HTTP_HOST"] != $referrerHost) {
 
 // this file doesn't boot the pimcore core for performance reasons
 ini_set("display_errors", "Off");
-include_once("../../../../lib/geoip2.phar");
+include_once("../../../../../vendor/autoload.php");
 
 
 use GeoIp2\Database\Reader;

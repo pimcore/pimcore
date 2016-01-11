@@ -13,7 +13,7 @@
 namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Tool;
-use Pimcore\Model\Cache as CacheManager;
+use Pimcore\Cache as CacheManager;
 
 class CDN extends \Zend_Controller_Plugin_Abstract {
 

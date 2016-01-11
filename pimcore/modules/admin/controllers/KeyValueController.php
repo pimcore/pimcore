@@ -17,7 +17,7 @@ use Pimcore\Model\Object\KeyValue;
 class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 {
     public function deletegroupAction() {
-        $id = $this->_getParam("id");
+        $id = $this->getParam("id");
 
         $config = KeyValue\GroupConfig::getById($id);
         $config->delete();
@@ -26,7 +26,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
     public function addgroupAction() {
-        $name = $this->_getParam("name");
+        $name = $this->getParam("name");
         $alreadyExist = false;
         $config = KeyValue\GroupConfig::getByName($name);
 
@@ -41,7 +41,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
     public function getgroupAction() {
-        $id = $this->_getParam("id");
+        $id = $this->getParam("id");
         $config = KeyValue\GroupConfig::getByName($id);
 
         $data = array(
@@ -54,8 +54,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
     public function groupsAction() {
-        if ($this->_getParam("data")) {
-            $dataParam = $this->_getParam("data");
+        if ($this->getParam("data")) {
+            $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
 
             $id = $data["id"];
@@ -86,14 +86,14 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                 $order  = $sortingSettings['order'];
             }
 
-            if ($this->_getParam("limit")) {
-                $limit = $this->_getParam("limit");
+            if ($this->getParam("limit")) {
+                $limit = $this->getParam("limit");
             }
-            if ($this->_getParam("start")) {
-                $start = $this->_getParam("start");
+            if ($this->getParam("start")) {
+                $start = $this->getParam("start");
             }
 
-            if ($this->_getParam("overrideSort") == "true") {
+            if ($this->getParam("overrideSort") == "true") {
                 $orderKey = "id";
                 $order = "DESC";
             }
@@ -106,9 +106,9 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $list->setOrderKey($orderKey);
 
 
-            if($this->_getParam("filter")) {
+            if($this->getParam("filter")) {
                 $condition = "";
-                $filterString = $this->_getParam("filter");
+                $filterString = $this->getParam("filter");
                 $filters = json_decode($filterString);
 
                 $db = Db::get();
@@ -165,8 +165,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 
 
     public function propertiesAction() {
-        if ($this->_getParam("data")) {
-            $dataParam = $this->_getParam("data");
+        if ($this->getParam("data")) {
+            $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
 
             $id = $data["id"];
@@ -200,16 +200,16 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                 $order  = $sortingSettings['order'];
             }
 
-            if ($this->_getParam("overrideSort") == "true") {
+            if ($this->getParam("overrideSort") == "true") {
                 $orderKey = "id";
                 $order = "DESC";
             }
 
-            if ($this->_getParam("limit")) {
-                $limit = $this->_getParam("limit");
+            if ($this->getParam("limit")) {
+                $limit = $this->getParam("limit");
             }
-            if ($this->_getParam("start")) {
-                $start = $this->_getParam("start");
+            if ($this->getParam("start")) {
+                $start = $this->getParam("start");
             }
 
             $list = new KeyValue\KeyConfig\Listing();
@@ -221,10 +221,10 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
-            if($this->_getParam("filter")) {
+            if($this->getParam("filter")) {
                 $db = Db::get();
                 $condition = "";
-                $filterString = $this->_getParam("filter");
+                $filterString = $this->getParam("filter");
                 $filters = json_decode($filterString);
 
                 $count = 0;
@@ -245,14 +245,14 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                 $list->setCondition($condition);
             }
 
-            if ($this->_getParam("groupIds") || $this->_getParam("keyIds")) {
+            if ($this->getParam("groupIds") || $this->getParam("keyIds")) {
                 $db = Db::get();
 
-                if ($this->_getParam("groupIds")) {
-                    $ids = \Zend_Json::decode($this->_getParam("groupIds"));
+                if ($this->getParam("groupIds")) {
+                    $ids = \Zend_Json::decode($this->getParam("groupIds"));
                     $col = "group";
                 } else {
-                    $ids = \Zend_Json::decode($this->_getParam("keyIds"));
+                    $ids = \Zend_Json::decode($this->getParam("keyIds"));
                     $col = "id";
                 }
 
@@ -334,7 +334,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
     public function addpropertyAction() {
-        $name = $this->_getParam("name");
+        $name = $this->getParam("name");
         $alreadyExist = false;
 
         if(!$alreadyExist) {
@@ -348,7 +348,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
     public function deletepropertyAction() {
-        $id = $this->_getParam("id");
+        $id = $this->getParam("id");
 
         $config = KeyValue\KeyConfig::getById($id);
         $config->delete();

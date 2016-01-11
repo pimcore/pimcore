@@ -59,11 +59,6 @@ class Page extends Model\Document\PageSnippet {
     public $prettyUrl;
 
     /**
-     * @var string
-     */
-    public $css = "";
-
-    /**
      * comma separated IDs of personas
      * @var string
      */
@@ -241,24 +236,6 @@ class Page extends Model\Document\PageSnippet {
     public function getPrettyUrl()
     {
         return $this->prettyUrl;
-    }
-
-    /**
-     * @param $css
-     * @return $this
-     */
-    public function setCss($css)
-    {
-        $this->css = $css;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCss()
-    {
-        return $this->css;
     }
 
     /**

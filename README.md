@@ -1,6 +1,6 @@
 # pimcore
 
-THE PREMIER OPEN-SOURCE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
+THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
 [![Current Release](https://img.shields.io/packagist/v/pimcore/pimcore.svg?style=flat)](https://packagist.org/packages/pimcore/pimcore)
@@ -10,10 +10,12 @@ THE PREMIER OPEN-SOURCE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 
 ![Editing Interface](website_demo/static/screenshots/1.png)
 
+* [Documentation](https://www.pimcore.org/wiki/)
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
-* Forums: - http://www.pimcore.org/board/ - Get help
+* [Google Group](https://groups.google.com/forum/#!forum/pimcore) - Discussions 
+* [StackOverflow](http://stackoverflow.com/questions/tagged/pimcore) - Questions / Support 
 
 
 ## Getting started
@@ -37,8 +39,8 @@ mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 
 ## Contribute
 **Bug fixes:** please create a pull request including a reproducible description of the problem  
-**Contribute features:** contact the core-team before you start developing (contribute@pimcore.org)
-**Security vulnerabilities:** please contact us (security@pimcore.org)
+**Contribute features:** contact the core-team before you start developing (contribute@pimcore.org)  
+**Security vulnerabilities:** please contact us (security@pimcore.org)  
 
 ## Copyright and license
 

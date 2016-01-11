@@ -78,7 +78,7 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a class="navbar-brand" href="<?= $mainNavStartNode; ?>">
-                        <img src="/website/static/img/logo.png" alt="pimcore Demo">
+                        <img src="/website/static/img/logo-white.svg" alt="pimcore Demo">
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">

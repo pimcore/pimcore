@@ -12,7 +12,7 @@
 
 namespace Pimcore\Controller\Plugin;
 
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Model\Tool;
 
 class TagManagement extends \Zend_Controller_Plugin_Abstract {

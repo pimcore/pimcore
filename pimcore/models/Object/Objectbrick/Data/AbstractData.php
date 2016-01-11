@@ -104,7 +104,7 @@ class AbstractData extends Model\AbstractModel {
      */
     public function delete($object) {
         $this->doDelete = true;
-        parent::delete($object);
+        $this->getDao()->delete($object);
     }
 
     /**

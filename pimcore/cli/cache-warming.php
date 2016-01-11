@@ -47,8 +47,8 @@ if($opts->getOption("maintenanceMode")) {
 }
 
 if($opts->getOption("verbose")) {
-    $writer = new \Zend_Log_Writer_Stream('php://output');
-    $logger = new \Zend_Log($writer);
+    $logger = new \Monolog\Logger('core');
+    $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout'));
     \Logger::addLogger($logger);
 
     // set all priorities

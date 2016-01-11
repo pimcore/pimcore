@@ -56,6 +56,7 @@ pimcore.settings.user.role.tab = Class.create({
 
         this.panel.add(this.settings.getPanel());
         this.panel.add(this.workspaces.getPanel());
+        this.panel.add(this.generalSet);
 
         this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().setActiveTab(this.panel);

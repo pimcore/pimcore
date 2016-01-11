@@ -167,7 +167,7 @@ class AbstractUser extends Model\AbstractModel {
 
         // now delete the current user
         $this->getDao()->delete();
-        \Pimcore\Model\Cache::clearAll();
+        \Pimcore\Cache::clearAll();
     }
 
     /**

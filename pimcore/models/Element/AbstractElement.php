@@ -59,7 +59,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * get the cache tag for the element
      *
-     * @return Dependency
+     * @return string
      */
     public function getCacheTag() {
         $elementType = Service::getElementType($this);

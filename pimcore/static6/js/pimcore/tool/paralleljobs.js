@@ -16,6 +16,10 @@ pimcore.tool.paralleljobs = Class.create({
 
         this.config = config;
 
+        if(this.config["stopOnError"] !== false) {
+            this.config["stopOnError"] = true;
+        }
+
         this.groupsFinished = 0;
         this.groupsTotal = this.config.jobs.length;
         this.alloverJobs = 0;
@@ -53,9 +57,30 @@ pimcore.tool.paralleljobs = Class.create({
     },
 
     error: function (message) {
+
+        if(this.config["stopOnError"]) {
+            clearInterval(this.jobsInterval);
+        }
+
         if(typeof this.config.failure == "function") {
             this.config.failure(message);
         }
+    },
+
+    continue: function () {
+        this.jobsFinished++;
+        this.jobsRunning-=1;
+        this.alloverJobsFinished++;
+
+        // update
+        var status = this.alloverJobsFinished / this.alloverJobs;
+        var percent = Math.ceil(status * 100);
+
+        try {
+            if(typeof this.config.update == "function") {
+                this.config.update(this.alloverJobsFinished, this.alloverJobs, percent);
+            }
+        } catch (e2) {}
     },
 
     processJob: function () {
@@ -84,31 +109,24 @@ pimcore.tool.paralleljobs = Class.create({
                             throw res;
                         }
                     } catch (e) {
-                        clearInterval(this.jobsInterval);
                         console.log(e);
                         console.log(response);
-                        this.error( (res && res["message"]) ? res["message"] : response.responseText);
-                        return;
+                        this.error((res && res["message"]) ? res["message"] : response.responseText);
+
+                        if(this.config["stopOnError"]) {
+                            // stop here
+                            return;
+                        }
                     }
 
-                    this.jobsFinished++;
-                    this.jobsRunning-=1;
-                    this.alloverJobsFinished++;
-
-                    // update
-                    var status = this.alloverJobsFinished / this.alloverJobs;
-                    var percent = Math.ceil(status * 100);
-
-                    try {
-                        if(typeof this.config.update == "function") {
-                            this.config.update(this.alloverJobsFinished, this.alloverJobs, percent);
-                        }
-                    } catch (e2) {}
-
+                    this.continue();
                 }.bind(this),
                 failure: function (response) {
-                    clearInterval(this.jobsInterval);
                     this.error(response.responseText);
+
+                    if(!this.config["stopOnError"]) {
+                        this.continue();
+                    }
                 }.bind(this),
                 params: this.config.jobs[this.groupsFinished][this.jobsStarted].params
             });

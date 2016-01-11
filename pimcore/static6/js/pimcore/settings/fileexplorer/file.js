@@ -32,7 +32,7 @@ pimcore.settings.fileexplorer.file = Class.create({
         response = Ext.decode(response.responseText);
         if(response.success) {
 
-            var toolbarItems = [];
+            var toolbarItems = ["->"];
             if(response.writeable) {
                 toolbarItems.push({
                     text: t("save"),
@@ -50,7 +50,7 @@ pimcore.settings.fileexplorer.file = Class.create({
                 title: response.path,
                 closable: true,
                 layout: "fit",
-                tbar: Ext.create('Ext.Toolbar', {
+                bbar: Ext.create('Ext.Toolbar', {
                     cls: 'main-toolbar',
                     items: toolbarItems
                 }),

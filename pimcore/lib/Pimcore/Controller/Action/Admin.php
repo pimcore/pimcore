@@ -103,7 +103,7 @@ abstract class Admin extends Action {
                     $this->setLanguage($this->getUser()->getLanguage());
                 }
             } else {
-                // try to authenticate with digest, but this is only allowed for WebDAV
+                // try to authenticate with http basic auth, but this is only allowed for WebDAV
                 if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
                     $user = Authentication::authenticateHttpBasic();
                     if($user instanceof Model\User) {

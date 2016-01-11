@@ -14,7 +14,7 @@ namespace Pimcore\Controller\Router\Route;
 
 use Pimcore\Tool;
 use Pimcore\Config; 
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Redirect;
@@ -103,7 +103,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
             if($username && $password) {
                 $adapter = new \Zend_Auth_Adapter_Http(array(
                     "accept_schemes" => "basic",
-                    "realm" => $_SERVER["HTTP_HOST"]
+                    "realm" => Tool::getHostname()
                 ));
 
                 $basicResolver = new \Pimcore\Helper\Auth\Adapter\Http\ResolverStatic($username, $password);
@@ -520,7 +520,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
                         // replace escaped % signs so that they didn't have effects to vsprintf (PIMCORE-1215)
                         $target = str_replace("\\%","###URLENCODE_PLACEHOLDER###", $target);
-                        $url = vsprintf($target, $matches);
+                        $url = @vsprintf($target, $matches);
+                        if(empty($url)) {
+                            // vsprintf() failed, just ose the original again
+                            $url = $target;
+                        }
                         $url = str_replace("###URLENCODE_PLACEHOLDER###", "%", $url);
 
                         // support for pcre backreferences

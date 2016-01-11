@@ -49,6 +49,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.preview = new pimcore.document.pages.preview(this);
         this.reports = new pimcore.report.panel("document_page", this);
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
     },
 
     getTabPanel: function () {
@@ -85,6 +86,9 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             items.push(this.notes.getLayout());
         }
 
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
+        }
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
@@ -156,18 +160,6 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             catch (e5) {
                 //console.log(e5);
             }
-        }
-
-        // styles
-        try {
-            var styles = this.preview.getValues();
-            if(!settings) {
-                settings = {};
-            }
-            settings.css = styles.css;
-        }
-        catch (e6) {
-            //console.log(e6);
         }
 
         if(settings) {

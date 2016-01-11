@@ -13,7 +13,7 @@
 namespace Pimcore\Google;
 
 use Pimcore\Google\Api;
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Model;
 

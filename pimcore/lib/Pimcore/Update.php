@@ -246,7 +246,7 @@ class Update {
         $db = Db::get();
         $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", $revision);
         
-        foreach ($files as $file) { 
+        foreach ($files as $file) {
             if ($file["action"] == "update" || $file["action"] == "add") {
                 if (!is_dir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]))) {
                     if(!self::$dryRun) {
@@ -274,7 +274,9 @@ class Update {
                     if (file_exists(PIMCORE_DOCUMENT_ROOT . $file["path"])) {
                         unlink(PIMCORE_DOCUMENT_ROOT . $file["path"]);
                     }
-        
+
+                    clearstatcache();
+
                     // remove also directory if its empty
                     if (count(glob(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]) . "/*")) === 0) {
                         recursiveDelete(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]), true);
@@ -297,7 +299,7 @@ class Update {
         @ini_set("max_execution_time", $maxExecutionTime);
         set_time_limit($maxExecutionTime);
 
-        Model\Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
+        Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
 
         if(is_file($script)) {
             ob_start();

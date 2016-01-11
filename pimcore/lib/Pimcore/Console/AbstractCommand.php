@@ -12,8 +12,13 @@
 
 namespace Pimcore\Console;
 
-use Pimcore\Console\Log\Writer;
+use Monolog\Handler\NullHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Pimcore\Console\Log\Formatter\ConsoleColorFormatter;
 use Pimcore\Tool\Admin;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,6 +37,9 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     /** @var Dumper */
     protected $dumper;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -43,6 +51,8 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         $this->input  = $input;
         $this->output = $output;
 
+        $this->initializeLogging();
+
         // use Console\Dumper for nice debug output
         $this->dumper = new Dumper($this->output);
 
@@ -53,26 +63,57 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * Hook into the pimcore logger using the Pimcore\Console\Log\Writer
-     *
-     * @param int $filterPriority
+     * Initialize logging
      */
-    protected function initializePimcoreLogging($filterPriority = \Zend_Log::INFO)
+    protected function initializeLogging()
     {
-        $writer = new Writer($this->output);
-        $logger = new \Zend_Log($writer);
+        $logger = $this->getLogger();
 
-        if ($this->output->isVerbose()) {
-            $filterPriority = null;
-        }
-
-        if (null !== $filterPriority) {
-            $logger->addFilter(new \Zend_Log_Filter_Priority($filterPriority));
-        }
-
-        // the filter handles verbosity
-        \Logger::setVerbosePriorities();
+        // hook logger into pimcore
         \Logger::addLogger($logger);
+
+        // set all priorities
+        \Logger::setVerbosePriorities();
+    }
+
+    /**
+     * Get log level - default to warning, but show all messages in verbose mode
+     *
+     * @return null|string
+     */
+    protected function getLogLevel()
+    {
+        $logLevel = LogLevel::WARNING;
+        if ($this->output->isVerbose()) {
+            $logLevel = null;
+        }
+
+        return $logLevel;
+    }
+
+    /**
+     * @return Logger|LoggerInterface
+     */
+    protected function getLogger()
+    {
+        if (null === $this->logger) {
+            $handler = null;
+            if ($this->output->isQuiet()) {
+                $handler = new NullHandler();
+            } else {
+                $handler = new StreamHandler($this->output->getStream(), $this->getLogLevel());
+                if (!$this->input->getOption('no-ansi')) {
+                    $handler->setFormatter(new ConsoleColorFormatter());
+                }
+            }
+
+            $logger = new Logger('core');
+            $logger->pushHandler($handler);
+
+            $this->logger = $logger;
+        }
+
+        return $this->logger;
     }
 
     /**

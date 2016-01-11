@@ -177,6 +177,25 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         }
 
 
+        //filtering for tags
+        $tagIds = $this->getParam("tagIds");
+        if($tagIds) {
+            foreach($tagIds as $tagId) {
+                foreach($types as $type) {
+                    if($this->getParam("considerChildTags") =="true") {
+                        $tag = Pimcore\Model\Element\Tag::getById($tagId);
+                        if($tag) {
+                            $tagPath = $tag->getFullIdPath();
+                            $conditionParts[] = "id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = " . $db->quote($type) . " AND (id = " . intval($tagId) . " OR idPath LIKE " . $db->quote($tagPath . "%") . "))";
+                        }
+                    } else {
+                        $conditionParts[] = "id IN (SELECT cId FROM tags_assignment WHERE ctype = " . $db->quote($type) . " AND tagid = " . intval($tagId) . ")";
+                    }
+                }
+            }
+        }
+
+
         if (count($conditionParts) > 0) {
             $condition = implode(" AND ", $conditionParts);
 
@@ -192,22 +211,22 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         //$searcherList->setOrder("desc");
         //$searcherList->setOrderKey("modificationdate");
 
-        if ($this->getParam("sort")) {
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
                 "classname" => "subtype"
             ];
 
-            $sort = $this->getParam("sort");
-            if(array_key_exists($this->getParam("sort"), $sortMapping)) {
-                $sort = $sortMapping[$this->getParam("sort")];
+            $sort = $sortingSettings['orderKey'];
+            if(array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
+                $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sort);
+            $searcherList->setOrderKey($sortingSettings['orderKey']);
         }
-        if ($this->getParam("dir")) {
-            $searcherList->setOrder($this->getParam("dir"));
+        if ($sortingSettings['order']) {
+            $searcherList->setOrder($sortingSettings['order']);
         }
-
 
 
         $hits = $searcherList->load();

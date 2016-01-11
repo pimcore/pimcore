@@ -138,7 +138,7 @@ class Maintenance {
             $db = \Pimcore\Db::get()->getResource();
 
 
-            $query = "SELECT * FROM ". \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
+            $query = "SELECT * FROM ". \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
 
             $rows = $db->fetchAll($query);
             $limit = 100;
@@ -161,7 +161,8 @@ class Maintenance {
 
                     $html = var_export($entries, true);
                     $html = "<pre>$html</pre>";
-                    $mail = new \Pimcore_Mail();
+                    $mail = new \Pimcore\Mail();
+                    $mail->setIgnoreDebugMode(true);
                     $mail->setBodyHtml($html);
                     $mail->addTo($receivers);
                     $mail->setSubject('Error Log ' . \Pimcore_Tool::getHostUrl());
@@ -169,7 +170,7 @@ class Maintenance {
                 }
             }
 
-            $db->query("UPDATE " . \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " set maintenanceChecked = 1");
+            $db->query("UPDATE " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " set maintenanceChecked = 1");
         }
     }
 
@@ -180,7 +181,7 @@ class Maintenance {
 
         $db = \Pimcore\Db::get();
 
-        $tablename =  \Pimcore\Log\Helper::ERROR_LOG_ARCHIVE_TABLE_NAME . "_" . \Zend_Date::now()->get(\Zend_Date::MONTH_NAME) . '_' .\Zend_Date::now()->get(\Zend_Date::YEAR);
+        $tablename =  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . "_" . \Zend_Date::now()->get(\Zend_Date::MONTH) . '_' .\Zend_Date::now()->get(\Zend_Date::YEAR);
 
         if($config->archive_alternative_database) {
             $tablename = $config->archive_alternative_database . '.' . $tablename;
@@ -190,9 +191,10 @@ class Maintenance {
 
         $db->query("CREATE TABLE IF NOT EXISTS " . $tablename . " (
                        id BIGINT(20) NOT NULL,
+                       `pid` INT(11) NULL DEFAULT NULL,
                        `timestamp` DATETIME NOT NULL,
                        message VARCHAR(1024),
-                       priority INT(10),
+                       `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
                        fileobject VARCHAR(1024),
                        info VARCHAR(1024),
                        component VARCHAR(255),
@@ -202,12 +204,9 @@ class Maintenance {
                        maintenanceChecked TINYINT(4)
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
-
         $timestamp = time();
 
-        $db->query("INSERT INTO " . $tablename . " SELECT * FROM " .  \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(" . $timestamp . "), INTERVAL " . $archive_treshold . " DAY);");
-        $db->query("DELETE FROM " .  \Pimcore\Log\Helper::ERROR_LOG_TABLE_NAME . " WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(" . $timestamp . "), INTERVAL " . $archive_treshold . " DAY);");
-
-
+        $db->query("INSERT INTO " . $tablename . " SELECT * FROM " .  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(" . $timestamp . "), INTERVAL " . $archive_treshold . " DAY);");
+        $db->query("DELETE FROM " .  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(" . $timestamp . "), INTERVAL " . $archive_treshold . " DAY);");
     }
 }

@@ -35,6 +35,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         }
 
         this.dependencies = new pimcore.element.dependencies(this, "object");
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
     },
 
 
@@ -230,6 +231,11 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         if (this.isAllowed("settings")) {
             items.push(this.notes.getLayout());
+        }
+
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({

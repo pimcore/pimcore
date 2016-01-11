@@ -108,7 +108,7 @@ pimcore.document.tree = Class.create({
             iconCls: this.config.treeIconCls,
             autoScroll:true,
             autoLoad: false,
-            animate:true,
+            animate: false,
             containerScroll: true,
             rootVisible: this.config.rootVisible,
             bufferedRenderer: false,
@@ -230,6 +230,15 @@ pimcore.document.tree = Class.create({
                     }
                     node.data.basePath = newBasePath;
                     node.data.path = node.data.basePath + "/" + node.data.text;
+
+                    if (!node.data.published) {
+                        var view = tree.getView();
+                        var nodeEl = Ext.fly(view.getNodeByRecord(node));
+                        var nodeElInner = nodeEl.down(".x-grid-td");
+                        if (nodeElInner) {
+                            nodeElInner.addCls("pimcore_unpublished");
+                        }
+                    }
                 }
                 else {
                     tree.loadMask.hide();
@@ -683,7 +692,7 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-        menu.showAt(e.pageX, e.pageY);
+        menu.showAt(e.pageX+1, e.pageY+1);
     },
 
     copy: function (tree, record) {
@@ -964,10 +973,10 @@ pimcore.document.tree = Class.create({
                 bodyStyle: "padding: 10px;",
                 items: [{
                     xtype: "textfield",
+                    width: "100%",
                     fieldLabel: t('key'),
                     itemId: "key",
                     name: 'key',
-                    width: 300,
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
@@ -984,13 +993,13 @@ pimcore.document.tree = Class.create({
                     itemId: "name",
                     fieldLabel: t('navigation'),
                     name: 'name',
-                    width: 300
+                    width: "100%"
                 },{
                     xtype: "textfield",
                     itemId: "title",
                     fieldLabel: t('title'),
                     name: 'title',
-                    width: 300
+                    width: "100%"
                 }]
             });
 
@@ -1010,6 +1019,7 @@ pimcore.document.tree = Class.create({
             var messageBox = new Ext.Window({
                 modal: true,
                 width: 400,
+                title: t(textKeyTitle),
                 items: pageForm,
                 buttons: [{
                     text: t('OK'),
@@ -1074,14 +1084,21 @@ pimcore.document.tree = Class.create({
                         var nodeEl = Ext.fly(view.getNodeByRecord(record));
 
                         if (task == 'unpublish') {
-                            nodeEl.addCls('pimcore_unpublished');
+                            var nodeElInner = nodeEl.down(".x-grid-td");
+                            if (nodeElInner) {
+                                nodeElInner.addCls("pimcore_unpublished");
+                            }
+
                             record.data.published = false;
                             if (pimcore.globalmanager.exists("document_" + record.data.id)) {
                                 pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.hide();
                             }
 
                         } else {
-                            nodeEl.removeCls('pimcore_unpublished');
+                            var nodeElInner = nodeEl.down(".x-grid-td");
+                            if (nodeElInner) {
+                                nodeElInner.removeCls('pimcore_unpublished');
+                            }
                             record.data.published = true;
                             if (pimcore.globalmanager.exists("document_" + record.data.id)) {
                                 pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.show();

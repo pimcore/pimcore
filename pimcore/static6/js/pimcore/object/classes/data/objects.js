@@ -32,9 +32,11 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             this.datax.lazyLoading = true;
         }
 
+        pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
+
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
-                                        "visibleGridView","visibleSearch","style"];
+            "visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },
@@ -59,7 +61,6 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
 
         this.uniqeFieldId = uniqid();
 
-        this.specificPanel.removeAll();
         this.specificPanel.add([
             {
                 xtype: "numberfield",
@@ -107,7 +108,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
         if(typeof this.datax.classes == "object") {
             // this is when it comes from the server
             for(var i=0; i<this.datax.classes.length; i++) {
-                classes.push(this.datax.classes[i]["classes"]);
+                classes.push(this.datax.classes[i]);
             }
         } else if(typeof this.datax.classes == "string") {
             // this is when it comes from the local store
@@ -123,8 +124,10 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             fields: ["text"]
         });
         classesStore.load({
-            "callback": function (classes) {
-                Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(classes.join(","));
+            "callback": function (classes, success) {
+                if (success) {
+                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(classes.join(","));
+                }
             }.bind(this, classes)
         });
 

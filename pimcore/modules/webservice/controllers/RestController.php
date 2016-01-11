@@ -1084,7 +1084,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      */
     public function translationsAction(){
         $this->checkUserPermission("translations");
-        $type = $this->_getParam('type');
+        $type = $this->getParam('type');
 
         try{
             $params = $this->getRequest()->getQuery();

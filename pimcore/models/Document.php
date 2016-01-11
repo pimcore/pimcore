@@ -247,7 +247,7 @@ class Document extends Element\AbstractElement {
         }
         catch (\Exception $e) {
             try {
-                if (!$document = Cache::load($cacheKey)) {
+                if (!$document = \Pimcore\Cache::load($cacheKey)) {
                     $document = new Document();
                     $document->getDao()->getById($id);
 
@@ -255,9 +255,9 @@ class Document extends Element\AbstractElement {
 
                     // this is the fallback for custom document types using prefixes
                     // so we need to check if the class exists first
-                    if(!\Pimcore\Tool::classExists($mappingClass)) {
+                    if(!Tool::classExists($mappingClass)) {
                         $oldStyleClass = "Document_" . ucfirst($document->getType());
-                        if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                        if(Tool::classExists($oldStyleClass)) {
                             $mappingClass = $oldStyleClass;
                         }
                     }
@@ -268,7 +268,7 @@ class Document extends Element\AbstractElement {
                         \Zend_Registry::set($cacheKey, $document);
                         $document->getDao()->getById($id);
 
-                        Cache::save($document, $cacheKey);
+                        \Pimcore\Cache::save($document, $cacheKey);
                     }
                 }
                 else {
@@ -390,6 +390,8 @@ class Document extends Element\AbstractElement {
             \Pimcore::getEventManager()->trigger("document.preAdd", $this);
         }
 
+        $this->correctPath();
+
         // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
@@ -404,7 +406,6 @@ class Document extends Element\AbstractElement {
                     throw new \Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
                 }
 
-                $this->correctPath();
                 // set date
                 $this->setModificationDate(time());
 
@@ -500,7 +501,6 @@ class Document extends Element\AbstractElement {
             }
 
             if (strlen($this->getKey()) < 1) {
-                $this->setKey("---no-valid-key---" . $this->getId());
                 throw new \Exception("Document requires key, generated key automatically");
             }
         } else if($this->getId() == 1) {
@@ -590,7 +590,7 @@ class Document extends Element\AbstractElement {
             $tags = array("document_" . $this->getId(), "document_properties", "output");
             $tags = array_merge($tags, $additionalTags);
 
-            Cache::clearTags($tags);
+            \Pimcore\Cache::clearTags($tags);
         }
         catch (\Exception $e) {
             \Logger::crit($e);
@@ -1058,12 +1058,12 @@ class Document extends Element\AbstractElement {
         if ($this->properties === null) {
             // try to get from cache
             $cacheKey = "document_properties_" . $this->getId();
-            $properties = Cache::load($cacheKey);
+            $properties = \Pimcore\Cache::load($cacheKey);
             if (!is_array($properties)) {
                 $properties = $this->getDao()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
                 $cacheTags = array("document_properties" => "document_properties", $elementCacheTag => $elementCacheTag);
-                Cache::save($properties, $cacheKey, $cacheTags);
+                \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
             }
 
             $this->setProperties($properties);

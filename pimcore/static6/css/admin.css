@@ -29,11 +29,10 @@
 }
 
 #pimcore_navigation li {
-    display:block;
+    display: block;
     list-style: none;
     width: 46px;
-    height: 50px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     cursor: pointer;
     color: #d7d7d7;
     font-size: 10px;
@@ -41,6 +40,7 @@
     font-family: Arial;
     overflow: hidden;
     word-wrap: break-word;
+    line-height: 12px;
 }
 
 #pimcore_navigation li:hover {
@@ -65,8 +65,8 @@
     width: 46px;
 }
 
-[class^="icon-"]:before, [class*=" icon-"]:before {
-    font-size: 22px;
+#pimcore_navigation [class^="icon-"]:before, #pimcore_navigation [class*=" icon-"]:before {
+    font-size: 28px;
     padding-bottom: 2px;
 }
 
@@ -82,12 +82,17 @@
     padding-left: 2px;
     transform: rotate(270deg);
     transform-origin: 14px 12px;
+
 }
 
-#pimcore_logo img.activity {
-    width: 31px;
-    height: 31px;
-    padding-left: 0;
+#pimcore_logo .spinner {
+    margin: 0;
+    transform: rotate(90deg);
+    transform-origin: 40px -17px;
+}
+
+#pimcore_logo .spinner > div {
+    background-color: #fff;
 }
 
 .pimcore_hidden {
@@ -127,6 +132,10 @@
     color: #6dc1fd!important;
 }
 
+.pimcore_overflow_scrolling {
+    -webkit-overflow-scrolling:touch;
+    overflow: auto;
+}
 
 /* objects */
 
@@ -530,7 +539,6 @@
 
 
 .pimcore_analytics_filter_form_item {
-    float: left;
     margin: 0 30px 0 0;
 }
 
@@ -1238,3 +1246,14 @@ span.warning {
     color: white;
 }
 
+.tag-tree-topbar .x-form-field, .tag-tree-topbar .x-form-cb-label {
+    margin-top: 0;
+}
+
+.tag-tree-topbar .x-form-item-body {
+    height: 20px;
+}
+
+.tag-tree-toolbar-collapsed {
+    border: none;
+}

@@ -13,7 +13,7 @@
 namespace Pimcore;
 
 use Pimcore\Tool;
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 use Pimcore\Model;
 
 class Config {

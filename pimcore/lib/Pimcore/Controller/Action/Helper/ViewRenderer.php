@@ -37,25 +37,6 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer {
         }
         
         parent::postDispatch();
-
-        // append custom styles to response body
-        if($this->getActionController() instanceof FrontendController) {
-            $doc = $this->getActionController()->getDocument();
-            if(Tool::isHtmlResponse($this->getResponse())
-                && $doc && method_exists($doc, "getCss") && $doc->getCss()
-                && !$this->getRequest()->getParam("pimcore_editmode")) {
-
-                $code = '<style type="text/css" id="pimcore_styles_' . $doc->getId() . '">';
-                $code .= "\n\n" . $doc->getCss() . "\n\n";
-                $code .= '</style>';
-
-                $name = $this->getResponseSegment();
-                $this->getResponse()->appendBody(
-                    $code,
-                    $name
-                );
-            }
-        }
     }
 
     /**

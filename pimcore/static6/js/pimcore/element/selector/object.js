@@ -300,7 +300,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             },
             {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
             {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
-            {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'},
+            {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
             {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
             {header: t("class"), width: 200, sortable: true, dataIndex: 'classname'}
         ];

@@ -1,9 +1,15 @@
 <section class="area-image">
 
-    <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
+    <?php if(!$this->editmode) { ?>
+        <a href="<?= $this->image("image")->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
+    <?php } ?>
+
         <?= $this->image("image", [
             "thumbnail" => "content"
         ]); ?>
-    </a>
+
+    <?php if(!$this->editmode) { ?>
+        </a>
+    <?php } ?>
 
 </section>

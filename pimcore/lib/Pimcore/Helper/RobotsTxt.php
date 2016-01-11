@@ -7,7 +7,7 @@
 
 namespace Pimcore\Helper;
 
-use Pimcore\Model\Cache;
+use Pimcore\Cache;
 
 class RobotsTxt
 {

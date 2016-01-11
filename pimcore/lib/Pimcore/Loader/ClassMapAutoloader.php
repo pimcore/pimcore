@@ -24,6 +24,9 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
             "Pimcore_Resource" => "Pimcore\\Db",
             "Pimcore\\Resource\\Mysql" => "Pimcore\\Db",
             "Pimcore_Resource_Mysql" => "Pimcore\\Db",
+            "Pimcore\\Log\\Log" => "Pimcore\\Log\\ApplicationLogger",
+            "Pimcore\\Log\\Writer\\Db" => "Pimcore\\Log\\Handler\\ApplicationLoggerDb",
+            "Pimcore\\Model\\Cache" => "Pimcore\\Cache",
         ];
 
         if(array_key_exists($class, $classAliases)) {

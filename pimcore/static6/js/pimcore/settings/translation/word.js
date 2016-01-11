@@ -76,7 +76,7 @@ pimcore.settings.translation.word = Class.create({
                     Ext.create('Ext.grid.column.Check', {
                         header: t("children"),
                         dataIndex: "children",
-                        width: 50
+                        width: 100
                     }),
                     {
                         xtype: 'actioncolumn',
@@ -276,10 +276,9 @@ pimcore.settings.translation.word = Class.create({
                         }
                     }.bind(this),
                     failure: function (message) {
-                        this.exportProgressWin.close();
-                        pimcore.helpers.showNotification(t("error"), t("error"),
-                            "error", t(message));
+                        console.error("Word export: " + message);
                     }.bind(this),
+                    stopOnError: false,
                     jobs: res.jobs
                 });
             }.bind(this)

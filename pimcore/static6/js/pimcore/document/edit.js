@@ -134,8 +134,8 @@ pimcore.document.edit = Class.create({
                 id: "document_content_" + this.document.id,
                 html: html,
                 title: t('edit'),
-                autoScroll: true,
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                scrollable: false,
+                bodyCls: "pimcore_overflow_scrolling",
                 forceLayout: true,
                 hideMode: "offsets",
                 iconCls: "pimcore_icon_tab_edit",
@@ -179,7 +179,7 @@ pimcore.document.edit = Class.create({
 
     setLayoutFrameDimensions: function (width, height) {
         Ext.get(this.iframeName).setStyle({
-            height: (height-51) + "px"
+            height: (height-52) + "px"
         });
     },
 

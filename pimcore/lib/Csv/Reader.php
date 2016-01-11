@@ -84,7 +84,7 @@ class Csv_Reader extends Csv_Reader_Abstract {
 	
 		$this->handle = fopen($this->path, 'rb');
 		if ($this->handle === false) {
-			throw new Csv_Exception_FileNotFound('File does not exist or is not readable: "' . $path . '".');
+			throw new Csv_Exception_FileNotFound('File does not exist or is not readable: "' . $this->path . '".');
 		}
 	
 	}

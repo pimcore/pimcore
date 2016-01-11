@@ -166,7 +166,7 @@ pimcore.document.emails.settings = Class.create({
                                     fields: ["name"]
                                 }),
                                 triggerAction: "all",
-                                mode: "local",
+                                queryMode: "local",
                                 value: this.email.data.action,
                                 listeners: {
                                     "focus": function (el) {
@@ -174,6 +174,9 @@ pimcore.document.emails.settings = Class.create({
                                             params: {
                                                 controllerName: Ext.getCmp("pimcore_document_settings_controller_"
                                                                         + this.email.id).getValue()
+                                            },
+                                            callback: function() {
+                                                el.expand();
                                             }
                                         });
                                     }.bind(this)
@@ -186,6 +189,7 @@ pimcore.document.emails.settings = Class.create({
                                 valueField: 'path',
                                 name: "template",
                                 disableKeyFilter: true,
+                                queryMode: "local",
                                 store: new Ext.data.Store({
                                     proxy: {
                                         type: 'ajax',

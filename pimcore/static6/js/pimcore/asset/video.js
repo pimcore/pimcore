@@ -25,6 +25,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         this.scheduler = new pimcore.element.scheduler(this, "asset");
         this.dependencies = new pimcore.element.dependencies(this, "asset");
         this.notes = new pimcore.element.notes(this, "asset");
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
         this.metadata = new pimcore.asset.metadata(this);
 
         this.getData();
@@ -54,6 +55,11 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             items.push(this.notes.getLayout());
         }
 
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
+        }
+
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
@@ -72,7 +78,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
             this.previewPanel = new Ext.Panel({
                 region: "center",
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="/admin/asset/get-preview-video/id/'
                                             + this.id + '/" frameborder="0" id="asset_video_edit_'
                                             + this.id + '" name="asset_video_edit_' + this.id + '"></iframe>'

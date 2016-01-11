@@ -30,6 +30,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.notes = new pimcore.element.notes(this, "object");
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
+        this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
         this.getData();
     },
 
@@ -193,7 +194,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var items = [];
 
         //try {
-            items.push(this.edit.getLayout(this.data.layout));
+        items.push(this.edit.getLayout(this.data.layout));
         //} catch (e) {
         //    console.log(e);
         //}
@@ -257,6 +258,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
         }
+
+        if (user.isAllowed("tags_assignment")) {
+            items.push(this.tagAssignment.getLayout());
+        }
+
 
         //
         if(this.data.childdata.data.classes.length > 0) {
@@ -455,11 +461,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbar.on("afterrender", function () {
                 window.setTimeout(function () {
                     if (!this.data.general.o_published) {
-                          this.toolbarButtons.unpublish.hide();
+                        this.toolbarButtons.unpublish.hide();
                     } else if (this.isAllowed("publish")) {
                         this.toolbarButtons.save.hide();
-                      }
-              }.bind(this), 500);
+                    }
+                }.bind(this), 500);
             }.bind(this));
         }
 
@@ -658,6 +664,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
                                         "success");
                                     this.resetChanges();
+
+                                    pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
                                 }
                                 else {
                                     pimcore.helpers.showNotification(t("error"), t("error_saving_object"),

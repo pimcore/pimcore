@@ -5,8 +5,16 @@
 /plugins/
 
 # tests
-tests/output/*
-tests/tmp/*
+/tests/output/*
+/tests/tmp/*
+
+# composer
+/composer.phar
+/composer.lock
+/vendor/*
+!/vendor/.dummy
 
 # PhpStorm / IDEA
-/.idea
+.idea
+# NetBeans
+nbproject

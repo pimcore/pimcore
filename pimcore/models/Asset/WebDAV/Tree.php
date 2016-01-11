@@ -18,7 +18,7 @@ use Pimcore\File;
 use Sabre\DAV;
 use Pimcore\Model\Asset;
 
-class Tree extends DAV\ObjectTree {
+class Tree extends DAV\Tree {
 
     /**
      * Moves a file/directory

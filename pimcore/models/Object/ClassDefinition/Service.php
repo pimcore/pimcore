@@ -150,12 +150,19 @@ class Service  {
         $importData = \Zend_Json::decode($json);
 
         // reverse map the class name to the class ID, see: self::generateObjectBrickJson()
+        $toAssignClassDefinitions = [];
         if(is_array($importData["classDefinitions"])) {
             foreach($importData["classDefinitions"] as &$cd) {
-                if(!is_numeric($cd["classname"])) {
+                if(is_numeric($cd["classname"])) {
+                    $class = Object\ClassDefinition::getById($cd["classname"]);
+                    if($class) {
+                        $toAssignClassDefinitions[] = $cd;
+                    }
+                } else {
                     $class = Object\ClassDefinition::getByName($cd["classname"]);
                     if($class) {
                         $cd["classname"] = $class->getId();
+                        $toAssignClassDefinitions[] = $cd;
                     }
                 }
             }
@@ -163,7 +170,7 @@ class Service  {
 
         $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
         $objectBrick->setLayoutDefinitions($layout);
-        $objectBrick->setClassDefinitions($importData["classDefinitions"]);
+        $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData["parentClass"]);
         $objectBrick->save();
 

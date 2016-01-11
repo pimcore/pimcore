@@ -12,7 +12,7 @@
 
 chdir(__DIR__);
 
-include("startup.php");
+include("../config/startup.php");
 
 try {
     $opts = new \Zend_Console_Getopt(array(
@@ -47,17 +47,6 @@ if($opts->getOption("core")) {
     $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 
     $excludePatterns = [
-        "/^Google_/",
-        "/^Zend_Service/", "/^Zend_Gdata/", "/^Zend_Pdf/",
-        "/^Zend_Tool/", "/^Zend_CodeGenerator/",
-        "/^Zend_Ldap/", "/^Zend_Amf/", "/^Zend_Dojo/",
-        "/^Zend_Wildfire/", "/^Zend_Soap/", "/^Zend_XmlRpc/",
-        "/^Zend_Reflection/", "/^Zend_Cloud/", "/^Zend_Mobile/",
-        "/^Zend_Feed/", "/^Zend_Test/", "/^Zend_Barcode/", "/^Zend_Search/",
-        "/^Zend_Queue/", "/^Zend_Oauth/", "/^Zend_Application/",
-        "/^Zend_Measure/", "/^Zend_OpenId/",
-        "/^Hybrid/",
-        "/^lessc/",
         "/^Csv/",
     ];
 
@@ -66,45 +55,48 @@ if($opts->getOption("core")) {
     $output = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
 }
 
-
 $globalMap = array();
 $map = new stdClass();
 
 foreach ($paths as $path) {
 
-    if(!empty($path)) {
-        // Get the ClassFileLocator, and pass it the library path
-        echo "current path: " . $path . "\n";
-        $l = new \Zend_File_ClassFileLocator($path);
+    $path = trim($path);
 
-        // Iterate over each element in the path, and create a map of
-        // classname => filename, where the filename is relative to the library path
-        //$map    = new stdClass;
-        //iterator_apply($l, 'createMap', array($l, $map));
+    if(empty($path) || strpos($path, "/vendor/") || !is_dir($path)) {
+        continue;
+    }
 
-        foreach ($l as $file) {
-            $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "\$pdr . '", $file->getRealpath());
+    // Get the ClassFileLocator, and pass it the library path
+    echo "current path: " . $path . "\n";
+    $l = new \Zend_File_ClassFileLocator($path);
 
-            // Windows portability
-            $filename  = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
+    // Iterate over each element in the path, and create a map of
+    // classname => filename, where the filename is relative to the library path
+    //$map    = new stdClass;
+    //iterator_apply($l, 'createMap', array($l, $map));
 
-            foreach ($file->getClasses() as $class) {
-                $allowed = true;
-                foreach($excludePatterns as $excludePattern) {
-                    if(preg_match($excludePattern, $class)) {
-                        $allowed = false;
-                        break;
-                    }
-                }
+    foreach ($l as $file) {
+        $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "\$pdr . '", $file->getRealpath());
 
-                if($allowed) {
-                    $map->{$class} = $filename;
+        // Windows portability
+        $filename  = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
+
+        foreach ($file->getClasses() as $class) {
+            $allowed = true;
+            foreach($excludePatterns as $excludePattern) {
+                if(preg_match($excludePattern, $class)) {
+                    $allowed = false;
+                    break;
                 }
             }
-        }
 
-        $globalMap = array_merge($globalMap, (array) $map);
+            if($allowed) {
+                $map->{$class} = $filename;
+            }
+        }
     }
+
+    $globalMap = array_merge($globalMap, (array) $map);
 }
 
 // Create a file with the class/file map.

@@ -166,7 +166,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin {
         $dashboard = $this->getCurrentConfiguration();
         $id = $this->getParam("id");
 
-        $cache = \Pimcore\Model\Cache::getInstance();
+        $cache = \Pimcore\Cache::getInstance();
         if($cache) {
             $cache->setLifetime(10);
             \Zend_Feed_Reader::setCache($cache);

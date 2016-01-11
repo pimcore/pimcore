@@ -1,0 +1,260 @@
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is subject to the GNU General Public License version 3 (GPLv3)
+ * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
+ * files that are distributed with this source code.
+ *
+ * @category   Pimcore
+ * @package    Object|Class
+ * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ */
+
+namespace Pimcore\Model\Object\ClassDefinition\Data;
+
+use Pimcore\Model;
+use Pimcore\Model\Element;
+
+class ExternalImage extends Model\Object\ClassDefinition\Data {
+
+    /**
+     * Static type of this element
+     *
+     * @var string
+     */
+    public $fieldtype = "externalImage";
+
+    /**
+     * @var integer
+     */
+    public $previewWidth;
+
+    /**
+     * @var integer
+     */
+    public $inputWidth;
+
+    /**
+     * @var integer
+     */
+    public $previewHeight;
+
+    /**
+     * Type for the column to query
+     *
+     * @var string
+     */
+    public $queryColumnType = "longtext";
+
+    /**
+     * Type for the column
+     *
+     * @var string
+     */
+    public $columnType = "longtext";
+
+
+    /**
+     * Type for the generated phpdoc
+     *
+     * @var string
+     */
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ExternalImage";
+
+    /**
+     * @return int
+     */
+    public function getPreviewWidth()
+    {
+        return $this->previewWidth;
+    }
+
+    /**
+     * @param int $previewWidth
+     */
+    public function setPreviewWidth($previewWidth)
+    {
+        $this->previewWidth = $this->getAsIntegerCast($previewWidth);
+    }
+
+    /**
+     * @return int
+     */
+    public function getPreviewHeight()
+    {
+        return $this->previewHeight;
+    }
+
+    /**
+     * @param int $previewHeight
+     */
+    public function setPreviewHeight($previewHeight)
+    {
+        $this->previewHeight = $this->getAsIntegerCast($previewHeight);
+    }
+
+    /**
+     * @return int
+     */
+    public function getInputWidth()
+    {
+        return $this->inputWidth;
+    }
+
+    /**
+     * @param int $inputWidth
+     */
+    public function setInputWidth($inputWidth)
+    {
+        $this->inputWidth = $this->getAsIntegerCast($inputWidth);
+    }
+
+
+
+    /**
+     * @see Object\ClassDefinition\Data::getDataForResource
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @return string
+     */
+    public function getDataForResource($data, $object = null) {
+        if ($data instanceof Model\Object\Data\ExternalImage) {
+            return $data->getUrl();
+        }
+        return null;
+    }
+
+    /**
+     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @param string $data
+     * @return string
+     */
+    public function getDataFromResource($data) {
+        return new Model\Object\Data\ExternalImage($data);
+    }
+
+    /**
+     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @return string
+     */
+    public function getDataForQueryResource($data, $object = null) {
+        return $this->getDataForResource($data, $object);
+    }
+
+    /**
+     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @return string
+     */
+    public function getDataForEditmode($data, $object = null) {
+        if ($data instanceof Model\Object\Data\ExternalImage) {
+            return $data->getUrl();
+        }
+        return null;
+    }
+
+    /**
+     * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @return string
+     */
+    public function getDataFromEditmode($data, $object = null) {
+        return new Model\Object\Data\ExternalImage($data);
+    }
+
+    /**
+     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @param string $data
+     * @return string
+     */
+    public function getVersionPreview($data) {
+        if ($data instanceof Model\Object\Data\ExternalImage && $data->getUrl()) {
+            return '<img style="max-width:200px;max-height:200px" src="' . $data->getUrl()  . '" /><br><a href="' . $data->getUrl() . '">' . $data->getUrl() . '</>';
+        }
+
+        return $data;
+    }
+
+
+    /**
+     * converts object data to a simple string value or CSV Export
+     * @abstract
+     * @param Model\Object\AbstractObject $object
+     * @return string
+     */
+    public function getForCsvExport($object) {
+        $data = $this->getDataFromObjectParam($object);
+        if ($data instanceof Model\Object\Data\ExternalImage) {
+            return $data->getUrl();
+        }
+        return null;
+    }
+
+    /**
+     * @param $importValue
+     * @return string
+     */
+    public function getFromCsvImport($importValue) {
+        return new Model\Object\Data\ExternalImage($importValue);
+    }
+
+
+    /**
+     * converts data to be exposed via webservices
+     * @param string $object
+     * @return mixed
+     */
+    public function getForWebserviceExport ($object) {
+        return $this->getForCsvExport($object);
+    }
+
+
+    /**
+     * @param mixed $value
+     * @param null $relatedObject
+     * @param null $idMapper
+     * @return mixed|void
+     * @throws \Exception
+     */
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null) {
+        return $this->getFromCsvImport($value);
+    }
+
+
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        if ($data) {
+            return '<img style="max-width:200px;max-height:200px" src="' . $data  . '" />';
+        }
+        return $data;
+    }
+
+
+    /**
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
+     */
+    public function synchronizeWithMasterDefinition(Model\Object\ClassDefinition\Data $masterDefinition) {
+        $this->previewHeight = $masterDefinition->previewHeight;
+        $this->previewWidth = $masterDefinition->previewWidth;
+        $this->inputWidth = $masterDefinition->inputWidth;
+    }
+}

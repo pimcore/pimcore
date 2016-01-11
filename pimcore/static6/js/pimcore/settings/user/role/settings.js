@@ -20,6 +20,20 @@ pimcore.settings.user.role.settings = Class.create({
 
     getPanel: function () {
 
+        var generalItems = [];
+
+        generalItems.push({
+            xtype:"displayfield",
+            fieldLabel:t("id"),
+            value: this.data.role.id
+        });
+
+        this.generalSet = new Ext.form.FieldSet({
+            collapsible: true,
+            title:t("general"),
+            items:generalItems
+        });
+
         var availPermsItems = [];
         // add available permissions
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
@@ -68,7 +82,7 @@ pimcore.settings.user.role.settings = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: [this.permissionsSet, this.typesSet],
+            items: [this.generalSet, this.permissionsSet, this.typesSet],
             bodyStyle: "padding:10px;",
             autoScroll: true
         });

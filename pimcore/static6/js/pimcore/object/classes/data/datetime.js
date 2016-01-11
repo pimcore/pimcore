@@ -55,7 +55,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
         });
 
         var date = {
-            itemCls:"object_field",
+            cls:"object_field",
             width:300
         };
 
@@ -95,7 +95,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
             style: "border: none !important",
             combineErrors:false,
             items:[this.datefield, this.timefield],
-            itemCls:"object_field"
+            cls:"object_field"
         });
 
 

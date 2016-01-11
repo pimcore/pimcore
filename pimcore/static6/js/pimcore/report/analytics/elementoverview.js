@@ -67,7 +67,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
         var summary = new Ext.grid.GridPanel({
             store: this.summaryStore,
             flex: 1,
-            height: 300,
+            manageHeight: false,
             autoScroll: true,
             hideHeaders: true,
             columns: [
@@ -151,12 +151,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                 autoScroll: true,
                 items: [{
                     layout:'hbox',
-                    //layoutConfig: {
-                    //    padding: 10,
-                    //    align: "stretch"
-                    //},
-                    border: true,
-                    height: 300,
+                    border: false,
                     items: [summary,
                         {
                         xtype: 'polar',
@@ -164,7 +159,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         height: 300,
                         store: this.sourceStore,
                         flex: 1,
-                        autoScroll: true,
+                        scrollable: false,
                         series: [{
                             type: 'pie',
                             angleField: 'pageviews',
@@ -219,7 +214,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         fieldLabel: t('from'),
                         name: 'dateFrom',
                         value: fromDate,
-                        itemCls: "pimcore_analytics_filter_form_item"
+                        cls: "pimcore_analytics_filter_form_item"
                     }
                     ,
                     {
@@ -227,7 +222,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         fieldLabel: t('to'),
                         name: 'dateTo',
                         value: today,
-                        itemCls: "pimcore_analytics_filter_form_item"
+                        cls: "pimcore_analytics_filter_form_item"
                     },{
                         xtype: "combo",
                         store: pimcore.globalmanager.get("sites"),
@@ -236,12 +231,12 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         triggerAction: "all",
                         name: "site",
                         fieldLabel: t("site"),
-                        itemCls: "pimcore_analytics_filter_form_item"
+                        cls: "pimcore_analytics_filter_form_item"
                     },{
                         xtype: "button",
                         text: t("apply"),
                         iconCls: "pimcore_icon_analytics_apply",
-                        itemCls: "pimcore_analytics_filter_form_item",
+                        cls: "pimcore_analytics_filter_form_item",
                         handler: function () {
                             
                             var values = this.filterPanel.getForm().getFieldValues();

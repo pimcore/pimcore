@@ -274,7 +274,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             this.selectionPanel = Ext.create('Ext.tree.Panel', {
                 rootVisible: true,
                 region:'center',
-                useArrows: true,
                 title: t('custom_layout'),
                 layout:'fit',
                 width: 428,
@@ -459,7 +458,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         if (!this.editPanel) {
             this.editPanel = new Ext.Panel({
                 region: "east",
-                bodyStyle: "padding: 20px;",
                 autoScroll: true,
                 width: 700,
                 split: true
@@ -472,7 +470,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     getRootPanel: function() {
-
 
         this.rootPanel = new Ext.form.Panel({
             title: t("basic_configuration"),
@@ -492,8 +489,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     xtype: "checkbox",
                     fieldLabel: t("default_layout"),
                     name: "default",
-                    value : 1,
-                    checked: this.data.default
+                    uncheckedValue : 0,
+                    checked: this.data.default,
                 },
                 {
                     xtype: "textarea",
@@ -515,7 +512,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             title: t('class_definitions'),
             region: "west",
             autoScroll: true,
-            useArrows: true,
             split: true,
             disabled: true,
             root: {
