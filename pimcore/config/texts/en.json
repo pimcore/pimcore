@@ -6686,5 +6686,13 @@
     {
         "term": "batch_applied",
         "definition": "Batch applied"
+    },
+	{
+	    "term": "min_max_times",
+        "definition": "Min / Max Times"
+    },
+    {
+        "term": "reset",
+        "definition": "Reset"
     }
 ]
