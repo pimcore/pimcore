@@ -29,8 +29,11 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.latitude = new Ext.form.NumberField(coordConf);
 
         if (this.data) {
-            this.longitude.setValue(this.data.longitude);
-            this.latitude.setValue(this.data.latitude);
+            //set raw values to stop values being initially dirty
+            this.longitude.setRawValue(this.data.longitude);
+            this.longitude.resetOriginalValue();
+            this.latitude.setRawValue(this.data.latitude);
+            this.latitude.resetOriginalValue();
         }
 
 
