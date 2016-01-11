@@ -59,6 +59,7 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         var groupDescWidth = 200;
         var valueWidth = 500;
         var descWidth = 200;
+        var unitWidth = 200;
         var height = 200;
         var maxheight = 0;
         var multivalent = 0;
@@ -76,6 +77,10 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
 
         if (this.datax.descWidth) {
             descWidth = this.datax.descWidth;
+        }
+
+        if (this.datax.unitWidth) {
+            unitWidth = this.datax.unitWidth;
         }
 
         if (this.datax.groupDescWidth) {
@@ -137,6 +142,12 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
                 value: descWidth
             },
             {
+                xtype: "spinnerfield",
+                fieldLabel: t("TEMP_unitwidth"),
+                name: "unitWidth",
+                value: unitWidth
+            },
+            {
                 xtype: "checkbox",
                 fieldLabel: t("keyvalue_data_metavisible"),
                 name: "metaVisible",
@@ -187,6 +198,7 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
                     keyWidth: source.datax.keyWidth,
                     valueWidth: source.datax.valueWidth,
                     descWidth: source.datax.descWidth,
+                    unitWidth: source.datax.unitWidth,
                     height: source.datax.height,
                     maxheight: source.datax.maxheight,
                     groupWidth: source.datax.groupWidth,

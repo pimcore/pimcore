@@ -48,6 +48,12 @@ class KeyValue extends Model\Object\ClassDefinition\Data {
      */
     public $descWidth;
 
+    /** width of unit column
+     * @var
+     */
+    public $unitWidth;
+
+
     /** Height of grid
      * @var
      */
@@ -168,6 +174,12 @@ class KeyValue extends Model\Object\ClassDefinition\Data {
         return $this->descWidth;
     }
 
+    /** Returns the width of the unit column.
+     * @return mixed
+     */
+    public function getUnitWidth() {
+        return $this->unitWidth;
+    }
 
     /**
      * @param integer $width
@@ -187,12 +199,30 @@ class KeyValue extends Model\Object\ClassDefinition\Data {
         return $this;
     }
 
+    /**
+     * @param integer $width
+     * @return void
+     */
+    public function setGroupDescWidth($width) {
+        $this->groupDescWidth = $this->getAsIntegerCast($width);
+        return $this;
+    }
+
     /** Sets the width of the description column.
      * @param $width
      * @return Object\ClassDefinition\Data_KeyValue
      */
     public function setDescWidth($width) {
         $this->descWidth = $this->getAsIntegerCast($width);
+        return $this;
+    }
+
+    /**
+     * @param integer $width
+     * @return void
+     */
+    public function setUnitWidth($width) {
+        $this->unitWidth = $this->getAsIntegerCast($width);
         return $this;
     }
 
@@ -217,6 +247,13 @@ class KeyValue extends Model\Object\ClassDefinition\Data {
      */
     public function getGroupWidth() {
         return $this->groupWidth;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getGroupDescWidth() {
+        return $this->groupDescWidth;
     }
 
     /**

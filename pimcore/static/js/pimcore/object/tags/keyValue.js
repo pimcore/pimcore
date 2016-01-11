@@ -196,6 +196,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var gridHeight = 150;
         var keyWidth = 150;
         var descWidth = 300;
+        var unitWidth = 200;
         var groupWidth = 200;
         var groupDescWidth = 200;
         var valueWidth = 600;
@@ -225,6 +226,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.descWidth) {
             descWidth = this.fieldConfig.descWidth;
+        }
+
+        if (this.fieldConfig.unitWidth) {
+            unitWidth = this.fieldConfig.unitWidth;
         }
 
         if (this.fieldConfig.metawidth) {
@@ -266,6 +271,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 colWidth = groupDescWidth;
             } else if (col == "metadata") {
                 colWidth = metawidth;
+            }else if (col == "keyDesc"){
+                colWidth = descWidth;
+            }else if (col == "unit"){
+                colWidth = unitWidth;
             }
 
             if (col == 'value') {
@@ -287,6 +296,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     return value;
                 }
 
+            }
+
+            // skip non-visible columns set to a negative size
+            if (colWidth < 0) {
+                continue;
             }
 
             gridWidth += colWidth;
