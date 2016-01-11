@@ -21,7 +21,7 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
                     }
                 } catch (e) {
                     console.log(e);
-                    pimcore.treenodelocator.showError();
+                    pimcore.treenodelocator.showError(null, null);
                 }
 
             }.bind(this, button)
@@ -29,8 +29,11 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
 }
 
 
-pimcore.treenodelocator.reportDone = function(button) {
-        button.enable();
+pimcore.treenodelocator.reportDone = function(element, elementType, button) {
+    if (element) {
+        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, element.id);
+    }
+    button.enable();
 }
 
 pimcore.treenodelocator.searchInTree = function(element, elementType, tree, path, callback, button) {
@@ -50,10 +53,10 @@ pimcore.treenodelocator.searchInTree = function(element, elementType, tree, path
                     pimcore.treenodelocator.getDirection(lastExpandedNode, element, elementType, null, button);
                 } catch (e) {
                     console.log(e);
-                    pimcore.treenodelocator.showError();
+                    pimcore.treenodelocator.showError(lastExpandedNode, lastExpandedNode.data.elementType);
                 }
             } else {
-                pimcore.treenodelocator.reportDone(button);
+                pimcore.treenodelocator.reportDone(null, null,  button);
                 if(typeof initialData["callback"] == "function") {
                     initialData["callback"]();
                 }
@@ -62,7 +65,7 @@ pimcore.treenodelocator.searchInTree = function(element, elementType, tree, path
 
     } catch (e) {
         console.log(e);
-        pimcore.treenodelocator.showError();
+        pimcore.treenodelocator.showError(null, null);
     }
 }
 
@@ -106,7 +109,7 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
     if (idPath == nodePath) {
         var tree = node.getOwnerTree();
         tree.selectPath(idPath);
-        pimcore.treenodelocator.reportDone(button);
+        pimcore.treenodelocator.reportDone(node, node.data.elementType, button);
         return;
     }
 
@@ -192,7 +195,7 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
         newPage = (searchData.minPage + searchData.maxPage) / 2;
         pimcore.treenodelocator.switchToPage(node, newPage, element, elementType, searchData, button);
     } else {
-        pimcore.treenodelocator.reportDone(button);
+        pimcore.treenodelocator.reportDone(node, node.data.elementType, button);
     }
 }
 
@@ -201,7 +204,7 @@ pimcore.treenodelocator.reloadComplete = function(node, element, elementType, se
         pimcore.treenodelocator.getDirection(node, element, elementType, searchData, button);
     } catch (e) {
         console.log(e);
-        pimcore.treenodelocator.showError();
+        pimcore.treenodelocator.showError(node, node.data.elementType);
     }
 }
 
@@ -210,7 +213,7 @@ pimcore.treenodelocator.switchToPage = function(node, pageNumber, element, eleme
         pageNumber = Math.floor(pageNumber);
 
         if (pageNumber < 1) {
-            pimcore.treenodelocator.reportDone(button);
+            pimcore.treenodelocator.reportDone(node, node.data.elementType, button);
             return;
         }
 
@@ -224,13 +227,16 @@ pimcore.treenodelocator.switchToPage = function(node, pageNumber, element, eleme
         var proxy = store.getProxy();
 
         proxy.setExtraParam("start", offset);
+
+        pimcore.helpers.addTreeNodeLoadingIndicator(node.data.elementType, node.id);
+
         store.reload({
             node: node,
             callback: pimcore.treenodelocator.reloadComplete.bind(this, node, element, elementType, searchData, button)
         });
     } catch (e) {
         console.log(e);
-        pimcore.treenodelocator.showError();
+        pimcore.treenodelocator.showError(node, node.data.elementTyoe);
     }
 }
 
@@ -245,6 +251,9 @@ pimcore.treenodelocator.getLastExpandedNode = function(path, tree) {
     return lastExpandedNode;
 }
 
-pimcore.treenodelocator.showError = function() {
+pimcore.treenodelocator.showError = function(element, elementType) {
+    if (element) {
+        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, element.id);
+    }
     Ext.MessageBox.alert(t("error"), t("not_possible_with_paging"));
 }
