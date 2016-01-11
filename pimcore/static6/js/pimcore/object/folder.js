@@ -209,7 +209,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 region: "north",
                 border: false,
                 cls: "main-toolbar",
-                items: buttons
+                items: buttons,
+                overflowHandler: 'menu'
             });
         }
 

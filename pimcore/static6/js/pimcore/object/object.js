@@ -455,7 +455,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 region: "north",
                 border: false,
                 cls: "main-toolbar",
-                items: buttons
+                items: buttons,
+                overflowHandler: 'menu'
             });
 
             this.toolbar.on("afterrender", function () {

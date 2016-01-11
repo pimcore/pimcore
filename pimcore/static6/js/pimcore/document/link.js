@@ -179,7 +179,8 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                 region: "north",
                 border: false,
                 cls: "main-toolbar",
-                items: buttons
+                items: buttons,
+                overflowHandler: 'menu'
             });
 
             this.toolbar.on("afterrender", function () {
