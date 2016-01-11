@@ -170,7 +170,6 @@ return array (
   'GlossaryController' => $pdr . '/pimcore/lib/Pimcore/View/Helper/Glossary.php',
   'Pimcore\\View\\Helper\\HeadLink' => $pdr . '/pimcore/lib/Pimcore/View/Helper/HeadLink.php',
   'Pimcore\\View\\Helper\\Url' => $pdr . '/pimcore/lib/Pimcore/View/Helper/Url.php',
-  'Net_URL2' => $pdr . '/pimcore/lib/Net/URL2.php',
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'simple_html_dom' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'UUID' => $pdr . '/pimcore/lib/UUID.php',

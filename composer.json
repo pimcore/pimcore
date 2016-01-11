@@ -19,6 +19,9 @@
         "forum": "https://groups.google.com/forum/#!forum/pimcore",
         "docs": "https://www.pimcore.org/wiki/"
     },
+    "config": {
+        "optimize-autoloader": true
+    },
     "require": {
         "php": ">=5.5.0",
         "ext-mcrypt" : "*",
@@ -46,7 +49,8 @@
         "geoip2/geoip2": "~2",
         "psr/log": "*",
         "monolog/monolog": "~1",
-        "sabre/dav": "~3.1"
+        "sabre/dav": "~3.1",
+        "pear/net_url2": "~2.2"
     },
     "suggest": {
         "ext-curl" : "*",
@@ -54,7 +58,7 @@
         "ext-pdo_mysql" : "*",
         "ext-imagick" : "*",
         "ext-redis" : "*",
-        "ext-memacche" : "*"
+        "ext-memcache" : "*"
     },
     "autoload": {
         "psr-4": {
