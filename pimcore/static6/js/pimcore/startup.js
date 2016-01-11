@@ -522,6 +522,7 @@ Ext.onReady(function () {
                                 width:300,
                                 minSize:175,
                                 collapsible:true,
+                                collapseMode: 'header',
                                 animCollapse:false,
                                 layout:'accordion',
                                 layoutConfig:{
@@ -560,6 +561,7 @@ Ext.onReady(function () {
                             width:300,
                             minSize:175,
                             collapsible:true,
+                            collapseMode: 'header',
                             collapsed:false,
                             animCollapse:false,
                             layout:'accordion',
