@@ -180,6 +180,7 @@ $scripts = array(
     "pimcore/functions.js",
     "pimcore/globalmanager.js",
     "pimcore/helpers.js",
+    "pimcore/treenodelocator.js",
     "pimcore/helpers/generic-grid.js",
     "pimcore/helpers/quantityValue.js",
     "pimcore/experimental.js",

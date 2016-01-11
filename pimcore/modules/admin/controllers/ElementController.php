@@ -297,4 +297,78 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin {
             "success" => $success
         ));
     }
+
+    public function typePathAction()
+    {
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
+
+        if ($type == "asset") {
+            $asset = Asset::getById($id);
+            $typePath = self::getAssetTypePath($asset);
+            $data = array(
+                "success" => true,
+                "idPath" => Element_Service::getIdPath($asset),
+                "typePath" => $typePath
+            );
+            $this->_helper->json($data);
+        } else {
+            $object = Object_Abstract::getById($id);
+            $typePath = self::getTypePath($object);
+            $data = array(
+                "success" => true,
+                "idPath" => Element_Service::getIdPath($object),
+                "typePath" => $typePath
+            );
+            $this->_helper->json($data);
+
+        }
+
+    }
+
+    public static function getAssetTypePath($element) {
+
+        $path = "";
+
+        if ($element) {
+            $parentId = $element->getParentId();
+            if ($parentId) {
+                $ne = Asset::getById($element->getParentId());
+            }
+        }
+
+        if ($ne) {
+            $path = self::getAssetTypePath($ne, $path);
+        }
+
+        if ($element) {
+            $path = $path . "/" . $element->getType();
+        }
+
+        return $path;
+    }
+
+
+
+    public static function getTypePath($element) {
+        $path = "";
+
+        if ($element) {
+            $parentId = $element->getParentId();
+            if ($parentId) {
+                $ne = Object_Abstract::getById($element->getParentId());
+            }
+        }
+
+        if ($ne) {
+            $path = self::getTypePath($ne, $path);
+        }
+
+        if ($element) {
+            $path = $path . "/" . $element->getType();
+        }
+
+        return $path;
+    }
+
 }

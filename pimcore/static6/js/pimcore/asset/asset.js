@@ -42,11 +42,9 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         }
     },
 
-    selectInTree: function () {
+    selectInTree: function (button) {
         try {
-            Ext.getCmp("pimcore_panel_tree_assets").expand();
-            var tree = pimcore.globalmanager.get("layout_asset_tree");
-            pimcore.helpers.selectPathInTree(tree.tree, this.data.idPath);
+            pimcore.treenodelocator.showInTree(this, "asset", button)
         } catch (e) {
             console.log(e);
         }

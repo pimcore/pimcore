@@ -12,14 +12,11 @@
 pimcore.registerNS("pimcore.object.abstract");
 pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
-    selectInTree: function (type) {
+    selectInTree: function (type, button) {
 
         if(type != "variant" || this.data.general.showVariants) {
             try {
-                var cmp = Ext.getCmp("pimcore_panel_tree_objects");
-                cmp.expand();
-                var tree = pimcore.globalmanager.get("layout_object_tree");
-                pimcore.helpers.selectPathInTree(tree.tree, this.data.idPath);
+                pimcore.treenodelocator.showInTree(this, "object", button)
             } catch (e) {
                 console.log(e);
             }
