@@ -1059,18 +1059,26 @@ pimcore.object.tree = Class.create({
                     var view = ownerTree.getView();
                     var nodeEl = Ext.fly(view.getNodeByRecord(record));
 
+                    if (nodeEl) {
+                        var nodeElInner = nodeEl.down(".x-grid-td");
+                    }
+
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
 
                         if (task == 'unpublish') {
-                            nodeEl.addCls('pimcore_unpublished');
+                            if (nodeElInner) {
+                                nodeElInner.addCls('pimcore_unpublished');
+                            }
                             record.data.published = false;
                             if (pimcore.globalmanager.exists("object_" + record.data.id)) {
                                 pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.hide();
                             }
 
                         } else {
-                            nodeEl.removeCls('pimcore_unpublished');
+                            if (nodeElInner) {
+                                nodeElInner.removeCls('pimcore_unpublished');
+                            }
 
                             record.data.published = true;
                             if (pimcore.globalmanager.exists("object_" + record.data.id)) {
