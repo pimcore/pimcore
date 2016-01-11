@@ -1,5 +1,0 @@
-
-# allow 3rd-party modules to be reachable directly
-
-RewriteEngine On
-RewriteRule .* - [PT,L]

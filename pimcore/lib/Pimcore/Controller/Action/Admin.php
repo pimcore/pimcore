@@ -160,7 +160,7 @@ abstract class Admin extends Action {
 
     /**
      * returns the current user
-     * @return User $user
+     * @return Model\User $user
      */
     public function getUser() {
         return $this->user;

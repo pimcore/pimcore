@@ -1505,7 +1505,7 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
-                "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
+                "/admin/external_linfo/", "pimcore_icon_server_info", "Server Info"));
         }
 
     },
@@ -1533,7 +1533,7 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
-                "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
+                "/admin/external_adminer/adminer/", "pimcore_icon_mysql", "Database Admin"));
         }
 
     },
