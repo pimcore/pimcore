@@ -1257,3 +1257,11 @@ span.warning {
 .tag-tree-toolbar-collapsed {
     border: none;
 }
+
+.x-portlet .x-title {
+    font-size: 13px !important;
+}
+
+.x-portlet .x-panel-header-default-framed-top {
+    padding: 5px 14px 5px 14px !important;
+}
