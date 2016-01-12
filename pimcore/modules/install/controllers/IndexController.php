@@ -77,7 +77,7 @@ class Install_IndexController extends \Pimcore\Controller\Action {
 
             // check utf-8 encoding
             $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
-            if ($result['Value'] != "utf8") {
+            if (in_array($result['Value'], ["utf8", "utf8mb4"])) {
                 $errors[] = "Database charset is not utf-8";
             }
         }
