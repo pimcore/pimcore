@@ -371,4 +371,18 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin {
         return $path;
     }
 
+    public function versionUpdateAction()
+    {
+
+        $data = \Zend_Json::decode($this->getParam("data"));
+
+        $version = Version::getById($data["id"]);
+        $version->setPublic($data["public"]);
+        $version->setNote($data["note"]);
+        $version->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+
 }

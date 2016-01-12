@@ -277,7 +277,7 @@ pimcore.document.versions = Class.create({
 
         if (operation == "edit") {
             Ext.Ajax.request({
-                url: "/admin/document/version-update",
+                url: "/admin/element/version-update",
                 params: {
                     data: Ext.encode(record.data)
                 }

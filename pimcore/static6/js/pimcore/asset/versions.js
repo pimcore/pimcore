@@ -60,8 +60,16 @@ pimcore.asset.versions = Class.create({
 
             });
 
+            this.store.on("update", this.dataUpdate.bind(this));
+
+            this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit: 2
+            });
+
+
             var grid = Ext.create('Ext.grid.Panel', {
                 store: this.store,
+                plugins: [this.cellEditing],
                 columns: [
                     {header: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
                         var date = new Date(d * 1000);
@@ -73,10 +81,11 @@ pimcore.asset.versions = Class.create({
                         	var date = new Date(d * 1000);
                             return Ext.Date.format(date, "Y-m-d H:i:s");
                     	}
-                    }, editable: false}
+                    }, editable: false},
+                    {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()}
                 ],
                 stripeRows: true,
-                width:380,
+                width: 450,
                 title: t('available_versions'),
                 region: "west",
                 split: true,
@@ -191,6 +200,19 @@ pimcore.asset.versions = Class.create({
 
     reload: function () {
         this.store.reload();
+    },
+
+    dataUpdate: function (store, record, operation) {
+
+        if (operation == "edit") {
+            Ext.Ajax.request({
+                url: "/admin/element/version-update",
+                params: {
+                    data: Ext.encode(record.data)
+                }
+            });
+        }
+
+        store.commitChanges();
     }
-    
 });

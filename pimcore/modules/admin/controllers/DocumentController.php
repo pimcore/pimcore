@@ -534,19 +534,6 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         die($document->getPath() . $document->getKey());
     }
 
-    public function versionUpdateAction()
-    {
-
-        $data = \Zend_Json::decode($this->getParam("data"));
-
-        $version = Version::getById($data["id"]);
-        $version->setPublic($data["public"]);
-        $version->setNote($data["note"]);
-        $version->save();
-
-        $this->_helper->json(array("success" => true));
-    }
-
     public function versionToSessionAction()
     {
 
