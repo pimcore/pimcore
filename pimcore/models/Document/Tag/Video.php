@@ -605,7 +605,7 @@ class Video extends Model\Document\Tag
         if($video) {
             $duration = ceil($video->getDuration());
 
-            $durationParts = array("T");
+            $durationParts = array("PT");
 
             // hours
             if($duration/3600 >= 1) {
@@ -624,15 +624,27 @@ class Video extends Model\Document\Tag
             $durationParts[] = $duration . "S";
             $durationString = implode("",$durationParts);
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">' . "\n";
-            $code .= '<meta itemprop="name" content="' . $this->getTitle() . '" />' . "\n";
-            $code .= '<meta itemprop="description" content="' . $this->getDescription() . '" />' . "\n";
-            $code .= '<meta itemprop="duration" content="' . $durationString . '" />' . "\n";
-            $code .= '<meta itemprop="contentURL" content="' . Tool::getHostUrl() . $urls["mp4"] .  '" />' . "\n";
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">' . "\n";
+
+            $uploadDate = new \Zend_Date($video->getCreationDate());
+
+            $jsonLd = [
+                "@context" => "http://schema.org",
+                "@type" => "VideoObject",
+                "name" => $this->getTitle(),
+                "description" => $this->getDescription(),
+                "uploadDate" => $uploadDate->get(\Zend_Date::ISO_8601),
+                "duration" => $durationString,
+                "contentUrl" => Tool::getHostUrl() . $urls["mp4"],
+                //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
+                //"interactionCount" => "1234",
+            ];
+
             if($thumbnail) {
-                $code .= '<meta itemprop="thumbnailURL" content="' . Tool::getHostUrl() . $thumbnail . '" />' . "\n";
+                $jsonLd["thumbnailUrl"] = Tool::getHostUrl() . $thumbnail;
             }
 
+            $code .= "\n\n<script type=\"application/ld+json\">\n" . json_encode($jsonLd) . "\n</script>\n\n";
 
             // default attributes
             $attributesString = "";
