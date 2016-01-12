@@ -32,7 +32,7 @@ http://www.opensource.org/licenses/mit-license.php
 License: MIT  
 https://raw.github.com/sstephenson/prototype/master/LICENSE
 
-## LESS by Alexis Sellier
+## LESS CSS by Alexis Sellier
 License: Apache 2.0  
 http://www.opensource.org/licenses/Apache-2.0
 
@@ -40,9 +40,9 @@ http://www.opensource.org/licenses/Apache-2.0
 License: LGPL
 http://opensource.org/licenses/lgpl-license
 
-## Sabre by Rooftop Solutions
-License: Modified BSD License
-http://code.google.com/p/sabredav/wiki/License
+## sabre/dav by fruux GmbH
+License: BSD-3-Clause
+http://opensource.org/licenses/BSD-3-Clause
 
 ## simplehtmldom
 License: MIT  
@@ -51,3 +51,43 @@ http://opensource.org/licenses/mit-license.php
 ## famfamfam.com Silk Icons by Mark James
 License: Creative Commons Attribution 2.5 License 
 http://www.famfamfam.com/lab/icons/silk/
+
+## whoops 
+License: MIT  
+http://opensource.org/licenses/mit-license.php 
+
+## CssToInlineStyles by Tijs Verkoyen
+License: BSD-3-Clause
+http://opensource.org/licenses/BSD-3-Clause
+
+## HybridAuth
+License: MIT or GPL-3.0+
+http://hybridauth.sourceforge.net/licenses.html 
+
+## Google APIs Client Library for PHP 
+License: Apache 2.0  
+http://www.opensource.org/licenses/Apache-2.0
+
+## Less.php by Josh Schmidt 
+License: Apache 2.0  
+http://www.opensource.org/licenses/Apache-2.0
+
+## GeoIP2 PHP API by MaxMind, Inc.
+License: Apache 2.0  
+http://www.opensource.org/licenses/Apache-2.0
+
+## PHP-FIG (PSR) Libraries 
+License: MIT  
+http://opensource.org/licenses/mit-license.php
+
+## Monolog
+License: MIT  
+http://opensource.org/licenses/mit-license.php
+
+## PEAR Net_URL2 
+License: BSD-3-Clause
+http://opensource.org/licenses/BSD-3-Clause
+
+## Adminer 
+License: Apache 2.0 or GPLv2
+http://www.opensource.org/licenses/Apache-2.0
