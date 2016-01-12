@@ -16,14 +16,12 @@ include("startup.php");
 
 
 $paths = array(
-    PIMCORE_PATH . "/lib/Pimcore",
-    PIMCORE_PATH . "/models",
     PIMCORE_CLASS_DIRECTORY,
 );
 $output = PIMCORE_WEBSITE_VAR . "/compatibility-2.x-stubs.php";
 
 $excludePatterns = [
-    "/^Csv/",
+
 ];
 
 $globalMap = array();
@@ -101,7 +99,8 @@ foreach($globalMap as $class => $file) {
 
     $line = "";
     if($class != $alias && !in_array($alias, $processedClasses)) {
-        $line = $definition . " " . $alias . " extends \\" . $class . " {} \n";
+        $line .= "/**\n * @deprecated \n */\n";
+        $line .= $definition . " " . $alias . " extends \\" . $class . " {} \n\n";
     }
 
     $content .= $line;
