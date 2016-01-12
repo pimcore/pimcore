@@ -18,11 +18,6 @@ If you are unable or unwilling to contribute a patch under the GPL version 3 and
 ## I want to release my work under a different license than GPLv3, is that possible? 
 No. You can only release your work under any GPL version 3 or later compatible license. 
 
-## What is the license for content on pimcore.org?
-All content on the pimcore.org itself is copyrighted by its original contributors, 
-and is licensed under the Creative Commons Attribution-ShareAlike license 2.0. 
-Sample code is also available under the GPL version 3 or later.
-
 ## The GPL requires that I distribute the "source code" of my files. What does that mean for a web application?
 The "source code" of a file means the format that is intended for people to edit. 
 What that means depends on the file in question.
