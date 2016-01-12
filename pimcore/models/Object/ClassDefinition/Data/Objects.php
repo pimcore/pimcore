@@ -20,6 +20,8 @@ use Pimcore\Model\Element;
 
 class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations {
 
+    use Model\Object\ClassDefinition\Data\Extension\Relation;
+
     /**
      * Static type of this element
      *
@@ -607,5 +609,14 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      */
     public function enrichLayoutDefinition($object) {
 
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getPhpdocType()
+    {
+        return implode(' | ', $this->getPhpDocClassString( true ));
     }
 }

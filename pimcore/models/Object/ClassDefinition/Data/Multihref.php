@@ -22,6 +22,7 @@ use Pimcore\Model\Object;
 
 class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 {
+    use Model\Object\ClassDefinition\Data\Extension\Relation;
 
     /**
      * Static type of this element
@@ -835,5 +836,14 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         $this->assetTypes = $masterDefinition->assetTypes;
         $this->documentsAllowed = $masterDefinition->documentsAllowed;
         $this->documentTypes = $masterDefinition->documentTypes;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getPhpdocType()
+    {
+        return implode(' | ', $this->getPhpDocClassString( true ));
     }
 }

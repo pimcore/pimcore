@@ -22,6 +22,8 @@ use Pimcore\Model\Element;
 
 class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations {
 
+    use Model\Object\ClassDefinition\Data\Extension\Relation;
+
     /**
      * Static type of this element
      *
@@ -611,5 +613,14 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
         $this->assetUploadPath = $masterDefinition->assetUploadPath;
         $this->relationType = $masterDefinition->relationType;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getPhpdocType()
+    {
+        return implode(' | ', $this->getPhpDocClassString( false ));
     }
 }
