@@ -147,6 +147,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             layout: "border",
             items: [this.getLayoutToolbar(),this.getTabPanel()],
             object: this,
+            cls: "pimcore_class_" + this.data.general.o_className,
             iconCls: iconClass
         });
 
