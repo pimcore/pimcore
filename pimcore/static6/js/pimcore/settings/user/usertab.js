@@ -76,6 +76,7 @@ pimcore.settings.user.usertab = Class.create({
 
     save: function () {
 
+        var active = false;
         var data = {
             id: this.id
         };
@@ -83,6 +84,7 @@ pimcore.settings.user.usertab = Class.create({
 
         try {
             var values = this.settings.getValues();
+            active = values.active;
             contentLanguages = values.contentLanguages;
             data.data = Ext.encode(values);
         } catch (e) {
@@ -107,6 +109,27 @@ pimcore.settings.user.usertab = Class.create({
                         if (this.id == pimcore.currentuser.id && contentLanguages) {
                                 pimcore.settings.websiteLanguages = contentLanguages;
                         }
+
+                        var tree = this.parentPanel.tree;
+                        var store = tree.getStore();
+
+                        var record = store.getById(this.id);
+                        if (record) {
+                            var view = tree.getView();
+                            var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                            if (nodeEl) {
+                                var nodeElInner = nodeEl.down(".x-grid-td");
+                                if (nodeElInner) {
+                                    if (active) {
+                                        nodeElInner.removeCls("pimcore_unpublished");
+                                    } else {
+                                        nodeElInner.addCls("pimcore_unpublished");
+                                    }
+                                }
+                            }
+                        }
+
+
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
                     }

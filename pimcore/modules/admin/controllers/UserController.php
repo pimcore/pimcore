@@ -71,6 +71,9 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin {
         else {
             $tmpUser["leaf"] = true;
             $tmpUser["iconCls"] = "pimcore_icon_user";
+            if (!$user->getActive()) {
+                $tmpUser["cls"] = " pimcore_unpublished";
+            }
             $tmpUser["allowChildren"] = false;
             $tmpUser["admin"] = $user->isAdmin();
 
