@@ -6686,5 +6686,19 @@
     {
         "term": "batch_applied",
         "definition": "Batch applied"
+    },
+    {
+        "term": "asset_search",
+        "definition": "Search Assets"
+    },
+    {
+        "term": "document_search",
+        "definition": "Search Documents"
+    },
+    {
+        "term": "object_search",
+        "definition": "Search Objects"
     }
+
+
 ]

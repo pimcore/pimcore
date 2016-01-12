@@ -29,6 +29,10 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         });
     },
 
+    getTabTitle: function() {
+        return "document_search";
+    },
+
     getForm: function () {
 
         var compositeConfig = {

@@ -155,7 +155,7 @@ pimcore.element.selector.selector = Class.create({
         this.tabpanel = new Ext.Panel({
             id: this.myTabId,
             iconCls: "pimcore_icon_search",
-            title: t("search"),
+            title: t(this.current.getTabTitle()),
             border: false,
             layout: "fit",
             closable:true,

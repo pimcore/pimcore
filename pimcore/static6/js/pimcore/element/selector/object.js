@@ -16,6 +16,10 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     initStore: function () {
         return 0; // dummy
     },
+
+    getTabTitle: function() {
+        return "object_search";
+    },
     
     getForm: function () {
         var i;

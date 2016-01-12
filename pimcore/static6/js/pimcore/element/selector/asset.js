@@ -29,6 +29,10 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         });
     },
 
+    getTabTitle: function() {
+        return "asset_search";
+    },
+
     getForm: function () {
 
         var compositeConfig = {
