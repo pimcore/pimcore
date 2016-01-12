@@ -470,6 +470,8 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin {
 
         // unset confidential informations
         $userData = object2array($user);
+        $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
+        $userData["contentLanguages"] = $contentLanguages;
         unset($userData["password"]);
 
         echo "pimcore.currentuser = " . \Zend_Json::encode($userData);

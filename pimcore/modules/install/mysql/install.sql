@@ -709,6 +709,7 @@ CREATE TABLE `users` (
   `lastname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `language` varchar(10) DEFAULT NULL,
+  `contentLanguages` LONGTEXT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',
   `permissions` varchar(1000) DEFAULT NULL,
