@@ -215,6 +215,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
             });
 
+        this.store.setPageSize(itemsPerPage);
+
             // grid
             this.grid = Ext.create('Ext.grid.Panel', {
                 frame: false,
