@@ -24,7 +24,7 @@
 <body>
 
 
-<?
+<?php
 $colors = [
     'used' => "#F7355B",
     'free' => "#47BFBD",
@@ -58,13 +58,13 @@ $urlParams = $this->getAllParams();
                     <!--Info and Error Messages Container-->
 
                     <div class="col col-sm-4">
-                        <? if ($this->msg['error']) { ?>
+                        <?php if ($this->msg['error']) { ?>
                             <div class="alert alert-danger js-fadeout"> <?= $this->msg['error'] ?>  </div>
-                        <? } elseif ($this->msg['success']) { ?>
+                        <?php } elseif ($this->msg['success']) { ?>
                             <div class="alert alert-success js-fadeout"> <?= $this->msg['success'] ?>  </div>
-                        <? } elseif ($this->msg['result']) { ?>
+                        <?php } elseif ($this->msg['result']) { ?>
                             <div class="alert alert-info js-fadeout"> <?= $this->msg['result'] ?>  </div>
-                        <? } ?>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -94,16 +94,16 @@ $urlParams = $this->getAllParams();
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <? if ($this->paginator) { ?>
-                                    <? foreach ($this->paginator as $code) { ?>
+                                <?php if ($this->paginator) { ?>
+                                    <?php foreach ($this->paginator as $code) { ?>
                                         <tr>
                                             <td class="token"><?= $code['token'] ?></td>
                                             <td class="text-center"><?= (int)$code['usages'] ?></td>
                                             <td class="text-center"><?= (int)$code['length'] ?></td>
                                             <td class="text-center"><?= $code['timestamp'] ?></td>
                                         </tr>
-                                    <? } ?>
-                                <? } ?>
+                                    <?php } ?>
+                                <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -120,9 +120,9 @@ $urlParams = $this->getAllParams();
                 <div class="row header">
 
                     <div class="col col-sm-4">
-                        <? if ($this->error) { ?>
+                        <?php if ($this->error) { ?>
                             <div class="alert alert-danger"> <?= $this->error ?>  </div>
-                        <? } ?>
+                        <?php } ?>
                     </div>
                     <div class="col col-sm-8 text-right">
                             <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_cleanup-reservations-button')?></button>
@@ -151,9 +151,9 @@ $urlParams = $this->getAllParams();
 <script src="/plugins/OnlineShop/static/js/voucherservice/voucherSeriesTabScript.js"></script>
 
 <!--Script for statistics-->
-<? if (is_array($this->statistics['usage'])) { ?>
+<?php if (is_array($this->statistics['usage'])) { ?>
     <?= $this->template('voucher/parts/usageStatisticScript.php', ['usage' => $this->statistics['usage'], 'colors'=>$colors]) ?>
-<? } ?>
+<?php } ?>
 
 
 </body>
