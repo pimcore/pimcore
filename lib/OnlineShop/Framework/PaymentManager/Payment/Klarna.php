@@ -27,7 +27,7 @@ class Klarna implements IPayment
     /**
      * @var string[]
      */
-    protected $authorizedData;
+    protected $authorizedData = [];
 
     /**
      * @var string

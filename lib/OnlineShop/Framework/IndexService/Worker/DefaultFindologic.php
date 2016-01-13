@@ -117,6 +117,42 @@ class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcess
         /* @var \SimpleXMLElement $attributes */
 
 
+        // add optional fields
+        if(in_array('salesFrequency', $data['data']))
+        {
+            $xml->addChild('salesFrequencies')
+                ->addChild('salesFrequency', (int)$data['data']['salesFrequency'])
+            ;
+        }
+        if(in_array('dateAdded', $data['data']))
+        {
+            $xml->addChild('dateAddeds')
+                ->addChild('dateAdded', date('c', $data['data']['dateAdded']))
+            ;
+        }
+
+
+        /**
+         * Adds a child with $value inside CDATA
+         * @param SimpleXMLElement $parent
+         * @param string           $name
+         * @param null             $value
+         *
+         * @return SimpleXMLElement
+         */
+        $addChildWithCDATA = function (\SimpleXMLElement $parent, $name, $value = NULL) {
+            $new_child = $parent->addChild($name);
+
+            if ($new_child !== NULL) {
+                $node = dom_import_simplexml($new_child);
+                $no   = $node->ownerDocument;
+                $node->appendChild($no->createCDATASection($value));
+            }
+
+            return $new_child;
+        };
+
+
         // add default data
         foreach($data['data'] as $field => $value)
         {
@@ -125,7 +161,7 @@ class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcess
             {
                     continue;
             }
-            $value = htmlspecialchars($value);
+            $value = is_string($value) ? htmlspecialchars($value) : $value;
 
 
             if(in_array($field, $this->supportedFields))
@@ -199,10 +235,14 @@ class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcess
                         break;
 
                     default:
-                        $attribute = $attributes->addChild('attribute');
+                        if(!is_array($value))
+                        {
+                            $attribute = $attributes->addChild('attribute');
 
-                        $attribute->addChild('key', $field);
-                        $attribute->addChild('values')->addChild('value', $value);
+                            $attribute->addChild('key', $field);
+                            $values = $attribute->addChild('values');
+                            $addChildWithCDATA($values, 'value', $value);
+                        }
                 }
             }
         }

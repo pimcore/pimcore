@@ -124,7 +124,7 @@ class DefaultFindologic implements IProductList
     /**
      * @var array
      */
-    protected $supportedOrderKeys = ['label', 'price', 'salesfrequency', 'dateadded'];
+    protected $supportedOrderKeys = ['label', 'price', 'salesFrequency', 'dateAdded'];
 
 
     /**
@@ -551,7 +551,7 @@ class DefaultFindologic implements IProductList
         {
             if(is_array($this->getOrderKey()))
             {
-                $order = $this->getOrderKey();
+                $order = reset($this->getOrderKey());
                 if(true === in_array($order[0], $this->supportedOrderKeys)){
                     $params['order'] = $order[0] . ($order[1] ? ' ' . $order[1] : '');
                 }
