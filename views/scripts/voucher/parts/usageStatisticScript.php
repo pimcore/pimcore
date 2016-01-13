@@ -13,7 +13,7 @@
 
 ?>
 
-<? if (is_array($this->usage)) { ?>
+<?php if (is_array($this->usage)) { ?>
     <script>
         /**
          * Line Chart for Usage Statistic
@@ -22,9 +22,9 @@
          */
         var lineChartData = {
             labels: [
-                <? foreach($this->usage as $date => $usage){ ?>
+                <?php foreach($this->usage as $date => $usage){ ?>
                 "<?= $date ?>",
-                <? } ?>
+                <?php } ?>
             ],
             datasets: [
                 {
@@ -36,9 +36,9 @@
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(220,220,220,1)",
                     data: [
-                        <? foreach($this->usage as $date => $usage){ ?>
+                        <?php foreach($this->usage as $date => $usage){ ?>
                         <?= $usage ?>,
-                        <? } ?>
+                        <?php } ?>
                     ]
                 }
             ]
@@ -90,4 +90,4 @@
         });
 
     </script>
-<? } ?>
+<?php } ?>
