@@ -832,7 +832,7 @@ pimcore.object.tree = Class.create({
 
             if (res.pastejobs) {
 
-                this.pasteProgressBar = new Ext.ProgressBar({
+                record.pasteProgressBar = new Ext.ProgressBar({
                     text: t('initializing')
                 });
 
@@ -844,7 +844,7 @@ pimcore.object.tree = Class.create({
                     closable: false,
                     plain: true,
                     modal: true,
-                    items: [this.pasteProgressBar]
+                    items: [record.pasteProgressBar]
                 });
 
                 record.pasteWindow.show();
@@ -862,9 +862,9 @@ pimcore.object.tree = Class.create({
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
-                        if (this.pasteProgressBar) {
+                        if (record.pasteProgressBar) {
                             var status = currentStep / steps;
-                            this.pasteProgressBar.updateProgress(status, percent + "%");
+                            record.pasteProgressBar.updateProgress(status, percent + "%");
                         }
                     }.bind(this),
                     failure: function (message) {
