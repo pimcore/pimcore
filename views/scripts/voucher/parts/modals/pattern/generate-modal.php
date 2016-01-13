@@ -25,18 +25,18 @@
                     <div class="col col-sm-10">
                         <table class="table current-data table-only-body">
                             <tbody>
-                            <? foreach ($this->settings as $name => $setting) { ?>
+                            <?php foreach ($this->settings as $name => $setting) { ?>
                                 <tr>
                                     <td><?= $name ?></td>
                                     <td>
-                                        <? if (is_numeric($setting)) {
+                                        <?php if (is_numeric($setting)) {
                                             echo number_format($setting, 0, ',', ' ');
                                         } else {
                                             echo $setting;
                                         } ?>
                                     </td>
                                 </tr>
-                            <? } ?>
+                            <?php } ?>
                             </tbody>
                         </table>
                     </div>

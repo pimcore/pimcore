@@ -26,21 +26,21 @@
                     <div class="col col-sm-8">
                         <table class="table current-data table-only-body">
                             <tbody>
-                            <? foreach ($this->settings as $name => $setting) { ?>
+                            <?php foreach ($this->settings as $name => $setting) { ?>
                                 <tr>
                                     <td><?= $name ?></td>
                                     <td>
-                                        <? if (is_numeric($setting)) {
+                                        <?php if (is_numeric($setting)) {
                                             echo number_format($setting, 0, ',', ' ');
                                         } else {
                                             echo $setting;
                                         } ?>
                                     </td>
                                 </tr>
-                            <? } ?>
+                            <?php } ?>
                             </tbody>
                         </table>
-                        <? if ($this->generateWarning) { ?>
+                        <?php if ($this->generateWarning) { ?>
                             <div class="alert alert-danger"><?= $this->generateWarning ?></div>
                         <? } ?>
                     </div>
@@ -48,7 +48,7 @@
             </div>
             <!-- dialog buttons -->
             <div class="modal-footer">
-                <? // TODO correct URL !?>
+                <?php // TODO correct URL !?>
                 <a href="/plugin/OnlineShop/voucher/generate?id=<?= $this->getParam('id') ?>" class="btn btn-primary js-loading" data-msg="Generating Codes, please wait. This can take some minutes.">Generate</a>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>

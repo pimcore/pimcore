@@ -12,13 +12,24 @@
 
 namespace OnlineShop\Framework\IndexService\Interpreter;
 
+use Pimcore\Model\Object\Data\ObjectMetadata;
+
 class DefaultRelations implements IRelationInterpreter {
 
     public static function interpret($value, $config = null) {
         $result = array();
 
+        if($value instanceof ObjectMetadata) {
+            $value = $value->getObject();
+        }
+
         if(is_array($value)) {
             foreach($value as $v) {
+
+                if($v instanceof ObjectMetadata) {
+                    $v = $v->getObject();
+                }
+
                 $result[] = array("dest" => $v->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($v));
             }
         } else if($value instanceof \Pimcore\Model\Element\AbstractElement) {

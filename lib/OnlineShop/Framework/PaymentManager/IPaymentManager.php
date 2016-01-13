@@ -17,7 +17,7 @@ interface IPaymentManager
     /**
      * @param $name
      *
-     * @return IPayment
+     * @return Payment\IPayment
      */
     public function getProvider($name);
 }

@@ -110,6 +110,8 @@ class Helper
                         $orderByList[] = array($orderBy->getField(), $orderBy->getDirection());
                     }
                 }
+                
+                $view->currentOrderBy = implode("#", reset($orderByList));
             }
             $productList->setOrderKey($orderByList);
             $productList->setOrder("ASC");

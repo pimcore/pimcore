@@ -20,11 +20,11 @@
 
 
 <div class="alert alert-danger">
-    <? if (is_array($this->errors)) { ?>
-        <? foreach ($this->errors as $error) { ?>
+    <?php if (is_array($this->errors)) { ?>
+        <?php foreach ($this->errors as $error) { ?>
             <?= $error ?>
-        <? } ?>
-    <? } ?>
+        <?php } ?>
+    <?php } ?>
 </div>
 
 

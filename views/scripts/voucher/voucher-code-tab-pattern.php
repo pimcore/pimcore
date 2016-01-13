@@ -65,21 +65,21 @@ if ($this->paginator) {
                 <div class="row header">
                     <div class="col col-sm-4">
                         <button type="button" class="btn btn-primary js-modal" data-modal="generate"><?=$this->ts('plugin_onlineshop_voucherservice_generate-button')?></button>
-                        <? if ($this->voucherType != "single") { ?>
+                        <?php if ($this->voucherType != "single") { ?>
                         <button type="button" class="btn btn-default js-modal" data-modal="cleanUp"><?=$this->ts('plugin_onlineshop_voucherservice_cleanup-button')?></button>
-                        <? } ?>
+                        <?php } ?>
                     </div>
 
                     <!--Info and Error Messages Container-->
 
                     <div class="col col-sm-4">
-                        <? if ($this->msg['error']) { ?>
+                        <?php if ($this->msg['error']) { ?>
                             <div class="alert alert-danger js-fadeout"> <?= $this->msg['error'] ?>  </div>
-                        <? } elseif ($this->msg['success']) { ?>
+                        <?php } elseif ($this->msg['success']) { ?>
                             <div class="alert alert-success js-fadeout"> <?= $this->msg['success'] ?>  </div>
-                       <? } elseif ($this->msg['result']) { ?>
+                       <?php } elseif ($this->msg['result']) { ?>
                             <div class="alert alert-info js-fadeout"> <?= $this->msg['result'] ?>  </div>
-                        <? } ?>
+                        <?php } ?>
                     </div>
 
 
@@ -105,9 +105,9 @@ if ($this->paginator) {
                         </div>
                         <div class="row">
                             <div class="col col-sm-6">
-                                <? if ($this->voucherType != "single") { ?>
+                                <?php if ($this->voucherType != "single") { ?>
                                     <h5 class="subtitle"><?= number_format($this->count, 0, ',', ' ') ?> <?=$this->ts('plugin_onlineshop_voucherservice_result-text')?></h5>
-                                <? } ?>
+                                <?php } ?>
                             </div>
                             <?if($this->paginator){?>
                             <div class="col col-sm-6 text-right">
@@ -131,21 +131,21 @@ if ($this->paginator) {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <? if ($this->paginator) { ?>
-                                    <? foreach ($this->paginator as $code) { ?>
+                                <?php if ($this->paginator) { ?>
+                                    <?php foreach ($this->paginator as $code) { ?>
                                         <tr>
                                             <td class="token"><?= $code->getToken() ?></td>
                                             <td class="text-center"><?= (int)$code->getUsages() ?></td>
                                             <td class="text-center"><?= (int)$code->getLength() ?></td>
                                             <td class="text-center"><?= $code->getTimestamp() ?></td>
                                         </tr>
-                                    <? } ?>
-                                <? } ?>
+                                    <?php } ?>
+                                <?php } ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <? if ($this->voucherType != "single") { ?>
+                    <?php if ($this->voucherType != "single") { ?>
                     <div class="col col-sm-4 filter">
                         <h3><i class="glyphicon glyphicon-search"></i> &nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_filter-headline')?></h3>
 
@@ -178,9 +178,9 @@ if ($this->paginator) {
                                 <div class=" col col-sm-6">
                                     <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-length')?></label>
                                     <select class="form-control" name="length" >
-                                        <? foreach($this->tokenLengths as $length => $amount){ ?>
-                                            <option value="<?=$length ?>" <? if ($this->getParam('length') == $length) { echo "selected"; } ?>"> <?= $length?> </option>
-                                        <? } ?>
+                                        <?php foreach($this->tokenLengths as $length => $amount){ ?>
+                                            <option value="<?=$length ?>" <?php if ($this->getParam('length') == $length) { echo "selected"; } ?>"> <?= $length?> </option>
+                                        <?php } ?>
                                     </select>
                                 </div>
                             </div>
@@ -207,9 +207,9 @@ if ($this->paginator) {
                 <div class="row header">
 
                     <div class="col col-sm-4">
-                        <? if ($this->error) { ?>
+                        <?php if ($this->error) { ?>
                             <div class="alert alert-danger"> <?= $this->error ?>  </div>
-                        <? } ?>
+                        <?php } ?>
                     </div>
                     <div class="col col-sm-8 text-right">
                         <div class="btn-group">
@@ -243,9 +243,9 @@ if ($this->paginator) {
 
 
 <!--Script for statistics-->
-<? if (is_array($this->statistics['usage'])) { ?>
+<?php if (is_array($this->statistics['usage'])) { ?>
     <?= $this->template('voucher/parts/usageStatisticScript.php', ['usage' => $this->statistics['usage'], 'colors'=>$colors]) ?>
-<? } ?>
+<?php } ?>
 
 <!--Script for tab view-->
 
