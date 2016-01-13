@@ -132,7 +132,7 @@ class AbstractSetProduct extends AbstractProduct {
      * @param $products AbstractSetProductEntry[]
      * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
      */
-    public function getOSAvailabilityInfo($quantity = null, $products = null) {
+    public function getOSAvailabilityInfo($quantity = 1, $products = null) {
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
         }
