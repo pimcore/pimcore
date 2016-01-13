@@ -315,7 +315,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             ]
         });
 
-        this.component.on("rowcontextmenu", this.onRowContextmenu);
+        if(!readOnly) {
+            this.component.on("rowcontextmenu", this.onRowContextmenu);
+        }
+        
         this.component.reference = this;
 
         if(!readOnly) {
