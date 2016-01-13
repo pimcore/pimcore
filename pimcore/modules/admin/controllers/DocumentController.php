@@ -631,7 +631,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     "type" => "child",
                     "enableInheritance" => $this->getParam("enableInheritance"),
                     "transactionId" => $transactionId,
-                    "saveParentId" => true
+                    "saveParentId" => true,
+                    "resetIndex" => true
                 )
             ));
 
@@ -685,7 +686,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     "targetId" => $this->getParam("targetId"),
                     "type" => $this->getParam("type"),
                     "enableInheritance" => $this->getParam("enableInheritance"),
-                    "transactionId" => $transactionId
+                    "transactionId" => $transactionId,
+                    "resetIndex" => ($this->getParam("type") == "child")
                 )
             ));
         }
@@ -765,7 +767,9 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                 if ($source != null) {
                     if ($this->getParam("type") == "child") {
                         $enableInheritance = ($this->getParam("enableInheritance") == "true") ? true : false;
-                        $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance);
+                        $resetIndex = ($this->getParam("resetIndex") == "true") ? true : false;
+
+                        $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance, $resetIndex);
                         $session->{$this->getParam("transactionId")}["idMapping"][(int)$source->getId()] = (int)$newDocument->getId();
 
                         // this is because the key can get the prefix "_copy" if the target does already exists
