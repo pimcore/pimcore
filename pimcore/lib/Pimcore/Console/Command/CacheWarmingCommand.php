@@ -14,14 +14,10 @@ namespace Pimcore\Console\Command;
 
 use Pimcore\Cache\Tool\Warming;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Console command implementation of cache-warming.php
- */
 class CacheWarmingCommand extends AbstractCommand
 {
     /**
@@ -101,17 +97,16 @@ class CacheWarmingCommand extends AbstractCommand
                 'Restrict object warming to these classes (only valid for objects!). Valid options: class names of your classes defined in Pimcore',
                 null
             )
-            ->addOption(
-                'maintenanceMode', 'm',
-                InputOption::VALUE_NONE,
-                'Enable maintenance mode during cache warming'
-            )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->enableMaintenanceMode();
+        if($input->getOption("maintenance-mode")) {
+            // set the timeout between each iteration to 0 if maintenance mode is on, because
+            // we don't have to care about the load on the server
+            Warming::setTimoutBetweenIteration(0);
+        }
 
         try {
             $types         = $this->getArrayOption('types', 'validTypes', 'type', true);
@@ -211,32 +206,5 @@ class CacheWarmingCommand extends AbstractCommand
         }
 
         return $input;
-    }
-
-    /**
-     * Enable maintenance mode if --maintenanceMode option was passed
-     */
-    protected function enableMaintenanceMode()
-    {
-        // enable maintenance mode if requested
-        if ($this->input->getOption('maintenanceMode')) {
-            $maintenanceModeId = 'cache-warming-dummy-session-id';
-
-            $this->output->writeln('Activating maintenance mode with ID <comment>%s</comment>...', $maintenanceModeId);
-
-            Admin::activateMaintenanceMode($maintenanceModeId);
-
-            // set the timeout between each iteration to 0 if maintenance mode is on, because
-            // we don't have to care about the load on the server
-            Warming::setTimoutBetweenIteration(0);
-        }
-    }
-
-    protected function disableMaintenanceMode()
-    {
-        if ($this->input->getOption('maintenanceMode')) {
-            $this->output->writeln('Deactivating maintenance mode...');
-            Admin::deactivateMaintenanceMode();
-        }
     }
 }

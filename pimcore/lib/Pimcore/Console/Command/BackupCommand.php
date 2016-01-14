@@ -12,13 +12,11 @@
 
 namespace Pimcore\Console\Command;
 
-use Pimcore\Cache\Tool\Warming;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class BackupCommand extends AbstractCommand
 {
@@ -57,41 +55,23 @@ class BackupCommand extends AbstractCommand
                 InputOption::VALUE_OPTIONAL,
                 'executes only mysql related tasks.'
             )
-            ->addOption(
-                'maintenance', 'm',
-                InputOption::VALUE_OPTIONAL,
-                'set maintenance mode during backup'
-            )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-        $this->output->writeln($input->getOption("verbose"));
-
-
         // defaults
         $config = array(
             "filename" => "backup_" . date("m-d-Y_H-i"),
             "directory" => PIMCORE_BACKUP_DIRECTORY,
             "overwrite" => false,
             "cleanup" => 7,
-            "verbose" => false,
-            "maintenance" => false
         );
-
-
-// display help message
-        if ($opts->getOption("help")) {
-            echo $opts->getUsageMessage();
-            exit;
-        }
 
         $tmpConfig = $config;
         foreach ($config as $key => $value) {
-            if ($opts->getOption($key)) {
-                $tmpConfig[$key] = $opts->getOption($key);
+            if ($input->getOption($key)) {
+                $tmpConfig[$key] = $input->getOption($key);
             }
         }
         $config = $tmpConfig;
@@ -100,44 +80,36 @@ class BackupCommand extends AbstractCommand
         $backupFile = $config["directory"] . "/" . $config["filename"] . ".zip";
 
 
-// check for existing file
+        // check for existing file
         if (is_file($backupFile) && !$config["overwrite"]) {
-            echo "backup-file already exists, please use --overwrite=true or -o true to overwrite it";
+            $this->writeError("backup-file already exists, please use --overwrite=true or -o true to overwrite it");
             exit;
         } else if (is_file($backupFile)) {
             @unlink($backupFile);
         }
 
-// cleanup
+        // cleanup
         if ($config["cleanup"] != "false") {
             $files = scandir($config["directory"]);
             $lifetime = (int) $config["cleanup"] * 86400;
             foreach ($files as $file) {
                 if (is_file($config["directory"] . "/" . $file) && preg_match("/\.zip$/", $file)) {
                     if (filemtime($config["directory"] . "/" . $file) < (time() - $lifetime)) {
-                        verboseMessage("delete: " . $config["directory"] . "/" . $file . "\n");
+                        $this->verboseMessage("delete: " . $config["directory"] . "/" . $file . "\n");
                         unlink($config["directory"] . "/" . $file);
                     }
                 }
             }
         }
 
-// maintenance
-        if ($config["maintenance"] == true) {
-            session_start();
-            verboseMessage("------------------------------------------------");
-            verboseMessage("set maintenance mode on");
-            Pimcore\Tool\Admin::activateMaintenanceMode();
-        }
-
-        verboseMessage("------------------------------------------------");
-        verboseMessage("------------------------------------------------");
-        verboseMessage("starting backup into file: " . $backupFile);
+        $this->verboseMessage("------------------------------------------------");
+        $this->verboseMessage("------------------------------------------------");
+        $this->verboseMessage("starting backup into file: " . $backupFile);
         $options = array();
-        if ($mysqlTables = $opts->getOption("mysql-tables")) {
+        if ($mysqlTables = $input->getOption("mysql-tables")) {
             $options["mysql-tables"] = $mysqlTables;
         }
-        $options['only-mysql-related-tasks'] = $opts->getOption('only-mysql-related-tasks');
+        $options['only-mysql-related-tasks'] = $input->getOption('only-mysql-related-tasks');
 
 
 
@@ -153,39 +125,43 @@ class BackupCommand extends AbstractCommand
         );
 
         if (empty($initInfo["errors"])) {
+
+            $progress = new ProgressBar($output, count($initInfo["steps"]));
+            if(!$output->isVerbose()) {
+                $progress->start();
+            }
+
             foreach ($initInfo["steps"] as $step) {
                 if (!is_array($step[1])) {
                     $step[1] = array();
                 }
-                verboseMessage("execute: " . $step[0] . " | with the following parameters: " . implode(",", $step[1]));
+
+                $message = $step[0] . ": " . implode(",", $step[1]);
+
                 $return = call_user_func_array(array($backup, $stepMethodMapping[$step[0]]), $step[1]);
                 if ($return["filesize"]) {
-                    verboseMessage("current filesize of the backup is: " . $return["filesize"]);
+                    $message .= " - " . $return["filesize"];
                 }
+
+                $progress->setMessage($message);
+                $progress->advance();
             }
+
+            $progress->finish();
         }
 
-
-// maintenance
-        if ($config["maintenance"] == true) {
-            verboseMessage("------------------------------------------------");
-            verboseMessage("set maintenance mode off");
-            Pimcore\Tool\Admin::deactivateMaintenanceMode();
-        }
-
-
-        verboseMessage("------------------------------------------------");
-        verboseMessage("------------------------------------------------");
+        $this->verboseMessage("------------------------------------------------");
+        $this->verboseMessage("------------------------------------------------");
         /*
          * do not remove the string "backup finished"
          * deployment will check for this string to ensure that the backup has been successfully created
          * and no fatal error occurred during backup-creation
          */
-        verboseMessage("backup finished, you can find your backup here: " . $backupFile);
+        $this->verboseMessage("backup finished, you can find your backup here: " . $backupFile);
     }
 
     protected function verboseMessage($m) {
-        if($input->getOption("verbose")) {
+        if ($this->output->isVerbose()) {
             $this->output->writeln($m);
         }
     }

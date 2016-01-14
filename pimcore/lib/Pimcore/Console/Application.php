@@ -13,10 +13,15 @@
 namespace Pimcore\Console;
 
 use Pimcore\Version;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
+use Symfony\Component\Console\ConsoleEvents;
+use Pimcore\Tool\Admin;
 
 /**
  * The console application
@@ -47,6 +52,27 @@ class Application extends \Symfony\Component\Console\Application
 
         // allow to register commands here (e.g. through plugins)
         \Pimcore::getEventManager()->trigger('system.console.init', $this);
+
+        $dispatcher = new EventDispatcher();
+        $this->setDispatcher($dispatcher);
+
+        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
+            if($event->getInput()->getOption("maintenance-mode")) {
+                // enable maintenance mode if requested
+                $maintenanceModeId = 'cache-warming-dummy-session-id';
+
+                $event->getOutput()->writeln('Activating maintenance mode with ID <comment>' . $maintenanceModeId . '</comment> ...');
+
+                Admin::activateMaintenanceMode($maintenanceModeId);
+            }
+        });
+
+        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) {
+            if($event->getInput()->getOption("maintenance-mode")) {
+                $event->getOutput()->writeln('Deactivating maintenance mode...');
+                Admin::deactivateMaintenanceMode();
+            }
+        });
     }
 
     /**
@@ -58,6 +84,7 @@ class Application extends \Symfony\Component\Console\Application
     {
         $inputDefinition = parent::getDefaultInputDefinition();
         $inputDefinition->addOption(new InputOption('ignore-maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force execution in maintenance mode'));
+        $inputDefinition->addOption(new InputOption('maintenance-mode', "m", InputOption::VALUE_NONE, 'Set this flag to force maintenance mode while this task runs'));
 
         return $inputDefinition;
     }
