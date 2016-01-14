@@ -384,9 +384,9 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
     },
 
     getData: function () {
-        var selected = this.groupGridPanel.getSelectionModel().getSelected();
+        var selected = this.groupGridPanel.getSelection();
         if(selected) {
-            return selected.data;
+            return selected.first();
         }
         return null;
     },
