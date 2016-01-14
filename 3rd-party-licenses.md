@@ -93,5 +93,5 @@ License: Apache 2.0 or GPLv2
 http://www.opensource.org/licenses/Apache-2.0
 
 ## Disclaimer 
-This information has no guarantee of completeness and is subject to change. 
+This information has no guarantee of completeness and is subject to change.  
 Please also check packages listed in [composer.json](composer.json). 
