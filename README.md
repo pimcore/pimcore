@@ -8,7 +8,7 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
-![Editing Interface](website_demo/static/screenshots/1.png)
+![Administration Interface](website_demo/static/screenshots/1.png)
 
 * [Documentation](https://www.pimcore.org/wiki/)
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
