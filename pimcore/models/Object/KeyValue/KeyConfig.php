@@ -369,7 +369,7 @@ class KeyConfig extends Model\AbstractModel {
      */
     public function setMandatory($mandatory)
     {
-        $this->mandatory = $mandatory;
+        $this->mandatory = (bool)$mandatory;
     }
 
     /**
