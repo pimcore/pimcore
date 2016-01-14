@@ -945,7 +945,6 @@ pimcore.asset.tree = Class.create({
 
         this.treePanel = new Ext.tree.TreePanel({
             region: "west",
-            id: "pimcore_asset_server_explorer",
             width: 300,
             rootVisible: true,
             enableDD: false,
@@ -969,7 +968,7 @@ pimcore.asset.tree = Class.create({
         this.uploadWindow = new Ext.Window({
             layout: 'fit',
             title: t('add_assets'),
-            closeAction: 'close',
+            closeAction: 'destroy',
             width:400,
             height:400,
             modal: true,
