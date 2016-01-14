@@ -34,7 +34,7 @@ mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 # now launch http://yourhostname.tld/install
 ```
 
-[A detailed installation guide can be found here.](http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124463)
+[A detailed installation guide can be found here.](https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854184)
 
 
 ## Contribute
