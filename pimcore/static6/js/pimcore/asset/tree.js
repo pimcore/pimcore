@@ -723,14 +723,14 @@ pimcore.asset.tree = Class.create({
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
-                        if(this.pasteProgressBar) {
+                        if(record.pasteProgressBar) {
                             var status = currentStep / steps;
-                            this.pasteProgressBar.updateProgress(status, percent + "%");
+                            record.pasteProgressBar.updateProgress(status, percent + "%");
                         }
                     }.bind(this),
                     failure: function (message) {
                         this.pasteWindow.close();
-                        this.pasteProgressBar = null;
+                        record.pasteProgressBar = null;
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_asset"), "error", t(message));
                         this.refresh(record.parentNode);
@@ -945,7 +945,6 @@ pimcore.asset.tree = Class.create({
 
         this.treePanel = new Ext.tree.TreePanel({
             region: "west",
-            id: "pimcore_asset_server_explorer",
             width: 300,
             rootVisible: true,
             enableDD: false,
@@ -969,7 +968,7 @@ pimcore.asset.tree = Class.create({
         this.uploadWindow = new Ext.Window({
             layout: 'fit',
             title: t('add_assets'),
-            closeAction: 'close',
+            closeAction: 'destroy',
             width:400,
             height:400,
             modal: true,

@@ -34,32 +34,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+include_once __DIR__ . "/../vendor/autoload.php";
+
 if (extension_loaded('xdebug')) {
     xdebug_disable();
 }
 
 if (strpos('@php_bin@', '@php_bin') === 0) {
-    set_include_path(dirname(__FILE__) . PATH_SEPARATOR . get_include_path());
+    //set_include_path(dirname(__FILE__) . PATH_SEPARATOR . get_include_path());
 }
 
 // add the tests, which still reside in the original development unit, not in pimcore_phpunit to the include path
-$includePaths = array(
+/*$includePaths = array(
     realpath(dirname(__FILE__)) . "/lib",
     get_include_path()
 );
 
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
+*/
 
-require_once 'PHPUnit/Util/Filter.php';
+//require_once 'PHPUnit/Util/Filter.php';
 
 // PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
-require 'PHPUnit/TextUI/Command.php';
+//require 'PHPUnit/TextUI/Command.php';
 
 define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
 
 
-require realpath(dirname(__FILE__)) . "/lib/PHPUnit/Autoload.php";
+//require realpath(dirname(__FILE__)) . "/lib/PHPUnit/Autoload.php";
 
 
 PHPUnit_TextUI_Command::main();

@@ -240,11 +240,14 @@ class Service extends Model\Element\Service {
     }
 
     /**
-     * @param  Document $target
-     * @param  Document $source
-     * @return Document copied document
+     * @param $target
+     * @param $source
+     * @param bool $enableInheritance
+     * @param bool $resetIndex
+     * @return Document
+     * @throws \Exception
      */
-    public function copyAsChild($target, $source, $enableInheritance = false) {
+    public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false) {
 
         if (method_exists($source, "getElements")) {
             $source->getElements();
@@ -262,6 +265,12 @@ class Service extends Model\Element\Service {
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+
+        if($resetIndex) {
+            // this needs to be after $new->setParentId($target->getId()); -> dependency!
+            $new->setIndex($new->getDao()->getNextIndex());
+        }
+
         if(method_exists($new, "setPrettyUrl")) {
             $new->setPrettyUrl(null);
         }

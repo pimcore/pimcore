@@ -775,7 +775,7 @@ pimcore.document.tree = Class.create({
                     closable:false,
                     plain: true,
                     modal: true,
-                    items: [this.pasteProgressBar]
+                    items: [record.pasteProgressBar]
                 });
 
                 record.pasteWindow.show();
@@ -793,7 +793,7 @@ pimcore.document.tree = Class.create({
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
-                        if(this.pasteProgressBar) {
+                        if(record.pasteProgressBar) {
                             var status = currentStep / steps;
                             record.pasteProgressBar.updateProgress(status, percent + "%");
                         }

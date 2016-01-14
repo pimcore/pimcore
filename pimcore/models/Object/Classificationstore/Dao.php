@@ -63,7 +63,6 @@ class Dao extends Model\Dao\AbstractDao {
                 $keyConfig = DefinitionCache::get($keyId);
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                $values = array();
                 foreach ($keyData as $language => $value) {
                     $value = $fd->getDataForResource($value, $this->model->object);
                     $value = $fd->marshal($value, $object);
@@ -76,7 +75,8 @@ class Dao extends Model\Dao\AbstractDao {
                         "keyId" => $keyId,
                         "value" => $value,
                         "fieldname" => $fieldname,
-                        "language" => $language
+                        "language" => $language,
+                        "type" => $keyConfig->getType()
 
                     );
                     $this->db->insertOrUpdate($dataTable, $data);
@@ -113,7 +113,6 @@ class Dao extends Model\Dao\AbstractDao {
     public function delete () {
         $object = $this->model->object;
         $objectId = $object->getId();
-        $classId = $object->getClassId();
         $dataTable = $this->getDataTableName();
         $groupsTable = $this->getGroupsTableName();
 
@@ -200,6 +199,7 @@ class Dao extends Model\Dao\AbstractDao {
             `value` LONGTEXT NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
+            `type` VARCHAR(50) NULL,
             PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`)
         ) DEFAULT CHARSET=utf8;");
 

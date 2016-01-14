@@ -8,7 +8,7 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
-![Editing Interface](website_demo/static/screenshots/1.png)
+![Administration Interface](website_demo/static/screenshots/1.png)
 
 * [Documentation](https://www.pimcore.org/wiki/)
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
@@ -34,7 +34,7 @@ mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 # now launch http://yourhostname.tld/install
 ```
 
-[A detailed installation guide can be found here.](http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124463)
+[A detailed installation guide can be found here.](https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854184)
 
 
 ## Contribute
@@ -42,7 +42,6 @@ mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
 **Contribute features:** contact the core-team before you start developing (contribute@pimcore.org)  
 **Security vulnerabilities:** please contact us (security@pimcore.org)  
 
-## Copyright and license
-
+## Copyright and license 
 Copyright: [pimcore](http://www.pimcore.org) GmbH  
 For licensing details please visit [LICENSE.md](LICENSE.md) 
