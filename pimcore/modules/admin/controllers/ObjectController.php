@@ -1418,6 +1418,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     if (array_key_exists($orderKey, $colMappings)) {
                         $orderKey = $colMappings[$orderKey];
                     }
+                    else if(strpos($orderKey, '~') !== false)
+                    {
+                        // sort by brick field
+                        $b = strtok($orderKey, '~');
+                        if(in_array($b, $bricks))
+                        {
+                            $orderKey = str_replace('~', '.', $orderKey);
+                        }
+                    }
                 }
             }
 
@@ -1449,7 +1458,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $list->setLimit($limit);
             $list->setOffset($start);
             $list->setOrder($order);
-            $list->setOrderKey($orderKey);
+            $list->setOrderKey($orderKey
+                // quote only if its a cell
+                , strpos($orderKey, '.') === false
+            );
             if($class->getShowVariants()) {
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
