@@ -43,12 +43,22 @@ class UpdateCommand extends AbstractCommand
                 'dry-run', 'd',
                 InputOption::VALUE_NONE,
                 'Dry-run'
+            )->addOption(
+                'source-build', null,
+                InputOption::VALUE_OPTIONAL,
+                'specify a source build where the update should start from - this is mainly for debugging purposes'
             );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $availableUpdates = Update::getAvailableUpdates();
+
+        $currentRevision = null;
+        if($input->getOption("source-build")) {
+            $currentRevision = $input->getOption("source-build");
+        }
+
+        $availableUpdates = Update::getAvailableUpdates($currentRevision);
 
         if($input->getOption("list")) {
 
@@ -67,6 +77,10 @@ class UpdateCommand extends AbstractCommand
 
             if(count($availableUpdates["revisions"])) {
                 $this->output->writeln("The latest available build is: <comment>" . $availableUpdates["revisions"][0]["id"] . "</comment> (" . date("Y-m-d", $availableUpdates["revisions"][0]["date"]) . ")");
+            }
+
+            if(!count($availableUpdates["releases"]) && !count($availableUpdates["revisions"])) {
+                $this->output->writeln("<info>No updates available</info>");
             }
         }
 
@@ -104,7 +118,7 @@ class UpdateCommand extends AbstractCommand
                 $this->output->writeln("<info>---------- DRY-RUN ----------</info>");
             }
 
-            $jobs = Update::getJobs($build);
+            $jobs = Update::getJobs($build, $currentRevision);
 
             $steps = count($jobs["parallel"]) + count($jobs["procedural"]);
 
