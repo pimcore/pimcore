@@ -11,9 +11,11 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+ob_get_clean();
+
 define('PIMCORE_CONSOLE', true);
 
 require_once 'startup.php';
 
 $application = new Pimcore\Console\Application();
-$application->run();
+$application->run($input);
