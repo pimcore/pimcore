@@ -84,7 +84,7 @@ class Application extends \Symfony\Component\Console\Application
     {
         $inputDefinition = parent::getDefaultInputDefinition();
         $inputDefinition->addOption(new InputOption('ignore-maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force execution in maintenance mode'));
-        $inputDefinition->addOption(new InputOption('maintenance-mode', "m", InputOption::VALUE_NONE, 'Set this flag to force maintenance mode while this task runs'));
+        $inputDefinition->addOption(new InputOption('maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force maintenance mode while this task runs'));
 
         return $inputDefinition;
     }
