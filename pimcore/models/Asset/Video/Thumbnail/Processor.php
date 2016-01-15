@@ -275,7 +275,7 @@ class Processor {
      */
     public function convert() {
         $this->save();
-        $cmd = Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "video-converter.php"). " " . $this->getProcessId();
+        $cmd = Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " internal:video-converter " . $this->getProcessId();
         Console::execInBackground($cmd);
     }
 

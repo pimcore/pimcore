@@ -15,6 +15,7 @@ namespace Pimcore\Console\Command;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Pimcore\Model\Asset;
 
 class InternalVideoConverterCommand extends AbstractCommand
 {
@@ -22,12 +23,12 @@ class InternalVideoConverterCommand extends AbstractCommand
     {
         $this
             ->setName('internal:video-converter')
-            ->setDescription('Generate class maps to improve performance')
+            ->setDescription('For internal use only')
             ->addArgument("processId");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
+        Asset\Video\Thumbnail\Processor::execute($input->getArgument("processId"));
     }
 }
