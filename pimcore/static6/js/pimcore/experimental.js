@@ -253,6 +253,12 @@ Ext.define('Ext.overrides.grid.View', {
         listeners: {
             refresh: function() {
                 this.updatePaging();
+            },
+            beforeitemupdate: function(record) {
+                if(record.ptb) {
+                    record.ptb.destroy();
+                    delete record.ptb;
+                }
             }
         },
 
