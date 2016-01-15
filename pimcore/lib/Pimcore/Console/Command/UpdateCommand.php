@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Pimcore\Update;
+use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -133,6 +134,10 @@ class UpdateCommand extends AbstractCommand
                 $progress->advance();
             }
 
+
+            $maintenanceModeId = 'cache-warming-dummy-session-id';
+            Admin::activateMaintenanceMode($maintenanceModeId);
+
             $stoppedByError = false;
             foreach($jobs["procedural"] as $job) {
 
@@ -167,6 +172,8 @@ class UpdateCommand extends AbstractCommand
             }
 
             $progress->finish();
+
+            Admin::deactivateMaintenanceMode();
 
             $this->output->writeln("\n");
 
