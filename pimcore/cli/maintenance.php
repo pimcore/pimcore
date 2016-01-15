@@ -10,6 +10,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
+/**
+ * THIS FILE ONLY EXISTS FOR COMPATIBILITY REASONS
+ * PLEASE USE THE FOLLOWING COMMAND INSTEAD:
+ *
+ * php pimcore/cli/console.php maintenance
+ *
+ */
+
 chdir(__DIR__);
 
 $arguments = $_SERVER['argv'];
