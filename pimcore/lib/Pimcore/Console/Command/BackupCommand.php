@@ -37,7 +37,7 @@ class BackupCommand extends AbstractCommand
             )
             ->addOption(
                 'overwrite', 'o',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_NONE,
                 'overwrite existing backup with the same filename, default: true'
             )
             ->addOption(
@@ -52,7 +52,7 @@ class BackupCommand extends AbstractCommand
             )
             ->addOption(
                 'only-mysql-related-tasks', null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_NONE,
                 'executes only mysql related tasks.'
             )
         ;
@@ -158,6 +158,9 @@ class BackupCommand extends AbstractCommand
          * and no fatal error occurred during backup-creation
          */
         $this->verboseMessage("backup finished, you can find your backup here: " . $backupFile);
+
+        $this->output->writeln("\n");
+        $this->output->writeln("Done!");
     }
 
     protected function verboseMessage($m) {
