@@ -51,13 +51,16 @@ class Update {
     }
 
     /**
+     * @param null $currentRev
      * @return array
      * @throws \Exception
      */
-    public static function getAvailableUpdates() {
+    public static function getAvailableUpdates($currentRev = null) {
 
-        $currentRev = Version::$revision;
-                
+        if(!$currentRev) {
+            $currentRev = Version::$revision;
+        }
+
         self::cleanup();
  
         if(PIMCORE_DEVMODE){
@@ -105,11 +108,14 @@ class Update {
 
     /**
      * @param $toRevision
+     * @param null $currentRev
      * @return array
      */
-    public static function getJobs ($toRevision) {
-        
-        $currentRev = Version::$revision;
+    public static function getJobs ($toRevision, $currentRev = null) {
+
+        if(!$currentRev) {
+            $currentRev = Version::$revision;
+        }
         
         $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
