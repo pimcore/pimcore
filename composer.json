@@ -39,6 +39,7 @@
         "zendframework/zendframework1": "~1.12",
         "symfony/console": "~3",
         "symfony/finder": "~3",
+        "symfony/process": "~3",
         "symfony/var-dumper": "~3",
         "symfony/css-selector": "~3",
         "symfony/event-dispatcher": "~3",
