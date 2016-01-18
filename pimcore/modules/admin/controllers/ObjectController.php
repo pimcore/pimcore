@@ -221,6 +221,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $tmpObject["expandable"] = false;
                 $tmpObject["expanded"] = true;
                 $tmpObject["leaf"] = false;
+                $tmpObject["loaded"] = true;
             }
         }
 
