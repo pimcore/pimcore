@@ -163,7 +163,7 @@ class Datatrans implements IPayment
         $form->setAttrib( 'data-sign', $this->sign );
         $form->setAttrib( 'data-amount', $paymentData['amount'] );
         $form->setAttrib( 'data-currency', $paymentData['currency'] );
-        $form->setAttrib( 'data-refno', $config['internal_id'] );
+        $form->setAttrib( 'data-refno', $config['refno'] );
         $form->setAttrib( 'data-reqtype', $paymentData['reqtype'] );
         $form->setAttrib( 'data-script', $this->endpoint['script'] );
         $form->setAttrib( 'data-success-url',  $config['successUrl'] );
@@ -294,7 +294,7 @@ class Datatrans implements IPayment
      * @param string                      $reference
      *
      * @return \OnlineShop\Framework\PaymentManager\Status|\OnlineShop\Framework\PaymentManager\IStatus
-     * @throws Exception
+     * @throws \Exception
      */
     public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
     {
@@ -304,14 +304,14 @@ class Datatrans implements IPayment
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
             // restore price object for payment status
-            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
+            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new \Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
                 self::TRANS_TYPE_DEBIT
                 , $this->authorizedData['amount']
                 , $this->authorizedData['currency']
-                , $this->authorizedData['refno']
+                , $reference ? : $this->authorizedData['refno']
                 , $this->authorizedData['uppTransactionId']
             );
 
@@ -320,7 +320,7 @@ class Datatrans implements IPayment
         else if($price === null)
         {
             // wrong call
-            throw new Exception('nothing to execute');
+            throw new \Exception('nothing to execute');
         }
         else
         {
@@ -342,7 +342,7 @@ class Datatrans implements IPayment
         $transaction = $xml->body->transaction;
         $status = (string)$transaction->attributes()['trxStatus'];
         $response = $transaction->{ $status };
-        /* @var SimpleXMLElement $response */
+        /* @var \SimpleXMLElement $response */
 
         $message = null;
         $paymentState = null;
@@ -360,7 +360,7 @@ class Datatrans implements IPayment
 
         // create and return status
         $status = new \OnlineShop\Framework\PaymentManager\Status(
-              (string)$transaction->attributes()['refno']
+            (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId ?: $uppTransactionId
             , $message
             , $paymentState
@@ -388,7 +388,7 @@ class Datatrans implements IPayment
         if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
         {
             // restore price object for payment status
-            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
+            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new \Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
@@ -433,7 +433,7 @@ class Datatrans implements IPayment
 
         // create and return status
         $status = new \OnlineShop\Framework\PaymentManager\Status(
-            (string)$transaction->attributes()['refno']
+            $reference ? : (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId
             , $message
             , $paymentState
