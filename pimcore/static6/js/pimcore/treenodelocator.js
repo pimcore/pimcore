@@ -33,6 +33,9 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
 pimcore.treenodelocator.reportDone = function(element, elementType, button) {
     if (element) {
         pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, element.id);
+        var tree = element.getOwnerTree();
+        var view = tree.getView();
+        view.focusRow(element);
     }
     button.enable();
 }
@@ -125,7 +128,9 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
             if (nodePath != idPath) {
                 childNode.expand();
                 var tree = childNode.getOwnerTree();
-                tree.getSelectionModel().select(childNode)
+                tree.getSelectionModel().select(childNode);
+                var view = tree.getView();
+                view.focusRow(childNode);
                 childNode.expand(false, pimcore.treenodelocator.reloadComplete.bind(this, childNode, element, elementType, null, button));
             } else {
                 var tree = node.getOwnerTree();
