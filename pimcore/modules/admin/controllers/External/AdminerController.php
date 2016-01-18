@@ -27,6 +27,9 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin 
         // only for admins
         $this->checkPermission("adminer");
 
+        // call this to keep the session 'open' so that Adminer can write to it
+        $session = \Pimcore\Tool\Session::get();
+
         $this->adminerHome = PIMCORE_DOCUMENT_ROOT . '/vendor/vrana/adminer/';
 
         // proxy for resources
@@ -87,12 +90,18 @@ function adminer_object() {
 
     $plugins = array(
         new AdminerFrames(),
+        new AdminerDumpDate,
+        new AdminerDumpJson,
+        new AdminerDumpBz2,
+        new AdminerDumpZip,
+        new AdminerDumpXml,
+        new AdminerDumpAlter,
     );
 
     class AdminerPimcore extends AdminerPlugin {
 
         function name () {
-            return "pimcore Adminer";
+            return "";
         }
 
         function permanentLogin() {
