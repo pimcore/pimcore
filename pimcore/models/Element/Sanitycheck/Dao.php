@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao {
         }
 
         try {
-            $this->db->insert("sanitycheck", $data);
+            $this->db->insertOrUpdate("sanitycheck", $data);
         }
         catch (\Exception $e) {
            //probably duplicate
