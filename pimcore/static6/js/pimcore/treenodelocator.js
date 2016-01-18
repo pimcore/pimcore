@@ -17,6 +17,7 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
                         Ext.getCmp("pimcore_panel_tree_" + elementType + "s").expand();
                         var tree = pimcore.globalmanager.get("layout_" + elementType + "_tree");
                         element.data.typePath = res.typePath;
+                        element.data.idPath = res.idPath;
                         pimcore.treenodelocator.searchInTree(element, elementType, tree.tree, res.idPath, null, button);
                     }
                 } catch (e) {
@@ -180,6 +181,10 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
     }
 
     var pagingData = node.pagingData;
+    if (!pagingData) {
+        pimcore.treenodelocator.showError(node, node.data.elementType);
+        return;
+    }
 
     var activePage = Math.ceil(pagingData.offset / pagingData.limit) + 1;
     var pageCount = Math.ceil(pagingData.total / pagingData.limit);
