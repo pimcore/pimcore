@@ -501,6 +501,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         if ($asset->getType() == "folder") {
             $tmpAsset["leaf"] = false;
             $tmpAsset["expanded"] = $asset->hasNoChilds();
+            $tmpAsset["loaded"] = $asset->hasNoChilds();
             $tmpAsset["iconCls"] = "pimcore_icon_folder";
             $tmpAsset["permissions"]["create"] = $asset->isAllowed("create");
 
@@ -522,6 +523,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
         } else {
             $tmpAsset["leaf"] = true;
+            $tmpAsset["expandable"] = false;
+            $tmpAsset["expanded"] = false;
             $tmpAsset["iconCls"] = "pimcore_icon_" . File::getFileExtension($asset->getFilename());
         }
 
