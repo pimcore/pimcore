@@ -32,6 +32,7 @@
             <path>/OnlineShop/static/js/pricing/config/item.js</path>
             <path>/OnlineShop/static/js/pricing/config/objects.js</path>
             <path>/OnlineShop/static/js/voucherservice/VoucherSeriesTab.js</path>
+            <path>/plugin/OnlineShop/config/js-config</path>
         </pluginJsPaths>
         <pluginJsPaths-extjs6>
             <path>/OnlineShop/static6/js/indexfieldselectionfield/data/indexFieldSelectionField.js</path>
@@ -45,6 +46,7 @@
             <path>/OnlineShop/static6/js/pricing/config/item.js</path>
             <path>/OnlineShop/static6/js/pricing/config/objects.js</path>
             <path>/OnlineShop/static6/js/voucherservice/VoucherSeriesTab.js</path>
+            <path>/plugin/OnlineShop/config/js-config</path>
         </pluginJsPaths-extjs6>
         <pluginCssPaths>
            <path>/OnlineShop/static/css/backend.css</path>

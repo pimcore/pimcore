@@ -365,5 +365,15 @@
             </config>
         </voucherservice>
 
+
+        <!-- pimcore OnlineShop Menu -->
+        <pimcore>
+            <menu>
+                <pricingRules disabled="0" />
+                <orderlist disabled="0" route="/plugin/BackOffice/admin-order/list" />
+            </menu>
+        </pimcore>
+
+
     </onlineshop>
 </zend-config>

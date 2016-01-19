@@ -42,10 +42,10 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
         var searchButton = Ext.get("pimcore_menu_settings");
 
-
+        var config = pimcore.plugin.OnlineShop.plugin.config;
 
         // pricing rules
-        if(user.isAllowed("plugin_onlineshop_pricing_rules")) {
+        if(user.isAllowed("plugin_onlineshop_pricing_rules") && config.menu.pricingRules.disabled == 0) {
             // add pricing rules to menu
             // create item
             var pricingPanelId = "plugin_onlineshop_pricing_config";
@@ -67,7 +67,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
 
         // order backend
-        if(user.isAllowed("plugin_onlineshop_back-office_order")) {
+        if(user.isAllowed("plugin_onlineshop_back-office_order") && config.menu.orderlist.disabled == 0) {
             // create item
             var orderPanelId = "plugin_onlineshop_back-office_order";
             var item = {
@@ -78,7 +78,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                         pimcore.globalmanager.get(orderPanelId).activate();
                     }
                     catch (e) {
-                        pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, "/plugin/OnlineShop/admin-order/list", "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
+                        pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.orderlist.route, "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
                     }
                 }
             };
