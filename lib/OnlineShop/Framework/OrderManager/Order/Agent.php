@@ -406,12 +406,6 @@ class Agent implements IOrderAgent
 
         }
 
-        //always set order state to payment pending when calling start payment
-        if($order->getOrderState() != $order::ORDER_STATE_PAYMENT_PENDING) {
-            $order->setOrderState( $order::ORDER_STATE_PAYMENT_PENDING );
-            $order->save();
-        }
-
         return $currentPaymentInformation;
     }
 
