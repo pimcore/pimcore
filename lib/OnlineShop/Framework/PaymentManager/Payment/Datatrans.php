@@ -433,7 +433,7 @@ class Datatrans implements IPayment
 
         // create and return status
         $status = new \OnlineShop\Framework\PaymentManager\Status(
-            $reference ? : (string)$transaction->attributes()['refno']
+            (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId
             , $message
             , $paymentState
