@@ -168,6 +168,12 @@ class CheckoutManager implements ICheckoutManager
         $orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
         $paymentInfo = $orderAgent->startPayment();
 
+        //always set order state to payment pending when calling start payment
+        if($order->getOrderState() != $order::ORDER_STATE_PAYMENT_PENDING) {
+            $order->setOrderState( $order::ORDER_STATE_PAYMENT_PENDING );
+            $order->save();
+        }
+        
         return $paymentInfo;
     }
 
