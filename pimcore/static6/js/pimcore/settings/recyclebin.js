@@ -13,7 +13,6 @@ pimcore.registerNS("pimcore.settings.recyclebin");
 pimcore.settings.recyclebin = Class.create({
 
     initialize: function () {
-
         this.getTabPanel();
     },
 
@@ -94,7 +93,7 @@ pimcore.settings.recyclebin = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
         var typesColumns = [
-            {header: t("type"), flex: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
+            {header: t("type"), width: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
                 return '<img src="/pimcore/static6/img/icon/' + d + '.png" />';
             }},
             {header: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string'},
