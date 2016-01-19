@@ -517,6 +517,8 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin {
 
             if($role->hasChilds()) {
                 $tmpUser["expanded"] = false;
+            } else if (\Pimcore\Tool\Admin::isExtJS6()) {
+                $tmpUser["loaded"] = true;
             }
         }
         else {
