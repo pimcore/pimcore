@@ -177,6 +177,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
                 if (is_dir($file)) {
                     $itemConfig["leaf"] = false;
                     $itemConfig["type"] = "folder";
+                    if (\Pimcore\Tool\Admin::isExtJS6() && is_dir_empty($file)) {
+                        $itemConfig["loaded"] = true;
+                    }
                 } else if (is_file($file)) {
                     $itemConfig["type"] = "file";
                 }
