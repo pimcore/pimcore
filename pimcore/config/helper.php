@@ -437,3 +437,17 @@ function closureHash (Closure $closure)
     return $hash;
 }
 
+/** Checks if the given directory is empty
+ * @param $dir
+ * @return bool|null
+ */
+function is_dir_empty($dir) {
+    if (!is_readable($dir)) return NULL;
+    $handle = opendir($dir);
+    while (false !== ($entry = readdir($handle))) {
+        if ($entry != "." && $entry != "..") {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}

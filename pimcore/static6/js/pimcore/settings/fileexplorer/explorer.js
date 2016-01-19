@@ -50,9 +50,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                     property: 'text',
                     direction: 'ASC'
                 }]
-
             });
-
 
             this.treePanel = Ext.create('Ext.tree.Panel', {
                 store: store,
@@ -82,7 +80,6 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 }
             });
-
         }
 
         return this.treePanel;
@@ -136,8 +133,13 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                                 Ext.Ajax.request({
                                     url: "/admin/misc/fileexplorer-add",
                                     success: function (node, response) {
+                                        node.data.loaded = false;
+
                                         this.treePanel.getStore().load({
-                                            node: node
+                                            node: node,
+                                            callback: function() {
+                                                node.expand();
+                                            }
                                         });
                                     }.bind(this, node),
                                     params: {
@@ -155,11 +157,15 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                                 Ext.Ajax.request({
                                     url: "/admin/misc/fileexplorer-add-folder",
                                     success: function (node, response) {
-                                        //this.treePanel.getStore().load({
-                                        //    node: node
-                                        //});
-                                        ////node.data.leaf = false;
-                                        //node.expand();
+                                        node.data.loaded = false;
+
+                                        this.treePanel.getStore().load({
+                                            node: node,
+                                            callback: function() {
+                                                node.expand();
+                                            }
+                                        });
+
                                     }.bind(this, node),
                                     params: {
                                         path: node.id,
