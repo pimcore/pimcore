@@ -86,31 +86,29 @@ Ext.define('pimcore.FieldSetTools', {
 
 
     createCloseCmp: function(result) {
-        //TODO do this in a generic way
         var me = this;
         var tool = me.config.tools[0];
 
         var cfg = {
-                type: 'close',
-                html: me.title,
-                ui: me.ui,
-                tooltip: tool.qtip,
-                handler: tool.handler,
-                cls: me.baseCls + '-header-tool-default ' + me.baseCls + '-header-tool-right',
-                id: me.id + '-legendTitle2',
-                    ariaRole: 'checkbox',
-                    ariaLabel: "gaga",
-                    ariaRenderAttributes: {
-                        'aria-checked': !me.collapsed
-                    }
-            };
+            type: 'close',
+            html: me.title,
+            ui: me.ui,
+            tooltip: tool.qtip,
+            handler: tool.handler,
+            cls: me.baseCls + '-header-tool-default ' + me.baseCls + '-header-tool-right',
+            id: me.id + '-legendTitle2',
+            ariaRole: 'checkbox',
+            ariaRenderAttributes: {
+                'aria-checked': !me.collapsed
+            }
+        };
 
         me.titleCmp2 = new Ext.panel.Tool(cfg);
         result.add(me.titleCmp2);
         return me.titleCmp2;
         result.add(closeCmp);
-    return closeCmp;
-},
+        return closeCmp;
+    },
 
 });
 
@@ -241,161 +239,168 @@ Ext.define('Ext.overrides.grid.View', {
 
     }
 
-    );
+);
 
-    Ext.define('pimcore.tree.Panel', {
-        extend: 'Ext.tree.Panel'
-    });
+Ext.define('pimcore.tree.Panel', {
+    extend: 'Ext.tree.Panel'
+});
 
-    Ext.define('pimcore.tree.View', {
-        extend: 'Ext.tree.View',
-        alias: 'widget.pimcoretreeview',
-        listeners: {
-            refresh: function() {
-                this.updatePaging();
-            },
-            beforeitemupdate: function(record) {
-                if(record.ptb) {
-                    record.ptb.destroy();
-                    delete record.ptb;
-                }
-            }
+Ext.define('pimcore.tree.View', {
+    extend: 'Ext.tree.View',
+    alias: 'widget.pimcoretreeview',
+    listeners: {
+        refresh: function() {
+            this.updatePaging();
         },
-
-        queue: {},
-
-        renderRow: function(record, rowIdx, out) {
-            var me = this;
-            if (record.needsPaging) {
-                me.queue[record.id] = record;
+        beforeitemupdate: function(record) {
+            if(record.ptb) {
+                record.ptb.destroy();
+                delete record.ptb;
             }
-
-            me.superclass.renderRow.call(this, record, rowIdx, out);
-
-            if (record.needsPaging && typeof record.ptp == "undefined") {
-                this.doUpdatePaging(record);
-
-            }
-
-            this.fireEvent("itemafterrender", record, rowIdx, out);
-        },
-
-
-        doUpdatePaging: function(node) {
-
-            //console.log("create toolbar for " + node.id + " " + node.data.expanded);
-
-            //console.log(t);
-            if (node.data.expanded) {
-
-                node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
-                        node: node,
-                        width: 160
-                    }
-                );
-
-                node.ptb.node = node;
-
-                var tree = node.getOwnerTree();
-                var view = tree.getView();
-                var nodeEl = Ext.fly(view.getNodeByRecord(node));
-                if (!nodeEl) {
-                    //console.log("Could not resolve node " + node.id);
-                    return;
-                }
-                nodeEl = nodeEl.getFirstChild();
-                nodeEl = nodeEl.query(".x-tree-node-text");
-                nodeEl = nodeEl[0];
-                var el = nodeEl;
-
-                //el.addCls('x-grid-header-inner');
-                el = Ext.DomHelper.insertAfter(el, {
-                    tag: 'span',
-                    "class": "pimcore_pagingtoolbar_container"
-                }, true);
-                el.addListener("click", function(e) {
-                    e.stopEvent();
-                });
-
-
-                ptb.render(el);
-                tree.updateLayout();
-            }
-
-        },
-
-        updatePaging: function() {
-            var me = this;
-            var queue = me.queue;
-
-            var names = Object.getOwnPropertyNames(queue);
-
-            for (i = 0; i < names.length; i++) {
-                var node = queue[names[i]];
-                this.doUpdatePaging(node);
-            }
-
-            me.queue = {}
         }
-    });
+    },
 
-    Ext.define('pimcore.data.PagingTreeStore', {
+    queue: {},
 
-        extend: 'Ext.data.TreeStore',
+    renderRow: function(record, rowIdx, out) {
+        var me = this;
+        if (record.needsPaging) {
+            me.queue[record.id] = record;
+        }
 
-        ptb: false,
+        me.superclass.renderRow.call(this, record, rowIdx, out);
 
-        onProxyLoad: function(operation) {
-            try {
-                var me = this;
-                var options = operation.initialConfig
-                var node = options.node;
+        if (record.needsPaging && typeof record.ptp == "undefined") {
+            this.doUpdatePaging(record);
 
-                var response = operation.getResponse();
-                var data = Ext.decode(response.responseText);
-                var total = data.total;
-                // console.log("total nodes for  " + node.data.text + " (" + total + ")");
+        }
 
-                var text = node.data.text;
-                if (typeof total == "undefined") {
-                    total = 0;
+        this.fireEvent("itemafterrender", record, rowIdx, out);
+    },
+
+
+    doUpdatePaging: function(node) {
+
+        if (node.data.expanded) {
+
+            node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
+                    node: node,
+                    width: 160
                 }
+            );
 
-                //if (!node.decorated) {
-                //    node.decorated = true;
-                //    if (node.data && node.data.text) {
-                //        node.data.text = node.data.text + " (" + total + ")" ;
-                //    }
-                //}
+            node.ptb.node = node;
 
-                node.addListener("expand", function (node) {
-                    var tree = node.getOwnerTree();
-                    if (tree) {
-                        var view = tree.getView();
-                        view.updatePaging();
-                    }
-                }.bind(this));
+            var tree = node.getOwnerTree();
+            var view = tree.getView();
+            var nodeEl = Ext.fly(view.getNodeByRecord(node));
+            if (!nodeEl) {
+                //console.log("Could not resolve node " + node.id);
+                return;
+            }
+            nodeEl = nodeEl.getFirstChild();
+            nodeEl = nodeEl.query(".x-tree-node-text");
+            nodeEl = nodeEl[0];
+            var el = nodeEl;
 
-                //to hide or show the expanding icon depending if childs are available or not
-                node.addListener('remove', function (node, removedNode, isMove) {
-                    if (!node.hasChildNodes()) {
-                        node.set('expandable', false);
-                    }
-                });
-                node.addListener('append', function (node) {
-                    node.set('expandable', true);
-                });
+            //el.addCls('x-grid-header-inner');
+            el = Ext.DomHelper.insertAfter(el, {
+                tag: 'span',
+                "class": "pimcore_pagingtoolbar_container"
+            }, true);
 
-                if (me.pageSize < total) {
-                    node.needsPaging = true;
-                    node.pagingData = {
-                        total: data.total,
-                        offset: data.offset,
-                        limit: data.limit
-                    }
+            el.addListener("click", function(e) {
+                e.stopPropagation();
+            });
+
+
+            el.addListener("mousedown", function(e) {
+                e.stopPropagation();
+            });
+
+            ptb.render(el);
+            tree.updateLayout();
+
+            if (node.fromPaging) {
+                node.ptb.numberItem.focus();
+            }
+        }
+
+    },
+
+    updatePaging: function() {
+        var me = this;
+        var queue = me.queue;
+
+        var names = Object.getOwnPropertyNames(queue);
+
+        for (i = 0; i < names.length; i++) {
+            var node = queue[names[i]];
+            this.doUpdatePaging(node);
+        }
+
+        me.queue = {}
+    }
+});
+
+Ext.define('pimcore.data.PagingTreeStore', {
+
+    extend: 'Ext.data.TreeStore',
+
+    ptb: false,
+
+    onProxyLoad: function(operation) {
+        try {
+            var me = this;
+            var options = operation.initialConfig
+            var node = options.node;
+            var proxy = me.getProxy();
+            var extraParams = proxy.getExtraParams();
+
+
+            var response = operation.getResponse();
+            var data = Ext.decode(response.responseText);
+
+            node.fromPaging = data.fromPaging;
+            proxy.setExtraParam("fromPaging", 0);
+
+
+            var total = data.total;
+            // console.log("total nodes for  " + node.data.text + " (" + total + ")");
+
+            var text = node.data.text;
+            if (typeof total == "undefined") {
+                total = 0;
+            }
+
+            node.addListener("expand", function (node) {
+                var tree = node.getOwnerTree();
+                if (tree) {
+                    var view = tree.getView();
+                    view.updatePaging();
                 }
+            }.bind(this));
 
-                me.superclass.onProxyLoad.call(this, operation);
+            //to hide or show the expanding icon depending if childs are available or not
+            node.addListener('remove', function (node, removedNode, isMove) {
+                if (!node.hasChildNodes()) {
+                    node.set('expandable', false);
+                }
+            });
+            node.addListener('append', function (node) {
+                node.set('expandable', true);
+            });
+
+            if (me.pageSize < total) {
+                node.needsPaging = true;
+                node.pagingData = {
+                    total: data.total,
+                    offset: data.offset,
+                    limit: data.limit
+                }
+            }
+
+            me.superclass.onProxyLoad.call(this, operation);
 
                 //var store = node.getTreeStore();
                 var proxy = this.getProxy();
@@ -407,343 +412,344 @@ Ext.define('Ext.overrides.grid.View', {
     });
 
 
-    Ext.define('pimcore.toolbar.Paging', {
-        extend: 'Ext.toolbar.Toolbar',
-        requires: [
-            'Ext.toolbar.TextItem',
-            'Ext.form.field.Number'
-        ],
+Ext.define('pimcore.toolbar.Paging', {
+    extend: 'Ext.toolbar.Toolbar',
+    requires: [
+        'Ext.toolbar.TextItem',
+        'Ext.form.field.Number'
+    ],
 
-        displayInfo: false,
+    displayInfo: false,
 
-        prependButtons: false,
+    prependButtons: false,
 
-        displayMsg: t('Displaying {0} - {1} of {2}'),
+    displayMsg: t('Displaying {0} - {1} of {2}'),
 
-        emptyMsg: t('no_data_to_display'),
+    emptyMsg: t('no_data_to_display'),
 
-        beforePageText: t('page'),
+    beforePageText: t('page'),
 
-        afterPageText: '/ {0}',
+    afterPageText: '/ {0}',
 
-        firstText: t('first_page'),
+    firstText: t('first_page'),
 
-        prevText: t('previous_page'),
+    prevText: t('previous_page'),
 
-        nextText: t('next_page'),
+    nextText: t('next_page'),
 
-        lastText: t('last_page'),
+    lastText: t('last_page'),
 
-        refreshText: t('refresh'),
+    refreshText: t('refresh'),
 
-        width: 180,
+    width: 180,
 
-        height: 20,
+    height: 20,
 
-        border: false,
+    border: false,
 
-        emptyPageData: {
-            total: 0,
-            currentPage: 0,
-            pageCount: 0,
-            toRecord: 0,
-            fromRecord: 0
-        },
+    emptyPageData: {
+        total: 0,
+        currentPage: 0,
+        pageCount: 0,
+        toRecord: 0,
+        fromRecord: 0
+    },
 
-        getPagingItems: function() {
-            var me = this,
-                inputListeners = {
-                    scope: me,
-                    blur: me.onPagingBlur
-                };
-            var pagingData = me.node.pagingData;
+    getPagingItems: function() {
+        var me = this,
+            inputListeners = {
+                scope: me,
+                blur: me.onPagingBlur
+            };
+        var pagingData = me.node.pagingData;
 
-            var currPage = pagingData.offset / pagingData.limit + 1;
-            //
+        var currPage = pagingData.offset / pagingData.limit + 1;
+        //
 
-            this.afterItem = Ext.create('Ext.form.NumberField', {
+        this.afterItem = Ext.create('Ext.form.NumberField', {
 
-                cls: Ext.baseCSSPrefix + 'tbar-page-number',
-                value: Math.ceil(pagingData.total / pagingData.limit),
-                hideTrigger: true,
-                heightLabel: true,
-                height: 18,
-                width: 40,
-                disabled: true,
-                margin: '-1 2 3 2'
+            cls: Ext.baseCSSPrefix + 'tbar-page-number',
+            value: Math.ceil(pagingData.total / pagingData.limit),
+            hideTrigger: true,
+            heightLabel: true,
+            height: 18,
+            width: 40,
+            disabled: true,
+            margin: '-1 2 3 2'
+        });
+
+        inputListeners[Ext.supports.SpecialKeyDownRepeat ? 'keydown' : 'keypress'] = me.onPagingKeyDown;
+
+        this.numberItem = new Ext.form.field.Number({
+            xtype: 'numberfield',
+            itemId: 'inputItem',
+            name: 'inputItem',
+            heightLabel: true,
+            cls: Ext.baseCSSPrefix + 'tbar-page-number',
+            allowDecimals: false,
+            minValue: 1,
+            maxValue: this.getMaxPageNum(),
+            value: currPage,
+            hideTrigger: true,
+            enableKeyEvents: true,
+            keyNavEnabled: false,
+            selectOnFocus: true,
+            submitValue: false,
+            height: 18,
+            width: 40,
+            isFormField: false,
+            margin: '-1 2 3 2',
+            listeners: inputListeners
+        });
+
+        return [
+            {
+                itemId: 'first',
+                tooltip: me.firstText,
+                overflowText: me.firstText,
+                iconCls: Ext.baseCSSPrefix + 'tbar-page-first',
+                disabled: me.node.pagingData.offset == 0,
+                handler: me.moveFirst,
+                scope: me,
+                border: false
+
+            },
+            {
+                itemId: 'prev',
+                tooltip: me.prevText,
+                overflowText: me.prevText,
+                iconCls: Ext.baseCSSPrefix + 'tbar-page-prev',
+                disabled: me.node.pagingData.offset == 0,
+                handler: me.movePrevious,
+                scope: me,
+                border: false
+            }
+            ,
+            this.numberItem,
+            {
+                xtype: "tbspacer"
+            }
+            ,
+            this.afterItem,
+            ,
+            {
+                itemId: 'next',
+                tooltip: me.nextText,
+                overflowText: me.nextText,
+                iconCls: Ext.baseCSSPrefix + 'tbar-page-next',
+                disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
+                handler: me.moveNext,
+                scope: me
+            },
+            {
+                itemId: 'last',
+                tooltip: me.lastText,
+                overflowText: me.lastText,
+                iconCls: Ext.baseCSSPrefix + 'tbar-page-last',
+                disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
+                handler: me.moveLast,
+                scope: me
+            }
+            //,
+            //'-',
+            //{
+            //    itemId: 'refresh',
+            //    tooltip: me.refreshText,
+            //    overflowText: me.refreshText,
+            //    iconCls: Ext.baseCSSPrefix + 'tbar-loading',
+            //    disabled: false,
+            //    handler: me.doRefresh,
+            //    scope: me
+            //}
+        ];
+    },
+
+    getMaxPageNum: function() {
+        var me = this;
+        return Math.ceil(me.node.pagingData.total / me.node.pagingData.limit)
+    },
+
+    initComponent: function(config) {
+        var me = this,
+            userItems = me.items || me.buttons || [],
+            pagingItems;
+
+        pagingItems = me.getPagingItems();
+        if (me.prependButtons) {
+            me.items = userItems.concat(pagingItems);
+        } else {
+            me.items = pagingItems.concat(userItems);
+        }
+        delete me.buttons;
+        if (me.displayInfo) {
+            me.items.push('->');
+            me.items.push({
+                xtype: 'tbtext',
+                itemId: 'displayItem'
             });
+        }
+        me.callParent();
+    },
 
 
-            inputListeners[Ext.supports.SpecialKeyDownRepeat ? 'keydown' : 'keypress'] = me.onPagingKeyDown;
-            return [
-                {
-                    itemId: 'first',
-                    tooltip: me.firstText,
-                    overflowText: me.firstText,
-                    iconCls: Ext.baseCSSPrefix + 'tbar-page-first',
-                    disabled: me.node.pagingData.offset == 0,
-                    handler: me.moveFirst,
-                    scope: me,
-                    border: false
+    getInputItem: function() {
+        return this.child('#inputItem');
+    },
 
-                },
-                {
-                    itemId: 'prev',
-                    tooltip: me.prevText,
-                    overflowText: me.prevText,
-                    iconCls: Ext.baseCSSPrefix + 'tbar-page-prev',
-                    disabled: me.node.pagingData.offset == 0,
-                    handler: me.movePrevious,
-                    scope: me,
-                    border: false
+
+    onPagingBlur: function(e) {
+        var inputItem = this.getInputItem(),
+            curPage;
+        if (inputItem) {
+            //curPage = this.getPageData().currentPage;
+            //inputItem.setValue(curPage);
+        }
+    },
+
+    onPagingKeyDown: function(field, e) {
+        this.processKeyEvent(field, e);
+    },
+
+    readPageFromInput: function() {
+        var inputItem = this.getInputItem(),
+            pageNum = false,
+            v;
+        if (inputItem) {
+            v = inputItem.getValue();
+            pageNum = parseInt(v, 10);
+        }
+        return pageNum;
+    },
+
+
+    processKeyEvent: function(field, e) {
+        var me = this,
+            k = e.getKey(),
+        //pageData = me.getPageData(),
+            increment = e.shiftKey ? 10 : 1,
+            pageNum;
+        if (k == e.RETURN) {
+            e.stopEvent();
+            pageNum = me.readPageFromInput();
+            if (pageNum !== false) {
+                pageNum = Math.min(Math.max(1, pageNum), this.getMaxPageNum());
+                this.moveToPage(pageNum);
+            }
+
+
+        } else if (k == e.HOME) {
+            e.stopEvent();
+            this.moveFirst();
+        } else if (k == e.END) {
+            e.stopEvent();
+            this.moveLast();
+        } else if (k == e.UP || k == e.PAGE_UP || k == e.DOWN || k == e.PAGE_DOWN) {
+            e.stopEvent();
+            pageNum = me.readPageFromInput();
+            if (pageNum) {
+                if (k == e.DOWN || k == e.PAGE_DOWN) {
+                    increment *= -1;
                 }
-                ,
-                {
-                    xtype: 'numberfield',
-                    itemId: 'inputItem',
-                    name: 'inputItem',
-                    heightLabel: true,
-                    cls: Ext.baseCSSPrefix + 'tbar-page-number',
-                    allowDecimals: false,
-                    minValue: 1,
-                    maxValue: this.getMaxPageNum(),
-                    value: currPage,
-                    hideTrigger: true,
-                    enableKeyEvents: true,
-                    keyNavEnabled: false,
-                    selectOnFocus: true,
-                    submitValue: false,
-                    height: 18,
-                    width: 40,
-                    isFormField: false,
-                    margin: '-1 2 3 2',
-                    listeners: inputListeners
-                },
-                {
-                    xtype: "tbspacer"
-                }
-                ,
-                this.afterItem,
-                ,
-                {
-                    itemId: 'next',
-                    tooltip: me.nextText,
-                    overflowText: me.nextText,
-                    iconCls: Ext.baseCSSPrefix + 'tbar-page-next',
-                    disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
-                    handler: me.moveNext,
-                    scope: me
-                },
-                {
-                    itemId: 'last',
-                    tooltip: me.lastText,
-                    overflowText: me.lastText,
-                    iconCls: Ext.baseCSSPrefix + 'tbar-page-last',
-                    disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
-                    handler: me.moveLast,
-                    scope: me
-                }
-                //,
-                //'-',
-                //{
-                //    itemId: 'refresh',
-                //    tooltip: me.refreshText,
-                //    overflowText: me.refreshText,
-                //    iconCls: Ext.baseCSSPrefix + 'tbar-loading',
-                //    disabled: false,
-                //    handler: me.doRefresh,
-                //    scope: me
-                //}
-            ];
-        },
-
-        getMaxPageNum: function() {
-            var me = this;
-            return Math.ceil(me.node.pagingData.total / me.node.pagingData.limit)
-        },
-
-        initComponent: function(config) {
-            var me = this,
-                userItems = me.items || me.buttons || [],
-                pagingItems;
-
-            pagingItems = me.getPagingItems();
-            if (me.prependButtons) {
-                me.items = userItems.concat(pagingItems);
-            } else {
-                me.items = pagingItems.concat(userItems);
-            }
-            delete me.buttons;
-            if (me.displayInfo) {
-                me.items.push('->');
-                me.items.push({
-                    xtype: 'tbtext',
-                    itemId: 'displayItem'
-                });
-            }
-            me.callParent();
-        },
-
-
-        getInputItem: function() {
-            return this.child('#inputItem');
-        },
-
-
-        onPagingBlur: function(e) {
-            //console.log("onPagingBlur");
-            var inputItem = this.getInputItem(),
-                curPage;
-            if (inputItem) {
-                //curPage = this.getPageData().currentPage;
-                //inputItem.setValue(curPage);
-            }
-        },
-
-        onPagingKeyDown: function(field, e) {
-            //console.log("onPagingKeyDown");
-            this.processKeyEvent(field, e);
-        },
-
-        readPageFromInput: function() {
-            var inputItem = this.getInputItem(),
-                pageNum = false,
-                v;
-            if (inputItem) {
-                v = inputItem.getValue();
-                pageNum = parseInt(v, 10);
-            }
-            return pageNum;
-        },
-
-
-        processKeyEvent: function(field, e) {
-            var me = this,
-                k = e.getKey(),
-                //pageData = me.getPageData(),
-                increment = e.shiftKey ? 10 : 1,
-                pageNum;
-            if (k == e.RETURN) {
-                e.stopEvent();
-                pageNum = me.readPageFromInput();
-                if (pageNum !== false) {
-                    pageNum = Math.min(Math.max(1, pageNum), this.getMaxPageNum());
+                pageNum += increment;
+                if (pageNum >= 1 && pageNum <= this.getMaxPageNum()) {
                     this.moveToPage(pageNum);
                 }
-
-
-            } else if (k == e.HOME) {
-                e.stopEvent();
-                this.moveFirst();
-            } else if (k == e.END) {
-                e.stopEvent();
-                this.moveLast();
-            } else if (k == e.UP || k == e.PAGE_UP || k == e.DOWN || k == e.PAGE_DOWN) {
-                e.stopEvent();
-                pageNum = me.readPageFromInput();
-                if (pageNum) {
-                    if (k == e.DOWN || k == e.PAGE_DOWN) {
-                        increment *= -1;
-                    }
-                    pageNum += increment;
-                    if (pageNum >= 1 && pageNum <= this.getMaxPageNum()) {
-                        this.moveToPage(pageNum);
-                    }
-                }
             }
-        },
-
-        moveToPage: function(page) {
-            var me = this;
-            var node = me.node;
-            var pagingData = node.pagingData;
-            var store = node.getTreeStore();
-
-
-            var proxy = store.getProxy();
-            proxy.setExtraParam("start",  pagingData.limit * (page - 1));
-            store.load({
-                node: node
-            });
-        },
-
-
-
-        moveFirst: function() {
-            var me = this;
-            var node = me.node;
-            var pagingData = node.pagingData;
-            var store = node.getTreeStore();
-            var page = pagingData.offset / pagingData.total;
-
-            var proxy = store.getProxy();
-            proxy.setExtraParam("start", 0);
-            store.load({
-                node: node
-            });
-        },
-
-        movePrevious: function() {
-            var me = this;
-            var node = me.node;
-            var pagingData = node.pagingData;
-            var store = node.getTreeStore();
-            var page = pagingData.offset / pagingData.total;
-
-            var proxy = store.getProxy();
-            proxy.setExtraParam("start", pagingData.offset - pagingData.limit);
-            store.load({
-                node: node
-            });
-        },
-
-        moveNext: function() {
-            var me = this;
-            var node = me.node;
-            var pagingData = node.pagingData;
-            var store = node.getTreeStore();
-            var page = pagingData.offset / pagingData.total;
-
-            var proxy = store.getProxy();
-            proxy.setExtraParam("start", pagingData.offset + pagingData.limit);
-            store.load({
-                node: node
-            });
-
-        },
-
-        moveLast: function() {
-            var me = this;
-            var node = me.node;
-            var pagingData = node.pagingData;
-            var store = node.getTreeStore();
-            var offset = (Math.ceil(pagingData.total / pagingData.limit) - 1) * pagingData.limit;
-
-            var proxy = store.getProxy();
-            proxy.setExtraParam("start", offset);
-            store.load({
-                node: node
-            });
-        },
-
-        doRefresh: function() {
-            var me = this;
-            var node = me.node;
-            var pagingData = node.pagingData;
-            var store = node.getTreeStore();
-            var page = pagingData.offset / pagingData.total;
-
-            var proxy = store.getProxy();
-            proxy.setExtraParam("start", pagingData.offset);
-            store.load({
-                node: node
-            });
-        },
-
-        onDestroy: function() {
-            //this.bindStore(null);
-            this.callParent();
         }
-    });
+    },
+
+    moveToPage: function(page) {
+        var me = this;
+        var node = me.node;
+        var pagingData = node.pagingData;
+        var store = node.getTreeStore();
+
+
+        var proxy = store.getProxy();
+        proxy.setExtraParam("start",  pagingData.limit * (page - 1));
+        proxy.setExtraParam("fromPaging", 1);
+        store.load({
+            node: node
+        });
+    },
+
+
+
+    moveFirst: function() {
+        var me = this;
+        var node = me.node;
+        var pagingData = node.pagingData;
+        var store = node.getTreeStore();
+        var page = pagingData.offset / pagingData.total;
+
+        var proxy = store.getProxy();
+        proxy.setExtraParam("start", 0);
+        store.load({
+            node: node
+        });
+    },
+
+    movePrevious: function() {
+        var me = this;
+        var node = me.node;
+        var pagingData = node.pagingData;
+        var store = node.getTreeStore();
+        var page = pagingData.offset / pagingData.total;
+
+        var proxy = store.getProxy();
+        proxy.setExtraParam("start", pagingData.offset - pagingData.limit);
+        store.load({
+            node: node
+        });
+    },
+
+    moveNext: function() {
+        var me = this;
+        var node = me.node;
+        var pagingData = node.pagingData;
+        var store = node.getTreeStore();
+        var page = pagingData.offset / pagingData.total;
+
+        var proxy = store.getProxy();
+        proxy.setExtraParam("start", pagingData.offset + pagingData.limit);
+        store.load({
+            node: node
+        });
+
+    },
+
+    moveLast: function() {
+        var me = this;
+        var node = me.node;
+        var pagingData = node.pagingData;
+        var store = node.getTreeStore();
+        var offset = (Math.ceil(pagingData.total / pagingData.limit) - 1) * pagingData.limit;
+
+        var proxy = store.getProxy();
+        proxy.setExtraParam("start", offset);
+        store.load({
+            node: node
+        });
+    },
+
+    doRefresh: function() {
+        var me = this;
+        var node = me.node;
+        var pagingData = node.pagingData;
+        var store = node.getTreeStore();
+        var page = pagingData.offset / pagingData.total;
+
+        var proxy = store.getProxy();
+        proxy.setExtraParam("start", pagingData.offset);
+        store.load({
+            node: node
+        });
+    },
+
+    onDestroy: function() {
+        //this.bindStore(null);
+        this.callParent();
+    }
+});
 
 

@@ -126,7 +126,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 "offset" => $offset,
                 "limit" => $limit,
                 "total" => $object->getChildAmount(array(Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT), $this->getUser()),
-                "nodes" => $returnValueContainer->getData()
+                "nodes" => $returnValueContainer->getData(),
+                "fromPaging" => intval($this->getParam("fromPaging"))
             ));
         } else {
             $this->_helper->json($returnValueContainer->getData());
