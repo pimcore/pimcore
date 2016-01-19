@@ -165,7 +165,7 @@ class Listing extends AbstractOrderList implements IOrderList
     public function joinPaymentInfo()
     {
         // create sub select
-        $paymentQuery = Resource::getConnection()->select();
+        $paymentQuery = Db::getConnection()->select();
         $paymentQuery
             ->from(
                 ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()]
