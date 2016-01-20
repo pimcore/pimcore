@@ -510,11 +510,14 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         if ($this->getParam("type")) {
             $type = $this->getParam("type");
             if (Document\Service::isValidType($type)) {
-                $list->setCondition("type = ?", $type);
+                $list->setFilter(function ($row) use ($type) {
+                    if($row["type"] == $type) {
+                        return true;
+                    }
+                    return false;
+                });
             }
         }
-        $list->setOrderKey(array("priority", "name"));
-        $list->setOrder(array("desc", "ASC"));
         $list->load();
 
 
