@@ -50,8 +50,8 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function getTotalCount() {
 
-        $docTypesData = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($docTypesData);
+        $data = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $amount = count($data);
 
         return $amount;
     }
