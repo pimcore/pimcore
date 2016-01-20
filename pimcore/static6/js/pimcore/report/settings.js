@@ -94,13 +94,13 @@ pimcore.report.settings = Class.create({
                     buttons: [
                         {
                             text: "Save",
-                            handler: this.save.bind(this)
+                            handler: this.save.bind(this),
+                            iconCls: "pimcore_icon_accept"
                         }
                     ]
                 });
 
                 this.panel.add(this.settingsContainer);
-
 
                 this.panel.updateLayout();
                 pimcore.layout.refresh();
