@@ -157,13 +157,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }.bind(this));
 
         this.tab.on("beforedestroy", function () {
-            Ext.Ajax.request({
-                url: "/admin/element/unlock-element",
-                params: {
-                    id: this.id,
-                    type: "object"
-                }
-            });
+            if (!this.confirmedClose && this.isAllowed("save") && this.isDirty) {
+                this.confirmCloseDirty();
+                return false;
+            } else {
+                Ext.Ajax.request({
+                    url: "/admin/element/unlock-element",
+                    params: {
+                        id: this.id,
+                        type: "object"
+                    }
+                });
+            }
         }.bind(this));
 
         // remove this instance when the panel is closed
