@@ -158,15 +158,15 @@ class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
             // als default, nehmen wir den ersten des aktuellen monats
             $from = new \Zend_Date();
             $from->setDay(1);
-            $this->setParam('from', $from->get(\Zend_Date::DATE_MEDIUM));
+            $this->setParam('from', $from->toString('dd.MM.yyyy'));
 
         }
 
         $filterDate = new Filter\OrderDateTime();
         if($this->getParam('from') || $this->getParam('till') )
         {
-            $from = $this->getParam('from') ? new \Zend_Date($this->getParam('from')) : null;
-            $till = $this->getParam('till') ? new \Zend_Date($this->getParam('till')) : null;
+            $from = $this->getParam('from') ? new \Zend_Date($this->getParam('from'), 'dd.MM.yyyy') : null;
+            $till = $this->getParam('till') ? new \Zend_Date($this->getParam('till'), 'dd.MM.yyyy') : null;
             if ($till){
                 $till->add(1,\Zend_Date::DAY);
             }
