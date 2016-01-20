@@ -2325,13 +2325,6 @@ INSERT INTO `search_backend_data` VALUES (72,'/en/advanced-examples/sub-modules'
 
 
 
-
-
-INSERT INTO `staticroutes` VALUES (1,'news','/(.*)_n([\\d]+)/','%prefix/%text_n%id','','news','detail','text,id','',0,1,0,0);
-INSERT INTO `staticroutes` VALUES (2,'blog','/(.*)_b([\\d]+)/','%prefix/%text_b%id','','blog','detail','text,id','',0,1,1388391249,1388391368);
-INSERT INTO `staticroutes` VALUES (3,'category-example','@/category\\-example@','/en/category-example','','category_example','test',NULL,NULL,NULL,1,1419933908,1419933931);
-
-
 INSERT INTO `tags` VALUES (12, 0, '/', 'imagetype');
 INSERT INTO `tags` VALUES (13, 0, '/', 'format');
 INSERT INTO `tags` VALUES (14, 0, '/', 'country');

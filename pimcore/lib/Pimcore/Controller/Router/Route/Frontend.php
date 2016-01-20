@@ -321,8 +321,12 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                 if (!$routes = Cache::load($cacheKey)) {
                 
                     $list = new Staticroute\Listing();
-                    $list->setOrderKey("priority");
-                    $list->setOrder("DESC");
+                    $list->setOrder(function ($a, $b) {
+                        if ($a["priority"] == $b["priority"]) {
+                            return 0;
+                        }
+                        return ($a["priority"] < $b["priority"]) ? 1 : -1;
+                    });
                     $routes = $list->load();
                     
                     Cache::save($routes, $cacheKey, array("system","staticroute","route"), null, 998);

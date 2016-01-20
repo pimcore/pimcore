@@ -19,6 +19,50 @@ use Pimcore\Model;
 class Config {
 
     /**
+     * @var array
+     */
+    protected static $configFileCache = [];
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public static function locateConfigFile($name) {
+
+        if(!isset(self::$configFileCache[$name])) {
+
+            $pathsToCheck = [
+                PIMCORE_WEBSITE_PATH . "/config",
+                PIMCORE_CONFIGURATION_DIRECTORY,
+            ];
+            $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name . ".json";
+
+            $env = self::getSystemConfig()->general->environment;
+            if($env) {
+                foreach($pathsToCheck as $path) {
+                    $tmpFile = $path . "/" . $name . "." . $env . ".json";
+                    if (file_exists($tmpFile)) {
+                        $file = $tmpFile;
+                        break;
+                    }
+                }
+            }
+
+            foreach($pathsToCheck as $path) {
+                $tmpFile = $path . "/" . $name . ".json";
+                if(file_exists($tmpFile)) {
+                    $file = $tmpFile;
+                    break;
+                }
+            }
+
+            self::$configFileCache[$name] = $file;
+        }
+
+        return self::$configFileCache[$name];
+    }
+
+    /**
      * @param bool $forceReload
      * @return mixed|null|\Zend_Config_Xml
      * @throws \Zend_Exception

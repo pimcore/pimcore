@@ -636,17 +636,35 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
             $list = new Staticroute\Listing();
 
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
-
             $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
             if($sortingSettings['orderKey']) {
-                $list->setOrderKey($sortingSettings['orderKey']);
-                $list->setOrder($sortingSettings['order']);
+                $list->setOrder(function ($a, $b) use ($sortingSettings) {
+
+                    $c = $a[$sortingSettings['orderKey']];
+                    $d = $b[$sortingSettings['orderKey']];
+
+                    if ($c == $d) {
+                        return 0;
+                    }
+
+                    if($sortingSettings['order'] == "DESC") {
+                        return ($c < $d) ? -1 : 1;
+                    } else {
+                        return ($c < $d) ? 1 : -1;
+                    }
+                });
             }
             
             if($this->getParam("filter")) {
-                $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+                $filter = $this->getParam("filter");
+                $list->setFilter(function ($row) use ($filter) {
+                    foreach($row as $value) {
+                        if(strpos($value, $filter) !== false) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
             }
 
             $list->load();

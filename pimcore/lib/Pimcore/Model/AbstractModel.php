@@ -135,8 +135,7 @@ abstract class AbstractModel {
         $this->dao = new $dao();
         $this->dao->setModel($this);
 
-        $db = Db::get();
-        $this->dao->configure($db);
+        $this->dao->configure();
 
         if (method_exists($this->dao, "init")) {
             $this->dao->init();

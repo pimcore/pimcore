@@ -12,16 +12,31 @@
 
 namespace Pimcore\Model\Dao;
 
-interface DaoInterface {
+use Pimcore\Cache;
+use Pimcore\Config;
+use \Pimcore\Db\JsonFileTable;
+
+abstract class JsonTable implements DaoInterface {
+
+    use DaoTrait;
 
     /**
-     * @param \Pimcore\Model\AbstractModel $model
-     * @return void
+     * @var JsonFileTable
      */
-    public function setModel($model);
+    protected $json;
 
     /**
-     * @return void
+     *
      */
-    public function configure();
+    public function configure() {
+
+    }
+
+    /**
+     * @param $name
+     */
+    protected function setFile($name) {
+        $file = Config::locateConfigFile($name);
+        $this->json = JsonFileTable::get($file);
+    }
 }

@@ -13,15 +13,13 @@
 namespace Pimcore\Model\Dao;
 
 use Pimcore\Cache;
+use Pimcore\Db;
 
 abstract class AbstractDao implements DaoInterface {
 
-    const CACHEKEY = "system_resource_columns_";
+    use DaoTrait;
 
-    /**
-     * @var \Pimcore\Model\AbstractModel
-     */
-    protected $model;
+    const CACHEKEY = "system_resource_columns_";
 
     /**
      * @var \Zend_Db_Adapter_Abstract
@@ -29,20 +27,10 @@ abstract class AbstractDao implements DaoInterface {
     protected $db;
 
     /**
-     * @param \Pimcore\Model\AbstractModel $model
-     * @return void
+     *
      */
-    public function setModel($model) {
-        $this->model = $model;
-        return $this;
-    }
-
-    /**
-     * @param \Zend_Db_Adapter_Abstract $conf
-     * @return void
-     */
-    public function configure($conf) {
-        $this->db = $conf;
+    public function configure() {
+        $this->db = Db::get();
     }
 
     /**
@@ -65,15 +53,6 @@ abstract class AbstractDao implements DaoInterface {
     public function rollBack() {
         $this->db->rollBack();
     }
-
-    /**
-     * @param array $data
-     * @return void
-     */
-    protected function assignVariablesToModel($data) {
-        $this->model->setValues($data);
-    }
-
 
     /**
      * @param string $table

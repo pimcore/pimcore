@@ -551,26 +551,6 @@ CREATE TABLE `sites` (
   UNIQUE KEY `rootId` (`rootId`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS  `staticroutes`;
-CREATE TABLE `staticroutes` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `name` varchar(50) default NULL,
-  `pattern` varchar(255) default NULL,
-  `reverse` varchar(255) default NULL,
-  `module` varchar(255) default NULL,
-  `controller` varchar(255) default NULL,
-  `action` varchar(255) default NULL,
-  `variables` varchar(255) default NULL,
-  `defaults` varchar(255) default NULL,
-  `siteId` int(11) DEFAULT NULL,
-  `priority` int(3) DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  PRIMARY KEY  (`id`),
-  KEY `priority` (`priority`),
-  KEY `name` (`name`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS  `tags`;
 CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
