@@ -225,7 +225,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             }
         }
 
-        $this->assetTypes = $assetTypes;
+        $this->assetTypes = $assetTypes ?: [];
         return $this;
     }
 
