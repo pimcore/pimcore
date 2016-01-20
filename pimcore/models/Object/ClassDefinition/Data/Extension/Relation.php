@@ -35,18 +35,14 @@ trait Relation
 
 
         // add documents
-        if(method_exists($this, 'getDocumentsAllowed') && $this->getDocumentsAllowed())
-        {
-            if(count($this->getDocumentTypes()) == 0)
-            {
+        if (method_exists($this, 'getDocumentsAllowed') && $this->getDocumentsAllowed()) {
+            $documentTypes = $this->getDocumentTypes();
+            if (count($documentTypes) == 0) {
                 $class[] = '\Pimcore\Model\Document\Page' . $strArray;
                 $class[] = '\Pimcore\Model\Document\Snippet' . $strArray;
                 $class[] = '\Pimcore\Model\Document' . $strArray;
-            }
-            else
-            {
-                foreach($this->getDocumentTypes() as $item)
-                {
+            } else if (is_array($documentTypes)) {
+                foreach ($documentTypes as $item) {
                     $class[] = sprintf('\Pimcore\Model\Document\%s', $item['documentTypes'] . $strArray);
                 }
             }
@@ -54,16 +50,12 @@ trait Relation
 
 
         // add asset
-        if(method_exists($this, 'getAssetsAllowed') && $this->getAssetsAllowed())
-        {
-            if(count($this->getAssetTypes()) == 0)
-            {
+        if (method_exists($this, 'getAssetsAllowed') && $this->getAssetsAllowed()) {
+            $assetTypes = $this->getAssetTypes();
+            if (count($assetTypes) == 0) {
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
-            }
-            else
-            {
-                foreach($this->getAssetTypes() as $item)
-                {
+            } else if (is_array($assetTypes)) {
+                foreach ($assetTypes as $item) {
                     $class[] = sprintf('\Pimcore\Model\Asset\%s', $item['assetTypes'] . $strArray);
                 }
             }
@@ -71,21 +63,16 @@ trait Relation
 
 
         // add objects
-        if($this->getObjectsAllowed())
-        {
-            if(count($this->getClasses()) == 0)
-            {
+        if ($this->getObjectsAllowed()) {
+            $classes = $this->getClasses();
+            if (count($classes) == 0) {
                 $class[] = '\Pimcore\Model\Object\AbstractObject' . $strArray;
-            }
-            else
-            {
-                foreach($this->getClasses() as $item)
-                {
+            } else if (is_array($classes)) {
+                foreach ($this->getClasses() as $item) {
                     $class[] = sprintf('\Pimcore\Model\Object\%s', $item['classes'] . $strArray);
                 }
             }
         }
-
 
         return $class;
     }
