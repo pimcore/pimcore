@@ -51,8 +51,8 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function getTotalCount() {
 
-        $routesData = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($routesData);
+        $data = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $amount = count($data);
 
         return $amount;
     }

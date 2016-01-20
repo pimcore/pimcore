@@ -151,9 +151,13 @@ abstract class Element extends Admin {
 
         if (in_array($type, $allowedTypes)) {
             $list = new Model\Property\Predefined\Listing();
-            $list->setCondition("ctype = ?", [$type]);
-            $list->setOrder("ASC");
-            $list->setOrderKey("name");
+            $list->setFilter(function ($row) use ($type) {
+                if($row["type"] == $type) {
+                    return true;
+                }
+                return false;
+            });
+
             $list->load();
 
             foreach ($list->getProperties() as $type) {

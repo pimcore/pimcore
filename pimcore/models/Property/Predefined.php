@@ -80,9 +80,14 @@ class Predefined extends Model\AbstractModel {
      * @return self
      */
     public static function getById($id) {
-        $property = new self();
-        $property->setId($id);
-        $property->getDao()->getById();
+
+        try {
+            $property = new self();
+            $property->setId($id);
+            $property->getDao()->getById();
+        } catch (\Exception $e) {
+            return null;
+        }
 
         return $property;
     }
@@ -101,11 +106,16 @@ class Predefined extends Model\AbstractModel {
                 throw new \Exception("Predefined property in registry is null");
             }
         } catch (\Exception $e) {
-            $property = new self();
-            $property->setKey($key);
-            $property->getDao()->getByKey();
 
-            \Zend_Registry::set($cacheKey, $property);
+            try {
+                $property = new self();
+                $property->setKey($key);
+                $property->getDao()->getByKey();
+
+                \Zend_Registry::set($cacheKey, $property);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
 
         return $property;
