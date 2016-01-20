@@ -230,12 +230,12 @@ pimcore.element.scheduler = Class.create({
     },
 
     onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelectedCell();
+        var rec = this.grid.getSelectionModel().getSelection();
 
         if (!rec) {
             return false;
         }
-        this.grid.store.removeAt(rec[0]);
+        this.grid.store.remove(rec[0]);
     },
 
     getValues: function () {
@@ -257,8 +257,6 @@ pimcore.element.scheduler = Class.create({
             });
         }
 
-
         return values;
     }
-
 });
