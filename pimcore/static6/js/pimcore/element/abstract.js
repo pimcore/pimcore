@@ -96,7 +96,7 @@ pimcore.element.abstract = Class.create({
         return this.addToHistory;
     },
 
-    confirmCloseDirty: function(callback) {
+    confirmCloseDirty: function() {
         Ext.MessageBox.confirm(
             t("element_has_unsaved_changes"), t("element_unsaved_changes_message"),
             function (buttonValue) {
