@@ -32,11 +32,11 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
     }
 
     public function listAction () {
-        
+
         if($this->getParam("xaction") == "destroy") {
             $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($this->getParam("data")));
             $item->delete();
- 
+
             $this->_helper->json(array("success" => true, "data" => array()));
         }
         else {
@@ -68,22 +68,29 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
 
                     $operator = "=";
 
+                    $filterField = $filter["field"];
+                    $filterOperator = $filter["comparison"];
+                    if(\Pimcore\Tool\Admin::isExtJS6()) {
+                        $filterField = $filter["property"];
+                        $filterOperator = $filter["operator"];
+                    }
+
                     if($filter["type"] == "string") {
                         $operator = "LIKE";
                     } else if ($filter["type"] == "numeric") {
-                        if($filter["comparison"] == "lt") {
+                        if($filterOperator == "lt") {
                             $operator = "<";
-                        } else if($filter["comparison"] == "gt") {
+                        } else if($filterOperator == "gt") {
                             $operator = ">";
-                        } else if($filter["comparison"] == "eq") {
+                        } else if($filterOperator == "eq") {
                             $operator = "=";
                         }
                     } else if ($filter["type"] == "date") {
-                        if($filter["comparison"] == "lt") {
+                        if($filterOperator == "lt") {
                             $operator = "<";
-                        } else if($filter["comparison"] == "gt") {
+                        } else if($filterOperator == "gt") {
                             $operator = ">";
-                        } else if($filter["comparison"] == "eq") {
+                        } else if($filterOperator == "eq") {
                             $operator = "=";
                         }
                         $filter["value"] = strtotime($filter["value"]);
@@ -99,7 +106,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
                         $value = "%" . $value . "%";
                     }
 
-                    $field = "`" . $filter["field"] . "` ";
+                    $field = "`" . $filterField . "` ";
                     if($filter["field"] == "fullpath") {
                         $field = "CONCAT(path,filename)";
                     }
@@ -114,23 +121,23 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin {
             }
 
             $items = $list->load();
-            
+
             $this->_helper->json(array("data" => $items, "success" => true, "total" => $list->getTotalCount()));
         }
     }
-    
+
     public function restoreAction () {
         $item = Recyclebin\Item::getById($this->getParam("id"));
         $item->restore();
- 
+
         $this->_helper->json(array("success" => true));
     }
- 
+
     public function flushAction () {
         $bin = new Element\Recyclebin();
         $bin->flush();
-        
-        $this->_helper->json(array("success" => true)); 
+
+        $this->_helper->json(array("success" => true));
     }
 
     public function addAction () {

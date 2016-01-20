@@ -160,7 +160,7 @@ pimcore.settings.recyclebin = Class.create({
             bbar: this.pagingtoolbar,
             stripeRows: true,
             selModel: Ext.create('Ext.selection.RowModel', {}),
-            plugins: ['gridfilters'],
+            plugins: ['pimcore.gridfilters'],
             columns : typesColumns,
             tbar: toolbar,
             listeners: {
@@ -206,9 +206,9 @@ pimcore.settings.recyclebin = Class.create({
         Ext.getCmp("pimcore_recyclebin_button_restore").disable();
         Ext.getCmp("pimcore_recyclebin_button_delete").disable();
     },
-    
+
     onRestore: function () {
-        
+
         pimcore.helpers.loadingShow();
 
         var selections = this.grid.getSelectionModel().getSelected();
@@ -225,7 +225,7 @@ pimcore.settings.recyclebin = Class.create({
             success: function () {
                 this.store.reload();
                 this.grid.getView().refresh();
-                
+
                 // refresh all trees
                 try {
                     if(pimcore.globalmanager.get("layout_document_tree").tree.rendered) {
@@ -251,7 +251,7 @@ pimcore.settings.recyclebin = Class.create({
                 catch (e) {
                     console.log(e);
                 }
-                
+
                 pimcore.helpers.loadingHide();
             }.bind(this)
         });
