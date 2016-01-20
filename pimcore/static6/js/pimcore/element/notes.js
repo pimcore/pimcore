@@ -119,7 +119,7 @@ pimcore.element.notes = Class.create({
                 },
                 {header: t("title"), sortable: true, dataIndex: 'title', flex: 200},
                 {header: t("description"), sortable: true, dataIndex: 'description'},
-                {header: t("fields"), sortable: true, dataIndex: 'data', renderer: function(v) {
+                {header: t("fields"), sortable: false, dataIndex: 'data', renderer: function(v) {
                     if(v) {
                         return v.length;
                     }
