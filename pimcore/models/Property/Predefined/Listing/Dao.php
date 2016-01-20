@@ -17,7 +17,16 @@ namespace Pimcore\Model\Property\Predefined\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Property;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Dao\JsonTable {
+
+    /**
+     *
+     */
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile("predefined-properties");
+    }
 
     /**
      * Loads a list of predefined properties for the specicifies parameters, returns an array of Property\Predefined elements
@@ -27,25 +36,24 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     public function load() {
 
         $properties = array();
-        $propertiesData = $this->db->fetchCol("SELECT id FROM properties_predefined" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $propertiesData = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($propertiesData as $propertyData) {
-            $properties[] = Property\Predefined::getById($propertyData);
+            $properties[] = Property\Predefined::getById($propertyData["id"]);
         }
 
         $this->model->setProperties($properties);
         return $properties;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalCount() {
 
-        try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM properties_predefined " . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
-
-        }
+        $routesData = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $amount = count($routesData);
 
         return $amount;
     }
-
 }

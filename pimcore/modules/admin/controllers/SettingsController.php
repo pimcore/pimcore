@@ -180,21 +180,18 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         }
         else {
             // get list of types
-
             $list = new Property\Predefined\Listing();
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
-
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
-            if($sortingSettings['orderKey']) {
-                $list->setOrderKey($sortingSettings['orderKey']);
-                $list->setOrder($sortingSettings['order']);
-            } else {
-                $list->setOrderKey('name');
-            }
 
             if($this->getParam("filter")) {
-                $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+                $filter = $this->getParam("filter");
+                $list->setFilter(function ($row) use ($filter) {
+                    foreach($row as $value) {
+                        if(strpos($value, $filter) !== false) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
             }
 
             $list->load();

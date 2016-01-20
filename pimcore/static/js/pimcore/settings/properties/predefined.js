@@ -75,17 +75,13 @@ pimcore.settings.properties.predefined = Class.create({
 
         var writer = new Ext.data.JsonWriter();
 
-        var itemsPerPage = 20;
-
         this.store = new Ext.data.Store({
             id: 'properties',
             restful: false,
             proxy: proxy,
             reader: reader,
             writer: writer,
-            remoteSort: true,
             baseParams: {
-                limit: itemsPerPage,
                 filter: ""
             },
             listeners: {
@@ -112,42 +108,6 @@ pimcore.settings.properties.predefined = Class.create({
                 }.bind(this)
             }
         });
-
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: itemsPerPage,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
-        });
-
-        // add per-page selection
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text: t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store: [
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode: "local",
-            width: 50,
-            value: 20,
-            triggerAction: "all",
-            listeners: {
-                select: function (box, rec, index) {
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
-                    this.pagingtoolbar.moveFirst();
-                }.bind(this)
-            }
-        }));
-
 
         var inheritableCheck = new Ext.grid.CheckColumn({
             header: t("inheritable"),

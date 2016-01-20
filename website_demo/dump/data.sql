@@ -2135,31 +2135,6 @@ INSERT INTO `properties` VALUES (72,'document','/en/advanced-examples/sub-module
 
 
 
-
-INSERT INTO `properties_predefined` VALUES (1,'Left Navigation Start Node','Where the tree of the left navigation should start','leftNavStartNode','document','','','document',1,0,0);
-INSERT INTO `properties_predefined` VALUES (2,'Hide Left Navigation','','leftNavHide','bool','true','','document',0,0,0);
-INSERT INTO `properties_predefined` VALUES (3,'Header Color','','headerColor','select','','orange,blue,green','document',1,0,0);
-INSERT INTO `properties_predefined` VALUES (4,'Sidebar','','sidebar','document','','','document',1,0,0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 INSERT INTO `search_backend_data` VALUES (1,'/','asset','folder','folder',1,1368522989,1368522989,1,1,'ID: 1  \nPath: /  \n','');
 INSERT INTO `search_backend_data` VALUES (3,'/portal-sujets','asset','folder','folder',1,1368530371,1368632469,0,0,'ID: 3  \nPath: /portal-sujets  \nportal-sujets','');
 INSERT INTO `search_backend_data` VALUES (4,'/portal-sujets/slide-01.jpg','asset','image','image',1,1368530684,1370432846,0,0,'ID: 4  \nPath: /portal-sujets/slide-01.jpg  \nslide-01.jpg','');

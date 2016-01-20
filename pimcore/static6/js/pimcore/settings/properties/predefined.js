@@ -51,7 +51,6 @@ pimcore.settings.properties.predefined = Class.create({
 
     getRowEditor: function () {
 
-        var itemsPerPage = 20;
         var url = '/admin/settings/properties?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -68,12 +67,12 @@ pimcore.settings.properties.predefined = Class.create({
                 {name: 'inheritable'},
                 {name: 'creationDate'},
                 {name: 'modificationDate'}
-            ],
-            itemsPerPage
+            ], null, {
+                remoteSort: false,
+                remoteFilter: false
+            }
         );
         this.store.setAutoSync(true);
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
-
 
         this.filterField = new Ext.form.TextField({
             width: 200,
@@ -193,7 +192,6 @@ pimcore.settings.properties.predefined = Class.create({
             plugins: [
                 this.cellEditing
             ],
-            bbar: this.pagingtoolbar,
             tbar: [
                 {
                     text: t('add'),

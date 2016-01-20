@@ -16,13 +16,20 @@ namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\JsonTable {
 
     /**
-     * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param integer $id
-     * @return void
+     */
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile("predefined-properties");
+    }
+
+    /**
+     * @param null $id
+     * @throws \Exception
      */
     public function getById($id = null) {
 
@@ -30,16 +37,19 @@ class Dao extends Model\Dao\AbstractDao {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM properties_predefined WHERE id = ?", $this->model->getId());
-        $this->assignVariablesToModel($data);
+        $data = $this->json->getById($this->model->getId());
+
+        if(isset($data["id"])) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception("Predefined property with id: " . $this->model->getId() . " does not exist");
+        }
     }
 
 
     /**
-     * Get the data for the object from database for the given key, or from the key which is set in the object
-     *
-     * @param string $key
-     * @return void
+     * @param null $key
+     * @throws \Exception
      */
     public function getByKey($key = null) {
 
@@ -47,20 +57,53 @@ class Dao extends Model\Dao\AbstractDao {
             $this->model->setKey($key);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM properties_predefined WHERE `key` = ?", $this->model->getKey());
-        $this->assignVariablesToModel($data);
+        $key = $this->model->getKey();
+
+        $data = $this->json->fetchAll(function ($row) use ($key) {
+            if($row["name"] == $key) {
+                return true;
+            }
+            return false;
+        });
+
+        if(count($data) && $data[0]["id"]) {
+            $this->assignVariablesToModel($data[0]);
+        } else {
+            throw new \Exception("Route with name: " . $this->model->getName() . " does not exist");
+        }
     }
 
     /**
-     * Save object to database
-     *
-     * @return void
+     * @throws \Exception
      */
     public function save() {
-        if ($this->model->getId()) {
-            return $this->model->update();
+
+        $ts = time();
+        if(!$this->model->getCreationDate()) {
+            $this->model->setCreationDate($ts);
         }
-        return $this->create();
+        $this->model->setModificationDate($ts);
+
+        try {
+            $dataRaw = get_object_vars($this->model);
+            $data = [];
+            $allowedProperties = ["id","name","description","key","type","data",
+                "config","ctype","inheritable","creationDate","modificationDate"];
+
+            foreach($dataRaw as $key => $value) {
+                if(in_array($key, $allowedProperties)) {
+                    $data[$key] = $value;
+                }
+            }
+            $this->json->insertOrUpdate($data, $this->model->getId());
+        }
+        catch (\Exception $e) {
+            throw $e;
+        }
+
+        if(!$this->model->getId()) {
+            $this->model->setId($this->json->getLastInsertId());
+        }
     }
 
     /**
@@ -69,49 +112,6 @@ class Dao extends Model\Dao\AbstractDao {
      * @return void
      */
     public function delete() {
-        $this->db->delete("properties_predefined", $this->db->quoteInto("id = ?", $this->model->getId()));
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function update() {
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
-
-            $type = get_object_vars($this->model);
-
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns("properties_predefined"))) {
-                    if(is_bool($value)) {
-                        $value = (int)$value;
-                    }
-                    $data[$key] = $value;
-                }
-            }
-
-            $this->db->update("properties_predefined", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
-        }
-        catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Create a new record for the object in database
-     *
-     * @return boolean
-     */
-    public function create() {
-        $ts = time();
-        $this->model->setCreationDate($ts);
-        $this->model->setModificationDate($ts);
-
-        $this->db->insert("properties_predefined", array());
-
-        $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
+        $this->json->delete($this->model->getId());
     }
 }

@@ -420,28 +420,6 @@ CREATE TABLE `properties` (
   KEY `cid` (`cid`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `properties_predefined`;
-CREATE TABLE `properties_predefined` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT '',
-  `description` text,
-  `key` varchar(255) DEFAULT NULL,
-  `type` enum('text','document','asset','bool','select','object') DEFAULT NULL,
-  `data` text,
-  `config` text,
-  `ctype` enum('document','asset','object') DEFAULT NULL,
-  `inheritable` tinyint(1) unsigned DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `name` (`name`),
-  KEY `id` (`id`),
-  KEY `key` (`key`),
-  KEY `type` (`type`),
-  KEY `ctype` (`ctype`),
-  KEY `inheritable` (`inheritable`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `recyclebin`;
 CREATE TABLE `recyclebin` (
   `id` int(11) NOT NULL auto_increment,

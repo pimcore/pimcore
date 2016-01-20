@@ -11,7 +11,7 @@
 
 pimcore.helpers.grid = {};
 
-pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage) {
+pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, customConfig) {
 
     var proxy = new Ext.data.proxy.Ajax({
         type: 'ajax',
@@ -56,8 +56,7 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage) {
     //
 
 
-
-    var store = Ext.create('Ext.data.Store', {
+    var config =  {
         proxy: proxy,
         autoLoad: true,
         autoSync: true,
@@ -65,7 +64,13 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage) {
         fields: fields,
         remoteSort: true,
         remoteFilter: true
-    });
+    };
+
+    if(customConfig) {
+        Ext.apply(config, customConfig);
+    }
+
+    var store = Ext.create('Ext.data.Store', config);
 
     return store;
 };
