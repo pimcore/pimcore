@@ -30,7 +30,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
     public function metadataAction() {
 
         if ($this->getParam("data")) {
-            $this->checkPermission("predefined_properties");
+            $this->checkPermission("asset_metadata");
 
             if ($this->getParam("xaction") == "destroy") {
 
@@ -89,19 +89,17 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             // get list of types
 
             $list = new Metadata\Predefined\Listing();
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
-
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
-            if($sortingSettings['orderKey']) {
-                $list->setOrderKey($sortingSettings['orderKey']);
-                $list->setOrder($sortingSettings['order']);
-            } else {
-                $list->setOrderKey("name");
-            }
 
             if($this->getParam("filter")) {
-                $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+                $filter = $this->getParam("filter");
+                $list->setFilter(function ($row) use ($filter) {
+                    foreach($row as $value) {
+                        if(strpos($value, $filter) !== false) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
             }
 
             $list->load();
@@ -633,25 +631,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
             $list = new Staticroute\Listing();
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
-            if($sortingSettings['orderKey']) {
-                $list->setOrder(function ($a, $b) use ($sortingSettings) {
-
-                    $c = $a[$sortingSettings['orderKey']];
-                    $d = $b[$sortingSettings['orderKey']];
-
-                    if ($c == $d) {
-                        return 0;
-                    }
-
-                    if($sortingSettings['order'] == "DESC") {
-                        return ($c < $d) ? -1 : 1;
-                    } else {
-                        return ($c < $d) ? 1 : -1;
-                    }
-                });
-            }
-            
             if($this->getParam("filter")) {
                 $filter = $this->getParam("filter");
                 $list->setFilter(function ($row) use ($filter) {
