@@ -152,7 +152,7 @@ abstract class Element extends Admin {
         if (in_array($type, $allowedTypes)) {
             $list = new Model\Property\Predefined\Listing();
             $list->setFilter(function ($row) use ($type) {
-                if($row["type"] == $type) {
+                if($row["ctype"] == $type) {
                     return true;
                 }
                 return false;
