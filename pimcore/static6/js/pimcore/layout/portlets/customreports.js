@@ -61,7 +61,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
     editSettings: function () {
         var win = new Ext.Window({
             width: 600,
-            height: 100,
+            height: 150,
             modal: true,
             title: t('portlet_customreport_settings'),
             closeAction: "destroy",
