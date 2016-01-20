@@ -33,3 +33,19 @@ foreach($staticRoutes as $route) {
 
 $db->query("RENAME TABLE `properties_predefined` TO `PLEASE_DELETE__properties_predefined`;");
 
+
+// PREDEFINED PROPERTIES
+$file = Pimcore\Config::locateConfigFile("predefined-asset-metadata");
+$db = \Pimcore\Db::get();
+$staticRoutes = $db->fetchAll("SELECT * FROM assets_metadata_predefined");
+
+$json = \Pimcore\Db\JsonFileTable::get($file);
+$json->truncate();
+
+foreach($staticRoutes as $route) {
+    $data = $route;
+    unset($data["id"]);
+    $json->insertOrUpdate($data, $route["id"]);
+}
+
+$db->query("RENAME TABLE `assets_metadata_predefined` TO `PLEASE_DELETE__assets_metadata_predefined`;");
