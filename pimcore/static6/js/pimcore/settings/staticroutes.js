@@ -70,7 +70,10 @@ pimcore.settings.staticroutes = Class.create({
                 {name:'priority', type:'int'},
                 {name: 'creationDate'},
                 {name: 'modificationDate'}
-            ]
+            ], null, {
+                remoteSort: false,
+                remoteFilter: false
+            }
         );
         this.store.setAutoSync(true);
 
