@@ -163,22 +163,6 @@ CREATE TABLE `documents` (
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `documents_doctypes`;
-CREATE TABLE `documents_doctypes` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
-  `template` varchar(255) DEFAULT NULL,
-  `type` enum('page','snippet','email') DEFAULT NULL,
-  `priority` int(3) DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  PRIMARY KEY  (`id`),
-  KEY `priority` (`priority`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `documents_elements`;
 CREATE TABLE `documents_elements` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',

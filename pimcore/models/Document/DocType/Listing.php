@@ -16,7 +16,7 @@ namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\JsonListing {
 
     /**
      * Contains the results of the list. They are all an instance of Document\Doctype
@@ -24,15 +24,6 @@ class Listing extends Model\Listing\AbstractListing {
      * @var array
      */
     public $docTypes = array();
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @return boolean
-     */
-    public function isValidOrderKey($key) {
-        return true;
-    }
 
     /**
      * @return array

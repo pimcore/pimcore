@@ -835,14 +835,6 @@ INSERT INTO `documents` VALUES (72,5,'page','sub-modules','/en/advanced-examples
 
 
 
-INSERT INTO `documents_doctypes` VALUES (1,'Content-Page','','content','default','','page',0,0,0);
-INSERT INTO `documents_doctypes` VALUES (2,'Standard-Teaser','','','','/snippets/standard-teaser.php','snippet',0,0,0);
-INSERT INTO `documents_doctypes` VALUES (3,'Sidebar','','','','/includes/sidebar.php','snippet',0,0,0);
-INSERT INTO `documents_doctypes` VALUES (4,'Standard-Mail','','newsletter','standard-mail','','email',0,1388409343,1388409359);
-
-
-
-
 INSERT INTO `documents_elements` VALUES (1,'authorcontent3','input','Albert Einstein');
 INSERT INTO `documents_elements` VALUES (1,'blockcontent1','block','a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}');
 INSERT INTO `documents_elements` VALUES (1,'caption-text-0content3','textarea','Isla Colón, Bocas del Toro, Republic of Panama');

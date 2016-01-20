@@ -451,7 +451,12 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
             if ($this->getParam("xaction") == "destroy") {
 
-                $id = \Zend_Json::decode($this->getParam("data"));
+                $data = \Zend_Json::decode($this->getParam("data"));
+                if (\Pimcore\Tool\Admin::isExtJS6()) {
+                    $id = $data["id"];
+                } else {
+                    $id = $data;
+                }
 
                 $type = Document\DocType::getById($id);
                 $type->delete();
@@ -483,12 +488,6 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         } else {
             // get list of types
             $list = new Document\DocType\Listing();
-
-            if ($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
-                $list->setOrder($this->getParam("dir"));
-            }
-
             $list->load();
 
             $docTypes = array();
