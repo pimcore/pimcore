@@ -554,12 +554,12 @@ class Tool {
     public static function getModelClassMapping($sourceClassName) {
 
         $targetClassName = $sourceClassName;
-        $lookupName = str_replace(["\\Pimcore\\Model\\", "\\"], ["", "_"], $sourceClassName);
+        $lookupName = str_replace("\\Pimcore\\Model\\", "", $sourceClassName);
         $lookupName = ltrim($lookupName, "\\_");
 
         if($map = Config::getModelClassMappingConfig()) {
-            $tmpClassName = $map->{$lookupName};
-            if($tmpClassName) {
+            if(isset($map[$lookupName])) {
+                $tmpClassName = $map[$lookupName];
                 $tmpClassName = "\\" . ltrim($tmpClassName, "\\");
                 if(self::classExists($tmpClassName)) {
                     if(is_subclass_of($tmpClassName, $sourceClassName)) {
@@ -584,8 +584,6 @@ class Tool {
 
         $autoloader = \Zend_Loader_Autoloader::getInstance();
         if($map = Config::getModelClassMappingConfig()) {
-            $map = $map->toArray();
-
             foreach ($map as $targetClass) {
                 $classParts = explode("_", $targetClass);
                 $autoloader->registerNamespace($classParts[0]);
