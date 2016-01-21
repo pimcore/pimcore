@@ -319,21 +319,19 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     public function imageThumbnailsAction () {
         $this->checkUserPermission("thumbnails");
 
-        $dir = Asset\Video\Thumbnail\Config::getWorkingDir();
+        $thumbnails = [];
 
-        $pipelines = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $pipelines[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $thumbnails[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
-        $this->encoder->encode(array("success" => true, "data" => $pipelines));
+        $this->encoder->encode(array("success" => true, "data" => $thumbnails));
     }
 
 
