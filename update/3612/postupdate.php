@@ -8,10 +8,10 @@ if(!is_dir($legacyFolder)) {
     mkdir($legacyFolder, 0777, true);
 }
 
+$mappingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/classmap.xml";
 
-if(file_exists($customCacheFile)) {
+if(file_exists($mappingFile)) {
     try {
-        $mappingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/classmap.xml";
         $conf = new \Zend_Config_Xml($mappingFile);
         $arrayConf = $conf->toArray();
 
