@@ -196,7 +196,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push("-");
 
             buttons.push({
-                text: this.data.path + this.data.filename,
+                text: t("download"),
                 iconCls: "pimcore_icon_download_medium",
                 scale: "small",
                 handler: function () {
