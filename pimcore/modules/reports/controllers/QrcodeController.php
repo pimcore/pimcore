@@ -25,19 +25,16 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports 
     }
 
     public function treeAction () {
+        $codes = [];
 
-        $dir = Qrcode\Config::getWorkingDir();
+        $list = new Qrcode\Config\Listing();
+        $items = $list->load();
 
-        $codes = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $codes[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        foreach($items as $item) {
+            $codes[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
         $this->_helper->json($codes);
@@ -45,20 +42,19 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports 
 
     public function addAction () {
 
-        try {
-            Qrcode\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $success = false;
 
-        if(!$alreadyExist) {
+        $code = Qrcode\Config::getByName($this->getParam("name"));
+
+        if(!$code) {
             $code = new Qrcode\Config();
             $code->setName($this->getParam("name"));
             $code->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $code->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $code->getName()));
     }
 
     public function deleteAction () {
