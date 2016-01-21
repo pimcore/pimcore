@@ -984,21 +984,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("thumbnails");
 
-        $dir = Asset\Image\Thumbnail\Config::getWorkingDir();
+        $thumbnails = [];
 
-        $pipelines = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $pipelines[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Asset\Image\Thumbnail\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $thumbnails[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
-        $this->_helper->json($pipelines);
+        $this->_helper->json($thumbnails);
     }
 
     public function thumbnailAddAction () {
@@ -1007,14 +1005,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $alreadyExist = false;
 
-        try {
-            Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
 
-        if(!$alreadyExist) {
+        if(!$pipe) {
             $pipe = new Asset\Image\Thumbnail\Config();
             $pipe->setName($this->getParam("name"));
             $pipe->save();
@@ -1039,7 +1032,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         $this->checkPermission("thumbnails");
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
-        //$pipe->delete();
 
         $this->_helper->json($pipe);
     }

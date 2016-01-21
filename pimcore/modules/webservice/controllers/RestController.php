@@ -299,6 +299,10 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
             $id = $this->getParam("id");
             if ($id) {
                 $config = Asset\Image\Thumbnail\Config::getByName($id);
+                if(!$config instanceof Asset\Image\Thumbnail\Config) {
+                    throw new \Exception("Thumbnail '" . $id . "' file doesn't exists");
+                }
+
                 $this->encoder->encode(array("success" => true, "data" => $config->getForWebserviceExport()));
                 return;
             }
@@ -314,7 +318,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      */
     public function imageThumbnailsAction () {
         $this->checkUserPermission("thumbnails");
-        $dir = Asset\Image\Thumbnail\Config::getWorkingDir();
+
+        $dir = Asset\Video\Thumbnail\Config::getWorkingDir();
 
         $pipelines = array();
         $files = scandir($dir);

@@ -35,12 +35,15 @@ class Config {
                 PIMCORE_WEBSITE_PATH . "/config",
                 PIMCORE_CONFIGURATION_DIRECTORY,
             ];
-            $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name . ".json";
+            $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name;
 
             $env = self::getSystemConfig()->general->environment;
             if($env) {
+                $fileExt = File::getFileExtension($name);
+                $pureName = str_replace(".".$fileExt, "", $name);
                 foreach($pathsToCheck as $path) {
-                    $tmpFile = $path . "/" . $name . "." . $env . ".json";
+                    $tmpFile = $path . "/" . $pureName . "." . $env . "." . $fileExt;
+                    //echo $tmpFile . "<br />";
                     if (file_exists($tmpFile)) {
                         $file = $tmpFile;
                         break;
@@ -49,7 +52,8 @@ class Config {
             }
 
             foreach($pathsToCheck as $path) {
-                $tmpFile = $path . "/" . $name . ".json";
+                $tmpFile = $path . "/" . $name;
+                //echo $tmpFile . "<br />";
                 if(file_exists($tmpFile)) {
                     $file = $tmpFile;
                     break;

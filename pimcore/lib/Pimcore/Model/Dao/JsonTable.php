@@ -36,7 +36,7 @@ abstract class JsonTable implements DaoInterface {
      * @param $name
      */
     protected function setFile($name) {
-        $file = Config::locateConfigFile($name);
+        $file = Config::locateConfigFile($name . ".json");
         $this->json = JsonFileTable::get($file);
     }
 }

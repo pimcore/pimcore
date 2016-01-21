@@ -55,6 +55,9 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
                         }
                         // just check if the thumbnail exists -> throws exception otherwise
                         $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
+                        if(!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
+                            throw new \Exception("Thumbnail '" . $thumbnailName . "' file doesn't exists");
+                        }
                     }
 
                     if($asset instanceof Asset\Document) {
