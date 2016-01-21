@@ -211,8 +211,12 @@ class Admin {
             return true;
         }
 
+        if(isset($_REQUEST["extjs3"])) {
+            return false;
+        }
+
         if(isset($_REQUEST["extjs6"])) {
-            return (bool) $_REQUEST["extjs6"];
+            return true;
         }
 
         $config = \Pimcore\Config::getSystemConfig();
