@@ -1,0 +1,12 @@
+{
+	"example-mailing":{
+		"description":"Just a simple example",
+		"document":"67",
+		"class":"person",
+		"objectFilterSQL":"",
+		"personas":"",
+		"testEmailAddress":"pimcore@byom.de",
+		"googleAnalytics":true,
+		"id":"example-mailing"
+	}
+}

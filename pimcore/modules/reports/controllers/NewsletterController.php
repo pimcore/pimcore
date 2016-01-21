@@ -25,18 +25,16 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
 
     public function treeAction () {
 
-        $dir = Newsletter\Config::getWorkingDir();
+        $letters = [];
 
-        $letters = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $letters[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Newsletter\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $letters[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
         $this->_helper->json($letters);
@@ -44,20 +42,19 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
 
     public function addAction () {
 
-        try {
-            Newsletter\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $success = false;
 
-        if(!$alreadyExist) {
+        $letter = Newsletter\Config::getByName($this->getParam("name"));
+
+        if(!$letter) {
             $letter = new Newsletter\Config();
             $letter->setName($this->getParam("name"));
             $letter->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $letter->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $letter->getName()));
     }
 
     public function deleteAction () {
