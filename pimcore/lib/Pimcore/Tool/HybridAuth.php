@@ -33,7 +33,7 @@ class HybridAuth {
      */
     public static function getConfiguration() {
         $config = null;
-        $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/hybridauth.php";
+        $configFile = \Pimcore\Config::locateConfigFile("hybridauth.php");
         if(is_file($configFile) ){
             $config = include($configFile);
             $config["base_url"] = \Pimcore\Tool::getHostUrl() . "/hybridauth/endpoint";
