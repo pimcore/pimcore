@@ -1003,7 +1003,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("thumbnails");
 
-        $alreadyExist = false;
+        $success = false;
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
 
@@ -1011,9 +1011,11 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
             $pipe = new Asset\Image\Thumbnail\Config();
             $pipe->setName($this->getParam("name"));
             $pipe->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $pipe->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $pipe->getName()));
     }
 
     public function thumbnailDeleteAction () {
@@ -1087,43 +1089,38 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("thumbnails");
 
-        $dir = Asset\Video\Thumbnail\Config::getWorkingDir();
+        $thumbnails = [];
 
-        $pipelines = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $pipelines[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $thumbnails[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
-        $this->_helper->json($pipelines);
+        $this->_helper->json($thumbnails);
     }
 
     public function videoThumbnailAddAction () {
 
         $this->checkPermission("thumbnails");
 
-        $alreadyExist = false;
+        $success = false;
 
-        try {
-            Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
 
-        if(!$alreadyExist) {
+        if(!$pipe) {
             $pipe = new Asset\Video\Thumbnail\Config();
             $pipe->setName($this->getParam("name"));
             $pipe->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $pipe->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $pipe->getName()));
     }
 
     public function videoThumbnailDeleteAction () {
