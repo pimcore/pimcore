@@ -22,9 +22,9 @@ class Maintenance extends \Zend_Controller_Plugin_Abstract {
         $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
 
         if(is_file($file)) {
-            $conf = new \Zend_Config_Xml($file);
-            if($conf->sessionId) {
-                if($conf->sessionId != $_COOKIE["pimcore_admin_sid"]) {
+            $conf = @json_decode(file_get_contents($file), true);
+            if(isset($conf["sessionId"])) {
+                if($conf["sessionId"] != $_COOKIE["pimcore_admin_sid"]) {
                     $maintenance = true;
                 }
             } else {
