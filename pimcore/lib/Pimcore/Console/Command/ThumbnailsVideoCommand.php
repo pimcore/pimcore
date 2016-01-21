@@ -48,13 +48,13 @@ class ThumbnailsVideoCommand extends AbstractCommand
         Version::disable();
 
         // get all thumbnails
-        $dir = Asset\Video\Thumbnail\Config::getWorkingDir();
-        $thumbnails = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $thumbnails[] = str_replace(".xml", "", $file);
-            }
+        $thumbnails = [];
+
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $thumbnails[] = $item->getName();
         }
 
         $allowedThumbs = array();
