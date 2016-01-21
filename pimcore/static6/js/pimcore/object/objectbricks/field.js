@@ -263,7 +263,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         this.baseStore[classDefinitionData.classname] = this.availableClasses[classDefinitionData.classname];
 
-        this.classDefinitionsItems.remove(this.classDefinitionsItems.items.get(0));
+        this.classDefinitionsItems.remove(this.classDefinitionsItems.get(0));
         this.classDefinitionsItems.insert(0, this.getAddControl());
         this.classDefinitionsItems.updateLayout();
 
