@@ -94,8 +94,10 @@ pimcore.element.tag.assignment = Class.create({
                                     var record = grid.getStore().getAt(rowIndex);
 
                                     grid.getStore().removeAt(rowIndex);
-                                    var node = tree.getStore().findRecord('id', record.id);
-                                    node.set('checked', false);
+                                    var node = tree.getStore().findNode('id', record.id);
+                                    if(node) {
+                                        node.set('checked', false);
+                                    }
                                     this.removeTagFromElement(record.id);
                                 }.bind(this, tree.getLayout())
                             }]
