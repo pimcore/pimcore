@@ -23,6 +23,7 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Element;
 use Pimcore\Model;
+use Pimcore\Model\Tool\Tag;
 
 class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
@@ -1218,18 +1219,16 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        $dir = Model\Tool\Tag\Config::getWorkingDir();
+        $tags = [];
 
-        $tags = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $tags[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Tag\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $tags[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
         $this->_helper->json($tags);
@@ -1239,20 +1238,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        try {
-            Model\Tool\Tag\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $success = false;
 
-        if(!$alreadyExist) {
+        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
+
+        if(!$tag) {
             $tag = new Model\Tool\Tag\Config();
             $tag->setName($this->getParam("name"));
             $tag->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $tag->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $tag->getName()));
     }
 
     public function tagManagementDeleteAction () {
@@ -1281,7 +1279,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
         $data = \Zend_Json::decode($this->getParam("configuration"));
-        $data = array_htmlspecialchars($data);
 
         $items = array();
         foreach ($data as $key => $value) {
