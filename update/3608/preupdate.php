@@ -56,5 +56,5 @@ foreach ($files as $file) {
 }
 
 // move data
-rename($dir, $legacyFolder . "/imagepipelines");
+rename($dir, $legacyFolder . "/videopipelines");
 
