@@ -35,20 +35,19 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
     public function addAction () {
 
-        try {
-            CustomReport\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $success = false;
 
-        if(!$alreadyExist) {
+        $report = CustomReport\Config::getByName($this->getParam("name"));
+
+        if(!$report) {
             $report = new CustomReport\Config();
             $report->setName($this->getParam("name"));
             $report->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $report->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $report->getName()));
     }
 
     public function deleteAction () {
@@ -111,29 +110,27 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
 
     public function getReportConfigAction() {
-        $dir = CustomReport\Config::getWorkingDir();
 
-        $reports = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $report = CustomReport\Config::getByName($name);
-                $reports[] = array(
-                    "name" => $report->getName(),
-                    "niceName" => $report->getNiceName(),
-                    "iconClass" => $report->getIconClass(),
-                    "group" => $report->getGroup(),
-                    "groupIconClass" => $report->getGroupIconClass(),
-                    "menuShortcut" => $report->getMenuShortcut()
-                );
-            }
+        $reports = [];
+
+        $list = new CustomReport\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $report) {
+            $reports[] = array(
+                "name" => $report->getName(),
+                "niceName" => $report->getNiceName(),
+                "iconClass" => $report->getIconClass(),
+                "group" => $report->getGroup(),
+                "groupIconClass" => $report->getGroupIconClass(),
+                "menuShortcut" => $report->getMenuShortcut()
+            );
         }
 
         $this->_helper->json(array(
-                                  "success" => true,
-                                  "reports" => $reports
-                             ));
+            "success" => true,
+            "reports" => $reports
+        ));
     }
 
     public function dataAction() {

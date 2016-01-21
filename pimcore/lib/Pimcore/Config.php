@@ -35,12 +35,15 @@ class Config {
                 PIMCORE_WEBSITE_PATH . "/config",
                 PIMCORE_CONFIGURATION_DIRECTORY,
             ];
-            $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name . ".json";
+            $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name;
 
             $env = self::getSystemConfig()->general->environment;
             if($env) {
+                $fileExt = File::getFileExtension($name);
+                $pureName = str_replace(".".$fileExt, "", $name);
                 foreach($pathsToCheck as $path) {
-                    $tmpFile = $path . "/" . $name . "." . $env . ".json";
+                    $tmpFile = $path . "/" . $pureName . "." . $env . "." . $fileExt;
+                    //echo $tmpFile . "<br />";
                     if (file_exists($tmpFile)) {
                         $file = $tmpFile;
                         break;
@@ -49,7 +52,8 @@ class Config {
             }
 
             foreach($pathsToCheck as $path) {
-                $tmpFile = $path . "/" . $name . ".json";
+                $tmpFile = $path . "/" . $name;
+                //echo $tmpFile . "<br />";
                 if(file_exists($tmpFile)) {
                     $file = $tmpFile;
                     break;
@@ -225,14 +229,16 @@ class Config {
         if(\Zend_Registry::isRegistered("pimcore_config_model_classmapping")) {
             $config = \Zend_Registry::get("pimcore_config_model_classmapping");
         } else {
-            $mappingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/classmap.xml";
+            $mappingFile = \Pimcore\Config::locateConfigFile("classmap.json");
 
             if(is_file($mappingFile) && is_readable($mappingFile)) {
-                try {
-                    $config = new \Zend_Config_Xml($mappingFile);
+                $configContent = file_get_contents($mappingFile);
+                $config = @json_decode($configContent, true);
+
+                if(is_array($config)) {
                     self::setModelClassMappingConfig($config);
-                } catch (\Exception $e) {
-                    \Logger::error("classmap.xml exists but it is not a valid Zend_Config_Xml configuration. Maybe there is a syntaxerror in the XML.");
+                } else {
+                    \Logger::error("classmap.json exists but it is not a valid JSON configuration. Maybe there is a syntax error in the JSON.");
                 }
             }
         }
@@ -244,7 +250,7 @@ class Config {
      * @param \Zend_Config $config
      * @return void
      */
-    public static function setModelClassMappingConfig (\Zend_Config $config) {
+    public static function setModelClassMappingConfig ($config) {
         \Zend_Registry::set("pimcore_config_model_classmapping", $config);
     }
 }

@@ -126,11 +126,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             bodyCls: "pimcore_droptarget_image pimcore_image_container",
             bodyStyle: "text-align: center; "
         });
-        this.component.add(this.panel);
-
 
         this.panel.on("afterrender", function (el) {
-
             // add drop zone
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
@@ -162,6 +159,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             }
 
         }.bind(this));
+
+        this.component.add(this.panel);
 
         this.component.updateLayout();
 

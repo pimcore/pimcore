@@ -14,7 +14,9 @@
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
 
-class Config {
+use Pimcore\Model;
+
+class Config extends Model\AbstractModel {
 
     /**
      * format of array:
@@ -54,31 +56,41 @@ class Config {
     public $audioBitrate;
 
     /**
-     * @param $name
-     * @return Config
-     * @throws \Exception
+     * @var int
      */
-    public static function getByName ($name) {
-        $pipe = new self();
-        $pipe->setName($name);
-        if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
-            throw new \Exception("video thumbnail definition : " . $name . " does not exist");
-        }
-
-        return $pipe;
-    }
+    public $modificationDate;
 
     /**
-     * @static
-     * @return string
+     * @var int
      */
-    public static function getWorkingDir () {
-        $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/videopipelines";
-        if(!is_dir($dir)) {
-            \Pimcore\File::mkdir($dir);
+    public $creationDate;
+
+    /**
+     * @param $name
+     * @return null|Config
+     */
+    public static function getByName($name) {
+
+        $cacheKey = "videothumb_" . crc32($name);
+
+        try {
+            $thumbnail = \Zend_Registry::get($cacheKey);
+            if(!$thumbnail) {
+                throw new \Exception("Thumbnail in registry is null");
+            }
+        } catch (\Exception $e) {
+
+            try {
+                $thumbnail = new self();
+                $thumbnail->getDao()->getByName($name);
+
+                \Zend_Registry::set($cacheKey, $thumbnail);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
 
-        return $dir;
+        return $thumbnail;
     }
 
     /**
@@ -101,69 +113,6 @@ class Config {
         ));
 
         return $config;
-    }
-
-    /**
-     * @return void
-     */
-    public function save () {
-
-        $arrayConfig = object2array($this);
-        $items = $arrayConfig["items"];
-        $arrayConfig["items"] = array("item" => $items);
-        
-        $config = new \Zend_Config($arrayConfig);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => $this->getConfigFile()
-        ));
-        $writer->write();
-
-        return true;
-    }
-
-    /**
-     * @return void
-     */
-    public function load () {
-
-        $configXml = new \Zend_Config_Xml($this->getConfigFile());
-        $configArray = $configXml->toArray();
-
-        if(array_key_exists("items",$configArray) && is_array($configArray["items"]["item"])) {
-            if(array_key_exists("method",$configArray["items"]["item"])) {
-                $configArray["items"] = array($configArray["items"]["item"]);
-            } else {
-                $configArray["items"] = $configArray["items"]["item"];
-            }
-        } else {
-            $configArray["items"] = array("item" => array());
-        }
-
-        foreach ($configArray as $key => $value) {
-            $setter = "set" . ucfirst($key);
-            if(method_exists($this, $setter)) {
-                $this->$setter($value);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @return void
-     */
-    public function delete() {
-        if(is_file($this->getConfigFile())) {
-            unlink($this->getConfigFile());
-        }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getConfigFile () {
-        return self::getWorkingDir() . "/" . $this->getName() . ".xml";
     }
 
     /**
@@ -315,5 +264,37 @@ class Config {
         }
 
         return $dimensions;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
     }
 }

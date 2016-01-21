@@ -131,7 +131,7 @@ class Admin {
      * @return string
      */
     public static function getMaintenanceModeFile () {
-        return PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.xml";
+        return PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.json";
     }
 
     /**
@@ -149,15 +149,10 @@ class Admin {
             throw new \Exception("It's not possible to activate the maintenance mode without a session-id");
         }
 
-        $config = new \Zend_Config(array(
+        File::put(self::getMaintenanceModeFile(), json_encode([
             "sessionId" => $sessionId
-        ), true);
+        ]));
 
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => self::getMaintenanceModeFile()
-        ));
-        $writer->write();
         @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
     }
 
@@ -177,8 +172,8 @@ class Admin {
         $file = self::getMaintenanceModeFile();
 
         if(is_file($file)) {
-            $conf = new \Zend_Config_Xml($file);
-            if($conf->sessionId) {
+            $conf = @json_decode(file_get_contents($file), true);
+            if(isset($conf["sessionId"])) {
                 return true;
             } else {
                 @unlink($file);

@@ -26,7 +26,8 @@ class Api {
      * @return string
      */
     public static function getPrivateKeyPath() {
-        return PIMCORE_CONFIGURATION_DIRECTORY . "/google-api-private-key.p12";
+        $path = \Pimcore\Config::locateConfigFile("google-api-private-key.p12");
+        return $path;
     }
 
     /**

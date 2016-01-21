@@ -14,6 +14,8 @@ namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Cache;
 use Pimcore\Model\Tool;
+use Pimcore\Model\Tool\Tag;
+use Pimcore\Model\Site;
 
 class TagManagement extends \Zend_Controller_Plugin_Abstract {
 
@@ -29,16 +31,10 @@ class TagManagement extends \Zend_Controller_Plugin_Abstract {
         $cacheKey = "outputfilter_tagmngt";
         $tags = Cache::load($cacheKey);
         if(!is_array($tags)) {
-            $dir = Tool\Tag\Config::getWorkingDir();
 
-            $tags = array();
-            $files = scandir($dir);
-            foreach ($files as $file) {
-                if(strpos($file, ".xml")) {
-                    $name = str_replace(".xml", "", $file);
-                    $tags[] = Tool\Tag\Config::getByName($name);
-                }
-            }
+            $list = new Tag\Config\Listing();
+            $tags = $list->load();
+
             Cache::save($tags, $cacheKey, array("tagmanagement"), null, 100);
         }
 
@@ -58,11 +54,11 @@ class TagManagement extends \Zend_Controller_Plugin_Abstract {
             $textPattern = $tag->getTextPattern();
 
             // site check
-            if(\Site::isSiteRequest() && $tag->getSiteId()) {
-                if(\Site::getCurrentSite()->getId() != $tag->getSiteId()) {
+            if(Site::isSiteRequest() && $tag->getSiteId()) {
+                if(Site::getCurrentSite()->getId() != $tag->getSiteId()) {
                     continue;
                 }
-            } else if (!\Site::isSiteRequest() && $tag->getSiteId()) {
+            } else if (!Site::isSiteRequest() && $tag->getSiteId()) {
                 continue;
             }
 

@@ -180,6 +180,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
                     if (\Pimcore\Tool\Admin::isExtJS6() && is_dir_empty($file)) {
                         $itemConfig["loaded"] = true;
                     }
+                    $itemConfig["expandable"] = true;
                 } else if (is_file($file)) {
                     $itemConfig["type"] = "file";
                 }

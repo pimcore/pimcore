@@ -23,6 +23,7 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Element;
 use Pimcore\Model;
+use Pimcore\Model\Tool\Tag;
 
 class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
@@ -984,43 +985,38 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("thumbnails");
 
-        $dir = Asset\Image\Thumbnail\Config::getWorkingDir();
+        $thumbnails = [];
 
-        $pipelines = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $pipelines[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Asset\Image\Thumbnail\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $thumbnails[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
-        $this->_helper->json($pipelines);
+        $this->_helper->json($thumbnails);
     }
 
     public function thumbnailAddAction () {
 
         $this->checkPermission("thumbnails");
 
-        $alreadyExist = false;
+        $success = false;
 
-        try {
-            Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
 
-        if(!$alreadyExist) {
+        if(!$pipe) {
             $pipe = new Asset\Image\Thumbnail\Config();
             $pipe->setName($this->getParam("name"));
             $pipe->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $pipe->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $pipe->getName()));
     }
 
     public function thumbnailDeleteAction () {
@@ -1039,7 +1035,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         $this->checkPermission("thumbnails");
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
-        //$pipe->delete();
 
         $this->_helper->json($pipe);
     }
@@ -1095,43 +1090,38 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("thumbnails");
 
-        $dir = Asset\Video\Thumbnail\Config::getWorkingDir();
+        $thumbnails = [];
 
-        $pipelines = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $pipelines[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $thumbnails[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
-        $this->_helper->json($pipelines);
+        $this->_helper->json($thumbnails);
     }
 
     public function videoThumbnailAddAction () {
 
         $this->checkPermission("thumbnails");
 
-        $alreadyExist = false;
+        $success = false;
 
-        try {
-            Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
 
-        if(!$alreadyExist) {
+        if(!$pipe) {
             $pipe = new Asset\Video\Thumbnail\Config();
             $pipe->setName($this->getParam("name"));
             $pipe->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $pipe->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $pipe->getName()));
     }
 
     public function videoThumbnailDeleteAction () {
@@ -1229,18 +1219,16 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        $dir = Model\Tool\Tag\Config::getWorkingDir();
+        $tags = [];
 
-        $tags = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $tags[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $list = new Tag\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $tags[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
         $this->_helper->json($tags);
@@ -1250,20 +1238,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $this->checkPermission("tag_snippet_management");
 
-        try {
-            Model\Tool\Tag\Config::getByName($this->getParam("name"));
-            $alreadyExist = true;
-        } catch (\Exception $e) {
-            $alreadyExist = false;
-        }
+        $success = false;
 
-        if(!$alreadyExist) {
+        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
+
+        if(!$tag) {
             $tag = new Model\Tool\Tag\Config();
             $tag->setName($this->getParam("name"));
             $tag->save();
+
+            $success = true;
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist, "id" => $tag->getName()));
+        $this->_helper->json(array("success" => $success, "id" => $tag->getName()));
     }
 
     public function tagManagementDeleteAction () {
@@ -1292,7 +1279,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
         $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
         $data = \Zend_Json::decode($this->getParam("configuration"));
-        $data = array_htmlspecialchars($data);
 
         $items = array();
         foreach ($data as $key => $value) {

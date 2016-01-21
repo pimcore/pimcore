@@ -15,8 +15,9 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Pimcore\Tool\Serialize;
+use Pimcore\Model;
 
-class Config {
+class Config extends Model\AbstractModel {
 
     /**
      * format of array:
@@ -66,6 +67,16 @@ class Config {
     public $highResolution;
 
     /**
+     * @var int
+     */
+    public $modificationDate;
+
+    /**
+     * @var int
+     */
+    public $creationDate;
+
+    /**
      * @var string
      */
     public $filenameSuffix;
@@ -103,47 +114,39 @@ class Config {
     }
 
     /**
-     * @static
-     * @param  $name
-     * @return self
+     * @param $name
+     * @return null|Config
      */
-    public static function getByName ($name) {
+    public static function getByName($name) {
 
         $cacheKey = "imagethumb_" . crc32($name);
 
-        if(\Zend_Registry::isRegistered($cacheKey)) {
-            $pipe = \Zend_Registry::get($cacheKey);
-            $pipe->setName($name); // set the name again because in documents there's an automated prefixing logic
-        } else {
-            $pipe = new self();
-            $pipe->setName($name);
-            if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
-                throw new \Exception("thumbnail definition : " . $name . " does not exist");
+        try {
+            $thumbnail = \Zend_Registry::get($cacheKey);
+            $thumbnail->setName($name);
+            if(!$thumbnail) {
+                throw new \Exception("Thumbnail in registry is null");
             }
+        } catch (\Exception $e) {
 
-            \Zend_Registry::set($cacheKey, $pipe);
+            try {
+                $thumbnail = new self();
+                $thumbnail->setName($name);
+                $thumbnail->getDao()->getByName();
+
+                \Zend_Registry::set($cacheKey, $thumbnail);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
 
         // only return clones of configs, this is necessary since we cache the configs in the registry (see above)
         // sometimes, e.g. when using the cropping tools, the thumbnail configuration is modified on-the-fly, since
         // pass-by-reference this modifications would then go to the cache/registry (singleton), by cloning the config
         // we can bypass this problem in an elegant way without parsing the XML config again and again
-        $clone = clone $pipe;
+        $clone = clone $thumbnail;
 
         return $clone;
-    }
-
-    /**
-     * @static
-     * @return string
-     */
-    public static function getWorkingDir () {
-        $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/imagepipelines";
-        if(!is_dir($dir)) {
-            \Pimcore\File::mkdir($dir);
-        }
-
-        return $dir;
     }
 
     public static function getPreviewConfig () {
@@ -169,107 +172,6 @@ class Config {
         $items = $arrayConfig["items"];
         $arrayConfig["items"] = $items;
         return $arrayConfig;
-    }
-
-
-    /**
-     * @return void
-     */
-    public function save () {
-
-        $arrayConfig = object2array($this);
-
-        $items = $arrayConfig["items"];
-        $arrayConfig["items"] = array("item" => $items);
-
-        if(!empty($this->medias)) {
-            $medias = [];
-            foreach ($arrayConfig["medias"] as $name => $items) {
-                $medias[] = array(
-                    "name" => $name,
-                    "items" => array("item" => $items)
-                );
-            }
-            $arrayConfig["medias"] = array("media" => $medias);
-        } else {
-            // do not include the medias node if empty
-            unset($arrayConfig["medias"]);
-        }
-
-        $config = new \Zend_Config($arrayConfig);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => $this->getConfigFile()
-        ));
-        $writer->write();
-
-        return true;
-    }
-
-    /**
-     * @return void
-     */
-    public function load () {
-
-        $configXml = new \Zend_Config_Xml($this->getConfigFile());
-        $configArray = $configXml->toArray();
-
-        if(array_key_exists("items",$configArray) && is_array($configArray["items"]["item"])) {
-            if(array_key_exists("method",$configArray["items"]["item"])) {
-                $configArray["items"] = array($configArray["items"]["item"]);
-            } else {
-                $configArray["items"] = $configArray["items"]["item"];
-            }
-        } else {
-            $configArray["items"] = array("item" => array());
-        }
-
-        $medias = [];
-        if(array_key_exists("medias", $configArray) && !empty($configArray["medias"]) && is_array($configArray["medias"]["media"])) {
-
-            if(array_key_exists("name", $configArray["medias"]["media"])) {
-                $configArray["medias"]["media"] = array($configArray["medias"]["media"]);
-            }
-
-            foreach ($configArray["medias"]["media"] as $media) {
-                if(array_key_exists("items",$media) && is_array($media["items"]["item"])) {
-                    if(array_key_exists("method",$media["items"]["item"])) {
-                        $medias[$media["name"]] = array($media["items"]["item"]);
-                    } else {
-                        $medias[$media["name"]] = $media["items"]["item"];
-                    }
-                } else {
-                    $medias[$media["name"]] = array("item" => array());
-                }
-            }
-        }
-
-        $configArray["medias"] = $medias;
-
-        foreach ($configArray as $key => $value) {
-            $setter = "set" . ucfirst($key);
-            if(method_exists($this, $setter)) {
-                $this->$setter($value);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @return void
-     */
-    public function delete() {
-        if(is_file($this->getConfigFile())) {
-            unlink($this->getConfigFile());
-        }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getConfigFile () {
-        return self::getWorkingDir() . "/" . $this->getName() . ".xml";
     }
 
     /**
@@ -688,5 +590,37 @@ class Config {
     public function getColorspace()
     {
         // no functionality, just for compatibility reasons
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
     }
 }

@@ -119,25 +119,28 @@ class Cache {
 
         if (!self::$instance instanceof \Zend_Cache_Core) {
             // check for custom cache configuration
-            $customCacheFile = PIMCORE_CONFIGURATION_DIRECTORY . "/cache.xml";
-            if (is_file($customCacheFile)) {
+            $customConfigFile = \Pimcore\Config::locateConfigFile("cache.json");
+            if (is_file($customConfigFile)) {
                 $config = self::getDefaultConfig();
-                try {
-                    $conf = new \Zend_Config_Xml($customCacheFile);
 
-                    if ($conf->frontend) {
-                        $config["frontendType"] = (string) $conf->frontend->type;
-                        $config["customFrontendNaming"] = (bool) $conf->frontend->custom;
-                        if ($conf->frontend->options && method_exists($conf->frontend->options,"toArray")) {
-                            $config["frontendConfig"] = $conf->frontend->options->toArray();
+                $contents = @file_get_contents($customConfigFile);
+                $conf = @json_decode($contents, true);
+
+                if(is_array($conf)) {
+
+                    if (isset($conf["frontend"])) {
+                        $config["frontendType"] = $conf["frontend"]["type"];
+                        $config["customFrontendNaming"] = $conf["frontend"]["custom"];
+                        if (isset($conf["frontend"]["options"])) {
+                            $config["frontendConfig"] = $conf["frontend"]["options"];
                         }
                     }
 
-                    if ($conf->backend) {
-                        $config["backendType"] = (string) $conf->backend->type;
-                        $config["customBackendNaming"] = (bool) $conf->backend->custom;
-                        if ($conf->backend->options && method_exists($conf->backend->options,"toArray")) {
-                            $config["backendConfig"] = $conf->backend->options->toArray();
+                    if (isset($conf["backend"])) {
+                        $config["backendType"] = $conf["backend"]["type"];
+                        $config["customBackendNaming"] = $conf["backend"]["custom"];
+                        if (isset($conf["backend"]["options"])) {
+                            $config["backendConfig"] = $conf["backend"]["options"];
                         }
                     }
 
@@ -154,9 +157,8 @@ class Cache {
                         \Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
                     }
 
-                } catch (\Exception $e) {
-                    \Logger::crit($e);
-                    \Logger::crit("Error while reading cache configuration, using the default file backend");
+                } else {
+                    \Logger::crit("Error while reading cache configuration, using the default database backend");
                 }
             }
         }

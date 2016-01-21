@@ -299,6 +299,10 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
             $id = $this->getParam("id");
             if ($id) {
                 $config = Asset\Image\Thumbnail\Config::getByName($id);
+                if(!$config instanceof Asset\Image\Thumbnail\Config) {
+                    throw new \Exception("Thumbnail '" . $id . "' file doesn't exists");
+                }
+
                 $this->encoder->encode(array("success" => true, "data" => $config->getForWebserviceExport()));
                 return;
             }
@@ -314,21 +318,20 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      */
     public function imageThumbnailsAction () {
         $this->checkUserPermission("thumbnails");
-        $dir = Asset\Image\Thumbnail\Config::getWorkingDir();
 
-        $pipelines = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $pipelines[] = array(
-                    "id" => $name,
-                    "text" => $name
-                );
-            }
+        $thumbnails = [];
+
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+        $items = $list->load();
+
+        foreach($items as $item) {
+            $thumbnails[] = array(
+                "id" => $item->getName(),
+                "text" => $item->getName()
+            );
         }
 
-        $this->encoder->encode(array("success" => true, "data" => $pipelines));
+        $this->encoder->encode(array("success" => true, "data" => $thumbnails));
     }
 
 

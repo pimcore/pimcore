@@ -81,13 +81,7 @@ class Video extends Model\Asset {
         $thumbnail = null;
 
         if (is_string($config)) {
-            try {
-                $thumbnail = Video\Thumbnail\Config::getByName($config);
-            }
-            catch (\Exception $e) {
-                \Logger::error("requested video-thumbnail " . $config . " is not defined");
-                return null;
-            }
+            $thumbnail = Video\Thumbnail\Config::getByName($config);
         } else if ($config instanceof Video\Thumbnail\Config) {
             $thumbnail = $config;
         }

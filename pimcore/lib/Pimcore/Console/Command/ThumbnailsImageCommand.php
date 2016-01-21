@@ -47,14 +47,11 @@ class ThumbnailsImageCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // get all thumbnails
-        $dir = Asset\Image\Thumbnail\Config::getWorkingDir();
-        $thumbnails = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $thumbnails[] = str_replace(".xml", "", $file);
-            }
+        $list = new Asset\Image\Thumbnail\Config\Listing();
+        $items = $list->load();
+        $thumbnails = [];
+        foreach($items as $item) {
+            $thumbnails[] = $item->getName();
         }
 
         $allowedThumbs = array();
