@@ -98,7 +98,7 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
 }
 
 // do some general stuff
-$websiteStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/startup.php";
+$websiteStartup = \Pimcore\Config::locateConfigFile("startup.php");
 if(@is_file($websiteStartup)) {
     include_once($websiteStartup);
 }
