@@ -139,7 +139,7 @@ class Cache {
                     if (isset($conf["backend"])) {
                         $config["backendType"] = $conf["backend"]["type"];
                         $config["customBackendNaming"] = $conf["backend"]["custom"];
-                        if (isset($conf["frontend"]["options"])) {
+                        if (isset($conf["backend"]["options"])) {
                             $config["backendConfig"] = $conf["backend"]["options"];
                         }
                     }
