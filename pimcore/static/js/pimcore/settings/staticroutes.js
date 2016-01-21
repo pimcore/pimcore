@@ -121,13 +121,6 @@ pimcore.settings.staticroutes = Class.create({
             }
         });
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            store:this.store,
-            displayInfo:true,
-            displayMsg:'{0} - {1} / {2}',
-            emptyMsg:t("no_items_found")
-        });
-
         var typesColumns = [
             {header:t("name"), width:50, sortable:true, dataIndex:'name',
                 editor:new Ext.form.TextField({})},
@@ -258,7 +251,6 @@ pimcore.settings.staticroutes = Class.create({
             stripeRows:true,
             columns:typesColumns,
             sm:new Ext.grid.RowSelectionModel({singleSelect:true}),
-            bbar:this.pagingtoolbar,
             tbar:[
                 {
                     text:t('add'),
