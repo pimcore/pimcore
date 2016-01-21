@@ -87,11 +87,15 @@ class Predefined extends Model\AbstractModel {
      * @return self
      */
     public static function getById($id) {
-        $metadata = new self();
-        $metadata->setId($id);
-        $metadata->getDao()->getById();
+        try {
+            $metadata = new self();
+            $metadata->setId($id);
+            $metadata->getDao()->getById();
 
-        return $metadata;
+            return $metadata;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -100,11 +104,15 @@ class Predefined extends Model\AbstractModel {
      */
     public static function getByName($name, $language = "") {
 
-        $metadata = new self();
-        $metadata->setName($name);
-        $metadata->getDao()->getByNameAndLanguage($name, $language);
+        try {
+            $metadata = new self();
+            $metadata->setName($name);
+            $metadata->getDao()->getByNameAndLanguage($name, $language);
 
-        return $metadata;
+            return $metadata;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
