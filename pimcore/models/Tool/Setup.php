@@ -14,6 +14,7 @@
 
 namespace Pimcore\Model\Tool;
 
+use Pimcore\File;
 use Pimcore\Model;
 
 class Setup extends Model\AbstractModel {
@@ -109,13 +110,9 @@ class Setup extends Model\AbstractModel {
         foreach($varFolders as $folder) {
             \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
         }
-		
-        $config = new \Zend_Config($settings, true);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => PIMCORE_CONFIGURATION_SYSTEM
-        ));
-        $writer->write();
+
+        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        File::put($configFile, to_php_data_file_format($settings));
     }
 
     /**

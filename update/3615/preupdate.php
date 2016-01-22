@@ -1,15 +1,32 @@
 <?php
 
-$extensionFile = \Pimcore\Config::locateConfigFile("extensions.xml");
+$files = ["extensions","customviews","reports","system"];
 
-if(file_exists($extensionFile)) {
-    $phpFile = \Pimcore\Config::locateConfigFile("extensions.php");
+foreach($files as $fileName) {
+    $xmlFile = \Pimcore\Config::locateConfigFile($fileName . ".xml");
 
-    $config = new \Zend_Config_Xml(PIMCORE_CONFIGURATION_DIRECTORY . "/extensions.xml", null, array("allowModifications" => true));
-    $contents = $config->toArray();
+    if (file_exists($xmlFile)) {
+        $phpFile = \Pimcore\Config::locateConfigFile($fileName . ".php");
 
-    $contents = var_export_pretty($contents);
-    $phpContents = "<?php \n\nreturn " . $contents . ";\n";
+        $config = new \Zend_Config_Xml($xmlFile);
+        $contents = $config->toArray();
 
-    \Pimcore\File::put($phpFile, $phpContents);
+        if($fileName == "customviews") {
+            $cvData = [];
+            if (isset($contents["views"]["view"][0])) {
+                $cvData = $contents["views"]["view"];
+            } else {
+                $cvData[] = $contents["views"]["view"];
+            }
+
+            $contents = [
+                "views" => $cvData
+            ];
+        }
+
+        $contents = var_export_pretty($contents);
+        $phpContents = "<?php \n\nreturn " . $contents . ";\n";
+
+        \Pimcore\File::put($phpFile, $phpContents);
+    }
 }

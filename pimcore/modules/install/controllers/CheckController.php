@@ -18,7 +18,7 @@ class Install_CheckController extends \Pimcore\Controller\Action {
     public function init() {
         parent::init();
 
-        if (is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
+        if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
             // session authentication, only possible if user is logged in
             $user = \Pimcore\Tool\Authentication::authenticateSession();
             if(!$user instanceof User) {

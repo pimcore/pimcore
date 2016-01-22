@@ -27,7 +27,11 @@ class ExtensionManager {
         if(!self::$config) {
             try {
                 $file = \Pimcore\Config::locateConfigFile("extensions.php");
-                self::$config = new \Zend_Config(include($file), true);
+                if(file_exists($file)) {
+                    self::$config = new \Zend_Config(include($file), true);
+                } else {
+                    throw new \Exception($file . " doesn't exist");
+                }
             }
             catch (\Exception $e) {
                 self::$config = new \Zend_Config(array(), true);

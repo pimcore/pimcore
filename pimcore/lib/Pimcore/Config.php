@@ -24,10 +24,11 @@ class Config {
     protected static $configFileCache = [];
 
     /**
-     * @param string $name
-     * @return string
+     * @param $name
+     * @param bool $useEnvironment
+     * @return mixed
      */
-    public static function locateConfigFile($name) {
+    public static function locateConfigFile($name, $useEnvironment = true) {
 
         if(!isset(self::$configFileCache[$name])) {
 
@@ -37,16 +38,18 @@ class Config {
             ];
             $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name;
 
-            $env = self::getSystemConfig()->general->environment;
-            if($env) {
-                $fileExt = File::getFileExtension($name);
-                $pureName = str_replace(".".$fileExt, "", $name);
-                foreach($pathsToCheck as $path) {
-                    $tmpFile = $path . "/" . $pureName . "." . $env . "." . $fileExt;
-                    //echo $tmpFile . "<br />";
-                    if (file_exists($tmpFile)) {
-                        $file = $tmpFile;
-                        break;
+            if($useEnvironment) {
+                $env = self::getSystemConfig()->general->environment;
+                if ($env) {
+                    $fileExt = File::getFileExtension($name);
+                    $pureName = str_replace("." . $fileExt, "", $name);
+                    foreach ($pathsToCheck as $path) {
+                        $tmpFile = $path . "/" . $pureName . "." . $env . "." . $fileExt;
+                        //echo $tmpFile . "<br />";
+                        if (file_exists($tmpFile)) {
+                            $file = $tmpFile;
+                            break;
+                        }
                     }
                 }
             }
@@ -79,12 +82,18 @@ class Config {
             $config = \Zend_Registry::get("pimcore_config_system");
         } else  {
             try {
-                $config = new \Zend_Config_Xml(PIMCORE_CONFIGURATION_SYSTEM);
+                $file = self::locateConfigFile("system.php", false);
+                if(file_exists($file)) {
+                    $config = new \Zend_Config(include($file));
+                } else {
+                    throw new \Exception($file . " doesn't exist");
+                }
                 self::setSystemConfig($config);
             } catch (\Exception $e) {
-                \Logger::emergency("Cannot find system configuration, should be located at: " . PIMCORE_CONFIGURATION_SYSTEM);
-                if(is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
-                    $m = "Your system.xml located at " . PIMCORE_CONFIGURATION_SYSTEM . " is invalid, please check and correct it manually!";
+                $file = self::locateConfigFile("system.php", false);
+                \Logger::emergency("Cannot find system configuration, should be located at: " . $file);
+                if(is_file($file)) {
+                    $m = "Your system.php located at " . $file . " is invalid, please check and correct it manually!";
                     Tool::exitWithError($m);
                 }
             }
@@ -192,11 +201,11 @@ class Config {
             $config = \Zend_Registry::get("pimcore_config_report");
         } else {
             try {
-                $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml";
-                if(file_exists($configFile)) {
-                    $config = new \Zend_Config_Xml($configFile);
+                $file = self::locateConfigFile("reports.php", false);
+                if(file_exists($file)) {
+                    $config = new \Zend_Config(include($file));
                 } else {
-                    throw new \Exception("Config-file " . $configFile . " doesn't exist.");
+                    throw new \Exception("Config-file " . $file . " doesn't exist.");
                 }
             }
             catch (\Exception $e) {
