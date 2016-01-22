@@ -476,3 +476,14 @@ function var_export_pretty($var, $indent="") {
             return var_export($var, TRUE);
     }
 }
+
+/**
+ * @param $contents
+ * @return string
+ */
+function to_php_data_file_format($contents) {
+    $contents = var_export_pretty($contents);
+    $contents = "<?php \n\nreturn " . $contents . ";";
+
+    return $contents;
+}

@@ -179,8 +179,7 @@ class PhpArrayFileTable
      *
      */
     protected function save() {
-        $contents = var_export_pretty($this->data);
-        $contents = "<?php \n\nreturn " . $contents . ";";
+        $contents = to_php_data_file_format($this->data);
         File::put($this->filePath, $contents);
     }
 }
