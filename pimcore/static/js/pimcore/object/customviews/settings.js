@@ -163,7 +163,7 @@ pimcore.object.customviews.settings = Class.create({
                 {
                     xtype: "multiselect",
                     fieldLabel: t("allowed_classes"),
-                    name: "classes_" + this.entryCount,
+                    name: "classes_" + this.entryCount + "[]",
                     width: 'auto',
                     store: pimcore.globalmanager.get("object_types_store"),
                     editable: false,
