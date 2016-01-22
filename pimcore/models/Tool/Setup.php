@@ -31,7 +31,7 @@ class Setup extends Model\AbstractModel {
 		$configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.template.php";
 		if(file_exists($configTemplatePath)) {
 			try {
-				$configTemplate = new \Zend_Config_Xml($configTemplatePath);
+				$configTemplate = new \Zend_Config(include($configTemplatePath));
 				if($configTemplate->general) { // check if the template contains a valid configuration
 					$settings = $configTemplate->toArray();
 

@@ -71,7 +71,7 @@ class Config {
 
     /**
      * @param bool $forceReload
-     * @return mixed|null|\Zend_Config_Xml
+     * @return mixed|null|\Zend_Config
      * @throws \Zend_Exception
      */
     public static function getSystemConfig ($forceReload = false) {
