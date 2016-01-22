@@ -571,21 +571,6 @@ class Staticroute extends AbstractModel {
             return $params;
         }
     }
-    
-    
-    /**
-     * @return void
-     */
-    public function clearDependentCache() {
-        
-        // this is mostly called in Staticroute\Dao not here
-        try {
-            \Pimcore\Cache::clearTag("staticroute");
-        }
-        catch (\Exception $e) {
-            \Logger::crit($e);
-        }
-    }
 
     /**
      * @param $modificationDate

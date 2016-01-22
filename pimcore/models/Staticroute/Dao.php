@@ -111,8 +111,6 @@ class Dao extends Model\Dao\PhpArrayTable {
         if(!$this->model->getId()) {
             $this->model->setId($this->db->getLastInsertId());
         }
-
-        $this->model->clearDependentCache();
     }
 
     /**
@@ -122,6 +120,5 @@ class Dao extends Model\Dao\PhpArrayTable {
      */
     public function delete() {
         $this->db->delete($this->model->getId());
-        $this->model->clearDependentCache();
     }
 }
