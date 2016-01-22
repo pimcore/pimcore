@@ -16,7 +16,7 @@ namespace Pimcore\Model\Staticroute;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\JsonTable {
+class Dao extends Model\Dao\PhpArrayTable {
 
     /**
      *
@@ -37,7 +37,7 @@ class Dao extends Model\Dao\JsonTable {
             $this->model->setId($id);
         }
 
-        $data = $this->json->getById($this->model->getId());
+        $data = $this->db->getById($this->model->getId());
 
         if(isset($data["id"])) {
             $this->assignVariablesToModel($data);
@@ -59,7 +59,7 @@ class Dao extends Model\Dao\JsonTable {
 
         $name = $this->model->getName();
 
-        $data = $this->json->fetchAll(function ($row) use ($name, $siteId) {
+        $data = $this->db->fetchAll(function ($row) use ($name, $siteId) {
             if($row["name"] == $name) {
                 if(empty($row["siteId"]) || $row["siteId"] == $siteId) {
                     return true;
@@ -102,14 +102,14 @@ class Dao extends Model\Dao\JsonTable {
                     $data[$key] = $value;
                 }
             }
-            $this->json->insertOrUpdate($data, $this->model->getId());
+            $this->db->insertOrUpdate($data, $this->model->getId());
         }
         catch (\Exception $e) {
             throw $e;
         }
 
         if(!$this->model->getId()) {
-            $this->model->setId($this->json->getLastInsertId());
+            $this->model->setId($this->db->getLastInsertId());
         }
 
         $this->model->clearDependentCache();
@@ -121,7 +121,7 @@ class Dao extends Model\Dao\JsonTable {
      * @return void
      */
     public function delete() {
-        $this->json->delete($this->model->getId());
+        $this->db->delete($this->model->getId());
         $this->model->clearDependentCache();
     }
 }

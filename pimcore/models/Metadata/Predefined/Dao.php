@@ -16,7 +16,7 @@ namespace Pimcore\Model\Metadata\Predefined;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\JsonTable {
+class Dao extends Model\Dao\PhpArrayTable {
 
     /**
      *
@@ -37,7 +37,7 @@ class Dao extends Model\Dao\JsonTable {
             $this->model->setId($id);
         }
 
-        $data = $this->json->getById($this->model->getId());
+        $data = $this->db->getById($this->model->getId());
 
         if(isset($data["id"])) {
             $this->assignVariablesToModel($data);
@@ -54,7 +54,7 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function getByNameAndLanguage($name = null, $language = null) {
 
-        $data = $this->json->fetchAll(function ($row) use ($name, $language) {
+        $data = $this->db->fetchAll(function ($row) use ($name, $language) {
             $return = true;
             if($name && $row["name"] != $name) {
                 $return = false;
@@ -94,14 +94,14 @@ class Dao extends Model\Dao\JsonTable {
                     $data[$key] = $value;
                 }
             }
-            $this->json->insertOrUpdate($data, $this->model->getId());
+            $this->db->insertOrUpdate($data, $this->model->getId());
         }
         catch (\Exception $e) {
             throw $e;
         }
 
         if(!$this->model->getId()) {
-            $this->model->setId($this->json->getLastInsertId());
+            $this->model->setId($this->db->getLastInsertId());
         }
     }
 
@@ -111,6 +111,6 @@ class Dao extends Model\Dao\JsonTable {
      * @return void
      */
     public function delete() {
-        $this->json->delete($this->model->getId());
+        $this->db->delete($this->model->getId());
     }
 }

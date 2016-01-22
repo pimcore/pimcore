@@ -16,7 +16,7 @@ namespace Pimcore\Model\Staticroute\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\JsonTable {
+class Dao extends Model\Dao\PhpArrayTable {
 
     /**
      *
@@ -34,7 +34,7 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function load() {
 
-        $routesData = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $routesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         $routes = array();
         foreach ($routesData as $routeData) {
@@ -50,7 +50,7 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function getTotalCount() {
 
-        $data = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
         $amount = count($data);
 
         return $amount;

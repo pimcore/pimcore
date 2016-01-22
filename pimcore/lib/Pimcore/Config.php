@@ -229,11 +229,10 @@ class Config {
         if(\Zend_Registry::isRegistered("pimcore_config_model_classmapping")) {
             $config = \Zend_Registry::get("pimcore_config_model_classmapping");
         } else {
-            $mappingFile = \Pimcore\Config::locateConfigFile("classmap.json");
+            $mappingFile = \Pimcore\Config::locateConfigFile("classmap.php");
 
-            if(is_file($mappingFile) && is_readable($mappingFile)) {
-                $configContent = file_get_contents($mappingFile);
-                $config = @json_decode($configContent, true);
+            if(is_file($mappingFile)) {
+                $config = include($mappingFile);
 
                 if(is_array($config)) {
                     self::setModelClassMappingConfig($config);

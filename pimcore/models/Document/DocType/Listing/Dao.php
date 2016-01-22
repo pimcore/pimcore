@@ -16,7 +16,7 @@ namespace Pimcore\Model\Document\DocType\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\JsonTable {
+class Dao extends Model\Dao\PhpArrayTable {
 
     /**
      *
@@ -34,7 +34,7 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function load() {
 
-        $docTypesData = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $docTypesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         $docTypes = array();
         foreach ($docTypesData as $docTypeData) {
@@ -50,7 +50,7 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function getTotalCount() {
 
-        $data = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
         $amount = count($data);
 
         return $amount;

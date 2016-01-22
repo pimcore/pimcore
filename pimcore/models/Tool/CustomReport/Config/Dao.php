@@ -16,7 +16,7 @@ namespace Pimcore\Model\Tool\CustomReport\Config;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\JsonTable {
+class Dao extends Model\Dao\PhpArrayTable {
 
     /**
      *
@@ -37,7 +37,7 @@ class Dao extends Model\Dao\JsonTable {
             $this->model->setName($id);
         }
 
-        $data = $this->json->getById($this->model->getName());
+        $data = $this->db->getById($this->model->getName());
 
         if(isset($data["id"])) {
             $this->assignVariablesToModel($data);
@@ -70,7 +70,7 @@ class Dao extends Model\Dao\JsonTable {
                     $data[$key] = $value;
                 }
             }
-            $this->json->insertOrUpdate($data, $this->model->getName());
+            $this->db->insertOrUpdate($data, $this->model->getName());
         }
         catch (\Exception $e) {
             throw $e;
@@ -83,6 +83,6 @@ class Dao extends Model\Dao\JsonTable {
      * @return void
      */
     public function delete() {
-        $this->json->delete($this->model->getName());
+        $this->db->delete($this->model->getName());
     }
 }

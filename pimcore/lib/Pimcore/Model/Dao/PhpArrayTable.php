@@ -14,16 +14,16 @@ namespace Pimcore\Model\Dao;
 
 use Pimcore\Cache;
 use Pimcore\Config;
-use \Pimcore\Db\JsonFileTable;
+use \Pimcore\Db\PhpArrayFileTable;
 
-abstract class JsonTable implements DaoInterface {
+abstract class PhpArrayTable implements DaoInterface {
 
     use DaoTrait;
 
     /**
-     * @var JsonFileTable
+     * @var PhpArrayFileTable
      */
-    protected $json;
+    protected $db;
 
     /**
      *
@@ -36,7 +36,7 @@ abstract class JsonTable implements DaoInterface {
      * @param $name
      */
     protected function setFile($name) {
-        $file = Config::locateConfigFile($name . ".json");
-        $this->json = JsonFileTable::get($file);
+        $file = Config::locateConfigFile($name . ".php");
+        $this->db = PhpArrayFileTable::get($file);
     }
 }
