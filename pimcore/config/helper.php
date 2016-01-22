@@ -483,7 +483,7 @@ function var_export_pretty($var, $indent="") {
  */
 function to_php_data_file_format($contents) {
     $contents = var_export_pretty($contents);
-    $contents = "<?php \n\nreturn " . $contents . ";";
+    $contents = "<?php \n\nreturn " . $contents . ";\n";
 
     return $contents;
 }
