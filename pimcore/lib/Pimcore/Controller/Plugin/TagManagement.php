@@ -28,20 +28,12 @@ class TagManagement extends \Zend_Controller_Plugin_Abstract {
             return;
         }
 
-        $cacheKey = "outputfilter_tagmngt";
-        $tags = Cache::load($cacheKey);
-        if(!is_array($tags)) {
-
-            $list = new Tag\Config\Listing();
-            $tags = $list->load();
-
-            Cache::save($tags, $cacheKey, array("tagmanagement"), null, 100);
-        }
+        $list = new Tag\Config\Listing();
+        $tags = $list->load();
 
         if(empty($tags)) {
             return;
         }
-
 
         $html = null;
         $body = $this->getResponse()->getBody();
