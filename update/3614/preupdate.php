@@ -12,7 +12,7 @@ foreach($configNames as $configName) {
         $contents = file_get_contents($jsonFile);
         $contents = json_decode($contents, true);
         $contents = var_export_pretty($contents);
-        $phpContents = "<?php \n\nreturn " . $contents . ";";
+        $phpContents = "<?php \n\nreturn " . $contents . ";\n";
 
         \Pimcore\File::put($phpFile, $phpContents);
     }

@@ -9,7 +9,7 @@ if(file_exists($extensionFile)) {
     $contents = $config->toArray();
 
     $contents = var_export_pretty($contents);
-    $phpContents = "<?php \n\nreturn " . $contents . ";";
+    $phpContents = "<?php \n\nreturn " . $contents . ";\n";
 
     \Pimcore\File::put($phpFile, $phpContents);
 }
