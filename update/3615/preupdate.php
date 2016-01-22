@@ -8,25 +8,38 @@ foreach($files as $fileName) {
     if (file_exists($xmlFile)) {
         $phpFile = \Pimcore\Config::locateConfigFile($fileName . ".php");
 
-        $config = new \Zend_Config_Xml($xmlFile);
-        $contents = $config->toArray();
+        try {
+            $config = new \Zend_Config_Xml($xmlFile);
+            $contents = $config->toArray();
 
-        if($fileName == "customviews") {
-            $cvData = [];
-            if (isset($contents["views"]["view"][0])) {
-                $cvData = $contents["views"]["view"];
-            } else {
-                $cvData[] = $contents["views"]["view"];
+            if(!is_writable(dirname($phpFile))) {
+                throw new \Exception($phpFile . " is not writable");
             }
 
-            $contents = [
-                "views" => $cvData
-            ];
+            if ($fileName == "customviews") {
+                $cvData = [];
+                if (isset($contents["views"]["view"][0])) {
+                    $cvData = $contents["views"]["view"];
+                } else {
+                    $cvData[] = $contents["views"]["view"];
+                }
+
+                $contents = [
+                    "views" => $cvData
+                ];
+            }
+
+            $contents = var_export_pretty($contents);
+            $phpContents = "<?php \n\nreturn " . $contents . ";\n";
+
+            \Pimcore\File::put($phpFile, $phpContents);
+        } catch (\Exception $e) {
+            \Logger::crit($e);
+
+            echo "<b>Critical ERROR!</b><br />";
+            echo $e->getMessage();
+            echo "<br />Please try to fix it an run the update again.";
+            exit;
         }
-
-        $contents = var_export_pretty($contents);
-        $phpContents = "<?php \n\nreturn " . $contents . ";\n";
-
-        \Pimcore\File::put($phpFile, $phpContents);
     }
 }
