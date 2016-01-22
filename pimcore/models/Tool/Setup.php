@@ -28,7 +28,7 @@ class Setup extends Model\AbstractModel {
 	
 		// check for an initial configuration template
 		// used eg. by the demo installer
-		$configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.xml.template";
+		$configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.template.php";
 		if(file_exists($configTemplatePath)) {
 			try {
 				$configTemplate = new \Zend_Config_Xml($configTemplatePath);

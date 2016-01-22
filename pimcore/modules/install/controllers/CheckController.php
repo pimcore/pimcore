@@ -22,7 +22,7 @@ class Install_CheckController extends \Pimcore\Controller\Action {
             // session authentication, only possible if user is logged in
             $user = \Pimcore\Tool\Authentication::authenticateSession();
             if(!$user instanceof User) {
-               die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.xml for the time of the check.");
+               die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
             }
         } else if ($this->getParam("mysql_adapter")) {
 

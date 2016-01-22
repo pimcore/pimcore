@@ -32,10 +32,10 @@ Zend_Registry::set("pimcore_config_test", $testConfig);
 $testConfig = $testConfig->toArray();
 
 // get configuration from main project
-$systemConfigFile = realpath(__DIR__ . "/../website/var/config/system.xml");
+$systemConfigFile = realpath(__DIR__ . "/../website/var/config/system.php");
 $systemConfig = null;
 if(is_file($systemConfigFile)) {
-    $systemConfig = new Zend_Config_Xml($systemConfigFile);
+    $systemConfig = new Zend_Config(include $systemConfigFile);
     $systemConfig = $systemConfig->toArray();
 
     // this is to allow localhost tests
