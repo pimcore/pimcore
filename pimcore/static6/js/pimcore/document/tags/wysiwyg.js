@@ -215,6 +215,24 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     additionalAttributes += ' style="width:' + defaultWidth + 'px;"';
                 }
 
+                // pre-fill attributes from asset metadata
+                // load document from active tab
+                var activeTab = window.parent.Ext.getCmp('pimcore_panel_tabs').getActiveTab();
+                var docId = (activeTab && activeTab.document) ? activeTab.document.id : null;
+                var document = pimcore.globalmanager.get('document_' + docId);
+                if (document) {
+                    // get language from document property or set the default from system settings
+                    var documentLanguage = document.properties.getPropertyData('language');
+                    if (!documentLanguage) {
+                        documentLanguage = pimcore.settings.websiteLanguages[0];
+                    }
+                    // load localized metadata via ajax
+                    var metadata = pimcore.helpers.getAssetImageMetadata(id, documentLanguage);
+                    for (var j in metadata) {
+                        additionalAttributes += ' ' + j + '="' + metadata[j] + '"';
+                    }
+                }
+
                 insertEl = CKEDITOR.dom.element.createFromHtml('<img src="'
                             + uri + '" pimcore_type="asset" pimcore_id="' + id + '" ' + additionalAttributes + ' />');
                 this.ckeditor.insertElement(insertEl);

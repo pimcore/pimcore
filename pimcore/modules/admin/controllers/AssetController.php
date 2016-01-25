@@ -1721,4 +1721,32 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
         $this->_helper->json(array('success' => 'true','text' => $text));
     }
+
+    public function getImageMetadataAction()
+    {
+
+        $asset = Asset\Image::getById($this->getParam('id'));
+        if (!$asset) {
+            $this->_helper->json(array('success' => 'true','metadata' => array()));
+        }
+
+        $language = $this->getParam('language');
+        if (!$language) {
+            $language = Tool::getDefaultLanguage();
+        }
+
+        $metadata = array();
+        $allowed = array('title', 'alt');
+        foreach ($allowed as $name) {
+            $value = $asset->getMetadata($name, $language);
+            // only string values for now
+            if (!is_string($value)) {
+                continue;
+            }
+            $metadata[$name] = $value;
+        }
+
+        $this->_helper->json(array('success' => 'true','metadata' => $metadata));
+
+    }
 }

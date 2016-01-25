@@ -257,6 +257,34 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
+                // pre-fill attributes from asset metadata
+                // load object from active tab
+                var activeTab = window.parent.Ext.getCmp('pimcore_panel_tabs').getActiveTab();
+                var objectId = (activeTab && activeTab.object) ? activeTab.object.id : null;
+                var object = pimcore.globalmanager.get('object_' + objectId);
+                if (object) {
+                    // load the default language from system settings
+                    var fieldLanguage = pimcore.settings.websiteLanguages[0];
+                    // if the wysiwyg field is in the current tab of a localized fields container
+                    // load the current localized fields container language
+                    if (object.edit.dataFields.hasOwnProperty('localizedfields')) {
+                        var lcLanguage = null;
+                        if (object.edit.dataFields.localizedfields.dropdownLayout) {
+                            lcLanguage = object.edit.dataFields.localizedfields.currentLanguage;
+                        } else {
+                            lcLanguage = object.edit.dataFields.localizedfields.tabPanel.activeTab.language;
+                        }
+                        if (object.edit.dataFields.localizedfields.data[lcLanguage].hasOwnProperty(this.name)) {
+                            fieldLanguage = lcLanguage;
+                        }
+                    }
+                    // load localized metadata via ajax
+                    var metadata = pimcore.helpers.getAssetImageMetadata(id, fieldLanguage);
+                    for (var j in metadata) {
+                        additionalAttributes += ' ' + j + '="' + metadata[j] + '"';
+                    }
+                }
+
                 this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id
                                 + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
                 return true;
