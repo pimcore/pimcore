@@ -30,7 +30,7 @@ if ($this->pageCount > 1): ?>
 
         <!-- Numbered page links -->
         <?php foreach ($this->pagesInRange as $page): ?>
-            <?if ($page != $this->current): ?>
+            <?php if ($page != $this->current): ?>
                 <li><a class="pagination-li" href="<?=$this->url(array_merge($this->urlParams, ['action' => 'voucher-code-tab', 'page' => $page]),'plugin')?>" rel="<?=$page?>"><?=$page?></a></li>
             <?php else: ?>
                 <li class="current"><span class="active"><?=$page?></span></li>
@@ -40,11 +40,11 @@ if ($this->pageCount > 1): ?>
         <!-- Link zur nächsten Seite -->
         <?php if (isset($this->next)): ?>
             <li class="last"><a class="pagination-li" href="<?=$this->url(array_merge($this->urlParams, ['action' => 'voucher-code-tab', 'page' => $this->next]),'plugin')?>" rel="<?=$this->next?>"><span class="pag-text-label"><?=$this->ts('plugin_onlineshop_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></a></li>
-<!--            <li class="last last-page"><a class="pagination-li" href="--><?//=$baseUrl?><!--?page=--><?//=$this->last?><!--" data-href="--><?//=$this->url . "&page=". $this->last?><!--" rel="--><?//= $this->last ?><!--"><span class="pag-text-label">--><?//= $this->translate('paging.lastpage') ?><!--</span></a></li>-->
+<!--            <li class="last last-page"><a class="pagination-li" href="--><?php //=$baseUrl?><!--?page=--><?php //=$this->last?><!--" data-href="--><?php //=$this->url . "&page=". $this->last?><!--" rel="--><?php //= $this->last ?><!--"><span class="pag-text-label">--><?php //= $this->translate('paging.lastpage') ?><!--</span></a></li>-->
 
         <?php else: ?>
             <li class="last"><span class="pag-text-label"><?=$this->ts('plugin_onlineshop_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></li>
-<!--            <li class="last last-page"><span class="pag-text-label">--><?//= $this->translate('paging.lastpage') ?><!--</span></li>-->
+<!--            <li class="last last-page"><span class="pag-text-label">--><?php //= $this->translate('paging.lastpage') ?><!--</span></li>-->
         <?php endif; ?>
     </ul>
 <?php endif; ?>

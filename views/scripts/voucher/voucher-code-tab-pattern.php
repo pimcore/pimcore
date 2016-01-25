@@ -22,7 +22,7 @@
 </head>
 <body>
 
-<?
+<?php
 
 $colors=[
 'used'=>"#F7355B",
@@ -109,15 +109,15 @@ if ($this->paginator) {
                                     <h5 class="subtitle"><?= number_format($this->count, 0, ',', ' ') ?> <?=$this->ts('plugin_onlineshop_voucherservice_result-text')?></h5>
                                 <?php } ?>
                             </div>
-                            <?if($this->paginator){?>
+                            <?php if($this->paginator){?>
                             <div class="col col-sm-6 text-right">
                                 <h5 class="subtitle pages"><?=$this->ts('plugin_onlineshop_voucherservice_tokens-per-page')?>
-                                    <a class="pages-count <?if($pagesCount == 25){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 25]))?>">25&nbsp;</a>
-                                    <a class="pages-count <?if($pagesCount == 75){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 75]))?>">75&nbsp;</a>
-                                    <a class="pages-count <?if($pagesCount == 150){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 150]))?>">150&nbsp;</a>
+                                    <a class="pages-count <?php if($pagesCount == 25){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 25]))?>">25&nbsp;</a>
+                                    <a class="pages-count <?php if($pagesCount == 75){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 75]))?>">75&nbsp;</a>
+                                    <a class="pages-count <?php if($pagesCount == 150){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 150]))?>">150&nbsp;</a>
                                 </h5>
                             </div>
-                            <?}?>
+                            <?php } ?>
                         </div>
 
                         <div class="table-container">
@@ -194,7 +194,7 @@ if ($this->paginator) {
                             </div>
                         </form>
                     </div>
-                    <?}?>
+                    <?php } ?>
                 </div>
             </div>
             <div class="tab-pane" id="statistics">
@@ -316,9 +316,9 @@ if ($this->paginator) {
 //         */
 //
 //        var urlData = {
-//            <?// foreach($urlParams as $key => $param){ ?>
-//            "<?//= $key ?>//": "<?//= $param ?>//",
-//            <?// } ?>
+//            <?php // foreach($urlParams as $key => $param){ ?>
+//            "<?php //= $key ?>//": "<?php //= $param ?>//",
+//            <?php // } ?>
 //        };
 //
 //        function getFormData($form){

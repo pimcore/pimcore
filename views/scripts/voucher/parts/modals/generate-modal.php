@@ -42,7 +42,7 @@
                         </table>
                         <?php if ($this->generateWarning) { ?>
                             <div class="alert alert-danger"><?= $this->generateWarning ?></div>
-                        <? } ?>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
