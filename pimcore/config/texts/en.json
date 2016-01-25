@@ -4105,7 +4105,7 @@
     },
     {
         "term": "system_xml_not_writeable",
-        "definition": "ERROR! System.xml is not writeable."
+        "definition": "ERROR! System.php is not writeable."
     },
     {
         "term": "system_xml_dir_not_writeable",
@@ -4113,7 +4113,7 @@
     },
     {
         "term": "system_xml_exists",
-        "definition": "Warning! The file website\/var\/config\/system.xml already exists and will be overwritten by the installer."
+        "definition": "Warning! The file website\/var\/config\/system.php already exists and will be overwritten by the installer."
     },
     {
         "term": "could_not_verify_db_encoding",
@@ -4141,7 +4141,7 @@
     },
     {
         "term": "could_not_write_system_xml",
-        "definition": "ERROR! system.xml could not be created."
+        "definition": "ERROR! system.php could not be created."
     },
     {
         "term": "pimcore_setup_completed",

@@ -26,7 +26,12 @@ class ExtensionManager {
     public static function getConfig () {
         if(!self::$config) {
             try {
-                self::$config = new \Zend_Config_Xml(PIMCORE_CONFIGURATION_DIRECTORY . "/extensions.xml", null, array("allowModifications" => true));
+                $file = \Pimcore\Config::locateConfigFile("extensions.php");
+                if(file_exists($file)) {
+                    self::$config = new \Zend_Config(include($file), true);
+                } else {
+                    throw new \Exception($file . " doesn't exist");
+                }
             }
             catch (\Exception $e) {
                 self::$config = new \Zend_Config(array(), true);
@@ -44,11 +49,8 @@ class ExtensionManager {
 
         self::$config = $config;
 
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/extensions.xml"
-        ));
-        $writer->write();
+        $file = \Pimcore\Config::locateConfigFile("extensions.php");
+        File::put($file, to_php_data_file_format(self::$config->toArray()));
     }
 
     /**

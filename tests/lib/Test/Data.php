@@ -25,7 +25,7 @@ class Test_Data
         $properties["bla"] = $property;
     }
 
-    private function getObjectList($condition = null) {
+    private static function getObjectList($condition = null) {
         $list = new Object_List();
         $list->setOrderKey("o_id");
         $list->setCondition($condition);

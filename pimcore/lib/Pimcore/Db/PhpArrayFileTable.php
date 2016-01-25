@@ -14,7 +14,7 @@ namespace Pimcore\Db;
 
 use Pimcore\File;
 
-class JsonFileTable
+class PhpArrayFileTable
 {
 
     protected static $tables = [];
@@ -36,7 +36,7 @@ class JsonFileTable
     }
 
     /**
-     * JsonFileTable constructor.
+     * PhpArrayFileTable constructor.
      * @param string $filePath
      */
     public function __construct($filePath = null)
@@ -171,11 +171,7 @@ class JsonFileTable
     protected function load() {
 
         if(file_exists($this->filePath)) {
-            $contents = file_get_contents($this->filePath);
-            $data = @json_decode($contents, true);
-            if(is_array($data)) {
-                $this->data = $data;
-            }
+            $this->data = include($this->filePath);
         }
     }
 
@@ -183,8 +179,7 @@ class JsonFileTable
      *
      */
     protected function save() {
-        $contents = json_encode($this->data);
-        $contents = \Zend_Json::prettyPrint($contents);
+        $contents = to_php_data_file_format($this->data);
         File::put($this->filePath, $contents);
     }
 }

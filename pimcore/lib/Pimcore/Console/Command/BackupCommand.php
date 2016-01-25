@@ -24,7 +24,7 @@ class BackupCommand extends AbstractCommand
     {
         $this
             ->setName('backup')
-            ->setDescription('Creates .tar archive of document root')
+            ->setDescription('Creates .zip archive of document root')
             ->addOption(
                 'filename', 'f',
                 InputOption::VALUE_OPTIONAL,

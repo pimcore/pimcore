@@ -14,6 +14,7 @@
 
 namespace Pimcore\Model\Tool;
 
+use Pimcore\File;
 use Pimcore\Model;
 
 class Setup extends Model\AbstractModel {
@@ -27,10 +28,10 @@ class Setup extends Model\AbstractModel {
 	
 		// check for an initial configuration template
 		// used eg. by the demo installer
-		$configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.xml.template";
+		$configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.template.php";
 		if(file_exists($configTemplatePath)) {
 			try {
-				$configTemplate = new \Zend_Config_Xml($configTemplatePath);
+				$configTemplate = new \Zend_Config(include($configTemplatePath));
 				if($configTemplate->general) { // check if the template contains a valid configuration
 					$settings = $configTemplate->toArray();
 
@@ -109,13 +110,9 @@ class Setup extends Model\AbstractModel {
         foreach($varFolders as $folder) {
             \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
         }
-		
-        $config = new \Zend_Config($settings, true);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => PIMCORE_CONFIGURATION_SYSTEM
-        ));
-        $writer->write();
+
+        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        File::put($configFile, to_php_data_file_format($settings));
     }
 
     /**

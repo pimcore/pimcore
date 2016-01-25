@@ -91,6 +91,13 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
+     *
+     */
+    protected function disableLogging() {
+       \Logger::removeLogger($this->getLogger());
+    }
+
+    /**
      * Get log level - default to warning, but show all messages in verbose mode
      *
      * @return null|string

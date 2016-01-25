@@ -329,7 +329,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
 
         $success = true;
 
-        $settings = array("views" => array("view" => array()));
+        $settings = ["views" => []];
 
         for ($i = 0; $i < 1000; $i++) {
             if ($this->getParam("name_" . $i)) {
@@ -340,7 +340,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
                     $rootfolder = $this->getParam("rootfolder_" . $i);
                 }
 
-                $settings["views"]["view"][] = array(
+                $settings["views"][] = array(
                     "name" => $this->getParam("name_" . $i),
                     "condition" => $this->getParam("condition_" . $i),
                     "icon" => $this->getParam("icon_" . $i),
@@ -352,13 +352,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
             }
         }
 
-
-        $config = new \Zend_Config($settings, true);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/customviews.xml"
-        ));
-        $writer->write();
+        $configFile = \Pimcore\Config::locateConfigFile("customviews.php");
+        File::put($configFile, to_php_data_file_format($settings));
 
 
         $this->_helper->json(array("success" => $success));

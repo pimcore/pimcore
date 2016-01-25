@@ -332,16 +332,6 @@ class Dao extends Model\Dao\AbstractDao {
     }
 
     /**
-     * @param $fieldtype
-     * @return bool
-     */
-    private function isRelationType($fieldtype) {
-        if ($fieldtype == 'multihref' || $fieldtype == 'objects' || $fieldtype == 'href')
-            return true;
-        return false;
-    }
-
-    /**
      * Create a new record for the object in database
      *
      * @return boolean

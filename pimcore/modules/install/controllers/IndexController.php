@@ -29,7 +29,7 @@ class Install_IndexController extends \Pimcore\Controller\Action {
 		
         \Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
-        if (is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
+        if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
             $this->redirect("/admin");
         }
     }

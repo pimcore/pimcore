@@ -316,22 +316,15 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
         // test if there is a suitable static route
         if (!$matchFound) {
             try {
-                
-                $cacheKey = "system_route_staticroute";
-                if (!$routes = Cache::load($cacheKey)) {
-                
-                    $list = new Staticroute\Listing();
-                    $list->setOrder(function ($a, $b) {
-                        if ($a["priority"] == $b["priority"]) {
-                            return 0;
-                        }
-                        return ($a["priority"] < $b["priority"]) ? 1 : -1;
-                    });
-                    $routes = $list->load();
-                    
-                    Cache::save($routes, $cacheKey, array("system","staticroute","route"), null, 998);
-                }
-                
+                $list = new Staticroute\Listing();
+                $list->setOrder(function ($a, $b) {
+                    if ($a["priority"] == $b["priority"]) {
+                        return 0;
+                    }
+                    return ($a["priority"] < $b["priority"]) ? 1 : -1;
+                });
+                $routes = $list->load();
+
                 foreach ($routes as $route) {
 
                     if(!$matchFound) {

@@ -19,7 +19,6 @@ install:
 
 before_script:
   # install apache
-  - echo "deb http://us-central1.gce.archive.ubuntu.com/ubuntu/ precise multiverse" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update
   - sudo apt-get install apache2 libapache2-mod-fastcgi
   - sudo a2enmod rewrite actions fastcgi alias

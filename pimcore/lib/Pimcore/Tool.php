@@ -391,25 +391,15 @@ class Tool {
      * @return array|bool
      */
     public static function getCustomViewConfig() {
-        $cvConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . "/customviews.xml";
-        $cvData = array();
 
-        if (!is_file($cvConfigFile)) {
+
+        $configFile = \Pimcore\Config::locateConfigFile("customviews.php");
+
+        if (!is_file($configFile)) {
             $cvData = false;
-        }
-        else {
-            $config = new \Zend_Config_Xml($cvConfigFile);
-            $confArray = $config->toArray();
-
-            if (empty($confArray["views"]["view"])) {
-                return array();
-            }
-            else if ($confArray["views"]["view"][0]) {
-                $cvData = $confArray["views"]["view"];
-            }
-            else {
-                $cvData[] = $confArray["views"]["view"];
-            }
+        } else {
+            $confArray = include($configFile);
+            $cvData = $confArray["views"];
 
             foreach ($cvData as &$tmp) {
                 $tmp["showroot"] = (bool) $tmp["showroot"];

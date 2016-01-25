@@ -119,12 +119,11 @@ class Cache {
 
         if (!self::$instance instanceof \Zend_Cache_Core) {
             // check for custom cache configuration
-            $customConfigFile = \Pimcore\Config::locateConfigFile("cache.json");
+            $customConfigFile = \Pimcore\Config::locateConfigFile("cache.php");
             if (is_file($customConfigFile)) {
                 $config = self::getDefaultConfig();
 
-                $contents = @file_get_contents($customConfigFile);
-                $conf = @json_decode($contents, true);
+                $conf = include($customConfigFile);
 
                 if(is_array($conf)) {
 

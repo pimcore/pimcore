@@ -16,7 +16,7 @@ namespace Pimcore\Model\Metadata\Predefined\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\JsonTable {
+class Dao extends Model\Dao\PhpArrayTable {
 
     /**
      *
@@ -36,7 +36,7 @@ class Dao extends Model\Dao\JsonTable {
     public function load() {
 
         $properties = array();
-        $definitions = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $definitions = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($definitions as $propertyData) {
             $properties[] = Model\Metadata\Predefined::getById($propertyData["id"]);
@@ -51,7 +51,7 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function getTotalCount() {
 
-        $data = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
         $amount = count($data);
 
         return $amount;

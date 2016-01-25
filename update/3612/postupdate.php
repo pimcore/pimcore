@@ -24,8 +24,6 @@ if(file_exists($mappingFile)) {
         $content = json_encode($newConf);
         $content = \Zend_Json::prettyPrint($content);
 
-        echo $content;
-
         $jsonFile = \Pimcore\Config::locateConfigFile("classmap.json");
         file_put_contents($jsonFile, $content);
 

@@ -17,7 +17,7 @@ namespace Pimcore\Model\Tool\Qrcode\Config\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Tool\Qrcode\Config;
 
-class Dao extends Model\Dao\JsonTable {
+class Dao extends Model\Dao\PhpArrayTable {
 
     /**
      *
@@ -36,7 +36,7 @@ class Dao extends Model\Dao\JsonTable {
     public function load() {
 
         $properties = array();
-        $propertiesData = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($propertiesData as $propertyData) {
             $properties[] = Config::getByName($propertyData["id"]);
@@ -51,7 +51,7 @@ class Dao extends Model\Dao\JsonTable {
      */
     public function getTotalCount() {
 
-        $data = $this->json->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
         $amount = count($data);
 
         return $amount;

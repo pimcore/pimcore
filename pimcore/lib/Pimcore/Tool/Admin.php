@@ -131,7 +131,7 @@ class Admin {
      * @return string
      */
     public static function getMaintenanceModeFile () {
-        return PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.json";
+        return PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.php";
     }
 
     /**
@@ -149,7 +149,7 @@ class Admin {
             throw new \Exception("It's not possible to activate the maintenance mode without a session-id");
         }
 
-        File::put(self::getMaintenanceModeFile(), json_encode([
+        File::put(self::getMaintenanceModeFile(), to_php_data_file_format([
             "sessionId" => $sessionId
         ]));
 
@@ -161,7 +161,7 @@ class Admin {
      * @return void
      */
     public static function deactivateMaintenanceMode () {
-        unlink(self::getMaintenanceModeFile());
+        @unlink(self::getMaintenanceModeFile());
     }
 
     /**
@@ -172,7 +172,7 @@ class Admin {
         $file = self::getMaintenanceModeFile();
 
         if(is_file($file)) {
-            $conf = @json_decode(file_get_contents($file), true);
+            $conf = include($file);
             if(isset($conf["sessionId"])) {
                 return true;
             } else {

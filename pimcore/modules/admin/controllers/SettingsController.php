@@ -24,6 +24,7 @@ use Pimcore\Model\Redirect;
 use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Model\Tool\Tag;
+use Pimcore\File;
 
 class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
 
@@ -370,7 +371,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                     "password" => $values["general.http_auth.password"]
                 ),
                 "custom_php_logfile" => $values["general.custom_php_logfile"],
-                "environment" => $values["general.environment"],
                 "debugloglevel" => $values["general.debugloglevel"],
                 "disable_whoops" => $values["general.disable_whoops"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
@@ -511,15 +511,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
         }
         $settings["newsletter"]["usespecific"] = $values["newsletter.usespecific"];
 
-        // convert all special characters to their entities so the xml writer can put it into the file
-        $settings = array_htmlspecialchars($settings);
 
-        $config = new \Zend_Config($settings, true);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => PIMCORE_CONFIGURATION_SYSTEM
-        ));
-        $writer->write();
+        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        File::put($configFile, to_php_data_file_format($settings));
 
         $this->_helper->json(array("success" => true));
 

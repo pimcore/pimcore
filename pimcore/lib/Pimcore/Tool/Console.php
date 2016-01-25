@@ -229,9 +229,11 @@ class Console {
      * @throws \Exception
      */
     public static function checkExecutingUser($allowedUsers = array()){
-        $owner = fileowner(PIMCORE_CONFIGURATION_SYSTEM);
+
+        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        $owner = fileowner($configFile);
         if($owner == false){
-            throw new \Exception("Couldn't get user from file " . PIMCORE_CONFIGURATION_SYSTEM);
+            throw new \Exception("Couldn't get user from file " . $configFile);
         }
         $userData = posix_getpwuid($owner);
         $allowedUsers[] = $userData['name'];

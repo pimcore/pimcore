@@ -144,7 +144,7 @@ class Db {
         }
         catch (\Exception $e) {
 
-            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log. \nReason: " . $e->getMessage();
+            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.php, for details see the debug.log. \nReason: " . $e->getMessage();
 
             \Logger::emergency($errorMessage);
             \Logger::emergency($e);
