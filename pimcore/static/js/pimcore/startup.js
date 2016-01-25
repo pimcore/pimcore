@@ -74,8 +74,11 @@ Ext.onReady(function () {
     Ext.Ajax.disableCaching = true;
     Ext.Ajax.timeout = 900000;
     Ext.Ajax.defaultHeaders = {
-        'X-pimcore-csrf-token': pimcore.settings["csrfToken"]
+        'X-pimcore-csrf-token': pimcore.settings["csrfToken"],
+        'X-pimcore-extjs-version-major': 3,
+        'X-pimcore-extjs-version-minor': 4
     };
+
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 

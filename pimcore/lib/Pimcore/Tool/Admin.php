@@ -206,6 +206,10 @@ class Admin {
             return true;
         }
 
+        if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] < 6) {
+            return false;
+        }
+
         if(isset($_REQUEST["extjs3"])) {
             return false;
         }
