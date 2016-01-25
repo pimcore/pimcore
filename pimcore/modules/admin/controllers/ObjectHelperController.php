@@ -334,6 +334,10 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
         for ($i = 0; $i < 1000; $i++) {
             if ($this->getParam("name_" . $i)) {
 
+                $classes = $this->getParam("classes_" . $i);
+                if (is_array($classes) || \Pimcore\Tool\Admin::isExtJS6()) {
+                    $classes = implode(',', $classes);
+                }
                 // check for root-folder
                 $rootfolder = "/";
                 if ($this->getParam("rootfolder_" . $i)) {
@@ -347,7 +351,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin {
                     "id" => ($i + 1),
                     "rootfolder" => $rootfolder,
                     "showroot" => ($this->getParam("showroot_" . $i) == "true") ? true : false,
-                    "classes" => $this->getParam("classes_" . $i)
+                    "classes" => $classes
                 );
             }
         }
