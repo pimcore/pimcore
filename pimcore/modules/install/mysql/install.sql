@@ -773,13 +773,17 @@ DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
 	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
+  `title` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` TEXT NULL,
 	`type` ENUM('input','textarea','wysiwyg','checkbox','numeric','slider','select','multiselect','date','datetime','language','languagemultiselect','country','countrymultiselect','table','quantityValue','calculatedValue') NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`definition` LONGTEXT NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	INDEX `name` (`name`),
+	INDEX `enabled` (`enabled`),
+	INDEX `type` (`type`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
