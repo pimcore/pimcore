@@ -371,7 +371,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin {
                     "password" => $values["general.http_auth.password"]
                 ),
                 "custom_php_logfile" => $values["general.custom_php_logfile"],
-                "environment" => $values["general.environment"],
                 "debugloglevel" => $values["general.debugloglevel"],
                 "disable_whoops" => $values["general.disable_whoops"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],

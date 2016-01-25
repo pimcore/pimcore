@@ -318,35 +318,6 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 600},
                         items: [
                             {
-                                fieldLabel: t("environment"),
-                                xtype: "combo",
-                                name: "general.environment",
-                                value: this.getValue("general.environment"),
-                                width: 400,
-                                store: [
-                                    ["production", t("production")],
-                                    ["stage", t("stage")],
-                                    ["test", t("test")],
-                                    ["development", t("development")],
-                                    ["local", t("local")]
-                                ],
-                                mode: "local",
-                                triggerAction: "all",
-                                listeners: {
-                                    "select": function (el) {
-                                        if (el.getValue() == "production") {
-                                            var ipField = Ext.getCmp("system_settings_general_debug_ip");
-                                            if (empty(ipField.getValue())) {
-                                                Ext.getCmp("system_settings_general_debug").setValue(false);
-                                            }
-
-                                            Ext.getCmp("system_settings_general_debugloglevel").setValue("error");
-                                            Ext.getCmp("system_settings_general_devmode").setValue(false);
-                                        }
-                                    }
-                                }
-                            },
-                            {
                                 fieldLabel: "DEBUG",
                                 xtype: "checkbox",
                                 name: "general.debug",
