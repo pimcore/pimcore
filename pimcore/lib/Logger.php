@@ -55,6 +55,14 @@ class Logger {
 	}
 
     /**
+     * @param $logger
+     */
+    public static function removeLogger($logger) {
+        $pos = array_search($logger, self::$logger);
+        array_splice(self::$logger, $pos, 1);
+    }
+
+    /**
      *
      */
     public static function resetLoggers() {

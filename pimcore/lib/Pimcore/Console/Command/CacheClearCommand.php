@@ -13,7 +13,6 @@
 namespace Pimcore\Console\Command;
 
 use Pimcore\Cache;
-use Pimcore\Cache\Tool\Warming;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
