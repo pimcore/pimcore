@@ -214,7 +214,6 @@ Ext.define('Ext.overrides.grid.View', {
         }
 
     }
-
 );
 
 Ext.define('pimcore.tree.Panel', {
@@ -248,12 +247,10 @@ Ext.define('pimcore.tree.View', {
 
         if (record.needsPaging && typeof record.ptp == "undefined") {
             this.doUpdatePaging(record);
-
         }
 
         this.fireEvent("itemafterrender", record, rowIdx, out);
     },
-
 
     doUpdatePaging: function(node) {
 
@@ -340,9 +337,7 @@ Ext.define('pimcore.data.PagingTreeStore', {
             node.fromPaging = data.fromPaging;
             proxy.setExtraParam("fromPaging", 0);
 
-
             var total = data.total;
-            // console.log("total nodes for  " + node.data.text + " (" + total + ")");
 
             var text = node.data.text;
             if (typeof total == "undefined") {
@@ -377,8 +372,6 @@ Ext.define('pimcore.data.PagingTreeStore', {
             }
 
             me.superclass.onProxyLoad.call(this, operation);
-
-                //var store = node.getTreeStore();
                 var proxy = this.getProxy();
                 proxy.setExtraParam("start", 0);
             } catch (e) {
@@ -629,7 +622,6 @@ Ext.define('pimcore.toolbar.Paging', {
         var pagingData = node.pagingData;
         var store = node.getTreeStore();
 
-
         var proxy = store.getProxy();
         proxy.setExtraParam("start",  pagingData.limit * (page - 1));
         proxy.setExtraParam("fromPaging", 1);
@@ -637,8 +629,6 @@ Ext.define('pimcore.toolbar.Paging', {
             node: node
         });
     },
-
-
 
     moveFirst: function() {
         var me = this;
@@ -718,3 +708,21 @@ Ext.define('pimcore.toolbar.Paging', {
 });
 
 
+/**
+ * Already fixed in 6.0.1
+ * Inspired from https://www.sencha.com/forum/showthread.php?302760
+ */
+Ext.define('EXTJS-16385.event.publisher.Dom', {
+    override: 'Ext.event.publisher.Dom',
+
+    isEventBlocked: function(e) {
+        var me = this,
+            type = e.type,
+            self = Ext.event.publisher.Dom,
+            now = Ext.now();
+
+        if (Ext.isGecko && e.type === 'click' && e.button === 2) {
+            return true;
+        }
+    }
+});
