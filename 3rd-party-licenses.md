@@ -36,10 +36,6 @@ https://raw.github.com/sstephenson/prototype/master/LICENSE
 License: Apache 2.0  
 http://www.opensource.org/licenses/Apache-2.0
 
-## CSV Reader By Luke Visinoni
-License: LGPL
-http://opensource.org/licenses/lgpl-license
-
 ## sabre/dav by fruux GmbH
 License: BSD-3-Clause
 http://opensource.org/licenses/BSD-3-Clause
