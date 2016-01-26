@@ -69,6 +69,8 @@
     },
     "autoload": {
         "psr-4": {
+            "Pimcore\\Model\\Object\\": "website/var/classes/Object",
+            "Pimcore\\Model\\": "pimcore/models",
             "Pimcore\\": "pimcore/lib/Pimcore"
         }
     },
