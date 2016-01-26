@@ -46,30 +46,6 @@ Ext.menu.Manager.checkActiveMenus = function(e) {
 };
 
 
-Ext.define('overrides.Component', {
-    override: 'Ext.Component'
-
-    //initComponent: function() {
-    //    this.callParent(arguments);
-    //    this.on('enable', function(cmp) {
-    //        // workaround for http://www.sencha.com/forum/showthread.php?295910
-    //        // [5.1.0.107] setDisabled(true) on formpanel doesn't enable buttons
-    //        // ...
-    //        // Success! Looks like we've fixed this one. According to our records the fix was applied for EXTJS-16180 in 5.1.1.
-    //        //..
-    //        try {
-    //            if (typeof cmp.isMasked == "function") {
-    //                if (cmp.isMasked()) {
-    //                    cmp.unmask();
-    //                }
-    //            }
-    //        } catch (e) {
-    //
-    //        }
-    //    })
-    //}
-});
-
 Ext.define('pimcore.FieldSetTools', {
     extend: 'Ext.form.FieldSet',
 
@@ -550,17 +526,6 @@ Ext.define('pimcore.toolbar.Paging', {
                 handler: me.moveLast,
                 scope: me
             }
-            //,
-            //'-',
-            //{
-            //    itemId: 'refresh',
-            //    tooltip: me.refreshText,
-            //    overflowText: me.refreshText,
-            //    iconCls: Ext.baseCSSPrefix + 'tbar-loading',
-            //    disabled: false,
-            //    handler: me.doRefresh,
-            //    scope: me
-            //}
         ];
     },
 
