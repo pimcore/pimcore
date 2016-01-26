@@ -16,8 +16,6 @@ namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
 
-include_once ("UUID.php");
-
 class UUID extends Model\AbstractModel {
 
     public $itemId;
@@ -38,7 +36,7 @@ class UUID extends Model\AbstractModel {
     public function setSystemInstanceIdentifier(){
         $instanceIdentifier = \Pimcore\Config::getSystemConfig()->general->instanceIdentifier;
         if(!$instanceIdentifier){
-            throw new \Exception("No instance identier set in system config!");
+            throw new \Exception("No instance identifier set in system config!");
         }
         $this->setInstanceIdentifier($instanceIdentifier);
         return $this;
@@ -81,23 +79,6 @@ class UUID extends Model\AbstractModel {
     }
 
     /**
-     * @return string
-     * @throws \Exception
-     */
-    public function getUuidResourceName(){
-        if(!$this->getType()){
-            throw new \Exception("Couldn't create UUID - no 'type' specified.");
-        }
-
-        if(!$this->getItemId()){
-            throw new \Exception("Couldn't create UUID - no 'itemId' specified.");
-        }
-
-        $resourceName =  implode('_',array_filter(array($this->getType(),$this->getItemId())));
-        return $resourceName;
-    }
-
-    /**
      * @return mixed
      * @throws \Exception
      */
@@ -107,7 +88,8 @@ class UUID extends Model\AbstractModel {
             throw new \Exception("No instance identifier specified.");
         }
 
-        $uuid = \UUID::generate(\UUID::UUID_NAME_SHA1,\UUID::FMT_STRING,$this->getUuidResourceName(),$this->getInstanceIdentifier());
+        $uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier());
+
         return $uuid;
     }
     /**
