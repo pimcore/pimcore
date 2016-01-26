@@ -71,7 +71,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         }, readerFields);
 
         this.relationsStore = new Ext.data.Store({
-            restful: false,
+            restful: true,
             idProperty: 'id',
             remoteSort: true,
             proxy: proxy,
