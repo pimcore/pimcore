@@ -223,17 +223,10 @@ pimcore.report.qrcode.item = Class.create({
             items: [this.codePanel, {
                 border: false,
                 buttons: [{
-                    text: "PNG",
+                    width: "100%",
+                    text: t("download"),
                     iconCls: "pimcore_icon_png",
                     handler: this.download.bind(this, "image")
-                },{
-                    text: "EPS",
-                    iconCls: "pimcore_icon_eps",
-                    handler: this.download.bind(this, "eps")
-                }, {
-                    text: "SVG",
-                    iconCls: "pimcore_icon_svg",
-                    handler: this.download.bind(this, "svg")
                 }]
             }]
         });
@@ -296,10 +289,8 @@ pimcore.report.qrcode.item = Class.create({
         delete params["description"];
         delete params["undefined"];
 
-        params["renderer"] = format;
         params["download"] = "true";
         params["name"] = this.data.name;
-        params["moduleSize"] = 20;
 
         var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
         pimcore.helpers.download(codeUrl);

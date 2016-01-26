@@ -92,12 +92,10 @@ pimcore.document.pages.preview = Class.create({
                     iconCls: "pimcore_icon_qrcode",
                     handler: function () {
                         var codeUrl = "/admin/reports/qrcode/code/documentId/" + this.page.id;
-                        var download = function (format) {
-                            var codeUrl = "/admin/reports/qrcode/code/documentId/"
-                                + this.page.id + "/renderer/" + format + "/download/true" +
-                                "/moduleSize/20";
+                        var download = function () {
+                            var codeUrl = "/admin/reports/qrcode/code/documentId/" + this.page.id + "/download/true";
                             pimcore.helpers.download(codeUrl);
-                        }
+                        };
 
                         var qrWindow = new Ext.Window({
                             width: 280,
@@ -113,17 +111,10 @@ pimcore.document.pages.preview = Class.create({
                                 }, {
                                 border: false,
                                 buttons: [{
-                                    text: "PNG",
+                                    width: "100%",
+                                    text: t("download"),
                                     iconCls: "pimcore_icon_png",
-                                    handler: download.bind(this, "image")
-                                },{
-                                    text: "EPS",
-                                    iconCls: "pimcore_icon_eps",
-                                    handler: download.bind(this, "eps")
-                                }, {
-                                    text: "SVG",
-                                    iconCls: "pimcore_icon_svg",
-                                    handler: download.bind(this, "svg")
+                                    handler: download.bind(this)
                                 }]
                             }]
                         });
