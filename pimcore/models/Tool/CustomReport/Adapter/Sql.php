@@ -50,7 +50,7 @@ class Sql extends AbstractAdapter {
             $data = $db->fetchAll($sql);
         }
 
-        return array("data" => $data, "total" => $total);
+        return ["data" => $data, "total" => $total];
     }
 
     /**
@@ -89,27 +89,27 @@ class Sql extends AbstractAdapter {
      */
     protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null) {
         $sql = "";
-        if($config->sql && !$ignoreSelectAndGroupBy) {
-            if(strpos(strtoupper(trim($config->sql)), "SELECT") === false || strpos(strtoupper(trim($config->sql)), "SELECT") > 5) {
+        if($config["sql"] && !$ignoreSelectAndGroupBy) {
+            if(strpos(strtoupper(trim($config["sql"])), "SELECT") === false || strpos(strtoupper(trim($config["sql"])), "SELECT") > 5) {
                 $sql .= "SELECT ";
             }
-            $sql .= str_replace("\n", " ", $config->sql);
+            $sql .= str_replace("\n", " ", $config["sql"]);
         } else if($selectField) {
             $db = Db::get();
             $sql .= "SELECT " . $db->quoteIdentifier($selectField);
         } else {
             $sql .= "SELECT *";
         }
-        if($config->from) {
-            if(strpos(strtoupper(trim($config->from)), "FROM") === false) {
+        if($config["from"]) {
+            if(strpos(strtoupper(trim($config["from"])), "FROM") === false) {
                 $sql .= " FROM ";
             }
-            $sql .= " " . str_replace("\n", " ", $config->from);
+            $sql .= " " . str_replace("\n", " ", $config["from"]);
         }
-        if($config->where || $drillDownFilters) {
+        if($config["where"] || $drillDownFilters) {
             $whereParts = array();
-            if($config->where) {
-                $whereParts[] = "(" . str_replace("\n", " ", $config->where) . ")";
+            if($config["where"]) {
+                $whereParts[] = "(" . str_replace("\n", " ", $config["where"]) . ")";
             }
 
             if($drillDownFilters) {
@@ -122,18 +122,18 @@ class Sql extends AbstractAdapter {
             }
 
             if($whereParts) {
-                if(strpos(strtoupper(trim($config->where)), "WHERE") === false) {
+                if(strpos(strtoupper(trim($config["where"])), "WHERE") === false) {
                     $sql .= " WHERE ";
                 }
 
                 $sql .= " " . implode(" AND ", $whereParts);
             }
         }
-        if($config->groupby && !$ignoreSelectAndGroupBy) {
-            if(strpos(strtoupper($config->groupby), "GROUP BY") === false) {
+        if($config["groupby"] && !$ignoreSelectAndGroupBy) {
+            if(strpos(strtoupper($config["groupby"]), "GROUP BY") === false) {
                 $sql .= " GROUP BY ";
             }
-            $sql .= " " . str_replace("\n", " ", $config->groupby);
+            $sql .= " " . str_replace("\n", " ", $config["groupby"]);
         }
 
         return $sql;
@@ -149,7 +149,7 @@ class Sql extends AbstractAdapter {
      */
     protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null) {
         $db = Db::get();
-        $condition = array("1 = 1");
+        $condition = ["1 = 1"];
 
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
@@ -221,10 +221,10 @@ class Sql extends AbstractAdapter {
         }
 
 
-        return array(
+        return [
             "data" => $data,
             "count" => $total
-        );
+        ];
     }
 
     /**
@@ -235,20 +235,25 @@ class Sql extends AbstractAdapter {
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters) {
         $db = Db::get();
-        $baseQuery = $this->getBaseQuery($filters, array($field), true, $drillDownFilters, $field);
-        $data = array();
+        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, $field);
+        $data = [];
         if($baseQuery) {
             $sql = $baseQuery["data"] . " GROUP BY " . $db->quoteIdentifier($field);
             $data = $db->fetchAll($sql);
         }
 
-        $filteredData = array();
+        $filteredData = [];
         foreach($data as $d) {
             if(!empty($d[$field]) || $d[$field] === 0) {
-                $filteredData[] = array("value" => $d[$field]);
+                $filteredData[] = ["value" => $d[$field]];
             }
         }
 
-        return array("data" => array_merge(array(array("value" => null)), $filteredData));
+        return [
+            "data" => array_merge([
+                        ["value" => null]
+                      ], $filteredData
+            )
+        ];
     }
 }
