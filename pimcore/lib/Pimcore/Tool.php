@@ -399,10 +399,13 @@ class Tool {
             $cvData = false;
         } else {
             $confArray = include($configFile);
-            $cvData = $confArray["views"];
+            $cvData = [];
 
-            foreach ($cvData as &$tmp) {
-                $tmp["showroot"] = (bool) $tmp["showroot"];
+            foreach ($confArray["views"] as $tmp) {
+                if(isset($tmp["name"])) {
+                    $tmp["showroot"] = (bool) $tmp["showroot"];
+                    $cvData[] = $tmp;
+                }
             }
         }
         return $cvData;

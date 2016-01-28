@@ -29,6 +29,11 @@ class ResetPasswordCommand extends AbstractCommand
                 'user', 'u',
                 InputOption::VALUE_REQUIRED,
                 "Username or ID of user"
+            )
+            ->addOption(
+                "password", "p",
+                InputOption::VALUE_OPTIONAL,
+                "Plaintext password - if not set, script will prompt for the new password (recommended)"
             );
     }
 
@@ -48,9 +53,13 @@ class ResetPasswordCommand extends AbstractCommand
             exit;
         }
 
-        $plainPassword = false;
-        while (empty($plainPassword)) {
-            $plainPassword = $this->promtSilent();
+        if($input->getOption("password")) {
+            $plainPassword = $input->getOption("password");
+        } else {
+            $plainPassword = false;
+            while (empty($plainPassword)) {
+                $plainPassword = $this->promtSilent();
+            }
         }
 
         $password = \Pimcore\Tool\Authentication::getPasswordHash($user->getName(), $plainPassword);

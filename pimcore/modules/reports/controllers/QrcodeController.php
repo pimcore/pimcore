@@ -93,6 +93,8 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports 
 
     public function codeAction () {
 
+        $url = "";
+
         if($this->getParam("name")) {
             $url = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() . "/qr~-~code/" .
                 $this->getParam("name");
@@ -104,46 +106,33 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports 
             $url = $this->getParam("url");
         }
 
-        $codeSettings = array(
-            'text' => $url,
-            'backgroundColor' => '#FFFFFF',
-            'foreColor' => '#000000',
-            'padding' => 0,  //array(10,5,10,5),
-            'moduleSize' => 10
-        );
+        $code = new \Endroid\QrCode\QrCode;
+        $code->setText($url);
+        $code->setPadding(0);
+        $code->setSize(500);
 
-        $extension = $this->getParam("renderer");
-        if($extension == "image") {
-            $extension ="png";
+        $hexToRGBA = function ($hex) {
+            list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");
+            return ["r" => $r, "g" => $g, "b" => $b, "a" => 0];
+        };
+
+        if(strlen($this->getParam("foreColor","")) == 7) {
+            $code->setForegroundColor($hexToRGBA($this->getParam("foreColor")));
         }
 
-        $renderSettings = array();
+        if(strlen($this->getParam("backgroundColor","")) == 7) {
+            $code->setBackgroundColor($hexToRGBA($this->getParam("backgroundColor")));
+        }
+
+        header("Content-Type: image/png");
         if($this->getParam("download")) {
-            $renderSettings["sendResult"] = array('Content-Disposition: attachment;filename="qrcode-' . $this->getParam("name") . '.' . $extension . '"');
+            $code->setSize(4000);
+            header('Content-Disposition: attachment;filename="qrcode-' . $this->getParam("name", "preview") . '.png"', true);
         }
 
-        foreach ($this->getAllParams() as $key => $value) {
-            if(array_key_exists($key, $codeSettings) && !empty($value)) {
-                if(stripos($key, "color")) {
-                    if(strlen($value) == 7) {
-                        $value = strtoupper($value);
-                        $codeSettings[$key] = $value;
-                    }
-                } else {
-                    $codeSettings[$key] = $value;
-                }
-            }
-            if(array_key_exists($key, $renderSettings) && !empty($value)) {
-                $renderSettings[$key] = $value;
-            }
-        }
+        $code->render();
 
-        $renderer = "image";
-        if($this->getParam("renderer") && in_array($this->getParam("renderer"), array("pdf", "image", "eps", "svg"))) {
-            $renderer = $this->getParam("renderer");
-        }
-
-        $code = \Pimcore\Image\Matrixcode::render('qrcode', $codeSettings, $renderer, $renderSettings);
+        exit;
     }
 }
 

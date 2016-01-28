@@ -23,9 +23,10 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract {
         if($code && ($code[0] == "4" || $code[0] == "5")) {
             $this->writeLog();
 
-            // put the response into the cache, this is read in Pimcore_Controller_Action_Frontend::checkForErrors()
+            // put the response into the cache, this is read in Pimcore\Controller\Action\Frontend::checkForErrors()
             $responseData = $this->getResponse()->getBody();
-            if(strlen($responseData) > 20) {
+            if(strlen($responseData) > 20 && !session_id()) {
+                // do not cache if there's no data or an active session
                 $cacheKey = "error_page_response_" . \Pimcore\Tool\Frontend::getSiteKey();
                 \Pimcore\Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
             }

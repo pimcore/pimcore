@@ -614,11 +614,7 @@ class Pimcore {
 
         $autoloader = \Zend_Loader_Autoloader::getInstance();
 
-        $autoloader->registerNamespace('Logger');
-        $autoloader->registerNamespace('Pimcore');
-        $autoloader->registerNamespace('Net_');
         $autoloader->registerNamespace('Website');
-        $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Search');
 
         // these are necessary to be backward compatible

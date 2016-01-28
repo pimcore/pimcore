@@ -139,7 +139,8 @@ pimcore.object.fieldcollection = Class.create({
     openFieldcollection: function (id) {
 
         if(Ext.getCmp("pimcore_fieldcollection_editor_panel_" + id)) {
-            this.getEditPanel().setActiveTab(Ext.getCmp("pimcore_class_editor_panel_" + id));
+
+            this.getEditPanel().setActiveTab(Ext.getCmp("pimcore_fieldcollection_editor_panel_" + id));
             return;
         }
 
@@ -161,7 +162,7 @@ pimcore.object.fieldcollection = Class.create({
             delete this.fieldPanel;
         }*/
 
-        var fieldPanel = new pimcore.object.fieldcollections.field(data, this, this.openFieldcollection.bind(this, data.key));
+        var fieldPanel = new pimcore.object.fieldcollections.field(data, this, this.openFieldcollection.bind(this, data.key), "pimcore_fieldcollection_editor_panel_");
         pimcore.layout.refresh();
         
     },

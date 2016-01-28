@@ -74,10 +74,9 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
             text = htmlentities(text, null, null, false);
 
             try {
-                document.execCommand("insertHTML", false, text);
+                pimcore.edithelpers.pasteHtmlAtCaret(text);
             } catch (e) {
-                // IE <= 10
-                document.selection.createRange().pasteHTML(text);
+                console.log(e);
             }
         }.bind(this));
 

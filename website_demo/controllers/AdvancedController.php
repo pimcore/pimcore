@@ -63,7 +63,7 @@ class AdvancedController extends Action
             $mail->setIgnoreDebugMode(true);
 
             // To is used from the email document, but can also be set manually here (same for subject, CC, BCC, ...)
-            //$mail->addTo("bernhard.rusch@pimcore.org");
+            //$mail->addTo("info@pimcore.org");
 
             $emailDocument = $this->document->getProperty("email");
             if(!$emailDocument) {

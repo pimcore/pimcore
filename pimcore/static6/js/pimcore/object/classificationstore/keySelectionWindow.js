@@ -67,10 +67,10 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                     text: t("apply"),
                     iconCls: "pimcore_icon_apply",
                     handler: function () {
-
+                        var selectionModel = this.gridPanel.getSelectionModel();
                         if (this.isCollectionSearch) {
                             var collectionIds = [];
-                            var selected = this.gridPanel.getSelectionModel().getSelections();
+                            var selected = selectionModel.getSelection();
                             for (var i = 0; i < selected.length; i++) {
                                 var collectionId = selected[i].id;
                                 collectionIds.push(collectionId);
@@ -79,7 +79,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
 
                         } else if (this.isGroupSearch) {
                             var groupIds = [];
-                            var selected = this.gridPanel.getSelectionModel().getSelections();
+                            var selected = selectionModel.getSelection();
                             for (var i = 0; i < selected.length; i++) {
                                 var groupId = selected[i].id;
                                 groupIds.push(groupId);
@@ -87,7 +87,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                             this.addGroups(groupIds);
                         } else {
                             var keyIds = [];
-                            var selectedKeys = this.gridPanel.getSelectionModel().getSelections();
+                            var selectedKeys = selectionModel.getSelection();
                             for (var ki = 0; ki < selectedKeys.length; ki++) {
                                 var keyId = selectedKeys[ki].id;
                                 keyIds.push(keyId);
@@ -403,7 +403,9 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             columnLines: true,
             bodyCls: "pimcore_editable_grid",
             stripeRows: true,
-            selModel: Ext.create('Ext.selection.RowModel', {}),
+            selModel: Ext.create('Ext.selection.RowModel', {
+                mode: 'MULTI'
+            }),
             bbar: this.pagingtoolbar,
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {

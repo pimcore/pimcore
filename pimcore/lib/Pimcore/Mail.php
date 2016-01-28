@@ -768,7 +768,6 @@ class Mail extends \Zend_Mail
             //creating text version from html email if html2text is installed
             try {
                 include_once("simple_html_dom.php");
-                include_once("html2text.php");
 
                 $htmlContent = $this->getBodyHtmlRendered();
                 $html = str_get_html($htmlContent);
@@ -877,10 +876,8 @@ class Mail extends \Zend_Mail
     }
 
     /**
-     *  generates text version of htmlContent
-     *  uses html2text binary if it was successfully enabled by calling
-     *  enableHtml2textBinary(), otherwise it uses html2text php version
-     *  @returns string
+     * @param $htmlContent
+     * @return string
      */
     protected  function html2Text($htmlContent)
     {
@@ -898,9 +895,9 @@ class Mail extends \Zend_Mail
             }
             return $content;
 
-        }   else {
-            return @html2text($htmlContent);
         }
+
+        return "";
     }
 
     /**

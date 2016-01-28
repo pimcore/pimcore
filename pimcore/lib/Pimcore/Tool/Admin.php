@@ -13,6 +13,7 @@
 namespace Pimcore\Tool;
 
 use Pimcore\File;
+use Pimcore\Tool\Text\Csv;
 
 class Admin {
 
@@ -99,7 +100,7 @@ class Admin {
 
     /**
      * @param $file
-     * @return \Csv_Dialect
+     * @return \stdClass
      */
     public static function determineCsvDialect ($file) {
 
@@ -110,11 +111,11 @@ class Admin {
         }
 
         try {
-            $sniffer = new \Csv_AutoDetect();
+            $sniffer = new Csv();
             $dialect = $sniffer->detect($sample);
         } catch (\Exception $e) {
             // use default settings
-            $dialect = new \Csv_Dialect();
+            $dialect = new \stdClass();
         }
 
         // validity check
@@ -204,6 +205,10 @@ class Admin {
     public static function isExtJS6() {
         if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] == 6) {
             return true;
+        }
+
+        if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] < 6) {
+            return false;
         }
 
         if(isset($_REQUEST["extjs3"])) {
