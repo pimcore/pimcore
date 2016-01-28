@@ -24,7 +24,7 @@ class Config {
     protected static $configFileCache = [];
 
     /**
-     * @param $name
+     * @param $name - name of configuration file. slash is allowed for subdirectories.
      * @return mixed
      */
     public static function locateConfigFile($name) {
