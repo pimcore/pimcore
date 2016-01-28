@@ -716,15 +716,25 @@ class DefaultFindologic implements IProductList
 
 
     /**
-     * @param str  $fieldname
-     * @param bool $countValues
-     * @param bool $fieldnameShouldBeExcluded
+     * @param string $fieldname
+     * @param bool   $countValues
+     * @param bool   $fieldnameShouldBeExcluded
      *
      * @return array|void
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
-        return $this->getGroupByValues( $fieldname, $countValues, $fieldnameShouldBeExcluded );
+        // init
+        $relations = [];
+
+        // load and resort data
+        $values = $this->getGroupByValues( $fieldname, $countValues, $fieldnameShouldBeExcluded );
+        foreach($values as $item)
+        {
+            $relations[] = $item['value'];
+        }
+
+        return $relations;
     }
 
 
