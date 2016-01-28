@@ -18,7 +18,7 @@ class MultiSelectRelation extends \OnlineShop\Framework\FilterService\FilterType
         //return "";
         $field = $this->getField($filterDefinition);
 
-        $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
+        $values = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
 
 
         // add current filter. workaround for findologic behavior

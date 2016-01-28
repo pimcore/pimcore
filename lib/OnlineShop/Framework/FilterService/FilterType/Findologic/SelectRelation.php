@@ -22,7 +22,7 @@ class SelectRelation extends \OnlineShop\Framework\FilterService\FilterType\Sele
         $field = $this->getField($filterDefinition);
 
 
-        $values = $productList->getGroupByRelationValues($field, true);
+        $values = $productList->getGroupByValues($field, true);
 
         $objects = array();
         \Logger::log("Load Objects...", \Zend_Log::INFO);
