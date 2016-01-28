@@ -51,6 +51,7 @@ class Config {
                 }
             }
 
+            //check for config file without environment configuration
             if(!$file) {
                 foreach ($pathsToCheck as $path) {
                     $tmpFile = $path . "/" . $name;
@@ -59,6 +60,11 @@ class Config {
                         break;
                     }
                 }
+            }
+
+            //get default path in pimcore configuration directory
+            if(!$file) {
+                $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name;
             }
 
             self::$configFileCache[$name] = $file;
