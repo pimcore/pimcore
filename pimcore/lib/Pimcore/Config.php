@@ -35,7 +35,7 @@ class Config {
                 PIMCORE_WEBSITE_PATH . "/config",
                 PIMCORE_CONFIGURATION_DIRECTORY,
             ];
-            $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name;
+            $file = null;
 
             // check for environment configuration
             $env = getenv("PIMCORE_ENVIRONMENT");
@@ -51,11 +51,13 @@ class Config {
                 }
             }
 
-            foreach($pathsToCheck as $path) {
-                $tmpFile = $path . "/" . $name;
-                if(file_exists($tmpFile)) {
-                    $file = $tmpFile;
-                    break;
+            if(!$file) {
+                foreach ($pathsToCheck as $path) {
+                    $tmpFile = $path . "/" . $name;
+                    if (file_exists($tmpFile)) {
+                        $file = $tmpFile;
+                        break;
+                    }
                 }
             }
 
