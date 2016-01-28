@@ -126,6 +126,11 @@ class DefaultFindologic implements IProductList
      */
     protected $supportedOrderKeys = ['label', 'price', 'salesFrequency', 'dateAdded'];
 
+    /**
+     * @var int
+     */
+    protected $timeout = 3;
+
 
     /**
      * @param \OnlineShop\Framework\IndexService\Config\IConfig $tenantConfig
@@ -815,7 +820,7 @@ class DefaultFindologic implements IProductList
         // start request
         $start = microtime(true);
         $client = new \Zend_Http_Client($url, [
-            'timeout' => 3
+            'timeout' => $this->timeout
         ]);
         $client->setMethod(\Zend_Http_Client::GET);
         $response = $client->request();
