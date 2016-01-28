@@ -91,7 +91,7 @@ class NumberRangeSelection extends AbstractFilterType {
     public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $rawValue = $params[$filterDefinition->getField()];
 
-        if(!empty($rawValue) && $rawValue != AbstractFilterType::EMPTY_STRING) {
+        if(!empty($rawValue) && $rawValue != AbstractFilterType::EMPTY_STRING && is_string($rawValue)) {
             $values = explode("-", $rawValue);
             $value['from'] = trim($values[0]);
             $value['to'] = trim($values[1]);
