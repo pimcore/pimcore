@@ -167,6 +167,7 @@ pimcore.settings.targeting.conditions = {
                 mode: "local",
                 width: 300,
                 value: data.browser,
+                editable: false,
                 triggerAction: "all"
             },{
                 xtype: "hidden",

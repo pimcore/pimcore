@@ -104,6 +104,7 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function(store, itemsPerPage) {
         width: 80,
         value: itemsPerPage,
         triggerAction: "all",
+        editable: false,
         listeners: {
             select: function (box, rec) {
                 var store = this.getStore();

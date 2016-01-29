@@ -188,7 +188,7 @@ pimcore.object.importer = Class.create({
                     mode: "local",
                     triggerAction: "all",
                     valueField: 'value',
-                    displayField: 'text',
+                    displayField: 'text'
                 })}
             ],
             forceFit: true

@@ -93,7 +93,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
             mode: "local",
             name: "subtype",
             triggerAction: "all",
-            forceSelection: true,
+            editable: false,
             value: selectedValue
         });
 

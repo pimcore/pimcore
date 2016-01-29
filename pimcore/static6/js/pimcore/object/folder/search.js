@@ -66,6 +66,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     valueField: 'id',
                     displayField: 'translatedText',
                     triggerAction: 'all',
+                    editable: false,
                     value: this.object.data["selectedClass"],
                     listeners: {
                         "select": this.changeClassSelect.bind(this)
@@ -314,6 +315,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 ],
                 mode: "local",
                 width: 80,
+                editable: false,
                 value: itemsPerPage,
                 triggerAction: "all",
                 listeners: {

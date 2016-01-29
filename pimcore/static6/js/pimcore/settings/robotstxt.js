@@ -107,6 +107,7 @@ pimcore.settings.robotstxt = Class.create({
                     valueField: "id",
                     displayField: "domain",
                     triggerAction: "all",
+                    editable: false,
                     listeners: {
                         "select": function (el) {
                             this.site = el.getValue();

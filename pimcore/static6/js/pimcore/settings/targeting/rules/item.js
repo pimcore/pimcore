@@ -210,6 +210,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                 value: this.data["scope"],
                 mode: "local",
                 triggerAction: "all",
+                editable: false,
                 store: [["user", t("user")],["session", t("session")], ["hit", t("hit")]]
             }, {
                 name: "active",

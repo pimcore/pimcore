@@ -75,6 +75,7 @@ pimcore.settings.document.doctypes = Class.create({
             {header: t("priority"), flex: 50, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
                 store: [1,2,3,4,5,6,7,8,9,10],
                 mode: "local",
+                editable: false,
                 triggerAction: "all"
             })},
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,

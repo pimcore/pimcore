@@ -41,7 +41,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                                             + '/width/88/height/88/frame/true" />';
                                     }
                                 }.bind(this, field.key)};
-    },    
+    },
 
     getLayoutEdit: function () {
 
@@ -233,7 +233,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 fieldLabel: t('type'),
                 name: 'type',
                 triggerAction: 'all',
-                editable: true,
+                editable: false,
                 mode: "local",
                 store: ["asset","youtube","vimeo"],
                 value: this.data.type,
@@ -419,7 +419,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         var bodyId = result[0].getAttribute("id");
         return Ext.get(bodyId);
     },
-    
+
     empty: function () {
         this.data = {
             type: "asset",
@@ -430,7 +430,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
         this.dirty = true;
     },
-    
+
     getValue: function () {
         return this.data;
     },

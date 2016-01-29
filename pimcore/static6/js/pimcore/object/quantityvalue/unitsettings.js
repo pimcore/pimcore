@@ -177,6 +177,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             mode: "local",
             width: 80,
             value: 20,
+            editable: false,
             triggerAction: "all",
             listeners: {
                 select: function (box, rec, index) {

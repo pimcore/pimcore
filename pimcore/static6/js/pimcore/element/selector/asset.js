@@ -92,7 +92,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             mode: "local",
             name: "subtype",
             triggerAction: "all",
-            forceSelection: true,
+            editable: false,
             value: selectedValue
         });
 

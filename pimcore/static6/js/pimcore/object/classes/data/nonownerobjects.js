@@ -21,7 +21,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
         objectbrick: false,
         fieldcollection: false,
         localizedfield: false
-    },        
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "nonownerobjects";
@@ -84,6 +84,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             value: this.datax.ownerClassName,
             disabled: this.isInCustomLayoutEditor(),
             forceSelection:true,
+            editable: false,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
                     this.datax.ownerClassName=classNamevalue;
@@ -121,13 +122,14 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             valueField: 'key' ,
             lastQuery: '',
             name: 'ownerFieldName',
+            editable: false,
             disabled: this.isInCustomLayoutEditor(),
             listeners: {
                 focus: function(){
                     if (this.datax.ownerClassName != null) {
                         this.fieldCombo.store.load({params:{name:this.datax.ownerClassName}});
-                    }   
-                }.bind(this) 
+                    }
+                }.bind(this)
             }
         });
 
