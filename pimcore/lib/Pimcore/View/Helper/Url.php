@@ -74,7 +74,7 @@ class Url extends \Zend_View_Helper_Url
             $url = $route->assemble($urlOptions, $reset, $encode);
 
             // if there's a site, prepend the host to the generated URL
-            if ($hostname && !preg_match("/^http/i", $url)) {
+            if ($hostname && !preg_match("/^https?:/i", $url)) {
                 $url = "//" . $hostname . $url;
             }
 
@@ -100,7 +100,7 @@ class Url extends \Zend_View_Helper_Url
             unset($urlOptions[$optionName]);
         }
 
-        
+
         try {
             return parent::url($urlOptions, $name, $reset, $encode);
         } catch (\Exception $e) {
