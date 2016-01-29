@@ -434,7 +434,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
                 return false;
             }
 
-            $result = $this->set($id, $data, $newLifetime,$tags);
+            $result = $this->set($id, $data, $newLifetime, $tags);
             return $result;
         }
 
@@ -474,12 +474,12 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * @param mixed $tags
      * @return boolean
      */
-    function set($id, $data, $lifetime, $tags)
+    public function set($id, $data, $lifetime, $tags)
     {
         $now = time();
 
         // set the lifetime to 1 year if it is null
-        if(!$lifetime) {
+        if (!$lifetime) {
             $lifetime = (86400*365);
         }
 
@@ -499,10 +499,8 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * @param int $id
      * @return array|false
      */
-    function get($id)
+    public function get($id)
     {
         return $this->_collection->find(array('_id' => $id));
     }
-
 }
-

@@ -5,7 +5,8 @@
 
 class TestSuite_Datatypes_AllTests extends Test_SuiteBase
 {
-    public static function suite() {
+    public static function suite()
+    {
         $suite = new TestSuite_Datatypes_AllTests('Datatypes');
 
         $tests = array('TestSuite_Datatypes_KeyValueTest', 'TestSuite_Datatypes_LocalizedFieldTest');
@@ -21,4 +22,3 @@ class TestSuite_Datatypes_AllTests extends Test_SuiteBase
         return $suite;
     }
 }
-?>

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class Textarea extends Model\Object\ClassDefinition\Data {
+class Textarea extends Model\Object\ClassDefinition\Data
+{
 
     use Model\Object\ClassDefinition\Data\Extension\Text;
 
@@ -61,14 +62,16 @@ class Textarea extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         return $this->width;
     }
 
     /**
      * @return integer
      */
-    public function getHeight() {
+    public function getHeight()
+    {
         return $this->height;
     }
 
@@ -76,7 +79,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param integer $width
      * @return void
      */
-    public function setWidth($width) {
+    public function setWidth($width)
+    {
         $this->width = $this->getAsIntegerCast($width);
         return $this;
     }
@@ -85,7 +89,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param integer $height
      * @return void
      */
-    public function setHeight($height) {
+    public function setHeight($height)
+    {
         $this->height = $this->getAsIntegerCast($height);
         return $this;
     }
@@ -97,7 +102,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         return $data;
     }
 
@@ -106,7 +112,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param string $data
      * @return string
      */
-    public function getDataFromResource($data) {
+    public function getDataFromResource($data)
+    {
         return $data;
     }
 
@@ -116,7 +123,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $data;
     }
 
@@ -127,7 +135,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -137,7 +146,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null) {
+    public function getDataFromEditmode($data, $object = null)
+    {
         return $data;
     }
 
@@ -147,7 +157,8 @@ class Textarea extends Model\Object\ClassDefinition\Data {
      * @param null $object
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null) {
+    public function getDiffVersionPreview($data, $object = null)
+    {
         if ($data) {
             $value = array();
             $data = str_replace("\r\n", "<br>", $data);

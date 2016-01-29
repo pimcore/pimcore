@@ -16,21 +16,23 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-class AdminStyle {
+class AdminStyle
+{
 
     protected $elementCssClass;
     protected $elementIcon;
     protected $elementIconClass;
     protected $elementQtipConfig;
 
-    public function __construct($element) {
-        if($element->getType() == "folder") {
+    public function __construct($element)
+    {
+        if ($element->getType() == "folder") {
             $this->elementIconClass = "pimcore_icon_folder";
             $this->elementQtipConfig = array(
                 "title" => "ID: " . $element->getId()
             );
         } else {
-            if($element->getClass()->getIcon()) {
+            if ($element->getClass()->getIcon()) {
                 $this->elementIcon = $element->getClass()->getIcon();
             } else {
                 $this->elementIconClass = "pimcore_icon_object";
@@ -43,40 +45,46 @@ class AdminStyle {
         }
     }
 
-    public function setElementCssClass($elementCssClass) {
+    public function setElementCssClass($elementCssClass)
+    {
         $this->elementCssClass = $elementCssClass;
         return $this;
     }
 
-    public function getElementCssClass() {
+    public function getElementCssClass()
+    {
         return $this->elementCssClass;
     }
 
-    public function setElementIcon($elementIcon) {
+    public function setElementIcon($elementIcon)
+    {
         $this->elementIcon = $elementIcon;
         return $this;
     }
 
-    public function getElementIcon() {
+    public function getElementIcon()
+    {
         return $this->elementIcon;
     }
 
-    public function setElementIconClass($elementIconClass) {
+    public function setElementIconClass($elementIconClass)
+    {
         $this->elementIconClass = $elementIconClass;
         return $this;
     }
 
-    public function getElementIconClass() {
+    public function getElementIconClass()
+    {
         return $this->elementIconClass;
     }
 
-    public function getElementQtipConfig() {
+    public function getElementQtipConfig()
+    {
         return $this->elementQtipConfig;
     }
 
-    public function setElementQtipConfig($elementQtipConfig) {
+    public function setElementQtipConfig($elementQtipConfig)
+    {
         $this->elementQtipConfig = $elementQtipConfig;
     }
-
-
 }

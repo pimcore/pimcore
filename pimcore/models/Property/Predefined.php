@@ -16,7 +16,8 @@ namespace Pimcore\Model\Property;
 
 use Pimcore\Model;
 
-class Predefined extends Model\AbstractModel {
+class Predefined extends Model\AbstractModel
+{
 
     /**
      * @var integer
@@ -79,8 +80,8 @@ class Predefined extends Model\AbstractModel {
      * @param integer $id
      * @return self
      */
-    public static function getById($id) {
-
+    public static function getById($id)
+    {
         try {
             $property = new self();
             $property->setId($id);
@@ -96,17 +97,16 @@ class Predefined extends Model\AbstractModel {
      * @param string $key
      * @return self
      */
-    public static function getByKey($key) {
-
+    public static function getByKey($key)
+    {
         $cacheKey = "property_predefined_" . $key;
 
         try {
             $property = \Zend_Registry::get($cacheKey);
-            if(!$property) {
+            if (!$property) {
                 throw new \Exception("Predefined property in registry is null");
             }
         } catch (\Exception $e) {
-
             try {
                 $property = new self();
                 $property->setKey($key);
@@ -124,7 +124,8 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return self
      */
-    public static function create() {
+    public static function create()
+    {
         $type = new self();
         $type->save();
 
@@ -134,28 +135,32 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
     /**
      * @return string
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -163,7 +168,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $key
      * @return void
      */
-    public function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
         return $this;
     }
@@ -172,7 +178,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -181,7 +188,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $type
      * @return void
      */
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
         return $this;
     }
@@ -190,7 +198,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $data
      * @return void
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
         return $this;
     }
@@ -198,7 +207,8 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -206,7 +216,8 @@ class Predefined extends Model\AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -214,7 +225,8 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getConfig() {
+    public function getConfig()
+    {
         return $this->config;
     }
 
@@ -222,7 +234,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $config
      * @return void
      */
-    public function setConfig($config) {
+    public function setConfig($config)
+    {
         $this->config = $config;
         return $this;
     }
@@ -230,7 +243,8 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getCtype() {
+    public function getCtype()
+    {
         return $this->ctype;
     }
 
@@ -238,7 +252,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $ctype
      * @return void
      */
-    public function setCtype($ctype) {
+    public function setCtype($ctype)
+    {
         $this->ctype = $ctype;
         return $this;
     }
@@ -246,7 +261,8 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getInheritable() {
+    public function getInheritable()
+    {
         return (bool) $this->inheritable;
     }
 
@@ -254,7 +270,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $inheritable
      * @return void
      */
-    public function setInheritable($inheritable) {
+    public function setInheritable($inheritable)
+    {
         $this->inheritable = (bool) $inheritable;
         return $this;
     }
@@ -310,6 +327,4 @@ class Predefined extends Model\AbstractModel {
     {
         return $this->modificationDate;
     }
-
-
 }

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class NewsletterConfirmed extends Model\Object\ClassDefinition\Data\Checkbox {
+class NewsletterConfirmed extends Model\Object\ClassDefinition\Data\Checkbox
+{
 
     /**
      * Static type of this element

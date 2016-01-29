@@ -16,7 +16,8 @@ namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Property\Predefined
@@ -28,7 +29,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getProperties() {
+    public function getProperties()
+    {
         return $this->properties;
     }
 
@@ -36,7 +38,8 @@ class Listing extends Model\Listing\JsonListing {
      * @param array $properties
      * @return void
      */
-    public function setProperties($properties) {
+    public function setProperties($properties)
+    {
         $this->properties = $properties;
         return $this;
     }

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Snippet;
 
 use Pimcore\Model;
 
-class Dao extends Model\Document\PageSnippet\Dao {
+class Dao extends Model\Document\PageSnippet\Dao
+{
 
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
@@ -24,9 +25,9 @@ class Dao extends Model\Document\PageSnippet\Dao {
      * @param integer $id
      * @throws \Exception
      */
-    public function getById($id = null) {
+    public function getById($id = null)
+    {
         try {
-
             if ($id != null) {
                 $this->model->setId($id);
             }
@@ -45,8 +46,7 @@ class Dao extends Model\Document\PageSnippet\Dao {
             $this->assignVariablesToModel($data);
 
             //$this->getElements();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
         }
     }
 
@@ -55,18 +55,17 @@ class Dao extends Model\Document\PageSnippet\Dao {
      *
      * @throws \Exception
      */
-    public function create() {
+    public function create()
+    {
         try {
             parent::create();
 
             $this->db->insert("documents_snippet", array(
                 "id" => $this->model->getId()
             ));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -74,15 +73,13 @@ class Dao extends Model\Document\PageSnippet\Dao {
      *
      * @throws \Exception
      */
-    public function delete() {
+    public function delete()
+    {
         try {
             $this->db->delete("documents_snippet", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
-
-
 }

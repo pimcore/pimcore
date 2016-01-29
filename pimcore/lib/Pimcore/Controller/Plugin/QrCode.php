@@ -14,17 +14,18 @@ namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Model\Tool;
 
-class QrCode extends \Zend_Controller_Plugin_Abstract {
+class QrCode extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
-
-        if(preg_match("@^/qr~-~code/([a-zA-Z0-9_\-]+)@",$request->getPathInfo(), $matches)) {
-            if(array_key_exists(1, $matches) && !empty($matches[1])) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
+        if (preg_match("@^/qr~-~code/([a-zA-Z0-9_\-]+)@", $request->getPathInfo(), $matches)) {
+            if (array_key_exists(1, $matches) && !empty($matches[1])) {
                 $code = Tool\Qrcode\Config::getByName($matches[1]);
-                if($code) {
+                if ($code) {
                     $url = $code->getUrl();
                     if ($code->getGoogleAnalytics()) {
                         $glue = "?";

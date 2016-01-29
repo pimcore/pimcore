@@ -5,7 +5,8 @@ use Pimcore\Model\Object;
 
 class BlogController extends Action
 {
-    public function indexAction() {
+    public function indexAction()
+    {
         $this->enableLayout();
 
         // get a list of news objects and order them by date
@@ -15,20 +16,20 @@ class BlogController extends Action
 
         $conditions = [];
 
-        if($this->getParam("category")) {
+        if ($this->getParam("category")) {
             $conditions[] = "categories LIKE " . $blogList->quote("%," . (int) $this->getParam("category") . ",%");
         }
 
-        if($this->getParam("archive")) {
+        if ($this->getParam("archive")) {
             $conditions[] = "DATE_FORMAT(FROM_UNIXTIME(date), '%Y-%c') = " . $blogList->quote($this->getParam("archive"));
         }
 
-        if(!empty($conditions)) {
+        if (!empty($conditions)) {
             $blogList->setCondition(implode(" AND ", $conditions));
         }
 
         $paginator = \Zend_Paginator::factory($blogList);
-        $paginator->setCurrentPageNumber( $this->getParam('page') );
+        $paginator->setCurrentPageNumber($this->getParam('page'));
         $paginator->setItemCountPerPage(5);
 
         $this->view->articles = $paginator;
@@ -43,13 +44,14 @@ class BlogController extends Action
         $this->view->archiveRanges = $ranges;
     }
 
-    public function detailAction() {
+    public function detailAction()
+    {
         $this->enableLayout();
 
         // "id" is the named parameters in "Static Routes"
         $article = Object\BlogArticle::getById($this->getParam("id"));
 
-        if(!$article instanceof Object\BlogArticle || !$article->isPublished()) {
+        if (!$article instanceof Object\BlogArticle || !$article->isPublished()) {
             // this will trigger a 404 error response
             throw new \Zend_Controller_Router_Exception("invalid request");
         }
@@ -57,10 +59,10 @@ class BlogController extends Action
         $this->view->article = $article;
     }
 
-    public function sidebarBoxAction() {
-
+    public function sidebarBoxAction()
+    {
         $items = (int) $this->getParam("items");
-        if(!$items) {
+        if (!$items) {
             $items = 3;
         }
 

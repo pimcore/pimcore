@@ -46,19 +46,19 @@ class Service
         $service = new Webservice\Service();
         if ($element instanceof Object\Folder) {
             return $service->getObjectFolderById($element->getId());
-        } else if ($element instanceof Object\Concrete) {
+        } elseif ($element instanceof Object\Concrete) {
             return $service->getObjectConcreteById($element->getId());
-        } else if ($element instanceof Asset\Folder) {
+        } elseif ($element instanceof Asset\Folder) {
             return $service->getAssetFolderById($element->getId());
-        } else if ($element instanceof Asset) {
+        } elseif ($element instanceof Asset) {
             return $service->getAssetFileById($element->getId());
-        } else if ($element instanceof Document\Folder) {
+        } elseif ($element instanceof Document\Folder) {
             return $service->getDocumentFolderById($element->getId());
-        } else if ($element instanceof Document\Snippet) {
+        } elseif ($element instanceof Document\Snippet) {
             return $service->getDocumentSnippetById($element->getId());
-        } else if ($element instanceof Document\Page) {
+        } elseif ($element instanceof Document\Page) {
             return $service->getDocumentPageById($element->getId());
-        } else if ($element instanceof Document\Link) {
+        } elseif ($element instanceof Document\Link) {
             return $service->getDocumentLinkById($element->getId());
         }
     }
@@ -71,13 +71,11 @@ class Service
         if ($includeRelations) {
             $dependency = $element->getDependencies();
             if ($dependency) {
-
                 foreach ($dependency->getRequires() as $r) {
                     if ($e = Element\Service::getDependedElement($r)) {
                         if ($element->getId() != $e->getId() and !in_array(Element\Service::getElementType($e) . "_" . $e->getId(), $apiElementKeys)) {
                             $foundRelations[Element\Service::getElementType($e) . "_" . $e->getId()] = array("elementType" => Element\Service::getType($e),"element" => $e->getId(), "recursive" => false);
                         }
-
                     }
                 }
             }
@@ -94,11 +92,5 @@ class Service
         }
 
         return $foundRelations;
-
     }
-
-
-
-
-
 }

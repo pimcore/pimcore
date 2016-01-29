@@ -30,11 +30,10 @@ class InternalNewsletterSendCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $newsletter = Model\Tool\Newsletter\Config::getByName($input->getArgument("id"));
-        if($newsletter) {
-
+        if ($newsletter) {
             $pidFile = $newsletter->getPidFile();
 
-            if(file_exists($pidFile)) {
+            if (file_exists($pidFile)) {
                 \Logger::alert("Cannot send newsletters because there's already one active sending process");
                 exit;
             }
@@ -44,27 +43,26 @@ class InternalNewsletterSendCommand extends AbstractCommand
             $list = new $objectList();
 
             $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
-            if($newsletter->getObjectFilterSQL()) {
+            if ($newsletter->getObjectFilterSQL()) {
                 $conditions[] = $newsletter->getObjectFilterSQL();
             }
-            if($newsletter->getPersonas()) {
+            if ($newsletter->getPersonas()) {
                 $class = Model\Object\ClassDefinition::getByName($newsletter->getClass());
-                if($class && $class->getFieldDefinition("persona")) {
+                if ($class && $class->getFieldDefinition("persona")) {
                     $personas = array();
                     $p = explode(",", $newsletter->getPersonas());
 
-                    if($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Persona) {
+                    if ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Persona) {
                         foreach ($p as $value) {
-                            if(!empty($value)) {
+                            if (!empty($value)) {
                                 $personas[] = $list->quote($value);
                             }
                         }
                         $conditions[] = "persona IN (" . implode(",", $personas) . ")";
-                    } else if ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect) {
+                    } elseif ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect) {
                         $personasCondition = array();
                         foreach ($p as $value) {
                             $personasCondition[] = "persona LIKE " . $list->quote("%," . $value .  ",%");
-
                         }
                         $conditions[] = "(" . implode(" OR ", $personasCondition). ")";
                     }
@@ -88,14 +86,13 @@ class InternalNewsletterSendCommand extends AbstractCommand
 
             $this->writePid($pidFile, $pidContents);
 
-            for($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
+            for ($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
                 $list->setLimit($elementsPerLoop);
                 $list->setOffset($i*$elementsPerLoop);
 
                 $objects = $list->load();
 
                 foreach ($objects as $object) {
-
                     try {
                         $count++;
                         \Logger::info("Sending newsletter " . $count . " / " . $elementsTotal. " [" . $newsletter->getName() . "]");
@@ -118,7 +115,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
                 }
 
                 // check if pid exists
-                if(!file_exists($pidFile)) {
+                if (!file_exists($pidFile)) {
                     \Logger::alert("Newsletter PID not found, cancel sending process");
                     exit;
                 }
@@ -133,18 +130,19 @@ class InternalNewsletterSendCommand extends AbstractCommand
 
             // remove pid
             @unlink($pidFile);
-
         } else {
             \Logger::emerg("Newsletter '" . $input->getArgument("id") . "' doesn't exist");
         }
     }
 
-    protected function obfuscateEmail($email) {
+    protected function obfuscateEmail($email)
+    {
         $email = substr_replace($email, ".xxx", strrpos($email, "."));
         return $email;
     }
 
-    protected function writePid ($file, $content) {
+    protected function writePid($file, $content)
+    {
         \Pimcore\File::put($file, serialize($content));
     }
 }

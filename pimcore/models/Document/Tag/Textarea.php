@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
-class Textarea extends Model\Document\Tag {
+class Textarea extends Model\Document\Tag
+{
 
     /**
      * Contains the text
@@ -30,7 +31,8 @@ class Textarea extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "textarea";
     }
 
@@ -38,7 +40,8 @@ class Textarea extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->text;
     }
 
@@ -46,8 +49,8 @@ class Textarea extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
-
+    public function frontend()
+    {
         $options = $this->getOptions();
 
         $text = $this->text;
@@ -65,7 +68,8 @@ class Textarea extends Model\Document\Tag {
     /**
      *
      */
-    public function getDataEditmode() {
+    public function getDataEditmode()
+    {
         return htmlentities($this->text);
     }
 
@@ -74,7 +78,8 @@ class Textarea extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->text = $data;
         return $this;
     }
@@ -84,7 +89,8 @@ class Textarea extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         $data = html_entity_decode($data, ENT_HTML5); // this is because the input is now an div contenteditable -> therefore in entities
         $this->text = $data;
         return $this;
@@ -94,7 +100,8 @@ class Textarea extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return empty($this->text);
     }
 
@@ -103,14 +110,13 @@ class Textarea extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
-
     }
-
 }

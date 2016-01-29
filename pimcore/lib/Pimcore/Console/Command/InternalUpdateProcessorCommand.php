@@ -30,27 +30,25 @@ class InternalUpdateProcessorCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $status = ["success" => true];
         $config = $input->getArgument("config");
 
-        if($config) {
+        if ($config) {
             $job = json_decode($config, true);
 
-            if(is_array($job)) {
-
+            if (is_array($job)) {
                 if (isset($job["dry-run"])) {
                     // do not do anything here
                     \Logger::info("skipped update job because it is in dry-run mode", $job);
-                } else if ($job["type"] == "files") {
+                } elseif ($job["type"] == "files") {
                     Update::installData($job["revision"]);
-                } else if ($job["type"] == "clearcache") {
+                } elseif ($job["type"] == "clearcache") {
                     \Pimcore\Cache::clearAll();
-                } else if ($job["type"] == "preupdate") {
+                } elseif ($job["type"] == "preupdate") {
                     $status = Update::executeScript($job["revision"], "preupdate");
-                } else if ($job["type"] == "postupdate") {
+                } elseif ($job["type"] == "postupdate") {
                     $status = Update::executeScript($job["revision"], "postupdate");
-                } else if ($job["type"] == "cleanup") {
+                } elseif ($job["type"] == "cleanup") {
                     Update::cleanup();
                 }
             }

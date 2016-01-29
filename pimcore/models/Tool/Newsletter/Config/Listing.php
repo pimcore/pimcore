@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Newsletter\Config;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * @var array
@@ -26,7 +27,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getNewsletter() {
+    public function getNewsletter()
+    {
         return $this->newsletter;
     }
 
@@ -34,7 +36,8 @@ class Listing extends Model\Listing\JsonListing {
      * @param $newsletter
      * @return $this
      */
-    public function setNewsletter($newsletter) {
+    public function setNewsletter($newsletter)
+    {
         $this->newsletter = $newsletter;
         return $this;
     }

@@ -9,11 +9,11 @@ $handle = @fopen(dirname(dirname(__FILE__)) . '/css/icons.css', "r");
 $lastIconClass;
 if ($handle) {
     while (($row = fgets($handle)) !== false) {
-        if(preg_match("@(\.pimcore_icon_[a-z_]+)@",$row,$match)){
+        if (preg_match("@(\.pimcore_icon_[a-z_]+)@", $row, $match)) {
             $lastIconClass = $match[1];
         }
 
-        if(preg_match("@background:\s*url\((.*?)\)@",$row,$match)){
+        if (preg_match("@background:\s*url\((.*?)\)@", $row, $match)) {
             $pimcoreIconClasses[$match[1]][] = $lastIconClass;
             $lastIconClass = $match[1];
         }
@@ -22,24 +22,25 @@ if ($handle) {
 }
 
 $iconsGrouped = array();
-function getIconData($icon,$iconCss,$pimcoreIconClasses){
+function getIconData($icon, $iconCss, $pimcoreIconClasses)
+{
     $data = array();
-    $data['name'] = str_replace('.png','',$icon);
+    $data['name'] = str_replace('.png', '', $icon);
     $data['path'] = dirname(dirname($_SERVER['SCRIPT_NAME'])) . '/img/icon/'.$icon;
-    $data['id'] = str_replace('.','',$icon);
-    $data['iconClass'] = implode(', ',$pimcoreIconClasses[$data['path']]);
+    $data['id'] = str_replace('.', '', $icon);
+    $data['iconClass'] = implode(', ', $pimcoreIconClasses[$data['path']]);
     return $data;
 }
 
 foreach ($icons as $icon) {
     if ($icon != '.' && $icon != '..') {
-        $name = str_replace('.png','',$icon);
+        $name = str_replace('.png', '', $icon);
 
-        if(strpos($icon,'_') === false){
-            $iconsGrouped[$name][] = getIconData($icon,$iconCss,$pimcoreIconClasses);
-        }else{
-            $tmp = explode('_',$icon,2);
-            $iconsGrouped[$tmp[0]][] = getIconData($icon,$iconCss,$pimcoreIconClasses);
+        if (strpos($icon, '_') === false) {
+            $iconsGrouped[$name][] = getIconData($icon, $iconCss, $pimcoreIconClasses);
+        } else {
+            $tmp = explode('_', $icon, 2);
+            $iconsGrouped[$tmp[0]][] = getIconData($icon, $iconCss, $pimcoreIconClasses);
         }
     }
 }
@@ -75,12 +76,16 @@ foreach ($icons as $icon) {
 <body>
 <?php
 foreach ($icons as $icon) {
-        if($icon == '.' || $icon == '..'){
-            continue;
-        }
+    if ($icon == '.' || $icon == '..') {
+        continue;
+    }
     ?>
-    <a href="#<?=str_replace('.','',$icon)?>"><img src="<?php echo $iconPath . $icon; ?>" title="<?php echo $icon; ?>" alt="<?php echo $icon; ?>"/></a>
-<?php } ?>
+    <a href="#<?=str_replace('.', '', $icon)?>"><img src="<?php echo $iconPath . $icon;
+    ?>" title="<?php echo $icon;
+    ?>" alt="<?php echo $icon;
+    ?>"/></a>
+<?php 
+} ?>
 <br/><br/>
 <table>
     <tr>
@@ -89,20 +94,27 @@ foreach ($icons as $icon) {
         <th>Path</th>
         <th>Pimcore CSS class</th>
     </tr>
-    <? foreach($iconsGrouped as $group => $icons){?>
+    <?php foreach ($iconsGrouped as $group => $icons) {
+    ?>
         <tr class="group">
             <td colspan="4"><?=ucfirst($group)?></td>
         </tr>
-        <? foreach($icons as $icon) {?>
+        <?php foreach ($icons as $icon) {
+    ?>
             <tr>
                 <td width="100"><img src="<?=$icon['path']?>" title="<?=$icon['path']?>" als="<?=$icon['path']?>" id="<?=$icon['id']?>"/></td>
                 <td><?=$icon['name']?></td>
                 <td><?=$icon['path']?></td>
                 <td><?=$icon['iconClass']?></td>
             </tr>
-        <?}?>
+        <?php
 
-    <?}?>
+}
+    ?>
+
+    <?php
+
+}?>
 
 
 </table>

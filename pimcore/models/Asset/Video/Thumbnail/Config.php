@@ -16,7 +16,8 @@ namespace Pimcore\Model\Asset\Video\Thumbnail;
 
 use Pimcore\Model;
 
-class Config extends Model\AbstractModel {
+class Config extends Model\AbstractModel
+{
 
     /**
      * format of array:
@@ -69,17 +70,16 @@ class Config extends Model\AbstractModel {
      * @param $name
      * @return null|Config
      */
-    public static function getByName($name) {
-
+    public static function getByName($name)
+    {
         $cacheKey = "videothumb_" . crc32($name);
 
         try {
             $thumbnail = \Zend_Registry::get($cacheKey);
-            if(!$thumbnail) {
+            if (!$thumbnail) {
                 throw new \Exception("Thumbnail in registry is null");
             }
         } catch (\Exception $e) {
-
             try {
                 $thumbnail = new self();
                 $thumbnail->getDao()->getByName($name);
@@ -96,7 +96,8 @@ class Config extends Model\AbstractModel {
     /**
      * @return Config
      */
-    public static function getPreviewConfig () {
+    public static function getPreviewConfig()
+    {
         $config = new self();
         $config->setName("pimcore-system-treepreview");
         $config->setAudioBitrate(128);
@@ -120,7 +121,8 @@ class Config extends Model\AbstractModel {
      * @param  $parameters
      * @return bool
      */
-    public function addItem ($name, $parameters) {
+    public function addItem($name, $parameters)
+    {
         $this->items[] = array(
             "method" => $name,
             "arguments" => $parameters
@@ -134,8 +136,8 @@ class Config extends Model\AbstractModel {
      * @param  $parameters
      * @return bool
      */
-    public function addItemAt ($position, $name, $parameters) {
-
+    public function addItemAt($position, $name, $parameters)
+    {
         array_splice($this->items, $position, 0, array(array(
             "method" => $name,
             "arguments" => $parameters
@@ -148,7 +150,8 @@ class Config extends Model\AbstractModel {
     /**
      * @return void
      */
-    public function resetItems () {
+    public function resetItems()
+    {
         $this->items = array();
     }
 
@@ -245,16 +248,16 @@ class Config extends Model\AbstractModel {
     /**
      * @return array
      */
-    public function getEstimatedDimensions() {
-
+    public function getEstimatedDimensions()
+    {
         $dimensions = array();
         $transformations = $this->getItems();
-        if(is_array($transformations) && count($transformations) > 0) {
+        if (is_array($transformations) && count($transformations) > 0) {
             foreach ($transformations as $transformation) {
-                if(!empty($transformation)) {
-                    if(is_array($transformation["arguments"])) {
+                if (!empty($transformation)) {
+                    if (is_array($transformation["arguments"])) {
                         foreach ($transformation["arguments"] as $key => $value) {
-                            if($key == "width" || $key == "height") {
+                            if ($key == "width" || $key == "height") {
                                 $dimensions[$key] = $value;
                             }
                         }

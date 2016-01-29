@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\Data\KeyValue;
 
 use Pimcore\Model;
 
-class Entry {
+class Entry
+{
     /**
      * @var
      */
@@ -37,7 +38,8 @@ class Entry {
      * @param $translated
      * @param $metadata
      */
-    public function __construct($value, $translated, $metadata) {
+    public function __construct($value, $translated, $metadata)
+    {
         $this->value = $value;
         $this->translated = $translated;
         $this->metadata = $metadata;
@@ -46,14 +48,16 @@ class Entry {
     /**
      * @return mixed
      */
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
     /**
      * @return mixed
      */
-    public function getTranslated() {
+    public function getTranslated()
+    {
         return $this->translated;
     }
 
@@ -68,7 +72,8 @@ class Entry {
     /**
      * @return mixed
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->translated !== null ? $this->translated : $this->value;
     }
 }

@@ -17,7 +17,8 @@ namespace Pimcore\Model\Tool\Tag\Config\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Tool\Tag\Config;
 
-class Dao extends Model\Dao\PhpArrayTable {
+class Dao extends Model\Dao\PhpArrayTable
+{
 
     /**
      *
@@ -31,8 +32,8 @@ class Dao extends Model\Dao\PhpArrayTable {
     /**
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $properties = array();
         $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
@@ -47,8 +48,8 @@ class Dao extends Model\Dao\PhpArrayTable {
     /**
      * @return int
      */
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
         $amount = count($data);
 

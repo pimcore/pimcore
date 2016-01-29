@@ -16,7 +16,8 @@ namespace Pimcore\Model\Asset\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
 
     /**
@@ -24,14 +25,14 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $assets = array();
         $assetsData = $this->db->fetchAll("SELECT id,type FROM assets" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($assetsData as $assetData) {
-            if($assetData["type"]) {
-                if($asset = Model\Asset::getById($assetData["id"])) {
+            if ($assetData["type"]) {
+                if ($asset = Model\Asset::getById($assetData["id"])) {
                     $assets[] = $asset;
                 }
             }
@@ -46,17 +47,20 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return array
      */
-    public function loadIdList() {
+    public function loadIdList()
+    {
         $assetIds = $this->db->fetchCol("SELECT id FROM assets" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $assetIds;
     }
 
-    public function getCount() {
+    public function getCount()
+    {
         $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM assets" . $this->getCondition() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $amount;
     }
 
-    public function getTotalCount() {
+    public function getTotalCount()
+    {
         $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM assets" . $this->getCondition(), $this->model->getConditionVariables());
         return $amount;
     }

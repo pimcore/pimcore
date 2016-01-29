@@ -16,7 +16,8 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
-class Listing extends Listing\AbstractListing {
+class Listing extends Listing\AbstractListing
+{
 
     public $type = "user";
 
@@ -24,7 +25,8 @@ class Listing extends Listing\AbstractListing {
      * Alias for $this->getItems()
      * @return array
      */
-    public function getUsers() {
+    public function getUsers()
+    {
         return $this->getItems();
     }
 }

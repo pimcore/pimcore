@@ -6,16 +6,19 @@
  */
 
 
-class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
+class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base
+{
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->inAdminMode = Pimcore::inAdmin();
         Pimcore::setAdminMode();
         Test_Tool::cleanUp();
         parent::setUp();
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         if ($this->inAdminMode) {
             Pimcore::setAdminMode();
         } else {
@@ -32,7 +35,8 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
      *
      * two is created after one, en fields inherited. two gets moved out and moved in again. Then one gets updated.
      */
-    public function testInheritance() {
+    public function testInheritance()
+    {
         $this->printTestName();
         // According to the bootstrap file en and de are valid website languages
 
@@ -177,7 +181,6 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base {
             $listItems = $list->load();
             $this->fail("Expected exception");
         } catch (Exception $e) {
-
         }
     }
 }

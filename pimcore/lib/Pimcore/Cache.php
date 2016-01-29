@@ -15,7 +15,8 @@ namespace Pimcore;
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 
-class Cache {
+class Cache
+{
 
     /**
      * Instance of the used cache-implementation
@@ -26,7 +27,7 @@ class Cache {
     /**
      * @var bool
      */
-    protected  static $enabled = true;
+    protected static $enabled = true;
 
     /**
      * @var null
@@ -99,8 +100,8 @@ class Cache {
      *
      * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
-    public static function getInstance() {
-
+    public static function getInstance()
+    {
         if (!self::$instance instanceof \Zend_Cache_Core) {
             self::init();
         }
@@ -115,8 +116,8 @@ class Cache {
     /**
      *
      */
-    public static function init() {
-
+    public static function init()
+    {
         if (!self::$instance instanceof \Zend_Cache_Core) {
             // check for custom cache configuration
             $customConfigFile = \Pimcore\Config::locateConfigFile("cache.php");
@@ -125,8 +126,7 @@ class Cache {
 
                 $conf = include($customConfigFile);
 
-                if(is_array($conf)) {
-
+                if (is_array($conf)) {
                     if (isset($conf["frontend"])) {
                         $config["frontendType"] = $conf["frontend"]["type"];
                         $config["customFrontendNaming"] = $conf["frontend"]["custom"];
@@ -143,7 +143,7 @@ class Cache {
                         }
                     }
 
-                    if(isset($config["frontendConfig"]["lifetime"])) {
+                    if (isset($config["frontendConfig"]["lifetime"])) {
                         self::$defaultLifetime = $config["frontendConfig"]["lifetime"];
                     }
 
@@ -155,7 +155,6 @@ class Cache {
                     } catch (\Exception $e) {
                         \Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
                     }
-
                 } else {
                     \Logger::crit("Error while reading cache configuration, using the default database backend");
                 }
@@ -172,7 +171,7 @@ class Cache {
         self::$instance->setOption("automatic_cleaning_factor", 0);
 
         // init the write lock once (from other processes etc.)
-        if(self::$writeLockTimestamp === null) {
+        if (self::$writeLockTimestamp === null) {
             self::$writeLockTimestamp = 0; // set the write lock to 0, otherwise infinite loop (self::hasWriteLock() calls self::getInstance())
             self::hasWriteLock();
         }
@@ -184,17 +183,17 @@ class Cache {
      * @param $config
      * @return mixed
      */
-    protected static function normalizeConfig($config) {
-
+    protected static function normalizeConfig($config)
+    {
         foreach ($config as $key => &$value) {
-            if($value === "true") {
+            if ($value === "true") {
                 $value = true;
             }
-            if($value === "false") {
+            if ($value === "false") {
                 $value = false;
             }
 
-            if(is_array($value)) {
+            if (is_array($value)) {
                 $value = self::normalizeConfig($value);
             }
         }
@@ -206,7 +205,8 @@ class Cache {
      * @param $config
      * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
-    public static function initializeCache ($config) {
+    public static function initializeCache($config)
+    {
         $cache = \Zend_Cache::factory($config["frontendType"], $config["backendType"], $config["frontendConfig"], $config["backendConfig"], $config["customFrontendNaming"], $config["customBackendNaming"], true);
         return $cache;
     }
@@ -215,7 +215,8 @@ class Cache {
      * @param string|null $adapter
      * @return array
      */
-    public static function getDefaultConfig($adapter = null) {
+    public static function getDefaultConfig($adapter = null)
+    {
         $config =  array(
             "frontendType" => "Core",
             "frontendConfig" => array(
@@ -229,7 +230,7 @@ class Cache {
             "customBackendNaming" => true
         );
 
-        if($adapter) {
+        if ($adapter) {
             $config["backendType"] = $adapter;
         }
 
@@ -239,8 +240,9 @@ class Cache {
     /**
      * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
-    public static function getDefaultCache () {
-        if(\Pimcore\Config::getSystemConfig()) {
+    public static function getDefaultCache()
+    {
+        if (\Pimcore\Config::getSystemConfig()) {
             // default mysql cache adapter
             $config = self::getDefaultConfig();
             $cache = self::initializeCache($config);
@@ -254,8 +256,9 @@ class Cache {
     /**
      * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
-    public static function getBlackHoleCache() {
-        if(!self::$blackHoleCache) {
+    public static function getBlackHoleCache()
+    {
+        if (!self::$blackHoleCache) {
             $config = self::getDefaultConfig();
             $config["backendType"] = "\\Zend_Cache_Backend_BlackHole";
             self::$blackHoleCache = self::initializeCache($config);
@@ -268,19 +271,18 @@ class Cache {
      * @param string $key
      * @return mixed
      */
-    public static function load($key, $doNotTestCacheValidity = false) {
-        
+    public static function load($key, $doNotTestCacheValidity = false)
+    {
         if (!self::$enabled) {
             \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
             return;
         }
 
-        if($cache = self::getInstance()) {
-
+        if ($cache = self::getInstance()) {
             $key = self::$cachePrefix . $key;
             $data = $cache->load($key, $doNotTestCacheValidity);
 
-            if(is_object($data)) {
+            if (is_object($data)) {
                 $data->____pimcore_cache_item__ = $key;
             }
     
@@ -301,7 +303,8 @@ class Cache {
      * @param  string $key Cache key
      * @return int|bool Last modified time of cache entry if it is available, false otherwise
      */
-    public static function test ($key) {
+    public static function test($key)
+    {
         if (!self::$enabled) {
             \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
             return;
@@ -309,7 +312,7 @@ class Cache {
 
         $lastModified = false;
 
-        if($cache = self::getInstance()) {
+        if ($cache = self::getInstance()) {
             $key = self::$cachePrefix . $key;
             $data = $cache->test($key);
 
@@ -329,10 +332,10 @@ class Cache {
      * @param string $key
      * @return void
      */
-    public static function save($data, $key, $tags = array(), $lifetime = null, $priority = 0, $force = false) {
-        if(self::getForceImmediateWrite() || $force) {
-
-            if(self::hasWriteLock()) {
+    public static function save($data, $key, $tags = array(), $lifetime = null, $priority = 0, $force = false)
+    {
+        if (self::getForceImmediateWrite() || $force) {
+            if (self::hasWriteLock()) {
                 return;
             }
 
@@ -352,18 +355,19 @@ class Cache {
      * @param bool $force
      * @return bool|void
      */
-    public static function storeToCache ($data, $key, $tags = array(), $lifetime = null, $priority = null, $force = false) {
+    public static function storeToCache($data, $key, $tags = array(), $lifetime = null, $priority = null, $force = false)
+    {
         if (!self::$enabled) {
             return;
         }
 
         // don't put anything into the cache, when cache is cleared
-        if(in_array("__CLEAR_ALL__",self::$clearedTagsStack) && !$force) {
+        if (in_array("__CLEAR_ALL__", self::$clearedTagsStack) && !$force) {
             return;
         }
 
         // do not cache hardlink-wrappers
-        if($data instanceof Document\Hardlink\Wrapper\WrapperInterface) {
+        if ($data instanceof Document\Hardlink\Wrapper\WrapperInterface) {
             return;
         }
 
@@ -371,7 +375,7 @@ class Cache {
         // maybe it will be added to prioritize items for backends with volatile memories
 
         // get cache instance
-        if($cache = self::getInstance()) {
+        if ($cache = self::getInstance()) {
 
             //if ($lifetime !== null) {
             //    $cache->setLifetime($lifetime);
@@ -383,7 +387,7 @@ class Cache {
                     return;
                 }
 
-                if(isset($data->_fulldump)) {
+                if (isset($data->_fulldump)) {
                     unset($data->_fulldump);
                 }
 
@@ -395,9 +399,9 @@ class Cache {
             }
 
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
-            if(is_array($tags)){
+            if (is_array($tags)) {
                 foreach ($tags as $t) {
-                    if(in_array($t,self::$clearedTagsStack)) {
+                    if (in_array($t, self::$clearedTagsStack)) {
                         \Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
                         return;
                     }
@@ -412,18 +416,18 @@ class Cache {
             // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
             $tags = array_values($tags);
 
-            if(is_object($data) && isset($data->____pimcore_cache_item__)) {
+            if (is_object($data) && isset($data->____pimcore_cache_item__)) {
                 unset($data->____pimcore_cache_item__);
             }
 
             $key = self::$cachePrefix . $key;
 
-            if($lifetime === null) {
+            if ($lifetime === null) {
                 $lifetime = false; // set to false otherwise the lifetime stays at null (\Zend_Cache_Backend::getLifetime())
             }
 
             $success = $cache->save($data, $key, $tags, $lifetime);
-            if($success !== true) {
+            if ($success !== true) {
                 \Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));
             }
 
@@ -440,13 +444,14 @@ class Cache {
      * @param array $config
      * @return void
      */
-    public static function addToSaveStack ($config) {
+    public static function addToSaveStack($config)
+    {
         $priority = $config[4];
         $i=0;
 
         //saveStack is sorted - just find the correct position for the new item
-        foreach(self::$saveStack as $entry) {
-            if($entry[4] <= $priority) {
+        foreach (self::$saveStack as $entry) {
+            if ($entry[4] <= $priority) {
                 //we got the position!
                 break;
             } else {
@@ -457,13 +462,14 @@ class Cache {
         array_splice(self::$saveStack, $i, 0, array($config));
 
         // remove items which are too much, and cannot be added to the cache anymore
-        array_splice(self::$saveStack,self::$maxWriteToCacheItems);
+        array_splice(self::$saveStack, self::$maxWriteToCacheItems);
     }
 
     /**
      *
      */
-    public function clearSaveStack() {
+    public function clearSaveStack()
+    {
         self::$saveStack = array();
     }
     
@@ -472,22 +478,21 @@ class Cache {
      *
      * @return void
      */
-    public static function write () {
-
-        if(self::hasWriteLock()) {
+    public static function write()
+    {
+        if (self::hasWriteLock()) {
             return;
         }
 
         $processedKeys = array();
         $count = 0;
         foreach (self::$saveStack as $conf) {
-
-            if(in_array($conf[1],$processedKeys)) {
+            if (in_array($conf[1], $processedKeys)) {
                 continue;
             }
 
             try {
-                forward_static_call_array(array(__CLASS__, "storeToCache"),$conf);
+                forward_static_call_array(array(__CLASS__, "storeToCache"), $conf);
             } catch (\Exception $e) {
                 \Logger::error("Unable to put element " . $conf[1] . " to cache because of the following reason: ");
                 \Logger::error($e);
@@ -497,7 +502,7 @@ class Cache {
 
             // only add $maxWriteToCacheItems items att once to the cache for performance issues
             $count++;
-            if($count > self::$maxWriteToCacheItems) {
+            if ($count > self::$maxWriteToCacheItems) {
                 break;
             }
         }
@@ -510,10 +515,11 @@ class Cache {
     /**
      *
      */
-    public static function setWriteLock ($force = false) {
-        if(!self::$writeLockTimestamp || $force) {
+    public static function setWriteLock($force = false)
+    {
+        if (!self::$writeLockTimestamp || $force) {
             self::$writeLockTimestamp = time();
-            if($cache = self::getInstance()) {
+            if ($cache = self::getInstance()) {
                 $cache->save(self::$writeLockTimestamp, "system_cache_write_lock", array(), 30);
             }
         }
@@ -522,13 +528,14 @@ class Cache {
     /**
      *
      */
-    public static function removeWriteLock () {
-        if(self::$writeLockTimestamp) {
-            if($cache = self::getInstance()) {
+    public static function removeWriteLock()
+    {
+        if (self::$writeLockTimestamp) {
+            if ($cache = self::getInstance()) {
                 $lock = $cache->load("system_cache_write_lock");
 
                 // only remove the lock if it was created by this process
-                if($lock <= self::$writeLockTimestamp) {
+                if ($lock <= self::$writeLockTimestamp) {
                     $cache->remove("system_cache_write_lock");
                     self::$writeLockTimestamp = null;
                 }
@@ -539,17 +546,17 @@ class Cache {
     /**
      * @return bool
      */
-    public static function hasWriteLock() {
-
-        if(self::$writeLockTimestamp) {
+    public static function hasWriteLock()
+    {
+        if (self::$writeLockTimestamp) {
             return true;
         }
 
-        if($cache = self::getInstance()) {
+        if ($cache = self::getInstance()) {
             $lock = $cache->load("system_cache_write_lock");
 
             // lock is valid for 30 secs
-            if($lock && $lock > (time()-30)) {
+            if ($lock && $lock > (time()-30)) {
                 self::$writeLockTimestamp = $lock;
                 return true;
             } else {
@@ -563,7 +570,8 @@ class Cache {
     /**
      * @param $key
      */
-    public static function remove($key) {
+    public static function remove($key)
+    {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
@@ -574,7 +582,7 @@ class Cache {
         self::setWriteLock();
 
         $key = self::$cachePrefix . $key;
-        if($cache = self::getInstance()) {
+        if ($cache = self::getInstance()) {
             $cache->remove($key);
         }
     }
@@ -584,7 +592,8 @@ class Cache {
      *
      * @return void
      */
-    public static function clearAll() {
+    public static function clearAll()
+    {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
@@ -594,7 +603,7 @@ class Cache {
 
         self::setWriteLock();
 
-        if($cache = self::getInstance()) {
+        if ($cache = self::getInstance()) {
             $cache->clean(\Zend_Cache::CLEANING_MODE_ALL);
         }
         
@@ -611,7 +620,8 @@ class Cache {
      * @param string $tag
      * @return void
      */
-    public static function clearTag($tag) {
+    public static function clearTag($tag)
+    {
         self::clearTags(array($tag));
     }
     
@@ -621,7 +631,8 @@ class Cache {
      * @param array $tags
      * @return void
      */
-    public static function clearTags($tags = array()) {
+    public static function clearTags($tags = array())
+    {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
@@ -631,7 +642,7 @@ class Cache {
 
         self::setWriteLock();
 
-        \Logger::info("clear cache tags: " . implode(",",$tags));
+        \Logger::info("clear cache tags: " . implode(",", $tags));
 
         // ensure that every tag is unique
         $tags = array_unique($tags);
@@ -639,7 +650,7 @@ class Cache {
         // check for ignored tags
         foreach (self::$ignoredTagsOnClear as $t) {
             $tagPosition = array_search($t, $tags);
-            if($tagPosition !== false) {
+            if ($tagPosition !== false) {
                 array_splice($tags, $tagPosition, 1);
             }
         }
@@ -648,9 +659,9 @@ class Cache {
         // the reason is that eg. long running importers will clean the output-cache on every save/update, that's not necessary,
         // only cleaning the output-cache on shutdown should be enough 
         $outputTagPosition = array_search("output", $tags);
-        if($outputTagPosition !== false) {
+        if ($outputTagPosition !== false) {
             array_splice($tags, $outputTagPosition, 1);
-             self::addClearTagOnShutdown("output");
+            self::addClearTagOnShutdown("output");
         }
 
         // add tag to clear stack
@@ -659,7 +670,7 @@ class Cache {
         }
 
         // clean tags, except output
-        if($cache = self::getInstance()) {
+        if ($cache = self::getInstance()) {
             $cache->clean(
                 \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
                 $tags
@@ -673,7 +684,8 @@ class Cache {
      * @param $tag
      * @return void
      */
-    public static function addClearTagOnShutdown($tag) {
+    public static function addClearTagOnShutdown($tag)
+    {
         self::setWriteLock();
 
         self::$_clearTagsOnShutdown[] = $tag;
@@ -685,7 +697,8 @@ class Cache {
      * @static
      * @return void
      */
-    public static function clearTagsOnShutdown() {
+    public static function clearTagsOnShutdown()
+    {
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
@@ -693,9 +706,9 @@ class Cache {
             return;
         }*/
 
-        if(!empty(self::$_clearTagsOnShutdown)) {
+        if (!empty(self::$_clearTagsOnShutdown)) {
             $tags = array_unique(self::$_clearTagsOnShutdown);
-            if($cache = self::getInstance()) {
+            if ($cache = self::getInstance()) {
                 $cache->clean(
                     \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
                     $tags
@@ -709,8 +722,9 @@ class Cache {
      * @param $tag
      * @return void
      */
-    public static function addIgnoredTagOnClear($tag) {
-        if(!in_array($tag, self::$ignoredTagsOnClear)) {
+    public static function addIgnoredTagOnClear($tag)
+    {
+        if (!in_array($tag, self::$ignoredTagsOnClear)) {
             self::$ignoredTagsOnClear[] = $tag;
         }
     }
@@ -720,9 +734,10 @@ class Cache {
      * @param $tag
      * @return void
      */
-    public static function removeIgnoredTagOnClear($tag) {
+    public static function removeIgnoredTagOnClear($tag)
+    {
         $tagPosition = array_search($tag, self::$ignoredTagsOnClear);
-        if($tagPosition !== false) {
+        if ($tagPosition !== false) {
             array_splice(self::$ignoredTagsOnClear, $tagPosition, 1);
         }
     }
@@ -730,7 +745,8 @@ class Cache {
     /**
      * @param string $tag
      */
-    public static function addClearedTag($tag) {
+    public static function addClearedTag($tag)
+    {
         self::$clearedTagsStack[] = $tag;
     }
 
@@ -739,8 +755,9 @@ class Cache {
      * @static
      * @return void
      */
-    public static function disable() {
-        if(self::$enabled) {
+    public static function disable()
+    {
+        if (self::$enabled) {
             self::setZendFrameworkCaches(self::getBlackHoleCache());
         }
         self::$enabled = false;
@@ -750,7 +767,8 @@ class Cache {
      * @static
      * @return void
      */
-    public static function enable() {
+    public static function enable()
+    {
         self::$enabled = true;
         self::setZendFrameworkCaches(self::getInstance());
     }
@@ -759,7 +777,8 @@ class Cache {
     /**
      * @param null $cache
      */
-    public static function setZendFrameworkCaches ($cache = null) {
+    public static function setZendFrameworkCaches($cache = null)
+    {
         \Zend_Locale::setCache($cache);
         \Zend_Locale_Data::setCache($cache);
         \Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
@@ -781,7 +800,8 @@ class Cache {
         return self::$forceImmediateWrite;
     }
 
-    public static function maintenance() {
+    public static function maintenance()
+    {
         $cache = self::getInstance();
         $cache->clean(\Zend_Cache::CLEANING_MODE_OLD);
     }

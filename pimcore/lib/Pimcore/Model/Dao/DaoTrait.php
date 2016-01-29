@@ -15,7 +15,8 @@ namespace Pimcore\Model\Dao;
 use Pimcore\Cache;
 use Pimcore\Db;
 
-trait DaoTrait {
+trait DaoTrait
+{
     /**
      * @var \Pimcore\Model\AbstractModel
      */
@@ -25,7 +26,8 @@ trait DaoTrait {
      * @param \Pimcore\Model\AbstractModel $model
      * @return void
      */
-    public function setModel($model) {
+    public function setModel($model)
+    {
         $this->model = $model;
         return $this;
     }
@@ -34,7 +36,8 @@ trait DaoTrait {
      * @param array $data
      * @return void
      */
-    protected function assignVariablesToModel($data) {
+    protected function assignVariablesToModel($data)
+    {
         $this->model->setValues($data);
     }
 }

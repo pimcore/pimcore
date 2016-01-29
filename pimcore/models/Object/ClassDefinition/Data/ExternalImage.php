@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 
-class ExternalImage extends Model\Object\ClassDefinition\Data {
+class ExternalImage extends Model\Object\ClassDefinition\Data
+{
 
     /**
      * Static type of this element
@@ -119,7 +120,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
         }
@@ -131,7 +133,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param string $data
      * @return string
      */
-    public function getDataFromResource($data) {
+    public function getDataFromResource($data)
+    {
         return new Model\Object\Data\ExternalImage($data);
     }
 
@@ -141,7 +144,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -151,7 +155,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null)
+    {
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
         }
@@ -164,7 +169,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null) {
+    public function getDataFromEditmode($data, $object = null)
+    {
         return new Model\Object\Data\ExternalImage($data);
     }
 
@@ -173,7 +179,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param string $data
      * @return string
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         if ($data instanceof Model\Object\Data\ExternalImage && $data->getUrl()) {
             return '<img style="max-width:200px;max-height:200px" src="' . $data->getUrl()  . '" /><br><a href="' . $data->getUrl() . '">' . $data->getUrl() . '</>';
         }
@@ -188,7 +195,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param Model\Object\AbstractObject $object
      * @return string
      */
-    public function getForCsvExport($object) {
+    public function getForCsvExport($object)
+    {
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
@@ -200,7 +208,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param $importValue
      * @return string
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue)
+    {
         return new Model\Object\Data\ExternalImage($importValue);
     }
 
@@ -210,7 +219,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param string $object
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
+    public function getForWebserviceExport($object)
+    {
         return $this->getForCsvExport($object);
     }
 
@@ -222,7 +232,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null) {
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    {
         return $this->getFromCsvImport($value);
     }
 
@@ -231,7 +242,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -241,7 +253,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
      * @param null $object
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null) {
+    public function getDiffVersionPreview($data, $object = null)
+    {
         if ($data) {
             return '<img style="max-width:200px;max-height:200px" src="' . $data  . '" />';
         }
@@ -252,7 +265,8 @@ class ExternalImage extends Model\Object\ClassDefinition\Data {
     /**
      * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\Object\ClassDefinition\Data $masterDefinition) {
+    public function synchronizeWithMasterDefinition(Model\Object\ClassDefinition\Data $masterDefinition)
+    {
         $this->previewHeight = $masterDefinition->previewHeight;
         $this->previewWidth = $masterDefinition->previewWidth;
         $this->inputWidth = $masterDefinition->inputWidth;

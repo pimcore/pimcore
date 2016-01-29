@@ -17,19 +17,20 @@ namespace Pimcore\Model\User\Workspace;
 use Pimcore\Model;
 use Pimcore\Model\User\Workspace;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      *
      */
-    public function save () {
-
+    public function save()
+    {
         $tableName = "";
-        if($this->model instanceof Workspace\Asset) {
+        if ($this->model instanceof Workspace\Asset) {
             $tableName = "users_workspaces_asset";
-        } else if($this->model instanceof Workspace\Document) {
+        } elseif ($this->model instanceof Workspace\Document) {
             $tableName = "users_workspaces_document";
-        } else if($this->model instanceof Workspace\Object) {
+        } elseif ($this->model instanceof Workspace\Object) {
             $tableName = "users_workspaces_object";
         }
 

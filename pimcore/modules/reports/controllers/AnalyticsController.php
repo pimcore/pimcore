@@ -13,7 +13,8 @@
 use Pimcore\Google;
 use Pimcore\Model\Document;
 
-class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Reports {
+class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Reports
+{
 
     /**
      * @var \Google_Client
@@ -21,19 +22,20 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     protected $service;
 
 
-    public function init () {
+    public function init()
+    {
         parent::init();
 
         $client = Google\Api::getServiceClient();
-        if(!$client) {
+        if (!$client) {
             die("Google Analytics is not configured");
         }
 
         $this->service = new Google_Service_Analytics($client);
     }
 
-    public function deeplinkAction () {
-
+    public function deeplinkAction()
+    {
         $config = Google\Analytics::getSiteConfig();
 
         $url = $this->getParam("url");
@@ -43,21 +45,20 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         $this->redirect($url);
     }
 
-    public function getProfilesAction () {
-
+    public function getProfilesAction()
+    {
         try {
             $data = array("data" => array());
             $result = $this->service->management_accounts->listManagementAccounts();
 
             $accountIds = array();
             if (is_array($result['items'])) {
-                foreach($result['items'] as $account) {
+                foreach ($result['items'] as $account) {
                     $accountIds[] = $account['id'];
-
                 }
             }
 
-            foreach($accountIds as $accountId) {
+            foreach ($accountIds as $accountId) {
                 $details = $this->service->management_profiles->listManagementProfiles($accountId, "~all");
 
                 if (is_array($details["items"])) {
@@ -75,37 +76,36 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
 
 
             $this->_helper->json($data);
-        }
-        catch (\Exception $e) {
-
+        } catch (\Exception $e) {
             $this->_helper->json(false);
         }
     }
 
 
-    private function getSite () {
+    private function getSite()
+    {
         $siteId = $this->getParam("site");
 
         try {
-           $site = Site::getById($siteId);
-        }
-        catch (\Exception $e) {
+            $site = Site::getById($siteId);
+        } catch (\Exception $e) {
             return;
         }
 
         return $site;
     }
 
-    protected function getFilterPath() {
-        if($this->getParam("type") == "document" && $this->getParam("id")) {
+    protected function getFilterPath()
+    {
+        if ($this->getParam("type") == "document" && $this->getParam("id")) {
             $doc = Document::getById($this->getParam("id"));
             $path = $doc->getFullPath();
 
-            if($doc instanceof Document\Page && $doc->getPrettyUrl()) {
+            if ($doc instanceof Document\Page && $doc->getPrettyUrl()) {
                 $path = $doc->getPrettyUrl();
             }
 
-            if($this->getParam("site")) {
+            if ($this->getParam("site")) {
                 $site = Site::getById($this->getParam("site"));
                 $path = preg_replace("@^" . preg_quote($site->getRootPath(), "@") . "/@", "/", $path);
             }
@@ -116,39 +116,37 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     }
 
 
-    public function chartmetricdataAction () {
-
+    public function chartmetricdataAction()
+    {
         $config = Google\Analytics::getSiteConfig($this->getSite());
-        $startDate = date("Y-m-d",(time()-(86400*31)));
-		$endDate = date("Y-m-d");
+        $startDate = date("Y-m-d", (time()-(86400*31)));
+        $endDate = date("Y-m-d");
 
-        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
+        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
         }
 
         $metrics = array("ga:pageviews");
-        if($this->getParam("metric")) {
+        if ($this->getParam("metric")) {
             $metrics = array();
 
-            if(is_array($this->getParam("metric"))) {
+            if (is_array($this->getParam("metric"))) {
                 foreach ($this->getParam("metric") as $m) {
                     $metrics[] = "ga:" . $m;
                 }
-            }
-            else {
+            } else {
                 $metrics[] = "ga:" . $this->getParam("metric");
             }
-
         }
 
         $filters = array();
 
-        if($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath()) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
-        if($this->getParam("filters")) {
+        if ($this->getParam("filters")) {
             $filters[] = $this->getParam("filters");
         }
 
@@ -156,7 +154,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             "dimensions" => "ga:date"
         );
 
-        if(!empty($filters)) {
+        if (!empty($filters)) {
             $opts["filters"] = implode(";", $filters);
         }
 
@@ -164,14 +162,13 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             "ga:" . $config->profile,
             $startDate,
             $endDate,
-            implode(",",$metrics),
+            implode(",", $metrics),
             $opts
         );
 
         $data = array();
 
-		foreach($result["rows"] as $row){
-
+        foreach ($result["rows"] as $row) {
             $date = $row[0];
 
             $tmpData = array(
@@ -180,8 +177,8 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             );
 
             foreach ($result["columnHeaders"] as $index => $metric) {
-                if(!$this->getParam("dataField")) {
-                    $tmpData[str_replace("ga:","",$metric["name"])] = $row[$index];
+                if (!$this->getParam("dataField")) {
+                    $tmpData[str_replace("ga:", "", $metric["name"])] = $row[$index];
                 } else {
                     $tmpData[$this->getParam("dataField")] = $row[$index];
                 }
@@ -194,19 +191,19 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     }
 
 
-    public function summaryAction () {
-
+    public function summaryAction()
+    {
         $config = Google\Analytics::getSiteConfig($this->getSite());
-        $startDate = date("Y-m-d",(time()-(86400*31)));
-		$endDate = date("Y-m-d");
+        $startDate = date("Y-m-d", (time()-(86400*31)));
+        $endDate = date("Y-m-d");
 
-        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
+        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
         }
 
 
-        if($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath()) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
@@ -215,7 +212,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             "dimensions" => "ga:date"
         );
 
-        if(!empty($filters)) {
+        if (!empty($filters)) {
             $opts["filters"] = implode(";", $filters);
         }
 
@@ -230,9 +227,9 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         $data = array();
         $dailyDataGrouped = array();
 
-		foreach($result["rows"] as $row){
+        foreach ($result["rows"] as $row) {
             foreach ($result["columnHeaders"] as $index => $metric) {
-                if($index) {
+                if ($index) {
                     $dailyDataGrouped[$metric["name"]][] = $row[$index];
                     $data[$metric["name"]] += $row[$index];
                 }
@@ -251,10 +248,10 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         $outputData = array();
         foreach ($data as $key => $value) {
             $outputData[$order[$key]] = array(
-                "label" => str_replace("ga:","",$key),
-                "value" => round($value,2),
+                "label" => str_replace("ga:", "", $key),
+                "value" => round($value, 2),
                 "chart" => \Pimcore\Helper\ImageChart::lineSmall($dailyDataGrouped[$key]),
-                "metric" => str_replace("ga:","",$key)
+                "metric" => str_replace("ga:", "", $key)
             );
         }
 
@@ -265,18 +262,18 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
 
 
 
-    public function sourceAction () {
-
+    public function sourceAction()
+    {
         $config = Google\Analytics::getSiteConfig($this->getSite());
-        $startDate = date("Y-m-d",(time()-(86400*31)));
-		$endDate = date("Y-m-d");
+        $startDate = date("Y-m-d", (time()-(86400*31)));
+        $endDate = date("Y-m-d");
 
-        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
+        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
         }
 
-        if($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath()) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
@@ -286,7 +283,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             "sort" => "-ga:pageviews"
         );
 
-        if(!empty($filters)) {
+        if (!empty($filters)) {
             $opts["filters"] = implode(";", $filters);
         }
 
@@ -300,7 +297,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
 
         $data = array();
 
-		foreach((array) $result["rows"] as $row){
+        foreach ((array) $result["rows"] as $row) {
             $data[] = array(
                 "pageviews" => $row[1],
                 "source" => $row[0]
@@ -310,36 +307,36 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         $this->_helper->json(array("data" => $data));
     }
 
-    public function dataExplorerAction () {
-
+    public function dataExplorerAction()
+    {
         $config = Google\Analytics::getSiteConfig($this->getSite());
-        $startDate = date("Y-m-d",(time()-(86400*31)));
-		$endDate = date("Y-m-d");
+        $startDate = date("Y-m-d", (time()-(86400*31)));
+        $endDate = date("Y-m-d");
         $metric = "ga:pageviews";
         $dimension = "ga:date";
         $descending = true;
         $limit = 10;
 
-        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
+        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
         }
-        if($this->getParam("dimension")) {
+        if ($this->getParam("dimension")) {
             $dimension = $this->getParam("dimension");
         }
-        if($this->getParam("metric")) {
+        if ($this->getParam("metric")) {
             $metric = $this->getParam("metric");
         }
-        if($this->getParam("sort")) {
-            if($this->getParam("sort") == "asc") {
+        if ($this->getParam("sort")) {
+            if ($this->getParam("sort") == "asc") {
                 $descending = false;
             }
         }
-        if($this->getParam("limit")) {
+        if ($this->getParam("limit")) {
             $limit = $this->getParam("limit");
         }
 
-        if($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath()) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
@@ -349,7 +346,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             "sort" => ($descending ? "-" : "") . $metric
         );
 
-        if(!empty($filters)) {
+        if (!empty($filters)) {
             $opts["filters"] = implode(";", $filters);
         }
 
@@ -362,8 +359,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         );
 
         $data = array();
-		foreach($result["rows"] as $row){
-
+        foreach ($result["rows"] as $row) {
             $data[] = array(
                 "dimension" => $this->formatDimension($dimension, $row[0]),
                 "metric" => (double) $row[1]
@@ -374,23 +370,24 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     }
 
 
-    public function getDimensionsAction () {
-
+    public function getDimensionsAction()
+    {
         $this->_helper->json(array("data" => Google\Api::getAnalyticsDimensions()));
     }
 
 
-    public function getMetricsAction () {
-
+    public function getMetricsAction()
+    {
         $this->_helper->json(array("data" => Google\Api::getAnalyticsMetrics()));
     }
 
-    public function getSegmentsAction() {
+    public function getSegmentsAction()
+    {
         $result = $this->service->management_segments->listManagementSegments();
 
         $data = array();
 
-        foreach($result['items'] as $row) {
+        foreach ($result['items'] as $row) {
             $data[] = array(
                 "id" => $row['segmentId'],
                 "name" => $row['name']
@@ -401,9 +398,9 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     }
 
 
-    protected function formatDimension ($type, $value) {
-
-        if(strpos($type,"date") !== false) {
+    protected function formatDimension($type, $value)
+    {
+        if (strpos($type, "date") !== false) {
             $date = new \Zend_Date(strtotime($value));
             return $date->get(\Zend_Date::DATE_MEDIUM);
         }
@@ -411,10 +408,10 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         return $value;
     }
 
-    private function formatDuration ($sec) {
-
+    private function formatDuration($sec)
+    {
         $minutes = intval(($sec / 60) % 60);
         $seconds = intval($sec % 60);
-        return str_pad($minutes,2,"0", STR_PAD_LEFT).":".str_pad($seconds,2,"0", STR_PAD_LEFT);
+        return str_pad($minutes, 2, "0", STR_PAD_LEFT).":".str_pad($seconds, 2, "0", STR_PAD_LEFT);
     }
 }

@@ -14,7 +14,8 @@ namespace Pimcore\Model\Listing\Dao;
 
 use Pimcore\Model;
 
-abstract class AbstractDao extends Model\Dao\AbstractDao {
+abstract class AbstractDao extends Model\Dao\AbstractDao
+{
 
     /**
      * @var Model\Object\Listing
@@ -25,8 +26,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
     /**
      * @return string
      */
-    protected function getOrder() {
-
+    protected function getOrder()
+    {
         $orderKey = $this->model->getOrderKey();
         $order = $this->model->getOrder();
 
@@ -35,7 +36,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
             $lastOrder = $order[0];
             $parts = array();
 
-            if(is_array($orderKey)) {
+            if (is_array($orderKey)) {
                 foreach ($orderKey as $key) {
                     if ($order[$c]) {
                         $lastOrder = $order[$c];
@@ -47,7 +48,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
                 }
             }
 
-            if(!empty($parts)) {
+            if (!empty($parts)) {
                 return " ORDER BY " . implode(", ", $parts);
             }
         }
@@ -58,7 +59,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
     /**
      * @return string
      */
-    protected function getGroupBy() {
+    protected function getGroupBy()
+    {
         if ($this->model->getGroupBy()) {
             return " GROUP BY " . $this->model->getGroupBy();
         }
@@ -68,7 +70,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
     /**
      * @return string
      */
-    protected function getOffsetLimit() {
+    protected function getOffsetLimit()
+    {
         if ($limit = $this->model->getLimit() and $offset = $this->model->getOffset()) {
             return " LIMIT " . $offset . "," . $limit;
         }
@@ -82,7 +85,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
     /**
      * @return string
      */
-    protected function getCondition() {
+    protected function getCondition()
+    {
         if ($cond = $this->model->getCondition()) {
             return " WHERE " . $cond . " ";
         }
@@ -105,7 +109,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
             $lastOrder = $order[0];
             $parts = array();
 
-            if(is_array($orderKey)) {
+            if (is_array($orderKey)) {
                 foreach ($orderKey as $key) {
                     if ($order[$c]) {
                         $lastOrder = $order[$c];
@@ -117,9 +121,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
                 }
             }
 
-            if(!empty($parts)) {
-
-                $select->order( new \Zend_Db_Expr(implode(", ", $parts)) );
+            if (!empty($parts)) {
+                $select->order(new \Zend_Db_Expr(implode(", ", $parts)));
             }
         }
     }
@@ -133,9 +136,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
     protected function addGroupBy(\Zend_DB_Select $select)
     {
         $groupBy = $this->model->getGroupBy();
-        if($groupBy)
-        {
-            $select->group( $groupBy );
+        if ($groupBy) {
+            $select->group($groupBy);
         }
 
         return $this;
@@ -149,7 +151,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
      */
     protected function addLimit(\Zend_DB_Select $select)
     {
-        $select->limit( $this->model->getLimit(), $this->model->getOffset() );
+        $select->limit($this->model->getLimit(), $this->model->getOffset());
 
         return $this;
     }
@@ -164,9 +166,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao {
     {
         $condition = $this->model->getCondition();
 
-        if($condition)
-        {
-            $select->where( $condition );
+        if ($condition) {
+            $select->where($condition);
         }
 
         return $this;

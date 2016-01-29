@@ -18,15 +18,17 @@ use Pimcore\Model;
 use Pimcore\Model\Version;
 use Pimcore\Model\Document;
 
-abstract class Dao extends Model\Document\Dao {
+abstract class Dao extends Model\Document\Dao
+{
 
     /**
      * Delete all elements containing the content (tags) from the database
      *
      * @return void
      */
-    public function deleteAllElements() {
-        $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId() ));
+    public function deleteAllElements()
+    {
+        $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId()));
     }
 
     /**
@@ -34,7 +36,8 @@ abstract class Dao extends Model\Document\Dao {
      *
      * @return void
      */
-    public function getElements() {
+    public function getElements()
+    {
         $elementsRaw = $this->db->fetchAll("SELECT * FROM documents_elements WHERE documentId = ?", $this->model->getId());
 
         $elements = array();
@@ -44,9 +47,9 @@ abstract class Dao extends Model\Document\Dao {
 
             // this is the fallback for custom document tags using prefixes
             // so we need to check if the class exists first
-            if(!\Pimcore\Tool::classExists($class)) {
+            if (!\Pimcore\Tool::classExists($class)) {
                 $oldStyleClass = "\\Document_Tag_" . ucfirst($elementRaw["type"]);
-                if(\Pimcore\Tool::classExists($oldStyleClass)) {
+                if (\Pimcore\Tool::classExists($oldStyleClass)) {
                     $class = $oldStyleClass;
                 }
             }
@@ -67,7 +70,8 @@ abstract class Dao extends Model\Document\Dao {
      *
      * @return array
      */
-    public function getVersions() {
+    public function getVersions()
+    {
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC", $this->model->getId());
 
         $versions = array();
@@ -86,12 +90,13 @@ abstract class Dao extends Model\Document\Dao {
      * @param bool $force
      * @return array
      */
-    public function getLatestVersion($force = false) {
+    public function getLatestVersion($force = false)
+    {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
         
-        if(($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
+        if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
             $version = Version::getById($versionData["id"]);
-            return $version;  
+            return $version;
         }
         return;
     }
@@ -102,14 +107,13 @@ abstract class Dao extends Model\Document\Dao {
      *
      * @throws \Exception
      */
-    public function delete() {
+    public function delete()
+    {
         try {
             parent::delete();
-            $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId() ));
-        }
-        catch (\Exception $e) {
+            $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId()));
+        } catch (\Exception $e) {
             throw $e;
         }
     }
-
 }

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class User extends Model\Object\ClassDefinition\Data\Select {
+class User extends Model\Object\ClassDefinition\Data\Select
+{
 
     /**
      * Static type of this element
@@ -31,9 +32,9 @@ class User extends Model\Object\ClassDefinition\Data\Select {
      * @param string $data
      * @return string
      */
-    public function getDataFromResource($data) {
-
-        if(!empty($data)) {
+    public function getDataFromResource($data)
+    {
+        if (!empty($data)) {
             try {
                 $this->checkValidity($data, true);
             } catch (\Exception $e) {
@@ -49,8 +50,9 @@ class User extends Model\Object\ClassDefinition\Data\Select {
      * @param null $object
      * @return null|string
      */
-    public function getDataForResource($data, $object = null) {
-        if(!empty($data)) {
+    public function getDataForResource($data, $object = null)
+    {
+        if (!empty($data)) {
             try {
                 $this->checkValidity($data, true);
             } catch (\Exception $e) {
@@ -65,8 +67,8 @@ class User extends Model\Object\ClassDefinition\Data\Select {
     /**
      *
      */
-    public function configureOptions() {
-
+    public function configureOptions()
+    {
         $list = new Model\User\Listing();
         $list->setOrder("asc");
         $list->setOrderKey("name");
@@ -75,7 +77,7 @@ class User extends Model\Object\ClassDefinition\Data\Select {
         $options = array();
         if (is_array($users) and count($users) > 0) {
             foreach ($users as $user) {
-                if($user instanceof Model\User) {
+                if ($user instanceof Model\User) {
                     $value = $user->getName();
                     $first = $user->getFirstname();
                     $last = $user->getLastname();
@@ -100,15 +102,15 @@ class User extends Model\Object\ClassDefinition\Data\Select {
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
-
-        if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
         
-        if(!empty($data)){
+        if (!empty($data)) {
             $user = Model\User::getById($data);
-            if(!$user instanceof Model\User){
+            if (!$user instanceof Model\User) {
                 throw new \Exception("invalid user reference");
             }
         }
@@ -117,9 +119,10 @@ class User extends Model\Object\ClassDefinition\Data\Select {
     /**
      *
      */
-    public function __wakeup() {
+    public function __wakeup()
+    {
         $options = $this->getOptions();
-        if(\Pimcore::inAdmin() || empty($options)) {
+        if (\Pimcore::inAdmin() || empty($options)) {
             $this->configureOptions();
         }
     }

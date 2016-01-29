@@ -9,9 +9,10 @@
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
-namespace Pimcore\FIle\Transfer\Adapter;
+namespace Pimcore\File\Transfer\Adapter;
 
-trait AdapterTrait {
+trait AdapterTrait
+{
 
     /**
      * @var null | string
@@ -100,7 +101,8 @@ trait AdapterTrait {
      * @param $sourceFile
      * @return $this
      */
-    public function setSourceFile($sourceFile){
+    public function setSourceFile($sourceFile)
+    {
         $this->sourceFile = $sourceFile;
         return $this;
     }
@@ -108,7 +110,8 @@ trait AdapterTrait {
     /**
      * @return null
      */
-    public function getSourceFile(){
+    public function getSourceFile()
+    {
         return $this->sourceFile;
     }
 
@@ -117,7 +120,8 @@ trait AdapterTrait {
      *
      * @return $this
      */
-    public function setDestinationFile($destinationFile){
+    public function setDestinationFile($destinationFile)
+    {
         $this->destinationFile  = $destinationFile;
         return $this;
     }
@@ -125,9 +129,8 @@ trait AdapterTrait {
     /**
      * @return null
      */
-    public function getDestinationFile(){
+    public function getDestinationFile()
+    {
         return $this->destinationFile;
     }
-
-
 }

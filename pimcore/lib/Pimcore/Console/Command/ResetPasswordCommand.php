@@ -41,19 +41,19 @@ class ResetPasswordCommand extends AbstractCommand
     {
         $user = $input->getOption("user");
 
-        if(!$user) {
+        if (!$user) {
             $this->writeError("No username/ID given");
         }
 
         $method = is_numeric($user) ? 'getById' : 'getByName';
         $user = User::$method($user);
 
-        if(!$user) {
+        if (!$user) {
             $this->writeError("User with name " . $user . " could not be found. Exiting");
             exit;
         }
 
-        if($input->getOption("password")) {
+        if ($input->getOption("password")) {
             $plainPassword = $input->getOption("password");
         } else {
             $plainPassword = false;
@@ -67,10 +67,10 @@ class ResetPasswordCommand extends AbstractCommand
         $user->save();
 
         $this->output->writeln("Password for user " . $user->getName() . " reset successfully.");
-
     }
 
-    protected function promtSilent  ($prompt = "Enter new password:") {
+    protected function promtSilent($prompt = "Enter new password:")
+    {
         if (preg_match('/^win/i', PHP_OS)) {
             $vbscript = sys_get_temp_dir() . 'prompt_password.vbs';
             file_put_contents(

@@ -8,7 +8,6 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Data\Extension;
 
-
 /**
  * Class Relation
  *
@@ -41,7 +40,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Document\Page' . $strArray;
                 $class[] = '\Pimcore\Model\Document\Snippet' . $strArray;
                 $class[] = '\Pimcore\Model\Document' . $strArray;
-            } else if (is_array($documentTypes)) {
+            } elseif (is_array($documentTypes)) {
                 foreach ($documentTypes as $item) {
                     $class[] = sprintf('\Pimcore\Model\Document\%s', $item['documentTypes'] . $strArray);
                 }
@@ -54,7 +53,7 @@ trait Relation
             $assetTypes = $this->getAssetTypes();
             if (count($assetTypes) == 0) {
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
-            } else if (is_array($assetTypes)) {
+            } elseif (is_array($assetTypes)) {
                 foreach ($assetTypes as $item) {
                     $class[] = sprintf('\Pimcore\Model\Asset\%s', $item['assetTypes'] . $strArray);
                 }
@@ -67,7 +66,7 @@ trait Relation
             $classes = $this->getClasses();
             if (count($classes) == 0) {
                 $class[] = '\Pimcore\Model\Object\AbstractObject' . $strArray;
-            } else if (is_array($classes)) {
+            } elseif (is_array($classes)) {
                 foreach ($this->getClasses() as $item) {
                     $class[] = sprintf('\Pimcore\Model\Object\%s', $item['classes'] . $strArray);
                 }

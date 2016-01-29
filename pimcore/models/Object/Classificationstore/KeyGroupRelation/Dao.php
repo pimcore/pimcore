@@ -16,13 +16,14 @@ namespace Pimcore\Model\Object\Classificationstore\KeyGroupRelation;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     const TABLE_NAME_RELATIONS = "classificationstore_relations";
 
 
-    public function getById($keyId = null, $groupId = null) {
-
+    public function getById($keyId = null, $groupId = null)
+    {
         if ($keyId != null) {
             $this->model->setKeyId($keyId);
         }
@@ -33,8 +34,7 @@ class Dao extends Model\Dao\AbstractDao {
 
 
         $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_RELATIONS
-            . "," . Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . " WHERE keyId = ? AND groupId = `?"
-            , $this->model->getKeyId(), $this->model->groupId);
+            . "," . Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . " WHERE keyId = ? AND groupId = `?", $this->model->getKeyId(), $this->model->groupId);
 
         $this->assignVariablesToModel($data);
     }
@@ -44,8 +44,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         return $this->update();
     }
 
@@ -54,26 +54,27 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete(self::TABLE_NAME_RELATIONS,
             $this->db->quoteInto("keyId = ? AND ", $this->model->getKeyId())
-            . $this->db->quoteInto("groupId = ? ",$this->model->getGroupId()));
-
+            . $this->db->quoteInto("groupId = ? ", $this->model->getGroupId()));
     }
 
     /**
      * @throws \Exception
      */
-    public function update() {
+    public function update()
+    {
         try {
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_RELATIONS))) {
-                    if(is_bool($value)) {
+                    if (is_bool($value)) {
                         $value = (int) $value;
                     }
-                    if(is_array($value) || is_object($value)) {
+                    if (is_array($value) || is_object($value)) {
                         $value = \Pimcore\Tool\Serialize::serialize($value);
                     }
 
@@ -83,8 +84,7 @@ class Dao extends Model\Dao\AbstractDao {
 
             $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
             return $this->model;
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -94,7 +94,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
         $this->db->insert(self::TABLE_NAME_RELATIONS, array());
         return $this->save();
     }

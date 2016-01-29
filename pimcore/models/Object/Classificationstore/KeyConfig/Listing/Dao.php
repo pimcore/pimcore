@@ -17,14 +17,16 @@ namespace Pimcore\Model\Object\Classificationstore\KeyConfig\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of Classificationstore key configs for the specifies parameters, returns an array of config elements
      *
      * @return array
      */
-    public function load() {
+    public function load()
+    {
         $sql = "SELECT id FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
         $configsData = $this->db->fetchCol($sql,  $this->model->getConditionVariables());
 
@@ -40,7 +42,8 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return array
      */
-    public function getDataArray() {
+    public function getDataArray()
+    {
         $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $configsData;
     }
@@ -48,12 +51,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return int
      */
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . " ". $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
 
         return $amount;
@@ -62,7 +64,8 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return string
      */
-    protected function getCondition() {
+    protected function getCondition()
+    {
         $condition = $this->model->getIncludeDisabled() ? "enabled is null or enabled is 0" : "enabled = 1";
 
         $cond = $this->model->getCondition();

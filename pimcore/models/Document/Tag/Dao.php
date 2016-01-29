@@ -16,13 +16,14 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      *
      */
-    public function save() {
-
+    public function save()
+    {
         $data = $this->model->getDataForResource();
         
         if (is_array($data) or is_object($data)) {
@@ -42,8 +43,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function delete () {
+    public function delete()
+    {
         $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getDocumentId()) . " AND " . $this->db->quoteInto("name = ?", $this->model->getName()));
     }
-
 }

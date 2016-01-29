@@ -102,7 +102,7 @@ class CacheWarmingCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if($input->getOption("maintenance-mode")) {
+        if ($input->getOption("maintenance-mode")) {
             // set the timeout between each iteration to 0 if maintenance mode is on, because
             // we don't have to care about the load on the server
             Warming::setTimoutBetweenIteration(0);
@@ -160,7 +160,7 @@ class CacheWarmingCommand extends AbstractCommand
     protected function humanList($list, $glue = 'or', $template = null)
     {
         if (null !== $template) {
-            array_walk($list, function(&$item) use ($template) {
+            array_walk($list, function (&$item) use ($template) {
                 $item = sprintf($template, $item);
             });
         }

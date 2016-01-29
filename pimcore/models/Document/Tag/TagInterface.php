@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-interface TagInterface {
+interface TagInterface
+{
 
     /**
      * Return the data for direct output to the frontend, can also contain HTML code!
@@ -83,5 +84,4 @@ interface TagInterface {
      * @return array
      */
     public function getForWebserviceExport();
-
 }

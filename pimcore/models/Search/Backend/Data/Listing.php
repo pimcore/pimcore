@@ -12,7 +12,8 @@
 
 namespace Pimcore\Model\Search\Backend\Data;
 
-class Listing extends \Pimcore\Model\Listing\AbstractListing {
+class Listing extends \Pimcore\Model\Listing\AbstractListing
+{
 
     /**
      * @var array
@@ -38,7 +39,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     /**
      * @return array
      */
-    public function getEntries(){
+    public function getEntries()
+    {
         return $this->entries;
     }
 
@@ -46,7 +48,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @param $entries
      * @return $this
      */
-    public function setEntries($entries){
+    public function setEntries($entries)
+    {
         $this->entries = $entries;
         return $this;
     }
@@ -54,19 +57,20 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     /**
      * @throws \Exception
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->initDao("\\Pimcore\\Model\\Search\\Backend\\Data\\Listing");
-
     }
 
     /**
-	 * @param string $key
-	 * @return boolean
-	 */
-	public function isValidOrderKey ($key) {
-		if(in_array($key,$this->validOrderKeys)) {
-			return true;
-		}
-		return false;
-	}
+     * @param string $key
+     * @return boolean
+     */
+    public function isValidOrderKey($key)
+    {
+        if (in_array($key, $this->validOrderKeys)) {
+            return true;
+        }
+        return false;
+    }
 }

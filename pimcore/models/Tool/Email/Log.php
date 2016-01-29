@@ -15,7 +15,7 @@
 namespace Pimcore\Model\Tool\Email;
 
 use Pimcore\Model;
-use Pimcore\File; 
+use Pimcore\File;
 
 class Log extends Model\AbstractModel
 {
@@ -447,7 +447,8 @@ class Log extends Model\AbstractModel
      *
      * @return array
      */
-    public function getToAsArray(){
+    public function getToAsArray()
+    {
         return $this->buildArray($this->getTo());
     }
 
@@ -476,7 +477,8 @@ class Log extends Model\AbstractModel
      *
      * @return array
      */
-    public function getCcAsArray(){
+    public function getCcAsArray()
+    {
         return $this->buildArray($this->getCc());
     }
 
@@ -505,7 +507,8 @@ class Log extends Model\AbstractModel
      *
      * @return array
      */
-    public function getBccAsArray(){
+    public function getBccAsArray()
+    {
         return $this->buildArray($this->getBcc());
     }
 
@@ -572,15 +575,16 @@ class Log extends Model\AbstractModel
     /**
      * Helper to get the recipients as array
      */
-    protected function buildArray($data){
+    protected function buildArray($data)
+    {
         $dataArray = array();
-        $tmp = explode(',',trim($data));
+        $tmp = explode(',', trim($data));
 
-        foreach($tmp as $entry){
+        foreach ($tmp as $entry) {
             $entry  = trim($entry);
-            $tmp2   = explode(' ',$entry);
+            $tmp2   = explode(' ', $entry);
             $dataArray[] = array('email' => trim($tmp2[0]),
-                                 'name' => str_replace(array('(',')'),'',$tmp2[1])
+                                 'name' => str_replace(array('(', ')'), '', $tmp2[1])
             );
         }
         return $dataArray;

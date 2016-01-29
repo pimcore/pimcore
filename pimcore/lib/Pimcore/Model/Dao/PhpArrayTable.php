@@ -16,7 +16,8 @@ use Pimcore\Cache;
 use Pimcore\Config;
 use \Pimcore\Db\PhpArrayFileTable;
 
-abstract class PhpArrayTable implements DaoInterface {
+abstract class PhpArrayTable implements DaoInterface
+{
 
     use DaoTrait;
 
@@ -28,14 +29,15 @@ abstract class PhpArrayTable implements DaoInterface {
     /**
      *
      */
-    public function configure() {
-
+    public function configure()
+    {
     }
 
     /**
      * @param $name
      */
-    protected function setFile($name) {
+    protected function setFile($name)
+    {
         $file = Config::locateConfigFile($name . ".php");
         $this->db = PhpArrayFileTable::get($file);
     }

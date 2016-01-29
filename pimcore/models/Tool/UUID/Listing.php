@@ -16,12 +16,13 @@ namespace Pimcore\Model\Tool\UUID;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
-    public function isValidOrderKey($key){
+    public function isValidOrderKey($key)
+    {
         $resource = new Model\Tool\UUID\Dao();
         $cols = $resource->getValidTableColumns(Model\Tool\UUID\Dao::TABLE_NAME);
-        return in_array($key,$cols);
+        return in_array($key, $cols);
     }
-
 }

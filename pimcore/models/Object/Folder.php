@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
-class Folder extends AbstractObject {
+class Folder extends AbstractObject
+{
 
     /**
      * @var string
@@ -27,7 +28,8 @@ class Folder extends AbstractObject {
      * @param array $values
      * @return Folder
      */
-    public static function create($values) {
+    public static function create($values)
+    {
         $object = new static();
         $object->setValues($values);
 
@@ -39,8 +41,8 @@ class Folder extends AbstractObject {
     /**
      * @return void
      */
-    public function update() {
-
+    public function update()
+    {
         parent::update();
         $this->getDao()->update();
     }
@@ -48,8 +50,8 @@ class Folder extends AbstractObject {
     /**
      * @throws \Exception
      */
-    public function delete() {
-
+    public function delete()
+    {
         if ($this->getId() == 1) {
             throw new \Exception("root-node cannot be deleted");
         }

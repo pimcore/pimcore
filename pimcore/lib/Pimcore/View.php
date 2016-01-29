@@ -15,7 +15,8 @@ namespace Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 
-class View extends \Zend_View {
+class View extends \Zend_View
+{
 
     /**
      * @var \Zend_Controller_Request_Abstract
@@ -33,20 +34,20 @@ class View extends \Zend_View {
      * @param array $options
      * @return Model\Document\Tag
      */
-    public function tag($type, $realName, $options = array()) {
-
+    public function tag($type, $realName, $options = array())
+    {
         $type = strtolower($type);
 
         try {
             $document = $this->document;
-            $name = Model\Document\Tag::buildTagName($type,$realName, $document);
+            $name = Model\Document\Tag::buildTagName($type, $realName, $document);
 
-            if($document instanceof Model\Document) {
+            if ($document instanceof Model\Document) {
                 $tag = $document->getElement($name);
                 if ($tag instanceof Model\Document\Tag && $tag->getType() == $type) {
 
                     // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
-                    if(method_exists($tag, "load")) {
+                    if (method_exists($tag, "load")) {
                         $tag->load();
                     }
 
@@ -56,8 +57,7 @@ class View extends \Zend_View {
                     $tag->setEditmode($this->editmode);
                     
                     $tag->setOptions($options);
-                }
-                else {
+                } else {
                     $tag = Model\Document\Tag::factory($type, $name, $document->getId(), $options, $this->controller, $this, $this->editmode);
                     $document->setElement($name, $tag);
                 }
@@ -67,8 +67,7 @@ class View extends \Zend_View {
             }
             
             return $tag;
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::warning($e);
         }
     }
@@ -76,13 +75,14 @@ class View extends \Zend_View {
     /**
      * @param string $script
      */
-    public function includeTemplateFile($script){
+    public function includeTemplateFile($script)
+    {
         $showTemplatePaths = isset($_REQUEST["pimcore_show_template_paths"]);
-        if($showTemplatePaths && \Pimcore::inDebugMode()){
+        if ($showTemplatePaths && \Pimcore::inDebugMode()) {
             echo "\n<!-- start template inclusion: " . $script . " -->\n";
         }
         include($script);
-        if($showTemplatePaths && \Pimcore::inDebugMode()){
+        if ($showTemplatePaths && \Pimcore::inDebugMode()) {
             echo "\n<!-- finished template inclusion: " . $script . " -->\n";
         }
     }
@@ -94,13 +94,13 @@ class View extends \Zend_View {
      * @param bool $capture
      * @return string
      */
-    public function template($scriptPath, $params = array(), $resetPassedParams = false, $capture = false) {
-
+    public function template($scriptPath, $params = array(), $resetPassedParams = false, $capture = false)
+    {
         foreach ($params as $key => $value) {
             $this->assign($key, $value);
         }
 
-        if($capture){
+        if ($capture) {
             $captureKey = (is_string($capture)) ? $capture : 'pimcore_capture_template';
             $this->placeholder($captureKey)->captureStart(\Zend_View_Helper_Placeholder_Container_Abstract::SET);
         }
@@ -118,20 +118,20 @@ class View extends \Zend_View {
             }
         }
 
-        if(!$found) {
-            if(is_file($scriptPath)) {
+        if (!$found) {
+            if (is_file($scriptPath)) {
                 $found = true;
                 $this->includeTemplateFile($scriptPath);
             }
         }
 
-        if($resetPassedParams){
-            foreach($params as $key => $value){
+        if ($resetPassedParams) {
+            foreach ($params as $key => $value) {
                 $this->$key = null;
             }
         }
 
-        if($capture){
+        if ($capture) {
             $this->placeholder($captureKey)->captureEnd();
             return trim($this->placeholder($captureKey)->getValue());
         }
@@ -144,9 +144,9 @@ class View extends \Zend_View {
      * @param array $params
      * @return string
      */
-    public function inc($include, $params = null, $cacheEnabled = true) {
-
-        if(!is_array($params)) {
+    public function inc($include, $params = null, $cacheEnabled = true)
+    {
+        if (!is_array($params)) {
             $params = [];
         }
 
@@ -154,22 +154,22 @@ class View extends \Zend_View {
         $cacheKey = null;
         $cacheConfig = false;
 
-        if($cacheEnabled) {
-            if($cacheConfig = Tool\Frontend::isOutputCacheEnabled()) {
+        if ($cacheEnabled) {
+            if ($cacheConfig = Tool\Frontend::isOutputCacheEnabled()) {
 
                 // cleanup params to avoid serializing Element\ElementInterface objects
                 $cacheParams = $params;
                 $cacheParams["~~include-document"] = $include;
                 array_walk($cacheParams, function (&$value, $key) {
-                    if($value instanceof Element\ElementInterface) {
+                    if ($value instanceof Element\ElementInterface) {
                         $value = $value->getId();
-                    } else if (is_object($value) && method_exists($value, "__toString")) {
+                    } elseif (is_object($value) && method_exists($value, "__toString")) {
                         $value = (string) $value;
                     }
                 });
 
                 $cacheKey = "tag_inc__" . md5(serialize($cacheParams));
-                if($content = Cache::load($cacheKey)) {
+                if ($content = Cache::load($cacheKey)) {
                     return $content;
                 }
             }
@@ -182,23 +182,20 @@ class View extends \Zend_View {
         $includeBak = $include;
 
         // this is if $this->inc is called eg. with $this->href() as argument
-        if(!$include instanceof Model\Document\PageSnippet && is_object($include) && method_exists($include, "__toString")) {
+        if (!$include instanceof Model\Document\PageSnippet && is_object($include) && method_exists($include, "__toString")) {
             $include = (string) $include;
         }
 
         if (is_string($include)) {
             try {
                 $include = Model\Document::getByPath($include);
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $include = $includeBak;
             }
-        }
-        else if (is_numeric($include)) {
+        } elseif (is_numeric($include)) {
             try {
                 $include = Model\Document::getById($include);
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $include = $includeBak;
             }
         }
@@ -209,24 +206,23 @@ class View extends \Zend_View {
         if ($include instanceof Model\Document\PageSnippet && $include->isPublished()) {
             if ($include->getAction() && $include->getController()) {
                 $content = $this->action($include->getAction(), $include->getController(), $include->getModule(), $params);
-            } else if ($include->getTemplate()) {
+            } elseif ($include->getTemplate()) {
                 $content = $this->action("default", "default", null, $params);
             }
 
             // in editmode, we need to parse the returned html from the document include
             // add a class and the pimcore id / type so that it can be opened in editmode using the context menu
             // if there's no first level HTML container => add one (wrapper)
-            if($this->editmode) {
-
+            if ($this->editmode) {
                 include_once("simple_html_dom.php");
 
                 $editmodeClass = " pimcore_editable pimcore_tag_inc ";
 
                 // this is if the content that is included does already contain markup/html
                 // this is needed by the editmode to highlight included documents
-                if($html = str_get_html($content)) {
+                if ($html = str_get_html($content)) {
                     $childs = $html->find("*");
-                    if(is_array($childs)) {
+                    if (is_array($childs)) {
                         foreach ($childs as $child) {
                             $child->class = $child->class . $editmodeClass;
                             $child->pimcore_type = $include->getType();
@@ -245,17 +241,18 @@ class View extends \Zend_View {
 
             // we need to add a component id to all first level html containers
             $componentId = "";
-            if($this->document instanceof Model\Document) {
+            if ($this->document instanceof Model\Document) {
                 $componentId .= 'document:' . $this->document->getId() . '.';
             }
-            $componentId .= 'type:inc.name:' . $include->getId();;
+            $componentId .= 'type:inc.name:' . $include->getId();
+            ;
             $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
         }
 
         \Zend_Registry::set("pimcore_editmode", $editmodeBackup);
 
         // write contents to the cache, if output-cache is enabled
-        if($cacheConfig) {
+        if ($cacheConfig) {
             Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
         }
 
@@ -267,7 +264,8 @@ class View extends \Zend_View {
      * @param $default
      * @return mixed
      */
-    public function getParam($key, $default = null) {
+    public function getParam($key, $default = null)
+    {
         $value = $this->getRequest()->getParam($key);
         if ((null === $value || '' === $value) && (null !== $default)) {
             $value = $default;
@@ -281,14 +279,16 @@ class View extends \Zend_View {
      * @param null $default
      * @return mixed
      */
-    public function _getParam($key, $default = null) {
+    public function _getParam($key, $default = null)
+    {
         return $this->getParam($key, $default);
     }
 
     /**
      * @return array
      */
-    public function getAllParams () {
+    public function getAllParams()
+    {
         return $this->getRequest()->getParams();
     }
 
@@ -296,14 +296,16 @@ class View extends \Zend_View {
      * @deprecated
      * @return array
      */
-    public function _getAllParams () {
+    public function _getAllParams()
+    {
         return $this->getAllParams();
     }
 
     /**
      * @return \Zend_Controller_Request_Http
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
@@ -311,7 +313,8 @@ class View extends \Zend_View {
      * @param \Zend_Controller_Request_Abstract $request
      * @return void
      */
-    public function setRequest(\Zend_Controller_Request_Abstract $request) {
+    public function setRequest(\Zend_Controller_Request_Abstract $request)
+    {
         $this->request = $request;
         return $this;
     }
@@ -319,14 +322,16 @@ class View extends \Zend_View {
     /**
      * shorthand for $this->translate() view helper
      */
-    public function t() {
+    public function t()
+    {
         return call_user_func_array(array($this, "translate"), func_get_args());
     }
 
     /**
      * shorthand for $this->translateAdmin() view helper
      */
-    public function ts() {
+    public function ts()
+    {
         return call_user_func_array(array($this, "translateAdmin"), func_get_args());
     }
 
@@ -336,25 +341,25 @@ class View extends \Zend_View {
      * @return mixed|Model\Document\Tag|string
      * @throws \Exception
      */
-    public function __call($method, $arguments) {
-
+    public function __call($method, $arguments)
+    {
         $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst(strtolower($method));
 
         $classFound = true;
-        if(!\Pimcore\Tool::classExists($class)) {
+        if (!\Pimcore\Tool::classExists($class)) {
             $oldStyleClass = "Document_Tag_" . ucfirst(strtolower($method));
-            if(!\Pimcore\Tool::classExists($oldStyleClass)) {
+            if (!\Pimcore\Tool::classExists($oldStyleClass)) {
                 $classFound = false;
             }
         }
 
         if ($classFound) {
-            if(!isset($arguments[0])) {
-                throw new \Exception ("You have to set a name for the called tag (editable): " . $method);
+            if (!isset($arguments[0])) {
+                throw new \Exception("You have to set a name for the called tag (editable): " . $method);
             }
 
             // set default if there is no editable configuration provided
-            if(!isset($arguments[1])) {
+            if (!isset($arguments[1])) {
                 $arguments[1] = array();
             }
             return $this->tag($method, $arguments[0], $arguments[1]);
@@ -373,14 +378,15 @@ class View extends \Zend_View {
      * @static
      * @return string
      */
-    public static function getViewScriptSuffix () {
+    public static function getViewScriptSuffix()
+    {
         // default is php
         $viewSuffix = "php";
 
         // custom view suffixes are only available for the frontend module (website)
-        if(\Zend_Controller_Front::getInstance()->getRequest()->getModuleName() == PIMCORE_FRONTEND_MODULE) {
+        if (\Zend_Controller_Front::getInstance()->getRequest()->getModuleName() == PIMCORE_FRONTEND_MODULE) {
             $customViewSuffix = Config::getSystemConfig()->general->viewSuffix;
-            if(!empty($customViewSuffix)) {
+            if (!empty($customViewSuffix)) {
                 $viewSuffix = $customViewSuffix;
             }
         }
@@ -403,5 +409,4 @@ class View extends \Zend_View {
     {
         self::$addComponentIds = $addComponentIds;
     }
-
 }

@@ -115,11 +115,11 @@ CSS;
      * @param array $receivers
      * @return string
      */
-    protected static function formatDebugReceivers(Array $receivers)
+    protected static function formatDebugReceivers(array $receivers)
     {
         $tmpString = '';
         foreach ($receivers as $entry) {
-            if(isset($entry['email'])) {
+            if (isset($entry['email'])) {
                 $tmpString .= $entry['email'];
                 if (isset($entry['name'])) {
                     $tmpString .= " (" . $entry["name"] . ")";
@@ -200,7 +200,7 @@ CSS;
             throw new \Exception('$document has to be an instance of Document');
         }
 
-        if(is_null($hostUrl)){
+        if (is_null($hostUrl)) {
             $hostUrl = \Pimcore\Tool::getHostUrl();
         }
 
@@ -244,7 +244,6 @@ CSS;
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"']([^http].*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
         if (!empty($matches[0])) {
-
             $css = "";
 
             foreach ($matches[0] as $key => $value) {
@@ -253,12 +252,11 @@ CSS;
                 $fileInfo = self::getNormalizedFileInfo($path, $document);
                 if (in_array($fileInfo['fileExtension'], array('css', 'less'))) {
                     if (is_readable($fileInfo['filePathNormalized'])) {
-
                         if ($fileInfo['fileExtension'] == 'css') {
                             $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                         } else {
                             $fileContent = \Pimcore\Tool\Less::compile($fileInfo['filePathNormalized']);
-                            $fileContent = str_replace('/**** compiled with lessphp ****/','',$fileContent);
+                            $fileContent = str_replace('/**** compiled with lessphp ****/', '', $fileContent);
                         }
                         if ($fileContent) {
                             $fileContent = self::normalizeCssContent($fileContent, $fileInfo);
@@ -294,7 +292,7 @@ CSS;
      * @param array $fileInfo
      * @return string
      */
-    public static function normalizeCssContent($content, Array $fileInfo)
+    public static function normalizeCssContent($content, array $fileInfo)
     {
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();

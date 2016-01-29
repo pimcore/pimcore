@@ -16,7 +16,8 @@ namespace Pimcore\Model\User\Listing;
 
 use Pimcore\Model;
 
-class AbstractListing extends Model\Listing\AbstractListing {
+class AbstractListing extends Model\Listing\AbstractListing
+{
 
 
     /**
@@ -37,14 +38,16 @@ class AbstractListing extends Model\Listing\AbstractListing {
      * @param string $key
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->items;
     }
 
@@ -52,7 +55,8 @@ class AbstractListing extends Model\Listing\AbstractListing {
      * @param array $items
      * @return void
      */
-    public function setItems($items) {
+    public function setItems($items)
+    {
         $this->items = $items;
         return $this;
     }
@@ -64,5 +68,4 @@ class AbstractListing extends Model\Listing\AbstractListing {
     {
         return $this->type;
     }
-
 }

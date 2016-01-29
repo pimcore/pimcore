@@ -74,7 +74,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @return boolean
      */
-    public function getLazyLoading(){
+    public function getLazyLoading()
+    {
         return $this->lazyLoading;
     }
 
@@ -82,7 +83,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param  $lazyLoading
      * @return void
      */
-    public function setLazyLoading($lazyLoading){
+    public function setLazyLoading($lazyLoading)
+    {
         $this->lazyLoading = $lazyLoading;
         return $this;
     }
@@ -95,7 +97,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null)
     {
-
         $editmodeData = array();
         $idx = -1;
 
@@ -116,7 +117,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $collectionData = array();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-
                     if ($fd instanceof CalculatedValue) {
                         $data = new Object\Data\CalculatedValue($fd->getName());
                         $data->setContextualData("fieldcollection", $this->getName(), $idx, null,  null, null, $fd);
@@ -150,12 +150,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
-
                 $collectionData = array();
                 $collectionDef = Object\Fieldcollection\Definition::getByKey($collectionRaw["type"]);
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (array_key_exists($fd->getName(),$collectionRaw["data"])) {
+                    if (array_key_exists($fd->getName(), $collectionRaw["data"])) {
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
                     }
                 }
@@ -208,13 +207,12 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param $object
      * @return string
      */
-    public function getDataForSearchIndex ($object) {
-
+    public function getDataForSearchIndex($object)
+    {
         $dataString = "";
         $fcData = $this->getDataFromObjectParam($object);
         if ($fcData instanceof Object\Fieldcollection) {
             foreach ($fcData as $item) {
-
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
@@ -301,7 +299,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 try {
                     Object\Fieldcollection\Definition::getByKey($allowedTypes[$i]);
                 } catch (\Exception $e) {
-
                     \Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
                     unset($allowedTypes[$i]);
                 }
@@ -323,7 +320,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
         if ($data instanceof Object\Fieldcollection) {
             foreach ($data as $item) {
-
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
@@ -348,7 +344,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     }
 
                     $wsDataItem->value[] = $el;
-
                 }
 
                 $wsData[] = $wsDataItem;
@@ -371,12 +366,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
-
                 if ($collectionRaw instanceof \stdClass) {
                     $collectionRaw = Cast::castToClass("\\Pimcore\\Model\\Webservice\\Data\\Object\\Element", $collectionRaw);
                 }
                 if (!$collectionRaw instanceof Webservice\Data\Object\Element) {
-
                     throw new \Exception("invalid data in fieldcollections [" . $this->getName() . "]");
                 }
 
@@ -395,18 +388,14 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                         }
                         if (!$field instanceof Webservice\Data\Object\Element) {
                             throw new \Exception("invalid data in fieldcollections [" . $this->getName() . "]");
-                        } else if ($field->name == $fd->getName()) {
-
+                        } elseif ($field->name == $fd->getName()) {
                             if ($field->type != $fd->getFieldType()) {
                                 throw new \Exception("Type mismatch for fieldcollection field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                             }
                             $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $idMapper);
                             break;
                         }
-
-
                     }
-
                 }
 
                 $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($fieldcollection);
@@ -435,7 +424,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
         if ($data instanceof Object\Fieldcollection) {
             foreach ($data as $item) {
-
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
@@ -469,7 +457,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
         if ($data instanceof Object\Fieldcollection) {
             foreach ($data as $item) {
-
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
@@ -498,12 +485,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false) {
-
-        if(!$omitMandatoryCheck){
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        if (!$omitMandatoryCheck) {
             if ($data instanceof Object\Fieldcollection) {
                 foreach ($data as $item) {
-
                     if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                         continue;
                     }
@@ -529,18 +515,18 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @return null|Object\Fieldcollection
      * @throws \Exception
      */
-    public function preGetData ($object, $params = array()) {
-
-        if(!$object instanceof Object\Concrete) {
+    public function preGetData($object, $params = array())
+    {
+        if (!$object instanceof Object\Concrete) {
             throw new \Exception("Field Collections are only valid in Objects");
         }
 
         $data = $object->{$this->getName()};
-        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $data = $this->load($object, array("force" => true));
 
             $setter = "set" . ucfirst($this->getName());
-            if(method_exists($object, $setter)) {
+            if (method_exists($object, $setter)) {
                 $object->$setter($data);
             }
         }
@@ -553,11 +539,13 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return array
      */
-    public function preSetData ($object, $data, $params = array()) {
+    public function preSetData($object, $data, $params = array())
+    {
+        if ($data === null) {
+            $data = array();
+        }
 
-        if($data === null) $data = array();
-
-        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $object->addO__loadedLazyField($this->getName());
         }
 
@@ -574,7 +562,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param Object\Concrete $object
      * @return string
      */
-    public function getDataForGrid($data, $object = null) {
+    public function getDataForGrid($data, $object = null)
+    {
         return "NOT SUPPORTED";
     }
 
@@ -582,7 +571,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param $class
      * @return string
      */
-    public function getGetterCode ($class) {
+    public function getGetterCode($class)
+    {
         // getter, no inheritance here, that's the only difference
 
         $key = $this->getName();
@@ -597,7 +587,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
         $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}' . "\n";
 
-        if(method_exists($this,"preGetData")) {
+        if (method_exists($this, "preGetData")) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -630,7 +620,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -641,10 +632,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null) {
+    public function getDiffVersionPreview($data, $object = null)
+    {
         $html = "";
         if ($data instanceof Object\Fieldcollection) {
-
             $html = "<table>";
             foreach ($data as $item) {
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
@@ -663,7 +654,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $collectionData = array();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-
                     $title = !empty($fd->title) ? $fd->title : $fd->getName();
                     $html .= "<tr><td>&nbsp;</td><td>" . $title . "</td><td>";
                     $html .= $fd->getVersionPreview($item->{$fd->getName()});
@@ -685,7 +675,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @return mixed
      */
-    public function getDiffDataFromEditmode($data, $object = null) {
+    public function getDiffDataFromEditmode($data, $object = null)
+    {
         $result = parent::getDiffDataFromEditmode($data, $object);
         \Logger::debug("bla");
         return $result;
@@ -706,7 +697,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array()) {
+    public function rewriteIds($object, $idMapping, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data instanceof Object\Fieldcollection) {
@@ -722,7 +714,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if(method_exists($fd, "rewriteIds")) {
+                    if (method_exists($fd, "rewriteIds")) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = "set" . ucfirst($fd->getName());
                         $item->$setter($d);
@@ -737,7 +729,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
+    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->lazyLoading = $masterDefinition->lazyLoading;
         $this->maxItems = $masterDefinition->maxItems;
@@ -759,7 +752,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                         if (method_exists($fd, "classSaved")) {
                             $fd->classSaved($class);
                         }
-
                     }
                 }
             }
@@ -829,7 +821,4 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $this->collapsible = $collapsible;
     }
-
-
-
 }

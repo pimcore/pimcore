@@ -12,11 +12,12 @@
 
 namespace Pimcore\Helper;
 
-use Pimcore\Tool\Serialize; 
+use Pimcore\Tool\Serialize;
 use Pimcore\File;
 use Pimcore\Model\User;
 
-class Dashboard {
+class Dashboard
+{
 
     /**
      * @var User
@@ -31,49 +32,53 @@ class Dashboard {
     /**
      * @param User $user
      */
-    public function __construct(User $user) {
+    public function __construct(User $user)
+    {
         $this->user = $user;
     }
 
     /**
      * @return User
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->user;
     }
 
     /**
      * @return string
      */
-    protected function getConfigDir () {
+    protected function getConfigDir()
+    {
         return PIMCORE_CONFIGURATION_DIRECTORY."/portal";
     }
 
     /**
      * @return string
      */
-    protected function getConfigFile () {
+    protected function getConfigFile()
+    {
         return $this->getConfigDir()."/dashboards_".$this->getUser()->getId().".psf";
     }
 
     /**
      * @return array|mixed
      */
-    protected function loadFile() {
-        if(!is_dir($this->getConfigDir())) {
+    protected function loadFile()
+    {
+        if (!is_dir($this->getConfigDir())) {
             File::mkdir($this->getConfigDir());
         }
 
-        if(empty($this->dashboards)) {
-
-            if(is_file($this->getConfigFile())) {
+        if (empty($this->dashboards)) {
+            if (is_file($this->getConfigFile())) {
                 $dashboards = Serialize::unserialize(file_get_contents($this->getConfigFile()));
-                if(!empty($dashboards)) {
+                if (!empty($dashboards)) {
                     $this->dashboards = $dashboards;
                 }
             }
 
-            if(empty($this->dashboards)) {
+            if (empty($this->dashboards)) {
 
                 // if no configuration exists, return the base config
                 $this->dashboards = array(
@@ -114,7 +119,8 @@ class Dashboard {
     /**
      * @return array|mixed
      */
-    public function getAllDashboards() {
+    public function getAllDashboards()
+    {
         return $this->loadFile();
     }
 
@@ -122,7 +128,8 @@ class Dashboard {
      * @param string $key
      * @return mixed
      */
-    public function getDashboard($key = "welcome") {
+    public function getDashboard($key = "welcome")
+    {
         $dashboards = $this->loadFile();
         return $dashboards[$key];
     }
@@ -131,10 +138,11 @@ class Dashboard {
      * @param $key
      * @param null $configuration
      */
-    public function saveDashboard($key, $configuration = null) {
+    public function saveDashboard($key, $configuration = null)
+    {
         $this->loadFile();
 
-        if(empty($configuration)) {
+        if (empty($configuration)) {
             $configuration = array("positions" => array(array(), array()));
         }
 
@@ -145,10 +153,10 @@ class Dashboard {
     /**
      * @param $key
      */
-    public function deleteDashboard($key) {
+    public function deleteDashboard($key)
+    {
         $this->loadFile();
         unset($this->dashboards[$key]);
         File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
-
 }

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element\Reference;
 
 use Pimcore\Model;
 
-class Placeholder {
+class Placeholder
+{
 
     /**
      * @var int
@@ -32,7 +33,8 @@ class Placeholder {
      * @param int $id
      * @param string $type
      */
-    public function __construct($id, $type) {
+    public function __construct($id, $type)
+    {
         $this->setId($id);
         $this->setType($type);
     }

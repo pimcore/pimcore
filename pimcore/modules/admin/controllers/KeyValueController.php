@@ -16,7 +16,8 @@ use Pimcore\Model\Object\KeyValue;
 
 class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 {
-    public function deletegroupAction() {
+    public function deletegroupAction()
+    {
         $id = $this->getParam("id");
 
         $config = KeyValue\GroupConfig::getById($id);
@@ -25,13 +26,14 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(array("success" => true));
     }
 
-    public function addgroupAction() {
+    public function addgroupAction()
+    {
         $name = $this->getParam("name");
         $alreadyExist = false;
         $config = KeyValue\GroupConfig::getByName($name);
 
 
-        if(!$config) {
+        if (!$config) {
             $config = new KeyValue\GroupConfig();
             $config->setName($name);
             $config->save();
@@ -40,7 +42,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(array("success" => !$alreadyExist, "id" => $config->getName()));
     }
 
-    public function getgroupAction() {
+    public function getgroupAction()
+    {
         $id = $this->getParam("id");
         $config = KeyValue\GroupConfig::getByName($id);
 
@@ -53,7 +56,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json($data);
     }
 
-    public function groupsAction() {
+    public function groupsAction()
+    {
         if ($this->getParam("data")) {
             $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
@@ -72,17 +76,16 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(array("success" => true, "data" => $config));
         } else {
-
             $start = 0;
             $limit = 15;
             $orderKey = "name";
             $order = "ASC";
 
             $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
-            if($sortingSettings['orderKey']) {
+            if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
             }
-            if($sortingSettings['order']) {
+            if ($sortingSettings['order']) {
                 $order  = $sortingSettings['order'];
             }
 
@@ -106,7 +109,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $list->setOrderKey($orderKey);
 
 
-            if($this->getParam("filter")) {
+            if ($this->getParam("filter")) {
                 $condition = "";
                 $filterString = $this->getParam("filter");
                 $filters = json_decode($filterString);
@@ -114,7 +117,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                 $db = Db::get();
                 $count = 0;
 
-                foreach($filters as $f) {
+                foreach ($filters as $f) {
                     if ($count > 0) {
                         $condition .= " OR ";
                     }
@@ -135,7 +138,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $rootElement = array();
 
             $data = array();
-            foreach($configList as $config) {
+            foreach ($configList as $config) {
                 $name = $config->getName();
                 if (!$name) {
                     $name = "EMPTY";
@@ -164,7 +167,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    public function propertiesAction() {
+    public function propertiesAction()
+    {
         if ($this->getParam("data")) {
             $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
@@ -186,17 +190,16 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(array("success" => true, "data" => $item));
         } else {
-
             $start = 0;
             $limit = 15;
             $orderKey = "name";
             $order = "ASC";
 
             $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
-            if($sortingSettings['orderKey']) {
+            if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
             }
-            if($sortingSettings['order']) {
+            if ($sortingSettings['order']) {
                 $order  = $sortingSettings['order'];
             }
 
@@ -221,7 +224,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
-            if($this->getParam("filter")) {
+            if ($this->getParam("filter")) {
                 $db = Db::get();
                 $condition = "";
                 $filterString = $this->getParam("filter");
@@ -229,7 +232,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 
                 $count = 0;
 
-                foreach($filters as $f) {
+                foreach ($filters as $f) {
                     if ($count > 0) {
                         $condition .= " OR ";
                     }
@@ -276,7 +279,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $rootElement = array();
 
             $data = array();
-            foreach($configList as $config) {
+            foreach ($configList as $config) {
                 $item = $this->getConfigItem($config);
                 $data[] = $item;
             }
@@ -288,7 +291,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    protected function getConfigItem($config) {
+    protected function getConfigItem($config)
+    {
         $name = $config->getName();
         if (!$name) {
             $name = "EMPTY";
@@ -301,7 +305,6 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                 $groupDescription = $group->getDescription();
                 $groupName = $group->getName();
             } catch (\Exception $e) {
-
             }
 
             if (empty($groupDescription)) {
@@ -333,11 +336,12 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         return $item;
     }
 
-    public function addpropertyAction() {
+    public function addpropertyAction()
+    {
         $name = $this->getParam("name");
         $alreadyExist = false;
 
-        if(!$alreadyExist) {
+        if (!$alreadyExist) {
             $config = new KeyValue\KeyConfig();
             $config->setName($name);
             $config->setType("text");
@@ -347,7 +351,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(array("success" => !$alreadyExist, "id" => $config->getName()));
     }
 
-    public function deletepropertyAction() {
+    public function deletepropertyAction()
+    {
         $id = $this->getParam("id");
 
         $config = KeyValue\KeyConfig::getById($id);
@@ -359,8 +364,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     /**
      * Imports group and key config from XML format.
      */
-    public function importAction() {
-
+    public function importAction()
+    {
         $tmpFile = file_get_contents($_FILES["Filedata"]["tmp_name"]);
         $conf = new \Zend_Config_Xml($tmpFile);
         $importData = $conf->toArray();
@@ -376,7 +381,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     /**
      * Exports group and key config into XML format.
      */
-    public function exportAction() {
+    public function exportAction()
+    {
         $this->removeViewRenderer();
 
         $data = KeyValue\Helper::export();
@@ -386,7 +392,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    public function testmagicAction() {
+    public function testmagicAction()
+    {
         $obj = Object\Concrete::getById(61071);
         $pairs = $obj->getKeyValuePairs();
 
@@ -398,7 +405,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $obj->save();
     }
 
-    public function getTranslatorConfigsAction() {
+    public function getTranslatorConfigsAction()
+    {
         $list = new KeyValue\TranslatorConfig\Listing();
         $list->load();
         $items = $list->getList();
@@ -414,7 +422,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(array("configurations" => $result));
     }
 
-    public function translateAction() {
+    public function translateAction()
+    {
         $success = false;
         $keyId = $this->getParam("keyId");
         $objectId = $this->getParam("objectId");
@@ -442,10 +451,8 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
                 "recordId" => $recordId
             ));
         } catch (\Exception $e) {
-
         }
 
         $this->_helper->json(array("success" => $success));
     }
-
 }

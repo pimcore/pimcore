@@ -12,9 +12,10 @@
 
 namespace Pimcore\Tool;
 
-class Mime {
+class Mime
+{
 
-    public static $extensionMapping = array (
+    public static $extensionMapping = array(
         'ez'        => 'application/andrew-inset',
         'atom'      => 'application/atom+xml',
         'jar'       => 'application/java-archive',
@@ -88,7 +89,7 @@ class Mime {
         'dcr'       => 'application/x-director',
         'dir'       => 'application/x-director',
         'dxr'       => 'application/x-director',
-	'dxf'       => 'application/x-autocad',
+    'dxf'       => 'application/x-autocad',
         'dvi'       => 'application/x-dvi',
         'spl'       => 'application/x-futuresplash',
         'tgz'       => 'application/x-gtar',
@@ -223,19 +224,20 @@ class Mime {
      * @return mixed|string
      * @throws \Exception
      */
-    public static function detect($file, $filename = null) {
-        if(!file_exists($file)) {
+    public static function detect($file, $filename = null)
+    {
+        if (!file_exists($file)) {
             throw new \Exception("File " . $file . " doesn't exist");
         }
 
-        if(!$filename) {
+        if (!$filename) {
             $filename = basename($file);
         }
 
         // check for an extension mapping first
-        if($filename) {
+        if ($filename) {
             $extension = \Pimcore\File::getFileExtension($filename);
-            if(array_key_exists($extension, self::$extensionMapping)) {
+            if (array_key_exists($extension, self::$extensionMapping)) {
                 return self::$extensionMapping[$extension];
             }
         }

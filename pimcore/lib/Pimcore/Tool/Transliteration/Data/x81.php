@@ -1,7 +1,7 @@
 <?php
 
 $base = array(
-  0x00 => 'Cheng ', 'Tiao ', 'Zhi ', 'Cui ', 'Mei ', 'Xie ', 'Cui ', 'Xie ', 'Mo ', 'Mai ', 'Ji ', 'Obiyaakasu ', NULL, 'Kuai ', 'Sa ', 'Zang ',
+  0x00 => 'Cheng ', 'Tiao ', 'Zhi ', 'Cui ', 'Mei ', 'Xie ', 'Cui ', 'Xie ', 'Mo ', 'Mai ', 'Ji ', 'Obiyaakasu ', null, 'Kuai ', 'Sa ', 'Zang ',
   0x10 => 'Qi ', 'Nao ', 'Mi ', 'Nong ', 'Luan ', 'Wan ', 'Bo ', 'Wen ', 'Guan ', 'Qiu ', 'Jiao ', 'Jing ', 'Rou ', 'Heng ', 'Cuo ', 'Lie ',
   0x20 => 'Shan ', 'Ting ', 'Mei ', 'Chun ', 'Shen ', 'Xie ', 'De ', 'Zui ', 'Cu ', 'Xiu ', 'Xin ', 'Tuo ', 'Pao ', 'Cheng ', 'Nei ', 'Fu ',
   0x30 => 'Dou ', 'Tuo ', 'Niao ', 'Noy ', 'Pi ', 'Gu ', 'Gua ', 'Li ', 'Lian ', 'Zhang ', 'Cui ', 'Jie ', 'Liang ', 'Zhou ', 'Pi ', 'Biao ',

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\CustomReport;
 
 use Pimcore\Model;
 
-class Config extends Model\AbstractModel {
+class Config extends Model\AbstractModel
+{
 
     /**
      * @var string
@@ -102,7 +103,8 @@ class Config extends Model\AbstractModel {
      * @param $name
      * @return null|Config
      */
-    public static function getByName ($name) {
+    public static function getByName($name)
+    {
         try {
             $report = new self();
             $report->getDao()->getByName($name);
@@ -116,14 +118,14 @@ class Config extends Model\AbstractModel {
     /**
      * @return array
      */
-    public static function getReportsList () {
-
+    public static function getReportsList()
+    {
         $reports = [];
 
         $list = new Config\Listing();
         $items = $list->load();
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $reports[] = array(
                 "id" => $item->getName(),
                 "text" => $item->getName()
@@ -131,7 +133,6 @@ class Config extends Model\AbstractModel {
         }
 
         return $reports;
-
     }
 
     /**
@@ -139,8 +140,8 @@ class Config extends Model\AbstractModel {
      * @param null $fullConfig
      * @return mixed
      */
-    public static function getAdapter($configuration, $fullConfig = null) {
-
+    public static function getAdapter($configuration, $fullConfig = null)
+    {
         $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
         $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
         return new $adapter($configuration, $fullConfig);

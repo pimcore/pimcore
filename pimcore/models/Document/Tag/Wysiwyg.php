@@ -15,11 +15,12 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
-use Pimcore\Tool\Text; 
+use Pimcore\Tool\Text;
 
 include_once("simple_html_dom.php");
 
-class Wysiwyg extends Model\Document\Tag {
+class Wysiwyg extends Model\Document\Tag
+{
 
     /**
      * Contains the text
@@ -33,7 +34,8 @@ class Wysiwyg extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "wysiwyg";
     }
 
@@ -41,7 +43,8 @@ class Wysiwyg extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->text;
     }
 
@@ -50,7 +53,8 @@ class Wysiwyg extends Model\Document\Tag {
      *
      * @return mixed
      */
-    public function getDataEditmode() {
+    public function getDataEditmode()
+    {
         return Text::wysiwygText($this->text);
     }
 
@@ -58,7 +62,8 @@ class Wysiwyg extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
+    public function frontend()
+    {
         return Text::wysiwygText($this->text);
     }
 
@@ -67,7 +72,8 @@ class Wysiwyg extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->text = $data;
         return $this;
     }
@@ -78,7 +84,8 @@ class Wysiwyg extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         $this->text = $data;
         return $this;
     }
@@ -86,7 +93,8 @@ class Wysiwyg extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return empty($this->text);
     }
 
@@ -96,7 +104,8 @@ class Wysiwyg extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
@@ -108,7 +117,8 @@ class Wysiwyg extends Model\Document\Tag {
     /**
      * @return array
      */
-    public function resolveDependencies() {
+    public function resolveDependencies()
+    {
         return Text::getDependenciesOfWysiwygText($this->text);
     }
 
@@ -118,7 +128,8 @@ class Wysiwyg extends Model\Document\Tag {
      * @param array $blockedTags
      * @return array
      */
-    public function getCacheTags($ownerDocument, $blockedTags = array()) {
+    public function getCacheTags($ownerDocument, $blockedTags = array())
+    {
         return Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
     }
 
@@ -136,23 +147,23 @@ class Wysiwyg extends Model\Document\Tag {
      * @param array $idMapping
      * @return void
      */
-    public function rewriteIds($idMapping) {
-        
+    public function rewriteIds($idMapping)
+    {
         $html = str_get_html($this->text);
-        if(!$html) {
+        if (!$html) {
             return $this->text;
         }
 
         $s = $html->find("a[pimcore_id],img[pimcore_id]");
 
-        if($s) {
+        if ($s) {
             foreach ($s as $el) {
                 if ($el->href || $el->src) {
                     $type = $el->pimcore_type;
                     $id = (int) $el->pimcore_id;
 
-                    if(array_key_exists($type, $idMapping)) {
-                        if(array_key_exists($id, $idMapping[$type])) {
+                    if (array_key_exists($type, $idMapping)) {
+                        if (array_key_exists($id, $idMapping[$type])) {
                             $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
                         }
                     }

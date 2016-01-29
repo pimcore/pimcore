@@ -14,7 +14,8 @@ namespace Pimcore\Model\Search;
 
 use Pimcore\Db;
 
- class Backend {
+class Backend
+{
 
     /**
      * @var string
@@ -37,70 +38,70 @@ use Pimcore\Db;
       * @param null $userModification
       * @param bool $countOnly
       */
-    protected function createBackendSearchQuery($queryStr, $type= null, $subtype = null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $countOnly=false){
+    protected function createBackendSearchQuery($queryStr, $type= null, $subtype = null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $countOnly=false)
+    {
+        if ($countOnly) {
+            $selectFields = " count(*) as count ";
+        } else {
+            $selectFields = " * ";
+        }
 
-            if($countOnly){
-                $selectFields = " count(*) as count ";
-            } else {
-                $selectFields = " * ";
-            }
-
-            $this->backendQuery = "SELECT ".$selectFields."
+        $this->backendQuery = "SELECT ".$selectFields."
                 FROM search_backend_data d
                 WHERE (d.data like ? OR properties like ? )";
 
-            $this->backendQueryParams = array("%$queryStr%","%$queryStr%");
+        $this->backendQueryParams = array("%$queryStr%","%$queryStr%");
 
-            if (!empty($type)) {
-                $this->backendQuery.=" AND maintype = ? ";
-                $this->backendQueryParams[] = $type;
-            }
+        if (!empty($type)) {
+            $this->backendQuery.=" AND maintype = ? ";
+            $this->backendQueryParams[] = $type;
+        }
 
-            if (!empty($subtype)) {
-                $this->backendQuery.=" AND type = ? ";
-                $this->backendQueryParams[] = $subtype;
-            }
+        if (!empty($subtype)) {
+            $this->backendQuery.=" AND type = ? ";
+            $this->backendQueryParams[] = $subtype;
+        }
 
-            if (!empty($classname)) {
-                $this->backendQuery.=" AND subtype = ? ";
-                $this->backendQueryParams[] = $classname;;
-            }
+        if (!empty($classname)) {
+            $this->backendQuery.=" AND subtype = ? ";
+            $this->backendQueryParams[] = $classname;
+            ;
+        }
 
-            if (is_array($modifiedRange)) {
-                    if ($modifiedRange[0] != null) {
-                        $this->backendQuery .= " AND modificationDate >= ? ";
-                        $this->backendQueryParams[] = $modifiedRange[0];
-                    }
-                    if ($modifiedRange[1] != null) {
-                        $this->backendQuery .= " AND modificationDate <= ? ";
-                        $this->backendQueryParams[] = $modifiedRange[1];
-                    }
+        if (is_array($modifiedRange)) {
+            if ($modifiedRange[0] != null) {
+                $this->backendQuery .= " AND modificationDate >= ? ";
+                $this->backendQueryParams[] = $modifiedRange[0];
             }
+            if ($modifiedRange[1] != null) {
+                $this->backendQuery .= " AND modificationDate <= ? ";
+                $this->backendQueryParams[] = $modifiedRange[1];
+            }
+        }
 
-            if (is_array($createdRange)) {
-                    if ($createdRange[0] != null) {
-                        $this->backendQuery .= " AND creationDate >= ? ";
-                        $this->backendQueryParams[] = $createdRange[0];
-                    }
-                    if ($createdRange[1] != null) {
-                        $this->backendQuery .= " AND creationDate <= ? ";
-                        $this->backendQueryParams[] = $createdRange[1];
-                    }
+        if (is_array($createdRange)) {
+            if ($createdRange[0] != null) {
+                $this->backendQuery .= " AND creationDate >= ? ";
+                $this->backendQueryParams[] = $createdRange[0];
             }
+            if ($createdRange[1] != null) {
+                $this->backendQuery .= " AND creationDate <= ? ";
+                $this->backendQueryParams[] = $createdRange[1];
+            }
+        }
 
-            if (!empty($userOwner)) {
-                $this->backendQuery.= " AND userOwner = ? ";
-                $this->backendQueryParams[] = $userOwner;
-            }
+        if (!empty($userOwner)) {
+            $this->backendQuery.= " AND userOwner = ? ";
+            $this->backendQueryParams[] = $userOwner;
+        }
 
-            if (!empty($userModification)) {
-                $this->backendQuery.= " AND userModification = ? ";
-                $this->backendQueryParams[] = $userModification;
-            }
+        if (!empty($userModification)) {
+            $this->backendQuery.= " AND userModification = ? ";
+            $this->backendQueryParams[] = $userModification;
+        }
 
         \Logger::debug($this->backendQuery);
-        \Logger::debug( $this->backendQueryParams);
-
+        \Logger::debug($this->backendQueryParams);
     }
 
     /**
@@ -114,13 +115,16 @@ use Pimcore\Db;
      * @param  $classname
      * @return int
      */
-    public function getTotalSearchMatches($queryStr, $webResourceType, $type, $subtype, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $classname = null){
-        $this->createBackendSearchQuery($queryStr, $webResourceType, $type, $subtype, $modifiedRange, $createdRange, $userOwner, $userModification,$classname,true);
+    public function getTotalSearchMatches($queryStr, $webResourceType, $type, $subtype, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $classname = null)
+    {
+        $this->createBackendSearchQuery($queryStr, $webResourceType, $type, $subtype, $modifiedRange, $createdRange, $userOwner, $userModification, $classname, true);
         $db = Db::get();
-        $result =  $db->fetchRow($this->backendQuery,$this->backendQueryParams);
-        if($result['count']){
+        $result =  $db->fetchRow($this->backendQuery, $this->backendQueryParams);
+        if ($result['count']) {
             return $result['count'];
-        } else return 0;
+        } else {
+            return 0;
+        }
     }
 
      /**
@@ -136,13 +140,10 @@ use Pimcore\Db;
       * @param int $limit
       * @return array
       */
-    public function findInDb($queryStr, $type=null, $subtype=null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $offset=0, $limit=25) {
-
-        $this->createBackendSearchQuery($queryStr, $type, $subtype, $classname, $modifiedRange, $createdRange, $userOwner, $userModification,false);
+    public function findInDb($queryStr, $type=null, $subtype=null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $offset=0, $limit=25)
+    {
+        $this->createBackendSearchQuery($queryStr, $type, $subtype, $classname, $modifiedRange, $createdRange, $userOwner, $userModification, false);
         $db = Db::get();
-        return $db->fetchAll($this->backendQuery,$this->backendQueryParams);
+        return $db->fetchAll($this->backendQuery, $this->backendQueryParams);
     }
-
- 
-
- }
+}

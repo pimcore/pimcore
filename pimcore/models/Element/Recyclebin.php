@@ -16,9 +16,11 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-class Recyclebin extends Model\AbstractModel {
+class Recyclebin extends Model\AbstractModel
+{
     
-    public function flush () {
+    public function flush()
+    {
         $this->getDao()->flush();
         
         $files = scandir(PIMCORE_RECYCLEBIN_DIRECTORY);

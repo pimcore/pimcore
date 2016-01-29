@@ -18,5 +18,4 @@ use Pimcore\Model;
 
 class Website extends AbstractTranslation
 {
-
 }

@@ -12,7 +12,8 @@
 
 namespace Pimcore\Image;
 
-abstract class Adapter {
+abstract class Adapter
+{
 
     /**
      * @var int
@@ -89,11 +90,12 @@ abstract class Adapter {
     /**
      * @return void
      */
-    protected function removeTmpFiles () {
+    protected function removeTmpFiles()
+    {
         // remove tmp files
-        if(!empty($this->tmpFiles)) {
+        if (!empty($this->tmpFiles)) {
             foreach ($this->tmpFiles as $tmpFile) {
-                if(file_exists($tmpFile)) {
+                if (file_exists($tmpFile)) {
                     unlink($tmpFile);
                 }
             }
@@ -105,7 +107,8 @@ abstract class Adapter {
      * @param  $colorhex
      * @return array
      */
-    public function colorhex2colorarray($colorhex) {
+    public function colorhex2colorarray($colorhex)
+    {
         $r = hexdec(substr($colorhex, 1, 2));
         $g = hexdec(substr($colorhex, 3, 2));
         $b = hexdec(substr($colorhex, 5, 2));
@@ -118,8 +121,8 @@ abstract class Adapter {
      * @param  $height
      * @return self
      */
-    public function resize ($width, $height) {
-
+    public function resize($width, $height)
+    {
         return $this;
     }
 
@@ -127,9 +130,9 @@ abstract class Adapter {
      * @param  $width
      * @return self
      */
-    public function scaleByWidth ($width, $forceResize = false) {
-
-        if($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
+    public function scaleByWidth($width, $forceResize = false)
+    {
+        if ($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
             $height = round(($width / $this->getWidth()) * $this->getHeight(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
@@ -141,9 +144,9 @@ abstract class Adapter {
      * @param  $height
      * @return self
      */
-    public function scaleByHeight ($height, $forceResize = false) {
-
-        if($forceResize || $height < $this->getHeight() || $this->isVectorGraphic()) {
+    public function scaleByHeight($height, $forceResize = false)
+    {
+        if ($forceResize || $height < $this->getHeight() || $this->isVectorGraphic()) {
             $width = round(($height / $this->getHeight()) * $this->getWidth(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
@@ -156,13 +159,13 @@ abstract class Adapter {
      * @param  $height
      * @return self
      */
-    public function contain ($width, $height) {
-
+    public function contain($width, $height)
+    {
         $x = $this->getWidth() / $width;
         $y = $this->getHeight() / $height;
         if ($x <= 1 && $y <= 1 && !$this->isVectorGraphic()) {
             return $this;
-        } else if ($x > $y) {
+        } elseif ($x > $y) {
             $this->scaleByWidth($width);
         } else {
             $this->scaleByHeight($height);
@@ -177,43 +180,43 @@ abstract class Adapter {
      * @param string $orientation
      * @return self
      */
-    public function cover ($width, $height, $orientation = "center", $doNotScaleUp = true) {
-
+    public function cover($width, $height, $orientation = "center", $doNotScaleUp = true)
+    {
         $scaleUp = $doNotScaleUp ? false : true;
 
         $ratio = $this->getWidth() / $this->getHeight();
 
         if (($width / $height) > $ratio) {
-           $this->scaleByWidth($width, $scaleUp);
+            $this->scaleByWidth($width, $scaleUp);
         } else {
-           $this->scaleByHeight($height, $scaleUp);
+            $this->scaleByHeight($height, $scaleUp);
         }
 
-        if($orientation == "center") {
+        if ($orientation == "center") {
             $cropX = ($this->getWidth() - $width)/2;
             $cropY = ($this->getHeight() - $height)/2;
-        } else if ($orientation == "topleft") {
+        } elseif ($orientation == "topleft") {
             $cropX = 0;
             $cropY = 0;
-        } else if ($orientation == "topright") {
+        } elseif ($orientation == "topright") {
             $cropX = $this->getWidth() - $width;
             $cropY = 0;
-        } else if ($orientation == "bottomleft") {
+        } elseif ($orientation == "bottomleft") {
             $cropX = 0;
             $cropY = $this->getHeight() - $height;
-        } else if ($orientation == "bottomright") {
+        } elseif ($orientation == "bottomright") {
             $cropX = $this->getWidth() - $width;
             $cropY = $this->getHeight() - $height;
-        } else if ($orientation == "centerleft") {
+        } elseif ($orientation == "centerleft") {
             $cropX = 0;
             $cropY = ($this->getHeight() - $height)/2;
-        } else if ($orientation == "centerright") {
+        } elseif ($orientation == "centerright") {
             $cropX = $this->getWidth() - $width;
             $cropY = ($this->getHeight() - $height)/2;
-        } else if ($orientation == "topcenter") {
+        } elseif ($orientation == "topcenter") {
             $cropX = ($this->getWidth() - $width)/2;
             $cropY = 0;
-        } else if ($orientation == "bottomcenter") {
+        } elseif ($orientation == "bottomcenter") {
             $cropX = ($this->getWidth() - $width)/2;
             $cropY = $this->getHeight() - $height;
         } else {
@@ -221,7 +224,7 @@ abstract class Adapter {
             $cropY = null;
         }
 
-        if($cropX !== null && $cropY !== null) {
+        if ($cropX !== null && $cropY !== null) {
             $this->crop($cropX, $cropY, $width, $height);
         } else {
             \Logger::error("Cropping not processed, because X or Y is not defined or null, proceeding with next step");
@@ -235,8 +238,8 @@ abstract class Adapter {
      * @param $height
      * @return $this
      */
-    public function frame ($width, $height) {
-        
+    public function frame($width, $height)
+    {
         return $this;
     }
 
@@ -244,8 +247,8 @@ abstract class Adapter {
      * @param  int $tolerance
      * @return self
      */
-    public function trim ($tolerance) {
-
+    public function trim($tolerance)
+    {
         return $this;
     }
 
@@ -253,8 +256,8 @@ abstract class Adapter {
      * @param $angle
      * @return $this
      */
-    public function rotate ($angle) {
-
+    public function rotate($angle)
+    {
         return $this;
     }
 
@@ -265,8 +268,8 @@ abstract class Adapter {
      * @param  $height
      * @return self
      */
-    public function crop ($x, $y, $width, $height) {
-
+    public function crop($x, $y, $width, $height)
+    {
         return $this;
     }
 
@@ -275,7 +278,8 @@ abstract class Adapter {
      * @param  $color
      * @return self
      */
-    public function setBackgroundColor ($color) {
+    public function setBackgroundColor($color)
+    {
         return $this;
     }
 
@@ -283,8 +287,8 @@ abstract class Adapter {
      * @param  $image
      * @return self
      */
-    public function setBackgroundImage ($image) {
-        
+    public function setBackgroundImage($image)
+    {
         return $this;
     }
 
@@ -294,8 +298,8 @@ abstract class Adapter {
      * @param  $y
      * @return self
      */
-    public function roundCorners ($x, $y) {
-
+    public function roundCorners($x, $y)
+    {
         return $this;
     }
 
@@ -307,8 +311,8 @@ abstract class Adapter {
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
      * @return self
      */
-    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left') {
-
+    public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
+    {
         return $this;
     }
 
@@ -317,7 +321,8 @@ abstract class Adapter {
      * @param string $composite
      * @return $this
      */
-    public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT") {
+    public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
+    {
         return $this;
     }
 
@@ -325,8 +330,8 @@ abstract class Adapter {
      * @param  $image
      * @return self
      */
-    public function applyMask ($image) {
-
+    public function applyMask($image)
+    {
         return $this;
     }
 
@@ -337,9 +342,9 @@ abstract class Adapter {
      * @param $y
      * @return self
      */
-    public function cropPercent ($width, $height, $x, $y) {
-
-        if($this->isVectorGraphic()) {
+    public function cropPercent($width, $height, $x, $y)
+    {
+        if ($this->isVectorGraphic()) {
             // rasterize before cropping
             $dimensions = $this->getVectorRasterDimensions();
             $this->resize($dimensions["width"], $dimensions["height"]);
@@ -359,32 +364,32 @@ abstract class Adapter {
     /**
      * @return self
      */
-    public function grayscale () {
-
+    public function grayscale()
+    {
         return $this;
     }
 
     /**
      * @return self
      */
-    public function sepia () {
-
+    public function sepia()
+    {
         return $this;
     }
 
     /**
      * @return self
      */
-    public function sharpen () {
-
+    public function sharpen()
+    {
         return $this;
     }
 
     /**
      * @return self
      */
-    public function mirror ($mode) {
-
+    public function mirror($mode)
+    {
         return $this;
     }
 
@@ -393,7 +398,8 @@ abstract class Adapter {
      * @param float $sigma
      * @return $this|Adapter
      */
-    public function gaussianBlur($radius = 0, $sigma = 1.0) {
+    public function gaussianBlur($radius = 0, $sigma = 1.0)
+    {
         return $this;
     }
 
@@ -403,7 +409,8 @@ abstract class Adapter {
      * @param int $hue
      * @return $this
      */
-    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100) {
+    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
+    {
         return $this;
     }
 
@@ -412,7 +419,7 @@ abstract class Adapter {
      * @param  $imagePath
      * @return self
      */
-    public abstract function load ($imagePath, $options = []);
+    abstract public function load($imagePath, $options = []);
 
 
     /**
@@ -421,20 +428,21 @@ abstract class Adapter {
      * @param null $quality
      * @return mixed
      */
-    public abstract function save ($path, $format = null, $quality = null);
+    abstract public function save($path, $format = null, $quality = null);
 
 
     /**
      * @abstract
      * @return void
      */
-    protected abstract function destroy ();
+    abstract protected function destroy();
 
     /**
      *
      */
-    public function preModify() {
-        if($this->getModified()) {
+    public function preModify()
+    {
+        if ($this->getModified()) {
             $this->reinitializeImage();
         }
     }
@@ -442,15 +450,16 @@ abstract class Adapter {
     /**
      *
      */
-    public function postModify() {
+    public function postModify()
+    {
         $this->setModified(true);
     }
 
     /**
      * @return void
      */
-    protected function reinitializeImage() {
-
+    protected function reinitializeImage()
+    {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
@@ -466,7 +475,8 @@ abstract class Adapter {
     /**
      * 
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->destroy();
         $this->removeTmpFiles();
     }
@@ -475,15 +485,16 @@ abstract class Adapter {
     /**
      * @return bool
      */
-    public function isVectorGraphic () {
+    public function isVectorGraphic()
+    {
         return false;
     }
 
     /**
      * @return array
      */
-    public function getVectorRasterDimensions() {
-
+    public function getVectorRasterDimensions()
+    {
         $targetWidth = 5000;
         $factor = $targetWidth / $this->getWidth();
 
@@ -497,7 +508,8 @@ abstract class Adapter {
      * @param string $type
      * @return $this
      */
-    public function setColorspace($type = "RGB") {
+    public function setColorspace($type = "RGB")
+    {
         return $this;
     }
 
@@ -536,7 +548,8 @@ abstract class Adapter {
     /**
      * @param bool $value
      */
-    public function setIsAlphaPossible($value) {
+    public function setIsAlphaPossible($value)
+    {
         $this->isAlphaPossible = $value;
     }
 }

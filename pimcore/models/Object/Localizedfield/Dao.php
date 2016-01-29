@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @var null
@@ -28,21 +29,24 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @return string
      */
-    public function getTableName () {
+    public function getTableName()
+    {
         return "object_localized_data_" . $this->model->getClass()->getId();
     }
 
     /**
      * @return string
      */
-    public function getQueryTableName () {
+    public function getQueryTableName()
+    {
         return "object_localized_query_" . $this->model->getClass()->getId();
     }
 
     /**
      *
      */
-    public function save () {
+    public function save()
+    {
         $this->delete(false);
 
         $object = $this->model->getObject();
@@ -62,7 +66,6 @@ class Dao extends Model\Dao\AbstractDao {
                 if (method_exists($fd, "save")) {
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $fd->save($this->model, array("language" => $language));
-
                 } else {
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language, true), $object);
@@ -93,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao {
                 $oldData = $this->db->fetchRow($sql);
             } catch (\Exception $e) {
                 // if the table doesn't exist -> create it!
-                if(strpos($e->getMessage(), "exist")) {
+                if (strpos($e->getMessage(), "exist")) {
 
                     // the following is to ensure consistent data and atomic transactions, while having the flexibility
                     // to add new languages on the fly without saving all classes having localized fields
@@ -118,10 +121,10 @@ class Dao extends Model\Dao\AbstractDao {
 
             $inheritanceEnabled = $object->getClass()->getAllowInherit();
             $parentData = null;
-            if($inheritanceEnabled) {
+            if ($inheritanceEnabled) {
                 // get the next suitable parent for inheritance
                 $parentForInheritance = $object->getNextParentForInheritance();
-                if($parentForInheritance) {
+                if ($parentForInheritance) {
                     // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
                     // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
                     // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
@@ -132,7 +135,6 @@ class Dao extends Model\Dao\AbstractDao {
 
             foreach ($fieldDefinitions as $fd) {
                 if ($fd->getQueryColumnType()) {
-
                     $key = $fd->getName();
 
                     // exclude untouchables if value is not an array - this means data has not been loaded
@@ -150,15 +152,15 @@ class Dao extends Model\Dao\AbstractDao {
                         }
 
                         // if the current value is empty and we have data from the parent, we just use it
-                        if($isEmpty && $parentData) {
-                            foreach($columnNames as $columnName) {
-                                if(array_key_exists($columnName, $parentData)) {
+                        if ($isEmpty && $parentData) {
+                            foreach ($columnNames as $columnName) {
+                                if (array_key_exists($columnName, $parentData)) {
                                     $data[$columnName] = $parentData[$columnName];
                                 }
                             }
                         }
 
-                        if($inheritanceEnabled) {
+                        if ($inheritanceEnabled) {
                             //get changed fields for inheritance
                             if ($fd->isRelationType()) {
                                 if (is_array($insertData)) {
@@ -166,7 +168,7 @@ class Dao extends Model\Dao\AbstractDao {
                                     foreach ($insertData as $insertDataKey => $insertDataValue) {
                                         if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
                                             // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                        } else if ($oldData[$insertDataKey] != $insertDataValue) {
+                                        } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                             $doInsert = true;
                                             break;
                                         }
@@ -178,24 +180,23 @@ class Dao extends Model\Dao\AbstractDao {
                                 } else {
                                     if ($isEmpty && $oldData[$key] == $parentData[$key]) {
                                         // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                    } else if ($oldData[$key] != $insertData) {
+                                    } elseif ($oldData[$key] != $insertData) {
                                         $this->inheritanceHelper->addRelationToCheck($key, $fd);
                                     }
                                 }
-
                             } else {
                                 if (is_array($insertData)) {
                                     foreach ($insertData as $insertDataKey => $insertDataValue) {
                                         if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
                                             // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                        } else if ($oldData[$insertDataKey] != $insertDataValue) {
+                                        } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                             $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
                                         }
                                     }
                                 } else {
                                     if ($isEmpty && $oldData[$key] == $parentData[$key]) {
                                         // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                    } else if ($oldData[$key] != $insertData) {
+                                    } elseif ($oldData[$key] != $insertData) {
                                         // data changed, do check and update
                                         $this->inheritanceHelper->addFieldToCheck($key, $fd);
                                     }
@@ -215,15 +216,14 @@ class Dao extends Model\Dao\AbstractDao {
             $this->inheritanceHelper->resetFieldsToCheck();
 
             Object\AbstractObject::setGetInheritedValues($inheritedValues);
-
         } // foreach language
     }
 
     /**
      * @param bool $deleteQuery
      */
-    public function delete ($deleteQuery = true) {
-
+    public function delete($deleteQuery = true)
+    {
         try {
             $object = $this->model->getObject();
             if ($deleteQuery) {
@@ -259,20 +259,21 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function load () {
+    public function load()
+    {
         $validLanguages = Tool::getValidLanguages();
         foreach ($validLanguages as &$language) {
             $language = $this->db->quote($language);
         }
 
-        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",",$validLanguages) . ")", $this->model->getObject()->getId());
+        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",", $validLanguages) . ")", $this->model->getObject()->getId());
         foreach ($data as $row) {
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $key => $fd) {
-                if($fd) {
+                if ($fd) {
                     if (method_exists($fd, "load")) {
                         // datafield has it's own loader
                         $value = $fd->load($this->model, array("language" => $row["language"]));
-                        if($value === 0 || !empty($value)) {
+                        if ($value === 0 || !empty($value)) {
                             $this->model->setLocalizedValue($key, $value, $row["language"]);
                         }
                     } else {
@@ -295,7 +296,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function createLocalizedViews () {
+    public function createLocalizedViews()
+    {
 
         // init
         $languages = Tool::getValidLanguages();
@@ -317,15 +319,12 @@ class Dao extends Model\Dao\AbstractDao {
 
             // get fallback for current language
             $fallback = count($languages) > 0
-                ? $getFallbackValue( $field, $languages )
+                ? $getFallbackValue($field, $languages)
                 : 'null'
             ;
 
             // create query
-            $sql = sprintf('ifnull(`%s`.`%s`, %s)'
-                , $lang
-                , $field
-                , $fallback
+            $sql = sprintf('ifnull(`%s`.`%s`, %s)', $lang, $field, $fallback
             );
 
             return $fallback !== 'null'
@@ -342,16 +341,14 @@ class Dao extends Model\Dao\AbstractDao {
 
                 // get available columns
                 $viewColumns = array_merge(
-                    $this->db->fetchAll('SHOW COLUMNS FROM `' . $defaultTable . '`')
-                    , $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
+                    $this->db->fetchAll('SHOW COLUMNS FROM `' . $defaultTable . '`'), $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
                 );
                 $localizedColumns = $this->db->fetchAll('SHOW COLUMNS FROM `' . $tablename . '`');
 
 
                 // get view fields
                 $viewFields = [];
-                foreach($viewColumns as $row)
-                {
+                foreach ($viewColumns as $row) {
                     $viewFields[] = $this->db->quoteIdentifier($row['Field']);
                 }
 
@@ -360,8 +357,7 @@ class Dao extends Model\Dao\AbstractDao {
                 $localizedFields = [];
                 $fallbackLanguages = array_unique(Tool::getFallbackLanguagesFor($language));
                 array_unshift($fallbackLanguages, $language);
-                foreach($localizedColumns as $row)
-                {
+                foreach ($localizedColumns as $row) {
                     $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages) . sprintf(' as "%s"', $row['Field']);
                 }
 
@@ -382,21 +378,18 @@ QUERY;
 
 
                 // join fallback languages
-                foreach($fallbackLanguages as $lang)
-                {
+                foreach ($fallbackLanguages as $lang) {
                     $viewQuery .= <<<QUERY
 LEFT JOIN {$this->getQueryTableName()}_{$lang} as {$lang}
     ON( 1
         AND {$defaultTable}.oo_id = {$lang}.ooo_id
     )
 QUERY;
-
                 }
 
                 // execute
-                $this->db->query( $viewQuery );
-            }
-            catch (\Exception $e) {
+                $this->db->query($viewQuery);
+            } catch (\Exception $e) {
                 \Logger::error($e);
             }
         }
@@ -406,8 +399,8 @@ QUERY;
     /**
      *
      */
-    public function createUpdateTable () {
-
+    public function createUpdateTable()
+    {
         $table = $this->getTableName();
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
@@ -425,24 +418,22 @@ QUERY;
         Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
 
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $value) {
-
-            if($value->getColumnType()) {
+            if ($value->getColumnType()) {
                 $key = $value->getName();
 
                 if (is_array($value->getColumnType())) {
                     // if a datafield requires more than one field
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($table, $key . "__" . $fkey, $fvalue,"", "NULL");
+                        $this->addModifyColumn($table, $key . "__" . $fkey, $fvalue, "", "NULL");
                         $protectedColumns[] = $key . "__" . $fkey;
                     }
-                }
-                else {
+                } else {
                     if ($value->getColumnType()) {
                         $this->addModifyColumn($table, $key, $value->getColumnType(), "", "NULL");
                         $protectedColumns[] = $key;
                     }
                 }
-                $this->addIndexToField($value,$table);
+                $this->addIndexToField($value, $table);
             }
         }
 
@@ -475,7 +466,7 @@ QUERY;
             // add non existing columns in the table
             if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
                 foreach ($fieldDefinitions as $value) {
-                    if($value->getQueryColumnType()) {
+                    if ($value->getQueryColumnType()) {
                         $key = $value->getName();
 
                         // if a datafield requires more than one column in the query table
@@ -511,8 +502,8 @@ QUERY;
      * @param $field
      * @param $table
      */
-    private function addIndexToField ($field, $table) {
-
+    private function addIndexToField($field, $table)
+    {
         if ($field->getIndex()) {
             if (is_array($field->getColumnType())) {
                 // multicolumn field
@@ -520,14 +511,16 @@ QUERY;
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
                     $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
             }
         } else {
             if (is_array($field->getColumnType())) {
@@ -536,7 +529,8 @@ QUERY;
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
                 }
             } else {
                 // single -column field
@@ -556,14 +550,14 @@ QUERY;
      * @param $default
      * @param $null
      */
-    private function addModifyColumn ($table, $colName, $type, $default, $null) {
-
+    private function addModifyColumn($table, $colName, $type, $default, $null)
+    {
         $existingColumns = $this->getValidTableColumns($table, false);
         $existingColName = null;
 
         // check for existing column case insensitive eg a rename from myInput to myinput
         $matchingExisting = preg_grep('/^' . preg_quote($colName, '/') . '$/i', $existingColumns);
-        if(is_array($matchingExisting) && !empty($matchingExisting)) {
+        if (is_array($matchingExisting) && !empty($matchingExisting)) {
             $existingColName = current($matchingExisting);
         }
 
@@ -582,7 +576,8 @@ QUERY;
      * @param $columnsToRemove
      * @param $protectedColumns
      */
-    private function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns) {
+    private function removeUnusedColumns($table, $columnsToRemove, $protectedColumns)
+    {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {

@@ -12,34 +12,34 @@
 
 use Pimcore\Model\Tool\CustomReport;
 
-class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Reports {
+class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Reports
+{
 
-    public function init() {
+    public function init()
+    {
         parent::init();
 
         $this->checkPermission("reports");
     }
 
-    public function treeAction () {
-
+    public function treeAction()
+    {
         $reports = CustomReport\Config::getReportsList();
 
-        if($this->getParam("portlet")) {
+        if ($this->getParam("portlet")) {
             $this->_helper->json(array("data" => $reports));
         } else {
             $this->_helper->json($reports);
         }
-
-
     }
 
-    public function addAction () {
-
+    public function addAction()
+    {
         $success = false;
 
         $report = CustomReport\Config::getByName($this->getParam("name"));
 
-        if(!$report) {
+        if (!$report) {
             $report = new CustomReport\Config();
             $report->setName($this->getParam("name"));
             $report->save();
@@ -50,8 +50,8 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $this->_helper->json(array("success" => $success, "id" => $report->getName()));
     }
 
-    public function deleteAction () {
-
+    public function deleteAction()
+    {
         $report = CustomReport\Config::getByName($this->getParam("name"));
         $report->delete();
 
@@ -59,21 +59,21 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
     }
 
 
-    public function getAction () {
-
+    public function getAction()
+    {
         $report = CustomReport\Config::getByName($this->getParam("name"));
         $this->_helper->json($report);
     }
 
 
-    public function updateAction () {
-
+    public function updateAction()
+    {
         $report = CustomReport\Config::getByName($this->getParam("name"));
         $data = \Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
         foreach ($data as $key => $value) {
             $setter = "set" . ucfirst($key);
-            if(method_exists($report, $setter)) {
+            if (method_exists($report, $setter)) {
                 $report->$setter($value);
             }
         }
@@ -83,8 +83,8 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $this->_helper->json(array("success" => true));
     }
 
-    public function columnConfigAction() {
-
+    public function columnConfigAction()
+    {
         $configuration = json_decode($this->getParam("configuration"));
         $configuration = $configuration[0];
 
@@ -93,7 +93,6 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $errorMessage = null;
 
         try {
-
             $adapter = CustomReport\Config::getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
             $success = true;
@@ -109,14 +108,14 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
     }
 
 
-    public function getReportConfigAction() {
-
+    public function getReportConfigAction()
+    {
         $reports = [];
 
         $list = new CustomReport\Config\Listing();
         $items = $list->load();
 
-        foreach($items as $report) {
+        foreach ($items as $report) {
             $reports[] = array(
                 "name" => $report->getName(),
                 "niceName" => $report->getNiceName(),
@@ -133,12 +132,12 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         ));
     }
 
-    public function dataAction() {
-
+    public function dataAction()
+    {
         $offset = $this->getParam("start", 0);
         $limit = $this->getParam("limit", 40);
         $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
-        if($sortingSettings['orderKey']) {
+        if ($sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];
         }
@@ -163,8 +162,8 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
                              ));
     }
 
-    public function drillDownOptionsAction() {
-
+    public function drillDownOptionsAction()
+    {
         $field = $this->getParam("field");
         $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
         $drillDownFilters = $this->getParam("drillDownFilters", null);
@@ -181,7 +180,8 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         ));
     }
 
-    public function chartAction() {
+    public function chartAction()
+    {
         $sort = $this->getParam("sort");
         $dir = $this->getParam("dir");
         $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
@@ -202,7 +202,8 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
                              ));
     }
 
-    public function downloadCsvAction() {
+    public function downloadCsvAction()
+    {
         set_time_limit(300);
 
         $sort = $this->getParam("sort");
@@ -214,8 +215,8 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $columns = $config->getColumnConfiguration();
         $fields = array();
-        foreach($columns as $column) {
-            if($column['export']) {
+        foreach ($columns as $column) {
+            if ($column['export']) {
                 $fields[] = $column['name'];
             }
         }
@@ -241,13 +242,10 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         header("Content-Length: " . filesize($exportFile));
         header("Content-Disposition: attachment; filename=\"export.csv\"");
 
-        while(@ob_end_flush());
+        while (@ob_end_flush());
         flush();
         readfile($exportFile);
 
         exit;
     }
-
-
 }
-

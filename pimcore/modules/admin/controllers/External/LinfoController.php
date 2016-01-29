@@ -14,14 +14,16 @@ use \Linfo\Exceptions\FatalException;
 use \Linfo\Linfo;
 use \Linfo\Common;
 
-class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin {
+class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin
+{
 
     /**
      * @var string
      */
     protected $linfoHome = "";
 
-    public function init() {
+    public function init()
+    {
         parent::init();
 
         // only for admins
@@ -30,7 +32,8 @@ class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin {
         $this->linfoHome = PIMCORE_DOCUMENT_ROOT . '/vendor/linfo/linfo/';
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
         try {
             $settings = Common::getVarFromFile($this->linfoHome . 'sample.config.inc.php', 'settings');
             $settings["compress_content"] = false;
@@ -39,7 +42,6 @@ class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin {
             $linfo->scan();
             $output = new \Linfo\Output\Html($linfo);
             $output->output();
-
         } catch (FatalException $e) {
             echo $e->getMessage()."\n";
             exit(1);
@@ -48,15 +50,15 @@ class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin {
         $this->removeViewRenderer();
     }
 
-    public function layoutAction() {
+    public function layoutAction()
+    {
 
         // proxy for resources
 
         $path = $this->getRequest()->getPathInfo();
         $path = str_replace("/admin/external_linfo/", "", $path);
 
-        if(preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
-
+        if (preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
             if ($path == "layout/styles.css") {
                 // aliasing
                 $path = "layout/theme_default.css";

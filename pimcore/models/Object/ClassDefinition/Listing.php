@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Object|Class
@@ -30,14 +31,16 @@ class Listing extends Model\Listing\AbstractListing {
      * @param $key
      * @return bool
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    function getClasses() {
+    public function getClasses()
+    {
         return $this->classes;
     }
 
@@ -45,7 +48,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param $classes
      * @return $this
      */
-    function setClasses($classes) {
+    public function setClasses($classes)
+    {
         $this->classes = $classes;
         return $this;
     }

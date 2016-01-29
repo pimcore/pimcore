@@ -12,7 +12,8 @@
 
 namespace Pimcore\Tool;
 
-class StopWatch {
+class StopWatch
+{
 
     /**
      * @var array
@@ -29,7 +30,8 @@ class StopWatch {
      * @static
      * @return void
      */
-    public static function start ($component = 'default') {
+    public static function start($component = 'default')
+    {
         self::$startTime[$component] = self::microtime_float();
         self::$laps[$component] = array();
     }
@@ -40,7 +42,8 @@ class StopWatch {
      * @param string $component
      * @return void
      */
-    public static function lap ($label,$component = 'default') {
+    public static function lap($label, $component = 'default')
+    {
         self::$laps[$component][$label] = self::microtime_float();
     }
 
@@ -50,7 +53,8 @@ class StopWatch {
      * @param string $component
      * @return string
      */
-    public static function getTime($html = false, $component = 'default') {
+    public static function getTime($html = false, $component = 'default')
+    {
         $text = "";
 
         $lastLap = self::$startTime[$component];
@@ -75,15 +79,17 @@ class StopWatch {
      * @param bool $html
      * @return void
      */
-    public static function display($html = false, $component = 'default') {
-        echo self::getTime($html,$component);
+    public static function display($html = false, $component = 'default')
+    {
+        echo self::getTime($html, $component);
     }
 
     /**
      * @static
      * @return float
      */
-    public static function microtime_float() {
+    public static function microtime_float()
+    {
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
     }

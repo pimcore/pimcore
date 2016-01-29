@@ -16,6 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Document\Link;
 
 use Pimcore\Model;
 
-class Incoming extends Model\Webservice\Data\Document\Link {
-
+class Incoming extends Model\Webservice\Data\Document\Link
+{
 }

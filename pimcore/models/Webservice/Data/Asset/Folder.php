@@ -16,7 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Asset;
 
 use Pimcore\Model;
 
-class Folder extends Model\Webservice\Data\Asset {
-    
-   
+class Folder extends Model\Webservice\Data\Asset
+{
 }

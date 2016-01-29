@@ -18,14 +18,16 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param Site $site
      * @param string $path
      * @return int
      */
-    public function getDocumentIdByPrettyUrlInSite(Site $site, $path) {
+    public function getDocumentIdByPrettyUrlInSite(Site $site, $path)
+    {
         return (int) $this->db->fetchOne("SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?",
@@ -37,7 +39,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param Document $document
      * @return int
      */
-    public function getDocumentIdFromHardlinkInSameSite(Site $site, Document $document) {
+    public function getDocumentIdFromHardlinkInSameSite(Site $site, Document $document)
+    {
         return $this->db->fetchOne("SELECT documents.id FROM documents
             LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
             WHERE documents_hardlink.sourceId = ? AND documents.path LIKE ?", array($document->getId(), $site->getRootPath() . "/%"));

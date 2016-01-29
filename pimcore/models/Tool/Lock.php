@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
 
-class Lock extends Model\AbstractModel {
+class Lock extends Model\AbstractModel
+{
 
     /**
      * @var string
@@ -41,8 +42,9 @@ class Lock extends Model\AbstractModel {
     /**
      * @return Lock
      */
-    protected static function getInstance () {
-        if(!self::$instance) {
+    protected static function getInstance()
+    {
+        if (!self::$instance) {
             self::$instance = new self();
         }
 
@@ -52,8 +54,8 @@ class Lock extends Model\AbstractModel {
     /**
      * @param string $key
      */
-    public static function acquire ($key, $expire = 120, $refreshInterval = 1) {
-
+    public static function acquire($key, $expire = 120, $refreshInterval = 1)
+    {
         $instance = self::getInstance();
         $instance->getDao()->acquire($key, $expire, $refreshInterval);
 
@@ -63,8 +65,8 @@ class Lock extends Model\AbstractModel {
     /**
      * @param string $key
      */
-    public static function release ($key) {
-
+    public static function release($key)
+    {
         $instance = self::getInstance();
         $instance->getDao()->release($key);
 
@@ -75,8 +77,8 @@ class Lock extends Model\AbstractModel {
      * @param string $key
      * @return bool
      */
-    public static function lock ($key) {
-
+    public static function lock($key)
+    {
         $instance = self::getInstance();
         return $instance->getDao()->lock($key);
     }
@@ -86,7 +88,8 @@ class Lock extends Model\AbstractModel {
      * @param int $expire
      * @return mixed
      */
-    public static function isLocked ($key, $expire = 120) {
+    public static function isLocked($key, $expire = 120)
+    {
         $instance = self::getInstance();
         return $instance->getDao()->isLocked($key, $expire);
     }
@@ -95,7 +98,8 @@ class Lock extends Model\AbstractModel {
      * @param $key
      * @return Lock
      */
-    public static function get($key) {
+    public static function get($key)
+    {
         $lock = new self;
         $lock->getById($key);
         return $lock;
@@ -104,10 +108,11 @@ class Lock extends Model\AbstractModel {
     /**
      *
      */
-    public static function releaseAll() {
+    public static function releaseAll()
+    {
         $locks = self::$acquiredLocks;
 
-        foreach($locks as $key) {
+        foreach ($locks as $key) {
             self::release($key);
         }
     }

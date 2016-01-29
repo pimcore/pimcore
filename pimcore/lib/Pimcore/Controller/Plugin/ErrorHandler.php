@@ -17,13 +17,15 @@ use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
-class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
+class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler
+{
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
      * @throws mixed
      */
-    protected function _handleError(\Zend_Controller_Request_Abstract $request) {
+    protected function _handleError(\Zend_Controller_Request_Abstract $request)
+    {
         
         // remove zend error handler
         $front = \Zend_Controller_Front::getInstance();
@@ -40,12 +42,12 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
 
                 $errorPath = Config::getSystemConfig()->documents->error_pages->default;
 
-                if(Site::isSiteRequest()) {
+                if (Site::isSiteRequest()) {
                     $site = Site::getCurrentSite();
                     $errorPath = $site->getErrorDocument();
                 }
 
-                if(empty($errorPath)) {
+                if (empty($errorPath)) {
                     $errorPath = "/";
                 }
 
@@ -57,7 +59,6 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
                 }
 
                 if ($document instanceof Document\Page) {
-
                     $params = Tool::getRoutingDefaults();
 
                     if ($module = $document->getModule()) {
@@ -77,7 +78,7 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
                     \Zend_Registry::set("pimcore_error_document", $document);
 
                     // ensure that a viewRenderer exists, and is enabled
-                    if(!\Zend_Controller_Action_HelperBroker::hasHelper("viewRenderer")) {
+                    if (!\Zend_Controller_Action_HelperBroker::hasHelper("viewRenderer")) {
                         $viewRenderer = new \Pimcore\Controller\Action\Helper\ViewRenderer();
                         \Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
                     }
@@ -85,13 +86,11 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
                     $viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
                     $viewRenderer->setNoRender(false);
 
-                    if($viewRenderer->view === null) {
+                    if ($viewRenderer->view === null) {
                         $viewRenderer->initView(PIMCORE_WEBSITE_PATH . "/views");
                     }
                 }
-
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 \Logger::emergency("error page not found");
             }
         }
@@ -99,6 +98,4 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler {
         // call default ZF error handler
         parent::_handleError($request);
     }
-
 }
-

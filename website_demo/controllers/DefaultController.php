@@ -2,13 +2,15 @@
 
 use Website\Controller\Action;
 
-class DefaultController extends Action {
+class DefaultController extends Action
+{
 
-	public function defaultAction () {
+    public function defaultAction()
+    {
+    }
 
-	}
-
-    public function layout() {
+    public function layout()
+    {
         $this->enableLayout();
     }
 }

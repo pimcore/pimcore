@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Layout;
 
 use Pimcore\Model;
 
-class Panel extends Model\Object\ClassDefinition\Layout {
+class Panel extends Model\Object\ClassDefinition\Layout
+{
 
     /**
      * Static type of this element
@@ -44,7 +45,7 @@ class Panel extends Model\Object\ClassDefinition\Layout {
      */
     public function setLabelWidth($labelWidth)
     {
-        if(!empty($labelWidth)) {
+        if (!empty($labelWidth)) {
             $this->labelWidth = intval($labelWidth);
         }
         return $this;

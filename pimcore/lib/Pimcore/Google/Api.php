@@ -15,7 +15,8 @@ namespace Pimcore\Google;
 use Pimcore\Config;
 use Pimcore\Model\Tool\TmpStore;
 
-class Api {
+class Api
+{
 
     /**
      *
@@ -25,7 +26,8 @@ class Api {
     /**
      * @return string
      */
-    public static function getPrivateKeyPath() {
+    public static function getPrivateKeyPath()
+    {
         $path = \Pimcore\Config::locateConfigFile("google-api-private-key.p12");
         return $path;
     }
@@ -33,7 +35,8 @@ class Api {
     /**
      * @return mixed
      */
-    public static function getConfig () {
+    public static function getConfig()
+    {
         return Config::getSystemConfig()->services->google;
     }
 
@@ -41,8 +44,9 @@ class Api {
      * @param string $type
      * @return bool
      */
-    public static function isConfigured($type = "service") {
-        if($type == "simple") {
+    public static function isConfigured($type = "service")
+    {
+        if ($type == "simple") {
             return self::isSimpleConfigured();
         }
 
@@ -52,10 +56,11 @@ class Api {
     /**
      * @return bool
      */
-    public static function isServiceConfigured() {
+    public static function isServiceConfigured()
+    {
         $config = self::getConfig();
 
-        if($config->client_id && $config->email && file_exists(self::getPrivateKeyPath())) {
+        if ($config->client_id && $config->email && file_exists(self::getPrivateKeyPath())) {
             return true;
         }
         return false;
@@ -64,10 +69,11 @@ class Api {
     /**
      * @return bool
      */
-    public static function isSimpleConfigured() {
+    public static function isSimpleConfigured()
+    {
         $config = self::getConfig();
 
-        if($config->simpleapikey) {
+        if ($config->simpleapikey) {
             return true;
         }
         return false;
@@ -77,8 +83,9 @@ class Api {
      * @param string $type
      * @return \Google_Client
      */
-    public static function getClient($type = "service") {
-        if($type == "simple") {
+    public static function getClient($type = "service")
+    {
+        if ($type == "simple") {
             return self::getSimpleClient();
         }
 
@@ -90,15 +97,15 @@ class Api {
      * @return bool|\Google_Client
      * @throws \Zend_Json_Exception
      */
-    public static function getServiceClient ($scope = null) {
-
-        if(!self::isServiceConfigured()) {
+    public static function getServiceClient($scope = null)
+    {
+        if (!self::isServiceConfigured()) {
             return false;
         }
 
         $config = self::getConfig();
 
-        if(!$scope) {
+        if (!$scope) {
             // default scope
             $scope = ['https://www.googleapis.com/auth/analytics.readonly'];
         }
@@ -121,14 +128,14 @@ class Api {
         // token cache
         $hash = crc32(serialize([$scope]));
         $tokenId =  "google-api.token." . $hash;
-        if($tokenData = TmpStore::get($tokenId)) {
+        if ($tokenData = TmpStore::get($tokenId)) {
             $tokenInfo = \Zend_Json::decode($tokenData->getData());
-            if( ($tokenInfo["created"] + $tokenInfo["expires_in"]) > (time()-900) )  {
+            if (($tokenInfo["created"] + $tokenInfo["expires_in"]) > (time()-900)) {
                 $token = $tokenData->getData();
             }
         }
 
-        if(!$token) {
+        if (!$token) {
             $client->getAuth()->refreshTokenWithAssertion();
             $token = $client->getAuth()->getAccessToken();
 
@@ -143,9 +150,9 @@ class Api {
     /**
      * @return \Google_Client
      */
-    public static function getSimpleClient() {
-
-        if(!self::isSimpleConfigured()) {
+    public static function getSimpleClient()
+    {
+        if (!self::isSimpleConfigured()) {
             return false;
         }
 
@@ -162,14 +169,16 @@ class Api {
     /**
      * @return array
      */
-    public static function getAnalyticsDimensions() {
+    public static function getAnalyticsDimensions()
+    {
         return self::getAnalyticsMetadataByType('DIMENSION');
     }
 
     /**
      * @return array
      */
-    public static function getAnalyticsMetrics() {
+    public static function getAnalyticsMetrics()
+    {
         return self::getAnalyticsMetadataByType('METRIC');
     }
 
@@ -179,7 +188,8 @@ class Api {
      * @throws \Zend_Http_Client_Exception
      * @throws \Zend_Json_Exception
      */
-    public static function getAnalyticsMetadata() {
+    public static function getAnalyticsMetadata()
+    {
         $client = \Pimcore\Tool::getHttpClient();
         $client->setUri(self::ANALYTICS_API_URL.'metadata/ga/columns');
 
@@ -192,19 +202,19 @@ class Api {
      * @return array
      * @throws \Zend_Exception
      */
-    protected static function getAnalyticsMetadataByType($type) {
+    protected static function getAnalyticsMetadataByType($type)
+    {
         $data = self::getAnalyticsMetadata();
         $t = \Zend_Registry::get("Zend_Translate");
 
         $result = array();
-        foreach($data['items'] as $item) {
-            if($item['attributes']['type'] == $type) {
-
-                if(strpos($item['id'], 'XX') !== false) {
-                    for($i = 1; $i<=5; $i++) {
+        foreach ($data['items'] as $item) {
+            if ($item['attributes']['type'] == $type) {
+                if (strpos($item['id'], 'XX') !== false) {
+                    for ($i = 1; $i<=5; $i++) {
                         $name = str_replace('1', $i, str_replace('01', $i, $t->translate($item['attributes']['uiName'])));
 
-                        if(in_array($item['id'], array('ga:dimensionXX', 'ga:metricXX'))) {
+                        if (in_array($item['id'], array('ga:dimensionXX', 'ga:metricXX'))) {
                             $name .= ' '.$i;
                         }
                         $result[] = array(

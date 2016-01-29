@@ -41,8 +41,8 @@ class MaintenanceCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $validJobs = array();
-        if($input->getOption("job")) {
-            $validJobs = explode(",",$input->getOption("job"));
+        if ($input->getOption("job")) {
+            $validJobs = explode(",", $input->getOption("job"));
         }
 
         // create manager

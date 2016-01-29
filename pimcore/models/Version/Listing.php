@@ -16,7 +16,8 @@ namespace Pimcore\Model\Version;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Schedule\Task
@@ -31,14 +32,16 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getVersions() {
+    public function getVersions()
+    {
         return $this->versions;
     }
 
@@ -46,7 +49,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param $versions
      * @return $this
      */
-    public function setVersions($versions) {
+    public function setVersions($versions)
+    {
         $this->versions = $versions;
         return $this;
     }

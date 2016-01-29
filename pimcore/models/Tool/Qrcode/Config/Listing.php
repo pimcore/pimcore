@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Qrcode\Config;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * @var array
@@ -26,7 +27,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getCodes() {
+    public function getCodes()
+    {
         return $this->codes;
     }
 
@@ -34,7 +36,8 @@ class Listing extends Model\Listing\JsonListing {
      * @param $codes
      * @return $this
      */
-    public function setCodes($codes) {
+    public function setCodes($codes)
+    {
         $this->codes = $codes;
         return $this;
     }

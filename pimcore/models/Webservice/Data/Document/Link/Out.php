@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document\Link;
 
 use Pimcore\Model;
 
-class Out extends Model\Webservice\Data\Document\Link {
+class Out extends Model\Webservice\Data\Document\Link
+{
 
 
     /**
@@ -38,8 +39,4 @@ class Out extends Model\Webservice\Data\Document\Link {
      * @var integer
      */
     public $userModification;
-
-
-
-
 }

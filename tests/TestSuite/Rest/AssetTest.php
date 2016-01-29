@@ -7,9 +7,11 @@
  */
 
 
-class TestSuite_Rest_AssetTest extends Test_BaseRest {
+class TestSuite_Rest_AssetTest extends Test_BaseRest
+{
 
-    public function setUp() {
+    public function setUp()
+    {
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
         parent::setUp();
@@ -17,7 +19,8 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest {
 
 
 
-    public function testCreateAssetFile() {
+    public function testCreateAssetFile()
+    {
         $this->printTestName();
 
         $originalContent = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
@@ -60,7 +63,8 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest {
         $this->assertEquals($originalContent, $savedContent, "asset was not saved correctly");
     }
 
-    public function testDelete() {
+    public function testDelete()
+    {
         $this->printTestName();
 
         $originalContent = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
@@ -79,7 +83,8 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest {
         $this->assertTrue($savedAsset == null, "asset still exists");
     }
 
-    public function testFolder() {
+    public function testFolder()
+    {
         $this->printTestName();
 
         // create folder but don't save it
@@ -107,5 +112,4 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest {
         $folderDirect = Asset::getById($id);
         $this->assertNull($folderDirect, "folder still exists");
     }
-
 }

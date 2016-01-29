@@ -15,7 +15,8 @@ namespace Pimcore\Controller\Plugin;
 use Pimcore\Tool;
 use Pimcore\Google\Analytics as AnalyticsHelper;
 
-class Analytics extends \Zend_Controller_Plugin_Abstract {
+class Analytics extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @var bool
@@ -26,8 +27,9 @@ class Analytics extends \Zend_Controller_Plugin_Abstract {
      * @param \Zend_Controller_Request_Abstract $request
      * @return bool|void
      */
-    public function routeShutdown(\Zend_Controller_Request_Abstract $request) {
-        if(!Tool::useFrontendOutputFilters($request)) {
+    public function routeShutdown(\Zend_Controller_Request_Abstract $request)
+    {
+        if (!Tool::useFrontendOutputFilters($request)) {
             return $this->disable();
         }
     }
@@ -35,7 +37,8 @@ class Analytics extends \Zend_Controller_Plugin_Abstract {
     /**
      * @return bool
      */
-    public function disable() {
+    public function disable()
+    {
         $this->enabled = false;
         return true;
     }
@@ -43,9 +46,9 @@ class Analytics extends \Zend_Controller_Plugin_Abstract {
     /**
      *
      */
-    public function dispatchLoopShutdown() {
-        
-        if(!Tool::isHtmlResponse($this->getResponse())) {
+    public function dispatchLoopShutdown()
+    {
+        if (!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
         
@@ -57,7 +60,7 @@ class Analytics extends \Zend_Controller_Plugin_Abstract {
             // search for the end <head> tag, and insert the google analytics code before
             // this method is much faster than using simple_html_dom and uses less memory
             $headEndPosition = stripos($body, "</head>");
-            if($headEndPosition !== false) {
+            if ($headEndPosition !== false) {
                 $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
             }
 

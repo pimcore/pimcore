@@ -15,16 +15,17 @@ namespace Pimcore\Controller\Plugin;
 use Pimcore\Tool;
 use Pimcore\Google\Analytics as AnalyticsHelper;
 
-class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
+class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      *
      */
-    public function dispatchLoopShutdown() {
-
+    public function dispatchLoopShutdown()
+    {
         $config = \Pimcore\Config::getSystemConfig();
 
-        if(!$config->general->show_cookie_notice || !Tool::useFrontendOutputFilters($this->getRequest()) || !Tool::isHtmlResponse($this->getResponse())) {
+        if (!$config->general->show_cookie_notice || !Tool::useFrontendOutputFilters($this->getRequest()) || !Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
@@ -43,7 +44,7 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
         }
 
         $linkContent = "";
-        if(array_key_exists("linkTarget", $translations)) {
+        if (array_key_exists("linkTarget", $translations)) {
             $linkContent = '<a href="' . $translations["linkTarget"] . '" data-content="' . $translations["linkText"] . '"></a>';
         }
         $template = str_replace("%link%", $linkContent, $template);
@@ -78,16 +79,16 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
         // search for the end <head> tag, and insert the google analytics code before
         // this method is much faster than using simple_html_dom and uses less memory
         $headEndPosition = stripos($body, "</head>");
-        if($headEndPosition !== false) {
+        if ($headEndPosition !== false) {
             $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
         }
 
         $this->getResponse()->setBody($body);
-
     }
 
 
-    protected function getTranslations() {
+    protected function getTranslations()
+    {
 
         // most common translations
         $defaultTranslations = [
@@ -180,29 +181,29 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract {
 
         $translations = [];
 
-        if(\Zend_Registry::isRegistered("Zend_Translate")) {
-            foreach(["text","linkText","ok","linkTarget"] as $key) {
+        if (\Zend_Registry::isRegistered("Zend_Translate")) {
+            foreach (["text", "linkText", "ok", "linkTarget"] as $key) {
                 $translationKey = "cookie-policy-" . $key;
 
                 $translator = \Zend_Registry::get("Zend_Translate");
                 $translation = $translator->translate($translationKey);
-                if($translation != $translationKey) {
+                if ($translation != $translationKey) {
                     $translations[$key] = $translation;
                 }
             }
         }
 
         $language = "en"; // default language
-        if(\Zend_Registry::isRegistered("Zend_Locale")) {
+        if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = \Zend_Registry::get("Zend_Locale");
-            if(array_key_exists($locale->getLanguage(), $defaultTranslations["text"])) {
+            if (array_key_exists($locale->getLanguage(), $defaultTranslations["text"])) {
                 $language = $locale->getLanguage();
             }
         }
 
         // set defaults in en or the language in Zend_Locale if registered (fallback)
-        foreach($defaultTranslations as $key => $values) {
-            if(!array_key_exists($key, $translations)) {
+        foreach ($defaultTranslations as $key => $values) {
+            if (!array_key_exists($key, $translations)) {
                 $translations[$key] = $values[$language];
             }
         }

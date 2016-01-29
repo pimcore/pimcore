@@ -16,7 +16,8 @@ namespace Pimcore\Model\Glossary;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Glossary
@@ -31,14 +32,16 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getGlossary() {
+    public function getGlossary()
+    {
         return $this->glossary;
     }
 
@@ -46,7 +49,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param $glossary
      * @return $this
      */
-    public function setGlossary($glossary) {
+    public function setGlossary($glossary)
+    {
         $this->glossary = $glossary;
         return $this;
     }

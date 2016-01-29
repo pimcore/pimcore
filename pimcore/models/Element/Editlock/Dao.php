@@ -16,14 +16,16 @@ namespace Pimcore\Model\Element\Editlock;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $cid
      * @param $ctype
      * @throws \Exception
      */
-    public function getByElement($cid, $ctype) {
+    public function getByElement($cid, $ctype)
+    {
         $data = $this->db->fetchRow("SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?", array($cid, $ctype));
 
         if (!$data["id"]) {
@@ -34,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao {
 
         // add elements path
         $element = Model\Element\Service::getElementById($ctype, $cid);
-        if($element) {
+        if ($element) {
             $this->model->setCpath($element->getFullpath());
         }
     }
@@ -44,8 +46,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         $version = get_object_vars($this->model);
 
         foreach ($version as $key => $value) {
@@ -58,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao {
         $this->db->insertOrUpdate("edit_lock", $data);
 
         $lastInsertId = $this->db->lastInsertId();
-        if(!$this->model->getId() && $lastInsertId) {
+        if (!$this->model->getId() && $lastInsertId) {
             $this->model->setId($lastInsertId);
         }
 
@@ -70,14 +72,16 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
-        $this->db->delete("edit_lock", $this->db->quoteInto("id = ?", $this->model->getId() ));
+    public function delete()
+    {
+        $this->db->delete("edit_lock", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
      * @param $sessionId
      */
-    public function clearSession($sessionId) {
-        $this->db->delete("edit_lock", $this->db->quoteInto("sessionId = ?", $sessionId ));
+    public function clearSession($sessionId)
+    {
+        $this->db->delete("edit_lock", $this->db->quoteInto("sessionId = ?", $sessionId));
     }
 }

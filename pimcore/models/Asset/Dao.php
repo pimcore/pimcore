@@ -32,7 +32,7 @@ class Dao extends Model\Element\Dao
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
 
-            if($data["hasMetaData"]) {
+            if ($data["hasMetaData"]) {
                 $metadataRaw = $this->db->fetchAll("SELECT * FROM assets_metadata WHERE cid = ?", array($data["id"]));
                 $metadata = array();
                 foreach ($metadataRaw as $md) {
@@ -89,7 +89,6 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -99,7 +98,6 @@ class Dao extends Model\Element\Dao
      */
     public function update()
     {
-
         try {
             $this->model->setModificationDate(time());
 
@@ -107,7 +105,6 @@ class Dao extends Model\Element\Dao
 
             foreach ($asset as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns("assets"))) {
-
                     if (is_array($value)) {
                         $value = \Pimcore\Tool\Serialize::serialize($value);
                     }
@@ -119,16 +116,16 @@ class Dao extends Model\Element\Dao
             $this->db->delete("assets_metadata", "cid = " . $this->model->getId());
             $metadata = $this->model->getMetadata();
             $data["hasMetaData"] = 0;
-            if(!empty($metadata)) {
+            if (!empty($metadata)) {
                 foreach ($metadata as $metadataItem) {
                     $metadataItem["cid"] = $this->model->getId();
                     unset($metadataItem['config']);
 
-                    if($metadataItem["data"] instanceof Model\Element\ElementInterface) {
+                    if ($metadataItem["data"] instanceof Model\Element\ElementInterface) {
                         $metadataItem["data"] = $metadataItem["data"]->getId();
                     }
 
-                    if(strlen($metadataItem["data"]) > 0) {
+                    if (strlen($metadataItem["data"]) > 0) {
                         $this->db->insert("assets_metadata", $metadataItem);
                         $data["hasMetaData"] = 1;
                     }
@@ -165,7 +162,8 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function updateWorkspaces() {
+    public function updateWorkspaces()
+    {
         $this->db->update("users_workspaces_asset", array(
             "cpath" => $this->model->getFullPath()
         ), "cid = " . $this->model->getId());
@@ -201,7 +199,6 @@ class Dao extends Model\Element\Dao
      */
     public function getProperties($onlyInherited = false)
     {
-
         $properties = array();
 
         // collect properties via parent - ids
@@ -214,7 +211,6 @@ class Dao extends Model\Element\Dao
         });
 
         foreach ($propertiesRaw as $propertyRaw) {
-
             try {
                 $property = new Model\Property();
                 $property->setType($propertyRaw["type"]);
@@ -333,15 +329,16 @@ class Dao extends Model\Element\Dao
         return (bool)$c;
     }
 
-	/**
-	 * Quick test if there are siblings
-	 *
-	 * @return boolean
-	 */
-	public function hasSiblings() {
-		$c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
-		return (bool)$c;
-	}
+    /**
+     * Quick test if there are siblings
+     *
+     * @return boolean
+     */
+    public function hasSiblings()
+    {
+        $c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+        return (bool)$c;
+    }
 
     /**
      * returns the amount of directly childs (not recursivly)
@@ -357,8 +354,6 @@ class Dao extends Model\Element\Dao
 
             $query = "select count(*) from assets a where parentId = ?
                             and (select list as locate from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;";
-
-
         } else {
             $query = "SELECT COUNT(*) AS count FROM assets WHERE parentId = ?";
         }
@@ -394,7 +389,8 @@ class Dao extends Model\Element\Dao
     /**
      *
      */
-    public function unlockPropagate() {
+    public function unlockPropagate()
+    {
         $lockIds = $this->db->fetchCol("SELECT id from assets WHERE path LIKE " . $this->db->quote($this->model->getFullPath() . "/%") . " OR id = " . $this->model->getId());
         $this->db->delete("tree_locks", "type = 'asset' AND id IN (" . implode(",", $lockIds) . ")");
         return $lockIds;
@@ -407,7 +403,6 @@ class Dao extends Model\Element\Dao
      */
     public function getLatestVersion($force = false)
     {
-
         if ($this->model->getType() != "folder") {
             $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
@@ -463,4 +458,4 @@ class Dao extends Model\Element\Dao
 
         return false;
     }
-}  
+}

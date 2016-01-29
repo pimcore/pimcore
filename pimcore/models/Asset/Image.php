@@ -16,7 +16,8 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
-class Image extends Model\Asset {
+class Image extends Model\Asset
+{
 
     /**
      * @var string
@@ -26,10 +27,11 @@ class Image extends Model\Asset {
     /**
      * @return void
      */
-    public function update() {
+    public function update()
+    {
 
         // only do this if the file exists and contains data
-        if($this->getDataChanged() || !$this->getCustomSetting("imageDimensionsCalculated")) {
+        if ($this->getDataChanged() || !$this->getCustomSetting("imageDimensionsCalculated")) {
             try {
                 // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
                 // because the file is written in parent::update();
@@ -37,7 +39,7 @@ class Image extends Model\Asset {
                 $dimensions = $this->getDimensions($tmpFile, true);
                 unlink($tmpFile);
 
-                if($dimensions && $dimensions["width"]) {
+                if ($dimensions && $dimensions["width"]) {
                     $this->setCustomSetting("imageWidth", $dimensions["width"]);
                     $this->setCustomSetting("imageHeight", $dimensions["height"]);
                 }
@@ -56,7 +58,7 @@ class Image extends Model\Asset {
         $this->clearThumbnails();
 
         // now directly create "system" thumbnails (eg. for the tree, ...)
-        if($this->getDataChanged()) {
+        if ($this->getDataChanged()) {
             try {
                 $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
 
@@ -73,9 +75,9 @@ class Image extends Model\Asset {
     /**
      * @return void
      */
-    public function clearThumbnails($force = false) {
-
-        if($this->getDataChanged() || $force) {
+    public function clearThumbnails($force = false)
+    {
+        if ($this->getDataChanged() || $force) {
             recursiveDelete($this->getImageThumbnailSavePath());
         }
     }
@@ -83,9 +85,10 @@ class Image extends Model\Asset {
     /**
      * @param $name
      */
-    public function clearThumbnail($name) {
+    public function clearThumbnail($name)
+    {
         $dir = $this->getImageThumbnailSavePath() . "/thumb__" . $name;
-        if(is_dir($dir)) {
+        if (is_dir($dir)) {
             recursiveDelete($dir);
         }
     }
@@ -95,8 +98,8 @@ class Image extends Model\Asset {
      * @param mixed $config
      * @return Image\Thumbnail|bool
      */
-    public function getThumbnailConfig($config) {
-
+    public function getThumbnailConfig($config)
+    {
         $thumbnail = $this->getThumbnail($config);
         return $thumbnail->getConfig();
     }
@@ -106,9 +109,9 @@ class Image extends Model\Asset {
      * @param mixed$config
      * @return Image\Thumbnail
      */
-    public function getThumbnail($config = null, $deferred = false) {
-
-       return new Image\Thumbnail($this, $config, $deferred);
+    public function getThumbnail($config = null, $deferred = false)
+    {
+        return new Image\Thumbnail($this, $config, $deferred);
     }
 
     /**
@@ -116,15 +119,15 @@ class Image extends Model\Asset {
      * @throws \Exception
      * @return null|\Pimcore\Image\Adapter
      */
-    public static function getImageTransformInstance () {
-
+    public static function getImageTransformInstance()
+    {
         try {
             $image = \Pimcore\Image::getInstance();
         } catch (\Exception $e) {
             $image = null;
         }
 
-        if(!$image instanceof \Pimcore\Image\Adapter){
+        if (!$image instanceof \Pimcore\Image\Adapter) {
             throw new \Exception("Couldn't get instance of image tranform processor.");
         }
 
@@ -134,14 +137,13 @@ class Image extends Model\Asset {
     /**
      * @return string
      */
-    public function getFormat() {
+    public function getFormat()
+    {
         if ($this->getWidth() > $this->getHeight()) {
             return "landscape";
-        }
-        else if ($this->getWidth() == $this->getHeight()) {
+        } elseif ($this->getWidth() == $this->getHeight()) {
             return "square";
-        }
-        else if ($this->getHeight() > $this->getWidth()) {
+        } elseif ($this->getHeight() > $this->getWidth()) {
             return "portrait";
         }
         return "unknown";
@@ -150,20 +152,21 @@ class Image extends Model\Asset {
     /**
      * @return string
      */
-    public function getRelativeFileSystemPath() {
+    public function getRelativeFileSystemPath()
+    {
         return str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getFileSystemPath());
     }
 
     /**
      * @return array
      */
-    public function getDimensions($path = null, $force = false) {
-
-        if(!$force) {
+    public function getDimensions($path = null, $force = false)
+    {
+        if (!$force) {
             $width = $this->getCustomSetting("imageWidth");
             $height = $this->getCustomSetting("imageHeight");
 
-            if($width && $height) {
+            if ($width && $height) {
                 return [
                     "width" => $width,
                     "height" => $height
@@ -171,14 +174,14 @@ class Image extends Model\Asset {
             }
         }
 
-        if(!$path) {
+        if (!$path) {
             $path = $this->getFileSystemPath();
         }
 
         $image = self::getImageTransformInstance();
 
         $status = $image->load($path);
-        if($status === false) {
+        if ($status === false) {
             return;
         }
 
@@ -193,7 +196,8 @@ class Image extends Model\Asset {
     /**
      * @return int
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         $dimensions = $this->getDimensions();
         return $dimensions["width"];
     }
@@ -201,7 +205,8 @@ class Image extends Model\Asset {
     /**
      * @return int
      */
-    public function getHeight() {
+    public function getHeight()
+    {
         $dimensions = $this->getDimensions();
         return $dimensions["height"];
     }

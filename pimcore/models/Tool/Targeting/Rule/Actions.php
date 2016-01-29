@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Targeting\Rule;
 
 use Pimcore\Model;
 
-class Actions {
+class Actions
+{
 
     /**
      * @var bool
@@ -215,8 +216,8 @@ class Actions {
      */
     public function setRedirectUrl($redirectUrl)
     {
-        if(is_string($redirectUrl)) {
-            if($doc = Model\Document::getByPath($redirectUrl)) {
+        if (is_string($redirectUrl)) {
+            if ($doc = Model\Document::getByPath($redirectUrl)) {
                 $redirectUrl = $doc->getId();
             }
         }

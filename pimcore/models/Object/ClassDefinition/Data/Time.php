@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class Time extends Model\Object\ClassDefinition\Data\Input {
+class Time extends Model\Object\ClassDefinition\Data\Input
+{
 
     /**
      * Static type of this element
@@ -39,11 +40,11 @@ class Time extends Model\Object\ClassDefinition\Data\Input {
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
-
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
         parent::checkValidity($data, $omitMandatoryCheck);
 
-        if((is_string($data) && strlen($data) != 5 && !empty($data)) || (!empty($data) && !is_string($data))) {
+        if ((is_string($data) && strlen($data) != 5 && !empty($data)) || (!empty($data) && !is_string($data))) {
             throw new \Exception("Wrong time format given must be a 5 digit string (eg: 06:49) [ ".$this->getName()." ]");
         }
     }
@@ -51,7 +52,8 @@ class Time extends Model\Object\ClassDefinition\Data\Input {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 }

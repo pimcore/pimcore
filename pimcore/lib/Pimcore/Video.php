@@ -12,24 +12,26 @@
 
 namespace Pimcore;
 
-class Video {
+class Video
+{
 
     /**
      * @param null $adapter
      * @return bool|null|Video\Adapter
      * @throws \Exception
      */
-    public static function getInstance ($adapter = null) {
+    public static function getInstance($adapter = null)
+    {
         try {
-            if($adapter) {
+            if ($adapter) {
                 $adapterClass = "\\Pimcore\\Video\\Adapter\\" . $adapter;
-                if(Tool::classExists($adapterClass)) {
+                if (Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
                     throw new \Exception("Video-transcode adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
-                if($adapter = self::getDefaultAdapter()) {
+                if ($adapter = self::getDefaultAdapter()) {
                     return $adapter;
                 }
             }
@@ -44,8 +46,9 @@ class Video {
     /**
      * @return bool
      */
-    public static function isAvailable () {
-        if(self::getDefaultAdapter()) {
+    public static function isAvailable()
+    {
+        if (self::getDefaultAdapter()) {
             return true;
         }
         return false;
@@ -54,16 +57,16 @@ class Video {
     /**
      * @return bool
      */
-    public static function getDefaultAdapter () {
-
+    public static function getDefaultAdapter()
+    {
         $adapters = array("Ffmpeg");
 
         foreach ($adapters as $adapter) {
             $adapterClass = "\\Pimcore\\Video\\Adapter\\" . $adapter;
-            if(Tool::classExists($adapterClass)) {
+            if (Tool::classExists($adapterClass)) {
                 try {
                     $adapter = new $adapterClass();
-                    if($adapter->isAvailable()) {
+                    if ($adapter->isAvailable()) {
                         return $adapter;
                     }
                 } catch (\Exception $e) {

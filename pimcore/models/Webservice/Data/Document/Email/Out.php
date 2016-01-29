@@ -16,6 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Document\Email;
 
 use Pimcore\Model;
 
-class Out extends Model\Webservice\Data\Document\Snippet\Out {
-
+class Out extends Model\Webservice\Data\Document\Snippet\Out
+{
 }

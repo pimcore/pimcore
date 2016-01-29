@@ -14,16 +14,17 @@
 
 namespace Pimcore\Model\Object\QuantityValue\Unit\Listing;
 
-
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * @return array
      */
-    public function load() {
+    public function load()
+    {
         $units = array();
 
         $unitIds = $this->db->fetchCol("SELECT id FROM " . Object\QuantityValue\Unit\Dao::TABLE_NAME .
@@ -38,9 +39,9 @@ class Dao extends Model\Listing\Dao\AbstractDao {
         return $units;
     }
 
-    public function getTotalCount() {
+    public function getTotalCount()
+    {
         $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM `" . Object\QuantityValue\Unit\Dao::TABLE_NAME . "`" . $this->getCondition());
         return $amount["amount"];
     }
-
 }

@@ -7,9 +7,11 @@
  */
 
 
-class TestSuite_Rest_ClassTest extends Test_BaseRest {
+class TestSuite_Rest_ClassTest extends Test_BaseRest
+{
 
-    public function setUp() {
+    public function setUp()
+    {
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
         parent::setUp();
@@ -17,7 +19,8 @@ class TestSuite_Rest_ClassTest extends Test_BaseRest {
 
 
 
-    public function testGetClass() {
+    public function testGetClass()
+    {
         $this->printTestName();
         $object = Test_Tool::createEmptyObject();
         $classId = $object->getClassId();
@@ -29,5 +32,4 @@ class TestSuite_Rest_ClassTest extends Test_BaseRest {
         $restClass2 = self::getRestClient()->getObjectMetaById($object->getId());
         $this->assertEquals("unittest", $restClass2->getName());
     }
-
 }

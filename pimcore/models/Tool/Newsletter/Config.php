@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Newsletter;
 
 use Pimcore\Model;
 
-class Config extends Model\AbstractModel {
+class Config extends Model\AbstractModel
+{
 
     /**
      * @var string
@@ -72,8 +73,8 @@ class Config extends Model\AbstractModel {
      * @param $name
      * @return null|Config
      */
-    public static function getByName($name) {
-
+    public static function getByName($name)
+    {
         try {
             $letter = new self();
             $letter->getDao()->getByName($name);
@@ -87,7 +88,8 @@ class Config extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getPidFile() {
+    public function getPidFile()
+    {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/newsletter__" . $this->getName() . ".pid";
     }
 

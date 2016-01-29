@@ -45,10 +45,10 @@ class CacheClearCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if($input->getOption("tags")) {
+        if ($input->getOption("tags")) {
             $tags = explode(",", $input->getOption("tags"));
             Cache::clearTags($tags);
-        } else if ($input->getOption("output")) {
+        } elseif ($input->getOption("output")) {
             Cache::clearTag("output");
         } else {
             Cache::clearAll();

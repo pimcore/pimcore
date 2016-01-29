@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\Objectbrick\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class AbstractData extends Model\AbstractModel {
+class AbstractData extends Model\AbstractModel
+{
 
     /**
      * @var string
@@ -38,14 +39,16 @@ class AbstractData extends Model\AbstractModel {
     /**
      * @param Object\Concrete $object
      */
-    public function __construct(Object\Concrete $object) {
+    public function __construct(Object\Concrete $object)
+    {
         $this->setObject($object);
     }
 
     /**
      * @return string
      */
-    public function getFieldname () {
+    public function getFieldname()
+    {
         return $this->fieldname;
     }
 
@@ -53,7 +56,8 @@ class AbstractData extends Model\AbstractModel {
      * @param $fieldname
      * @return void
      */
-    public function setFieldname ($fieldname) {
+    public function setFieldname($fieldname)
+    {
         $this->fieldname = $fieldname;
         return $this;
     }
@@ -61,14 +65,16 @@ class AbstractData extends Model\AbstractModel {
     /**
      * @return 
      */
-    public function getType () {
+    public function getType()
+    {
         return $this->type;
     }
 
     /**
      * @return mixed
      */
-    public function getDefinition () {
+    public function getDefinition()
+    {
         $definition = Object\Objectbrick\Definition::getByKey($this->getType());
         return $definition;
     }
@@ -94,7 +100,8 @@ class AbstractData extends Model\AbstractModel {
     /**
      * @return Object\Concrete
      */
-    public function getBaseObject() {
+    public function getBaseObject()
+    {
         return $this->getObject();
     }
 
@@ -102,7 +109,8 @@ class AbstractData extends Model\AbstractModel {
      * @param $object
      * @return void
      */
-    public function delete($object) {
+    public function delete($object)
+    {
         $this->doDelete = true;
         $this->getDao()->delete($object);
     }
@@ -110,19 +118,18 @@ class AbstractData extends Model\AbstractModel {
     /**
      * @return mixed
      */
-    public function getValueFromParent($key) {
-
+    public function getValueFromParent($key)
+    {
         $parent = Object\Service::hasInheritableParentObject($this->getObject());
 
-        if(!empty($parent)) {
+        if (!empty($parent)) {
             $containerGetter = "get" . ucfirst($this->fieldname);
             $brickGetter = "get" . ucfirst($this->getType());
             $getter = "get" . ucfirst($key);
 
-            if($parent->$containerGetter()->$brickGetter()) {
+            if ($parent->$containerGetter()->$brickGetter()) {
                 return $parent->$containerGetter()->$brickGetter()->$getter();
             }
-
         }
 
         return null;
@@ -150,11 +157,11 @@ class AbstractData extends Model\AbstractModel {
      * @param string $key
      * @return void
      */
-    public function getValueForFieldName($key) {
+    public function getValueForFieldName($key)
+    {
         if ($this->$key) {
             return $this->$key;
         }
         return false;
     }
-
 }

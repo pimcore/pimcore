@@ -12,14 +12,15 @@
 
 namespace Pimcore\Controller\Plugin;
 
-class HybridAuth extends \Zend_Controller_Plugin_Abstract {
+class HybridAuth extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
-
-        if(preg_match("@^/hybridauth/endpoint@",$request->getPathInfo(), $matches)) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
+        if (preg_match("@^/hybridauth/endpoint@", $request->getPathInfo(), $matches)) {
             \Pimcore\Tool\HybridAuth::process();
         }
     }

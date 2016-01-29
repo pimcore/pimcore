@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\CustomReport\Config;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * @var array
@@ -26,7 +27,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getReports() {
+    public function getReports()
+    {
         return $this->reports;
     }
 
@@ -34,7 +36,8 @@ class Listing extends Model\Listing\JsonListing {
      * @param $reports
      * @return $this
      */
-    public function setReports($reports) {
+    public function setReports($reports)
+    {
         $this->reports = $reports;
         return $this;
     }

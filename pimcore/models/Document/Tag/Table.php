@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
-class Table extends Model\Document\Tag {
+class Table extends Model\Document\Tag
+{
 
     /**
      * Contains the text for this element
@@ -30,7 +31,8 @@ class Table extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "table";
     }
 
@@ -38,7 +40,8 @@ class Table extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -46,8 +49,8 @@ class Table extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
-
+    public function frontend()
+    {
         $html = "";
 
         if (is_array($this->data) && count($this->data) > 0) {
@@ -73,7 +76,8 @@ class Table extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         return $this;
     }
@@ -83,7 +87,8 @@ class Table extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         $this->data = $data;
         return $this;
     }
@@ -91,7 +96,8 @@ class Table extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return empty($this->data);
     }
 
@@ -100,14 +106,13 @@ class Table extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
         if ($data->data === null or is_array($data->data)) {
             $this->data = $data->data;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
-
     }
-
 }

@@ -16,6 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Document\Page;
 
 use Pimcore\Model;
 
-class Incoming extends Model\Webservice\Data\Document\Page {
-
+class Incoming extends Model\Webservice\Data\Document\Page
+{
 }

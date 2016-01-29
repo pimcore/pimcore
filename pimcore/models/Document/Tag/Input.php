@@ -54,7 +54,7 @@ class Input extends Model\Document\Tag
         $options = $this->getOptions();
 
         $text = $this->text;
-        if (isset($options["htmlspecialchars"]) AND $options["htmlspecialchars"] !== false) {
+        if (isset($options["htmlspecialchars"]) and $options["htmlspecialchars"] !== false) {
             $text = htmlspecialchars($this->text);
         }
 
@@ -64,7 +64,8 @@ class Input extends Model\Document\Tag
     /**
      *
      */
-    public function getDataEditmode() {
+    public function getDataEditmode()
+    {
         return htmlentities($this->text);
     }
 

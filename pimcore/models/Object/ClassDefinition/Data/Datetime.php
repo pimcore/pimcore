@@ -142,7 +142,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
     public function getVersionPreview($data)
     {
         if ($data instanceof \Zend_Date) {
-            return $data->get(\Zend_Date::DATETIME_FULL );
+            return $data->get(\Zend_Date::DATETIME_FULL);
         }
     }
 
@@ -158,7 +158,9 @@ class Datetime extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof \Zend_Date) {
             return $data->toString();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -186,7 +188,9 @@ class Datetime extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof \Zend_Date) {
             return $data->toString();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -201,7 +205,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
         $timestamp = strtotime($value);
         if (empty($value)) {
             return null;
-        } else if ($timestamp !== FALSE) {
+        } elseif ($timestamp !== false) {
             return new \Pimcore\Date($timestamp);
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
@@ -216,7 +220,9 @@ class Datetime extends Model\Object\ClassDefinition\Data
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
             //return new Date($this->defaultValue);
-        } else return 0;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -249,7 +255,8 @@ class Datetime extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -259,7 +266,8 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @return null|Date
      */
 
-    public function getDiffDataFromEditmode($data, $object = null) {
+    public function getDiffDataFromEditmode($data, $object = null)
+    {
         $thedata = $data[0]["data"];
         if ($thedata) {
             return new \Pimcore\Date($thedata);
@@ -273,7 +281,8 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null) {
+    public function getDiffDataForEditMode($data, $object = null)
+    {
         $result = array();
 
         $thedata = null;

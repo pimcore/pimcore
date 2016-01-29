@@ -12,7 +12,8 @@
 
 namespace Pimcore;
 
-class ExtensionManager {
+class ExtensionManager
+{
 
     /**
      * @var \Zend_Config
@@ -23,17 +24,17 @@ class ExtensionManager {
      * @static
      * @return \Zend_Config
      */
-    public static function getConfig () {
-        if(!self::$config) {
+    public static function getConfig()
+    {
+        if (!self::$config) {
             try {
                 $file = \Pimcore\Config::locateConfigFile("extensions.php");
-                if(file_exists($file)) {
+                if (file_exists($file)) {
                     self::$config = new \Zend_Config(include($file), true);
                 } else {
                     throw new \Exception($file . " doesn't exist");
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 self::$config = new \Zend_Config(array(), true);
             }
         }
@@ -45,8 +46,8 @@ class ExtensionManager {
      * @param \Zend_Config $config
      * @return void
      */
-    public static function setConfig (\Zend_Config $config) {
-
+    public static function setConfig(\Zend_Config $config)
+    {
         self::$config = $config;
 
         $file = \Pimcore\Config::locateConfigFile("extensions.php");
@@ -59,19 +60,20 @@ class ExtensionManager {
      * @param  $id
      * @return bool
      */
-    public static function isEnabled ($type, $id) {
+    public static function isEnabled($type, $id)
+    {
         $config = self::getConfig();
 
-        if($type == "brick") {
+        if ($type == "brick") {
             // bricks are enabled per default
-            if(!isset($config->brick->$id)) {
+            if (!isset($config->brick->$id)) {
                 return true;
             } else {
                 return (bool) $config->$type->$id;
             }
         } else {
             // plugins (any maybe others) need to be explicitly enabled
-            if($config->$type) {
+            if ($config->$type) {
                 return (bool) $config->$type->$id;
             }
         }
@@ -85,9 +87,10 @@ class ExtensionManager {
      * @param  $id
      * @return void
      */
-    public static function enable ($type, $id) {
+    public static function enable($type, $id)
+    {
         $config = self::getConfig();
-        if(!isset($config->$type)) {
+        if (!isset($config->$type)) {
             $config->$type = new \Zend_Config(array(), true);
         }
         $config->$type->$id = true;
@@ -96,7 +99,7 @@ class ExtensionManager {
         // call enable.php inside the extension
         $extensionDir = self::getPathForExtension($id, $type);
         $enableScript = $extensionDir . "/enable.php";
-        if(is_file($enableScript)) {
+        if (is_file($enableScript)) {
             include($enableScript);
         }
     }
@@ -107,9 +110,10 @@ class ExtensionManager {
      * @param  $id
      * @return void
      */
-    public static function disable ($type, $id) {
+    public static function disable($type, $id)
+    {
         $config = self::getConfig();
-        if(!isset($config->$type)) {
+        if (!isset($config->$type)) {
             $config->$type = new \Zend_Config(array(), true);
         }
         $config->$type->$id = false;
@@ -118,7 +122,7 @@ class ExtensionManager {
         // call disable.php inside the extension
         $extensionDir = self::getPathForExtension($id, $type);
         $disableScript = $extensionDir . "/disable.php";
-        if(is_file($disableScript)) {
+        if (is_file($disableScript)) {
             include($disableScript);
         }
     }
@@ -127,8 +131,8 @@ class ExtensionManager {
     /**
      * @return Array $pluginConfigs
      */
-    public static function getPluginConfigs() {
-
+    public static function getPluginConfigs()
+    {
         $pluginConfigs = array();
 
         if (is_dir(PIMCORE_PLUGINS_PATH) && is_readable(PIMCORE_PLUGINS_PATH)) {
@@ -158,12 +162,12 @@ class ExtensionManager {
      * @param $id
      * @throws \Exception
      */
-    public static function getPluginConfig ($id) {
-
+    public static function getPluginConfig($id)
+    {
         $pluginConfigs = self::getPluginConfigs();
 
         foreach ($pluginConfigs as $config) {
-            if($config["plugin"]["pluginName"] == $id) {
+            if ($config["plugin"]["pluginName"] == $id) {
                 return $config;
             }
         }
@@ -175,20 +179,18 @@ class ExtensionManager {
      * @param null $customPath
      * @return array|mixed
      */
-    public static function getBrickDirectories ($customPath = null) {
-
+    public static function getBrickDirectories($customPath = null)
+    {
         $cacheKey = "brick_directories";
-        if($customPath) {
+        if ($customPath) {
             $cacheKey .= "_" . crc32($customPath);
         }
 
         $areas = array();
-        try
-        {
+        try {
             $areas = \Zend_Registry::get($cacheKey);
-        }
-        catch  (\Exception $e) {
-            if($customPath) {
+        } catch (\Exception $e) {
+            if ($customPath) {
                 $areaRepositories = array($customPath);
             } else {
                 $areaRepositories = array(
@@ -214,13 +216,12 @@ class ExtensionManager {
 
             // get directories
             foreach ($areaRepositories as $respository) {
-
-                if(is_dir($respository) && is_readable($respository)) {
+                if (is_dir($respository) && is_readable($respository)) {
                     $blockDirs = scandir($respository);
 
                     foreach ($blockDirs as $blockDir) {
-                        if(is_dir($respository . "/" . $blockDir)) {
-                            if(is_file($respository . "/" . $blockDir . "/area.xml")) {
+                        if (is_dir($respository . "/" . $blockDir)) {
+                            if (is_file($respository . "/" . $blockDir . "/area.xml")) {
                                 $areas[$blockDir] = $respository . "/" . $blockDir;
                             }
                         }
@@ -237,10 +238,10 @@ class ExtensionManager {
      * @param null $customPath
      * @return array|mixed
      */
-    public static function getBrickConfigs($customPath = null) {
-
+    public static function getBrickConfigs($customPath = null)
+    {
         $cacheKey = "brick_configs";
-        if($customPath) {
+        if ($customPath) {
             $cacheKey .= "_" . crc32($customPath);
         }
 
@@ -268,12 +269,12 @@ class ExtensionManager {
      * @param $id
      * @throws \Exception
      */
-    public static function getBrickConfig ($id, $path = null) {
-
+    public static function getBrickConfig($id, $path = null)
+    {
         $brickConfigs = self::getBrickConfigs($path);
 
         foreach ($brickConfigs as $brickId => $config) {
-            if($brickId == $id) {
+            if ($brickId == $id) {
                 return $config;
             }
         }
@@ -285,18 +286,19 @@ class ExtensionManager {
      * @param $id
      * @param $type
      */
-    public static function delete ($id, $type) {
-        if($type == "plugin") {
+    public static function delete($id, $type)
+    {
+        if ($type == "plugin") {
             $pluginDir = PIMCORE_PLUGINS_PATH . "/" . $id;
-            if(is_writeable($pluginDir)) {
-                recursiveDelete($pluginDir,true);
+            if (is_writeable($pluginDir)) {
+                recursiveDelete($pluginDir, true);
             }
-        } else if ($type == "brick") {
+        } elseif ($type == "brick") {
             $brickDirs = self::getBrickDirectories();
             $brickDir = $brickDirs[$id];
 
-            if(is_writeable($brickDir)) {
-                recursiveDelete($brickDir,true);
+            if (is_writeable($brickDir)) {
+                recursiveDelete($brickDir, true);
             }
         }
     }
@@ -306,13 +308,13 @@ class ExtensionManager {
      * @param $type
      * @return string
      */
-    public static function getPathForExtension($id, $type) {
-
+    public static function getPathForExtension($id, $type)
+    {
         $extensionDir = "";
 
-        if($type == "plugin") {
+        if ($type == "plugin") {
             $extensionDir = PIMCORE_PLUGINS_PATH . "/" . $id;
-        } else if ($type == "brick") {
+        } elseif ($type == "brick") {
             $brickDirs = self::getBrickDirectories();
             $extensionDir = $brickDirs[$id];
         }

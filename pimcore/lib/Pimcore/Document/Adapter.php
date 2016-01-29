@@ -12,7 +12,6 @@
 
 namespace Pimcore\Document;
 
-abstract class Adapter {
-
-
+abstract class Adapter
+{
 }

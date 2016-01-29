@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document\Folder;
 
 use Pimcore\Model;
 
-class Out extends Model\Webservice\Data\Document\Folder {
+class Out extends Model\Webservice\Data\Document\Folder
+{
 
     /**
      * @var string

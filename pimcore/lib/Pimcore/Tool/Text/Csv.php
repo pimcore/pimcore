@@ -14,10 +14,11 @@
 
 namespace Pimcore\Tool\Text;
 
-class Csv {
+class Csv
+{
 
-    public function detect($data) {
-
+    public function detect($data)
+    {
         $linefeed = $this->guessLinefeed($data);
         $data = rtrim($data, $linefeed);
         $count = count(explode($linefeed, $data));
@@ -46,8 +47,8 @@ class Csv {
         return $dialect;
     }
 
-    protected function guessLinefeed($data) {
-
+    protected function guessLinefeed($data)
+    {
         $charcount = count_chars($data);
         $cr = "\r";
         $lf = "\n";
@@ -67,15 +68,14 @@ class Csv {
 
         // sane default: cr+lf
         return "$cr$lf";
-
     }
 
     /**
      * @param $data
      * @return array
      */
-    protected function guessQuoteAndDelim($data) {
-
+    protected function guessQuoteAndDelim($data)
+    {
         $patterns = array();
         $patterns[] = '/([^\w\n"\']) ?(["\']).*?(\2)(\1)/';
         $patterns[] = '/(?:^|\n)(["\']).*?(\1)([^\w\n"\']) ?/'; // dont know if any of the regexes starting here work properly
@@ -84,11 +84,15 @@ class Csv {
 
         foreach ($patterns as $pattern) {
             if ($nummatches = preg_match_all($pattern, $data, $matches)) {
-                if ($matches) break;
+                if ($matches) {
+                    break;
+                }
             }
         }
 
-        if (!$matches) return array("", null); // couldn't guess quote or delim
+        if (!$matches) {
+            return array("", null);
+        } // couldn't guess quote or delim
 
         $quotes = array_count_values($matches[2]);
         arsort($quotes);
@@ -97,10 +101,10 @@ class Csv {
             arsort($delims);
             $delim = array_shift(array_flip($delims));
         } else {
-            $quote = ""; $delim = null;
+            $quote = "";
+            $delim = null;
         }
         return array($quote, $delim);
-
     }
 
     /**
@@ -109,8 +113,8 @@ class Csv {
      * @param $quotechar
      * @return bool|string
      */
-    protected function guessDelim($data, $linefeed, $quotechar) {
-
+    protected function guessDelim($data, $linefeed, $quotechar)
+    {
         $charcount = count_chars($data, 1);
 
         $filtered = array();
@@ -198,21 +202,19 @@ class Csv {
         }
 
         return $delim;
-
     }
 
     /**
      * @param $array
      * @return float
      */
-    protected function deviation ($array){
-
+    protected function deviation($array)
+    {
         $avg = array_sum($array) / count($array);
         foreach ($array as $value) {
             $variance[] = pow($value - $avg, 2);
         }
         $deviation = sqrt(array_sum($variance) / count($variance));
         return $deviation;
-
     }
 }

@@ -15,9 +15,10 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Tool; 
+use Pimcore\Tool;
 
-class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
+class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect
+{
 
     /**
      * Static type of this element
@@ -35,16 +36,15 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect 
     /**
      *
      */
-    public function configureOptions () {
-
+    public function configureOptions()
+    {
         $validLanguages = (array) Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
         $options = array();
 
         foreach ($locales as $short => $translation) {
-
-            if($this->getOnlySystemLanguages()) {
-                if(!in_array($short, $validLanguages)) {
+            if ($this->getOnlySystemLanguages()) {
+                if (!in_array($short, $validLanguages)) {
                     continue;
                 }
             }
@@ -61,7 +61,8 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect 
     /**
      * @return bool
      */
-    public function getOnlySystemLanguages () {
+    public function getOnlySystemLanguages()
+    {
         return $this->onlySystemLanguages;
     }
 
@@ -69,7 +70,8 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect 
      * @param $value
      * @return $this
      */
-    public function setOnlySystemLanguages ($value) {
+    public function setOnlySystemLanguages($value)
+    {
         $this->onlySystemLanguages = (bool) $value;
         return $this;
     }
@@ -77,7 +79,8 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect 
     /**
      *
      */
-    public function __wakeup () {
+    public function __wakeup()
+    {
         $this->configureOptions();
     }
 }

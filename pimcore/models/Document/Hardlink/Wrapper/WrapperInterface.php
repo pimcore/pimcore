@@ -14,6 +14,6 @@
 
 namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
-interface WrapperInterface {
-
+interface WrapperInterface
+{
 }

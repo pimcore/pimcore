@@ -16,7 +16,8 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator {
+class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+{
 
     /**
      * List of assets
@@ -47,14 +48,16 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param string $key
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getAssets() {
+    public function getAssets()
+    {
         if ($this->assets === null) {
             $this->load();
         }
@@ -65,7 +68,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param string $assets
      * @return void
      */
-    public function setAssets($assets) {
+    public function setAssets($assets)
+    {
         $this->assets = $assets;
         return $this;
     }
@@ -76,17 +80,20 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Methods for \Zend_Paginator_Adapter_Interface
      */
 
-    public function count() {
+    public function count()
+    {
         return $this->getTotalCount();
     }
 
-    public function getItems($offset, $itemCountPerPage) {
+    public function getItems($offset, $itemCountPerPage)
+    {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
         return $this->load();
     }
 
-    public function getPaginatorAdapter() {
+    public function getPaginatorAdapter()
+    {
         return $this;
     }
     
@@ -95,30 +102,35 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Methods for Iterator
      */
 
-    public function rewind() {
+    public function rewind()
+    {
         $this->getAssets();
         reset($this->assets);
     }
 
-    public function current() {
+    public function current()
+    {
         $this->getAssets();
         $var = current($this->assets);
         return $var;
     }
 
-    public function key() {
+    public function key()
+    {
         $this->getAssets();
         $var = key($this->assets);
         return $var;
     }
 
-    public function next() {
+    public function next()
+    {
         $this->getAssets();
         $var = next($this->assets);
         return $var;
     }
 
-    public function valid() {
+    public function valid()
+    {
         $this->getAssets();
         $var = $this->current() !== false;
         return $var;

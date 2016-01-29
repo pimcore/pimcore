@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\Fieldcollection\Data;
 
 use Pimcore\Model;
 
-abstract class AbstractData extends Model\AbstractModel {
+abstract class AbstractData extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -41,7 +42,8 @@ abstract class AbstractData extends Model\AbstractModel {
     /**
      * @return int
      */
-    public function getIndex () {
+    public function getIndex()
+    {
         return $this->index;
     }
 
@@ -49,7 +51,8 @@ abstract class AbstractData extends Model\AbstractModel {
      * @param int $index
      * @return void
      */
-    public function setIndex ($index) {
+    public function setIndex($index)
+    {
         $this->index = (int) $index;
         return $this;
     }
@@ -57,7 +60,8 @@ abstract class AbstractData extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getFieldname () {
+    public function getFieldname()
+    {
         return $this->fieldname;
     }
 
@@ -65,7 +69,8 @@ abstract class AbstractData extends Model\AbstractModel {
      * @param $fieldname
      * @return void
      */
-    public function setFieldname ($fieldname) {
+    public function setFieldname($fieldname)
+    {
         $this->fieldname = $fieldname;
         return $this;
     }
@@ -73,14 +78,16 @@ abstract class AbstractData extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getType () {
+    public function getType()
+    {
         return $this->type;
     }
 
     /**
      * @return mixed
      */
-    public function getDefinition () {
+    public function getDefinition()
+    {
         $definition = Model\Object\Fieldcollection\Definition::getByKey($this->getType());
         return $definition;
     }

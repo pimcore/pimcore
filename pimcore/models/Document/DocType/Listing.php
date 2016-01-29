@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Document\Doctype
@@ -28,7 +29,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getDocTypes() {
+    public function getDocTypes()
+    {
         return $this->docTypes;
     }
 
@@ -36,9 +38,9 @@ class Listing extends Model\Listing\JsonListing {
      * @param array $docTypes
      * @return void
      */
-    public function setDocTypes($docTypes) {
+    public function setDocTypes($docTypes)
+    {
         $this->docTypes = $docTypes;
         return $this;
     }
-
 }

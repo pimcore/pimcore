@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
-class Email extends Model\Webservice\Data\Document\Snippet {
+class Email extends Model\Webservice\Data\Document\Snippet
+{
 
 
     /**
@@ -67,5 +68,4 @@ class Email extends Model\Webservice\Data\Document\Snippet {
      * @var string
      */
     public $bcc = "";
-
 }

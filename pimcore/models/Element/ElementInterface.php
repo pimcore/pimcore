@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model\Element;
 
-interface ElementInterface {
+interface ElementInterface
+{
 
     /**
      * @return integer $id

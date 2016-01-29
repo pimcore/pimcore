@@ -15,7 +15,8 @@ namespace Pimcore\Google;
 use Pimcore\Config;
 use Pimcore\Model\Site;
 
-class Webmastertools {
+class Webmastertools
+{
 
     /**
      * @var array
@@ -26,8 +27,9 @@ class Webmastertools {
      * @param Site $site
      * @return bool
      */
-    public static function isConfigured (Site $site = null) {
-        if(self::getSiteConfig($site)) {
+    public static function isConfigured(Site $site = null)
+    {
+        if (self::getSiteConfig($site)) {
             return true;
         }
         return false;
@@ -37,11 +39,11 @@ class Webmastertools {
      * @param null $site
      * @return bool
      */
-    public static function getSiteConfig ($site = null) {
-        
+    public static function getSiteConfig($site = null)
+    {
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey($site);
         
-        if(Config::getReportConfig()->webmastertools->sites->$siteKey->verification) {
+        if (Config::getReportConfig()->webmastertools->sites->$siteKey->verification) {
             return Config::getReportConfig()->webmastertools->sites->$siteKey;
         }
         return false;

@@ -14,7 +14,8 @@ namespace Pimcore\View\Helper;
 
 use Pimcore\Translate\Admin as TranslateAdapter;
 
-class TranslateAdmin extends \Zend_View_Helper_Translate {
+class TranslateAdmin extends \Zend_View_Helper_Translate
+{
 
     /**
      * @var \Pimcore\Translate
@@ -27,12 +28,13 @@ class TranslateAdmin extends \Zend_View_Helper_Translate {
      * @throws \Zend_Exception
      * @throws \Zend_View_Exception
      */
-    public function translateAdmin($key = "") {
+    public function translateAdmin($key = "")
+    {
         if ($key) {
             $locale = $_REQUEST["systemLocale"];
 
-            if(!$locale){
-                if(\Zend_Registry::isRegistered("Zend_Locale")) {
+            if (!$locale) {
+                if (\Zend_Registry::isRegistered("Zend_Locale")) {
                     $locale = \Zend_Registry::get("Zend_Locale");
                 } else {
                     $locale = new \Zend_Locale("en");
@@ -40,7 +42,7 @@ class TranslateAdmin extends \Zend_View_Helper_Translate {
             }
 
             if ($locale) {
-                if(!$this->getTranslator()) {
+                if (!$this->getTranslator()) {
                     $translate = new TranslateAdapter($locale);
                     $this->setTranslator($translate);
                 }
@@ -48,7 +50,6 @@ class TranslateAdmin extends \Zend_View_Helper_Translate {
 
                 return call_user_func_array(array($this, "translate"), func_get_args());
             }
-
         }
 
         return $key;
@@ -71,4 +72,3 @@ class TranslateAdmin extends \Zend_View_Helper_Translate {
         return $this->translator;
     }
 }
-

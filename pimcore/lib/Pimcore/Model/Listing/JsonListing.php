@@ -14,14 +14,14 @@ namespace Pimcore\Model\Listing;
 
 use Pimcore\Model\AbstractModel;
 
-
 /**
  * Class AbstractListing
  *
  * @package Pimcore\Model\Listing
  * @method \Zend_Db_Select getQuery()
  */
-abstract class JsonListing extends AbstractModel {
+abstract class JsonListing extends AbstractModel
+{
 
     protected $filter;
     protected $order;

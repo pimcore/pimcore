@@ -12,27 +12,28 @@
 
 use Pimcore\Model\User;
 
-class Install_CheckController extends \Pimcore\Controller\Action {
+class Install_CheckController extends \Pimcore\Controller\Action
+{
 
 
-    public function init() {
+    public function init()
+    {
         parent::init();
 
         if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
             // session authentication, only possible if user is logged in
             $user = \Pimcore\Tool\Authentication::authenticateSession();
-            if(!$user instanceof User) {
-               die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
+            if (!$user instanceof User) {
+                die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
             }
-        } else if ($this->getParam("mysql_adapter")) {
-
+        } elseif ($this->getParam("mysql_adapter")) {
         } else {
             die("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
         }
     }
 
-    public function indexAction() {
-
+    public function indexAction()
+    {
         $checksPHP = array();
         $checksMySQL = array();
         $checksFS = array();
@@ -43,9 +44,9 @@ class Install_CheckController extends \Pimcore\Controller\Action {
         $memoryLimit = filesize2bytes($memoryLimit . "B");
         $state = "ok";
 
-        if($memoryLimit < 67108000) {
+        if ($memoryLimit < 67108000) {
             $state = "error";
-        } else if ($memoryLimit < 134217000) {
+        } elseif ($memoryLimit < 134217000) {
             $state = "warning";
         }
 
@@ -192,10 +193,9 @@ class Install_CheckController extends \Pimcore\Controller\Action {
 
         $db = null;
 
-        if($this->getParam("mysql_adapter")) {
+        if ($this->getParam("mysql_adapter")) {
             // this is before installing
             try {
-
                 $dbConfig = [
                     'username' => $this->getParam("mysql_username"),
                     'password' => $this->getParam("mysql_password"),
@@ -203,7 +203,7 @@ class Install_CheckController extends \Pimcore\Controller\Action {
                 ];
 
                 $hostSocketValue = $this->getParam("mysql_host_socket");
-                if(file_exists($hostSocketValue)) {
+                if (file_exists($hostSocketValue)) {
                     $dbConfig["unix_socket"] = $hostSocketValue;
                 } else {
                     $dbConfig["host"] = $hostSocketValue;
@@ -221,7 +221,7 @@ class Install_CheckController extends \Pimcore\Controller\Action {
             $db = \Pimcore\Db::get();
         }
 
-        if($db) {
+        if ($db) {
 
             // storage engines
             $engines = array();
@@ -448,7 +448,6 @@ class Install_CheckController extends \Pimcore\Controller\Action {
                 "name" => "DROP TABLE",
                 "state" => $queryCheck ? "ok" : "error"
             );
-
         } else {
             die("Not possible... no or wrong database settings given.<br />Please fill out the MySQL Settings in the install form an click again on `Check Requirements´");
         }

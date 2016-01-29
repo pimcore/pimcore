@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Layout;
 
 use Pimcore\Model;
 
-class Tabpanel extends Model\Object\ClassDefinition\Layout {
+class Tabpanel extends Model\Object\ClassDefinition\Layout
+{
 
     /**
      * Static type of this element
@@ -24,5 +25,4 @@ class Tabpanel extends Model\Object\ClassDefinition\Layout {
      * @var string
      */
     public $fieldtype = "tabpanel";
-
 }

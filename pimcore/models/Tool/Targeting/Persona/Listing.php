@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Targeting\Persona;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Tool\Targeting\Persona
@@ -30,7 +31,8 @@ class Listing extends Model\Listing\AbstractListing {
      *
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
@@ -51,5 +53,4 @@ class Listing extends Model\Listing\AbstractListing {
     {
         return $this->personas;
     }
-
 }

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\DocType\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\PhpArrayTable {
+class Dao extends Model\Dao\PhpArrayTable
+{
 
     /**
      *
@@ -32,8 +33,8 @@ class Dao extends Model\Dao\PhpArrayTable {
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $docTypesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         $docTypes = array();
@@ -48,8 +49,8 @@ class Dao extends Model\Dao\PhpArrayTable {
     /**
      * @return int
      */
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
         $amount = count($data);
 

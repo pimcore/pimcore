@@ -14,8 +14,8 @@
 
 namespace Pimcore\Model\Object\Data;
 
-
-class ExternalImage {
+class ExternalImage
+{
 
     /** @var  string */
     public $url;
@@ -24,7 +24,8 @@ class ExternalImage {
      * ExternalImage constructor.
      * @param null $url
      */
-    public function __construct($url = null) {
+    public function __construct($url = null)
+    {
         $this->url = $url;
     }
 
@@ -48,7 +49,8 @@ class ExternalImage {
     /**
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->url;
     }
 }

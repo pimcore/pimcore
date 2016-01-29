@@ -16,7 +16,8 @@ namespace Pimcore\Model\User\Workspace;
 
 use Pimcore\Model;
 
-class Document extends AbstractWorkspace {
+class Document extends AbstractWorkspace
+{
 
     /**
      * @var bool

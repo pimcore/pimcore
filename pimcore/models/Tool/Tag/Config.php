@@ -17,7 +17,8 @@ namespace Pimcore\Model\Tool\Tag;
 use Pimcore\Model;
 use Pimcore\Cache;
 
-class Config extends Model\AbstractModel {
+class Config extends Model\AbstractModel
+{
 
     /**
      * @var array
@@ -81,7 +82,8 @@ class Config extends Model\AbstractModel {
      * @return Config
      * @throws \Exception
      */
-    public static function getByName ($name) {
+    public static function getByName($name)
+    {
         try {
             $tag = new self();
             $tag->getDao()->getByName($name);
@@ -96,19 +98,20 @@ class Config extends Model\AbstractModel {
     /**
      * @return void
      */
-    public function delete() {
-
+    public function delete()
+    {
         $this->getDao()->delete();
 
         // clear cache tags
-        Cache::clearTags(array("tagmanagement","output"));
+        Cache::clearTags(array("tagmanagement", "output"));
     }
 
     /**
      * @param $parameters
      * @return bool
      */
-    public function addItem ($parameters) {
+    public function addItem($parameters)
+    {
         $this->items[] = $parameters;
 
         return true;
@@ -119,8 +122,8 @@ class Config extends Model\AbstractModel {
      * @param $parameters
      * @return bool
      */
-    public function addItemAt ($position, $parameters) {
-
+    public function addItemAt($position, $parameters)
+    {
         array_splice($this->items, $position, 0, array($parameters));
 
         return true;
@@ -130,7 +133,8 @@ class Config extends Model\AbstractModel {
     /**
      * @return void
      */
-    public function resetItems () {
+    public function resetItems()
+    {
         $this->items = array();
     }
 

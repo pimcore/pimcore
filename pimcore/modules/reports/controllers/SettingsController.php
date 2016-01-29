@@ -12,10 +12,11 @@
 
 use Pimcore\File;
 
-class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports {
+class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports
+{
     
-    public function getAction () {
-
+    public function getAction()
+    {
         $this->checkPermission("system_settings");
 
         $conf = $this->getConfig();
@@ -28,8 +29,8 @@ class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Report
         $this->_helper->json($response);
     }
     
-    public function saveAction () {
-
+    public function saveAction()
+    {
         $this->checkPermission("system_settings");
 
         $values = \Zend_Json::decode($this->getParam("data"));

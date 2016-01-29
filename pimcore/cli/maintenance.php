@@ -27,4 +27,3 @@ $_SERVER['argv'] = $arguments;
 ob_start();
 
 include_once("console.php");
-

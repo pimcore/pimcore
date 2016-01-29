@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
 
     /**
@@ -33,28 +34,26 @@ class Dao extends Model\Listing\Dao\AbstractDao {
 
         // create base
         $select->from(
-            [ 'objects' ]
-            , [
-                new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS o_id')
-                , 'o_type'
+            [ 'objects' ], [
+                new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS o_id'), 'o_type'
             ]
         );
 
 
         // add joins
-        $this->addJoins( $select );
+        $this->addJoins($select);
 
         // add condition
-        $this->addConditions( $select );
+        $this->addConditions($select);
 
         // group by
-        $this->addGroupBy( $select );
+        $this->addGroupBy($select);
 
         // order
-        $this->addOrder( $select );
+        $this->addOrder($select);
 
         // limit
-        $this->addLimit( $select );
+        $this->addLimit($select);
 
         return $select;
     }
@@ -65,7 +64,8 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return array
      */
-    public function load() {
+    public function load()
+    {
 
         // load id's
         $list = $this->loadIdList();
@@ -73,7 +73,7 @@ class Dao extends Model\Listing\Dao\AbstractDao {
 
         $objects = array();
         foreach ($list as $o_id) {
-            if($object = Object::getById($o_id)) {
+            if ($object = Object::getById($o_id)) {
                 $objects[] = $object;
             }
         }
@@ -92,16 +92,14 @@ class Dao extends Model\Listing\Dao\AbstractDao {
         $hasLimit = !empty($limit);
         $query = $this->getQuery();
 
-        if(!$hasLimit)
-        {
+        if (!$hasLimit) {
             $query->limit(1);
         }
 
         $this->loadIdList();
 
-        if(!$hasLimit)
-        {
-            $query->reset( \Zend_Db_Select::LIMIT_COUNT );
+        if (!$hasLimit) {
+            $query->reset(\Zend_Db_Select::LIMIT_COUNT);
         }
 
         return (int)$this->totalCount;
@@ -113,8 +111,7 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      */
     public function getCount()
     {
-        if (count($this->model->getObjects()) == 0)
-        {
+        if (count($this->model->getObjects()) == 0) {
             $this->load();
         }
 
@@ -126,11 +123,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return array
      */
-    public function loadIdList() {
-
+    public function loadIdList()
+    {
         $query = $this->getQuery(true);
-        $objectIds = $this->db->fetchCol( $query, $this->model->getConditionVariables() );
-        $this->totalCount = (int)$this->db->fetchOne( 'SELECT FOUND_ROWS()' );
+        $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
+        $this->totalCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
 
         return $objectIds;
     }
@@ -139,12 +136,12 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return string
      */
-    protected function getCondition() {
-
+    protected function getCondition()
+    {
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();
-        if(!empty($objectTypes)) {
-            if(!empty($condition)) {
+        if (!empty($objectTypes)) {
+            if (!empty($condition)) {
                 $condition .= " AND ";
             }
             $condition .= " o_type IN ('" . implode("','", $objectTypes) . "')";
@@ -155,8 +152,7 @@ class Dao extends Model\Listing\Dao\AbstractDao {
                 return " WHERE (" . $condition . ") AND o_published = 1";
             }
             return " WHERE " . $condition . " ";
-        }
-        else if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+        } elseif (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
             return " WHERE o_published = 1";
         }
         return "";
@@ -185,8 +181,8 @@ class Dao extends Model\Listing\Dao\AbstractDao {
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();
 
-        if(!empty($objectTypes)) {
-            if(!empty($condition)) {
+        if (!empty($objectTypes)) {
+            if (!empty($condition)) {
                 $condition .= " AND ";
             }
             $condition .= " o_type IN ('" . implode("','", $objectTypes) . "')";
@@ -196,15 +192,13 @@ class Dao extends Model\Listing\Dao\AbstractDao {
             if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
                 $condition = "(" . $condition . ") AND o_published = 1";
             }
-        }
-        else if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+        } elseif (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
             $condition = "o_published = 1";
         }
 
 
-        if($condition)
-        {
-            $select->where( $condition );
+        if ($condition) {
+            $select->where($condition);
         }
 
         return $this;
@@ -213,7 +207,8 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return $this
      */
-    public function reset() {
+    public function reset()
+    {
         $this->totalCount = 0;
 
         return $this;

@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @var null
@@ -28,14 +29,16 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @return string
      */
-    public function getDataTableName () {
+    public function getDataTableName()
+    {
         return "object_classificationstore_data_" . $this->model->getClass()->getId();
     }
 
     /**
      * @return string
      */
-    public function getGroupsTableName () {
+    public function getGroupsTableName()
+    {
         return "object_classificationstore_groups_" . $this->model->getClass()->getId();
     }
 
@@ -43,7 +46,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function save () {
+    public function save()
+    {
         $object = $this->model->object;
         $objectId = $object->getId();
         $dataTable = $this->getDataTableName();
@@ -80,7 +84,6 @@ class Dao extends Model\Dao\AbstractDao {
 
                     );
                     $this->db->insertOrUpdate($dataTable, $data);
-
                 }
             }
         }
@@ -110,7 +113,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function delete () {
+    public function delete()
+    {
         $object = $this->model->object;
         $objectId = $object->getId();
         $dataTable = $this->getDataTableName();
@@ -126,7 +130,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function load () {
+    public function load()
+    {
         /** @var  $classificationStore Object\Classificationstore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
@@ -180,7 +185,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function createUpdateTable () {
+    public function createUpdateTable()
+    {
         $groupsTable = $this->getGroupsTableName();
         $dataTable = $this->getDataTableName();
 
@@ -207,6 +213,4 @@ class Dao extends Model\Dao\AbstractDao {
 //
         $this->tableDefinitions = null;
     }
-
-
 }

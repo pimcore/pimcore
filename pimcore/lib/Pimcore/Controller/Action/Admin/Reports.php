@@ -15,7 +15,8 @@ namespace Pimcore\Controller\Action\Admin;
 use Pimcore\Controller\Action\Admin;
 use Pimcore\Config;
 
-class Reports extends Admin {
+class Reports extends Admin
+{
 
     /**
      * @var
@@ -25,15 +26,16 @@ class Reports extends Admin {
     /**
      *
      */
-    public function init () {
-        
+    public function init()
+    {
         parent::init();
     }
 
     /**
      * @return \Zend_Config
      */
-    public function getConfig () {
+    public function getConfig()
+    {
         return Config::getReportConfig();
     }
 }

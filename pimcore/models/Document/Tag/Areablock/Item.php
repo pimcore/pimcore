@@ -54,7 +54,7 @@ class Item
     public function getElement($name)
     {
         $id = sprintf('%s%s%d', $name, $this->name, $this->index);
-        $element = $this->doc->getElement( $id );
+        $element = $this->doc->getElement($id);
         $element->suffixes = array( $this->name );
 
         return $element;
@@ -71,8 +71,7 @@ class Item
         $element = $this->getElement($args[0]);
         $class = "\\Pimcore\\Model\\Document\\Tag\\" . str_replace('get', '', $func);
 
-        if(!strcasecmp(get_class($element), $class))
-        {
+        if (!strcasecmp(get_class($element), $class)) {
             return $element;
         }
     }

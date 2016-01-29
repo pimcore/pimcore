@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Layout;
 
 use Pimcore\Model;
 
-class Text extends Model\Object\ClassDefinition\Layout {
+class Text extends Model\Object\ClassDefinition\Layout
+{
 
     /**
      * Static type of this element
@@ -30,7 +31,8 @@ class Text extends Model\Object\ClassDefinition\Layout {
     /**
      * @return string
      */
-    public function getHtml() {
+    public function getHtml()
+    {
         return $this->html;
     }
 
@@ -38,7 +40,8 @@ class Text extends Model\Object\ClassDefinition\Layout {
      * @param $html
      * @return $this
      */
-    public function setHtml ($html) {
+    public function setHtml($html)
+    {
         $this->html = $html;
         return $this;
     }

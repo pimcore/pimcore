@@ -16,13 +16,15 @@ namespace Pimcore\Model\Schedule\Task;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $id
      * @throws \Exception
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $data = $this->db->fetchRow("SELECT * FROM schedule_tasks WHERE id = ?", $id);
         if (!$data["id"]) {
             throw new \Exception("there is no task for the requested id");
@@ -36,7 +38,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->update();
         }
@@ -48,7 +51,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
         $this->db->insert("schedule_tasks", array());
         $this->model->setId($this->db->lastInsertId());
 
@@ -60,23 +64,22 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function update() {
-
+    public function update()
+    {
         $site = get_object_vars($this->model);
 
         foreach ($site as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("schedule_tasks"))) {
-
                 if (is_array($value) || is_object($value)) {
                     $value = \Pimcore\Tool\Serialize::serialize($value);
-                } else if(is_bool($value)) {
+                } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
                 $data[$key] = $value;
             }
         }
 
-        $this->db->update("schedule_tasks", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
+        $this->db->update("schedule_tasks", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -84,7 +87,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete("schedule_tasks", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 }

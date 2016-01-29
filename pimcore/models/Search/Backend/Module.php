@@ -12,50 +12,51 @@
 
 namespace Pimcore\Model\Search\Backend;
 
-class Module extends \Pimcore\API\Module\AbstractModule {
+class Module extends \Pimcore\API\Module\AbstractModule
+{
 
     /**
      * @throws \Zend_EventManager_Exception_InvalidArgumentException
      */
-    public function init() {
+    public function init()
+    {
 
         // attach event-listener
-        foreach (["asset","object","document"] as $type) {
+        foreach (["asset", "object", "document"] as $type) {
             \Pimcore::getEventManager()->attach($type . ".postAdd", array($this, "postAddElement"));
             \Pimcore::getEventManager()->attach($type . ".postUpdate", array($this, "postUpdateElement"));
             \Pimcore::getEventManager()->attach($type . ".preDelete", array($this, "preDeleteElement"));
         }
-
     }
 
     /**
      * @param $e
      */
-    public function postAddElement($e){
+    public function postAddElement($e)
+    {
         $searchEntry = new Data($e->getTarget());
         $searchEntry->save();
-
     }
 
     /**
      * @param $e
      */
-    public function preDeleteElement($e){
-        
+    public function preDeleteElement($e)
+    {
         $searchEntry = Data::getForElement($e->getTarget());
-        if($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id){
+        if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
             $searchEntry->delete();
         }
-
     }
 
     /**
      * @param $e
      */
-    public function postUpdateElement($e){
+    public function postUpdateElement($e)
+    {
         $element = $e->getTarget();
         $searchEntry = Data::getForElement($element);
-        if($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id ){
+        if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
             $searchEntry->setDataFromElement($element);
             $searchEntry->save();
         } else {

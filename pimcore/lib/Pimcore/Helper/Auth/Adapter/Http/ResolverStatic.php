@@ -28,9 +28,10 @@ class ResolverStatic implements \Zend_Auth_Adapter_Http_Resolver_Interface
      * @param $username
      * @param $password
      */
-     public function __construct ($username, $password) {
-          $this->username = $username;
-          $this->password = $password;
+     public function __construct($username, $password)
+     {
+         $this->username = $username;
+         $this->password = $password;
      }
 
     /**
@@ -40,11 +41,10 @@ class ResolverStatic implements \Zend_Auth_Adapter_Http_Resolver_Interface
      */
     public function resolve($username, $realm)
     {
-          if($username == $this->username) {
-                return $this->password;
-          }
+        if ($username == $this->username) {
+            return $this->password;
+        }
 
         return false;
     }
 }
-

@@ -13,9 +13,11 @@
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 
-class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document {
+class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
+{
 
-    public function getDataByIdAction() {
+    public function getDataByIdAction()
+    {
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
@@ -37,7 +39,7 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document 
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
-        if($snippet->getContentMasterDocument()) {
+        if ($snippet->getContentMasterDocument()) {
             $snippet->contentMasterDocumentPath = $snippet->getContentMasterDocument()->getRealFullPath();
         }
 
@@ -53,7 +55,8 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document 
         $this->_helper->json(false);
     }
 
-    public function saveAction() {
+    public function saveAction()
+    {
         if ($this->getParam("id")) {
             $snippet = Document\Snippet::getById($this->getParam("id"));
             $snippet = $this->getLatestVersion($snippet);
@@ -78,10 +81,7 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document 
                 } catch (\Exception $e) {
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
-
-
-            }
-            else {
+            } else {
                 if ($snippet->isAllowed("save")) {
                     $this->setValuesToDocument($snippet);
 
@@ -92,8 +92,6 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document 
                     } catch (\Exception $e) {
                         $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                     }
-
-
                 }
             }
         }
@@ -101,12 +99,11 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document 
         $this->_helper->json(false);
     }
 
-    protected function setValuesToDocument(Document $snippet) {
-
+    protected function setValuesToDocument(Document $snippet)
+    {
         $this->addSettingsToDocument($snippet);
         $this->addDataToDocument($snippet);
         $this->addSchedulerToDocument($snippet);
         $this->addPropertiesToDocument($snippet);
     }
-
 }

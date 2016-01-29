@@ -14,7 +14,8 @@ namespace Pimcore\Model\WebsiteSetting;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of WebsiteSetting
@@ -29,7 +30,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 

@@ -72,7 +72,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         // hook logger into pimcore
         \Logger::addLogger($logger);
 
-        if($this->output->isVerbose()) {
+        if ($this->output->isVerbose()) {
             \Logger::setPriorities([
                 "info",
                 "notice",
@@ -85,7 +85,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         }
 
         // set all priorities
-        if($this->output->isDebug()) {
+        if ($this->output->isDebug()) {
             \Logger::setVerbosePriorities();
         }
     }
@@ -93,8 +93,9 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     /**
      *
      */
-    protected function disableLogging() {
-       \Logger::removeLogger($this->getLogger());
+    protected function disableLogging()
+    {
+        \Logger::removeLogger($this->getLogger());
     }
 
     /**

@@ -16,8 +16,8 @@ namespace Pimcore\Model\Object\QuantityValue;
 
 use Pimcore\Model;
 
-
-class Unit extends Model\AbstractModel {
+class Unit extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -68,7 +68,8 @@ class Unit extends Model\AbstractModel {
      * @param string $abbreviation
      * @return Unit
      */
-    public static function getByAbbreviation($abbreviation) {
+    public static function getByAbbreviation($abbreviation)
+    {
         $unit = new self();
         $unit->getDao()->getByAbbreviation($abbreviation);
         return $unit;
@@ -78,7 +79,8 @@ class Unit extends Model\AbstractModel {
      * @param string $reference
      * @return Unit
      */
-    public static function getByReference($reference) {
+    public static function getByReference($reference)
+    {
         $unit = new self();
         $unit->getDao()->getByReference($reference);
         return $unit;
@@ -88,24 +90,21 @@ class Unit extends Model\AbstractModel {
      * @param string $id
      * @return Unit
      */
-    public static function getById($id) {
-
+    public static function getById($id)
+    {
         $cacheKey = Unit\Dao::TABLE_NAME . "_" . $id;
 
         try {
             $unit = \Zend_Registry::get($cacheKey);
-        }
-        catch (\Exception $e) {
-
+        } catch (\Exception $e) {
             try {
                 $unit = new self();
                 $unit->getDao()->getById($id);
                 \Zend_Registry::set($cacheKey, $unit);
-            } catch(\Exception $ex) {
+            } catch (\Exception $ex) {
                 \Logger::debug($ex->getMessage());
                 return null;
             }
-
         }
 
         return $unit;
@@ -115,7 +114,8 @@ class Unit extends Model\AbstractModel {
      * @param array $values
      * @return Unit
      */
-    public static function create($values = array()) {
+    public static function create($values = array())
+    {
         $unit = new self();
         $unit->setValues($values);
         return $unit;
@@ -124,14 +124,16 @@ class Unit extends Model\AbstractModel {
     /**
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         $this->getDao()->save();
     }
 
     /**
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();
         \Zend_Registry::set($cacheKey, null);
 
@@ -139,7 +141,8 @@ class Unit extends Model\AbstractModel {
     }
 
 
-    public function __toString() {
+    public function __toString()
+    {
         return ucfirst($this->getAbbreviation() . " (" . $this->getId() . ")");
     }
 
@@ -234,5 +237,4 @@ class Unit extends Model\AbstractModel {
     {
         $this->conversionOffset = $conversionOffset;
     }
-
 }

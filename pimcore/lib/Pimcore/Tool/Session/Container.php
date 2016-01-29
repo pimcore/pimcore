@@ -12,7 +12,8 @@
 
 namespace Pimcore\Tool\Session;
 
-class Container extends \Zend_Session_Namespace {
+class Container extends \Zend_Session_Namespace
+{
 
     // we need this class because Zend_Session_Namespace relies directly on the $_SESSION variable
     // which is a problem when we are using multiple sessions at once and need permanent access to the data
@@ -48,8 +49,8 @@ class Container extends \Zend_Session_Namespace {
      */
     public function & __get($name)
     {
-        if($this->lockStorage) {
-            if(isset($this->lockStorage[$name])) {
+        if ($this->lockStorage) {
+            if (isset($this->lockStorage[$name])) {
                 return $this->lockStorage[$name];
             }
         }

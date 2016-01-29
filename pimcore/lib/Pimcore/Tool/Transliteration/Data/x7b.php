@@ -14,7 +14,7 @@ $base = array(
   0xA0 => 'Chui ', 'Guan ', 'Yuan ', 'Ce ', 'Ju ', 'Bo ', 'Ze ', 'Qie ', 'Tuo ', 'Luo ', 'Dan ', 'Xiao ', 'Ruo ', 'Jian ', 'Xuan ', 'Bian ',
   0xB0 => 'Sun ', 'Xiang ', 'Xian ', 'Ping ', 'Zhen ', 'Sheng ', 'Hu ', 'Shi ', 'Zhu ', 'Yue ', 'Chun ', 'Lu ', 'Wu ', 'Dong ', 'Xiao ', 'Ji ',
   0xC0 => 'Jie ', 'Huang ', 'Xing ', 'Mei ', 'Fan ', 'Chui ', 'Zhuan ', 'Pian ', 'Feng ', 'Zhu ', 'Hong ', 'Qie ', 'Hou ', 'Qiu ', 'Miao ', 'Qian ',
-  0xD0 => NULL, 'Kui ', 'Sik ', 'Lou ', 'Yun ', 'He ', 'Tang ', 'Yue ', 'Chou ', 'Gao ', 'Fei ', 'Ruo ', 'Zheng ', 'Gou ', 'Nie ', 'Qian ',
+  0xD0 => null, 'Kui ', 'Sik ', 'Lou ', 'Yun ', 'He ', 'Tang ', 'Yue ', 'Chou ', 'Gao ', 'Fei ', 'Ruo ', 'Zheng ', 'Gou ', 'Nie ', 'Qian ',
   0xE0 => 'Xiao ', 'Cuan ', 'Gong ', 'Pang ', 'Du ', 'Li ', 'Bi ', 'Zhuo ', 'Chu ', 'Shai ', 'Chi ', 'Zhu ', 'Qiang ', 'Long ', 'Lan ', 'Jian ',
   0xF0 => 'Bu ', 'Li ', 'Hui ', 'Bi ', 'Di ', 'Cong ', 'Yan ', 'Peng ', 'Sen ', 'Zhuan ', 'Pai ', 'Piao ', 'Dou ', 'Yu ', 'Mie ', 'Zhuan ',
 );

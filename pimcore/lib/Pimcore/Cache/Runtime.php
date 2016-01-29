@@ -12,7 +12,8 @@
 
 namespace Pimcore\Cache;
 
-class Runtime {
+class Runtime
+{
 
     /**
      * @var array
@@ -24,7 +25,8 @@ class Runtime {
      * @param $id
      * @return mixed
      */
-    public static function save($data, $id) {
+    public static function save($data, $id)
+    {
         static::$_cache[$id] = $data;
         return $data;
     }
@@ -33,14 +35,16 @@ class Runtime {
      * @param $id
      * @return mixed
      */
-    public static function load($id) {
+    public static function load($id)
+    {
         return static::$_cache[$id];
     }
 
     /**
      *
      */
-    public static function clear(){
+    public static function clear()
+    {
         static::$_cache = array();
     }
 }

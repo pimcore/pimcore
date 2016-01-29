@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class Gender extends Model\Object\ClassDefinition\Data\Select {
+class Gender extends Model\Object\ClassDefinition\Data\Select
+{
 
     /**
      * Static type of this element
@@ -26,7 +27,8 @@ class Gender extends Model\Object\ClassDefinition\Data\Select {
     public $fieldtype = "gender";
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $options = array(
             array("key" => "male", "value" => "male"),
             array("key" => "female", "value" => "female"),

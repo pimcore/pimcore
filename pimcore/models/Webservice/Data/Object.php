@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data;
 
 use Pimcore\Model;
 
-class Object extends Model\Webservice\Data {
+class Object extends Model\Webservice\Data
+{
 
 
     /** If set to true then null values will not be exported.
@@ -64,13 +65,13 @@ class Object extends Model\Webservice\Data {
      * @param $object
      * @param null $options
      */
-    public function map($object, $options = null) {
-
+    public function map($object, $options = null)
+    {
         parent::map($object);
 
         $keys = get_object_vars($this);
-        if(array_key_exists("childs",$keys)){
-            if($object->hasChilds()) {
+        if (array_key_exists("childs", $keys)) {
+            if ($object->hasChilds()) {
                 $this->childs = array();
                 foreach ($object->getChilds() as $child) {
                     $item = new Model\Webservice\Data\Object\Listing\Item();
@@ -80,7 +81,6 @@ class Object extends Model\Webservice\Data {
                 }
             }
         }
-
     }
 
     /**
@@ -98,8 +98,4 @@ class Object extends Model\Webservice\Data {
     {
         return self::$dropNullValues;
     }
-
-
-
-
 }

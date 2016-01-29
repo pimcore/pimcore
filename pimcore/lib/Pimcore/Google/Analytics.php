@@ -15,7 +15,8 @@ namespace Pimcore\Google;
 use Pimcore\Config;
 use Pimcore\Model;
 
-class Analytics {
+class Analytics
+{
 
     /**
      * @var array
@@ -40,8 +41,9 @@ class Analytics {
      * @param Model\Site $site
      * @return bool
      */
-    public static function isConfigured (Model\Site $site = null) {
-        if(self::getSiteConfig($site) && self::getSiteConfig($site)->profile) {
+    public static function isConfigured(Model\Site $site = null)
+    {
+        if (self::getSiteConfig($site) && self::getSiteConfig($site)->profile) {
             return true;
         }
         return false;
@@ -51,8 +53,8 @@ class Analytics {
      * @param null $site
      * @return bool
      */
-    public static function getSiteConfig ($site = null) {
-        
+    public static function getSiteConfig($site = null)
+    {
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey($site);
         
         $config = Config::getReportConfig();
@@ -60,7 +62,7 @@ class Analytics {
             return false;
         }
 
-        if($config->analytics->sites->$siteKey) {
+        if ($config->analytics->sites->$siteKey) {
             return Config::getReportConfig()->analytics->sites->$siteKey;
         }
         return false;
@@ -70,14 +72,14 @@ class Analytics {
      * @param null $config
      * @return string
      */
-    public static function getCode ($config = null) {
-                
-        if(is_null($config)){
+    public static function getCode($config = null)
+    {
+        if (is_null($config)) {
             $config = self::getSiteConfig();
         }
         
         // do nothing if not configured
-        if(!$config || !$config->trackid) {
+        if (!$config || !$config->trackid) {
             return "";
         }
 
@@ -85,24 +87,24 @@ class Analytics {
         $codeBeforePageview = $config->additionalcodebeforepageview;
         $codeBeforeEnd = $config->additionalcode;
 
-        if(!empty(self::$additionalCodes["beforeInit"])) {
+        if (!empty(self::$additionalCodes["beforeInit"])) {
             $codeBeforeInit .= "\n" . implode("\n", self::$additionalCodes["beforeInit"]);
         }
 
-        if(!empty(self::$additionalCodes["beforePageview"])) {
+        if (!empty(self::$additionalCodes["beforePageview"])) {
             $codeBeforePageview .= "\n" . implode("\n", self::$additionalCodes["beforePageview"]);
         }
 
-        if(!empty(self::$additionalCodes["beforeEnd"])) {
+        if (!empty(self::$additionalCodes["beforeEnd"])) {
             $codeBeforeEnd .= "\n" . implode("\n", self::$additionalCodes["beforeEnd"]);
         }
 
 
         $code = "";
 
-        if($config->asynchronouscode || $config->retargetingcode) {
+        if ($config->asynchronouscode || $config->retargetingcode) {
             $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';";
-            if($config->retargetingcode) {
+            if ($config->retargetingcode) {
                 $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';";
             }
 
@@ -151,28 +153,31 @@ class Analytics {
         }
 
         
-        return $code;  
+        return $code;
     }
 
     /**
      * @param string $code
      * @param string $where
      */
-    public static function addAdditionalCode($code, $where = "beforeEnd") {
+    public static function addAdditionalCode($code, $where = "beforeEnd")
+    {
         self::$additionalCodes[$where][] = $code;
     }
 
     /**
      * @param Model\Element\ElementInterface $element
      */
-    public static function trackElement (Model\Element\ElementInterface $element) {
+    public static function trackElement(Model\Element\ElementInterface $element)
+    {
         \Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
     }
 
     /**
      * @param $path
      */
-    public static function trackPageView ($path) {
+    public static function trackPageView($path)
+    {
         \Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
     }
 

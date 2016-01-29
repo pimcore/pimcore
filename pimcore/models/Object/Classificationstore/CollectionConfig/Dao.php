@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\Classificationstore\CollectionConfig;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     const TABLE_NAME_COLLECTIONS = "classificationstore_collections";
 
@@ -26,8 +27,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param integer $id
      * @return void
      */
-    public function getById($id = null) {
-
+    public function getById($id = null)
+    {
         if ($id != null) {
             $this->model->setId($id);
         }
@@ -45,8 +46,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param null $name
      * @throws \Exception
      */
-    public function getByName($name = null) {
-
+    public function getByName($name = null)
+    {
         if ($name != null) {
             $this->model->setName($name);
         }
@@ -55,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao {
 
         $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_COLLECTIONS . " WHERE name = ?", $name);
 
-        if($data["id"]) {
+        if ($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception("Config with name: " . $this->model->getName() . " does not exist");
@@ -67,7 +68,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->model->update();
         }
@@ -79,14 +81,16 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete(self::TABLE_NAME_COLLECTIONS, $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
      * @throws \Exception
      */
-    public function update() {
+    public function update()
+    {
         try {
             $ts = time();
             $this->model->setModificationDate($ts);
@@ -95,10 +99,10 @@ class Dao extends Model\Dao\AbstractDao {
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_COLLECTIONS))) {
-                    if(is_bool($value)) {
+                    if (is_bool($value)) {
                         $value = (int) $value;
                     }
-                    if(is_array($value) || is_object($value)) {
+                    if (is_array($value) || is_object($value)) {
                         $value = \Pimcore\Tool\Serialize::serialize($value);
                     }
 
@@ -108,8 +112,7 @@ class Dao extends Model\Dao\AbstractDao {
 
             $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
             return $this->model;
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -119,7 +122,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
         $ts = time();
         $this->model->setModificationDate($ts);
         $this->model->setCreationDate($ts);

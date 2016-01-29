@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
-class Select extends Model\Document\Tag {
+class Select extends Model\Document\Tag
+{
 
     /**
      * Contains the current selected value
@@ -29,7 +30,8 @@ class Select extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "select";
     }
 
@@ -37,7 +39,8 @@ class Select extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->text;
     }
 
@@ -45,7 +48,8 @@ class Select extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
+    public function frontend()
+    {
         return $this->text;
     }
 
@@ -54,7 +58,8 @@ class Select extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->text = $data;
         return $this;
     }
@@ -64,7 +69,8 @@ class Select extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         $this->text = $data;
         return $this;
     }
@@ -72,7 +78,8 @@ class Select extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return empty($this->text);
     }
 
@@ -81,15 +88,13 @@ class Select extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
-
     }
-
-
 }

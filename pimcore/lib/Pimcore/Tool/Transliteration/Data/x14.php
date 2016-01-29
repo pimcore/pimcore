@@ -1,9 +1,9 @@
 <?php
 
 $base = array(
-  0x00 => NULL, 'e', 'aai', 'i', 'ii', 'o', 'oo', 'oo', 'ee', 'i', 'a', 'aa', 'we', 'we', 'wi', 'wi',
+  0x00 => null, 'e', 'aai', 'i', 'ii', 'o', 'oo', 'oo', 'ee', 'i', 'a', 'aa', 'we', 'we', 'wi', 'wi',
   0x10 => 'wii', 'wii', 'wo', 'wo', 'woo', 'woo', 'woo', 'wa', 'wa', 'waa', 'waa', 'waa', 'ai', 'w', '\'', 't',
-  0x20 => 'k', 'sh', 's', 'n', 'w', 'n', NULL, 'w', 'c', '?', 'l', 'en', 'in', 'on', 'an', 'pe',
+  0x20 => 'k', 'sh', 's', 'n', 'w', 'n', null, 'w', 'c', '?', 'l', 'en', 'in', 'on', 'an', 'pe',
   0x30 => 'paai', 'pi', 'pii', 'po', 'poo', 'poo', 'hee', 'hi', 'pa', 'paa', 'pwe', 'pwe', 'pwi', 'pwi', 'pwii', 'pwii',
   0x40 => 'pwo', 'pwo', 'pwoo', 'pwoo', 'pwa', 'pwa', 'pwaa', 'pwaa', 'pwaa', 'p', 'p', 'h', 'te', 'taai', 'ti', 'tii',
   0x50 => 'to', 'too', 'too', 'dee', 'di', 'ta', 'taa', 'twe', 'twe', 'twi', 'twi', 'twii', 'twii', 'two', 'two', 'twoo',

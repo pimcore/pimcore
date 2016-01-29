@@ -15,9 +15,10 @@
 namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
-use Pimcore\Tool; 
+use Pimcore\Tool;
 
-class Classificationstore extends Model\AbstractModel {
+class Classificationstore extends Model\AbstractModel
+{
 
     /**
      * @var array
@@ -46,8 +47,9 @@ class Classificationstore extends Model\AbstractModel {
     /**
      * @param array $items
      */
-    public function __construct($items = null) {
-        if($items) {
+    public function __construct($items = null)
+    {
+        if ($items) {
             $this->setItems($items);
         }
     }
@@ -113,7 +115,7 @@ class Classificationstore extends Model\AbstractModel {
      */
     public function getClass()
     {
-        if(!$this->class && $this->getObject()) {
+        if (!$this->class && $this->getObject()) {
             $this->class = $this->getObject()->getClass();
         }
         return $this->class;
@@ -124,8 +126,9 @@ class Classificationstore extends Model\AbstractModel {
      * @param null $language
      * @return string
      */
-    public function getLanguage ($language = null) {
-        if($language) {
+    public function getLanguage($language = null)
+    {
+        if ($language) {
             return (string) $language;
         }
 
@@ -140,13 +143,13 @@ class Classificationstore extends Model\AbstractModel {
      * @param null $language
      * @return $this
      */
-    public function setLocalizedKeyValue ($groupId, $keyId, $value, $language = null) {
-
+    public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
+    {
         $language  = $this->getLanguage($language);
 
         if ($value) {
             $this->items[$groupId][$keyId][$language] = $value;
-        } else if (isset($this->items[$groupId][$keyId][$language])) {
+        } elseif (isset($this->items[$groupId][$keyId][$language])) {
             unset($this->items[$groupId][$keyId][$language]);
             if (empty($this->items[$groupId][$keyId])) {
                 unset($this->items[$groupId][$keyId]);
@@ -161,14 +164,16 @@ class Classificationstore extends Model\AbstractModel {
     /** Removes the group with the given id
      * @param $groupId
      */
-    public function removeGroupData($groupId) {
+    public function removeGroupData($groupId)
+    {
         unset($this->items[$groupId]);
     }
 
     /** Returns an array of
      * @return array
      */
-    public function getGroupIdsWithData() {
+    public function getGroupIdsWithData()
+    {
         return array_keys($this->items);
     }
 
@@ -205,16 +210,16 @@ class Classificationstore extends Model\AbstractModel {
     }
 
 
-    protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition) {
+    protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
+    {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);
         $data = null;
 
         foreach ($fallbackLanguages as $l) {
-            if(
+            if (
                 array_key_exists($groupId, $this->items)
                 &&  array_key_exists($keyId, $this->items[$groupId])
-                &&  array_key_exists($l, $this->items[$groupId][$keyId]))
-            {
+                &&  array_key_exists($l, $this->items[$groupId][$keyId])) {
                 $data = $this->items[$groupId][$keyId][$l];
                 if (!$fielddefinition->isEmpty($data)) {
                     return $data;
@@ -227,7 +232,6 @@ class Classificationstore extends Model\AbstractModel {
         }
 
         return $data;
-
     }
 
     /**
@@ -237,7 +241,8 @@ class Classificationstore extends Model\AbstractModel {
      * @param bool|false $ignoreFallbackLanguage
      * @return null
      */
-    public function getLocalizedKeyValue($groupId, $keyId, $language = "default", $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false) {
+    public function getLocalizedKeyValue($groupId, $keyId, $language = "default", $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
+    {
         $oid = $this->object->getId();
 
         $keyConfig = Model\Object\Classificationstore\DefinitionCache::get($keyId);
@@ -255,14 +260,14 @@ class Classificationstore extends Model\AbstractModel {
         $language = $this->getLanguage($language);
         $data = null;
 
-        if(array_key_exists($groupId, $this->items)  && array_key_exists($keyId, $this->items[$groupId])
+        if (array_key_exists($groupId, $this->items)  && array_key_exists($keyId, $this->items[$groupId])
                 && array_key_exists($language, $this->items[$groupId][$keyId])
-            )  {
+            ) {
             $data = $this->items[$groupId][$keyId][$language];
         }
 
         // check for fallback value
-        if($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
+        if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             $data = $this->getFallbackValue($groupId, $keyId, $language, $fieldDefinition);
         }
 
@@ -273,16 +278,15 @@ class Classificationstore extends Model\AbstractModel {
 
         // check for inherited value
         $doGetInheritedValues = AbstractObject::doGetInheritedValues();
-        if($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
+        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();
 
             if ($allowInherit) {
-
                 if ($object->getParent() instanceof AbstractObject) {
                     $parent = $object->getParent();
-                    while($parent && $parent->getType() == "folder") {
+                    while ($parent && $parent->getType() == "folder") {
                         $parent = $parent->getParent();
                     }
 
@@ -293,7 +297,7 @@ class Classificationstore extends Model\AbstractModel {
                                 $getter = "get" . ucfirst($this->fieldname);
                                 $classificationStore = $parent->$getter();
                                 if ($classificationStore instanceof Classificationstore) {
-                                    if($classificationStore->object->getId() != $this->object->getId()) {
+                                    if ($classificationStore->object->getId() != $this->object->getId()) {
                                         $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
                                     }
                                 }
@@ -305,7 +309,7 @@ class Classificationstore extends Model\AbstractModel {
         }
 
 
-        if($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
+        if ($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
             $data =  $fieldDefinition->preGetData($this, array(
                 "data" => $data,
                 "language" => $language,
@@ -344,7 +348,8 @@ class Classificationstore extends Model\AbstractModel {
      * @param $groupId
      * @param $collectionId
      */
-    public function setGroupCollectionMapping($groupId, $collectionId) {
+    public function setGroupCollectionMapping($groupId, $collectionId)
+    {
         if (!is_array($this->groupCollectionMapping)) {
             $this->groupCollectionMapping[$groupId] = $collectionId;
         }
@@ -354,12 +359,10 @@ class Classificationstore extends Model\AbstractModel {
      * @param $groupId
      * @return mixed
      */
-    public function getGroupCollectionMapping($groupId) {
+    public function getGroupCollectionMapping($groupId)
+    {
         if ($this->groupCollectionMapping) {
             return $this->groupCollectionMapping[$groupId];
         }
     }
-
-
-
 }

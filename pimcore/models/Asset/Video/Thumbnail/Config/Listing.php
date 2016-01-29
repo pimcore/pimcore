@@ -16,7 +16,8 @@ namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Property\Predefined
@@ -28,7 +29,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getThumbnails() {
+    public function getThumbnails()
+    {
         return $this->thumbnails;
     }
 
@@ -36,7 +38,8 @@ class Listing extends Model\Listing\JsonListing {
      * @param $thumbnails
      * @return $this
      */
-    public function setThumbnails($thumbnails) {
+    public function setThumbnails($thumbnails)
+    {
         $this->thumbnails = $thumbnails;
         return $this;
     }

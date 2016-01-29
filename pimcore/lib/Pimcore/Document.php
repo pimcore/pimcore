@@ -12,26 +12,28 @@
 
 namespace Pimcore;
 
-use Pimcore\Tool; 
+use Pimcore\Tool;
 
-class Document {
+class Document
+{
 
     /**
      * @param null $adapter
      * @return bool|null|Document
      * @throws \Exception
      */
-    public static function getInstance ($adapter = null) {
+    public static function getInstance($adapter = null)
+    {
         try {
-            if($adapter) {
+            if ($adapter) {
                 $adapterClass = "\\Pimcore\\Document\\Adapter\\" . $adapter;
-                if(Tool::classExists($adapterClass)) {
+                if (Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
                     throw new \Exception("document-transcode adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
-                if($adapter = self::getDefaultAdapter()) {
+                if ($adapter = self::getDefaultAdapter()) {
                     return $adapter;
                 }
             }
@@ -46,8 +48,9 @@ class Document {
     /**
      * @return bool
      */
-    public static function isAvailable () {
-        if(self::getDefaultAdapter()) {
+    public static function isAvailable()
+    {
+        if (self::getDefaultAdapter()) {
             return true;
         }
         return false;
@@ -57,9 +60,10 @@ class Document {
      * @param $filetype
      * @return bool
      */
-    public static function isFileTypeSupported($filetype) {
-        if(self::getDefaultAdapter()) {
-            if($adapter = self::getDefaultAdapter()) {
+    public static function isFileTypeSupported($filetype)
+    {
+        if (self::getDefaultAdapter()) {
+            if ($adapter = self::getDefaultAdapter()) {
                 return $adapter->isFileTypeSupported($filetype);
             }
         }
@@ -69,16 +73,16 @@ class Document {
     /**
      * @return bool
      */
-    public static function getDefaultAdapter () {
-
+    public static function getDefaultAdapter()
+    {
         $adapters = array("LibreOffice", "Ghostscript");
 
         foreach ($adapters as $adapter) {
             $adapterClass = "\\Pimcore\\Document\\Adapter\\" . $adapter;
-            if(Tool::classExists($adapterClass)) {
+            if (Tool::classExists($adapterClass)) {
                 try {
                     $adapter = new $adapterClass();
-                    if($adapter->isAvailable()) {
+                    if ($adapter->isAvailable()) {
                         return $adapter;
                     }
                 } catch (\Exception $e) {

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
-class Multiselect extends Model\Document\Tag {
+class Multiselect extends Model\Document\Tag
+{
 
     /**
      * Contains the current selected values
@@ -29,7 +30,8 @@ class Multiselect extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "multiselect";
     }
 
@@ -37,7 +39,8 @@ class Multiselect extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->values;
     }
 
@@ -45,11 +48,13 @@ class Multiselect extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
+    public function frontend()
+    {
         return implode(",", $this->values);
     }
 
-    public function getDataEditmode() {
+    public function getDataEditmode()
+    {
         return implode(",", $this->values);
     }
 
@@ -58,7 +63,8 @@ class Multiselect extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->values = \Pimcore\Tool\Serialize::unserialize($data);
         return $this;
     }
@@ -68,13 +74,13 @@ class Multiselect extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
-
-        if(empty($data)) {
+    public function setDataFromEditmode($data)
+    {
+        if (empty($data)) {
             $this->values = [];
-        } else if (is_string($data)) {
+        } elseif (is_string($data)) {
             $this->values = explode(",", $data);
-        } else if (is_array($data)) {
+        } elseif (is_array($data)) {
             $this->values = $data;
         }
 
@@ -84,7 +90,8 @@ class Multiselect extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return empty($this->values);
     }
 
@@ -93,14 +100,13 @@ class Multiselect extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
         if ($data->values === null or is_array($data->values)) {
             $this->values = $data->values;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
-
     }
-
 }

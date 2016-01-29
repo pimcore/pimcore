@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class Email extends Model\Object\ClassDefinition\Data\Input {
+class Email extends Model\Object\ClassDefinition\Data\Input
+{
 
     /**
      * Static type of this element

@@ -54,19 +54,16 @@ class Item
     public function getElement($name)
     {
         $root = $name . implode('_', $this->suffixes);
-        foreach($this->suffixes as $item)
-        {
-            if(preg_match('#[^\d]{1}(?<index>[\d]+)$#i', $item, $match))
-            {
+        foreach ($this->suffixes as $item) {
+            if (preg_match('#[^\d]{1}(?<index>[\d]+)$#i', $item, $match)) {
                 $root .= $match['index'] . '_';
             }
         }
         $root .= $this->index;
         $id = $root;
 
-        $element = $this->doc->getElement( $id );
-        if($element)
-        {
+        $element = $this->doc->getElement($id);
+        if ($element) {
             $element->suffixes = $this->suffixes;
         }
 
@@ -85,12 +82,9 @@ class Item
         $element = $this->getElement($args[0]);
         $class = "\\Pimcore\\Model\\Document\\Tag\\" . str_replace('get', '', $func);
 
-        if(!strcasecmp(get_class($element), $class))
-        {
+        if (!strcasecmp(get_class($element), $class)) {
             return $element;
-        }
-        else if($element === NULL)
-        {
+        } elseif ($element === null) {
             return new $class;
         }
     }

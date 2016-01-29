@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
-class Element extends Model\Webservice\Data {
+class Element extends Model\Webservice\Data
+{
     
     /**
      * @var string
@@ -32,10 +33,4 @@ class Element extends Model\Webservice\Data {
      * @var string
      */
     public $name;
-
-
-
-
-
-
 }

@@ -78,7 +78,6 @@ class Link extends Model\Document
      */
     public function resolveDependencies()
     {
-
         $dependencies = parent::resolveDependencies();
 
         if ($this->getLinktype() == "internal") {
@@ -129,8 +128,7 @@ class Link extends Model\Document
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
             }
-        }
-        else {
+        } else {
             $path = $this->getDirect();
         }
 
@@ -144,7 +142,8 @@ class Link extends Model\Document
      *
      * @return string
      */
-    public function getLink () {
+    public function getLink()
+    {
         $path = $this->getHref();
 
         if (strlen($this->getParameters()) > 0) {
@@ -221,8 +220,7 @@ class Link extends Model\Document
         if (!empty($internal)) {
             $this->internal = (int) $internal;
             $this->setObjectFromId();
-        }
-        else {
+        } else {
             $this->internal = null;
         }
         return $this;
@@ -320,10 +318,10 @@ class Link extends Model\Document
      */
     public function setObjectFromId()
     {
-        if($this->internal) {
+        if ($this->internal) {
             if ($this->internalType == "document") {
                 $this->object = Document::getById($this->internal);
-            } else if ($this->internalType == "asset") {
+            } elseif ($this->internalType == "asset") {
                 $this->object = Asset::getById($this->internal);
             }
         }
@@ -462,7 +460,6 @@ class Link extends Model\Document
      */
     public function getHtml()
     {
-
         $attributes = array("rel", "tabindex", "accesskey", "title", "name", "target");
         $attribs = array();
         foreach ($attributes as $a) {
@@ -475,8 +472,8 @@ class Link extends Model\Document
     /**
      *
      */
-    public function __sleep() {
-
+    public function __sleep()
+    {
         $finalVars = array();
         $parentVars = parent::__sleep();
 

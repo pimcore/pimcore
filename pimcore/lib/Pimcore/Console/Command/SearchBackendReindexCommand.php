@@ -38,13 +38,13 @@ class SearchBackendReindexCommand extends AbstractCommand
         foreach ($types as $type) {
             $listClassName = "\\Pimcore\\Model\\" . ucfirst($type) . "\\Listing";
             $list = new $listClassName();
-            if(method_exists($list, "setUnpublished")) {
+            if (method_exists($list, "setUnpublished")) {
                 $list->setUnpublished(true);
             }
 
             $elementsTotal = $list->getTotalCount();
 
-            for($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
+            for ($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
                 $list->setLimit($elementsPerLoop);
                 $list->setOffset($i*$elementsPerLoop);
 
@@ -54,7 +54,7 @@ class SearchBackendReindexCommand extends AbstractCommand
                 foreach ($elements as $element) {
                     try {
                         $searchEntry = Search\Backend\Data::getForElement($element);
-                        if($searchEntry instanceof Search\Backend\Data and $searchEntry->getId() instanceof Search\Backend\Data\Id ) {
+                        if ($searchEntry instanceof Search\Backend\Data and $searchEntry->getId() instanceof Search\Backend\Data\Id) {
                             $searchEntry->setDataFromElement($element);
                         } else {
                             $searchEntry = new Search\Backend\Data($element);

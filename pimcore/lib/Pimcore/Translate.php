@@ -14,7 +14,8 @@ namespace Pimcore;
 
 use Pimcore\Cache;
 
-class Translate extends \Zend_Translate_Adapter {
+class Translate extends \Zend_Translate_Adapter
+{
 
     /**
      * Translation_Website is default for backward compatibilty other options are: Translation_Admin
@@ -38,8 +39,8 @@ class Translate extends \Zend_Translate_Adapter {
     /**
      * @param $locale
      */
-    public function __construct($locale) {
-
+    public function __construct($locale)
+    {
         if (!$locale instanceof \Zend_Locale) {
             $locale = new \Zend_Locale($locale);
         }
@@ -58,18 +59,18 @@ class Translate extends \Zend_Translate_Adapter {
      * @param array $options
      * @return array
      */
-    protected function _loadTranslationData($data, $locale, array $options = array()) {
-
+    protected function _loadTranslationData($data, $locale, array $options = array())
+    {
         $locale = (string) $locale;
         $tmpKeyParts = explode("\\", self::getBackend());
         $cacheKey = "Translate_" . array_pop($tmpKeyParts) . "_data_" . $locale;
 
-        if(!$data = Cache::load($cacheKey)) {
+        if (!$data = Cache::load($cacheKey)) {
             $data = array("__pimcore_dummy" => "only_a_dummy");
             $listClass = self::getBackend() . "\\Listing";
             $list = new $listClass();
 
-            if($list->isCacheable()) {
+            if ($list->isCacheable()) {
                 $list->setCondition("language = ?", array($locale));
                 $translations = $list->loadRaw();
 
@@ -77,7 +78,7 @@ class Translate extends \Zend_Translate_Adapter {
                     $data[mb_strtolower($translation["key"])] = Tool\Text::removeLineBreaks($translation["text"]);
                 }
 
-                Cache::save($data, $cacheKey, array("translator","translator_website","translate"), null, 999);
+                Cache::save($data, $cacheKey, array("translator", "translator_website", "translate"), null, 999);
                 $this->isCacheable = true;
             } else {
                 $this->isCacheable = false;
@@ -92,7 +93,8 @@ class Translate extends \Zend_Translate_Adapter {
     /**
      * @return string
      */
-    public function toString() {
+    public function toString()
+    {
         // pseudo is needed by the interface but not by the application
         return "Array";
     }
@@ -103,12 +105,13 @@ class Translate extends \Zend_Translate_Adapter {
      * @return \Zend_Translate_Adapter
      * @throws \Zend_Translate_Exception
      */
-    public function setLocale($locale) {
+    public function setLocale($locale)
+    {
 
         // load data before calling the parent
         $l = (string) $locale;
-        if(empty($this->_translate[$l])) {
-            $this->_loadTranslationData(null,$l);
+        if (empty($this->_translate[$l])) {
+            $this->_loadTranslationData(null, $l);
         }
 
         return parent::setLocale($locale);
@@ -120,14 +123,14 @@ class Translate extends \Zend_Translate_Adapter {
      * @return array|string
      * @throws \Exception
      */
-    public function translate($messageId, $locale = null) {
-
+    public function translate($messageId, $locale = null)
+    {
         $messageIdOriginal = $messageId;
         $messageId = mb_strtolower($messageId);
         $messageId = trim($messageId);
 
         // the maximum length of message-id's is 255
-        if(strlen($messageId) > 255) {
+        if (strlen($messageId) > 255) {
             throw new \Exception("Pimcore_Translate: Message ID's longer than 255 characters are invalid!");
         }
 
@@ -136,22 +139,22 @@ class Translate extends \Zend_Translate_Adapter {
         }
 
         // check if the given locale is available, if not try again just the language without the region
-        if(!Tool::isValidLanguage($locale)) {
+        if (!Tool::isValidLanguage($locale)) {
             $originalLocale = new \Zend_Locale((string) $locale);
-            if(Tool::isValidLanguage($originalLocale->getLanguage())) {
+            if (Tool::isValidLanguage($originalLocale->getLanguage())) {
                 $locale = $originalLocale->getLanguage();
                 $this->setLocale($locale);
             }
         }
 
         // list isn't cacheable, just get a single item
-        if(!$this->isCacheable) {
+        if (!$this->isCacheable) {
             $backend = self::getBackend();
             $translation = $backend::getByKeyLocalized($messageIdOriginal, true, true, $locale);
-            if($translation == $messageIdOriginal) {
-                foreach(Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
+            if ($translation == $messageIdOriginal) {
+                foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                     $translation = $backend::getByKeyLocalized($messageIdOriginal, true, true, $fallbackLanguage);
-                    if($translation != $messageIdOriginal) {
+                    if ($translation != $messageIdOriginal) {
                         break;
                     }
                 }
@@ -159,15 +162,14 @@ class Translate extends \Zend_Translate_Adapter {
             return $translation;
         }
 
-        if(empty($this->_translate[$locale])) {
-            $this->_loadTranslationData(null,$locale);
+        if (empty($this->_translate[$locale])) {
+            $this->_loadTranslationData(null, $locale);
         }
         
         if (!empty($this->_translate[$locale][$messageId])) {
             // return original translation
             return $this->_translate[$locale][$messageId];
-        }
-        else {
+        } else {
             // check if there is a translation in a lower step
             $keyParts = explode(".", $messageId);
 
@@ -186,8 +188,8 @@ class Translate extends \Zend_Translate_Adapter {
 
             // check if there is a translation in a lower step (without reverting the keys)
             $tmpKey = $messageId;
-            if(strrpos($tmpKey,':')){
-                while($tmpKey = substr($tmpKey,0,strrpos($tmpKey,':'))){
+            if (strrpos($tmpKey, ':')) {
+                while ($tmpKey = substr($tmpKey, 0, strrpos($tmpKey, ':'))) {
                     if (!empty($this->_translate[$locale][$tmpKey])) {
                         return $this->_translate[$locale][$tmpKey];
                     }
@@ -196,15 +198,15 @@ class Translate extends \Zend_Translate_Adapter {
         }
 
         // do not create a new translation if it is only empty, but do not return empty values
-        if(!array_key_exists($messageId, $this->_translate[$locale])) {
+        if (!array_key_exists($messageId, $this->_translate[$locale])) {
             $this->createEmptyTranslation($locale, $messageIdOriginal);
         } else {
             // look for a fallback translation
-            foreach(Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
+            foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
 
                 // check if data for fallback language is loaded, if not force it
-                if(empty($this->_translate[$fallbackLanguage])) {
-                    $this->_loadTranslationData(null,$fallbackLanguage);
+                if (empty($this->_translate[$fallbackLanguage])) {
+                    $this->_loadTranslationData(null, $fallbackLanguage);
                 }
 
                 if (!empty($this->_translate[$fallbackLanguage][$messageId])) {
@@ -222,14 +224,14 @@ class Translate extends \Zend_Translate_Adapter {
      * @param $messageId
      * @return mixed
      */
-    protected function createEmptyTranslation($locale, $messageId) {
-
+    protected function createEmptyTranslation($locale, $messageId)
+    {
         $messageIdOriginal = $messageId;
         $messageId = mb_strtolower($messageId);
         $messageId = trim($messageId);
 
         // don't create translation if it's just empty
-        if(array_key_exists($messageId, $this->_translate[$locale])) {
+        if (array_key_exists($messageId, $this->_translate[$locale])) {
             return;
         }
 
@@ -240,8 +242,7 @@ class Translate extends \Zend_Translate_Adapter {
             try {
                 $t = $class::getByKey($messageId);
                 $t->addTranslation($locale, "");
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $t = new $class();
                 $t->setKey($messageId);
 
@@ -266,7 +267,8 @@ class Translate extends \Zend_Translate_Adapter {
      * @param null $locale
      * @return bool
      */
-    public function isTranslated($messageId, $original = false, $locale = null) {
+    public function isTranslated($messageId, $original = false, $locale = null)
+    {
         $messageId = mb_strtolower($messageId);
         return parent::isTranslated($messageId, $original, $locale);
     }

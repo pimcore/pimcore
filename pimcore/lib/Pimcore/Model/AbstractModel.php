@@ -14,9 +14,10 @@ namespace Pimcore\Model;
 
 use Pimcore\File;
 use Pimcore\Db;
-use Pimcore\Tool; 
+use Pimcore\Tool;
 
-abstract class AbstractModel {
+abstract class AbstractModel
+{
 
     /**
      * @var \Pimcore\Model\Dao\AbstractDao
@@ -31,8 +32,8 @@ abstract class AbstractModel {
     /**
      * @return \Pimcore\Model\Dao\AbstractDao
      */
-    public function getDao() {
-
+    public function getDao()
+    {
         if (!$this->dao) {
             $this->initDao();
         }
@@ -43,7 +44,8 @@ abstract class AbstractModel {
      * @param $dao
      * @return self
      */
-    public function setDao($dao) {
+    public function setDao($dao)
+    {
         $this->dao = $dao;
         return $this;
     }
@@ -52,7 +54,8 @@ abstract class AbstractModel {
      * @deprecated
      * @return Dao\AbstractDao
      */
-    public function getResource() {
+    public function getResource()
+    {
         return $this->getDao();
     }
 
@@ -60,22 +63,21 @@ abstract class AbstractModel {
      * @param null $key
      * @throws \Exception
      */
-    public function initDao($key = null) {
-
+    public function initDao($key = null)
+    {
         $myClass = get_class($this);
         $dao = null;
 
         if (!$key) {
             // check for a resource in the cache
-            if(array_key_exists($myClass, self::$daoClassCache)) {
+            if (array_key_exists($myClass, self::$daoClassCache)) {
                 $dao = self::$daoClassCache[$myClass];
             } else {
                 $classes = $this->getParentClasses($myClass);
 
                 foreach ($classes as $class) {
-
                     $delimiter = "_"; // old prefixed class style
-                    if(strpos($class, "\\")) {
+                    if (strpos($class, "\\")) {
                         $delimiter = "\\"; // that's the new with namespaces
                     }
 
@@ -87,20 +89,20 @@ abstract class AbstractModel {
 
                         // check for a general dao adapter
                         $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Dao";
-                        if($className = $this->determineResourceClass($tmpClassName)) {
+                        if ($className = $this->determineResourceClass($tmpClassName)) {
                             break;
                         }
 
                         // check for the old style resource adapter
                         $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Resource";
-                        if($className = $this->determineResourceClass($tmpClassName)) {
+                        if ($className = $this->determineResourceClass($tmpClassName)) {
                             break;
                         }
 
                         array_pop($classParts);
                     }
 
-                    if($className) {
+                    if ($className) {
                         $dao = $className;
                         self::$daoClassCache[$myClass] = $dao;
 
@@ -111,11 +113,11 @@ abstract class AbstractModel {
         } else {
             // check in cache
             $cacheKey = $myClass . "-" . $key;
-            if(array_key_exists($cacheKey, self::$daoClassCache)) {
+            if (array_key_exists($cacheKey, self::$daoClassCache)) {
                 $dao = self::$daoClassCache[$cacheKey];
             } else {
                 $delimiter = "_"; // old prefixed class style
-                if(strpos($key, "\\") !== false) {
+                if (strpos($key, "\\") !== false) {
                     $delimiter = "\\"; // that's the new with namespaces
                 }
 
@@ -125,7 +127,7 @@ abstract class AbstractModel {
             }
         }
 
-        if(!$dao) {
+        if (!$dao) {
             \Logger::critical("No dao implementation found for: " . $myClass);
             throw new \Exception("No dao implementation found for: " . $myClass);
         }
@@ -145,22 +147,22 @@ abstract class AbstractModel {
     /**
      * @param $className
      */
-    protected function determineResourceClass ($className) {
-
+    protected function determineResourceClass($className)
+    {
         $filesToInclude = [];
 
-        $filePath = str_replace(["_","\\"], "/", $className) . ".php";
+        $filePath = str_replace(["_", "\\"], "/", $className) . ".php";
         $filesToInclude[] = preg_replace("@^Pimcore/Model/@", "", $filePath);
         $filesToInclude[] = $filePath;
 
-        foreach($filesToInclude as $fileToInclude) {
-            if($fileToInclude == "Dao.php" || $fileToInclude == "Resource.php") {
+        foreach ($filesToInclude as $fileToInclude) {
+            if ($fileToInclude == "Dao.php" || $fileToInclude == "Resource.php") {
                 return;
             }
 
             if (File::isIncludeable($fileToInclude)) {
                 include_once($fileToInclude);
-                if(Tool::classExists($className)) {
+                if (Tool::classExists($className)) {
                     return $className;
                 }
             }
@@ -174,13 +176,13 @@ abstract class AbstractModel {
      * @param  $class
      * @return array
      */
-    protected function getParentClasses ($class) {
-
+    protected function getParentClasses($class)
+    {
         $classes = array();
         $classes[] = $class;
 
         $parentClass = get_parent_class($class);
-        if($parentClass && $parentClass != get_class()) {
+        if ($parentClass && $parentClass != get_class()) {
             $classes = array_merge($classes, $this->getParentClasses($parentClass));
         }
 
@@ -191,10 +193,11 @@ abstract class AbstractModel {
      * @param array $data
      * @return $this
      */
-    public function setValues($data = array()) {
+    public function setValues($data = array())
+    {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
-                $this->setValue($key,$value);
+                $this->setValue($key, $value);
             }
         }
         return $this;
@@ -205,11 +208,12 @@ abstract class AbstractModel {
      * @param  $value
      * @return $this
      */
-    public function setValue($key, $value) {
+    public function setValue($key, $value)
+    {
         $method = "set" . $key;
         if (method_exists($this, $method)) {
             $this->$method($value);
-        } else if(method_exists($this, "set" . preg_replace("/^o_/","",$key))) {
+        } elseif (method_exists($this, "set" . preg_replace("/^o_/", "", $key))) {
             // compatibility mode for objects (they do not have any set_oXyz() methods anymore)
             $this->$method($value);
         }
@@ -219,8 +223,8 @@ abstract class AbstractModel {
     /**
      * @return array
      */
-    public function __sleep() {
-
+    public function __sleep()
+    {
         $finalVars = array();
         $blockedVars = array("dao","_fulldump"); // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
         $vars = get_object_vars($this);
@@ -238,10 +242,11 @@ abstract class AbstractModel {
      * @return mixed
      * @throws \Exception
      */
-    public function __call($method, $args) {
+    public function __call($method, $args)
+    {
 
         // protected / private methods shouldn't be delegated to the dao -> this can have dangerous effects
-        if(!is_callable([$this, $method])) {
+        if (!is_callable([$this, $method])) {
             throw new \Exception("Unable to call private/protected method '" . $method . "' on object " . get_class($this));
         }
 
@@ -250,13 +255,11 @@ abstract class AbstractModel {
             try {
                 $r = call_user_func_array(array($this->getDao(), $method), $args);
                 return $r;
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 \Logger::emergency($e);
                 throw $e;
             }
-        }
-        else {
+        } else {
             \Logger::error("Class: " . get_class($this) . " => call to undefined method " . $method);
             throw new \Exception("Call to undefined method " . $method . " in class " . get_class($this));
         }
@@ -265,7 +268,8 @@ abstract class AbstractModel {
     /**
      * @return void
      */
-    public function __clone() {
+    public function __clone()
+    {
         $this->dao = null;
     }
 
@@ -274,7 +278,8 @@ abstract class AbstractModel {
      *
      * @return array
      */
-    public function getObjectVars(){
+    public function getObjectVars()
+    {
         $data = get_object_vars($this);
         unset($data['dao']);
         return $data;

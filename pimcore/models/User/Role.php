@@ -16,7 +16,8 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
-class Role extends UserRole {
+class Role extends UserRole
+{
 
     /**
      * @var string

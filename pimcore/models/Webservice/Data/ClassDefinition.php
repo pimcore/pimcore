@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data;
 
 use Pimcore\Model;
 
-class ClassDefinition extends Model\Webservice\Data {
+class ClassDefinition extends Model\Webservice\Data
+{
 
     /**
      * @var int
@@ -105,8 +106,8 @@ class ClassDefinition extends Model\Webservice\Data {
     /**
      * @param $class
      */
-    public function map($class, $options = null) {
-
+    public function map($class, $options = null)
+    {
         $arr = $class->fieldDefinitions;
         $result = array();
         foreach ($arr as $item) {

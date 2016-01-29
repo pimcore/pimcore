@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Asset;
 
 use Pimcore\Model;
 
-class File extends Model\Webservice\Data\Asset {
+class File extends Model\Webservice\Data\Asset
+{
     
     /**
      * @var string
@@ -24,7 +25,8 @@ class File extends Model\Webservice\Data\Asset {
     public $data;
     
     
-    public function map ($object, $options = null) {
+    public function map($object, $options = null)
+    {
         parent::map($object, $options);
         if (is_array($options)) {
             if ($options["LIGHT"]) {
@@ -35,13 +37,11 @@ class File extends Model\Webservice\Data\Asset {
     }
 
 
-    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
-
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
+    {
         $data = base64_decode($this->data);
         unset($this->data);
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
         $object->setData($data);
-
     }
-   
 }

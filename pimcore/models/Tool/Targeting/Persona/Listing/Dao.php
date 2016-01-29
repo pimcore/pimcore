@@ -16,15 +16,16 @@ namespace Pimcore\Model\Tool\Targeting\Persona\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of document-types for the specicifies parameters, returns an array of Document\DocType elements
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $personasData = $this->db->fetchCol("SELECT id FROM targeting_personas" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $personas = array();
@@ -35,5 +36,4 @@ class Dao extends Model\Listing\Dao\AbstractDao {
         $this->model->setPersonas($personas);
         return $personas;
     }
-
 }

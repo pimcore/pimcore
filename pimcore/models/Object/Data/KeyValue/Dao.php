@@ -16,14 +16,16 @@ namespace Pimcore\Model\Object\Data\KeyValue;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
     }
 
     /**
@@ -31,7 +33,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         $this->delete();
         $db = $this->db;
         $model = $this->model;
@@ -58,8 +61,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
-
+    public function delete()
+    {
         $sql = $this->db->quoteInto("o_id = ?", $this->model->getObjectId());
 
         // $sql = "o_id = " . $this->model->getObjectId();
@@ -72,7 +75,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function update() {
+    public function update()
+    {
         \Logger::debug("update called");
     }
 
@@ -81,13 +85,15 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
     }
 
     /**
      * @return string
      */
-    public function getTableName() {
+    public function getTableName()
+    {
         $model = $this->model;
         $class = $model->getClass();
         $classId = $class->getId();
@@ -97,11 +103,13 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function createUpdateTable () {
+    public function createUpdateTable()
+    {
         \Logger::debug("createUpdateTable called");
 
         $model = $this->model;
-        $class = $model->getClass();;
+        $class = $model->getClass();
+        ;
         $classId = $class->getId();
         $table = $this->getTableName();
 
@@ -133,7 +141,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function load() {
+    public function load()
+    {
         $model = $this->model;
         \Logger::debug("load called");
 

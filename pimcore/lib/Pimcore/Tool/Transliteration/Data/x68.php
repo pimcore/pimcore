@@ -1,12 +1,12 @@
 <?php
 
 $base = array(
-  0x00 => 'Zhi ', 'Liu ', 'Mei ', 'Hoy ', 'Rong ', 'Zha ', NULL, 'Biao ', 'Zhan ', 'Jie ', 'Long ', 'Dong ', 'Lu ', 'Sayng ', 'Li ', 'Lan ',
+  0x00 => 'Zhi ', 'Liu ', 'Mei ', 'Hoy ', 'Rong ', 'Zha ', null, 'Biao ', 'Zhan ', 'Jie ', 'Long ', 'Dong ', 'Lu ', 'Sayng ', 'Li ', 'Lan ',
   0x10 => 'Yong ', 'Shu ', 'Xun ', 'Shuan ', 'Qi ', 'Zhen ', 'Qi ', 'Li ', 'Yi ', 'Xiang ', 'Zhen ', 'Li ', 'Su ', 'Gua ', 'Kan ', 'Bing ',
   0x20 => 'Ren ', 'Xiao ', 'Bo ', 'Ren ', 'Bing ', 'Zi ', 'Chou ', 'Yi ', 'Jie ', 'Xu ', 'Zhu ', 'Jian ', 'Zui ', 'Er ', 'Er ', 'You ',
   0x30 => 'Fa ', 'Gong ', 'Kao ', 'Lao ', 'Zhan ', 'Li ', 'Yin ', 'Yang ', 'He ', 'Gen ', 'Zhi ', 'Chi ', 'Ge ', 'Zai ', 'Luan ', 'Fu ',
   0x40 => 'Jie ', 'Hang ', 'Gui ', 'Tao ', 'Guang ', 'Wei ', 'Kuang ', 'Ru ', 'An ', 'An ', 'Juan ', 'Yi ', 'Zhuo ', 'Ku ', 'Zhi ', 'Qiong ',
-  0x50 => 'Tong ', 'Sang ', 'Sang ', 'Huan ', 'Jie ', 'Jiu ', 'Xue ', 'Duo ', 'Zhui ', 'Yu ', 'Zan ', 'Kasei ', 'Ying ', 'Masu ', NULL, 'Zhan ',
+  0x50 => 'Tong ', 'Sang ', 'Sang ', 'Huan ', 'Jie ', 'Jiu ', 'Xue ', 'Duo ', 'Zhui ', 'Yu ', 'Zan ', 'Kasei ', 'Ying ', 'Masu ', null, 'Zhan ',
   0x60 => 'Ya ', 'Nao ', 'Zhen ', 'Dang ', 'Qi ', 'Qiao ', 'Hua ', 'Kuai ', 'Jiang ', 'Zhuang ', 'Xun ', 'Suo ', 'Sha ', 'Zhen ', 'Bei ', 'Ting ',
   0x70 => 'Gua ', 'Jing ', 'Bo ', 'Ben ', 'Fu ', 'Rui ', 'Tong ', 'Jue ', 'Xi ', 'Lang ', 'Liu ', 'Feng ', 'Qi ', 'Wen ', 'Jun ', 'Gan ',
   0x80 => 'Cu ', 'Liang ', 'Qiu ', 'Ting ', 'You ', 'Mei ', 'Bang ', 'Long ', 'Peng ', 'Zhuang ', 'Di ', 'Xuan ', 'Tu ', 'Zao ', 'Ao ', 'Gu ',

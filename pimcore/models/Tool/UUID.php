@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
 
-class UUID extends Model\AbstractModel {
+class UUID extends Model\AbstractModel
+{
 
     public $itemId;
     public $type;
@@ -24,18 +25,21 @@ class UUID extends Model\AbstractModel {
     public $instanceIdentifier;
     protected $item;
 
-    public function setInstanceIdentifier($instanceIdentifier){
+    public function setInstanceIdentifier($instanceIdentifier)
+    {
         $this->instanceIdentifier = $instanceIdentifier;
         return $this;
     }
 
-    public function getInstanceIdentifier(){
+    public function getInstanceIdentifier()
+    {
         return $this->instanceIdentifier;
     }
 
-    public function setSystemInstanceIdentifier(){
+    public function setSystemInstanceIdentifier()
+    {
         $instanceIdentifier = \Pimcore\Config::getSystemConfig()->general->instanceIdentifier;
-        if(!$instanceIdentifier){
+        if (!$instanceIdentifier) {
             throw new \Exception("No instance identifier set in system config!");
         }
         $this->setInstanceIdentifier($instanceIdentifier);
@@ -82,9 +86,9 @@ class UUID extends Model\AbstractModel {
      * @return mixed
      * @throws \Exception
      */
-    public function createUuid(){
-
-        if(!$this->getInstanceIdentifier()){
+    public function createUuid()
+    {
+        if (!$this->getInstanceIdentifier()) {
             throw new \Exception("No instance identifier specified.");
         }
 
@@ -103,7 +107,8 @@ class UUID extends Model\AbstractModel {
     /**
      * @param $uuid
      */
-    public function setUuid($uuid){
+    public function setUuid($uuid)
+    {
         $this->uuid = $uuid;
     }
 
@@ -111,7 +116,8 @@ class UUID extends Model\AbstractModel {
      * @param $item
      * @return $this
      */
-    public function setItem($item){
+    public function setItem($item)
+    {
         $this->setItemId($item->getId());
         $this->setType(Model\Element\Service::getElementType($item));
 
@@ -124,7 +130,8 @@ class UUID extends Model\AbstractModel {
      * @return UUID
      * @throws \Exception
      */
-    public static function getByItem($item){
+    public static function getByItem($item)
+    {
         $self = new self;
         $self->setSystemInstanceIdentifier();
         $self->setUuid($self->setItem($item)->createUuid());
@@ -135,7 +142,8 @@ class UUID extends Model\AbstractModel {
      * @param $uuid
      * @return mixed
      */
-    public static function getByUuid($uuid){
+    public static function getByUuid($uuid)
+    {
         $self = new self;
         return $self->getDao()->getByUuid($uuid);
     }
@@ -145,12 +153,12 @@ class UUID extends Model\AbstractModel {
      * @return static
      * @throws \Exception
      */
-    public static function create($item){
+    public static function create($item)
+    {
         $uuid = new static;
         $uuid->setSystemInstanceIdentifier()->setItem($item);
         $uuid->setUuid($uuid->createUuid());
         $uuid->save();
         return $uuid;
     }
-
 }

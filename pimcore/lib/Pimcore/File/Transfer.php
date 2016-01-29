@@ -12,7 +12,8 @@
 
 namespace Pimcore\File;
 
-class Transfer extends \Zend_File_Transfer{
+class Transfer extends \Zend_File_Transfer
+{
 
     /**
      * @param string $adapter
@@ -21,6 +22,6 @@ class Transfer extends \Zend_File_Transfer{
      */
     public function __construct($adapter = "\\Pimcore\\File\\Transfer\\Adapter\\Http", $direction = false, $options = array())
     {
-        parent::__construct($adapter,$direction,$options);
+        parent::__construct($adapter, $direction, $options);
     }
 }

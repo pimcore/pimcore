@@ -16,13 +16,15 @@ namespace Pimcore\Model\Schedule\Manager;
 
 use Pimcore\Model;
 
-class Factory {
+class Factory
+{
     /**
      * @static
      * @param  string $pidFile
      * @return Procedural
      */
-    public static function getManager($pidFile) {
+    public static function getManager($pidFile)
+    {
         $manager = new Procedural($pidFile);
         return $manager;
     }

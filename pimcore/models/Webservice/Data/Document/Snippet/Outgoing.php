@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document\Snippet;
 
 use Pimcore\Model;
 
-class Outgoing extends Model\Webservice\Data\Document\Snippet {
+class Outgoing extends Model\Webservice\Data\Document\Snippet
+{
 
 
     /**
@@ -43,6 +44,4 @@ class Outgoing extends Model\Webservice\Data\Document\Snippet {
      * @var Model\Webservice\Data\Document\Listing\Item[]
      */
     public $childs;
-
-
 }

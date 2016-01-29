@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Asset\Folder;
 
 use Pimcore\Model;
 
-class Out extends Model\Webservice\Data\Asset\Folder {
+class Out extends Model\Webservice\Data\Asset\Folder
+{
 
     /**
      * @var string
@@ -43,5 +44,4 @@ class Out extends Model\Webservice\Data\Asset\Folder {
      * @var integer
      */
     public $userModification;
-
 }

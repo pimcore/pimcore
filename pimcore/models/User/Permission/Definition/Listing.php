@@ -16,7 +16,8 @@ namespace Pimcore\Model\User\Permission\Definition;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of User\Permission\Definition
@@ -31,7 +32,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
@@ -39,7 +41,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param $definitions
      * @return $this
      */
-    function setDefinitions($definitions) {
+    public function setDefinitions($definitions)
+    {
         $this->definitions = $definitions;
         return $this;
     }
@@ -47,7 +50,8 @@ class Listing extends Model\Listing\AbstractListing {
     /**
      * @return array
      */
-    function getDefinitions() {
+    public function getDefinitions()
+    {
         return $this->definitions;
     }
 }

@@ -18,18 +18,19 @@ use Pimcore\Model\Webservice;
 use Pimcore\Model\Element;
 use Pimcore\Model;
 
-abstract class Data {
+abstract class Data
+{
 
     /**
      * @param $object
      * @param null $options
      * @throws \Exception
      */
-    public function map($object, $options = null) {
+    public function map($object, $options = null)
+    {
         $keys = get_object_vars($this);
         $blockedKeys = array("childs");
         foreach ($keys as $key => $value) {
-
             $method = "get" . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {
                 if ($object->$method()) {
@@ -43,14 +44,12 @@ abstract class Data {
                     // if the value is an object or array call the mapper again for the value
                     if (is_object($this->$key) || is_array($this->$key)) {
                         $type = "out";
-                        if (strpos(get_class($this), "_In")!==FALSE) {
+                        if (strpos(get_class($this), "_In")!==false) {
                             $type = "in";
                         }
                         $className = Webservice\Data\Mapper::findWebserviceClass($this->$key, "out");
                         $this->$key = Webservice\Data\Mapper::map($this->$key, $className, $type);
                     }
-
-
                 }
             }
         }
@@ -60,7 +59,8 @@ abstract class Data {
      * @param $value
      * @return array
      */
-    private function mapProperties($value) {
+    private function mapProperties($value)
+    {
         if (is_array($value)) {
             $result = array();
 
@@ -77,7 +77,6 @@ abstract class Data {
                 }
             }
             $value = $result;
-
         }
         return $value;
     }
@@ -88,8 +87,8 @@ abstract class Data {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
-
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
+    {
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
             $method = "set" . $key;
@@ -108,13 +107,11 @@ abstract class Data {
 
         if (is_array($this->properties)) {
             foreach ($this->properties as $propertyWs) {
-
                 $propertyWs = (array) $propertyWs;
 
                 $dat = $propertyWs["data"];
                 $type = $propertyWs["type"];
                 if (in_array($type, array("object", "document", "asset"))) {
-
                     $id = $propertyWs["data"];
                     $type = $propertyWs["type"];
                     $dat = null;
@@ -133,7 +130,7 @@ abstract class Data {
                             $idMapper->recordMappingFailure("object", $object->getId(), $type, $propertyWs["data"]);
                         }
                     }
-                } else if ($type == "date"){
+                } elseif ($type == "date") {
                     $dat = new \Pimcore\Date(strtotime($propertyWs["data"]));
                 } else {
                     $dat = $propertyWs["data"];

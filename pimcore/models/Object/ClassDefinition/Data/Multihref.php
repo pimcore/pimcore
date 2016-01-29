@@ -157,7 +157,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setDocumentTypes($documentTypes)
     {
         // this is the new method with Ext.form.MultiSelect
-        if((is_string($documentTypes) && !empty($documentTypes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($documentTypes))) {
+        if ((is_string($documentTypes) && !empty($documentTypes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($documentTypes))) {
             if (!\Pimcore\Tool\Admin::isExtJS6()) {
                 $parts = explode(",", $documentTypes);
             } else {
@@ -166,7 +166,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
             $documentTypes = array();
             foreach ($parts as $type) {
-                if($type) {
+                if ($type) {
                     $documentTypes[] = array("documentTypes" => $type);
                 }
             }
@@ -211,7 +211,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setAssetTypes($assetTypes)
     {
         // this is the new method with Ext.form.MultiSelect
-        if((is_string($assetTypes) && !empty($assetTypes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($assetTypes))) {
+        if ((is_string($assetTypes) && !empty($assetTypes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($assetTypes))) {
             if (!\Pimcore\Tool\Admin::isExtJS6()) {
                 $parts = explode(",", $assetTypes);
             } else {
@@ -238,11 +238,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function getDataForResource($data, $object = null)
     {
-
         $return = array();
 
         if (is_array($data) && count($data) > 0) {
-
             $counter = 1;
             foreach ($data as $object) {
                 if ($object instanceof Element\ElementInterface) {
@@ -256,7 +254,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 $counter++;
             }
             return $return;
-        } else if (is_array($data) and count($data) === 0) {
+        } elseif (is_array($data) and count($data) === 0) {
             //give empty array if data was not null
             return array();
         } else {
@@ -275,14 +273,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         $elements = array();
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-
                 if ($element["type"] == "object") {
                     $e = Object::getById($element["dest_id"]);
-                }
-                else if ($element["type"] == "asset") {
+                } elseif ($element["type"] == "asset") {
                     $e = Asset::getById($element["dest_id"]);
-                }
-                else if ($element["type"] == "document") {
+                } elseif ($element["type"] == "document") {
                     $e = Document::getById($element["dest_id"]);
                 }
 
@@ -304,7 +299,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     {
 
         //return null when data is not set
-        if (!$data) return null;
+        if (!$data) {
+            return null;
+        }
 
         $d = array();
 
@@ -316,7 +313,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 }
             }
             return "," . implode(",", $d) . ",";
-        } else if (is_array($data) && count($data) === 0) {
+        } elseif (is_array($data) && count($data) === 0) {
             return "";
         } else {
             throw new \Exception("invalid data passed to getDataForQueryResource - must be array");
@@ -337,18 +334,15 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             foreach ($data as $element) {
                 if ($element instanceof Object\Concrete) {
                     $return[] = array($element->getId(), $element->getFullPath(), "object", $element->getClassName());
-                }
-                else if ($element instanceof Object\AbstractObject) {
+                } elseif ($element instanceof Object\AbstractObject) {
                     $return[] = array($element->getId(), $element->getFullPath(), "object", "folder");
-                }
-                else if ($element instanceof Asset) {
+                } elseif ($element instanceof Asset) {
                     $return[] = array($element->getId(), $element->getFullPath(), "asset", $element->getType());
-                }
-                else if ($element instanceof Document) {
+                } elseif ($element instanceof Document) {
                     $return[] = array($element->getId(), $element->getFullPath(), "document", $element->getType());
                 }
             }
-            if (empty ($return)) {
+            if (empty($return)) {
                 $return = false;
             }
             return $return;
@@ -367,21 +361,18 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     {
 
         //if not set, return null
-        if ($data === null or $data === FALSE) {
+        if ($data === null or $data === false) {
             return null;
         }
 
         $elements = array();
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-
                 if ($element["type"] == "object") {
                     $e = Object::getById($element["id"]);
-                }
-                else if ($element["type"] == "asset") {
+                } elseif ($element["type"] == "asset") {
                     $e = Asset::getById($element["id"]);
-                }
-                else if ($element["type"] == "document") {
+                } elseif ($element["type"] == "document") {
                     $e = Document::getById($element["id"]);
                 }
 
@@ -389,13 +380,13 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $elements[] = $e;
                 }
             }
-
         }
         //must return array if data shall be set
         return $elements;
     }
 
-    public function getDataForGrid($data, $object = null) {
+    public function getDataForGrid($data, $object = null)
+    {
         if (is_array($data)) {
             $pathes = array();
             foreach ($data as $eo) {
@@ -405,7 +396,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             }
             return $pathes;
         }
-    }    
+    }
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
@@ -414,10 +405,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function getVersionPreview($data)
     {
-
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $e) {
-                if($e instanceof Element\ElementInterface) {
+                if ($e instanceof Element\ElementInterface) {
                     $pathes[] = get_class($e) . $e->getFullPath();
                 }
             }
@@ -471,7 +461,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new \Exception("Empty mandatory field [ " . $this->getName() . " ]");
         }
@@ -481,11 +470,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             foreach ($data as $d) {
                 if ($d instanceof Document) {
                     $allow = $this->allowDocumentRelation($d);
-                } else if ($d instanceof Asset) {
+                } elseif ($d instanceof Asset) {
                     $allow = $this->allowAssetRelation($d);
-                } else if ($d instanceof Object\AbstractObject) {
+                } elseif ($d instanceof Object\AbstractObject) {
                     $allow = $this->allowObjectRelation($d);
-                } else if (empty($d)) {
+                } elseif (empty($d)) {
                     $allow = true;
                 } else {
                     $allow = false;
@@ -514,7 +503,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 }
             }
             return implode(",", $paths);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -530,7 +521,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
         $value = array();
         foreach ($values as $element) {
-
             $tokens = explode(":", $element);
             if (count($tokens) == 2) {
                 $type = $tokens[0];
@@ -540,11 +530,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 //fallback for old export files
                 if ($el = Asset::getByPath($element)) {
                     $value[] = $el;
-                }
-                else if ($el = Document::getByPath($element)) {
+                } elseif ($el = Document::getByPath($element)) {
                     $value[] = $el;
-                }
-                else if ($el = Object::getByPath($element)) {
+                } elseif ($el = Object::getByPath($element)) {
                     $value[] = $el;
                 }
             }
@@ -580,7 +568,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function resolveDependencies($data)
     {
-
         $dependencies = array();
 
         if (is_array($data) && count($data) > 0) {
@@ -617,7 +604,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 }
             }
             return $items;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -629,10 +618,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
     {
-
         if (empty($value)) {
             return null;
-        } else if (is_array($value)) {
+        } elseif (is_array($value)) {
             $hrefs = array();
             foreach ($value as $href) {
                 // cast is needed to make it work for both SOAP and REST
@@ -660,7 +648,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     }
                 }
             }
-            return $hrefs; 
+            return $hrefs;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
@@ -669,7 +657,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function preGetData($object, $params = array())
     {
         $data = null;
-        if($object instanceof Object\Concrete) {
+        if ($object instanceof Object\Concrete) {
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
@@ -680,11 +668,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $object->$setter($data);
                 }
             }
-        } else if ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof Object\Localizedfield) {
             $data = $params["data"];
-        } else if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } else if ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 
@@ -703,10 +691,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
     public function preSetData($object, $data, $params = array())
     {
+        if ($data === null) {
+            $data = array();
+        }
 
-        if ($data === null) $data = array();
-
-        if($object instanceof Object\Concrete) {
+        if ($object instanceof Object\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $object->addO__loadedLazyField($this->getName());
             }
@@ -755,7 +744,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -765,7 +755,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param null $object
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null) {
+    public function getDiffVersionPreview($data, $object = null)
+    {
         $value = array();
         $value["type"] = "html";
         $value["html"] = "";
@@ -782,7 +773,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param null $object
      * @return null|Pimcore_Date
      */
-    public function getDiffDataFromEditmode($data, $object = null) {
+    public function getDiffDataFromEditmode($data, $object = null)
+    {
         if ($data) {
             $tabledata = $data[0]["data"];
 
@@ -818,7 +810,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array()) {
+    public function rewriteIds($object, $idMapping, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
         return $data;
@@ -827,7 +820,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
+    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    {
         $this->maxItems = $masterDefinition->maxItems;
         $this->assetUploadPath = $masterDefinition->assetUploadPath;
         $this->relationType = $masterDefinition->relationType;
@@ -844,6 +838,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function getPhpdocType()
     {
-        return implode(' | ', $this->getPhpDocClassString( true ));
+        return implode(' | ', $this->getPhpDocClassString(true));
     }
 }

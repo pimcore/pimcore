@@ -19,7 +19,8 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 
-class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
+class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
+{
 
     const ELEMENT_DOES_NOT_EXIST = -1;
     /**
@@ -35,8 +36,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     private $encoder;
 
 
-    public function init() {
-
+    public function init()
+    {
         if ($this->getParam("condense")) {
             Object\ClassDefinition\Data::setDropNullValues(true);
             Webservice\Data\Object::setDropNullValues(true);
@@ -45,7 +46,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         $profile = $this->getParam("profiling");
         if ($profile) {
             $startTs = microtime(true);
-
         }
         parent::init();
         $this->disableViewAutoRender();
@@ -54,30 +54,28 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         $this->encoder = new Webservice\JsonEncoder();
 
         if ($profile) {
-
-            $this->timeConsumedInit = round(microtime(true) - $startTs,3)*1000;
+            $this->timeConsumedInit = round(microtime(true) - $startTs, 3)*1000;
         }
-
-
     }
 
-    private function checkPermission($element, $category) {
+    private function checkPermission($element, $category)
+    {
         if ($category == "get") {
             if (!$element->isAllowed("view")) {
                 $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission view is needed"));
             }
-        } else if ($category == "delete") {
+        } elseif ($category == "delete") {
             if (!$element->isAllowed("delete")) {
                 $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission delete is needed"));
             }
-        } else if ($category == "update") {
+        } elseif ($category == "update") {
             if (!$element->isAllowed("publish")) {
                 $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission save is needed"));
             }
-        } else if ($category == "create") {
+        } elseif ($category == "create") {
             if (!$element->isAllowed("create")) {
                 $this->getResponse()->setHttpResponseCode(403);
                 $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission create is needed"));
@@ -85,8 +83,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         }
     }
 
-    private function checkUserPermission($permission) {
-        if($user = Tool\Admin::getCurrentUser()) {
+    private function checkUserPermission($permission)
+    {
+        if ($user = Tool\Admin::getCurrentUser()) {
             if ($user->isAllowed($permission)) {
                 return;
             }
@@ -114,8 +113,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns json encoded success value
      * @throws \Exception
      */
-    public function objectAction() {
-
+    public function objectAction()
+    {
         $id = $this->getParam("id");
         $success = false;
 
@@ -136,14 +135,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     }
 
                     if ($profile) {
-                        $timeConsumedGet = round(microtime(true) - $startTs,3)*1000;
+                        $timeConsumedGet = round(microtime(true) - $startTs, 3)*1000;
                         $startTs = microtime(true);
                     }
 
                     $this->checkPermission($object, "get");
 
                     if ($profile) {
-                        $timeConsumedPerm = round(microtime(true) - $startTs,3)*1000;
+                        $timeConsumedPerm = round(microtime(true) - $startTs, 3)*1000;
                         $startTs = microtime(true);
                     }
 
@@ -154,7 +153,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     }
 
                     if ($profile) {
-                        $timeConsumedGetWebservice = round(microtime(true) - $startTs,3)*1000;
+                        $timeConsumedGetWebservice = round(microtime(true) - $startTs, 3)*1000;
                     }
 
                     if ($profile) {
@@ -172,7 +171,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     $this->encoder->encode($result);
                     return;
                 }
-            } else if ($this->isDelete()) {
+            } elseif ($this->isDelete()) {
                 $object = Object::getById($id);
                 if ($object) {
                     $this->checkPermission($object, "delete");
@@ -181,7 +180,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 $success = $this->service->deleteObject($id);
                 $this->encoder->encode(array("success" => $success));
                 return;
-            } else if ($this->isPost() || $this->isPut()) {
+            } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
                 $data = \Zend_Json::decode($data);
 
@@ -231,7 +230,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
 
                 $this->encoder->encode($result);
                 return;
-
             }
         } catch (\Exception $e) {
             \Logger::error($e);
@@ -246,7 +244,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns the json-encoded class definition for the given object
      *
      */
-    public function objectMetaAction() {
+    public function objectMetaAction()
+    {
         $this->checkUserPermission("classes");
 
         $id = $this->getParam("id");
@@ -264,7 +263,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         }
 
         $this->encoder->encode(array("success" => false));
-
     }
 
 
@@ -273,7 +271,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns the class definition for the given class
      *
      */
-    public function classAction() {
+    public function classAction()
+    {
         $this->checkUserPermission("classes");
 
         try {
@@ -293,13 +292,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns the configuration for the image thumbnail with the given ID.
      */
-    public function imageThumbnailAction () {
+    public function imageThumbnailAction()
+    {
         $this->checkUserPermission("thumbnails");
         try {
             $id = $this->getParam("id");
             if ($id) {
                 $config = Asset\Image\Thumbnail\Config::getByName($id);
-                if(!$config instanceof Asset\Image\Thumbnail\Config) {
+                if (!$config instanceof Asset\Image\Thumbnail\Config) {
                     throw new \Exception("Thumbnail '" . $id . "' file doesn't exists");
                 }
 
@@ -316,7 +316,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns a list of all image thumbnails.
      */
-    public function imageThumbnailsAction () {
+    public function imageThumbnailsAction()
+    {
         $this->checkUserPermission("thumbnails");
 
         $thumbnails = [];
@@ -324,7 +325,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         $list = new Asset\Video\Thumbnail\Config\Listing();
         $items = $list->load();
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $thumbnails[] = array(
                 "id" => $item->getName(),
                 "text" => $item->getName()
@@ -340,7 +341,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns the class definition for the given class
      *
      */
-    public function objectBrickAction() {
+    public function objectBrickAction()
+    {
         $this->checkUserPermission("classes");
         try {
             $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
@@ -357,7 +359,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns the class definition for the given class
      *
      */
-    public function fieldCollectionAction() {
+    public function fieldCollectionAction()
+    {
         $this->checkUserPermission("classes");
         try {
             $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
@@ -375,12 +378,11 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns the json-encoded user data for the current user
      *
      */
-    public function userAction() {
+    public function userAction()
+    {
         try {
-
             $object = $this->service->getuser();
             $this->encoder->encode(array("success" => true, "data" => $object));
-
         } catch (\Exception $e) {
             \Logger::error($e);
         }
@@ -405,7 +407,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns json encoded success value
      * @throws \Exception
      */
-    public function assetAction() {
+    public function assetAction()
+    {
         $id = $this->getParam("id");
         $success = false;
 
@@ -448,7 +451,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 }
                 $this->encoder->encode(array("success" => true, "data" => $object));
                 return;
-            } else if ($this->isDelete()) {
+            } elseif ($this->isDelete()) {
                 $asset = Asset::getById($id);
                 if ($asset) {
                     $this->checkPermission($asset, "delete");
@@ -457,7 +460,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 $success = $this->service->deleteAsset($id);
                 $this->encoder->encode(array("success" => $success));
                 return;
-            } else if ($this->isPost() || $this->isPut()) {
+            } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
                 $data = \Zend_Json::decode($data);
 
@@ -465,7 +468,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 $id = null;
 
                 if ($data["id"]) {
-
                     $asset = Asset::getById($data["id"]);
                     if ($asset) {
                         $this->checkPermission($asset, "update");
@@ -480,7 +482,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                         $success = $this->service->updateAssetFile($wsData);
                     }
                 } else {
-
                     if ($type == "folder") {
                         $class = "\\Pimcore\\Model\\Webservice\\Data\\Asset\\Folder\\In";
                         $method = "createAssetFolder";
@@ -508,7 +509,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     $this->encoder->encode(array("success" => $success));
                 }
                 return;
-
             }
         } catch (\Exception $e) {
             \Logger::error($e);
@@ -520,7 +520,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /** Returns the group/key config as JSON.
      * @return mixed
      */
-    public function keyValueDefinitionAction() {
+    public function keyValueDefinitionAction()
+    {
         $this->checkUserPermission("classes");
 
         try {
@@ -530,7 +531,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 $definition = array();
 
                 $list = new Object\KeyValue\GroupConfig\Listing();
-                if($condition){
+                if ($condition) {
                     $list->setCondition($condition);
                 }
                 $list->load();
@@ -544,7 +545,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 $definition["groups"] = $groups;
 
                 $list = new Object\KeyValue\KeyConfig\Listing();
-                if($condition){
+                if ($condition) {
                     $list->setCondition($condition);
                 }
                 $list->load();
@@ -583,7 +584,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      returns json encoded success value
      * @throws \Exception
      */
-    public function documentAction() {
+    public function documentAction()
+    {
         $id = $this->getParam("id");
         $success = false;
 
@@ -614,9 +616,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                         } else {
                             throw new \Exception("unknown type");
                         }
-
                     }
-
                 }
 
                 if (!$object) {
@@ -624,7 +624,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 }
                 @$this->encoder->encode(array("success" => true, "data" => $object));
                 return;
-            } else if ($this->isDelete()) {
+            } elseif ($this->isDelete()) {
                 $doc = Document::getById($id);
                 if ($doc) {
                     $this->checkPermission($doc, "delete");
@@ -632,7 +632,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 $success = $this->service->deleteDocument($id);
                 $this->encoder->encode(array("success" => $success));
                 return;
-            } else if ($this->isPost() || $this->isPut()) {
+            } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
                 $data = \Zend_Json::decode($data);
 
@@ -654,7 +654,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     }
                     $wsData = self::fillWebserviceData($className, $data);
                     $success = $this->service->$setter($wsData);
-
                 } else {
                     $setter = "createDocument" . $typeUpper;
                     if (!method_exists($this->service, $setter)) {
@@ -666,7 +665,6 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     $this->checkPermission($doc, "create");
 
                     $id = $this->service->$setter($wsData);
-
                 }
 
                 if (!$isUpdate) {
@@ -679,9 +677,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                     $this->encoder->encode(array("success" => $success));
                 }
                 return;
-
             }
-
         } catch (\Exception $e) {
             $this->encoder->encode(array("success" => false, "msg" => (string) $e));
         }
@@ -701,7 +697,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      - limit
      *      - group by key
      */
-    public function assetListAction() {
+    public function assetListAction()
+    {
         $this->checkUserPermission("assets");
 
         $condition = $this->getParam("condition");
@@ -726,7 +723,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      - limit
      *      - group by key
      */
-    public function documentListAction() {
+    public function documentListAction()
+    {
         $this->checkUserPermission("documents");
 
         $condition = urldecode($this->getParam("condition"));
@@ -753,7 +751,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      - objectClass the name of the object class (without "Object_"). If the class does
      *          not exist the filter criteria will be ignored!
      */
-    public function objectListAction() {
+    public function objectListAction()
+    {
         $this->checkUserPermission("objects");
 
         $condition = urldecode($this->getParam("condition"));
@@ -776,7 +775,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      - objectClass the name of the object class (without "Object_"). If the class does
      *          not exist the filter criteria will be ignored!
      */
-    public function objectCountAction() {
+    public function objectCountAction()
+    {
         $this->checkUserPermission("objects");
 
         $condition = urldecode($this->getParam("condition"));
@@ -784,13 +784,17 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         $objectClass = $this->getParam("objectClass");
         $params = array("objectTypes" => array(Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT));
 
-        if (!empty($condition)) $params["condition"] = $condition;
-        if (!empty($groupBy)) $params["groupBy"] = $groupBy;
+        if (!empty($condition)) {
+            $params["condition"] = $condition;
+        }
+        if (!empty($groupBy)) {
+            $params["groupBy"] = $groupBy;
+        }
 
         $listClassName = "\\Pimcore\\Model\\Object\\AbstractObject";
-        if(!empty($objectClass)) {
+        if (!empty($objectClass)) {
             $listClassName = "\\Pimcore\\Model\\Object\\" . ucfirst($objectClass);
-            if(!Tool::classExists($listClassName)) {
+            if (!Tool::classExists($listClassName)) {
                 $listClassName = "Pimcore\\Model\\Object\\AbstractObject";
             }
         }
@@ -808,20 +812,25 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      - condition
      *      - group by key
      */
-    public function assetCountAction() {
+    public function assetCountAction()
+    {
         $this->checkUserPermission("assets");
 
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $params = array();
 
-        if (!empty($condition)) $params["condition"] = $condition;
-        if (!empty($groupBy)) $params["groupBy"] = $groupBy;
+        if (!empty($condition)) {
+            $params["condition"] = $condition;
+        }
+        if (!empty($groupBy)) {
+            $params["groupBy"] = $groupBy;
+        }
 
 
         $count = Asset::getTotalCount($params);
 
-        $this->encoder->encode(array("success" => true, "data" => array ("totalCount" => $count)));
+        $this->encoder->encode(array("success" => true, "data" => array("totalCount" => $count)));
     }
 
     /** Returns the total number of documents matching the given condition
@@ -831,15 +840,20 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      *      - condition
      *      - group by key
      */
-    public function documentCountAction() {
+    public function documentCountAction()
+    {
         $this->checkUserPermission("documents");
 
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $params = array();
 
-        if (!empty($condition)) $params["condition"] = $condition;
-        if (!empty($groupBy)) $params["groupBy"] = $groupBy;
+        if (!empty($condition)) {
+            $params["condition"] = $condition;
+        }
+        if (!empty($groupBy)) {
+            $params["groupBy"] = $groupBy;
+        }
 
 
         $count = Document::getTotalCount($params);
@@ -850,7 +864,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns a list of all class definitions.
      */
-    public function classesAction() {
+    public function classesAction()
+    {
         $this->checkUserPermission("classes");
 
         $list = new Object\ClassDefinition\Listing();
@@ -868,14 +883,15 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
-    private function inquire($type) {
+    private function inquire($type)
+    {
         try {
             $condense = $this->getParam("condense");
             $this->checkUserPermission($type . "s");
             if ($this->isPost()) {
                 $data = file_get_contents("php://input");
                 $idList = explode(',', $data);
-            } else if ($this->getParam("ids")) {
+            } elseif ($this->getParam("ids")) {
                 $idList = explode(',', $this->getParam("ids"));
             } else {
                 $idList = array();
@@ -921,7 +937,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      * Returns:
      *      - List with true or false for each ID
      */
-    public function objectInquireAction() {
+    public function objectInquireAction()
+    {
         $this->inquire("object");
     }
 
@@ -933,7 +950,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      * Returns:
      *      - List with true or false for each ID
      */
-    public function assetInquireAction() {
+    public function assetInquireAction()
+    {
         $this->inquire("asset");
     }
 
@@ -945,7 +963,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      * Returns:
      *      - List with true or false for each ID
      */
-    public function documentInquireAction() {
+    public function documentInquireAction()
+    {
         $this->inquire("document");
     }
 
@@ -954,7 +973,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns a list of all object brick definitions.
      */
-    public function objectBricksAction() {
+    public function objectBricksAction()
+    {
         $this->checkUserPermission("classes");
 
         $list = new Object\Objectbrick\Definition\Listing();
@@ -975,7 +995,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns a list of all field collection definitions.
      */
-    public function fieldCollectionsAction() {
+    public function fieldCollectionsAction()
+    {
         $this->checkUserPermission("classes");
 
         $list = new Object\Fieldcollection\Definition\Listing();
@@ -994,15 +1015,17 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     }
 
 
-    private static function map($wsData, $data) {
-        foreach($data as $key => $value) {
+    private static function map($wsData, $data)
+    {
+        foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $tmp = array();
 
                 foreach ($value as $subkey => $subvalue) {
                     if (is_array($subvalue)) {
                         $object = new stdClass();
-                        $object = self::map($object, $subvalue);;
+                        $object = self::map($object, $subvalue);
+                        ;
                         $tmp[$subkey] = $object;
                     } else {
                         $tmp[$subkey] = $subvalue;
@@ -1011,12 +1034,12 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
                 $value = $tmp;
             }
             $wsData->$key = $value;
-
         }
         return $wsData;
     }
 
-    public static function fillWebserviceData($class, $data) {
+    public static function fillWebserviceData($class, $data)
+    {
         $wsData = new $class();
         return self::map($wsData, $data);
     }
@@ -1026,7 +1049,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      * a method=delete parameter.
      * @return bool
      */
-    public function isDelete() {
+    public function isDelete()
+    {
         $request = $this->getRequest();
         $overrideMethod = $request->getParam("method");
         if (strtoupper($overrideMethod) == "DELETE") {
@@ -1039,7 +1063,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      * a method=get parameter.
      * @return bool
      */
-    public function isGet() {
+    public function isGet()
+    {
         $request = $this->getRequest();
         $overrideMethod = $request->getParam("method");
         if (strtoupper($overrideMethod) == "GET") {
@@ -1052,7 +1077,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      * a method=post parameter.
      * @return bool
      */
-    public function isPost() {
+    public function isPost()
+    {
         $request = $this->getRequest();
         $overrideMethod = $request->getParam("method");
         if (strtoupper($overrideMethod) == "POST") {
@@ -1065,7 +1091,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
      * a method=put parameter.
      * @return bool
      */
-    public function isPut() {
+    public function isPut()
+    {
         $request = $this->getRequest();
         $overrideMethod = $request->getParam("method");
         if (strtoupper($overrideMethod) == "PUT") {
@@ -1077,7 +1104,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns the current time.
      */
-    public function systemClockAction() {
+    public function systemClockAction()
+    {
         $this->encoder->encode(array("success" => true,
             "data" => array("currentTime" => time())));
     }
@@ -1085,13 +1113,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns translations
      */
-    public function translationsAction(){
+    public function translationsAction()
+    {
         $this->checkUserPermission("translations");
         $type = $this->getParam('type');
 
-        try{
+        try {
             $params = $this->getRequest()->getQuery();
-            $result = $this->service->getTranslations($params['type'],$params);
+            $result = $this->service->getTranslations($params['type'], $params);
             $this->encoder->encode(array("success" => true, "data" => $result));
         } catch (\Exception $e) {
             \Logger::error($e);
@@ -1103,7 +1132,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
     /**
      * Returns a list of all class definitions.
      */
-    public function serverInfoAction() {
+    public function serverInfoAction()
+    {
         $this->checkUserPermission("system_settings");
         $systemSettings = \Pimcore\Config::getSystemConfig()->toArray();
         $system = array("currentTime" => time(),
@@ -1111,8 +1141,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         );
 
         $pimcoreConstants = array(); //only Pimcore_ constants -> others might break the \Zend_Encode functionality
-        foreach((array)get_defined_constants() as $constant => $value){
-            if(strpos($constant,'PIMCORE_') === 0){
+        foreach ((array)get_defined_constants() as $constant => $value) {
+            if (strpos($constant, 'PIMCORE_') === 0) {
                 $pimcoreConstants[$constant] = $value;
             }
         }
@@ -1126,7 +1156,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
 
 
 
-        foreach((array) \Pimcore\API\Plugin\Broker::getInstance()->getModules() as $module){
+        foreach ((array) \Pimcore\API\Plugin\Broker::getInstance()->getModules() as $module) {
             $pimcore["modules"][] = get_class($module);
         }
 
@@ -1170,21 +1200,19 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice {
         unset($sections[0]);
 
         $pi = array();
-        foreach ($sections as $section)
-        {
+        foreach ($sections as $section) {
             $n = substr($section, 0, strpos($section, '</h2>'));
             preg_match_all('#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#', $section, $askapache, PREG_SET_ORDER);
-            foreach($askapache as $m)
-            {
-                $pi[$n][$m[1]]=(!isset($m[3])||$m[2]==$m[3])?$m[2]:array_slice($m,2);
+            foreach ($askapache as $m) {
+                $pi[$n][$m[1]]=(!isset($m[3])||$m[2]==$m[3])?$m[2]:array_slice($m, 2);
             }
         }
 
         return $pi;
-
     }
 
-    protected function getQueryParams(){
+    protected function getQueryParams()
+    {
         return $this->getRequest()->getQuery();
     }
 }

@@ -16,6 +16,6 @@ namespace Pimcore\Model\User\Workspace;
 
 use Pimcore\Model;
 
-class Asset extends AbstractWorkspace {
-
+class Asset extends AbstractWorkspace
+{
 }

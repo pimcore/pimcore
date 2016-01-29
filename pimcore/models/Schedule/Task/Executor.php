@@ -20,13 +20,14 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Version;
 
-class Executor {
+class Executor
+{
 
     /**
      *
      */
-    public static function execute() {
-
+    public static function execute()
+    {
         $list = new Listing();
         $list->setCondition("active = 1 AND date < ?", time());
         $tasks = $list->load();
@@ -37,87 +38,72 @@ class Executor {
                     $document = Document::getById($task->getCid());
                     if ($document instanceof Document) {
                         if ($task->getAction() == "publish-version" && $task->getVersion()) {
-                            try{
+                            try {
                                 $version = Version::getById($task->getVersion());
                                 $document = $version->getData();
-                                if($document instanceof Document){
+                                if ($document instanceof Document) {
                                     $document->setPublished(true);
                                     $document->save();
                                 } else {
                                     \Logger::err("Schedule\\Task\\Executor: Could not restore document from version data.");
                                 }
-
-                            } catch(\Exception $e){
+                            } catch (\Exception $e) {
                                 \Logger::err("Schedule\\Task\\Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
-
-                        }
-                        else if ($task->getAction() == "publish") {
+                        } elseif ($task->getAction() == "publish") {
                             $document->setPublished(true);
                             $document->save();
-                        }
-                        else if ($task->getAction() == "unpublish") {
+                        } elseif ($task->getAction() == "unpublish") {
                             $document->setPublished(false);
                             $document->save();
-                        }
-                        else if ($task->getAction() == "delete") {
+                        } elseif ($task->getAction() == "delete") {
                             $document->delete();
                         }
                     }
-                }
-                else if ($task->getCtype() == "asset") {
-
+                } elseif ($task->getCtype() == "asset") {
                     $asset = Asset::getById($task->getCid());
 
                     if ($asset instanceof Asset) {
                         if ($task->getAction() == "publish-version" && $task->getVersion()) {
-                            try{
+                            try {
                                 $version = Version::getById($task->getVersion());
                                 $asset = $version->getData();
-                                if($asset instanceof Asset){
+                                if ($asset instanceof Asset) {
                                     $asset->save();
                                 } else {
                                     \Logger::err("Schedule\\Task\\Executor: Could not restore asset from version data.");
                                 }
-
-                            } catch(\Exception $e){
+                            } catch (\Exception $e) {
                                 \Logger::err("Schedule\\Task\\Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
-                        }
-                        else if ($task->getAction() == "delete") {
+                        } elseif ($task->getAction() == "delete") {
                             $asset->delete();
                         }
                     }
-                }
-                else if ($task->getCtype() == "object") {
-
+                } elseif ($task->getCtype() == "object") {
                     $object = Object::getById($task->getCid());
 
                     if ($object instanceof Object) {
                         if ($task->getAction() == "publish-version" && $task->getVersion()) {
-                            try{
+                            try {
                                 $version = Version::getById($task->getVersion());
                                 $object = $version->getData();
-                                if($object instanceof Object\AbstractObject){
+                                if ($object instanceof Object\AbstractObject) {
                                     $object->setPublished(true);
                                     $object->save();
                                 } else {
                                     \Logger::err("Schedule\\Task\\Executor: Could not restore object from version data.");
                                 }
-
-                            } catch(\Exception $e){
+                            } catch (\Exception $e) {
                                 \Logger::err("Schedule\\Task\\Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
-                        }
-                        else if ($task->getAction() == "publish") {
+                        } elseif ($task->getAction() == "publish") {
                             $object->setPublished(true);
                             $object->save();
-                        }
-                        else if ($task->getAction() == "unpublish") {
+                        } elseif ($task->getAction() == "unpublish") {
                             $object->setPublished(false);
                             $object->save();
-                        }
-                        else if ($task->getAction() == "delete") {
+                        } elseif ($task->getAction() == "delete") {
                             $object->delete();
                         }
                     }
@@ -125,7 +111,6 @@ class Executor {
 
                 $task->setActive(false);
                 $task->save();
-                
             } catch (\Exception $e) {
                 \Logger::err("There was a problem with the scheduled task ID: " . $task->getId());
                 \Logger::err($e);

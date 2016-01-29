@@ -20,7 +20,8 @@ use Pimcore\Tool\Session;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model;
 
-abstract class Admin extends Action {
+abstract class Admin extends Action
+{
 
     /**
      * @var Model\User
@@ -41,19 +42,18 @@ abstract class Admin extends Action {
     /**
      * @throws \Zend_Exception
      */
-    public function init() {
-
+    public function init()
+    {
         parent::init();
 
         // set language
-        if(\Zend_Registry::isRegistered("Zend_Locale")) {
+        if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = (string) \Zend_Registry::get("Zend_Locale");
             $this->setLanguage($locale);
         } else {
             if ($this->getParam("language")) {
                 $this->setLanguage($this->getParam("language"));
-            }
-            else {
+            } else {
                 $config = Config::getSystemConfig();
                 $this->setLanguage($config->general->language);
 
@@ -62,7 +62,7 @@ abstract class Admin extends Action {
             }
         }
 
-        if(self::$adminInitialized) {
+        if (self::$adminInitialized) {
             // this will be executed on every call to this init() method
             try {
                 $this->setUser(\Zend_Registry::get("pimcore_admin_user"));
@@ -91,13 +91,13 @@ abstract class Admin extends Action {
             \Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
             // this is to make it possible to use the session id as a part of the route (ZF default route) used for pixlr.com editors, etc.
-            if($this->getParam("pimcore_admin_sid")) {
+            if ($this->getParam("pimcore_admin_sid")) {
                 $_REQUEST["pimcore_admin_sid"] = $this->getParam("pimcore_admin_sid");
             }
 
             // authenticate user, first try to authenticate with session information
             $user = Authentication::authenticateSession();
-            if($user instanceof Model\User) {
+            if ($user instanceof Model\User) {
                 $this->setUser($user);
                 if ($this->getUser()->getLanguage()) {
                     $this->setLanguage($this->getUser()->getLanguage());
@@ -106,7 +106,7 @@ abstract class Admin extends Action {
                 // try to authenticate with http basic auth, but this is only allowed for WebDAV
                 if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
                     $user = Authentication::authenticateHttpBasic();
-                    if($user instanceof Model\User) {
+                    if ($user instanceof Model\User) {
                         $this->setUser($user);
 
                         \Zend_Registry::set("pimcore_admin_user", $this->getUser());
@@ -131,7 +131,7 @@ abstract class Admin extends Action {
                 ));
 
                 // send a auth header for the client (is covered by the ajax object in javascript)
-                $this->getResponse()->setHeader("X-Pimcore-Auth","required");
+                $this->getResponse()->setHeader("X-Pimcore-Auth", "required");
                 // redirect to login page
                 $this->redirect("/admin/login");
                 // exit the execution -> just to be sure
@@ -139,7 +139,7 @@ abstract class Admin extends Action {
             }
 
             // we're now authenticated so we can remove the default error handler so that we get just the normal PHP errors
-            if($this->getParam("controller") != "login") {
+            if ($this->getParam("controller") != "login") {
                 $front = \Zend_Controller_Front::getInstance();
                 $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\ErrorHandler");
                 $front->throwExceptions(true);
@@ -162,7 +162,8 @@ abstract class Admin extends Action {
      * returns the current user
      * @return Model\User $user
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->user;
     }
 
@@ -170,7 +171,8 @@ abstract class Admin extends Action {
      * @param Model\User $user
      * @return $this
      */
-    public function setUser(Model\User $user) {
+    public function setUser(Model\User $user)
+    {
         $this->user = $user;
         \Zend_Registry::set("pimcore_admin_user", $this->user);
 
@@ -181,7 +183,8 @@ abstract class Admin extends Action {
     /**
      * @return string
      */
-    public function getLanguage() {
+    public function getLanguage()
+    {
         return $this->language;
     }
 
@@ -191,30 +194,29 @@ abstract class Admin extends Action {
      * @return $this
      * @throws \Zend_Exception
      */
-    public function setLanguage($language, $useFrontendLanguages = false) {
-
+    public function setLanguage($language, $useFrontendLanguages = false)
+    {
         if (\Zend_Locale::isLocale($language, true)) {
             $locale = new \Zend_Locale($language);
-        }
-        else {
+        } else {
             $locale = new \Zend_Locale("en");
         }
 
-        if($useFrontendLanguages) {
+        if ($useFrontendLanguages) {
             // check if given language is a valid language
-            if(!Tool::isValidLanguage($locale)) {
+            if (!Tool::isValidLanguage($locale)) {
                 return;
             }
 
             \Zend_Registry::set("Zend_Locale", $locale);
         } else {
             // check if given language is installed if not => skip
-            if(!in_array((string) $locale, AdminTool::getLanguages())) {
+            if (!in_array((string) $locale, AdminTool::getLanguages())) {
                 return;
             }
 
             \Zend_Registry::set("Zend_Locale", $locale);
-            if(\Zend_Registry::isRegistered("Zend_Translate")) {
+            if (\Zend_Registry::isRegistered("Zend_Translate")) {
                 $t = \Zend_Registry::get("Zend_Translate");
                 $t->setLocale($locale);
             }
@@ -229,7 +231,8 @@ abstract class Admin extends Action {
      * @param $instance
      * @throws \Zend_Exception
      */
-    public static function initTranslations($instance) {
+    public static function initTranslations($instance)
+    {
 
         //add translations to registry
         $coreLanguageFile = AdminTool::getLanguageFile("en");
@@ -238,13 +241,13 @@ abstract class Admin extends Action {
         $availableLanguages = AdminTool::getLanguages();
         
         foreach ($availableLanguages as $lang) {
-            if($lang != "en") {
+            if ($lang != "en") {
                 $languageFile = AdminTool::getLanguageFile($lang);
                 $translator->addTranslation($languageFile, $lang);
             }
         }
         
-        if(\Zend_Registry::isRegistered("Zend_Locale")) {
+        if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = \Zend_Registry::get("Zend_Locale");
             @$translator->setLocale($locale);
         }
@@ -260,7 +263,8 @@ abstract class Admin extends Action {
      * @param \Zend_Translate $t
      * @return $this
      */
-    public function setTranslator(\Zend_Translate $t) {
+    public function setTranslator(\Zend_Translate $t)
+    {
         $this->translator = $t;
         return $this;
     }
@@ -268,19 +272,21 @@ abstract class Admin extends Action {
     /**
      * @return mixed
      */
-    public function getTranslator() {
+    public function getTranslator()
+    {
         return $this->translator;
     }
 
     /**
      *
      */
-    protected function protectCSRF() {
-        $csrfToken = Session::useSession(function($adminSession) {
+    protected function protectCSRF()
+    {
+        $csrfToken = Session::useSession(function ($adminSession) {
             return $adminSession->csrfToken;
         });
 
-        if($csrfToken != $_SERVER["HTTP_X_PIMCORE_CSRF_TOKEN"]) {
+        if ($csrfToken != $_SERVER["HTTP_X_PIMCORE_CSRF_TOKEN"]) {
             die("Detected CSRF Attack! Do not do evil things with pimcore ... ;-)");
         }
     }
@@ -289,7 +295,8 @@ abstract class Admin extends Action {
      * @param $permission
      * @throws \Exception
      */
-    protected function checkPermission($permission) {
+    protected function checkPermission($permission)
+    {
         if (!$this->getUser() || !$this->getUser()->isAllowed($permission)) {
             $message = "attempt to access " . $permission . ", but has no permission to do so.";
             \Logger::err($message);
@@ -300,17 +307,16 @@ abstract class Admin extends Action {
     /**
      * @throws \Zend_Json_Exception
      */
-    protected function logUsageStatistics() {
-
+    protected function logUsageStatistics()
+    {
         $params = array();
         $disallowedKeys = array("_dc", "module", "controller", "action", "password");
-        foreach($this->getAllParams() as $key => $value) {
-
-            if(is_json($value)) {
+        foreach ($this->getAllParams() as $key => $value) {
+            if (is_json($value)) {
                 $value = \Zend_Json::decode($value);
-                if(is_array($value)) {
+                if (is_array($value)) {
                     array_walk_recursive($value, function (&$item, $key) {
-                        if(strpos($key, "pass") !== false) {
+                        if (strpos($key, "pass") !== false) {
                             $item = "*************";
                         }
                     });
@@ -319,7 +325,7 @@ abstract class Admin extends Action {
             }
 
 
-            if(!in_array($key, $disallowedKeys) && is_string($value)) {
+            if (!in_array($key, $disallowedKeys) && is_string($value)) {
                 $params[$key] = (strlen($value) > 40) ? substr($value, 0, 40) . "..." : $value;
             }
         }

@@ -10,12 +10,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-use Pimcore\Update; 
+use Pimcore\Update;
 
-class Update_IndexController extends \Pimcore\Controller\Action\Admin {
+class Update_IndexController extends \Pimcore\Controller\Action\Admin
+{
 
 
-    public function init() {
+    public function init()
+    {
         parent::init();
 
         Update::clearOPCaches();
@@ -23,10 +25,10 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin {
         $this->checkPermission("update");
     }
 
-    public function checkFilePermissionsAction () {
-        
+    public function checkFilePermissionsAction()
+    {
         $success = false;
-        if(Update::isWriteable()) {
+        if (Update::isWriteable()) {
             $success = true;
         }
 
@@ -35,40 +37,41 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin {
         ));
     }
     
-    public function getAvailableUpdatesAction () {
-
+    public function getAvailableUpdatesAction()
+    {
         $availableUpdates = Update::getAvailableUpdates();
         $this->_helper->json($availableUpdates);
     }
     
-    public function getJobsAction () {
-
+    public function getJobsAction()
+    {
         $jobs = Update::getJobs($this->getParam("toRevision"));
         
         $this->_helper->json($jobs);
     }
     
-    public function jobParallelAction () {
-        if($this->getParam("type") == "download") {
+    public function jobParallelAction()
+    {
+        if ($this->getParam("type") == "download") {
             Update::downloadData($this->getParam("revision"), $this->getParam("url"));
         }
         
         $this->_helper->json(array("success" => true));
     }
     
-    public function jobProceduralAction () {
-        
+    public function jobProceduralAction()
+    {
         $status = array("success" => true);
         
-        if($this->getParam("type") == "files") {
+        if ($this->getParam("type") == "files") {
             Update::installData($this->getParam("revision"));
-        } else if ($this->getParam("type") == "clearcache") {
+        } elseif ($this->getParam("type") == "clearcache") {
             \Pimcore\Cache::clearAll();
-        } else if ($this->getParam("type") == "preupdate") {
+        } elseif ($this->getParam("type") == "preupdate") {
             $status = Update::executeScript($this->getParam("revision"), "preupdate");
-        } else if ($this->getParam("type") == "postupdate") {
+        } elseif ($this->getParam("type") == "postupdate") {
             $status = Update::executeScript($this->getParam("revision"), "postupdate");
-        } else if ($this->getParam("type") == "cleanup") {
+        } elseif ($this->getParam("type") == "cleanup") {
             Update::cleanup();
         }
 

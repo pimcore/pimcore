@@ -16,13 +16,15 @@ namespace Pimcore\Model\Tool\Email\Blacklist;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $address
      * @throws \Exception
      */
-    public function getByAddress($address) {
+    public function getByAddress($address)
+    {
         $data = $this->db->fetchRow("SELECT * FROM email_blacklist WHERE address = ?", $address);
 
         if (!$data["address"]) {
@@ -36,10 +38,10 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         $this->model->setModificationDate(time());
-        if(!$this->model->getCreationDate()) {
+        if (!$this->model->getCreationDate()) {
             $this->model->setCreationDate(time());
         }
 
@@ -48,8 +50,7 @@ class Dao extends Model\Dao\AbstractDao {
         // save main table
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("email_blacklist"))) {
-
-                if(is_bool($value)) {
+                if (is_bool($value)) {
                     $value = (int) $value;
                 }
 
@@ -67,7 +68,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
-        $this->db->delete("email_blacklist", $this->db->quoteInto("address = ?", $this->model->getAddress() ));
+    public function delete()
+    {
+        $this->db->delete("email_blacklist", $this->db->quoteInto("address = ?", $this->model->getAddress()));
     }
 }

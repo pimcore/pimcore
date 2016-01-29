@@ -18,6 +18,6 @@ namespace Pimcore\Model\Dao\Mysql;
 
 use Pimcore\Model\Dao\AbstractDao;
 
-abstract class AbstractMysql extends AbstractDao {
-
+abstract class AbstractMysql extends AbstractDao
+{
 }

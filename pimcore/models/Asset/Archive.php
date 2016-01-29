@@ -16,11 +16,11 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
-class Archive extends Model\Asset {
+class Archive extends Model\Asset
+{
 
     /**
      * @var string
      */
     public $type = "archive";
-
 }

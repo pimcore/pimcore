@@ -17,7 +17,6 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
 
     public function addAction()
     {
-
         $tag = new Pimcore\Model\Element\Tag();
         $tag->setName(strip_tags($this->getParam('text')));
         $tag->setParentId(intval($this->getParam('parentId')));
@@ -39,7 +38,6 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
 
     public function updateAction()
     {
-
         $tag = Pimcore\Model\Element\Tag::getById($this->getParam("id"));
         if ($tag) {
             $parentId = $this->getParam("parentId");
@@ -60,16 +58,15 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
 
     public function treeGetChildrenByIdAction()
     {
-
         $showSelection = $this->getParam("showSelection") == "true";
         $assginmentCId = intval($this->getParam("assignmentCId"));
         $assginmentCType = strip_tags($this->getParam("assignmentCType"));
 
         $assignedTagIds = [];
-        if($assginmentCId && $assginmentCType) {
+        if ($assginmentCId && $assginmentCType) {
             $assignedTags = Tag::getTagsForElement($assginmentCType, $assginmentCId);
 
-            foreach($assignedTags as $assignedTag) {
+            foreach ($assignedTags as $assignedTag) {
                 $assignedTagIds[$assignedTag->getId()] = $assignedTag;
             }
         }
@@ -103,7 +100,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
             ]
         ];
 
-        if($showSelection) {
+        if ($showSelection) {
             $tagArray["checked"] = isset($assignedTagIds[$tag->getId()]);
         }
 
@@ -118,15 +115,16 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    public function loadTagsForElementAction() {
+    public function loadTagsForElementAction()
+    {
         $assginmentCId = intval($this->getParam("assignmentCId"));
         $assginmentCType = strip_tags($this->getParam("assignmentCType"));
 
         $assignedTagArray = [];
-        if($assginmentCId && $assginmentCType) {
+        if ($assginmentCId && $assginmentCType) {
             $assignedTags = Tag::getTagsForElement($assginmentCType, $assginmentCId);
 
-            foreach($assignedTags as $assignedTag) {
+            foreach ($assignedTags as $assignedTag) {
                 $assignedTagArray[] = $this->convertTagToArray($assignedTag, false, []);
             }
         }
@@ -134,28 +132,29 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json($assignedTagArray);
     }
 
-    public function addTagToElementAction() {
+    public function addTagToElementAction()
+    {
         $assginmentCId = intval($this->getParam("assignmentElementId"));
         $assginmentCType = strip_tags($this->getParam("assignmentElementType"));
         $tagId = intval($this->getParam("tagId"));
 
         $tag = Tag::getById($tagId);
-        if($tag) {
+        if ($tag) {
             Tag::addTagToElement($assginmentCType, $assginmentCId, $tag);
             $this->_helper->json(['success' => true, 'id' => $tag->getId()]);
         } else {
             $this->_helper->json(['success' => false]);
         }
-
     }
 
-    public function removeTagFromElementAction() {
+    public function removeTagFromElementAction()
+    {
         $assginmentCId = intval($this->getParam("assignmentElementId"));
         $assginmentCType = strip_tags($this->getParam("assignmentElementType"));
         $tagId = intval($this->getParam("tagId"));
 
         $tag = Tag::getById($tagId);
-        if($tag) {
+        if ($tag) {
             Tag::removeTagFromElement($assginmentCType, $assginmentCId, $tag);
             $this->_helper->json(['success' => true, 'id' => $tag->getId()]);
         } else {
@@ -164,8 +163,8 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    public function getBatchAssignmentJobsAction() {
-
+    public function getBatchAssignmentJobsAction()
+    {
         $elementId = intval($this->getParam("elementId"));
         $elementType = strip_tags($this->getParam("elementType"));
 
@@ -174,19 +173,19 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         switch ($elementType) {
             case "object":
                 $object = \Pimcore\Model\Object\AbstractObject::getById($elementId);
-                if($object) {
+                if ($object) {
                     $idList = $this->getSubObjectIds($object);
                 }
                 break;
             case "asset":
                 $asset = \Pimcore\Model\Asset::getById($elementId);
-                if($asset) {
+                if ($asset) {
                     $idList = $this->getSubAssetIds($asset);
                 }
                 break;
             case "document":
                 $document = \Pimcore\Model\Document::getById($elementId);
-                if($document) {
+                if ($document) {
                     $idList = $this->getSubDocumentIds($document);
                 }
                 break;
@@ -195,17 +194,16 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         $size = 2;
         $offset = 0;
         $idListParts = [];
-        while($offset < count($idList)) {
+        while ($offset < count($idList)) {
             $idListParts[] = array_slice($idList, $offset, $size);
             $offset += $size;
         }
 
         $this->_helper->json(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
-
     }
 
-    private function getSubObjectIds(\Pimcore\Model\Object\AbstractObject $object) {
-
+    private function getSubObjectIds(\Pimcore\Model\Object\AbstractObject $object)
+    {
         $childsList = new Pimcore\Model\Object\Listing();
         $condition = "o_path LIKE ?";
         if (!$this->getUser()->isAdmin()) {
@@ -223,8 +221,8 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         return $childsList->loadIdList();
     }
 
-    private function getSubAssetIds(\Pimcore\Model\Asset $asset) {
-
+    private function getSubAssetIds(\Pimcore\Model\Asset $asset)
+    {
         $childsList = new Pimcore\Model\Asset\Listing();
         $condition = "path LIKE ?";
         if (!$this->getUser()->isAdmin()) {
@@ -242,8 +240,8 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         return $childsList->loadIdList();
     }
 
-    private function getSubDocumentIds(\Pimcore\Model\Document $document) {
-
+    private function getSubDocumentIds(\Pimcore\Model\Document $document)
+    {
         $childsList = new Pimcore\Model\Document\Listing();
         $condition = "path LIKE ?";
         if (!$this->getUser()->isAdmin()) {
@@ -261,8 +259,8 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         return $childsList->loadIdList();
     }
 
-    public function doBatchAssignmentAction() {
-
+    public function doBatchAssignmentAction()
+    {
         $cType = strip_tags($this->getParam("elementType"));
         $assignedTags = json_decode($this->getParam("assignedTags"));
         $elementIds = json_decode($this->getParam("childrenIds"));
@@ -272,5 +270,4 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
 
         $this->_helper->json(['success' => true]);
     }
-
 }

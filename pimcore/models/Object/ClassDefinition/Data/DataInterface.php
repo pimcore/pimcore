@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
-interface DataInterface {
+interface DataInterface
+{
 
     /**
      * @param $object
@@ -28,4 +29,3 @@ interface DataInterface {
      */
     public function getFromCsvImport($importValue);
 }
- 

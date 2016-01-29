@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
-class Link extends Model\Webservice\Data\Document {
+class Link extends Model\Webservice\Data\Document
+{
     
     /**
      * @var integer

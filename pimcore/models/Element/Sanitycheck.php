@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-class Sanitycheck extends Model\AbstractModel {
+class Sanitycheck extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -31,7 +32,8 @@ class Sanitycheck extends Model\AbstractModel {
     /**
      * @return int
      */
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -39,7 +41,8 @@ class Sanitycheck extends Model\AbstractModel {
      * @param  int $id
      * @return void
      */
-    public function setId($id){
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -47,7 +50,8 @@ class Sanitycheck extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getType(){
+    public function getType()
+    {
         return $this->type;
     }
 
@@ -55,7 +59,8 @@ class Sanitycheck extends Model\AbstractModel {
      * @param  string $type
      * @return void
      */
-    public function setType($type){
+    public function setType($type)
+    {
         $this->type = $type;
         return $this;
     }
@@ -66,7 +71,8 @@ class Sanitycheck extends Model\AbstractModel {
      *
      * @return void
      */
-    public function save(){
+    public function save()
+    {
         $this->getDao()->save();
     }
 
@@ -75,7 +81,8 @@ class Sanitycheck extends Model\AbstractModel {
      *
      * @return void
      */
-    public function delete(){
+    public function delete()
+    {
         $this->getDao()->delete();
     }
 
@@ -84,11 +91,14 @@ class Sanitycheck extends Model\AbstractModel {
      * @static
      * @return Sanitycheck
      */
-    public static function getNext(){
+    public static function getNext()
+    {
         $sanityCheck = new Sanitycheck();
         $sanityCheck->getDao()->getNext();
-        if($sanityCheck->getId() and $sanityCheck->getType()){
-                return $sanityCheck;
-        } else return null;
+        if ($sanityCheck->getId() and $sanityCheck->getType()) {
+            return $sanityCheck;
+        } else {
+            return null;
+        }
     }
 }

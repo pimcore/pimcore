@@ -16,7 +16,8 @@ use Pimcore\Db as Database;
 use Monolog\Handler\AbstractProcessingHandler;
 use Pimcore\Tool;
 
-class ApplicationLoggerDb extends AbstractProcessingHandler {
+class ApplicationLoggerDb extends AbstractProcessingHandler
+{
 
     /**
      *
@@ -33,11 +34,12 @@ class ApplicationLoggerDb extends AbstractProcessingHandler {
      * @param string $level
      * @param bool|true $bubble
      */
-    public function __construct($level = "debug", $bubble = true) {
+    public function __construct($level = "debug", $bubble = true)
+    {
 
         // Zend_Log compatibility
         $zendLoggerPsr3Mapping = \Logger::getZendLoggerPsr3Mapping();
-        if(isset($zendLoggerPsr3Mapping[$level])) {
+        if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
         }
 
@@ -71,10 +73,11 @@ class ApplicationLoggerDb extends AbstractProcessingHandler {
      * @deprecated
      * @param $level
      */
-    public function setFilterPriority($level) {
+    public function setFilterPriority($level)
+    {
         // legacy ZF method
         $zendLoggerPsr3Mapping = \Logger::getZendLoggerPsr3Mapping();
-        if(isset($zendLoggerPsr3Mapping[$level])) {
+        if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
             $this->setLevel($level);
         }
@@ -84,7 +87,8 @@ class ApplicationLoggerDb extends AbstractProcessingHandler {
      * @static
      * @return string[]
      */
-    public static function getComponents() {
+    public static function getComponents()
+    {
         $db = Database::get();
 
         $components = $db->fetchCol("SELECT component FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE NOT ISNULL(component) GROUP BY component;");
@@ -95,7 +99,8 @@ class ApplicationLoggerDb extends AbstractProcessingHandler {
      * @static
      * @return string[]
      */
-    public static function getPriorities() {
+    public static function getPriorities()
+    {
         $priorities = array();
         $priorityNames = array(
             "debug" => "DEBUG",
@@ -111,7 +116,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler {
         $db = Database::get();
 
         $priorityNumbers = $db->fetchCol("SELECT priority FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE NOT ISNULL(priority) GROUP BY priority;");
-        foreach($priorityNumbers as $priorityNumber) {
+        foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }
 

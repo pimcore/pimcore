@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
-class Page extends Model\Webservice\Data\Document\PageSnippet {
+class Page extends Model\Webservice\Data\Document\PageSnippet
+{
     
     /**
      * @var string

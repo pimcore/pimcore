@@ -27,7 +27,6 @@ class CompatibilityStubsCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $paths = array(
             PIMCORE_CLASS_DIRECTORY,
         );
@@ -41,8 +40,7 @@ class CompatibilityStubsCommand extends AbstractCommand
         $map = new \stdClass();
 
         foreach ($paths as $path) {
-
-            if(!empty($path)) {
+            if (!empty($path)) {
                 // Get the ClassFileLocator, and pass it the library path
                 $this->output->writeln("current path: " . $path);
                 $l = new \Zend_File_ClassFileLocator($path);
@@ -60,14 +58,14 @@ class CompatibilityStubsCommand extends AbstractCommand
 
                     foreach ($file->getClasses() as $class) {
                         $allowed = true;
-                        foreach($excludePatterns as $excludePattern) {
-                            if(preg_match($excludePattern, $class)) {
+                        foreach ($excludePatterns as $excludePattern) {
+                            if (preg_match($excludePattern, $class)) {
                                 $allowed = false;
                                 break;
                             }
                         }
 
-                        if($allowed) {
+                        if ($allowed) {
                             $map->{$class} = $filename;
                         }
                     }
@@ -83,15 +81,14 @@ class CompatibilityStubsCommand extends AbstractCommand
 
         $processedClasses = [];
 
-        foreach($globalMap as $class => $file) {
-
+        foreach ($globalMap as $class => $file) {
             $contents = file_get_contents($file);
             $definition = "";
-            if(strpos($contents, "abstract class")) {
+            if (strpos($contents, "abstract class")) {
                 $definition = "abstract class";
-            } else if (strpos($contents, "class ")) {
+            } elseif (strpos($contents, "class ")) {
                 $definition = "class";
-            } else if (strpos($contents, "interface ")) {
+            } elseif (strpos($contents, "interface ")) {
                 $definition = "interface";
             } else {
                 continue;
@@ -104,14 +101,14 @@ class CompatibilityStubsCommand extends AbstractCommand
             $alias = preg_replace("/_Listing$/", "_List", $alias);
             $alias = str_replace("Object_ClassDefinition", "Object_Class", $alias);
 
-            if(strpos($alias, "Pimcore_Model") === 0) {
-                if(!preg_match("/^Pimcore_Model_(Abstract|List|Resource|Cache)/", $alias)) {
+            if (strpos($alias, "Pimcore_Model") === 0) {
+                if (!preg_match("/^Pimcore_Model_(Abstract|List|Resource|Cache)/", $alias)) {
                     $alias = str_replace("Pimcore_Model_", "", $alias);
                 }
             }
 
             $line = "";
-            if($class != $alias && !in_array($alias, $processedClasses)) {
+            if ($class != $alias && !in_array($alias, $processedClasses)) {
                 $line .= "/**\n * @deprecated \n */\n";
                 $line .= $definition . " " . $alias . " extends \\" . $class . " {} \n\n";
             }

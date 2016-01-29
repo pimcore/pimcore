@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Qrcode;
 
 use Pimcore\Model;
 
-class Config extends Model\AbstractModel {
+class Config extends Model\AbstractModel
+{
 
     /**
      * @var string
@@ -63,8 +64,8 @@ class Config extends Model\AbstractModel {
      * @return Config
      * @throws \Exception
      */
-    public static function getByName ($name) {
-
+    public static function getByName($name)
+    {
         try {
             $code = new self();
             $code->getDao()->getByName($name);

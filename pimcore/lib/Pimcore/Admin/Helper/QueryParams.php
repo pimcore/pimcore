@@ -12,14 +12,15 @@
 
 namespace Pimcore\Admin\Helper;
 
-class QueryParams {
+class QueryParams
+{
 
     /**
      * @param $params
      * @return array  [orderKey => null|string, order => null|string]
      */
-    public static function extractSortingSettings($params) {
-
+    public static function extractSortingSettings($params)
+    {
         $orderKey = null;
         $order = null;
 
@@ -32,12 +33,11 @@ class QueryParams {
                 $order = $sortParam["direction"];
             }
         } else {
-
-            if($params["dir"]) {
+            if ($params["dir"]) {
                 $order = $params["dir"];
             }
 
-            if($params["sort"]) {
+            if ($params["sort"]) {
                 $orderKey = $params["sort"];
             }
         }
@@ -45,7 +45,8 @@ class QueryParams {
         return ['orderKey' => $orderKey, "order" => $order];
     }
 
-    public static function getRecordIdForGridRequest($param) {
+    public static function getRecordIdForGridRequest($param)
+    {
         if (!\Pimcore\Tool\Admin::isExtJS6() && is_numeric($param)) {
             return intval($param);
         } else {
@@ -53,6 +54,4 @@ class QueryParams {
             return $param['id'];
         }
     }
-
-
 }

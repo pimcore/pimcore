@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\QuantityValue\Unit;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     const TABLE_NAME = "quantityvalue_units";
 
@@ -32,7 +33,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
 
@@ -40,10 +42,10 @@ class Dao extends Model\Dao\AbstractDao {
      * @param string $abbreviation
      * @return void
      */
-    public function getByAbbreviation($abbreviation) {
-
+    public function getByAbbreviation($abbreviation)
+    {
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE abbreviation=" . $this->db->quote($abbreviation));
-        if(empty($classRaw)) {
+        if (empty($classRaw)) {
             throw new \Exception("Unit " . $abbreviation . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
@@ -53,10 +55,10 @@ class Dao extends Model\Dao\AbstractDao {
      * @param string $reference
      * @return void
      */
-    public function getByReference($reference) {
-
+    public function getByReference($reference)
+    {
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE reference=" . $this->db->quote($reference));
-        if(empty($classRaw)) {
+        if (empty($classRaw)) {
             throw new \Exception("Unit " . $reference . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
@@ -66,14 +68,13 @@ class Dao extends Model\Dao\AbstractDao {
      * @param string $abbreviation
      * @return void
      */
-    public function getById($id) {
-
+    public function getById($id)
+    {
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE id=" . $this->db->quote($id));
-        if(empty($classRaw)) {
+        if (empty($classRaw)) {
             throw new \Exception("Unit " . $id . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
-
     }
 
 
@@ -82,7 +83,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
         $this->db->insert(self::TABLE_NAME, array());
         $this->model->setId($this->db->lastInsertId());
 
@@ -94,7 +96,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->update();
         }
@@ -104,16 +107,15 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @return void
      */
-    public function update() {
-
+    public function update()
+    {
         $class = get_object_vars($this->model);
 
         foreach ($class as $key => $value) {
             if (in_array($key, $this->validColumns)) {
-
                 if (is_array($value) || is_object($value)) {
                     $value = serialize($value);
-                } else  if(is_bool($value)) {
+                } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
                 $data[$key] = $value;
@@ -128,8 +130,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete(self::TABLE_NAME, "id=" . $this->db->quote($this->model->getId()));
     }
-
 }

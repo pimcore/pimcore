@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
-class Numeric extends Model\Document\Tag {
+class Numeric extends Model\Document\Tag
+{
 
     /**
      * Contains the current number, or an empty string if not set
@@ -30,7 +31,8 @@ class Numeric extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "numeric";
     }
 
@@ -38,7 +40,8 @@ class Numeric extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->number;
     }
 
@@ -46,7 +49,8 @@ class Numeric extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
+    public function frontend()
+    {
         return $this->number;
     }
 
@@ -55,7 +59,8 @@ class Numeric extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->number = $data;
         return $this;
     }
@@ -65,7 +70,8 @@ class Numeric extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         $this->number = $data;
         return $this;
     }
@@ -73,7 +79,8 @@ class Numeric extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return empty($this->number);
     }
 
@@ -82,13 +89,13 @@ class Numeric extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null){
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
-        if(empty($data->number) or is_numeric($data->number)){
+        if (empty($data->number) or is_numeric($data->number)) {
             $this->number = $data->number;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
-
     }
 }

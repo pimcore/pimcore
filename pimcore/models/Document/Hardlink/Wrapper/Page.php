@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
 use Pimcore\Model;
 
-class Page extends Model\Document\Page implements Model\Document\Hardlink\Wrapper\WrapperInterface {
+class Page extends Model\Document\Page implements Model\Document\Hardlink\Wrapper\WrapperInterface
+{
 
     use Model\Document\Hardlink\Wrapper;
 }

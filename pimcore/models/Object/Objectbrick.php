@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
-class Objectbrick extends Model\AbstractModel {
+class Objectbrick extends Model\AbstractModel
+{
 
     /**
      * @var array
@@ -42,9 +43,10 @@ class Objectbrick extends Model\AbstractModel {
      * @param Concrete $object
      * @param string $fieldname
      */
-    public function __construct ($object, $fieldname) {
+    public function __construct($object, $fieldname)
+    {
         $this->setObject($object);
-        if($fieldname) {
+        if ($fieldname) {
             $this->setFieldname($fieldname);
         }
     }
@@ -52,22 +54,23 @@ class Objectbrick extends Model\AbstractModel {
     /**
      * @return array
      */
-    public function getItems ($withInheritedValues = false) {
-        if($withInheritedValues) {
+    public function getItems($withInheritedValues = false)
+    {
+        if ($withInheritedValues) {
             $getters = $this->getBrickGetters();
             $values = array();
-            foreach($getters as $getter) {
+            foreach ($getters as $getter) {
                 $value = $this->$getter();
-                if(!empty($value)) {
+                if (!empty($value)) {
                     $values[] = $value;
                 }
             }
 
             return $values;
         } else {
-            if(empty($this->items)) {
-                foreach(get_object_vars($this) as $var) {
-                    if($var instanceof Objectbrick\Data\AbstractData) {
+            if (empty($this->items)) {
+                foreach (get_object_vars($this) as $var) {
+                    if ($var instanceof Objectbrick\Data\AbstractData) {
                         $this->items[] = $var;
                     }
                 }
@@ -80,7 +83,8 @@ class Objectbrick extends Model\AbstractModel {
      * @param $items
      * @return void
      */
-    public function setItems ($items) {
+    public function setItems($items)
+    {
         $this->items = $items;
         return $this;
     }
@@ -88,7 +92,8 @@ class Objectbrick extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getFieldname () {
+    public function getFieldname()
+    {
         return $this->fieldname;
     }
 
@@ -96,7 +101,8 @@ class Objectbrick extends Model\AbstractModel {
      * @param $fieldname
      * @return void
      */
-    public function setFieldname ($fieldname) {
+    public function setFieldname($fieldname)
+    {
         $this->fieldname = $fieldname;
         return $this;
     }
@@ -104,9 +110,10 @@ class Objectbrick extends Model\AbstractModel {
     /**
      * @return array
      */
-    public function getBrickGetters() {
+    public function getBrickGetters()
+    {
         $getters = array();
-        foreach($this->brickGetters as $bg) {
+        foreach ($this->brickGetters as $bg) {
             $getters[] = "get" . ucfirst($bg);
         }
         return $getters;
@@ -115,14 +122,16 @@ class Objectbrick extends Model\AbstractModel {
     /**
      * @return array
      */
-    public function getAllowedBrickTypes() {
+    public function getAllowedBrickTypes()
+    {
         return is_array($this->brickGetters) ? $this->brickGetters : array();
     }
 
     /**
      * @return array
      */
-    public function getItemDefinitions () {
+    public function getItemDefinitions()
+    {
         $definitions = array();
         foreach ($this->getItems() as $item) {
             $definitions[$item->getType()] = $item->getDefinition();
@@ -135,18 +144,19 @@ class Objectbrick extends Model\AbstractModel {
      * @param Concrete $object
      * @return void
      */
-    public function save ($object) {
+    public function save($object)
+    {
 
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
 
         $getters = $this->getBrickGetters();
 
-        foreach($getters as $getter) {
+        foreach ($getters as $getter) {
             $brick = $this->$getter();
 
-            if($brick instanceof Objectbrick\Data\AbstractData) {
-                if($brick->getDoDelete()) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
+                if ($brick->getDoDelete()) {
                     $brick->delete($object);
 
                     $setter = "s" . substr($getter, 1);
@@ -156,42 +166,39 @@ class Objectbrick extends Model\AbstractModel {
                     $parentBrick = null;
                     $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
                     AbstractObject::setGetInheritedValues(true);
-                    if(AbstractObject::doGetInheritedValues($object)) {
+                    if (AbstractObject::doGetInheritedValues($object)) {
                         $container = $object->getValueFromParent($this->fieldname);
-                        if(!empty($container)) {
+                        if (!empty($container)) {
                             $parentBrick = $container->$getter();
                         }
                     }
                     AbstractObject::setGetInheritedValues($inheritanceModeBackup);
 
-                    if(!empty($parentBrick)) {
+                    if (!empty($parentBrick)) {
                         $brickType = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($parentBrick->getType());
                         $brick = new $brickType($object);
                         $brick->setFieldname($this->getFieldname());
                         $brick->save($object);
                         $this->$setter($brick);
                     }
-
-
-                } else  {
+                } else {
                     $brick->setFieldname($this->getFieldname());
                     $brick->save($object);
                 }
-
             } else {
-                if($brick == null) {
+                if ($brick == null) {
                     $parentBrick = null;
                     $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
                     AbstractObject::setGetInheritedValues(true);
-                    if(AbstractObject::doGetInheritedValues($object)) {
+                    if (AbstractObject::doGetInheritedValues($object)) {
                         $container = $object->getValueFromParent($this->fieldname);
-                        if(!empty($container)) {
+                        if (!empty($container)) {
                             $parentBrick = $container->$getter();
                         }
                     }
                     AbstractObject::setGetInheritedValues($inheritanceModeBackup);
 
-                    if(!empty($parentBrick)) {
+                    if (!empty($parentBrick)) {
                         $brickType = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($parentBrick->getType());
                         $brick = new $brickType($object);
                         $brick->setFieldname($this->getFieldname());
@@ -205,7 +212,8 @@ class Objectbrick extends Model\AbstractModel {
     /**
      * @return AbstractObject
      */
-    public function getObject() {
+    public function getObject()
+    {
         return $this->object;
     }
 
@@ -213,13 +221,14 @@ class Objectbrick extends Model\AbstractModel {
      * @param AbstractObject $object
      * @return void
      */
-    public function setObject($object) {
+    public function setObject($object)
+    {
         $this->object = $object;
 
         // update all items with the new $object
-        if(is_array($this->getItems())) {
+        if (is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
-                if($brick instanceof Objectbrick\Data\AbstractData) {
+                if ($brick instanceof Objectbrick\Data\AbstractData) {
                     $brick->setObject($object);
                 }
             }
@@ -232,10 +241,11 @@ class Objectbrick extends Model\AbstractModel {
      * @param Concrete $object
      * @return void 
      */
-    public function delete(Concrete $object) {
-        if(is_array($this->getItems())) {
+    public function delete(Concrete $object)
+    {
+        if (is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
-                if($brick instanceof Objectbrick\Data\AbstractData) {
+                if ($brick instanceof Objectbrick\Data\AbstractData) {
                     $brick->delete($object);
                 }
             }

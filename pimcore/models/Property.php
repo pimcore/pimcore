@@ -17,7 +17,8 @@ namespace Pimcore\Model;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
-class Property extends AbstractModel {
+class Property extends AbstractModel
+{
 
     /**
      * @var string
@@ -65,25 +66,24 @@ class Property extends AbstractModel {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
 
-        if(in_array($this->getType(), array("document","asset","object"))) {
+        if (in_array($this->getType(), array("document", "asset", "object"))) {
             $el = Element\Service::getElementByPath($this->getType(), $data);
             $this->data = null;
-            if($el) {
+            if ($el) {
                 $this->data = $el->getId();
             }
-        } else if ($this->type == "date") {
+        } elseif ($this->type == "date") {
             $this->data = new \Zend_Date($data);
-        }
-        else if ($this->type == "bool") {
+        } elseif ($this->type == "bool") {
             $this->data = false;
             if (!empty($data)) {
                 $this->data = true;
             }
-        }
-        else {
+        } else {
             // plain text
             $this->data = $data;
         }
@@ -96,19 +96,18 @@ class Property extends AbstractModel {
      * @param mixed $data
      * @return static
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
         // do not set data for object, asset and document here, this is loaded dynamically when calling $this->getData();
         if ($this->type == "date") {
             $this->data = \Pimcore\Tool\Serialize::unserialize($data);
-        }
-        else if ($this->type == "bool") {
+        } elseif ($this->type == "bool") {
             $this->data = false;
             if (!empty($data)) {
                 $this->data = true;
             }
-        }
-        else {
+        } else {
             // plain text
             $this->data = $data;
         }
@@ -118,24 +117,27 @@ class Property extends AbstractModel {
     /**
      * @return integer
      */
-    public function getCid() {
+    public function getCid()
+    {
         return $this->cid;
     }
 
     /**
      * @return string
      */
-    public function getCtype() {
+    public function getCtype()
+    {
         return $this->ctype;
     }
 
     /**
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
 
         // lazy-load data of type asset, document, object
-        if(in_array($this->getType(), array("document","asset","object")) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
+        if (in_array($this->getType(), array("document", "asset", "object")) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
             return Element\Service::getElementById($this->getType(), $this->data);
         }
 
@@ -145,14 +147,16 @@ class Property extends AbstractModel {
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
@@ -160,7 +164,8 @@ class Property extends AbstractModel {
      * @param integer $cid
      * @return static
      */
-    public function setCid($cid) {
+    public function setCid($cid)
+    {
         $this->cid = (int) $cid;
         return $this;
     }
@@ -169,7 +174,8 @@ class Property extends AbstractModel {
      * @param string $ctype
      * @return static
      */
-    public function setCtype($ctype) {
+    public function setCtype($ctype)
+    {
         $this->ctype = $ctype;
         return $this;
     }
@@ -178,9 +184,9 @@ class Property extends AbstractModel {
      * @param mixed $data
      * @return static
      */
-    public function setData($data) {
-
-        if($data instanceof ElementInterface) {
+    public function setData($data)
+    {
+        if ($data instanceof ElementInterface) {
             $this->setType(Service::getElementType($data));
             $data = $data->getId();
         }
@@ -193,7 +199,8 @@ class Property extends AbstractModel {
      * @param string $name
      * @return static
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -202,7 +209,8 @@ class Property extends AbstractModel {
      * @param string $type
      * @return static
      */
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
         return $this;
     }
@@ -210,14 +218,16 @@ class Property extends AbstractModel {
     /**
      * @return string
      */
-    public function getCpath() {
+    public function getCpath()
+    {
         return $this->cpath;
     }
 
     /**
      * @return boolean
      */
-    public function getInherited() {
+    public function getInherited()
+    {
         return $this->inherited;
     }
 
@@ -226,7 +236,8 @@ class Property extends AbstractModel {
      *
      * @return boolean
      */
-    public function isInherited() {
+    public function isInherited()
+    {
         return $this->getInherited();
     }
 
@@ -234,7 +245,8 @@ class Property extends AbstractModel {
      * @param string $cpath
      * @return static
      */
-    public function setCpath($cpath) {
+    public function setCpath($cpath)
+    {
         $this->cpath = $cpath;
         return $this;
     }
@@ -243,7 +255,8 @@ class Property extends AbstractModel {
      * @param boolean $inherited
      * @return static
      */
-    public function setInherited($inherited) {
+    public function setInherited($inherited)
+    {
         $this->inherited = (bool) $inherited;
         return $this;
     }
@@ -251,7 +264,8 @@ class Property extends AbstractModel {
     /**
      * @return boolean
      */
-    public function getInheritable() {
+    public function getInheritable()
+    {
         return $this->inheritable;
     }
 
@@ -259,7 +273,8 @@ class Property extends AbstractModel {
      * @param boolean $inheritable
      * @return static
      */
-    public function setInheritable($inheritable) {
+    public function setInheritable($inheritable)
+    {
         $this->inheritable = (bool) $inheritable;
         return $this;
     }
@@ -267,8 +282,8 @@ class Property extends AbstractModel {
     /**
      * @return array
      */
-    public function resolveDependencies () {
-        
+    public function resolveDependencies()
+    {
         $dependencies = array();
         
         if ($this->getData() instanceof ElementInterface) {
@@ -295,11 +310,12 @@ class Property extends AbstractModel {
      * )
      * @param array $idMapping
      */
-    public function rewriteIds($idMapping) {
-        if(!$this->isInherited()) {
-            if(array_key_exists($this->getType(), $idMapping)) {
-                if($this->getData() instanceof ElementInterface) {
-                    if(array_key_exists((int) $this->getData()->getId(), $idMapping[$this->getType()])) {
+    public function rewriteIds($idMapping)
+    {
+        if (!$this->isInherited()) {
+            if (array_key_exists($this->getType(), $idMapping)) {
+                if ($this->getData() instanceof ElementInterface) {
+                    if (array_key_exists((int) $this->getData()->getId(), $idMapping[$this->getType()])) {
                         $this->setData(Element\Service::getElementById($this->getType(), $idMapping[$this->getType()][$this->getData()->getId()]));
                     }
                 }

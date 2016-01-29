@@ -2,9 +2,11 @@
 
 use Website\Controller\Action;
 
-class Category_ExampleController extends Action {
+class Category_ExampleController extends Action
+{
 
-    public function testAction () {
+    public function testAction()
+    {
 
         /*
          * This is an example of a categorization of controllers

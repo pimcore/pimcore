@@ -84,7 +84,7 @@ class BackupCommand extends AbstractCommand
         if (is_file($backupFile) && !$config["overwrite"]) {
             $this->writeError("backup-file already exists, please use --overwrite=true or -o true to overwrite it");
             exit;
-        } else if (is_file($backupFile)) {
+        } elseif (is_file($backupFile)) {
             @unlink($backupFile);
         }
 
@@ -125,9 +125,8 @@ class BackupCommand extends AbstractCommand
         );
 
         if (empty($initInfo["errors"])) {
-
             $progress = new ProgressBar($output, count($initInfo["steps"]));
-            if(!$output->isVerbose()) {
+            if (!$output->isVerbose()) {
                 $progress->start();
             }
 
@@ -163,7 +162,8 @@ class BackupCommand extends AbstractCommand
         $this->output->writeln("Done!");
     }
 
-    protected function verboseMessage($m) {
+    protected function verboseMessage($m)
+    {
         if ($this->output->isVerbose()) {
             $this->output->writeln($m);
         }

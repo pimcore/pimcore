@@ -16,14 +16,16 @@ namespace Pimcore\Model\User\Permission;
 
 use Pimcore\Model;
 
-class Definition extends Model\AbstractModel {
+class Definition extends Model\AbstractModel
+{
 
     public $key;
 
     /**
      * @param array
      */
-    public function __construct($data = array()) {
+    public function __construct($data = array())
+    {
         if (is_array($data) && !empty($data)) {
             $this->setValues($data);
         }
@@ -32,7 +34,8 @@ class Definition extends Model\AbstractModel {
     /**
      * @return string
      */
-    function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
@@ -40,7 +43,8 @@ class Definition extends Model\AbstractModel {
      * @param $key
      * @return $this
      */
-    function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
         return $this;
     }
@@ -50,15 +54,16 @@ class Definition extends Model\AbstractModel {
      * @return mixed
      * @throws \Exception
      */
-    public static function getByKey($permission){
-        if(!$permission){
+    public static function getByKey($permission)
+    {
+        if (!$permission) {
             throw new \Exception("No permisson defined.");
         }
         $list = new Definition\Listing();
-        $list->setCondition("`key`=?",array($permission));
+        $list->setCondition("`key`=?", array($permission));
         $list->setLimit(1);
         $permissionDefinition = $list->load();
-        if($permissionDefinition[0]){
+        if ($permissionDefinition[0]) {
             return $permissionDefinition[0];
         }
     }
@@ -68,15 +73,16 @@ class Definition extends Model\AbstractModel {
      * @return mixed|static
      * @throws \Exception
      */
-    public static function create($permission){
-        if(!$permission){
+    public static function create($permission)
+    {
+        if (!$permission) {
             throw new \Exception("No permisson defined.");
         }
         $permissionDefinition = static::getByKey($permission);
-        if($permissionDefinition instanceof self){
+        if ($permissionDefinition instanceof self) {
             \Logger::info("Permission $permission allready exists. Skipping creation.");
             return $permissionDefinition;
-        }else{
+        } else {
             $permissionDefinition = new static();
             $permissionDefinition->setKey($permission);
             $permissionDefinition->save();

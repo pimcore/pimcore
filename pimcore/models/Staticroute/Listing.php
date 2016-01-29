@@ -16,7 +16,8 @@ namespace Pimcore\Model\Staticroute;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Staticroute
@@ -28,7 +29,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getRoutes() {
+    public function getRoutes()
+    {
         return $this->routes;
     }
 
@@ -36,7 +38,8 @@ class Listing extends Model\Listing\JsonListing {
      * @param array $routes
      * @return void
      */
-    public function setRoutes($routes) {
+    public function setRoutes($routes)
+    {
         $this->routes = $routes;
         return $this;
     }

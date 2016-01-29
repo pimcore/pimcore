@@ -13,23 +13,26 @@
 namespace Pimcore\Image\Adapter;
 
 use Pimcore\Image\Adapter\Imagick;
-use Pimcore\Tool\Console; 
+use Pimcore\Tool\Console;
 
-class InkscapeImagick extends Imagick {
+class InkscapeImagick extends Imagick
+{
 
     protected $isOriginal = true;
 
     /**
      * @return string
      */
-    protected static function getBinary() {
+    protected static function getBinary()
+    {
         return "/usr/bin/inkscape";
     }
 
     /**
      * @return bool
      */
-    protected function isSvg() {
+    protected function isSvg()
+    {
         return (bool) preg_match("/\.svgz?$/", $this->imagePath);
     }
 
@@ -37,9 +40,9 @@ class InkscapeImagick extends Imagick {
      * @param $width
      * @return $this|\Pimcore\Image\Adapter
      */
-    public function scaleByWidth ($width) {
-
-        if(!$this->isOriginal || !$this->isSvg()) {
+    public function scaleByWidth($width)
+    {
+        if (!$this->isOriginal || !$this->isSvg()) {
             return parent::scaleByWidth($width);
         }
 
@@ -58,9 +61,9 @@ class InkscapeImagick extends Imagick {
      * @param $height
      * @return $this|\Pimcore\Image\Adapter
      */
-    public function scaleByHeight ($height) {
-
-        if(!$this->isOriginal || !$this->isSvg()) {
+    public function scaleByHeight($height)
+    {
+        if (!$this->isOriginal || !$this->isSvg()) {
             return parent::scaleByHeight($height);
         }
 
@@ -81,9 +84,9 @@ class InkscapeImagick extends Imagick {
      * @param $height
      * @return $this|Imagick
      */
-    public function resize ($width, $height) {
-
-        if(!$this->isOriginal || !$this->isSvg()) {
+    public function resize($width, $height)
+    {
+        if (!$this->isOriginal || !$this->isSvg()) {
             return parent::resize($width, $height);
         }
 
@@ -102,7 +105,8 @@ class InkscapeImagick extends Imagick {
     /**
      * @param $tmpFile
      */
-    protected function initImagick($tmpFile) {
+    protected function initImagick($tmpFile)
+    {
         $this->isOriginal = false;
 
         $this->destroy();
@@ -112,9 +116,9 @@ class InkscapeImagick extends Imagick {
     /**
      *
      */
-    protected function reinitializeImage() {
+    protected function reinitializeImage()
+    {
         $this->isOriginal = false;
         parent::reinitializeImage();
     }
-
 }

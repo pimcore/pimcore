@@ -13,9 +13,11 @@
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document {
+class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
+{
 
-    public function getDataByIdAction() {
+    public function getDataByIdAction()
+    {
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
@@ -31,7 +33,7 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
         $link->setLocked($link->isLocked());
         $link->setParent(null);
 
-        if($link->getSourceDocument()) {
+        if ($link->getSourceDocument()) {
             $link->sourcePath = $link->getSourceDocument()->getFullpath();
         }
 
@@ -44,7 +46,8 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
-    public function saveAction() {
+    public function saveAction()
+    {
         if ($this->getParam("id")) {
             $link = Document\Hardlink::getById($this->getParam("id"));
             $this->setValuesToDocument($link);
@@ -70,13 +73,14 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
-    protected function setValuesToDocument(Document\Hardlink $link) {
+    protected function setValuesToDocument(Document\Hardlink $link)
+    {
 
         // data
         $data = \Zend_Json::decode($this->getParam("data"));
 
         $sourceId = null;
-        if($sourceDocument = Document::getByPath($data["sourcePath"])) {
+        if ($sourceDocument = Document::getByPath($data["sourcePath"])) {
             $sourceId = $sourceDocument->getId();
         }
         $link->setSourceId($sourceId);
@@ -84,5 +88,4 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
         $link->setValues($data);
         $this->addPropertiesToDocument($link);
     }
-
 }

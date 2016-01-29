@@ -18,27 +18,27 @@ use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Tool;
 
-class Document extends Model\Asset {
+class Document extends Model\Asset
+{
 
     /**
      * @var string
      */
     public $type = "document";
 
-    protected function update() {
-
+    protected function update()
+    {
         $this->clearThumbnails();
 
-        if($this->getDataChanged()) {
+        if ($this->getDataChanged()) {
             $tmpFile = $this->getTemporaryFile(true);
 
             try {
                 $pageCount = $this->readPageCount($tmpFile);
-                if($pageCount !== null && $pageCount > 0) {
+                if ($pageCount !== null && $pageCount > 0) {
                     $this->setCustomSetting("document_page_count", $pageCount);
                 }
             } catch (\Exception $e) {
-
             }
 
             unlink($tmpFile);
@@ -47,13 +47,14 @@ class Document extends Model\Asset {
         parent::update();
     }
 
-    protected function readPageCount($path = null)  {
+    protected function readPageCount($path = null)
+    {
         $pageCount = null;
-        if(!$path) {
+        if (!$path) {
             $path = $this->getFileSystemPath();
         }
 
-        if(!\Pimcore\Document::isAvailable()) {
+        if (!\Pimcore\Document::isAvailable()) {
             \Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
             return null;
         }
@@ -72,8 +73,9 @@ class Document extends Model\Asset {
         return $pageCount;
     }
 
-    public function getPageCount() {
-        if(!$pageCount = $this->getCustomSetting("document_page_count")) {
+    public function getPageCount()
+    {
+        if (!$pageCount = $this->getCustomSetting("document_page_count")) {
             $pageCount = $this->readPageCount();
         }
         return $pageCount;
@@ -85,12 +87,13 @@ class Document extends Model\Asset {
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @return mixed|string
      */
-    public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false) {
+    public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false)
+    {
 
         // just 4 testing
         //$this->clearThumbnails(true);
 
-        if(!\Pimcore\Document::isAvailable()) {
+        if (!\Pimcore\Document::isAvailable()) {
             \Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
             return "/pimcore/static/img/filetype-not-supported.png";
         }
@@ -99,26 +102,26 @@ class Document extends Model\Asset {
         $thumbnail->setName("document_" . $thumbnail->getName()."-".$page);
 
         try {
-            if(!$deferred) {
+            if (!$deferred) {
                 $converter = \Pimcore\Document::getInstance();
                 $converter->load($this->getFileSystemPath());
                 $path = PIMCORE_TEMPORARY_DIRECTORY . "/document-image-cache/document_" . $this->getId() . "__thumbnail_" .  $page . ".png";
-                if(!is_dir(dirname($path))) {
+                if (!is_dir(dirname($path))) {
                     \Pimcore\File::mkdir(dirname($path));
                 }
 
                 $lockKey = "document-thumbnail-" . $this->getId() . "-" . $page;
 
-                if(!is_file($path) && !Model\Tool\Lock::isLocked($lockKey)) {
+                if (!is_file($path) && !Model\Tool\Lock::isLocked($lockKey)) {
                     Model\Tool\Lock::lock($lockKey);
                     $converter->saveImage($path, $page);
                     Model\Tool\Lock::release($lockKey);
-                } else if(Model\Tool\Lock::isLocked($lockKey)) {
+                } elseif (Model\Tool\Lock::isLocked($lockKey)) {
                     return "/pimcore/static/img/please-wait.png";
                 }
             }
 
-            if($thumbnail) {
+            if ($thumbnail) {
                 $path = Image\Thumbnail\Processor::process($this, $thumbnail, $path, $deferred);
             }
 
@@ -131,10 +134,11 @@ class Document extends Model\Asset {
         return "/pimcore/static/img/filetype-not-supported.png";
     }
 
-    public function getText($page = null) {
-        if(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
+    public function getText($page = null)
+    {
+        if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
             $cacheKey = "asset_document_text_" . $this->getId() . "_" . ($page ? $page : "all");
-            if(!$text = Cache::load($cacheKey)) {
+            if (!$text = Cache::load($cacheKey)) {
                 $document = \Pimcore\Document::getInstance();
                 $text = $document->getText($page, $this->getFileSystemPath());
                 Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
@@ -150,12 +154,12 @@ class Document extends Model\Asset {
     /**
      * @return void
      */
-    public function clearThumbnails($force = false) {
-
-        if($this->_dataChanged || $force) {
+    public function clearThumbnails($force = false)
+    {
+        if ($this->_dataChanged || $force) {
             // video thumbnails and image previews
             $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/document-image-cache/document_" . $this->getId() . "__*");
-            if(is_array($files)) {
+            if (is_array($files)) {
                 foreach ($files as $file) {
                     unlink($file);
                 }

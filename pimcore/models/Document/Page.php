@@ -17,7 +17,8 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Model\Redirect;
 
-class Page extends Model\Document\PageSnippet {
+class Page extends Model\Document\PageSnippet
+{
 
 
     /**
@@ -72,7 +73,8 @@ class Page extends Model\Document\PageSnippet {
     /**
      * @throws \Exception
      */
-    public function delete() {
+    public function delete()
+    {
         if ($this->getId() == 1) {
             throw new \Exception("root-node cannot be deleted");
         }
@@ -82,7 +84,7 @@ class Page extends Model\Document\PageSnippet {
         $redirects->setCondition("target = ?", $this->getId());
         $redirects->load();
 
-        foreach($redirects->getRedirects() as $redirect) {
+        foreach ($redirects->getRedirects() as $redirect) {
             $redirect->delete();
         }
 
@@ -92,8 +94,8 @@ class Page extends Model\Document\PageSnippet {
     /**
      *
      */
-    protected function update() {
-
+    protected function update()
+    {
         $oldPath = $this->getDao()->getCurrentFullPath();
 
         parent::update();
@@ -116,7 +118,8 @@ class Page extends Model\Document\PageSnippet {
      * @deprecated
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->getProperty("navigation_name");
     }
 
@@ -127,29 +130,33 @@ class Page extends Model\Document\PageSnippet {
      * @param string $name
      * @return void
      */
-    public function setName($name) {
-        $this->setProperty("navigation_name","text",$name,false);
+    public function setName($name)
+    {
+        $this->setProperty("navigation_name", "text", $name, false);
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
     /**
      * @return string
      */
-    public function getKeywords() {
+    public function getKeywords()
+    {
         return $this->keywords;
     }
 
     /**
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return \Pimcore\Tool\Text::removeLineBreaks($this->title);
     }
 
@@ -157,8 +164,9 @@ class Page extends Model\Document\PageSnippet {
      * @param string $description
      * @return void
      */
-    public function setDescription($description) {
-        $this->description = str_replace("\n"," ",$description);
+    public function setDescription($description)
+    {
+        $this->description = str_replace("\n", " ", $description);
         return $this;
     }
 
@@ -166,8 +174,9 @@ class Page extends Model\Document\PageSnippet {
      * @param string $keywords
      * @return void
      */
-    public function setKeywords($keywords) {
-        $this->keywords = str_replace("\n"," ",$keywords);
+    public function setKeywords($keywords)
+    {
+        $this->keywords = str_replace("\n", " ", $keywords);
         return $this;
     }
 
@@ -175,7 +184,8 @@ class Page extends Model\Document\PageSnippet {
      * @param string $title
      * @return void
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
@@ -201,15 +211,15 @@ class Page extends Model\Document\PageSnippet {
     /**
      *
      */
-    public function getFullPath() {
-
+    public function getFullPath()
+    {
         $path = parent::getFullPath();
 
         // do not use pretty url's when in admin, the current document is wrapped by a hardlink or this document isn't in the current site
-        if(!\Pimcore::inAdmin() && !($this instanceof Hardlink\Wrapper\WrapperInterface) && \Pimcore\Tool\Frontend::isDocumentInCurrentSite($this)) {
+        if (!\Pimcore::inAdmin() && !($this instanceof Hardlink\Wrapper\WrapperInterface) && \Pimcore\Tool\Frontend::isDocumentInCurrentSite($this)) {
             // check for a pretty url
             $prettyUrl = $this->getPrettyUrl();
-            if(!empty($prettyUrl) && strlen($prettyUrl) > 1) {
+            if (!empty($prettyUrl) && strlen($prettyUrl) > 1) {
                 return $prettyUrl;
             }
         }
@@ -224,7 +234,7 @@ class Page extends Model\Document\PageSnippet {
     public function setPrettyUrl($prettyUrl)
     {
         $this->prettyUrl = "/" . trim($prettyUrl, " /");
-        if(strlen($this->prettyUrl) < 2) {
+        if (strlen($this->prettyUrl) < 2) {
             $this->prettyUrl = null;
         }
         return $this;
@@ -243,11 +253,11 @@ class Page extends Model\Document\PageSnippet {
      */
     public function setPersonas($personas)
     {
-        if(is_array($personas)) {
+        if (is_array($personas)) {
             $personas = implode(",", $personas);
         }
         $personas = trim($personas, " ,");
-        if(!empty($personas)) {
+        if (!empty($personas)) {
             $personas = "," . $personas . ",";
         }
         $this->personas = $personas;
@@ -265,14 +275,15 @@ class Page extends Model\Document\PageSnippet {
      * @param null $personaId
      * @return null|string
      */
-    public function getPersonaElementPrefix($personaId = null) {
+    public function getPersonaElementPrefix($personaId = null)
+    {
         $prefix = null;
 
-        if(!$personaId) {
+        if (!$personaId) {
             $personaId = $this->getUsePersona();
         }
 
-        if($personaId) {
+        if ($personaId) {
             $prefix = "persona_-" . $personaId . "-_";
         }
 
@@ -283,8 +294,9 @@ class Page extends Model\Document\PageSnippet {
      * @param $name
      * @return string
      */
-    public function getPersonaElementName($name) {
-        if($this->getUsePersona() && !preg_match("/^" . preg_quote($this->getPersonaElementPrefix(),"/") . "/", $name)) {
+    public function getPersonaElementName($name)
+    {
+        if ($this->getUsePersona() && !preg_match("/^" . preg_quote($this->getPersonaElementPrefix(), "/") . "/", $name)) {
             $name = $this->getPersonaElementPrefix() . $name;
         }
         return $name;
@@ -294,9 +306,9 @@ class Page extends Model\Document\PageSnippet {
      * @param string $name
      * @param string $data
      */
-    public function setElement($name, $data) {
-
-        if($this->getUsePersona()) {
+    public function setElement($name, $data)
+    {
+        if ($this->getUsePersona()) {
             $name = $this->getPersonaElementName($name);
             $data->setName($name);
         }
@@ -308,13 +320,14 @@ class Page extends Model\Document\PageSnippet {
      * @param string $name
      * @return Model\Document\Tag
      */
-    public function getElement($name) {
+    public function getElement($name)
+    {
 
         // check if a persona is requested for this page, if yes deliver a different version of the element (prefixed)
-        if($this->getUsePersona()) {
+        if ($this->getUsePersona()) {
             $personaName = $this->getPersonaElementName($name);
 
-            if($this->hasElement($personaName)) {
+            if ($this->hasElement($personaName)) {
                 $name = $personaName;
             } else {
                 // if there's no dedicated content for this persona, inherit from the "original" content (unprefixed)
@@ -322,7 +335,7 @@ class Page extends Model\Document\PageSnippet {
                 // replace all occurrences of the persona prefix, this is needed because of block-prefixes
                 $inheritedName = str_replace($this->getPersonaElementPrefix(), "", $name);
                 $inheritedElement = parent::getElement($inheritedName);
-                if($inheritedElement) {
+                if ($inheritedElement) {
                     $inheritedElement = clone $inheritedElement;
                     $inheritedElement->setDao(null);
                     $inheritedElement->setName($personaName);
@@ -356,8 +369,8 @@ class Page extends Model\Document\PageSnippet {
     /**
      *
      */
-    public function __sleep() {
-
+    public function __sleep()
+    {
         $finalVars = array();
         $parentVars = parent::__sleep();
 

@@ -36,9 +36,8 @@ class ClassesRebuildCommand extends AbstractCommand
         $list = new ClassDefinition\Listing();
         $list->load();
 
-        foreach($list->getClasses() as $class) {
-
-            if($output->isVerbose()) {
+        foreach ($list->getClasses() as $class) {
+            if ($output->isVerbose()) {
                 $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
             }
 

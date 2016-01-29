@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 
-class Folder extends Model\Document {
+class Folder extends Model\Document
+{
 
     /**
      * static type of this object
@@ -24,5 +25,4 @@ class Folder extends Model\Document {
      * @var string
      */
     public $type = "folder";
-
 }

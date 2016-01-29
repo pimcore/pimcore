@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Email;
 
 use Pimcore\Model;
 
-class Blacklist extends Model\AbstractModel {
+class Blacklist extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -37,8 +38,8 @@ class Blacklist extends Model\AbstractModel {
      * @param $addr
      * @return null|Blacklist
      */
-    public static function getByAddress ($addr) {
-
+    public static function getByAddress($addr)
+    {
         try {
             $address = new self();
             $address->getDao()->getByAddress($addr);
@@ -78,7 +79,7 @@ class Blacklist extends Model\AbstractModel {
      */
     public function getCreationDate()
     {
-        if(!$this->creationDate) {
+        if (!$this->creationDate) {
             $this->creationDate = time();
         }
 
@@ -98,7 +99,7 @@ class Blacklist extends Model\AbstractModel {
      */
     public function getModificationDate()
     {
-        if(!$this->modificationDate) {
+        if (!$this->modificationDate) {
             $this->modificationDate = time();
         }
         return $this->modificationDate;

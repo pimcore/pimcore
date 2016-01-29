@@ -26,9 +26,9 @@ class PhpArrayFileTable
      * @param $filePath
      * @return self
      */
-    public static function get($filePath) {
-
-        if(!isset(self::$tables[$filePath])) {
+    public static function get($filePath)
+    {
+        if (!isset(self::$tables[$filePath])) {
             self::$tables[$filePath] = new self($filePath);
         }
 
@@ -41,7 +41,7 @@ class PhpArrayFileTable
      */
     public function __construct($filePath = null)
     {
-        if($filePath) {
+        if ($filePath) {
             $this->setFilePath($filePath);
         }
     }
@@ -50,19 +50,19 @@ class PhpArrayFileTable
      * @param $filePath
      * @throws \Exception
      */
-    public function setFilePath($filePath) {
-
+    public function setFilePath($filePath)
+    {
         $writeable = false;
 
-        if(file_exists($filePath) && is_writeable($filePath))  {
+        if (file_exists($filePath) && is_writeable($filePath)) {
             $writeable = true;
-        } else if (!file_exists($filePath)) {
-            if(is_writeable(dirname($filePath))) {
+        } elseif (!file_exists($filePath)) {
+            if (is_writeable(dirname($filePath))) {
                 $writeable = true;
             }
         }
 
-        if($writeable) {
+        if ($writeable) {
             $this->filePath = $filePath;
 
             $this->load();
@@ -76,8 +76,9 @@ class PhpArrayFileTable
      * @param string|int $id
      * @throws \Exception
      */
-    public function insertOrUpdate($data, $id = null) {
-        if(!$id) {
+    public function insertOrUpdate($data, $id = null)
+    {
+        if (!$id) {
             $id = $this->getNextId();
         }
 
@@ -91,8 +92,9 @@ class PhpArrayFileTable
     /**
      * @param string|int $id
      */
-    public function delete($id) {
-        if(isset($this->data[$id])) {
+    public function delete($id)
+    {
+        if (isset($this->data[$id])) {
             unset($this->data[$id]);
             $this->save();
         }
@@ -102,8 +104,9 @@ class PhpArrayFileTable
      * @param string|int $id
      * @return array|null
      */
-    public function getById($id) {
-        if(isset($this->data[$id])) {
+    public function getById($id)
+    {
+        if (isset($this->data[$id])) {
             return $this->data[$id];
         }
 
@@ -115,14 +118,14 @@ class PhpArrayFileTable
      * @param null $order
      * @return array
      */
-    public function fetchAll($filter = null, $order = null) {
-
+    public function fetchAll($filter = null, $order = null)
+    {
         $data = $this->data;
 
-        if(is_callable($filter)) {
+        if (is_callable($filter)) {
             $filteredData = [];
-            foreach($data as $row) {
-                if($filter($row)) {
+            foreach ($data as $row) {
+                if ($filter($row)) {
                     $filteredData[] = $row;
                 }
             }
@@ -130,7 +133,7 @@ class PhpArrayFileTable
             $data = $filteredData;
         }
 
-        if(is_callable($order)) {
+        if (is_callable($order)) {
             usort($data, $order);
         }
 
@@ -140,9 +143,10 @@ class PhpArrayFileTable
     /**
      * @return int
      */
-    public function getNextId() {
+    public function getNextId()
+    {
         $ids = array_keys($this->data);
-        if(count($ids)) {
+        if (count($ids)) {
             $id = max($ids) + 1;
             return $id;
         }
@@ -153,14 +157,16 @@ class PhpArrayFileTable
     /**
      * @return int
      */
-    public function getLastInsertId() {
+    public function getLastInsertId()
+    {
         return $this->lastInsertId;
     }
 
     /**
      *
      */
-    public function truncate() {
+    public function truncate()
+    {
         $this->data = [];
         $this->save();
     }
@@ -168,9 +174,9 @@ class PhpArrayFileTable
     /**
      *
      */
-    protected function load() {
-
-        if(file_exists($this->filePath)) {
+    protected function load()
+    {
+        if (file_exists($this->filePath)) {
             $this->data = include($this->filePath);
         }
     }
@@ -178,7 +184,8 @@ class PhpArrayFileTable
     /**
      *
      */
-    protected function save() {
+    protected function save()
+    {
         $contents = to_php_data_file_format($this->data);
         File::put($this->filePath, $contents);
     }

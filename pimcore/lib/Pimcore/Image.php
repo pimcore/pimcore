@@ -12,10 +12,11 @@
 
 namespace Pimcore;
 
-use Pimcore\Tool; 
+use Pimcore\Tool;
 use Pimcore\Image\Adapter;
 
-class Image {
+class Image
+{
 
     /**
      * @var string
@@ -27,25 +28,26 @@ class Image {
      * @return null|Adapter\GD|Adapter\Imagick
      * @throws \Exception
      */
-    public static function getInstance ($adapter = null) {
+    public static function getInstance($adapter = null)
+    {
 
         // use the default adapter if set manually (!= null) and no specify adapter is given
-        if(!$adapter && self::$defaultAdapter) {
+        if (!$adapter && self::$defaultAdapter) {
             $adapter = self::$defaultAdapter;
         }
 
         try {
-            if($adapter) {
+            if ($adapter) {
                 $adapterClass = "\\Pimcore\\Image\\Adapter\\" . $adapter;
-                if(Tool::classExists($adapterClass)) {
+                if (Tool::classExists($adapterClass)) {
                     return new $adapterClass();
-                } else if (Tool::classExists($adapter)) {
+                } elseif (Tool::classExists($adapter)) {
                     return new $adapter();
                 } else {
                     throw new \Exception("Image-transform adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
-                if(extension_loaded("imagick")) {
+                if (extension_loaded("imagick")) {
                     return new Adapter\Imagick();
                 } else {
                     return new Adapter\GD();
@@ -62,7 +64,8 @@ class Image {
     /**
      * @param $adapter
      */
-    public static function setDefaultAdapter($adapter) {
+    public static function setDefaultAdapter($adapter)
+    {
         self::$defaultAdapter = $adapter;
     }
 }

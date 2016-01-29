@@ -39,7 +39,7 @@ class ClassmapGeneratorCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $excludePatterns = [];
-        if($input->getOption("core")) {
+        if ($input->getOption("core")) {
             $paths = array(
                 PIMCORE_PATH . "/lib",
                 PIMCORE_PATH . "/models",
@@ -58,15 +58,14 @@ class ClassmapGeneratorCommand extends AbstractCommand
         $map = new \stdClass();
 
         foreach ($paths as $path) {
-
             $path = trim($path);
 
-            if(empty($path) || strpos($path, "/vendor/") || !is_dir($path)) {
+            if (empty($path) || strpos($path, "/vendor/") || !is_dir($path)) {
                 continue;
             }
 
             // only pimcore related classes, not the ones in eg. /usr/share/php ...
-            if(strpos($path, PIMCORE_PATH) !== 0 && strpos($path, PIMCORE_WEBSITE_PATH) !== 0) {
+            if (strpos($path, PIMCORE_PATH) !== 0 && strpos($path, PIMCORE_WEBSITE_PATH) !== 0) {
                 continue;
             }
 
@@ -87,14 +86,14 @@ class ClassmapGeneratorCommand extends AbstractCommand
 
                 foreach ($file->getClasses() as $class) {
                     $allowed = true;
-                    foreach($excludePatterns as $excludePattern) {
-                        if(preg_match($excludePattern, $class)) {
+                    foreach ($excludePatterns as $excludePattern) {
+                        if (preg_match($excludePattern, $class)) {
                             $allowed = false;
                             break;
                         }
                     }
 
-                    if($allowed) {
+                    if ($allowed) {
                         $map->{$class} = $filename;
                     }
                 }

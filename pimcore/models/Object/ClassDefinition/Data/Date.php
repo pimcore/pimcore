@@ -159,7 +159,9 @@ class Date extends Model\Object\ClassDefinition\Data
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-        } else return 0;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -190,7 +192,9 @@ class Date extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof \Zend_Date) {
             return $data->toString();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -217,7 +221,9 @@ class Date extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof \Zend_Date) {
             return $data->toString();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -232,7 +238,7 @@ class Date extends Model\Object\ClassDefinition\Data
         $timestamp = strtotime($value);
         if (empty($value)) {
             return null;
-        } else if ($timestamp !== FALSE) {
+        } elseif ($timestamp !== false) {
             return new \Pimcore\Date($timestamp);
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
@@ -252,7 +258,8 @@ class Date extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -261,7 +268,8 @@ class Date extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @return null|\Pimcore\Date
      */
-    public function getDiffDataFromEditmode($data, $object = null) {
+    public function getDiffDataFromEditmode($data, $object = null)
+    {
         $thedata = $data[0]["data"];
         if ($thedata) {
             return new \Pimcore\Date($thedata);
@@ -275,7 +283,8 @@ class Date extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null) {
+    public function getDiffDataForEditMode($data, $object = null)
+    {
         $result = array();
 
         $thedata = null;

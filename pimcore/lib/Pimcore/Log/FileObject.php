@@ -12,7 +12,8 @@
 
 namespace Pimcore\Log;
 
-class FileObject {
+class FileObject
+{
 
     protected $filename;
     protected $data;
@@ -21,23 +22,22 @@ class FileObject {
      * @param string $data
      * @param string $filename
      */
-    public function __construct($data, $filename=null) {
-
-        if(!is_dir(PIMCORE_LOG_FILEOBJECT_DIRECTORY))  {
+    public function __construct($data, $filename=null)
+    {
+        if (!is_dir(PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
             mkdir(PIMCORE_LOG_FILEOBJECT_DIRECTORY, 0755, true);
         }
 
         $this->data = $data;
         $this->filename = $filename;
 
-        if(empty($this->filename)) {
+        if (empty($this->filename)) {
             $folderpath = PIMCORE_LOG_FILEOBJECT_DIRECTORY . strftime('/%Y/%m/%d');
 
-            if(!is_dir($folderpath)) {
+            if (!is_dir($folderpath)) {
                 mkdir($folderpath, 0775, true);
             }
-            $this->filename = $folderpath."/".uniqid("fileobject_",true);
-
+            $this->filename = $folderpath."/".uniqid("fileobject_", true);
         }
 
         file_put_contents($this->filename, $this->data);
@@ -46,21 +46,24 @@ class FileObject {
     /**
      * @return string
      */
-    public function getSystemPath() {
+    public function getSystemPath()
+    {
         return $this->filename;
     }
 
     /**
      * @return string
      */
-    public function getFilename() {
+    public function getFilename()
+    {
         return str_replace(PIMCORE_DOCUMENT_ROOT."/", "", $this->filename);
     }
 
     /**
      * @return string
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 }

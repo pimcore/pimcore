@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Tag\Config;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\JsonListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * @var array
@@ -26,7 +27,8 @@ class Listing extends Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getTags() {
+    public function getTags()
+    {
         return $this->tags;
     }
 
@@ -34,7 +36,8 @@ class Listing extends Model\Listing\JsonListing {
      * @param $tags
      * @return $this
      */
-    public function setTags($tags) {
+    public function setTags($tags)
+    {
         $this->tags = $tags;
         return $this;
     }

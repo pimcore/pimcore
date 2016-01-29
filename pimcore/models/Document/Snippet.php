@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 
-class Snippet extends Model\Document\PageSnippet {
+class Snippet extends Model\Document\PageSnippet
+{
 
     /**
      * Static type of the document
@@ -24,5 +25,4 @@ class Snippet extends Model\Document\PageSnippet {
      * @var string
      */
     public $type = "snippet";
-
 }

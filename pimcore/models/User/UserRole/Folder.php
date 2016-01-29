@@ -16,7 +16,8 @@ namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
 
-class Folder extends Model\User\AbstractUser {
+class Folder extends Model\User\AbstractUser
+{
 
     /**
      * @var boolean
@@ -27,7 +28,8 @@ class Folder extends Model\User\AbstractUser {
      * @param $state
      * @return $this
      */
-    function setHasChilds($state){
+    public function setHasChilds($state)
+    {
         $this->hasChilds= $state;
         return $this;
     }
@@ -37,7 +39,8 @@ class Folder extends Model\User\AbstractUser {
      *
      * @return boolean
      */
-    public function hasChilds() {
+    public function hasChilds()
+    {
         if ($this->hasChilds !== null) {
             return $this->hasChilds;
         }

@@ -16,15 +16,16 @@ namespace Pimcore\Model\Version\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of thumanils for the specicifies parameters, returns an array of Schedule\Task elements
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $versions = array();
         $data = $this->db->fetchCol("SELECT id FROM versions" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -39,12 +40,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return int
      */
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM versions " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
 
         return $amount;

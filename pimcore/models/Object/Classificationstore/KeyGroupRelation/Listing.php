@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\Classificationstore\KeyGroupRelation;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list.
@@ -31,14 +32,16 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getList() {
+    public function getList()
+    {
         return $this->list;
     }
 
@@ -46,7 +49,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param array
      * @return void
      */
-    public function setList($theList) {
+    public function setList($theList)
+    {
         $this->list = $theList;
         return $this;
     }

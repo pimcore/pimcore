@@ -23,4 +23,3 @@ Pimcore::getEventManager()->attach("asset.postDelete", function (\Zend_EventMana
     $asset = $e->getTarget();
     \Pimcore\Model\Element\Tag::setTagsForElement("asset", $asset->getId(), []);
 }, 9999);
-

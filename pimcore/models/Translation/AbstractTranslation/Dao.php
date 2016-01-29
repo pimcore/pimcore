@@ -16,13 +16,15 @@ namespace Pimcore\Model\Translation\AbstractTranslation;
 
 use Pimcore\Model;
 
-abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface {
+abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
+{
 
     /**
      * @param $key
      * @throws \Exception
      */
-    public function getByKey($key) {
+    public function getByKey($key)
+    {
         $data = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . " WHERE `key` = ? ORDER BY `creationDate` ", $key);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -31,8 +33,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface {
             $this->model->setKey($d['key']);
             $this->model->setCreationDate($d['creationDate']);
             $this->model->setModificationDate($d['modificationDate']);
-        }
-        else {
+        } else {
             throw new \Exception("Translation-Key -->'" . $key . "'<-- not found");
         }
     }
@@ -43,12 +44,10 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface {
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         if ($this->model->getKey() !== '') {
-
             foreach ($this->model->getTranslations() as $language => $text) {
-
                 $data = array(
                     "key" => $this->model->getKey(),
                     "language" => $language,
@@ -56,7 +55,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface {
                     "modificationDate" => $this->model->getModificationDate(),
                     "creationDate" => $this->model->getCreationDate()
                 );
-                $this->db->insertOrUpdate(static::getTableName() , $data);
+                $this->db->insertOrUpdate(static::getTableName(), $data);
             }
         }
 
@@ -69,8 +68,9 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface {
      *
      * @return void
      */
-    public function delete() {
-        $this->db->delete(static::getTableName() , $this->db->quoteInto("`key`= ?", $this->model->getKey()));
+    public function delete()
+    {
+        $this->db->delete(static::getTableName(), $this->db->quoteInto("`key`= ?", $this->model->getKey()));
 
         $this->model->clearDependentCache();
     }
@@ -80,7 +80,8 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface {
      *
      * @return void
      */
-    public function getAvailableLanguages() {
+    public function getAvailableLanguages()
+    {
         $l = $this->db->fetchAll("SELECT * FROM " . static::getTableName()  . "  GROUP BY `language`;");
 
         foreach ($l as $values) {

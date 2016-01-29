@@ -12,7 +12,8 @@
 
 namespace Pimcore;
 
-class Version {
+class Version
+{
 
     /**
      * @var string
@@ -28,7 +29,8 @@ class Version {
     /**
      * @return string
      */
-    public static function getVersion() {
+    public static function getVersion()
+    {
         return self::$version;
     }
 

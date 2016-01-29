@@ -16,6 +16,6 @@ namespace Pimcore\Model\User\Role\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\User\Listing\AbstractListing\Dao {
-
+class Dao extends Model\User\Listing\AbstractListing\Dao
+{
 }

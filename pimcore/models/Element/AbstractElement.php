@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-abstract class AbstractElement extends Model\AbstractModel implements ElementInterface {
+abstract class AbstractElement extends Model\AbstractModel implements ElementInterface
+{
 
 
     /**
@@ -26,10 +27,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param bool $asContainer
      * @return mixed
      */
-    public function getProperty($name, $asContainer = false) {
+    public function getProperty($name, $asContainer = false)
+    {
         $properties = $this->getProperties();
         if ($this->hasProperty($name)) {
-            if($asContainer) {
+            if ($asContainer) {
                 return $properties[$name];
             } else {
                 return $properties[$name]->getData();
@@ -42,7 +44,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param  $name
      * @return bool
      */
-    public function hasProperty ($name) {
+    public function hasProperty($name)
+    {
         $properties = $this->getProperties();
         return array_key_exists($name, $properties);
     }
@@ -50,7 +53,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @param  $name
      */
-    public function removeProperty ($name) {
+    public function removeProperty($name)
+    {
         $properties = $this->getProperties();
         unset($properties[$name]);
         $this->setProperties($properties);
@@ -61,7 +65,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @return string
      */
-    public function getCacheTag() {
+    public function getCacheTag()
+    {
         $elementType = Service::getElementType($this);
         return $elementType . "_" . $this->getId();
     }
@@ -73,8 +78,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($tags = array()) {
-
+    public function getCacheTags($tags = array())
+    {
         $tags = is_array($tags) ? $tags : array();
 
         $tags[$this->getCacheTag()] = $this->getCacheTag();
@@ -86,8 +91,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @return array
      */
-    public function resolveDependencies() {
-
+    public function resolveDependencies()
+    {
         $dependencies = array();
 
         // check for properties
@@ -105,8 +110,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * Returns true if the element is locked
      * @return bool
      */
-    public function isLocked(){
-        if($this->getLocked()) {
+    public function isLocked()
+    {
+        if ($this->getLocked()) {
             return true;
         }
 
@@ -117,15 +123,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @return array
      */
-    public function getUserPermissions () {
-
+    public function getUserPermissions()
+    {
         $elementType = Service::getElementType($this);
         $vars = get_class_vars("\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($elementType));
         $ignored = array("userId","cid","cpath","dao");
         $permissions = array();
 
         foreach ($vars as $name => $defaultValue) {
-            if(!in_array($name, $ignored)) {
+            if (!in_array($name, $ignored)) {
                 $permissions[$name] = $this->isAllowed($name);
             }
         }
@@ -139,8 +145,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param string $type
      * @return boolean
      */
-    public function isAllowed($type) {
-
+    public function isAllowed($type)
+    {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
@@ -153,14 +159,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      *
      */
-    public function unlockPropagate() {
+    public function unlockPropagate()
+    {
         $type = Service::getType($this);
         $ids = $this->getDao()->unlockPropagate();
 
         // invalidate cache items
         foreach ($ids as $id) {
             $element = Service::getElementById($type, $id);
-            if($element) {
+            if ($element) {
                 $element->clearDependentCache();
             }
         }
@@ -171,14 +178,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @return boolean
      */
-    public function hasNoChilds() {
+    public function hasNoChilds()
+    {
         return !$this->hasChilds();
     }
 
     /**
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getFullPath();
     }
 }

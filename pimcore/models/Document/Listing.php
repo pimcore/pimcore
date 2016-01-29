@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator {
+class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+{
 
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
@@ -55,14 +56,16 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      *
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getDocuments() {
+    public function getDocuments()
+    {
         if ($this->documents === null) {
             $this->load();
         }
@@ -73,7 +76,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param array $documents
      * @return void
      */
-    public function setDocuments($documents) {
+    public function setDocuments($documents)
+    {
         $this->documents = $documents;
         return $this;
     }
@@ -81,14 +85,16 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return bool
      */
-    public function getUnpublished() {
+    public function getUnpublished()
+    {
         return $this->unpublished;
     }
     
     /**
      * @return bool
      */
-    public function setUnpublished($unpublished) {
+    public function setUnpublished($unpublished)
+    {
         $this->unpublished = (bool) $unpublished;
         return $this;
     }
@@ -98,17 +104,20 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Methods for \Zend_Paginator_Adapter_Interface
      */
 
-    public function count() {
+    public function count()
+    {
         return $this->getTotalCount();
     }
 
-    public function getItems($offset, $itemCountPerPage) {
+    public function getItems($offset, $itemCountPerPage)
+    {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
         return $this->load();
     }
 
-    public function getPaginatorAdapter() {
+    public function getPaginatorAdapter()
+    {
         return $this;
     }
     
@@ -117,30 +126,35 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Methods for Iterator
      */
 
-    public function rewind() {
+    public function rewind()
+    {
         $this->getDocuments();
         reset($this->documents);
     }
 
-    public function current() {
+    public function current()
+    {
         $this->getDocuments();
         $var = current($this->documents);
         return $var;
     }
 
-    public function key() {
+    public function key()
+    {
         $this->getDocuments();
         $var = key($this->documents);
         return $var;
     }
 
-    public function next() {
+    public function next()
+    {
         $this->getDocuments();
         $var = next($this->documents);
         return $var;
     }
 
-    public function valid() {
+    public function valid()
+    {
         $this->getDocuments();
         $var = $this->current() !== false;
         return $var;

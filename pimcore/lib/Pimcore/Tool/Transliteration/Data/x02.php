@@ -15,6 +15,6 @@ $base = array(
   0xB0 => 'k', 'h', 'j', 'r', 'r', 'r', 'r', 'w', 'y', '\'', '"', '`', '\'', '`', '`', '\'',
   0xC0 => '?', '?', '<', '>', '^', 'V', '^', 'V', '\'', '-', '/', '\\', ',', '_', '\\', '/',
   0xD0 => ':', '.', '`', '\'', '^', 'V', '+', '-', 'V', '.', '@', ',', '~', '"', 'R', 'X',
-  0xE0 => 'G', 'l', 's', 'x', '?', '', '', '', '', '', '', '', 'V', '=', '"', NULL,
-  0xF0 => NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  0xE0 => 'G', 'l', 's', 'x', '?', '', '', '', '', '', '', '', 'V', '=', '"', null,
+  0xF0 => null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
 );

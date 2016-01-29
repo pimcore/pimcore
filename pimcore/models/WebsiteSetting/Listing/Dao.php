@@ -14,15 +14,16 @@ namespace Pimcore\Model\WebsiteSetting\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of static routes for the specifies parameters, returns an array of Staticroute elements
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $sql = "SELECT id FROM website_settings" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
         $settingsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
 
@@ -36,15 +37,13 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     }
 
 
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM website_settings " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
 
         return $amount;
     }
-
 }

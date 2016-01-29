@@ -7,9 +7,11 @@
  */
 
 
-class TestSuite_Rest_ObjectTest extends Test_BaseRest {
+class TestSuite_Rest_ObjectTest extends Test_BaseRest
+{
 
-    public function setUp() {
+    public function setUp()
+    {
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
         parent::setUp();
@@ -19,7 +21,8 @@ class TestSuite_Rest_ObjectTest extends Test_BaseRest {
      * creates a class called "unittest" containing all Object_Class_Data Types currently available.
      * @return void
      */
-    public function testObjectList() {
+    public function testObjectList()
+    {
         $this->printTestName();
         $list = self::getRestClient()->getObjectList();
 //        if (count($list) > 1) {
@@ -39,7 +42,8 @@ class TestSuite_Rest_ObjectTest extends Test_BaseRest {
         $this->assertEquals("folder", $list[0]->getType(), "expected type to be folder");
     }
 
-    public function testObjectGet() {
+    public function testObjectGet()
+    {
         $this->printTestName();
         $object = self::getRestClient()->getObjectById(1);
         $this->assertEquals("folder", $object->getType(), "expected type to be folder");
@@ -55,7 +59,8 @@ class TestSuite_Rest_ObjectTest extends Test_BaseRest {
     }
 
 
-    public function testCreateObjectConcrete() {
+    public function testCreateObjectConcrete()
+    {
         $this->printTestName();
         $this->assertEquals(1, Test_Tool::getObjectCount());
 
@@ -82,7 +87,8 @@ class TestSuite_Rest_ObjectTest extends Test_BaseRest {
         $this->assertEquals(1, count($list));
     }
 
-    public function testDelete() {
+    public function testDelete()
+    {
         $this->printTestName();
 
         $savedObject = Test_Tool::createEmptyObject();
@@ -100,7 +106,8 @@ class TestSuite_Rest_ObjectTest extends Test_BaseRest {
         $this->assertTrue($savedObject == null, "object still exists");
     }
 
-    public function testFolder() {
+    public function testFolder()
+    {
         $this->printTestName();
 
         // create folder but don't save it
@@ -128,6 +135,4 @@ class TestSuite_Rest_ObjectTest extends Test_BaseRest {
         $folderDirect = Object_Abstract::getById($id);
         $this->assertNull($folderDirect, "folder still exists");
     }
-
-
 }

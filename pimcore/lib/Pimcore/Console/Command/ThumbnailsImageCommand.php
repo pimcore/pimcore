@@ -50,12 +50,12 @@ class ThumbnailsImageCommand extends AbstractCommand
         $list = new Asset\Image\Thumbnail\Config\Listing();
         $items = $list->load();
         $thumbnails = [];
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $thumbnails[] = $item->getName();
         }
 
         $allowedThumbs = array();
-        if($input->getOption("thumbnails")) {
+        if ($input->getOption("thumbnails")) {
             $allowedThumbs = explode(",", $input->getOption("thumbnails"));
         }
 
@@ -63,9 +63,9 @@ class ThumbnailsImageCommand extends AbstractCommand
         // get only images
         $conditions = array("type = 'image'");
 
-        if($input->getOption("parent")) {
+        if ($input->getOption("parent")) {
             $parent = Asset::getById($input->getOption("parent"));
-            if($parent instanceof Asset\Folder) {
+            if ($parent instanceof Asset\Folder) {
                 $conditions[] = "path LIKE '" . $parent->getFullPath() . "/%'";
             } else {
                 $this->writeError($input->getOption("parent") . " is not a valid asset folder ID!");
@@ -78,15 +78,15 @@ class ThumbnailsImageCommand extends AbstractCommand
         $total = $list->getTotalCount();
         $perLoop = 10;
 
-        for($i=0; $i<(ceil($total/$perLoop)); $i++) {
+        for ($i=0; $i<(ceil($total/$perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i*$perLoop);
 
             $images = $list->load();
             foreach ($images as $image) {
                 foreach ($thumbnails as $thumbnail) {
-                    if((empty($allowedThumbs) && !$input->getOption("system")) || in_array($thumbnail, $allowedThumbs)) {
-                        if($input->getOption("force")) {
+                    if ((empty($allowedThumbs) && !$input->getOption("system")) || in_array($thumbnail, $allowedThumbs)) {
+                        if ($input->getOption("force")) {
                             $image->clearThumbnail($thumbnail);
                         }
 
@@ -95,10 +95,9 @@ class ThumbnailsImageCommand extends AbstractCommand
                     }
                 }
 
-                if($input->getOption("system")) {
-
+                if ($input->getOption("system")) {
                     $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
-                    if($input->getOption("force")) {
+                    if ($input->getOption("force")) {
                         $image->clearThumbnail($thumbnail->getName());
                     }
 

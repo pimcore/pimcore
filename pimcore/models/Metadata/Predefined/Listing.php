@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model\Metadata\Predefined;
 
-class Listing extends \Pimcore\Model\Listing\JsonListing {
+class Listing extends \Pimcore\Model\Listing\JsonListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Metadata\Predefined
@@ -26,7 +27,8 @@ class Listing extends \Pimcore\Model\Listing\JsonListing {
     /**
      * @return array
      */
-    public function getDefinitions() {
+    public function getDefinitions()
+    {
         return $this->definitions;
     }
 
@@ -34,7 +36,8 @@ class Listing extends \Pimcore\Model\Listing\JsonListing {
      * @param $definitions
      * @return $this
      */
-    public function setDefinitions($definitions) {
+    public function setDefinitions($definitions)
+    {
         $this->definitions = $definitions;
         return $this;
     }
@@ -45,7 +48,8 @@ class Listing extends \Pimcore\Model\Listing\JsonListing {
      * @return Listing
      * @throws \Exception
      */
-    public static function getByTargetType($type, $subTypes) {
+    public static function getByTargetType($type, $subTypes)
+    {
         if ($type != "asset") {
             throw new \Exception("other types than assets are currently not supported");
         }
@@ -58,11 +62,11 @@ class Listing extends \Pimcore\Model\Listing\JsonListing {
 
         if (is_array($subTypes)) {
             $list->setFilter(function ($row) use ($subTypes) {
-                if(empty($row["targetSubtype"])) {
+                if (empty($row["targetSubtype"])) {
                     return true;
                 }
 
-                if(in_array($row["targetSubtype"], $subTypes)) {
+                if (in_array($row["targetSubtype"], $subTypes)) {
                     return true;
                 }
                 return false;
@@ -77,20 +81,20 @@ class Listing extends \Pimcore\Model\Listing\JsonListing {
      * @param $language
      * @return \Pimcore\Model\Metadata\Predefined
      */
-    public static function getByKeyAndLanguage($key, $language, $targetSubtype = null) {
-
+    public static function getByKeyAndLanguage($key, $language, $targetSubtype = null)
+    {
         $list = new self();
 
         $list->setFilter(function ($row) use ($key, $language, $targetSubtype) {
-            if($row["name"] != $key) {
+            if ($row["name"] != $key) {
                 return false;
             }
 
-            if($language && $language != $row["language"]) {
+            if ($language && $language != $row["language"]) {
                 return false;
             }
 
-            if($targetSubtype && $targetSubtype != $row["targetSubtype"]) {
+            if ($targetSubtype && $targetSubtype != $row["targetSubtype"]) {
                 return false;
             }
         });

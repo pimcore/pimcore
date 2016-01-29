@@ -3,10 +3,10 @@
 $base = array(
   0x00 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0x10 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-  0x20 => '', '', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  0x30 => NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  0x40 => '', '', '', '', '', '', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL,
-  0x50 => NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  0x20 => '', '', '', '', '', '', '', null, null, null, null, null, null, null, null, null,
+  0x30 => null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+  0x40 => '', '', '', '', '', '', '', '', '', '', '', null, null, null, null, null,
+  0x50 => null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
   0x60 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0x70 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0x80 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
@@ -15,6 +15,6 @@ $base = array(
   0xB0 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0xC0 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0xD0 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-  0xE0 => '', '', '', '', '', '', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL,
-  0xF0 => NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  0xE0 => '', '', '', '', '', '', '', '', '', '', '', null, null, null, null, null,
+  0xF0 => null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
 );

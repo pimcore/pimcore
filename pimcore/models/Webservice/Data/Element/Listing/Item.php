@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Element\Listing;
 
 use Pimcore\Model;
 
-class Item extends Model\Webservice\Data {
+class Item extends Model\Webservice\Data
+{
     
     /**
      * @var int

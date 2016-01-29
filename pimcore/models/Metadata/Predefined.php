@@ -17,7 +17,8 @@ namespace Pimcore\Model\Metadata;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 
-class Predefined extends Model\AbstractModel {
+class Predefined extends Model\AbstractModel
+{
 
     /**
      * @var integer
@@ -86,7 +87,8 @@ class Predefined extends Model\AbstractModel {
      * @param integer $id
      * @return self
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         try {
             $metadata = new self();
             $metadata->setId($id);
@@ -102,8 +104,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $key
      * @return self
      */
-    public static function getByName($name, $language = "") {
-
+    public static function getByName($name, $language = "")
+    {
         try {
             $metadata = new self();
             $metadata->setName($name);
@@ -118,7 +120,8 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return self
      */
-    public static function create() {
+    public static function create()
+    {
         $type = new self();
         $type->save();
 
@@ -129,21 +132,24 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
     /**
      * @return string
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -152,7 +158,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -161,7 +168,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $type
      * @return void
      */
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
         return $this;
     }
@@ -170,7 +178,8 @@ class Predefined extends Model\AbstractModel {
      * @param string $data
      * @return void
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
         return $this;
     }
@@ -178,7 +187,8 @@ class Predefined extends Model\AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -186,7 +196,8 @@ class Predefined extends Model\AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -298,7 +309,8 @@ class Predefined extends Model\AbstractModel {
     /**
      *
      */
-    public function minimize() {
+    public function minimize()
+    {
         switch ($this->type) {
             case "document":
             case "asset":
@@ -326,7 +338,8 @@ class Predefined extends Model\AbstractModel {
     /**
      *
      */
-    public function expand() {
+    public function expand()
+    {
         switch ($this->type) {
             case "document":
             case "asset":

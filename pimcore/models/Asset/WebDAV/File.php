@@ -18,7 +18,8 @@ use Sabre\DAV;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model\Asset;
 
-class File extends DAV\File {
+class File extends DAV\File
+{
 
     /**
      * @var Asset
@@ -28,14 +29,16 @@ class File extends DAV\File {
     /**
      * @param $asset
      */
-    function __construct($asset) {
+    public function __construct($asset)
+    {
         $this->asset = $asset;
     }
 
     /**
      * @return string
      */
-    function getName() {
+    public function getName()
+    {
         return $this->asset->getFilename();
     }
 
@@ -45,9 +48,9 @@ class File extends DAV\File {
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    function setName($name) {
-
-        if($this->asset->isAllowed("rename")) {
+    public function setName($name)
+    {
+        if ($this->asset->isAllowed("rename")) {
             $user = AdminTool::getCurrentUser();
             $this->asset->setUserModification($user->getId());
 
@@ -64,9 +67,9 @@ class File extends DAV\File {
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    function delete() {
-
-        if($this->asset->isAllowed("delete")) {
+    public function delete()
+    {
+        if ($this->asset->isAllowed("delete")) {
             Asset\Service::loadAllFields($this->asset);
             $this->asset->delete();
 
@@ -92,7 +95,8 @@ class File extends DAV\File {
     /**
      * @return integer
      */
-    function getLastModified() {
+    public function getLastModified()
+    {
         return $this->asset->getModificationDate();
     }
 
@@ -101,9 +105,9 @@ class File extends DAV\File {
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    function put($data) {
-
-        if($this->asset->isAllowed("publish")) {
+    public function put($data)
+    {
+        if ($this->asset->isAllowed("publish")) {
             // read from resource -> default for SabreDAV
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-dav-tmp-file-" . uniqid();
             file_put_contents($tmpFile, $data);
@@ -126,8 +130,9 @@ class File extends DAV\File {
      * @return mixed|void
      * @throws DAV\Exception\Forbidden
      */
-    function get() {
-        if($this->asset->isAllowed("view")) {
+    public function get()
+    {
+        if ($this->asset->isAllowed("view")) {
             return fopen($this->asset->getFileSystemPath(), "r");
         } else {
             throw new DAV\Exception\Forbidden();
@@ -139,7 +144,8 @@ class File extends DAV\File {
      *
      * @return string
      */
-    function getETag() {
+    public function getETag()
+    {
         return md5_file($this->asset->getFileSystemPath());
     }
 
@@ -148,7 +154,8 @@ class File extends DAV\File {
      *
      * @return string
      */
-    function getContentType() {
+    public function getContentType()
+    {
         return $this->asset->getMimetype();
     }
 
@@ -157,8 +164,8 @@ class File extends DAV\File {
      *
      * @return integer
      */
-    function getSize() {
+    public function getSize()
+    {
         return filesize($this->asset->getFileSystemPath());
     }
-
 }

@@ -16,14 +16,15 @@ namespace Pimcore\Model\Object\Fieldcollection\Data;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param Model\Object\Concrete $object
      * @throws \Exception
      */
-    public function save (Model\Object\Concrete $object) {
-        
+    public function save(Model\Object\Concrete $object)
+    {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = array(
             "o_id" => $object->getId(),
@@ -32,15 +33,13 @@ class Dao extends Model\Dao\AbstractDao {
         );
         
         try {
-            
             foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
                 $getter = "get" . ucfirst($fd->getName());
 
                 if (method_exists($fd, "save")) {
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $fd->save($this->model);
-                    
-                } else if ($fd->getColumnType()) {
+                } elseif ($fd->getColumnType()) {
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object);
                         $data = array_merge($data, $insertDataArray);

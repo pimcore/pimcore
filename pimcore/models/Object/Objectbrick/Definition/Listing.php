@@ -16,22 +16,23 @@ namespace Pimcore\Model\Object\Objectbrick\Definition;
 
 use Pimcore\Model;
 
-class Listing {
+class Listing
+{
 
     /**
      * @return array
      */
-    public function load () {
-        
+    public function load()
+    {
         $fields = array();
         $objectBricksFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
         
-        if(is_dir($objectBricksFolder)) {
+        if (is_dir($objectBricksFolder)) {
             $files = scandir($objectBricksFolder);
             
             foreach ($files as $file) {
                 $file = $objectBricksFolder . "/" . $file;
-                if(is_file($file)) {
+                if (is_file($file)) {
                     $fieldData = file_get_contents($file);
                     $fields[] = \Pimcore\Tool\Serialize::unserialize($fieldData);
                 }

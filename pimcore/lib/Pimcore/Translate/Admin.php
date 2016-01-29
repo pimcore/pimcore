@@ -14,7 +14,8 @@ namespace Pimcore\Translate;
 
 use Pimcore\Translate;
 
-class Admin extends Translate {
+class Admin extends Translate
+{
 
     /**
      * @var string

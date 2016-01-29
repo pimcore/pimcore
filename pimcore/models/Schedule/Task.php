@@ -16,7 +16,8 @@ namespace Pimcore\Model\Schedule;
 
 use Pimcore\Model;
 
-class Task extends Model\AbstractModel {
+class Task extends Model\AbstractModel
+{
 
     /**
      * @var integer
@@ -57,17 +58,16 @@ class Task extends Model\AbstractModel {
      * @param integer $id
      * @return Schedule\Task
      */
-    public static function getById($id) {
-
+    public static function getById($id)
+    {
         $cacheKey = "scheduled_task_" . $id;
 
         try {
             $task = \Zend_Registry::get($cacheKey);
-            if(!$task) {
+            if (!$task) {
                 throw new \Exception("Scheduled Task in Registry is not valid");
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $task = new self();
             $task->getDao()->getById(intval($id));
 
@@ -81,8 +81,8 @@ class Task extends Model\AbstractModel {
      * @param array $data
      * @return Schedule\Task
      */
-    public static function create($data) {
-
+    public static function create($data)
+    {
         $task = new self();
         $task->setValues($data);
         return $task;
@@ -91,49 +91,56 @@ class Task extends Model\AbstractModel {
     /**
      * @param array $data
      */
-    public function __construct($data = array()) {
+    public function __construct($data = array())
+    {
         $this->setValues($data);
     }
 
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
      * @return integer
      */
-    public function getCid() {
+    public function getCid()
+    {
         return $this->cid;
     }
 
     /**
      * @return string
      */
-    public function getCtype() {
+    public function getCtype()
+    {
         return $this->ctype;
     }
 
     /**
      * @return integer
      */
-    public function getDate() {
+    public function getDate()
+    {
         return $this->date;
     }
 
     /**
      * @return string
      */
-    public function getAction() {
+    public function getAction()
+    {
         return $this->action;
     }
 
     /**
      * @return integer
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return $this->version;
     }
 
@@ -141,7 +148,8 @@ class Task extends Model\AbstractModel {
      * @param $id
      * @return $this
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -150,7 +158,8 @@ class Task extends Model\AbstractModel {
      * @param $cid
      * @return $this
      */
-    public function setCid($cid) {
+    public function setCid($cid)
+    {
         $this->cid = (int) $cid;
         return $this;
     }
@@ -159,7 +168,8 @@ class Task extends Model\AbstractModel {
      * @param $ctype
      * @return $this
      */
-    public function setCtype($ctype) {
+    public function setCtype($ctype)
+    {
         $this->ctype = $ctype;
         return $this;
     }
@@ -168,7 +178,8 @@ class Task extends Model\AbstractModel {
      * @param $date
      * @return $this
      */
-    public function setDate($date) {
+    public function setDate($date)
+    {
         $this->date = (int) $date;
         return $this;
     }
@@ -177,7 +188,8 @@ class Task extends Model\AbstractModel {
      * @param $action
      * @return $this
      */
-    public function setAction($action) {
+    public function setAction($action)
+    {
         $this->action = $action;
         return $this;
     }
@@ -186,7 +198,8 @@ class Task extends Model\AbstractModel {
      * @param $version
      * @return $this
      */
-    public function setVersion($version) {
+    public function setVersion($version)
+    {
         $this->version = $version;
         return $this;
     }
@@ -194,7 +207,8 @@ class Task extends Model\AbstractModel {
     /**
      * @return boolean
      */
-    public function getActive() {
+    public function getActive()
+    {
         return $this->active;
     }
 
@@ -202,12 +216,12 @@ class Task extends Model\AbstractModel {
      * @param $active
      * @return $this
      */
-    public function setActive($active) {
+    public function setActive($active)
+    {
         if (empty($active)) {
             $active = false;
         }
         $this->active = (bool) $active;
         return $this;
     }
-
 }

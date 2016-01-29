@@ -12,21 +12,21 @@
 
 namespace Pimcore\Controller\Plugin;
 
-class WysiwygAttributes extends \Zend_Controller_Plugin_Abstract {
+class WysiwygAttributes extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      *
      */
-    public function dispatchLoopShutdown() {
-        
-        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
+    public function dispatchLoopShutdown()
+    {
+        if (!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
         
         // removes the non-valid html attributes which are used by the wysiwyg editor for ID based linking        
         $body = $this->getResponse()->getBody();
-        $body = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/","",$body);
+        $body = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/", "", $body);
         $this->getResponse()->setBody($body);
     }
 }
-

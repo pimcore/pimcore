@@ -13,45 +13,46 @@
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 
-class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
+class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
+{
 
 
-    public function updateKeyAction() {
+    public function updateKeyAction()
+    {
         $id = $this->getParam("id");
         $key = $this->getParam("key");
-            $object = Object\Concrete::getById($id);
+        $object = Object\Concrete::getById($id);
 
         try {
-            if(!empty($object)) {
+            if (!empty($object)) {
                 $object->setKey($key);
                 $object->save();
                 $this->_helper->json(array("success" => true));
             } else {
                 throw new \Exception("No Object found for given id.");
             }
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
         }
     }
 
-    public function getVariantsAction() {
+    public function getVariantsAction()
+    {
         // get list of variants
 
-        if($this->getParam("language")) {
+        if ($this->getParam("language")) {
             $this->setLanguage($this->getParam("language"), true);
         }
 
         if ($this->getParam("xaction") == "update") {
-
             $data = \Zend_Json::decode($this->getParam("data"));
 
             // save
             $object = Object::getById($data["id"]);
 
-            if($object->isAllowed("publish")) {
+            if ($object->isAllowed("publish")) {
                 $objectData = array();
-                foreach($data as $key => $value) {
+                foreach ($data as $key => $value) {
                     $parts = explode("~", $key);
                     if (substr($key, 0, 1) == "~") {
                         $type = $parts[1];
@@ -70,7 +71,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
 
                         $keyValuePairs->setPropertyWithId($keyid, $value, true);
                         $object->$setter($keyValuePairs);
-                    } else if(count($parts) > 1) {
+                    } elseif (count($parts) > 1) {
                         $brickType = $parts[0];
                         $brickKey = $parts[1];
                         $brickField = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
@@ -80,14 +81,13 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
                         $valueSetter = "set" . ucfirst($brickKey);
 
                         $brick = $object->$fieldGetter()->$brickGetter();
-                        if(empty($brick)) {
+                        if (empty($brick)) {
                             $classname = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($brickType);
                             $brickSetter = "set" . ucfirst($brickType);
                             $brick = new $classname($object);
                             $object->$fieldGetter()->$brickSetter($brick);
                         }
                         $brick->$valueSetter($value);
-
                     } else {
                         $objectData[$key] = $value;
                     }
@@ -104,16 +104,14 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
             } else {
                 throw new \Exception("Permission denied");
             }
-
         } else {
-
             $parentObject = Object\Concrete::getById($this->getParam("objectId"));
 
-            if(empty($parentObject)) {
+            if (empty($parentObject)) {
                 throw new \Exception("No Object found with id " . $this->getParam("objectId"));
             }
 
-            if($parentObject->isAllowed("view")) {
+            if ($parentObject->isAllowed("view")) {
                 $class = $parentObject->getClass();
                 $className = $parentObject->getClass()->getName();
 
@@ -124,12 +122,12 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
 
                 $fields = array();
                 $bricks = array();
-                if($this->getParam("fields")) {
+                if ($this->getParam("fields")) {
                     $fields = $this->getParam("fields");
 
-                    foreach($fields as $f) {
+                    foreach ($fields as $f) {
                         $parts = explode("~", $f);
-                        if(count($parts) > 1) {
+                        if (count($parts) > 1) {
                             $bricks[$parts[0]] = $parts[0];
                         }
                     }
@@ -144,13 +142,13 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
                 if ($this->getParam("sort")) {
                     if ($this->getParam("sort") == "fullpath") {
                         $orderKey = array("o_path", "o_key");
-                    } else if ($this->getParam("sort") == "id") {
+                    } elseif ($this->getParam("sort") == "id") {
                         $orderKey = "o_id";
-                    } else if ($this->getParam("sort") == "published") {
+                    } elseif ($this->getParam("sort") == "published") {
                         $orderKey = "o_published";
-                    } else if ($this->getParam("sort") == "modificationDate") {
+                    } elseif ($this->getParam("sort") == "modificationDate") {
                         $orderKey = "o_modificationDate";
-                    } else if ($this->getParam("sort") == "creationDate") {
+                    } elseif ($this->getParam("sort") == "creationDate") {
                         $orderKey = "o_creationDate";
                     } else {
                         $orderKey = $this->getParam("sort");
@@ -172,8 +170,8 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
                 }
 
                 $list = new $listClass();
-                if(!empty($bricks)) {
-                    foreach($bricks as $b) {
+                if (!empty($bricks)) {
+                    foreach ($bricks as $b) {
                         $list->addObjectbrick($b);
                     }
                 }
@@ -188,7 +186,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
 
                 $objects = array();
                 foreach ($list->getObjects() as $object) {
-                    if($object->isAllowed("view")) {
+                    if ($object->isAllowed("view")) {
                         $o = Object\Service::gridObjectData($object, $fields);
                         $objects[] = $o;
                     }
@@ -201,5 +199,3 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin {
         }
     }
 }
-
-

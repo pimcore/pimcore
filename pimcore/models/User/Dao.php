@@ -16,15 +16,16 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
-class Dao extends UserRole\Dao {
+class Dao extends UserRole\Dao
+{
 
     /**
      * Deletes object from database
      *
      * @return void
      */
-    public function delete() {
-
+    public function delete()
+    {
         parent::delete();
 
         $userId = $this->model->getId();
@@ -43,15 +44,14 @@ class Dao extends UserRole\Dao {
         // documents
         $this->db->update("documents", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
         $this->db->update("documents", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
-        $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $userId ));
+        $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $userId));
 
         // objects
-        $this->db->update("objects", array("o_userOwner" => null), $this->db->quoteInto("o_userOwner = ?", $userId ));
+        $this->db->update("objects", array("o_userOwner" => null), $this->db->quoteInto("o_userOwner = ?", $userId));
         $this->db->update("objects", array("o_userModification" => null), $this->db->quoteInto("o_userModification = ?", $userId));
-        $this->db->delete("users_workspaces_object", $this->db->quoteInto("userId= ?", $userId ));
+        $this->db->delete("users_workspaces_object", $this->db->quoteInto("userId= ?", $userId));
 
         // versions
         $this->db->update("versions", array("userId" => null), $this->db->quoteInto("userId = ?", $userId));
     }
-
 }

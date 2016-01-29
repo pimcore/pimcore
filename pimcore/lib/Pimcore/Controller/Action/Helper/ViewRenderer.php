@@ -16,7 +16,8 @@ use Pimcore\Controller\Action\Frontend as FrontendController;
 use Pimcore\Tool;
 use Pimcore\View;
 
-class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer {
+class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
+{
 
     /**
      * @var bool
@@ -26,8 +27,8 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer {
     /**
      *
      */
-    public function postDispatch() {
-
+    public function postDispatch()
+    {
         if ($this->_shouldRender()) {
             if (method_exists($this->getActionController(), "getRenderScript")) {
                 if ($script = $this->getActionController()->getRenderScript()) {
@@ -61,7 +62,7 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer {
 
         // this is very important, the initView could be called multiple times.
         // if we add the path on every call, we have big performance issues.
-        if($this->isInitialized) {
+        if ($this->isInitialized) {
             return;
         }
 
@@ -70,17 +71,16 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer {
         $paths = $this->view->getScriptPaths();
         // script pathes for layout path
         foreach (array_reverse($paths) as $path) {
-            $path = str_replace("\\","/",$path);
-            if(!in_array($path, $paths)) {
+            $path = str_replace("\\", "/", $path);
+            if (!in_array($path, $paths)) {
                 $this->view->addScriptPath($path);
             }
 
             $path = str_replace("/scripts", "/layouts", $path);
-            if(!in_array($path, $paths)) {
+            if (!in_array($path, $paths)) {
                 $this->view->addScriptPath($path);
             }
         }
-
     }
 
     /**

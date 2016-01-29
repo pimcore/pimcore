@@ -14,7 +14,8 @@ namespace Pimcore\Cache\Backend;
 
 use Pimcore\Db;
 
-class Memcached extends \Zend_Cache_Backend_Memcached {
+class Memcached extends \Zend_Cache_Backend_Memcached
+{
 
     /**
      * @var \Zend_Db_Adapter_Abstract
@@ -29,8 +30,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
     /**
      * @param array $options
      */
-    public function __construct(array $options = array()) {
-
+    public function __construct(array $options = array())
+    {
         $this->_options["tags_do_not_switch_to_innodb"] = null;
 
         parent::__construct($options);
@@ -39,16 +40,17 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
     /**
      * @return void
      */
-    protected function checkCacheConsistency() {
+    protected function checkCacheConsistency()
+    {
         // if the cache_tags table is empty, flush the cache
         // reason: the cache tags are stored in a MEMORY table, that means that a restart of the mysql server causes the loss
         // of all data in this table but the cache still exists, so there is an inconsistency because then it's possible that
         // there are outdated or just wrong items in the cache
-        if(!$this->checkedCacheConsistency) {
+        if (!$this->checkedCacheConsistency) {
             $this->checkedCacheConsistency = true;
 
             $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
-            if(!$res) {
+            if (!$res) {
                 $this->clean(\Zend_Cache::CLEANING_MODE_ALL);
             }
         }
@@ -59,9 +61,9 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param bool $doNotTestCacheValidity
      * @return void
      */
-    public function load($id, $doNotTestCacheValidity = false) {
-
-        if(!$doNotTestCacheValidity) {
+    public function load($id, $doNotTestCacheValidity = false)
+    {
+        if (!$doNotTestCacheValidity) {
             $this->checkCacheConsistency();
         }
 
@@ -71,8 +73,9 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
     /**
      * @return \Zend_Db_Adapter_Abstract
      */
-    protected function getDb () {
-        if(!$this->db) {
+    protected function getDb()
+    {
+        if (!$this->db) {
             // we're using a new mysql connection here to avoid problems with active (nested) transactions
             \Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
             $this->db = Db::getConnection();
@@ -85,7 +88,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param array $tags
      * @return void
      */
-    protected function saveTags($id, $tags) {
+    protected function saveTags($id, $tags)
+    {
 
         //$this->getDb()->beginTransaction();
 
@@ -96,13 +100,11 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
                         "id" => $id,
                         "tag" => $tag
                     ));
-                }
-                catch (\Exception $e) {
-                    if(strpos(strtolower($e->getMessage()), "is full") !== false) {
-
+                } catch (\Exception $e) {
+                    if (strpos(strtolower($e->getMessage()), "is full") !== false) {
                         \Logger::warning($e);
 
-                        if($this->_options["tags_do_not_switch_to_innodb"]) {
+                        if ($this->_options["tags_do_not_switch_to_innodb"]) {
                             $this->clean();
                         } else {
                             // it seems that the MEMORY table is on the limit an full
@@ -119,7 +121,6 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
                 }
             }
             //$this->getDb()->commit();
-
         } catch (\Exception $e) {
             \Logger::error($e);
         }
@@ -128,7 +129,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
     /**
      * @return void
      */
-    protected function clearTags () {
+    protected function clearTags()
+    {
         $this->getDb()->query("TRUNCATE TABLE `cache_tags`");
         $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=MEMORY");
     }
@@ -137,8 +139,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param string $tag
      * @return array
      */
-    protected function getItemsByTag($tag) {
-
+    protected function getItemsByTag($tag)
+    {
         $this->checkCacheConsistency();
         $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag = ?", $tag);
         return $itemIds;
@@ -156,13 +158,13 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
      * @return boolean True if no problem
      */
-    public function save($data, $id, $tags = array(), $specificLifetime = false) {
-
+    public function save($data, $id, $tags = array(), $specificLifetime = false)
+    {
         $this->checkCacheConsistency();
 
         $result = parent::save($data, $id, array(), $specificLifetime);
 
-        if($result) {
+        if ($result) {
             if (count($tags) > 0) {
                 $this->saveTags($id, $tags);
             }
@@ -177,20 +179,20 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param  string $id
      * @return bool true if OK
      */
-    public function remove($id) {
-
+    public function remove($id)
+    {
         $this->checkCacheConsistency();
 
         $result = parent::remove($id);
 
         // using func_get_arg() to be compatible with the interface
         // when the 2ng argument is true, do not clean the cache tags
-        if($result && func_num_args() > 1 && func_get_arg(1) !== true) {
+        if ($result && func_num_args() > 1 && func_get_arg(1) !== true) {
             $this->getDb()->delete("cache_tags", "id = '".$id."'");
         }
 
         // security check if the deletion fails
-        if(!$result && $this->_memcache->get($id) !== false) {
+        if (!$result && $this->_memcache->get($id) !== false) {
             $this->_memcache->flush();
         }
 
@@ -212,8 +214,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param  array  $tags Array of tags
      * @return boolean True if no problem
      */
-    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
-
+    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    {
         $this->checkCacheConsistency();
 
         if ($mode == \Zend_Cache::CLEANING_MODE_ALL) {
@@ -230,24 +232,23 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
 
                 foreach ($items as $item) {
                     // We call delete directly here because the ID in the cache is already specific for this site
-                    if($this->remove($item, true)) {
+                    if ($this->remove($item, true)) {
                         $quotedIds[] = $this->getDb()->quote($item);
                     }
                 }
 
-                if(count($quotedIds) > 0) {
+                if (count($quotedIds) > 0) {
                     $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
                 }
             }
         }
         if ($mode == \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
-            
             $condParts = array("1=1");
             foreach ($tags as $tag) {
                 $condParts[] = "tag != '" . $tag . "'";
             }
             
-            $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ",$condParts));
+            $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ", $condParts));
 
             foreach ($itemIds as $item) {
                 $this->remove($item);
@@ -272,7 +273,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param  string $id
      * @return array tags for given id
      */
-    protected function getTagsById($id) {
+    protected function getTagsById($id)
+    {
         $itemIds = $this->getDb()->fetchCol("SELECT tag FROM cache_tags WHERE id = ?", $id);
         return $itemIds;
     }
@@ -281,13 +283,14 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param array $tags
      * @return array
      */
-    public function getIdsMatchingAnyTags($tags = array()) {
+    public function getIdsMatchingAnyTags($tags = array())
+    {
         $tags_ = array();
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $tags_[] = $this->getDb()->quote($tag);
         }
 
-        $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag IN (".implode(",",$tags_).")");
+        $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag IN (".implode(",", $tags_).")");
         return $itemIds;
     }
 
@@ -296,14 +299,14 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
      * @param array $tags
      * @return array
      */
-    public function getIdsMatchingTags($tags = array()) {
-
+    public function getIdsMatchingTags($tags = array())
+    {
         $tags_ = array();
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $tags_[] = " tag = ".$this->getDb()->quote($tag);
         }
 
-        $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ",$tags_));
+        $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ", $tags_));
         return $itemIds;
     }
 
@@ -311,7 +314,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached {
     /**
      * @return array
      */
-    public function getCapabilities() {
+    public function getCapabilities()
+    {
         $capabilities = parent::getCapabilities();
         $capabilities["tags"] = true;
 
