@@ -134,6 +134,10 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             foreach ($fieldDefinitions as $fd) {
+                if ($fd->getFieldType() == "calculatedValue") {
+                    continue;
+                }
+
                 if ($fd->getQueryColumnType()) {
                     $key = $fd->getName();
 
