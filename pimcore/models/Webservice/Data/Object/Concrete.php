@@ -46,7 +46,7 @@ class Concrete extends Model\Webservice\Data\Object
         foreach ($fd as $field) {
             $getter = "get".ucfirst($field->getName());
 
-            //only expose fields which have a get method 
+            //only expose fields which have a get method
             if (method_exists($object, $getter)) {
                 $el = new Webservice\Data\Object\Element();
                 $el->name = $field->getName();
@@ -87,7 +87,7 @@ class Concrete extends Model\Webservice\Data\Object
 
                 $setter = "set" . ucfirst($element->name);
                 if (method_exists($object, $setter)) {
-                    $tag = $object->getClass()->getFieldDefinition($element->name);
+                    $tag = $class->getFieldDefinition($element->name);
                     if ($tag) {
                         if ($class instanceof Model\Object\ClassDefinition\Data\Fieldcollections) {
                             $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object,
@@ -100,7 +100,7 @@ class Concrete extends Model\Webservice\Data\Object
                     }
                 } else {
                     if (!$disableMappingExceptions) {
-                        throw new \Exception("No element [ " . $element->name . " ] of type [ " . $element->type . " ] found in class definition " . $class);
+                        throw new \Exception("No element [ " . $element->name . " ] of type [ " . $element->type . " ] found in class definition [" . $class->getId() . "] | " . $class->getName());
                     }
                 }
             }
