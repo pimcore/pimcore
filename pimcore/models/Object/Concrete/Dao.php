@@ -262,7 +262,7 @@ class Dao extends Model\Object\AbstractObject\Dao
                         }
                     }
 
-                    if ($inheritanceEnabled) {
+                    if ($inheritanceEnabled && $fd->getFieldType() != "calculatedValue") {
                         //get changed fields for inheritance
                         if ($fd->isRelationType()) {
                             if (is_array($insertData)) {

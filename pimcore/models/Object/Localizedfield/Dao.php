@@ -134,10 +134,6 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             foreach ($fieldDefinitions as $fd) {
-                if ($fd->getFieldType() == "calculatedValue") {
-                    continue;
-                }
-
                 if ($fd->getQueryColumnType()) {
                     $key = $fd->getName();
 
@@ -164,7 +160,7 @@ class Dao extends Model\Dao\AbstractDao
                             }
                         }
 
-                        if ($inheritanceEnabled) {
+                        if ($inheritanceEnabled && $fd->getFieldType() != "calculatedValue") {
                             //get changed fields for inheritance
                             if ($fd->isRelationType()) {
                                 if (is_array($insertData)) {
