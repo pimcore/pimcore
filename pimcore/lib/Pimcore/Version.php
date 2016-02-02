@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -18,7 +18,7 @@ class Version
     /**
      * @var string
      */
-    public static $version = "4.0.0-b3";
+    public static $version = "4.0.0-b4";
 
     /**
      * @var int
