@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-class Object_Data_QuantityValue
+namespace Pimcore\Model\Object\Data;
+
+class QuantityValue
 {
-
-
     /**
      * @var double | string
      */
@@ -27,7 +27,7 @@ class Object_Data_QuantityValue
     public $unitId;
 
     /**
-     * @var QuantityValue_Unit
+     * @var \Pimcore\Model\Object\QuantityValue\Unit
      */
     public $unit;
 
@@ -62,7 +62,7 @@ class Object_Data_QuantityValue
     public function getUnit()
     {
         if (empty($this->unit)) {
-            $this->unit = Pimcore\Model\Object\QuantityValue\Unit::getById($this->unitId);
+            $this->unit = \Pimcore\Model\Object\QuantityValue\Unit::getById($this->unitId);
         }
         return $this->unit;
     }
@@ -84,17 +84,22 @@ class Object_Data_QuantityValue
         return $this->value;
     }
 
+    /**
+     * @return string
+     * @throws \Zend_Locale_Exception
+     */
     public function __toString()
     {
         $value = $this->getValue();
         if (is_numeric($value)) {
+            $locale = null;
             try {
-                $locale = Zend_Registry::get("Zend_Locale");
-            } catch (Exception $e) {
+                $locale = \Zend_Registry::get("Zend_Locale");
+            } catch (\Exception $e) {
             }
 
             if ($locale) {
-                $value = Zend_Locale_Format::toNumber($value, array('locale' => $locale));
+                $value = \Zend_Locale_Format::toNumber($value, array('locale' => $locale));
             }
         }
 
