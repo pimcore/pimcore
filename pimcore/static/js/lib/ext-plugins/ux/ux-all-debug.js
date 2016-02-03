@@ -6040,8 +6040,7 @@ Ext.ux.form.MultiSelect = Ext.extend(Ext.form.Field,  {
 
         if (!Ext.isArray(values)) { values = values.split(this.delimiter); }
         for (var i=0; i<values.length; i++) {
-            index = this.view.store.indexOf(this.view.store.query(this.valueField,
-                new RegExp('^' + values[i] + '$', "i")).itemAt(0));
+            index = this.view.store.findExact(this.valueField, values[i]);
             selections.push(index);
         }
         this.view.select(selections);
