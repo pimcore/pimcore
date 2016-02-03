@@ -258,10 +258,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object_Abstract $object
+     * @param Model\Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object)
+    public function getForCsvExport($object, $params = array())
     {
         $key = $this->getName();
         $getter = "get".ucfirst($key);

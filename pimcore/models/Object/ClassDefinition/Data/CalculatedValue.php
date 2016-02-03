@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\Object;
 
 class CalculatedValue extends Model\Object\ClassDefinition\Data
 {
@@ -193,10 +194,11 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object_Abstract $object
+     * @param Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object)
+    public function getForCsvExport($object, $params = array())
     {
         \Logger::debug("csv not supported");
         //TODO
