@@ -92,6 +92,7 @@ class Sql extends AbstractAdapter
      */
     protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
     {
+        $config = (array)$config;
         $sql = "";
         if ($config["sql"] && !$ignoreSelectAndGroupBy) {
             if (strpos(strtoupper(trim($config["sql"])), "SELECT") === false || strpos(strtoupper(trim($config["sql"])), "SELECT") > 5) {
