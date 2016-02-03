@@ -26,6 +26,9 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
     {
         parent::init();
 
+        // PHP 7.0 compatibility of adminer (throws some warnings)
+        ini_set("display_errors", 0);
+
         // only for admins
         $this->checkPermission("adminer");
 
