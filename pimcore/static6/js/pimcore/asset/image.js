@@ -191,8 +191,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     store: [["JPEG", "JPEG"],["PNG","PNG"]],
                     mode: "local",
                     value: "JPEG",
-                    editable: false,
-                    width: 200
+                    editable: false
                 }, {
                     xtype: "numberfield",
                     name: "width",
@@ -229,8 +228,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 var exifPanel = new Ext.grid.PropertyGrid({
                     title: t("exif_data"),
                     source: this.data.imageInfo.exif,
-                    clicksToEdit: 1000,
-                    autoHeight: true
+                    clicksToEdit: 1000
                 });
 
                 details.push(exifPanel);
@@ -249,7 +247,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     region: "east",
                     width: 300,
                     items: details,
-                    autoScroll: true
+                    scrollable: "y"
                 }]
             });
         }
