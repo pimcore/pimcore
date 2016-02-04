@@ -265,13 +265,16 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 $headElement = preg_match("/<head ?.*>/", $html);
                 $bodyElement = preg_match("/<body ?.*>/", $html);
 
+                $skipCheck = false;
+
                 // if there's no head and no body, create a wrapper including these elements
                 // add html headers for snippets in editmode, so there is no problem with javascript
                 if (!$headElement && !$bodyElement && !$htmlElement) {
                     $html = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . "</body></html>";
+                    $skipCheck = true;
                 }
 
-                if ($headElement && $bodyElement && $htmlElement) {
+                if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
                     $html = str_replace("</head>", $editmodeHeadHtml . "\n\n</head>", $html);
 
                     $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js";
