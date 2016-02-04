@@ -254,20 +254,6 @@ pimcore.settings.thumbnail.item = Class.create({
 pimcore.registerNS("pimcore.settings.thumbnail.items");
 
 pimcore.settings.thumbnail.items = {
-
-    detectBlockIndex: function (blockElement, container) {
-        // detect index
-        var index;
-
-        for(var s=0; s<container.items.items.length; s++) {
-            if(container.items.items[s].getId() == blockElement.getId()) {
-                index = s;
-                break;
-            }
-        }
-        return index;
-    },
-
     getTopBar: function (name, index, parent) {
         return [{
             xtype: "tbtext",
@@ -278,19 +264,8 @@ pimcore.settings.thumbnail.items = {
 
                 var container = parent;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.settings.thumbnail.items.detectBlockIndex(blockElement, container);
-                var tmpContainer = pimcore.viewport;
 
-                var newIndex = index-1;
-                if(newIndex < 0) {
-                    newIndex = 0;
-                }
-
-                container.remove(blockElement, false);
-                container.insert(newIndex, blockElement);
-                container.updateLayout();
-
-                pimcore.layout.refresh();
+                container.moveBefore(blockElement, blockElement.previousSibling());
             }.bind(window, index, parent)
         },{
             iconCls: "pimcore_icon_down",
@@ -298,14 +273,8 @@ pimcore.settings.thumbnail.items = {
 
                 var container = parent;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.settings.thumbnail.items.detectBlockIndex(blockElement, container);
-                var tmpContainer = pimcore.viewport;
 
-                container.remove(blockElement, false);
-                container.insert(index+1, blockElement);
-                container.updateLayout();
-
-                pimcore.layout.refresh();
+                container.moveAfter(blockElement, blockElement.nextSibling());
             }.bind(window, index, parent)
         },"->",{
             iconCls: "pimcore_icon_delete",
