@@ -258,43 +258,34 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
         // add scripts in html header for pages in editmode
         if ($this->controller->editmode && Document\Service::isValidType($this->controller->document->getType())) { //ckogler
             include_once("simple_html_dom.php");
-            $body = $this->getResponse()->getBody();
+            $html = $this->getResponse()->getBody();
 
-            $html = str_get_html($body);
             if ($html) {
-                $htmlElement = $html->find("html", 0);
-                $head = $html->find("head", 0);
-                $bodyElement = $html->find("body", 0);
+                $htmlElement = preg_match("/<html ?.*>/", $html);
+                $headElement = preg_match("/<head ?.*>/", $html);
+                $bodyElement = preg_match("/<body ?.*>/", $html);
 
                 // if there's no head and no body, create a wrapper including these elements
                 // add html headers for snippets in editmode, so there is no problem with javascript
-                if (!$head && !$bodyElement && !$htmlElement) {
-                    $body = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $body . "</body></html>";
-                    $html = str_get_html($body);
-
-                    // get them again with the updated html markup
-                    $htmlElement = $html->find("html", 0);
-                    $head = $html->find("head", 0);
-                    $bodyElement = $html->find("body", 0);
+                if (!$headElement && !$bodyElement && !$htmlElement) {
+                    $html = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . "</body></html>";
                 }
 
-                if ($head && $bodyElement && $htmlElement) {
-                    $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
-                    $bodyElement->onunload = "pimcoreOnUnload();";
-                    if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static6/js/pimcore/document/edit/startup.js?_dc=' . Version::$revision . '"></script>' . "\n\n";
-                    } else {
-                        $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Version::$revision . '"></script>' . "\n\n";
+                if ($headElement && $bodyElement && $htmlElement) {
+                    $html = str_replace("</head>", $editmodeHeadHtml . "\n\n</head>", $html);
+
+                    $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js";
+                    if (!\Pimcore\Tool\Admin::isExtJS6()) {
+                        $startupJavascript = "/pimcore/static/js/pimcore/document/edit/startup.js";
                     }
 
-                    $body = $html->save();
-                    $this->getResponse()->setBody($body);
+                    $editmodeBodyHtml = "\n\n" . '<script type="text/javascript" src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
+                    $html = str_replace("</body>", $editmodeBodyHtml . "\n\n</body>", $html);
+
+                    $this->getResponse()->setBody($html);
                 } else {
                     $this->getResponse()->setBody('<div style="font-size:30px; font-family: Arial; font-weight:bold; color:red; text-align: center; margin: 40px 0">You have to define a &lt;html&gt;, &lt;head&gt;, &lt;body&gt;<br />HTML-tag in your view/layout markup!</div>');
                 }
-
-                $html->clear();
-                unset($html);
             }
         }
 
