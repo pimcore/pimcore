@@ -166,6 +166,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                         scrollOffset: 2
                     }
                 });
+                dimensionPanel.plugins[0].disable();
                 dimensionPanel.getStore().sort("name","DESC");
 
                 details.push(dimensionPanel);
@@ -230,6 +231,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     source: this.data.imageInfo.exif,
                     clicksToEdit: 1000
                 });
+                exifPanel.plugins[0].disable();
 
                 details.push(exifPanel);
             }
