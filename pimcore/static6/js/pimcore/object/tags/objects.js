@@ -257,9 +257,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
 
-        var autoHeight = false;
         if (intval(this.fieldConfig.height) < 15) {
-            autoHeight = true;
+            this.fieldConfig.height = null;
         }
 
         var cls = 'object_field';
@@ -382,7 +381,6 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
             },
-            autoHeight: autoHeight,
             bodyCssClass: "pimcore_object_tag_objects"
         });
 
