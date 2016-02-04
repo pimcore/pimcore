@@ -17,7 +17,8 @@ namespace Pimcore\Model\Document\Page;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
-class Dao extends Model\Document\PageSnippet\Dao {
+class Dao extends Model\Document\PageSnippet\Dao
+{
 
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
@@ -25,7 +26,8 @@ class Dao extends Model\Document\PageSnippet\Dao {
      * @param integer $id
      * @throws \Exception
      */
-    public function getById($id = null) {
+    public function getById($id = null)
+    {
         try {
             if ($id != null) {
                 $this->model->setId($id);
@@ -39,12 +41,10 @@ class Dao extends Model\Document\PageSnippet\Dao {
             if ($data["id"] > 0) {
                 $data["metaData"] = Serialize::unserialize($data["metaData"]);
                 $this->assignVariablesToModel($data);
-            }
-            else {
+            } else {
                 throw new \Exception("Page with the ID " . $this->model->getId() . " doesn't exists");
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -54,18 +54,17 @@ class Dao extends Model\Document\PageSnippet\Dao {
      *
      * @throws \Exception
      */
-    public function create() {
+    public function create()
+    {
         try {
             parent::create();
 
             $this->db->insert("documents_page", array(
                 "id" => $this->model->getId()
             ));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -73,17 +72,15 @@ class Dao extends Model\Document\PageSnippet\Dao {
      *
      * @throws \Exception
      */
-    public function delete() {
+    public function delete()
+    {
         try {
             $this->deleteAllProperties();
 
             $this->db->delete("documents_page", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
-
-
 }

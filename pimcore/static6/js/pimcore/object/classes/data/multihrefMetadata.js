@@ -421,6 +421,7 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
                 triggerAction: 'all',
                 allowBlank: false,
                 lazyRender: true,
+                editable: false,
                 mode: 'local',
                 store: new Ext.data.ArrayStore({
                     id: 'value',

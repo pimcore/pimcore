@@ -5,11 +5,13 @@
  * Date: 14.05.13
  * Time: 20:54
  */
-class Test_BaseRest extends Test_Base{
+class Test_BaseRest extends Test_Base
+{
 
     protected static $testConfig;
 
-    public static function getRestClient(){
+    public static function getRestClient()
+    {
         $testConfig = self::getTestConfig();
 
         $client = new Pimcore_Tool_RestClient();
@@ -24,7 +26,7 @@ class Test_BaseRest extends Test_Base{
      */
     public static function getTestConfig()
     {
-        if(!self::$testConfig) {
+        if (!self::$testConfig) {
             $testConfig = new Zend_Config_Xml(TESTS_PATH . "/config/testconfig.xml");
             $testConfig = $testConfig->toArray();
             self::$testConfig = $testConfig;

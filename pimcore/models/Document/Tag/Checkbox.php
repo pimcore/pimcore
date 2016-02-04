@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
-class Checkbox extends Model\Document\Tag {
+class Checkbox extends Model\Document\Tag
+{
 
     /**
      * Contains the checkbox value
@@ -30,7 +31,8 @@ class Checkbox extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "checkbox";
     }
 
@@ -38,7 +40,8 @@ class Checkbox extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->value;
     }
 
@@ -46,7 +49,8 @@ class Checkbox extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
+    public function frontend()
+    {
         return $this->value;
     }
 
@@ -55,7 +59,8 @@ class Checkbox extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->value = $data;
         return $this;
     }
@@ -65,7 +70,8 @@ class Checkbox extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         $this->value = $data;
         return $this;
     }
@@ -73,14 +79,16 @@ class Checkbox extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return $this->value;
     }
 
     /**
      * @return boolean
      */
-    public function isChecked() {
+    public function isChecked()
+    {
         return $this->isEmpty();
     }
 
@@ -89,12 +97,13 @@ class Checkbox extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null){
-       $data = $wsElement->value;
-       if($data->bool === null or is_bool($data)){
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
+        $data = $wsElement->value;
+        if ($data->bool === null or is_bool($data)) {
             $this->value = (bool) $data->value;
-       } else {
-           throw new \Exception("cannot get values from web service import - invalid data");
-       }
+        } else {
+            throw new \Exception("cannot get values from web service import - invalid data");
+        }
     }
 }

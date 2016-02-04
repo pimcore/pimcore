@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator {
+class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+{
 
     /**
      * @var array
@@ -49,7 +50,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param string $key
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
         //TODO: ???
         /*if(in_array($key,$this->validOrderKeys)) {
@@ -61,7 +63,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return array
      */
-    public function getObjects() {
+    public function getObjects()
+    {
         if ($this->objects === null) {
             $this->load();
         }
@@ -72,7 +75,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param string $objects
      * @return void
      */
-    public function setObjects($objects) {
+    public function setObjects($objects)
+    {
         $this->objects = $objects;
         return $this;
     }
@@ -80,14 +84,16 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return bool
      */
-    public function getUnpublished() {
+    public function getUnpublished()
+    {
         return $this->unpublished;
     }
     
     /**
      * @return bool
      */
-    public function setUnpublished($unpublished) {
+    public function setUnpublished($unpublished)
+    {
         $this->unpublished = (bool) $unpublished;
         return $this;
     }
@@ -96,7 +102,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param  $objectTypes
      * @return void
      */
-    public function setObjectTypes($objectTypes) {
+    public function setObjectTypes($objectTypes)
+    {
         $this->objectTypes = $objectTypes;
         return $this;
     }
@@ -104,7 +111,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return array
      */
-    public function getObjectTypes() {
+    public function getObjectTypes()
+    {
         return $this->objectTypes;
     }
 
@@ -148,7 +156,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->reset();
 
-        if($groupBy) {
+        if ($groupBy) {
             $this->groupBy = $groupBy;
 
             if (!$qoute) {
@@ -168,7 +176,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return int
      */
-    public function count() {
+    public function count()
+    {
         return $this->getTotalCount();
     }
 
@@ -177,7 +186,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param int $itemCountPerPage
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage) {
+    public function getItems($offset, $itemCountPerPage)
+    {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
         return $this->load();
@@ -186,7 +196,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return Model\Object\Listing|\Zend_Paginator_Adapter_Interface
      */
-    public function getPaginatorAdapter() {
+    public function getPaginatorAdapter()
+    {
         return $this;
     }
 
@@ -197,7 +208,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      *
      */
-    public function rewind() {
+    public function rewind()
+    {
         $this->getObjects();
         reset($this->objects);
     }
@@ -205,7 +217,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return mixed
      */
-    public function current() {
+    public function current()
+    {
         $this->getObjects();
         $var = current($this->objects);
         return $var;
@@ -214,7 +227,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return mixed
      */
-    public function key() {
+    public function key()
+    {
         $this->getObjects();
         $var = key($this->objects);
         return $var;
@@ -223,7 +237,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return mixed|void
      */
-    public function next() {
+    public function next()
+    {
         $this->getObjects();
         $var = next($this->objects);
         return $var;
@@ -232,7 +247,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return bool
      */
-    public function valid() {
+    public function valid()
+    {
         $this->getObjects();
         $var = $this->current() !== false;
         return $var;

@@ -8,7 +8,7 @@
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
- 
+
 pimcore.registerNS("pimcore.document.properties");
 pimcore.document.properties = Class.create(pimcore.element.properties,{
 
@@ -105,7 +105,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                             name: "navigation_target",
                             store: ["","_blank","_self","_top","_parent"],
                             value: this.getPropertyData("navigation_target"),
-                            editable: false,
+                            editable: true,
                             triggerAction: 'all',
                             mode: "local",
                             width: 200,

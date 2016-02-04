@@ -38,7 +38,6 @@ class RobotsTxt
 
             $this->_rules = $this->_makeRules($robotsTxt);
         } catch (\Exception $e) {
-
         }
     }
 
@@ -62,7 +61,6 @@ class RobotsTxt
 
         $urlArray = parse_url($url);
         if (isset($urlArray['path'])) {
-
             $url = $urlArray['path'];
 
             if (isset($urlArray['query'])) {

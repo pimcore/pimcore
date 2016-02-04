@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\Data;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 
-class Hotspotimage {
+class Hotspotimage
+{
 
     /**
      * @var Asset\Image
@@ -45,28 +46,29 @@ class Hotspotimage {
      * @param array $marker
      * @param array $crop
      */
-    public function __construct($image = null, $hotspots = [], $marker = array(), $crop = array()) {
-        if($image instanceof Asset\Image) {
+    public function __construct($image = null, $hotspots = [], $marker = array(), $crop = array())
+    {
+        if ($image instanceof Asset\Image) {
             $this->image = $image;
-        } else if (is_numeric($image)){
+        } elseif (is_numeric($image)) {
             $this->image = Asset\Image::getById($image);
         }
 
-        if(is_array($hotspots)) {
+        if (is_array($hotspots)) {
             $this->hotspots = array();
-            foreach($hotspots as $h) {
+            foreach ($hotspots as $h) {
                 $this->hotspots[] = $h;
             }
         }
 
-        if(is_array($marker)) {
+        if (is_array($marker)) {
             $this->marker = array();
-            foreach($marker as $m) {
+            foreach ($marker as $m) {
                 $this->marker[] = $m;
             }
         }
 
-        if(is_array($crop)) {
+        if (is_array($crop)) {
             $this->crop = $crop;
         }
     }
@@ -75,7 +77,8 @@ class Hotspotimage {
      * @param $hotspots
      * @return $this
      */
-    public function setHotspots($hotspots) {
+    public function setHotspots($hotspots)
+    {
         $this->hotspots = $hotspots;
         return $this;
     }
@@ -83,7 +86,8 @@ class Hotspotimage {
     /**
      * @return array|\array[]
      */
-    public function getHotspots() {
+    public function getHotspots()
+    {
         return $this->hotspots;
     }
 
@@ -91,7 +95,8 @@ class Hotspotimage {
      * @param $marker
      * @return $this
      */
-    public function setMarker($marker) {
+    public function setMarker($marker)
+    {
         $this->marker = $marker;
         return $this;
     }
@@ -99,7 +104,8 @@ class Hotspotimage {
     /**
      * @return array|\array[]
      */
-    public function getMarker() {
+    public function getMarker()
+    {
         return $this->marker;
     }
 
@@ -123,7 +129,8 @@ class Hotspotimage {
      * @param $image
      * @return $this
      */
-    public function setImage($image) {
+    public function setImage($image)
+    {
         $this->image = $image;
         return $this;
     }
@@ -131,7 +138,8 @@ class Hotspotimage {
     /**
      * @return Asset|Asset\Image
      */
-    public function getImage() {
+    public function getImage()
+    {
         return $this->image;
     }
 
@@ -139,24 +147,24 @@ class Hotspotimage {
      * @param null $thumbnailName
      * @return mixed
      */
-    public function getThumbnail($thumbnailName = null) {
-
-        if(!$this->getImage()) {
+    public function getThumbnail($thumbnailName = null)
+    {
+        if (!$this->getImage()) {
             return "";
         }
 
         $crop = null;
-        if(is_array($this->getCrop())) {
+        if (is_array($this->getCrop())) {
             $crop = $this->getCrop();
         }
 
         $thumbConfig = $this->getImage()->getThumbnailConfig($thumbnailName);
-        if(!$thumbConfig && $crop) {
+        if (!$thumbConfig && $crop) {
             $thumbConfig = new Asset\Image\Thumbnail\Config();
         }
 
-        if($crop) {
-            $thumbConfig->addItemAt(0,"cropPercent", array(
+        if ($crop) {
+            $thumbConfig->addItemAt(0, "cropPercent", array(
                 "width" => $crop["cropWidth"],
                 "height" => $crop["cropHeight"],
                 "y" => $crop["cropTop"],
@@ -173,10 +181,11 @@ class Hotspotimage {
     /**
      * @return string
      */
-    public function __toString() {
-        if($this->image) {
+    public function __toString()
+    {
+        if ($this->image) {
             return $this->image->__toString();
         }
-        return ""; 
+        return "";
     }
 }

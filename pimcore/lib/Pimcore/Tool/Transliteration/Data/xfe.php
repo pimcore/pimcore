@@ -1,14 +1,14 @@
 <?php
 
 $base = array(
-  0x00 => NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  0x10 => NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  0x20 => '', '', '', '~', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  0x00 => null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+  0x10 => null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+  0x20 => '', '', '', '~', null, null, null, null, null, null, null, null, null, null, null, null,
   0x30 => '..', '--', '-', '_', '_', '(', ') ', '{', '} ', '[', '] ', '[(', ')] ', '<<', '>> ', '<',
-  0x40 => '> ', '[', '] ', '{', '}', NULL, NULL, NULL, NULL, '', '', '', '', '', '', '',
+  0x40 => '> ', '[', '] ', '{', '}', null, null, null, null, '', '', '', '', '', '', '',
   0x50 => ',', ',', '.', '', ';', ':', '?', '!', '-', '(', ')', '{', '}', '{', '}', '#',
-  0x60 => '&', '*', '+', '-', '<', '>', '=', '', '\\', '$', '%', '@', NULL, NULL, NULL, NULL,
-  0x70 => '', '', '', NULL, '', NULL, '', '', '', '', '', '', '', '', '', '',
+  0x60 => '&', '*', '+', '-', '<', '>', '=', '', '\\', '$', '%', '@', null, null, null, null,
+  0x70 => '', '', '', null, '', null, '', '', '', '', '', '', '', '', '', '',
   0x80 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0x90 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0xA0 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
@@ -16,5 +16,5 @@ $base = array(
   0xC0 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0xD0 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0xE0 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-  0xF0 => '', '', '', '', '', '', '', '', '', '', '', '', '', NULL, NULL, '',
+  0xF0 => '', '', '', '', '', '', '', '', '', '', '', '', '', null, null, '',
 );

@@ -19,13 +19,15 @@ pimcore.object.classes.klass = Class.create({
 
 
 
-    initialize: function (data, parentPanel, reopen) {
+    initialize: function (data, parentPanel, reopen, editorPrefix) {
         this.parentPanel = parentPanel;
         this.data = data;
+        this.editorPrefix = editorPrefix;
+        this.reopen = reopen;
 
         this.addLayout();
         this.initLayoutFields();
-        this.reopen = reopen;
+
     },
 
     getUploadUrl: function(){
@@ -122,7 +124,8 @@ pimcore.object.classes.klass = Class.create({
             layout: "border",
             closable: true,
             title: name,
-            id: "pimcore_class_editor_panel_" + this.getId(),
+            //id: "pimcore_class_editor_panel_" + this.getId(),
+            id: this.editorPrefix + this.getId(),
             items: [
                 this.tree,
                 this.editpanel

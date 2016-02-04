@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Email\Log;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * Name of the db table
@@ -30,8 +31,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param integer $id
      * @return void
      */
-    public function getById($id = null) {
-
+    public function getById($id = null)
+    {
         if ($id != null) {
             $this->model->setId($id);
         }
@@ -45,7 +46,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         $data = array();
 
         $emailLog = get_object_vars($this->model);
@@ -55,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao {
 
                 // check if the getter exists
                 $getter = "get" . ucfirst($key);
-                if(!method_exists($this->model,$getter)) {
+                if (!method_exists($this->model, $getter)) {
                     continue;
                 }
 
@@ -64,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao {
 
                 if (is_bool($value)) {
                     $value = (int) $value;
-                }else if(is_array($value)){
+                } elseif (is_array($value)) {
                     //converts the dynamic params to a basic json string
                     $preparedData = self::createJsonLoggingObject($value);
                     $value = \Zend_Json::encode($preparedData);
@@ -76,8 +78,7 @@ class Dao extends Model\Dao\AbstractDao {
 
         try {
             $this->db->update(self::$dbTable, $data,  $this->db->quoteInto("id = ?", $this->model->getId()));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
     }
@@ -88,21 +89,24 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete(self::$dbTable, $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
      * just an alias for $this->save();
      */
-    public function update(){
+    public function update()
+    {
         $this->save();
     }
 
     /**
      * @throws \Exception
      */
-    public function create() {
+    public function create()
+    {
         try {
             $this->db->insert(self::$dbTable, array());
 
@@ -110,9 +114,7 @@ class Dao extends Model\Dao\AbstractDao {
             $this->model->setId($this->db->lastInsertId());
             $this->model->setCreationDate($date);
             $this->model->setModificationDate($date);
-
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -121,15 +123,16 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $data
      * @return array|string
      */
-    protected function createJsonLoggingObject($data){
-        if(!is_array($data)){
+    protected function createJsonLoggingObject($data)
+    {
+        if (!is_array($data)) {
             return \Zend_Json::encode(new \stdClass());
-        }else{
-           $loggingData = array();
-           foreach($data as $key => $value){
-              $loggingData[] = self::prepareLoggingData($key,$value);
+        } else {
+            $loggingData = array();
+            foreach ($data as $key => $value) {
+                $loggingData[] = self::prepareLoggingData($key, $value);
             }
-           return $loggingData;
+            return $loggingData;
         }
     }
 
@@ -141,23 +144,24 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $value
      * @return \stdClass
      */
-    protected function prepareLoggingData($key,$value){
+    protected function prepareLoggingData($key, $value)
+    {
         $class = new \stdClass();
         $class->key = $key.' '; //dirty hack - key has to be a string otherwise the treeGrid won't work
 
-        if(is_string($value) || is_int($value) || is_null($value)){
+        if (is_string($value) || is_int($value) || is_null($value)) {
             $class->data = array('type' => 'simple',
                 'value' => $value);
-        }elseif($value instanceof \Zend_Date){
+        } elseif ($value instanceof \Zend_Date) {
             $class->data = array('type' => 'simple',
                 'value' => $value->get(\Zend_Date::DATETIME));
-        }elseif(is_object($value) && method_exists($value,'getId')){
+        } elseif (is_object($value) && method_exists($value, 'getId')) {
             $class->data = array('type' => 'object',
                 'objectId' => $value->getId(),
                 'objectClass' => get_class($value));
-        }elseif(is_array($value)){
-            foreach($value as $entryKey => $entryValue){
-                $class->children[] = self::prepareLoggingData($entryKey,$entryValue);
+        } elseif (is_array($value)) {
+            foreach ($value as $entryKey => $entryValue) {
+                $class->children[] = self::prepareLoggingData($entryKey, $entryValue);
             }
         }
         return $class;

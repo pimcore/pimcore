@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Email;
 
 use Pimcore\Model;
 
-class Dao extends Model\Document\PageSnippet\Dao {
+class Dao extends Model\Document\PageSnippet\Dao
+{
 
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
@@ -24,7 +25,8 @@ class Dao extends Model\Document\PageSnippet\Dao {
      * @param integer $id
      * @return void
      */
-    public function getById($id = null) {
+    public function getById($id = null)
+    {
         try {
             if ($id != null) {
                 $this->model->setId($id);
@@ -37,12 +39,10 @@ class Dao extends Model\Document\PageSnippet\Dao {
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
-            }
-            else {
+            } else {
                 throw new \Exception("Email Document with the ID " . $this->model->getId() . " doesn't exists");
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -52,18 +52,17 @@ class Dao extends Model\Document\PageSnippet\Dao {
      *
      * @return void
      */
-    public function create() {
+    public function create()
+    {
         try {
             parent::create();
 
             $this->db->insert("documents_email", array(
                 "id" => $this->model->getId()
             ));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -71,7 +70,8 @@ class Dao extends Model\Document\PageSnippet\Dao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         try {
             $this->deleteAllProperties();
 
@@ -80,8 +80,7 @@ class Dao extends Model\Document\PageSnippet\Dao {
             $this->db->delete("email_log", $this->db->quoteInto("documentId = ?", $this->model->getId()));
 
             parent::delete();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }

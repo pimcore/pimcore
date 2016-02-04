@@ -15,7 +15,8 @@ namespace Pimcore\Controller\Plugin;
 use Pimcore\Tool;
 use Pimcore\Model\Site;
 
-class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
+class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @var array
@@ -33,35 +34,37 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract {
     /**
      * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
         $found = false;
-        foreach(self::$files as $pattern) {
-            if(preg_match($pattern, $request->getPathInfo())) {
+        foreach (self::$files as $pattern) {
+            if (preg_match($pattern, $request->getPathInfo())) {
                 $found = true;
                 break;
             }
         }
 
-        if($found) {
-            if($request->getPathInfo() == "/robots.txt") {
+        if ($found) {
+            if ($request->getPathInfo() == "/robots.txt") {
 
                 // check for site
                 try {
                     $domain = Tool::getHostname();
                     $site = Site::getByDomain($domain);
-                } catch (\Exception $e) { }
+                } catch (\Exception $e) {
+                }
 
                 $siteSuffix = "";
-                if($site instanceof Site) {
+                if ($site instanceof Site) {
                     $siteSuffix = "-" . $site->getId();
                 }
 
                 // check for configured robots.txt in pimcore
                 $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
-                if(is_file($robotsPath)) {
+                if (is_file($robotsPath)) {
                     header("Content-Type: text/plain; charset=utf8");
                     while (@ob_end_flush()) ;
                     readfile($robotsPath);

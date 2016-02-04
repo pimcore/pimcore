@@ -17,30 +17,30 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Search;
 
-class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao  {
+class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
+{
 
-     /**
+    /**
      * Loads a list of entries for the specicifies parameters, returns an array of Search\Backend\Data
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $entries = array();
         $data = $this->db->fetchAll("SELECT * FROM search_backend_data" .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
      
         foreach ($data as $entryData) {
-
-             if($entryData['maintype']=='document'){
+            if ($entryData['maintype']=='document') {
                 $element = Document::getById($entryData['id']);
-             } else  if($entryData['maintype']=='asset'){
+            } elseif ($entryData['maintype']=='asset') {
                 $element = Asset::getById($entryData['id']);
-             } else  if($entryData['maintype']=='object'){
+            } elseif ($entryData['maintype']=='object') {
                 $element = Object::getById($entryData['id']);
-             } else {
+            } else {
                 \Logger::err("unknown maintype ");
-             }
-            if($element){
+            }
+            if ($element) {
                 $entry = new Search\Backend\Data();
                 $entry->setId(new Search\Backend\Data\Id($element));
                 $entry->setFullPath($entryData['fullpath']);
@@ -61,7 +61,8 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao  {
     /**
      * @return string
      */
-    public function getTotalCount() {
+    public function getTotalCount()
+    {
         $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM search_backend_data" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
         return $amount;
     }
@@ -69,7 +70,8 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao  {
     /**
      * @return int|string
      */
-    public function getCount() {
+    public function getCount()
+    {
         if (count($this->model->getEntries()) > 0) {
             return count($this->model->getEntries());
         }
@@ -81,11 +83,11 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao  {
     /**
      * @return string
      */
-    protected function getCondition() {
+    protected function getCondition()
+    {
         if ($cond = $this->model->getCondition()) {
             return " WHERE " . $cond . " ";
         }
         return "";
     }
-
 }

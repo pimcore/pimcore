@@ -63,7 +63,7 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 if (!$pimcoreConsole) {
     // skip if maintenance mode is on and the flag is not set
     // we cannot use \Zend_Console_Getopt here because it doesn't allow to be called twice (unrecognized parameter, ...)
-    if(\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array("--ignore-maintenance-mode", $_SERVER['argv'])) {
+    if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array("--ignore-maintenance-mode", $_SERVER['argv'])) {
         die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution \n");
     }
 }

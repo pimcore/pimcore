@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag\Area;
 
 use Pimcore\Model;
 
-class Info {
+class Info
+{
 
     /**
      * @var Model\Document\Tag
@@ -153,4 +154,3 @@ class Info {
         $this->tag = $tag;
     }
 }
-    

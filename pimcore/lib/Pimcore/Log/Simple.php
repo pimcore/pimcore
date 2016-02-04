@@ -14,17 +14,18 @@ namespace Pimcore\Log;
 
 use Pimcore\File;
 
-class Simple {
+class Simple
+{
 
     /**
      * @param $name
      * @param $message
      */
-    public static function log($name, $message) {
-
+    public static function log($name, $message)
+    {
         $log = PIMCORE_LOG_DIRECTORY . "/$name.log";
-        if(!is_file($log)) {
-            if(is_writable(dirname($log))) {
+        if (!is_file($log)) {
+            if (is_writable(dirname($log))) {
                 File::put($log, "AUTOCREATE\n");
             }
         }

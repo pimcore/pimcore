@@ -16,7 +16,8 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
-class Service {
+class Service
+{
 
     /**
      * Mapping between database types and pimcore class names
@@ -24,8 +25,9 @@ class Service {
      * @param $type
      * @return string
      */
-    public static function getClassNameForType ($type) {
-        switch($type) {
+    public static function getClassNameForType($type)
+    {
+        switch ($type) {
             case "user": return "\\Pimcore\\Model\\User";
             case "userfolder": return "\\Pimcore\\Model\\User\\Folder";
             case "role": return "\\Pimcore\\Model\\User\\Role";

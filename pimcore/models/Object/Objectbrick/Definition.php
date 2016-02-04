@@ -16,10 +16,11 @@ namespace Pimcore\Model\Object\Objectbrick;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\Tool\Serialize; 
-use Pimcore\File; 
+use Pimcore\Tool\Serialize;
+use Pimcore\File;
 
-class Definition extends Model\Object\Fieldcollection\Definition {
+class Definition extends Model\Object\Fieldcollection\Definition
+{
 
     /**
      * @var array()
@@ -35,7 +36,8 @@ class Definition extends Model\Object\Fieldcollection\Definition {
      * @param $classDefinitions
      * @return void
      */
-    public function setClassDefinitions($classDefinitions) {
+    public function setClassDefinitions($classDefinitions)
+    {
         $this->classDefinitions = $classDefinitions;
         return $this;
     }
@@ -43,7 +45,8 @@ class Definition extends Model\Object\Fieldcollection\Definition {
     /**
      * @return array()
      */
-    public function getClassDefinitions() {
+    public function getClassDefinitions()
+    {
         return $this->classDefinitions;
     }
 
@@ -53,21 +56,21 @@ class Definition extends Model\Object\Fieldcollection\Definition {
      * @param $key
      * @return mixed
      */
-    public static function getByKey ($key) {
-
+    public static function getByKey($key)
+    {
         $brick = null;
         $cacheKey = "objectbrick_" . $key;
 
         try {
             $brick = \Zend_Registry::get($cacheKey);
-            if(!$brick) {
+            if (!$brick) {
                 throw new \Exception("ObjectBrick in Registry is not valid");
             }
         } catch (\Exception $e) {
             $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
 
             $fieldFile = $objectBrickFolder . "/" . $key . ".psf";
-            if(is_file($fieldFile)) {
+            if (is_file($fieldFile)) {
                 $fcData = file_get_contents($fieldFile);
                 $brick = Serialize::unserialize($fcData);
 
@@ -75,7 +78,7 @@ class Definition extends Model\Object\Fieldcollection\Definition {
             }
         }
 
-        if($brick) {
+        if ($brick) {
             return $brick;
         }
 
@@ -86,24 +89,24 @@ class Definition extends Model\Object\Fieldcollection\Definition {
      * @throws \Exception
      * @return void
      */
-    public function save () {
-
-        if(!$this->getKey()) {
+    public function save()
+    {
+        if (!$this->getKey()) {
             throw new \Exception("A object-brick needs a key to be saved!");
         }
 
         $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
 
         // create folder if not exist
-        if(!is_dir($objectBrickFolder)) {
+        if (!is_dir($objectBrickFolder)) {
             File::mkdir($objectBrickFolder);
         }
 
         $newClassDefinitions = array();
         $classDefinitionsToDelete = array();
 
-        foreach($this->classDefinitions as $cl) {
-            if(!$cl['deleted']) {
+        foreach ($this->classDefinitions as $cl) {
+            if (!$cl['deleted']) {
                 $newClassDefinitions[] = $cl;
             } else {
                 $classDefinitionsToDelete[] = $cl;
@@ -177,12 +180,12 @@ class Definition extends Model\Object\Fieldcollection\Definition {
         $cd .= "\n";
 
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
-        if(!is_dir($fieldClassFolder)) {
+        if (!is_dir($fieldClassFolder)) {
             File::mkdir($fieldClassFolder);
         }
 
         $fieldClassFile = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
-        File::put($fieldClassFile,$cd);
+        File::put($fieldClassFile, $cd);
 
         $this->createContainerClasses();
         $this->updateDatabase();
@@ -193,28 +196,29 @@ class Definition extends Model\Object\Fieldcollection\Definition {
      * @param $serializedFilename
      * @return void
      */
-    private function cleanupOldFiles($serializedFilename) {
+    private function cleanupOldFiles($serializedFilename)
+    {
         $this->oldClassDefinitions = array();
-        if(file_exists($serializedFilename)) {
+        if (file_exists($serializedFilename)) {
             $prevSerialized = file_get_contents($serializedFilename);
         }
 
         $oldObject = Serialize::unserialize($prevSerialized);
 
-        if(!empty($oldObject->classDefinitions)) {
-            foreach($oldObject->classDefinitions as $cl) {
+        if (!empty($oldObject->classDefinitions)) {
+            foreach ($oldObject->classDefinitions as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
                 $class = Object\ClassDefinition::getById($cl['classname']);
-                if($class) {
+                if ($class) {
                     $path = $this->getContainerClassFolder($class->getName());
                     @unlink($path . "/" . ucfirst($cl['fieldname'] . ".php"));
 
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                        if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
                             $allowedTypes = $fieldDef->getAllowedTypes();
                             $idx = array_search($this->getKey(), $allowedTypes);
-                            if($idx !== false) {
+                            if ($idx !== false) {
                                 array_splice($allowedTypes, $idx, 1);
                             }
                             $fieldDef->setAllowedTypes($allowedTypes);
@@ -223,7 +227,6 @@ class Definition extends Model\Object\Fieldcollection\Definition {
 
                     $class->save();
                 }
-
             }
         }
     }
@@ -231,33 +234,32 @@ class Definition extends Model\Object\Fieldcollection\Definition {
     /**
      * @return void
      */
-    private function updateDatabase() {
-
+    private function updateDatabase()
+    {
         $processedClasses = array();
-        if(!empty($this->classDefinitions)) {
-            foreach($this->classDefinitions as $cl) {
+        if (!empty($this->classDefinitions)) {
+            foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
-                if(!$processedClasses[$cl['classname']]) {
+                if (!$processedClasses[$cl['classname']]) {
                     $class = Object\ClassDefinition::getById($cl['classname']);
                     $this->getDao()->createUpdateTable($class);
                     $processedClasses[$cl['classname']] = true;
                 }
-
             }
         }
 
-        if(!empty($this->oldClassDefinitions)) {
-            foreach($this->oldClassDefinitions as $cl) {
+        if (!empty($this->oldClassDefinitions)) {
+            foreach ($this->oldClassDefinitions as $cl) {
                 $class = Object\ClassDefinition::getById($cl);
-                if($class) {
+                if ($class) {
                     $this->getDao()->delete($class);
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                        if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
                             $allowedTypes = $fieldDef->getAllowedTypes();
                             $idx = array_search($this->getKey(), $allowedTypes);
-                            if($idx !== false) {
+                            if ($idx !== false) {
                                 array_splice($allowedTypes, $idx, 1);
                             }
                             $fieldDef->setAllowedTypes($allowedTypes);
@@ -268,17 +270,17 @@ class Definition extends Model\Object\Fieldcollection\Definition {
                 }
             }
         }
-
     }
 
     /**
      * @throws \Exception
      */
-    private function createContainerClasses() {
+    private function createContainerClasses()
+    {
         $containerDefinition = array();
 
-        if(!empty($this->classDefinitions)) {
-            foreach($this->classDefinitions as $cl) {
+        if (!empty($this->classDefinitions)) {
+            foreach ($this->classDefinitions as $cl) {
                 $containerDefinition[$cl['classname']][$cl['fieldname']][] = $this->key;
 
                 $class = Object\ClassDefinition::getById($cl['classname']);
@@ -288,22 +290,21 @@ class Definition extends Model\Object\Fieldcollection\Definition {
                     throw new \Exception("Could not resolve field definition for " . $cl['fieldname']);
                 }
                 $allowedTypes = $fd->getAllowedTypes();
-                if(!in_array($this->key, $allowedTypes)) {
+                if (!in_array($this->key, $allowedTypes)) {
                     $allowedTypes[] = $this->key;
                 }
                 $fd->setAllowedTypes($allowedTypes);
                 $class->save();
-
             }
         }
 
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
-        foreach($list as $def) {
-            if($this->key != $def->getKey()) {
+        foreach ($list as $def) {
+            if ($this->key != $def->getKey()) {
                 $classDefinitions = $def->getClassDefinitions();
-                if(!empty($classDefinitions)) {
-                    foreach($classDefinitions as $cl) {
+                if (!empty($classDefinitions)) {
+                    foreach ($classDefinitions as $cl) {
                         $containerDefinition[$cl['classname']][$cl['fieldname']][] = $def->getKey();
                     }
                 }
@@ -311,14 +312,14 @@ class Definition extends Model\Object\Fieldcollection\Definition {
         }
 
 
-        foreach($containerDefinition as $classId => $cd) {
+        foreach ($containerDefinition as $classId => $cd) {
             $class = Object\ClassDefinition::getById($classId);
 
-            if(!$class) {
+            if (!$class) {
                 continue;
             }
 
-            foreach($cd as $fieldname => $brickKeys) {
+            foreach ($cd as $fieldname => $brickKeys) {
                 $className = $this->getContainerClassName($class->getName(), $fieldname);
                 $namespace = $this->getContainerNamespace($class->getName(), $fieldname);
 
@@ -334,7 +335,7 @@ class Definition extends Model\Object\Fieldcollection\Definition {
                 $cd .= 'protected $brickGetters = array(' . "'" . implode("','", $brickKeys) . "');\n";
                 $cd .= "\n\n";
 
-                foreach($brickKeys as $brickKey) {
+                foreach ($brickKeys as $brickKey) {
                     $cd .= 'public $' . $brickKey . " = null;\n\n";
 
                     $cd .= '/**' . "\n";
@@ -342,7 +343,7 @@ class Definition extends Model\Object\Fieldcollection\Definition {
                     $cd .= '*/' . "\n";
                     $cd .= "public function get" . ucfirst($brickKey) . "() { \n";
 
-                    if($class->getAllowInherit()) {
+                    if ($class->getAllowInherit()) {
                         $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\Object\\AbstractObject::doGetInheritedValues($this->getObject())) { ' . "\n";
                         $cd .= "\t\t" . '$brick = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
                         $cd .= "\t\t" . 'if(!empty($brick)) {' . "\n";
@@ -362,22 +363,20 @@ class Definition extends Model\Object\Fieldcollection\Definition {
                     $cd .= "\t" . '$this->' . $brickKey . " = " . '$' . $brickKey . ";\n";
                     $cd .= "\t" . 'return $this;' . ";\n";
                     $cd .= "}\n\n";
-
                 }
 
                 $cd .= "}\n";
                 $cd .= "\n";
 
                 $folder = $this->getContainerClassFolder($class->getName());
-                if(!is_dir($folder)) {
+                if (!is_dir($folder)) {
                     File::mkdir($folder);
                 }
 
                 $file = $folder . "/" . ucfirst($fieldname) . ".php";
-                File::put($file,$cd);
+                File::put($file, $cd);
             }
         }
-
     }
 
     /**
@@ -385,7 +384,8 @@ class Definition extends Model\Object\Fieldcollection\Definition {
      * @param $fieldname
      * @return string
      */
-    private function getContainerClassName($classname, $fieldname) {
+    private function getContainerClassName($classname, $fieldname)
+    {
         return ucfirst($fieldname);
     }
 
@@ -394,7 +394,8 @@ class Definition extends Model\Object\Fieldcollection\Definition {
      * @param $fieldname
      * @return string
      */
-    private function getContainerNamespace($classname, $fieldname) {
+    private function getContainerNamespace($classname, $fieldname)
+    {
         return "Pimcore\\Model\\Object\\" . ucfirst($classname);
     }
 
@@ -402,14 +403,16 @@ class Definition extends Model\Object\Fieldcollection\Definition {
      * @param $classname
      * @return string
      */
-    private function getContainerClassFolder($classname) {
+    private function getContainerClassFolder($classname)
+    {
         return PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($classname);
     }
 
     /**
      * @return void
      */
-    public function delete () {
+    public function delete()
+    {
         $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
         $fieldFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
 
@@ -422,21 +425,21 @@ class Definition extends Model\Object\Fieldcollection\Definition {
 
 
         $processedClasses = array();
-        if(!empty($this->classDefinitions)) {
-            foreach($this->classDefinitions as $cl) {
+        if (!empty($this->classDefinitions)) {
+            foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
-                if(!$processedClasses[$cl['classname']]) {
+                if (!$processedClasses[$cl['classname']]) {
                     $class = Object\ClassDefinition::getById($cl['classname']);
                     $this->getDao()->delete($class);
                     $processedClasses[$cl['classname']] = true;
 
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                        if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
                             $allowedTypes = $fieldDef->getAllowedTypes();
                             $idx = array_search($this->getKey(), $allowedTypes);
-                            if($idx !== false) {
+                            if ($idx !== false) {
                                 array_splice($allowedTypes, $idx, 1);
                             }
                             $fieldDef->setAllowedTypes($allowedTypes);
@@ -444,20 +447,18 @@ class Definition extends Model\Object\Fieldcollection\Definition {
                     }
 
                     $class->save();
-
                 }
-
             }
         }
 
         // update classes
         $classList = new Object\ClassDefinition\Listing();
         $classes = $classList->load();
-        if(is_array($classes)){
-            foreach($classes as $class){
+        if (is_array($classes)) {
+            foreach ($classes as $class) {
                 foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
-                        if(in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                    if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             break;
                         }
                     }

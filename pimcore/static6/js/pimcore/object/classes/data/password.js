@@ -21,7 +21,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true
-    },        
+    },
 	statics : {
 		CONFIG_DATA : [
 			['front', 'Front'],
@@ -29,7 +29,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 		]
 	},
 	algorithmsStore: {},
-	
+
     initialize: function (treeNode, initData) {
         this.type = "password";
 
@@ -57,11 +57,11 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
     getLayout: function ($super) {
 
         $super();
-		
+
         var algorithmsProxy = new Ext.data.HttpProxy({
             url:'/admin/settings/get-available-algorithms'
         });
-        
+
         var algorithmsReader = new Ext.data.JsonReader({
             totalProperty:'total',
             successProperty:'success',
@@ -71,7 +71,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
                 {name:'value'}
             ]
         });
-        
+
         this.algorithmsStore = new Ext.data.Store({
             proxy:algorithmsProxy,
             reader:algorithmsReader,
@@ -83,8 +83,8 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 	            }.bind(this)
             }
         });
-        
-        
+
+
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
@@ -106,6 +106,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
                 store: this.algorithmsStore,
                 valueField: 'value',
                 displayField: 'key',
+                editable: false,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
@@ -144,7 +145,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         ]);
 
         this.algorithmsStore.load();
-        
+
         return this.layout;
     },
 

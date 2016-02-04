@@ -107,6 +107,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             width: 400,
             store: pimcore.globalmanager.get("object_types_store"),
             valueField: 'id',
+            editable: false,
             displayField: 'text',
             fieldLabel: t('objectsMetadata_allowed_class'),
             name: 'allowedClassId',
@@ -245,6 +246,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 allowBlank: false,
                 lazyRender: true,
                 mode: 'local',
+                editable: false,
                 store: new Ext.data.ArrayStore({
                     id: 'value',
                     fields: [

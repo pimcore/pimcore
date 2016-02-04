@@ -16,16 +16,18 @@ namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
 
-class Dao extends Model\User\AbstractUser\Dao {
+class Dao extends Model\User\AbstractUser\Dao
+{
 
     /**
      * @param $id
      * @throws \Exception
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         parent::getById($id);
 
-        if(in_array($this->model->getType(), array("user","role"))) {
+        if (in_array($this->model->getType(), array("user", "role"))) {
             $this->loadWorkspaces();
         }
     }
@@ -34,10 +36,11 @@ class Dao extends Model\User\AbstractUser\Dao {
      * @param $name
      * @throws \Exception
      */
-    public function getByName($name) {
+    public function getByName($name)
+    {
         parent::getByName($name);
 
-        if(in_array($this->model->getType(), array("user","role"))) {
+        if (in_array($this->model->getType(), array("user", "role"))) {
             $this->loadWorkspaces();
         }
     }
@@ -45,8 +48,8 @@ class Dao extends Model\User\AbstractUser\Dao {
     /**
      *
      */
-    public function loadWorkspaces () {
-
+    public function loadWorkspaces()
+    {
         $types = array("asset","document","object");
 
         foreach ($types as $type) {
@@ -66,9 +69,10 @@ class Dao extends Model\User\AbstractUser\Dao {
     /**
      *
      */
-    public function emptyWorkspaces () {
-        $this->db->delete("users_workspaces_asset", $this->db->quoteInto("userId = ?", $this->model->getId() ));
-        $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $this->model->getId() ));
-        $this->db->delete("users_workspaces_object", $this->db->quoteInto("userId = ?", $this->model->getId() ));
+    public function emptyWorkspaces()
+    {
+        $this->db->delete("users_workspaces_asset", $this->db->quoteInto("userId = ?", $this->model->getId()));
+        $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $this->model->getId()));
+        $this->db->delete("users_workspaces_object", $this->db->quoteInto("userId = ?", $this->model->getId()));
     }
 }

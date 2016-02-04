@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of Classificationstore group configs for the specifies parameters, returns an array of config elements
@@ -56,7 +57,8 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return array
      */
-    public function getDataArray() {
+    public function getDataArray()
+    {
         $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $configsData;
     }
@@ -64,12 +66,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return int
      */
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . " ". $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
 
         return $amount;

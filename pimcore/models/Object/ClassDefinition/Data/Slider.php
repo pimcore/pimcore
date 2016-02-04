@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Slider extends Model\Object\ClassDefinition\Data {
+class Slider extends Model\Object\ClassDefinition\Data
+{
 
     /**
      * Static type of this element
@@ -85,7 +86,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         return $this->width;
     }
 
@@ -93,7 +95,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param integer $width
      * @return void
      */
-    public function setWidth($width) {
+    public function setWidth($width)
+    {
         $this->width = $this->getAsIntegerCast($width);
         return $this;
     }
@@ -101,7 +104,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getHeight() {
+    public function getHeight()
+    {
         return $this->height;
     }
 
@@ -109,7 +113,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param integer $height
      * @return void
      */
-    public function setHeight($height) {
+    public function setHeight($height)
+    {
         $this->height = $this->getAsIntegerCast($height);
         return $this;
     }
@@ -118,7 +123,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /**
      * @return float
      */
-    public function getMinValue() {
+    public function getMinValue()
+    {
         return $this->minValue;
     }
 
@@ -126,7 +132,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param float $minValue
      * @return void
      */
-    public function setMinValue($minValue) {
+    public function setMinValue($minValue)
+    {
         $this->minValue = $this->getAsFloatCast($minValue);
         return $this;
     }
@@ -134,7 +141,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /**
      * @return float
      */
-    public function getMaxValue() {
+    public function getMaxValue()
+    {
         return $this->maxValue;
     }
 
@@ -142,7 +150,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param float $minValue
      * @return void
      */
-    public function setMaxValue($maxValue) {
+    public function setMaxValue($maxValue)
+    {
         $this->maxValue = $this->getAsFloatCast($maxValue);
         return $this;
     }
@@ -150,14 +159,16 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /**
      * @return boolean
      */
-    public function getVertical() {
+    public function getVertical()
+    {
         return $this->vertical;
     }
 
     /**
      * @return integer
      */
-    public function getDefaultValue() {
+    public function getDefaultValue()
+    {
         return null;
     }
 
@@ -166,7 +177,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param boolean $vertical
      * @return void
      */
-    public function setVertical($vertical) {
+    public function setVertical($vertical)
+    {
         $this->vertical = (bool) $vertical;
         return $this;
     }
@@ -174,7 +186,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /**
      * @return float
      */
-    public function getIncrement() {
+    public function getIncrement()
+    {
         return $this->increment;
     }
 
@@ -182,7 +195,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param float $increment
      * @return void
      */
-    public function setIncrement($increment) {
+    public function setIncrement($increment)
+    {
         $this->increment = $this->getAsFloatCast($increment);
         return $this;
     }
@@ -191,7 +205,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /**
      * @return int
      */
-    public function getDecimalPrecision() {
+    public function getDecimalPrecision()
+    {
         return $this->decimalPrecision;
     }
 
@@ -199,7 +214,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param int $decimalPrecision
      * @return void
      */
-    public function setDecimalPrecision($decimalPrecision) {
+    public function setDecimalPrecision($decimalPrecision)
+    {
         $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
         return $this;
     }
@@ -210,7 +226,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return float
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         return (float) $data;
     }
 
@@ -219,7 +236,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataFromResource($data) {
+    public function getDataFromResource($data)
+    {
         return (float) $data;
     }
 
@@ -229,7 +247,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $data;
     }
 
@@ -239,7 +258,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return float
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -249,7 +269,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return float
      */
-    public function getDataFromEditmode($data, $object = null) {
+    public function getDataFromEditmode($data, $object = null)
+    {
         return $this->getDataFromResource($data);
     }
 
@@ -258,7 +279,8 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         return $data;
     }
 
@@ -269,13 +291,13 @@ class Slider extends Model\Object\ClassDefinition\Data {
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
-
-        if(!$omitMandatoryCheck and $this->getMandatory() and $data === NULL){
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
             throw new \Exception("Empty mandatory field [ ".$this->getName()." ] ".strval($data));
         }
 
-        if(!empty($data) and !is_numeric($data)){
+        if (!empty($data) and !is_numeric($data)) {
             throw new \Exception("invalid slider data");
         }
     }
@@ -284,19 +306,20 @@ class Slider extends Model\Object\ClassDefinition\Data {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
+    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    {
         $this->minValue = $masterDefinition->minValue;
         $this->maxValue = $masterDefinition->maxValue;
         $this->vertical = $masterDefinition->vertical;
         $this->increment = $masterDefinition->increment;
         $this->decimalPrecision = $masterDefinition->decimalPrecision;
     }
-
 }

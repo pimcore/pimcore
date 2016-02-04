@@ -16,16 +16,18 @@ namespace Pimcore\Model\Metadata;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
 
-    public function getRawData(){
+    public function getRawData()
+    {
         $cid = $this->model->getCid();
         $type = $this->model->getType();
         $name = $this->model->getName();
         $raw = null;
-        if($cid){
-            $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE type=? AND cid = ? AND name=?",array($type,$cid,$name) );
+        if ($cid) {
+            $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE type=? AND cid = ? AND name=?", array($type, $cid, $name));
             $raw = $data['data'];
         }
         return $raw;
@@ -36,16 +38,14 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         $data = $this->model->getData();
 
         if ($this->model->getType() == "object" || $this->model->getType() == "asset" || $this->model->getType() == "document") {
-
             if ($data instanceof Model\Element\ElementInterface) {
                 $data = $data->getId();
-            }
-            else {
+            } else {
                 $data = null;
             }
         }

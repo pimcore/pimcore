@@ -16,6 +16,6 @@ namespace Pimcore\Model\Translation\Website;
 
 use Pimcore\Model;
 
-class Listing extends Model\Translation\AbstractTranslation\Listing {
-
+class Listing extends Model\Translation\AbstractTranslation\Listing
+{
 }

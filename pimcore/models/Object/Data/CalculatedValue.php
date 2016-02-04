@@ -16,8 +16,8 @@ namespace Pimcore\Model\Object\Data;
 
 use Pimcore\Model;
 
-
-class CalculatedValue {
+class CalculatedValue
+{
 
     /** @var  string */
     public $fieldname;
@@ -43,7 +43,8 @@ class CalculatedValue {
 
     public $keyDefinition;
 
-    public function __construct($fieldname) {
+    public function __construct($fieldname)
+    {
         $this->fieldname = $fieldname;
     }
 
@@ -56,7 +57,8 @@ class CalculatedValue {
      * @param null $keyId
      * @param null $keyDefinition
      */
-    public function setContextualData($ownerType, $ownerName, $index, $position, $groupId = null, $keyId = null, $keyDefinition = null) {
+    public function setContextualData($ownerType, $ownerName, $index, $position, $groupId = null, $keyId = null, $keyDefinition = null)
+    {
         $this->ownerType = $ownerType;
         $this->ownerName = $ownerName;
         $this->index = $index;
@@ -129,8 +131,4 @@ class CalculatedValue {
     {
         return $this->keyId;
     }
-
-
-
-
 }

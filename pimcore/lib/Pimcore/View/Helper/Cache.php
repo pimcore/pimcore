@@ -14,7 +14,8 @@ namespace Pimcore\View\Helper;
 
 use Pimcore\Cache as CacheManager;
 
-class Cache extends \Zend_View_Helper_Abstract {
+class Cache extends \Zend_View_Helper_Abstract
+{
 
     /**
      * @var CacheController
@@ -27,8 +28,8 @@ class Cache extends \Zend_View_Helper_Abstract {
      * @param bool $force
      * @return mixed
      */
-    public function cache($name, $lifetime = null, $force = false) {
-
+    public function cache($name, $lifetime = null, $force = false)
+    {
         if (self::$_caches[$name]) {
             return self::$_caches[$name];
         }
@@ -41,7 +42,8 @@ class Cache extends \Zend_View_Helper_Abstract {
 }
 
 
-class CacheController {
+class CacheController
+{
 
     /**
      * @var
@@ -74,8 +76,8 @@ class CacheController {
      * @param bool $editmode
      * @param bool $force
      */
-    public function __construct($name, $lifetime, $editmode = true, $force = false) {
-        
+    public function __construct($name, $lifetime, $editmode = true, $force = false)
+    {
         $this->key = "pimcore_viewcache_" . $name;
         $this->editmode = $editmode;
         $this->force = $force;
@@ -90,9 +92,9 @@ class CacheController {
     /**
      * @return bool
      */
-    public function start() {
-                
-        if(\Pimcore\Tool::isFrontentRequestByAdmin() && !$this->force) {
+    public function start()
+    {
+        if (\Pimcore\Tool::isFrontentRequestByAdmin() && !$this->force) {
             return false;
         }
         
@@ -110,10 +112,9 @@ class CacheController {
     /**
      *
      */
-    public function end() {
-        
-        if($this->captureEnabled) {
-            
+    public function end()
+    {
+        if ($this->captureEnabled) {
             $this->captureEnabled = false;
             
             $tags = array("in_template");
@@ -130,7 +131,8 @@ class CacheController {
     /**
      *
      */
-    public function stop() {
+    public function stop()
+    {
         $this->end();
     }
 }

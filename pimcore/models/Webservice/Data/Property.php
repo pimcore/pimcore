@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data;
 
 use Pimcore\Model;
 
-class Property extends Model\Webservice\Data {
+class Property extends Model\Webservice\Data
+{
     
     /**
      * @var string

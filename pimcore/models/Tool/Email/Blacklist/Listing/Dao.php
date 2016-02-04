@@ -16,20 +16,21 @@ namespace Pimcore\Model\Tool\Email\Blacklist\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Tool\Email\Blacklist elements
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $addressData = $this->db->fetchCol("SELECT address FROM email_blacklist" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $addresses = array();
         foreach ($addressData as $data) {
-            if($address = Model\Tool\Email\Blacklist::getByAddress($data)) {
+            if ($address = Model\Tool\Email\Blacklist::getByAddress($data)) {
                 $addresses[] = $address;
             }
         }
@@ -38,15 +39,13 @@ class Dao extends Model\Listing\Dao\AbstractDao {
         return $addresses;
     }
 
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM email_blacklist " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
 
         return $amount;
     }
-
 }

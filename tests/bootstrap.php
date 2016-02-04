@@ -6,7 +6,7 @@ print($date . "\n");
 @ini_set("display_startup_errors", "On");
 
 
-if(!defined("TESTS_PATH"))  {
+if (!defined("TESTS_PATH")) {
     define('TESTS_PATH', realpath(dirname(__FILE__)));
 }
 
@@ -32,10 +32,10 @@ Zend_Registry::set("pimcore_config_test", $testConfig);
 $testConfig = $testConfig->toArray();
 
 // get configuration from main project
-$systemConfigFile = realpath(__DIR__ . "/../website/var/config/system.xml");
+$systemConfigFile = realpath(__DIR__ . "/../website/var/config/system.php");
 $systemConfig = null;
-if(is_file($systemConfigFile)) {
-    $systemConfig = new Zend_Config_Xml($systemConfigFile);
+if (is_file($systemConfigFile)) {
+    $systemConfig = new Zend_Config(include $systemConfigFile);
     $systemConfig = $systemConfig->toArray();
 
     // this is to allow localhost tests
@@ -52,13 +52,13 @@ try {
 
     // use the default db configuration if there's no main project (eg. travis automated builds)
     $dbConfig = $testConfig["database"];
-    if(is_array($systemConfig) && array_key_exists("database", $systemConfig)) {
+    if (is_array($systemConfig) && array_key_exists("database", $systemConfig)) {
         // if there's a configuration for the main project, use that one and replace the database name
         $dbConfig = $systemConfig["database"];
         $dbConfig["params"]["dbname"] = $dbConfig["params"]["dbname"] . "___phpunit";
 
         // remove write only config
-        if(isset($dbConfig["writeOnly"])) {
+        if (isset($dbConfig["writeOnly"])) {
             unset($dbConfig["writeOnly"]);
         }
     }
@@ -70,8 +70,7 @@ try {
     $db->query("DROP database IF EXISTS " . $dbConfig["params"]["dbname"] . ";");
     $db->query("CREATE DATABASE " . $dbConfig["params"]["dbname"] . " charset=utf8");
     $db = null;
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     echo $e->getMessage() . "\n";
     die("Couldn't establish connection to mysql" . "\n");
 }
@@ -94,7 +93,7 @@ $setup->config(array(
 Pimcore::initConfiguration();
 
 // force the db wrapper to use only one connection, regardless if read/write
-if(is_array($systemConfig)) {
+if (is_array($systemConfig)) {
     $db = \Pimcore\Db::get();
     $db->setWriteResource($db->getResource());
 }

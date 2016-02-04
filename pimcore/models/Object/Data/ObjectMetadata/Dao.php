@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\Data\ObjectMetadata;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param Object\Concrete $object
@@ -27,7 +28,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $type
      * @throws \Zend_Db_Adapter_Exception
      */
-    public function save(Object\Concrete $object, $ownertype, $ownername, $position, $type = "object") {
+    public function save(Object\Concrete $object, $ownertype, $ownername, $position, $type = "object")
+    {
         $table = $this->getTablename($object);
 
         $dataTemplate = array("o_id" => $object->getId(),
@@ -38,21 +40,21 @@ class Dao extends Model\Dao\AbstractDao {
             "position" => $position ?  $position : "0",
             "type" => $type ?  $type : "object");
 
-        foreach($this->model->getColumns() as $column) {
+        foreach ($this->model->getColumns() as $column) {
             $getter = "get" . ucfirst($column);
             $data = $dataTemplate;
             $data["column"] = $column;
             $data["data"] = $this->model->$getter();
             $this->db->insert($table, $data);
         }
-
     }
 
     /**
      * @param $object
      * @return string
      */
-    private function getTablename($object) {
+    private function getTablename($object)
+    {
         return "object_metadata_" . $object->getClassId();
     }
 
@@ -66,8 +68,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $type
      * @return null|Model\Dao\Pimcore_Model_Abstract
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = "object") {
-
+    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = "object")
+    {
         if ($type == "object") {
             $typeQuery = " AND (type = 'object' or type = '')";
         } else {
@@ -75,12 +77,12 @@ class Dao extends Model\Dao\AbstractDao {
         }
 
         $dataRaw = $this->db->fetchAll("SELECT * FROM " . $this->getTablename($source) . " WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? " . $typeQuery, array($source->getId(), $destination->getId(), $fieldname, $ownertype, $ownername, $position));
-        if(!empty($dataRaw)) {
+        if (!empty($dataRaw)) {
             $this->model->setElement($destination);
             $this->model->setFieldname($fieldname);
             $columns = $this->model->getColumns();
-            foreach($dataRaw as $row) {
-                if(in_array($row['column'], $columns)) {
+            foreach ($dataRaw as $row) {
+                if (in_array($row['column'], $columns)) {
                     $setter = "set" . ucfirst($row['column']);
                     $this->model->$setter($row['data']);
                 }
@@ -95,8 +97,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @return void
      */
-    public function createOrUpdateTable($class) {
-
+    public function createOrUpdateTable($class)
+    {
         $classId = $class->getId();
         $table = "object_metadata_" . $classId;
 
@@ -119,6 +121,5 @@ class Dao extends Model\Dao\AbstractDao {
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`)
 		) DEFAULT CHARSET=utf8;");
-
     }
 }

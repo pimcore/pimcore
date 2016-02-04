@@ -16,8 +16,8 @@ namespace Pimcore\Model\Object\QuantityValue\Unit;
 
 use Pimcore\Model;
 
-
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * @var array
@@ -27,8 +27,9 @@ class Listing extends Model\Listing\AbstractListing {
     /**
      * @var array
      */
-    public function isValidOrderKey($key) {
-        if($key == "abbreviation" || $key == "group" || $key == "id" || $key == "longname") {
+    public function isValidOrderKey($key)
+    {
+        if ($key == "abbreviation" || $key == "group" || $key == "id" || $key == "longname") {
             return true;
         }
         return false;
@@ -37,8 +38,9 @@ class Listing extends Model\Listing\AbstractListing {
     /**
      * @return array
      */
-    function getUnits() {
-        if(empty($this->units)) {
+    public function getUnits()
+    {
+        if (empty($this->units)) {
             $this->load();
         }
         return $this->units;
@@ -48,8 +50,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param array $units
      * @return void
      */
-    function setUnits($units) {
+    public function setUnits($units)
+    {
         $this->units = $units;
     }
-
 }

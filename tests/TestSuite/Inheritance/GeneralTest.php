@@ -6,16 +6,19 @@
  */
 
 
-class TestSuite_Inheritance_GeneralTest extends Test_Base {
+class TestSuite_Inheritance_GeneralTest extends Test_Base
+{
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->inAdminMode = Pimcore::inAdmin();
         Pimcore::setAdminMode();
         Test_Tool::cleanUp();
         parent::setUp();
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         if ($this->inAdminMode) {
             Pimcore::setAdminMode();
         } else {
@@ -32,7 +35,8 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base {
      *
      * two is created after one. two gets moved out and moved in again. Then one gets updated.
      */
-    public function testInheritance() {
+    public function testInheritance()
+    {
         $this->printTestName();
         // According to the bootstrap file en and de are valid website languages
 
@@ -133,7 +137,6 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base {
             $listItems = $list->load();
             $this->fail("Excpected exception");
         } catch (Exception $e) {
-
         }
     }
 
@@ -148,7 +151,8 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base {
      *
      * object relations field should inherit it's values from one to two
      */
-    public function testInheritanceWithFolder() {
+    public function testInheritanceWithFolder()
+    {
         $this->printTestName();
         // According to the bootstrap file en and de are valid website languages
 
@@ -183,10 +187,10 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base {
         $two = Object_Inheritance::getById($two->getId());
 
         $relationobjects = $two->getRelationObjects();
-        if(sizeof($relationobjects) != 1) {
+        if (sizeof($relationobjects) != 1) {
             $this->fail('inheritance for object relations failed');
         } else {
-            if($relationobjects[0]->getId() != $one->getId()) {
+            if ($relationobjects[0]->getId() != $one->getId()) {
                 $this->fail('inheritance for object relations failed (wrong object)');
             }
         }
@@ -196,7 +200,7 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base {
 
         $relationobjectsString = $db->fetchOne("select relationobjects from {$table} where oo_id= ? ", $two->getId());
 
-        if($relationobjectsString != ','.$one->getId().',') {
+        if ($relationobjectsString != ','.$one->getId().',') {
             $this->fail("comma separated relation ids not written correctly in object_* view");
         }
     }

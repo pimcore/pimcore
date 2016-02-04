@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model;
 
-class Site extends AbstractModel {
+class Site extends AbstractModel
+{
 
     /**
      * @var integer
@@ -72,7 +73,8 @@ class Site extends AbstractModel {
      * @param integer $id
      * @return Site
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         $site = new self();
         $site->getDao()->getById(intval($id));
 
@@ -83,7 +85,8 @@ class Site extends AbstractModel {
      * @param integer $id
      * @return Site
      */
-    public static function getByRootId($id) {
+    public static function getByRootId($id)
+    {
         $site = new self();
         $site->getDao()->getByRootId(intval($id));
 
@@ -95,7 +98,8 @@ class Site extends AbstractModel {
      * @return mixed|Site|string
      * @throws \Exception
      */
-    public static function getByDomain($domain) {
+    public static function getByDomain($domain)
+    {
         
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
         $cacheKey = "site_domain_". md5($domain);
@@ -109,10 +113,10 @@ class Site extends AbstractModel {
                 $site = "failed";
             }
             
-            \Pimcore\Cache::save($site, $cacheKey, array("system","site"));
+            \Pimcore\Cache::save($site, $cacheKey, array("system", "site"));
         }
         
-        if($site == "failed" || !$site) {
+        if ($site == "failed" || !$site) {
             $msg = "there is no site for the requested domain [" . $domain . "], content was [" . $site . "]";
             \Logger::debug($msg);
             throw new \Exception($msg);
@@ -126,13 +130,13 @@ class Site extends AbstractModel {
      * @param $mixed
      * @return Site
      */
-    public static function getBy($mixed) {
-
-        if(is_numeric($mixed)) {
+    public static function getBy($mixed)
+    {
+        if (is_numeric($mixed)) {
             $site = self::getById($mixed);
-        } else if (is_string($mixed)) {
+        } elseif (is_string($mixed)) {
             $site = self::getByDomain($mixed);
-        } else if ($mixed instanceof Site) {
+        } elseif ($mixed instanceof Site) {
             $site = $mixed;
         }
 
@@ -143,8 +147,8 @@ class Site extends AbstractModel {
      * @param array $data
      * @return Site
      */
-    public static function create($data) {
-
+    public static function create($data)
+    {
         $site = new self();
         $site->setValues($data);
         return $site;
@@ -155,9 +159,9 @@ class Site extends AbstractModel {
      * @static
      * @return bool
      */
-    public static function isSiteRequest () {
-
-        if(\Zend_Registry::isRegistered("pimcore_site")) {
+    public static function isSiteRequest()
+    {
+        if (\Zend_Registry::isRegistered("pimcore_site")) {
             return true;
         }
 
@@ -168,8 +172,9 @@ class Site extends AbstractModel {
      * @throws \Exception
      * @throws \Zend_Exception
      */
-    public static function getCurrentSite() {
-        if(\Zend_Registry::isRegistered("pimcore_site")) {
+    public static function getCurrentSite()
+    {
+        if (\Zend_Registry::isRegistered("pimcore_site")) {
             $site = \Zend_Registry::get("pimcore_site");
             return $site;
         } else {
@@ -180,28 +185,32 @@ class Site extends AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
      * @return array
      */
-    public function getDomains() {
+    public function getDomains()
+    {
         return $this->domains;
     }
 
     /**
      * @return integer
      */
-    public function getRootId() {
+    public function getRootId()
+    {
         return $this->rootId;
     }
 
     /**
      * @return Document\Page
      */
-    public function getRootDocument() {
+    public function getRootDocument()
+    {
         return $this->rootDocument;
     }
 
@@ -209,7 +218,8 @@ class Site extends AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -218,7 +228,8 @@ class Site extends AbstractModel {
      * @param mixed $domains
      * @return void
      */
-    public function setDomains($domains) {
+    public function setDomains($domains)
+    {
         if (is_string($domains)) {
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
         }
@@ -230,7 +241,8 @@ class Site extends AbstractModel {
      * @param integer $rootId
      * @return void
      */
-    public function setRootId($rootId) {
+    public function setRootId($rootId)
+    {
         $this->rootId = (int) $rootId;
 
         $rd = Document::getById($this->rootId);
@@ -242,7 +254,8 @@ class Site extends AbstractModel {
      * @param Document\Page $rootDocument
      * @return void
      */
-    public function setRootDocument($rootDocument) {
+    public function setRootDocument($rootDocument)
+    {
         $this->rootDocument = $rootDocument;
         return $this;
     }
@@ -251,7 +264,8 @@ class Site extends AbstractModel {
      * @param $path
      * @return $this
      */
-    public function setRootPath($path) {
+    public function setRootPath($path)
+    {
         $this->rootPath = $path;
         return $this;
     }
@@ -259,8 +273,9 @@ class Site extends AbstractModel {
     /**
      * @return string
      */
-    public function getRootPath() {
-        if(!$this->rootPath && $this->getRootDocument()) {
+    public function getRootPath()
+    {
+        if (!$this->rootPath && $this->getRootDocument()) {
             return $this->getRootDocument()->getRealFullPath();
         }
         return $this->rootPath;
@@ -317,13 +332,13 @@ class Site extends AbstractModel {
     /**
      * @return void
      */
-    public function clearDependentCache() {
+    public function clearDependentCache()
+    {
         
         // this is mostly called in Site\Dao not here
         try {
             \Pimcore\Cache::clearTag("site");
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::crit($e);
         }
     }
@@ -363,5 +378,4 @@ class Site extends AbstractModel {
     {
         return $this->creationDate;
     }
-
 }

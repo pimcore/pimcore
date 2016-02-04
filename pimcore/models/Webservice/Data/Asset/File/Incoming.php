@@ -16,6 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Asset\File;
 
 use Pimcore\Model;
 
-class Incoming extends Model\Webservice\Data\Asset\File {
-
+class Incoming extends Model\Webservice\Data\Asset\File
+{
 }

@@ -16,13 +16,14 @@ use Pimcore\Tool;
 use Pimcore\Config;
 use Pimcore\Model\User;
 
-class Maintenance {
+class Maintenance
+{
 
     /**
      *
      */
-    public function mail () {
-
+    public function mail()
+    {
         $conf = Config::getSystemConfig();
         if (!empty($conf->general->logrecipient)) {
             \Logger::debug(get_class($this).": detected log recipient:".$conf->general->logrecipient);
@@ -32,33 +33,32 @@ class Maintenance {
                 $email = $user->getEmail();
                 \Logger::debug(get_class($this).": user is valid");
                 if (!empty($email)) {
-                     if(is_dir(PIMCORE_LOG_MAIL_TEMP)){
-                         \Logger::debug(get_class($this).": detected mail log dir");
-                         \Logger::debug(get_class($this).": opening dir ".PIMCORE_LOG_MAIL_TEMP);
+                    if (is_dir(PIMCORE_LOG_MAIL_TEMP)) {
+                        \Logger::debug(get_class($this).": detected mail log dir");
+                        \Logger::debug(get_class($this).": opening dir ".PIMCORE_LOG_MAIL_TEMP);
                         if ($handle = opendir(PIMCORE_LOG_MAIL_TEMP)) {
                             \Logger::debug(get_class($this).": reading dir ".PIMCORE_LOG_MAIL_TEMP);
                             while (false !== ($file = readdir($handle))) {
                                 \Logger::debug(get_class($this).": detected file ".$file);
-                                if(is_file(PIMCORE_LOG_MAIL_TEMP."/".$file) and is_writable(PIMCORE_LOG_MAIL_TEMP."/".$file)){
+                                if (is_file(PIMCORE_LOG_MAIL_TEMP."/".$file) and is_writable(PIMCORE_LOG_MAIL_TEMP."/".$file)) {
                                     $now = time();
-                                   $threshold = 1 * 60 * 15;
-                                   $fileModified = filemtime(PIMCORE_LOG_MAIL_TEMP."/".$file);
+                                    $threshold = 1 * 60 * 15;
+                                    $fileModified = filemtime(PIMCORE_LOG_MAIL_TEMP."/".$file);
                                     \Logger::debug(get_class($this).": file is writeable and was last modified: ".$fileModified);
-                                    if($fileModified!==FALSE and $fileModified<($now-$threshold)){
-                                        $mail = Tool::getMail(array($email),"pimcore log notification - ".$file);
+                                    if ($fileModified!==false and $fileModified<($now-$threshold)) {
+                                        $mail = Tool::getMail(array($email), "pimcore log notification - ".$file);
                                         $mail->setIgnoreDebugMode(true);
                                         $mail->setBodyText(file_get_contents(PIMCORE_LOG_MAIL_TEMP."/".$file));
                                         $mail->send();
                                         @unlink(PIMCORE_LOG_MAIL_TEMP."/".$file);
                                         \Logger::debug(get_class($this).": sent mail and deleted temp log file ".$file);
-                                    } else if ($fileModified>($now-$threshold)){
+                                    } elseif ($fileModified>($now-$threshold)) {
                                         \Logger::debug(get_class($this).": leaving temp log file alone because file [ $file ] was written to within the last 15 minutes");
                                     }
                                 }
-
                             }
                         }
-                     }
+                    }
                 } else {
                     \Logger::err(get_class($this).": Cannot send mail to configured log user [".$user->getName()."] because email is empty");
                 }
@@ -73,7 +73,8 @@ class Maintenance {
     /**
      *
      */
-    public function httpErrorLogCleanup () {
+    public function httpErrorLogCleanup()
+    {
 
         // keep the history for max. 7 days (=> exactly 144h), according to the privacy policy (EU/German Law)
         // it's allowed to store the IP for 7 days for security reasons (DoS, ...)
@@ -86,17 +87,17 @@ class Maintenance {
     /**
      *
      */
-    public function usageStatistics() {
-
-        if(Config::getSystemConfig()->general->disableusagestatistics) {
+    public function usageStatistics()
+    {
+        if (Config::getSystemConfig()->general->disableusagestatistics) {
             return;
         }
 
         $logFile = PIMCORE_LOG_DIRECTORY . "/usagelog.log";
-        if(is_file($logFile) && filesize($logFile) > 200000) {
+        if (is_file($logFile) && filesize($logFile) > 200000) {
             $data = gzencode(file_get_contents($logFile));
             $response = Tool::getHttpData("https://www.pimcore.org/usage-statistics/", array(), array("data" => $data));
-            if(strpos($response, "true") !== false) {
+            if (strpos($response, "true") !== false) {
                 @unlink($logFile);
                 \Logger::debug("Usage statistics are transmitted and logfile was cleaned");
             } else {
@@ -108,13 +109,14 @@ class Maintenance {
     /**
      *
      */
-    public function cleanupLogFiles () {
+    public function cleanupLogFiles()
+    {
         $files = glob(PIMCORE_LOG_DIRECTORY . "/*.log-archive-*");
-        if(is_array($files)) {
+        if (is_array($files)) {
             foreach ($files as $file) {
-                if(filemtime($file) < (time()-(86400*30))) { // we keep the logs for 30 days
+                if (filemtime($file) < (time()-(86400*30))) { // we keep the logs for 30 days
                     unlink($file);
-                } else if (!preg_match("/\.gz$/", $file)) {
+                } elseif (!preg_match("/\.gz$/", $file)) {
                     gzcompressfile($file);
                     unlink($file);
                 }
@@ -122,15 +124,15 @@ class Maintenance {
         }
     }
 
-    public function checkErrorLogsDb(){
+    public function checkErrorLogsDb()
+    {
         $conf = Config::getSystemConfig();
         $config = $conf->applicationlog;
 
-        if($config->mail_notification->send_log_summary){
+        if ($config->mail_notification->send_log_summary) {
+            $receivers = preg_split("/,|;/", $config->mail_notification->mail_receiver);
 
-            $receivers = preg_split("/,|;/",$config->mail_notification->mail_receiver);
-
-            array_walk($receivers, function (&$value){
+            array_walk($receivers, function (&$value) {
                 $value = trim($value);
             });
 
@@ -145,7 +147,7 @@ class Maintenance {
             $rowsProcessed = 0;
 
             $rowCount = count($rows);
-            if($rowCount){
+            if ($rowCount) {
                 while ($rowsProcessed < $rowCount) {
                     $entries = array();
 
@@ -175,7 +177,8 @@ class Maintenance {
     }
 
 
-    public function archiveLogEntries() {
+    public function archiveLogEntries()
+    {
         $conf = Config::getSystemConfig();
         $config = $conf->applicationlog;
 
@@ -183,7 +186,7 @@ class Maintenance {
 
         $tablename =  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . "_" . \Zend_Date::now()->get(\Zend_Date::MONTH) . '_' .\Zend_Date::now()->get(\Zend_Date::YEAR);
 
-        if($config->archive_alternative_database) {
+        if ($config->archive_alternative_database) {
             $tablename = $config->archive_alternative_database . '.' . $tablename;
         }
 

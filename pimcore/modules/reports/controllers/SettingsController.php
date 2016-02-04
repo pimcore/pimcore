@@ -10,10 +10,13 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports {
-    
-    public function getAction () {
+use Pimcore\File;
 
+class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports
+{
+    
+    public function getAction()
+    {
         $this->checkPermission("system_settings");
 
         $conf = $this->getConfig();
@@ -26,18 +29,14 @@ class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Report
         $this->_helper->json($response);
     }
     
-    public function saveAction () {
-
+    public function saveAction()
+    {
         $this->checkPermission("system_settings");
 
         $values = \Zend_Json::decode($this->getParam("data"));
 
-        $config = new \Zend_Config($values, true);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml"
-        ));
-        $writer->write();
+        $configFile = \Pimcore\Config::locateConfigFile("reports.php");
+        File::put($configFile, to_php_data_file_format($values));
 
         $this->_helper->json(array("success" => true));
     }

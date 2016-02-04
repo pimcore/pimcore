@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
-class Hardlink extends Model\Webservice\Data\Document {
+class Hardlink extends Model\Webservice\Data\Document
+{
 
     /**
      * static type of this object

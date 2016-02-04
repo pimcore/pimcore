@@ -15,12 +15,14 @@ namespace Pimcore\Controller\Action\Admin;
 use Pimcore\Controller\Action\Admin;
 use Pimcore\Model;
 
-abstract class Element extends Admin {
+abstract class Element extends Admin
+{
 
     /**
      *
      */
-    public function treeGetRootAction() {
+    public function treeGetRootAction()
+    {
         $type = $this->getParam("controller");
         $allowedTypes = ["asset","document","object"];
 
@@ -29,7 +31,7 @@ abstract class Element extends Admin {
             $id = intval($this->getParam("id"));
         }
 
-        if(in_array($type, $allowedTypes)) {
+        if (in_array($type, $allowedTypes)) {
             $root = Model\Element\Service::getElementById($type, $id);
             if ($root->isAllowed("list")) {
                 $this->_helper->json($this->getTreeNodeConfig($root));
@@ -42,7 +44,8 @@ abstract class Element extends Admin {
     /**
      * @return array
      */
-    protected function getTreeNodeConfig($element) {
+    protected function getTreeNodeConfig($element)
+    {
         return [];
     }
 
@@ -57,31 +60,28 @@ abstract class Element extends Admin {
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
-            if($element) {
-                if($element->isAllowed("versions")) {
-
+            if ($element) {
+                if ($element->isAllowed("versions")) {
                     $schedule = $element->getScheduledTasks();
                     $schedules = array();
-                    foreach ($schedule as $task){
-                        if ($task->getActive()){
+                    foreach ($schedule as $task) {
+                        if ($task->getActive()) {
                             $schedules[$task->getVersion()] = $task->getDate();
                         }
                     }
 
                     $versions = $element->getVersions();
                     $versions = object2array($versions);
-                    foreach ($versions as &$version){
-
+                    foreach ($versions as &$version) {
                         unset($version["user"]["password"]); // remove password hash
 
                         $version["scheduled"] = null;
-                        if(array_key_exists($version["id"], $schedules)) {
+                        if (array_key_exists($version["id"], $schedules)) {
                             $version["scheduled"] = $schedules[$version["id"]];
                         }
                     }
 
                     $this->_helper->json(array("versions" => $versions));
-
                 } else {
                     throw new \Exception("Permission denied, " . $type . " id [" . $id . "]");
                 }
@@ -151,9 +151,13 @@ abstract class Element extends Admin {
 
         if (in_array($type, $allowedTypes)) {
             $list = new Model\Property\Predefined\Listing();
-            $list->setCondition("ctype = ?", [$type]);
-            $list->setOrder("ASC");
-            $list->setOrderKey("name");
+            $list->setFilter(function ($row) use ($type) {
+                if ($row["ctype"] == $type) {
+                    return true;
+                }
+                return false;
+            });
+
             $list->load();
 
             foreach ($list->getProperties() as $type) {

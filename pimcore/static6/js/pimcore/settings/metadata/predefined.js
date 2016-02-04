@@ -50,8 +50,6 @@ pimcore.settings.metadata.predefined = Class.create({
     },
 
     getRowEditor: function () {
-        var itemsPerPage = 20;
-
         var url =  '/admin/settings/metadata?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -75,8 +73,10 @@ pimcore.settings.metadata.predefined = Class.create({
                 {name: 'language', allowBlank: true},
                 {name: 'creationDate', allowBlank: true},
                 {name: 'modificationDate', allowBlank: true}
-            ],
-            itemsPerPage
+            ], null, {
+                remoteSort: false,
+                remoteFilter: false
+            }
         );
 
         this.store.addListener('exception', function(proxy, mode, action, options, response) {
@@ -89,9 +89,6 @@ pimcore.settings.metadata.predefined = Class.create({
             });
         });
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
-
-
         this.filterField = new Ext.form.TextField({
             xtype: "textfield",
             width: 200,
@@ -101,7 +98,7 @@ pimcore.settings.metadata.predefined = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        var proxy = this.store.getPropxy();
+                        var proxy = this.store.getProxy();
                         proxy.extraParams.filter = input.getValue();
                         this.store.load();
                     }

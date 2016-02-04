@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model;
 
-class Dependency extends AbstractModel {
+class Dependency extends AbstractModel
+{
 
     /**
      * The ID of the object to get dependencies for
@@ -52,8 +53,8 @@ class Dependency extends AbstractModel {
      * @param string $type
      * @return Dependency
      */
-    public static function getBySourceId($id, $type) {
-
+    public static function getBySourceId($id, $type)
+    {
         $d = new self();
         $d->setSourceId($id);
         $d->setSourceType($type);
@@ -68,7 +69,8 @@ class Dependency extends AbstractModel {
      * @param string $type
      * @return void
      */
-    public function addRequirement($id, $type) {
+    public function addRequirement($id, $type)
+    {
         $this->requires[] = array(
             "type" => $type,
             "id" => $id
@@ -79,7 +81,8 @@ class Dependency extends AbstractModel {
      * @param  Element\ELementInterface $element
      * @return void
      */
-    public function cleanAllForElement($element){
+    public function cleanAllForElement($element)
+    {
         $this->getDao()->cleanAllForElement($element);
     }
 
@@ -88,7 +91,8 @@ class Dependency extends AbstractModel {
      *
      * @return void
      */
-    public function clean() {
+    public function clean()
+    {
         $this->requires = array();
         $this->getDao()->clear();
     }
@@ -96,21 +100,24 @@ class Dependency extends AbstractModel {
     /**
      * @return integer
      */
-    public function getSourceId() {
+    public function getSourceId()
+    {
         return $this->sourceId;
     }
 
     /**
      * @return array
      */
-    public function getRequires() {
+    public function getRequires()
+    {
         return $this->requires;
     }
 
     /**
      * @return array
      */
-    public function getRequiredBy() {
+    public function getRequiredBy()
+    {
         return $this->requiredBy;
     }
 
@@ -118,7 +125,8 @@ class Dependency extends AbstractModel {
      * @param integer $sourceId
      * @return void
      */
-    public function setSourceId($sourceId) {
+    public function setSourceId($sourceId)
+    {
         $this->sourceId = (int) $sourceId;
         return $this;
     }
@@ -127,7 +135,8 @@ class Dependency extends AbstractModel {
      * @param array $requires
      * @return void
      */
-    public function setRequires($requires) {
+    public function setRequires($requires)
+    {
         $this->requires = $requires;
         return $this;
     }
@@ -136,7 +145,8 @@ class Dependency extends AbstractModel {
      * @param array $requiredBy
      * @return void
      */
-    public function setRequiredBy($requiredBy) {
+    public function setRequiredBy($requiredBy)
+    {
         $this->requiredBy = $requiredBy;
         return $this;
     }
@@ -144,7 +154,8 @@ class Dependency extends AbstractModel {
     /**
      * @return string
      */
-    public function getSourceType() {
+    public function getSourceType()
+    {
         return $this->sourceType;
     }
 
@@ -152,7 +163,8 @@ class Dependency extends AbstractModel {
      * @param string $sourceType
      * @return void
      */
-    public function setSourceType($sourceType) {
+    public function setSourceType($sourceType)
+    {
         $this->sourceType = $sourceType;
         return $this;
     }
@@ -162,12 +174,11 @@ class Dependency extends AbstractModel {
      *
      * @return void
      */
-    public function isRequired() {
+    public function isRequired()
+    {
         if (is_array($this->getRequiredBy()) && count($this->getRequiredBy()) > 0) {
             return true;
         }
         return false;
     }
-
-
 }

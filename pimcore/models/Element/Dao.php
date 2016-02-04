@@ -16,23 +16,25 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-abstract class Dao extends Model\Dao\AbstractDao {
+abstract class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @return array
      * @throws \Exception
      */
-    public function getParentIds() {
+    public function getParentIds()
+    {
         // collect properties via parent - ids
         $parentIds = array(1);
         $obj = $this->model->getParent();
 
-        if($obj) {
-            while($obj) {
-                if($obj->getId() == 1) {
+        if ($obj) {
+            while ($obj) {
+                if ($obj->getId() == 1) {
                     break;
                 }
-                if(in_array($obj->getId(), $parentIds)) {
+                if (in_array($obj->getId(), $parentIds)) {
                     throw new \Exception("detected infinite loop while resolving all parents from " . $this->model->getId() . " on " . $obj->getId());
                 }
 
@@ -44,4 +46,3 @@ abstract class Dao extends Model\Dao\AbstractDao {
         return $parentIds;
     }
 }
-

@@ -84,7 +84,7 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
     editSettings: function () {
         var win = new Ext.Window({
             width: 600,
-            height: 100,
+            height: 150,
             modal: true,
             closeAction: "destroy",
             items: [

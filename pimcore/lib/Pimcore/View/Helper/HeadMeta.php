@@ -12,7 +12,8 @@
 
 namespace Pimcore\View\Helper;
 
-class HeadMeta extends \Zend_View_Helper_HeadMeta {
+class HeadMeta extends \Zend_View_Helper_HeadMeta
+{
 
     /**
      * Determine if item is valid
@@ -20,7 +21,8 @@ class HeadMeta extends \Zend_View_Helper_HeadMeta {
      * @param  mixed $item
      * @return boolean
      */
-    protected function _isValid($item) {
+    protected function _isValid($item)
+    {
         return true;
     }
 }

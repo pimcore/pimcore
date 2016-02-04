@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class Lastname extends Model\Object\ClassDefinition\Data\Input {
+class Lastname extends Model\Object\ClassDefinition\Data\Input
+{
 
     /**
      * Static type of this element

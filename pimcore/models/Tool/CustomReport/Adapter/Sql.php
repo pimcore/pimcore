@@ -17,7 +17,8 @@ namespace Pimcore\Model\Tool\CustomReport\Adapter;
 use Pimcore\Model;
 use Pimcore\Db;
 
-class Sql extends AbstractAdapter {
+class Sql extends AbstractAdapter
+{
 
     /**
      * @param $filters
@@ -29,28 +30,29 @@ class Sql extends AbstractAdapter {
      * @param null $drillDownFilters
      * @return array
      */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null) {
+    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
+    {
         $db = Db::get();
 
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
 
-        if($baseQuery) {
+        if ($baseQuery) {
             $total = $db->fetchOne($baseQuery["count"]);
 
             $order = "";
-            if($sort && $dir) {
+            if ($sort && $dir) {
                 $order = " ORDER BY " . $db->quoteIdentifier($sort) . " " . $dir;
             }
 
             $sql = $baseQuery["data"] . $order;
-            if($offset !== null && $limit) {
+            if ($offset !== null && $limit) {
                 $sql .= " LIMIT $offset,$limit";
             }
 
             $data = $db->fetchAll($sql);
         }
 
-        return array("data" => $data, "total" => $total);
+        return ["data" => $data, "total" => $total];
     }
 
     /**
@@ -58,9 +60,10 @@ class Sql extends AbstractAdapter {
      * @return array|mixed|null
      * @throws \Exception
      */
-    public function getColumns($configuration) {
+    public function getColumns($configuration)
+    {
         $sql = "";
-        if($configuration) {
+        if ($configuration) {
             $sql = $this->buildQueryString($configuration);
         }
 
@@ -68,7 +71,7 @@ class Sql extends AbstractAdapter {
         $errorMessage = null;
         $columns = null;
 
-        if(!preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i", $sql, $matches)) {
+        if (!preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i", $sql, $matches)) {
             $sql .= " LIMIT 0,1";
             $db = Db::get();
             $res = $db->fetchRow($sql);
@@ -87,53 +90,55 @@ class Sql extends AbstractAdapter {
      * @param null $selectField
      * @return string
      */
-    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null) {
+    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
+    {
+        $config = (array)$config;
         $sql = "";
-        if($config->sql && !$ignoreSelectAndGroupBy) {
-            if(strpos(strtoupper(trim($config->sql)), "SELECT") === false || strpos(strtoupper(trim($config->sql)), "SELECT") > 5) {
+        if ($config["sql"] && !$ignoreSelectAndGroupBy) {
+            if (strpos(strtoupper(trim($config["sql"])), "SELECT") === false || strpos(strtoupper(trim($config["sql"])), "SELECT") > 5) {
                 $sql .= "SELECT ";
             }
-            $sql .= str_replace("\n", " ", $config->sql);
-        } else if($selectField) {
+            $sql .= str_replace("\n", " ", $config["sql"]);
+        } elseif ($selectField) {
             $db = Db::get();
             $sql .= "SELECT " . $db->quoteIdentifier($selectField);
         } else {
             $sql .= "SELECT *";
         }
-        if($config->from) {
-            if(strpos(strtoupper(trim($config->from)), "FROM") === false) {
+        if ($config["from"]) {
+            if (strpos(strtoupper(trim($config["from"])), "FROM") === false) {
                 $sql .= " FROM ";
             }
-            $sql .= " " . str_replace("\n", " ", $config->from);
+            $sql .= " " . str_replace("\n", " ", $config["from"]);
         }
-        if($config->where || $drillDownFilters) {
+        if ($config["where"] || $drillDownFilters) {
             $whereParts = array();
-            if($config->where) {
-                $whereParts[] = "(" . str_replace("\n", " ", $config->where) . ")";
+            if ($config["where"]) {
+                $whereParts[] = "(" . str_replace("\n", " ", $config["where"]) . ")";
             }
 
-            if($drillDownFilters) {
+            if ($drillDownFilters) {
                 $db = Db::get();
-                foreach($drillDownFilters as $field => $value) {
-                    if($value !== "" && $value !== null) {
+                foreach ($drillDownFilters as $field => $value) {
+                    if ($value !== "" && $value !== null) {
                         $whereParts[] = "`$field` = " . $db->quote($value);
                     }
                 }
             }
 
-            if($whereParts) {
-                if(strpos(strtoupper(trim($config->where)), "WHERE") === false) {
+            if ($whereParts) {
+                if (strpos(strtoupper(trim($config["where"])), "WHERE") === false) {
                     $sql .= " WHERE ";
                 }
 
                 $sql .= " " . implode(" AND ", $whereParts);
             }
         }
-        if($config->groupby && !$ignoreSelectAndGroupBy) {
-            if(strpos(strtoupper($config->groupby), "GROUP BY") === false) {
+        if ($config["groupby"] && !$ignoreSelectAndGroupBy) {
+            if (strpos(strtoupper($config["groupby"]), "GROUP BY") === false) {
                 $sql .= " GROUP BY ";
             }
-            $sql .= " " . str_replace("\n", " ", $config->groupby);
+            $sql .= " " . str_replace("\n", " ", $config["groupby"]);
         }
 
         return $sql;
@@ -147,16 +152,17 @@ class Sql extends AbstractAdapter {
      * @param null $selectField
      * @return array
      */
-    protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null) {
+    protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
+    {
         $db = Db::get();
-        $condition = array("1 = 1");
+        $condition = ["1 = 1"];
 
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
         $data = "";
 
-        if($filters) {
-            if(is_array($filters)) {
+        if ($filters) {
+            if (is_array($filters)) {
                 foreach ($filters as $filter) {
                     if (\Pimcore\Tool\Admin::isExtJS6()) {
                         $operator = $filter['operator'];
@@ -180,51 +186,46 @@ class Sql extends AbstractAdapter {
                                 $condition[] = $db->quoteIdentifier($filter["property"]) . " = " . $db->quote((int)$filter["value"]);
                                 break;
                         }
-
                     } else {
-                        if($filter["type"] == "string") {
+                        if ($filter["type"] == "string") {
                             $condition[] = $db->quoteIdentifier($filter["field"]) . " LIKE " . $db->quote("%" . $filter["value"] . "%");
-                        } else if($filter["type"] == "numeric") {
+                        } elseif ($filter["type"] == "numeric") {
                             $compMapping = array(
                                 "lt" => "<",
                                 "gt" => ">",
                                 "eq" => "="
                             );
-                            if($compMapping[$filter["comparison"]]) {
+                            if ($compMapping[$filter["comparison"]]) {
                                 $condition[] = $db->quoteIdentifier($filter["field"]) . " " . $compMapping[$filter["comparison"]] . " " . $db->quote($filter["value"]);
                             }
-                        } else if ($filter["type"] == "boolean") {
+                        } elseif ($filter["type"] == "boolean") {
                             $condition[] = $db->quoteIdentifier($filter["field"]) . " = " . $db->quote((int)$filter["value"]);
-                        } else if ($filter["type"] == "date") {
-
+                        } elseif ($filter["type"] == "date") {
                         }
-
                     }
                 }
             }
         }
 
-        if(!preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i", $sql, $matches)) {
-
+        if (!preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i", $sql, $matches)) {
             $condition = implode(" AND ", $condition);
 
             $total = "SELECT COUNT(*) FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
 
-            if($fields) {
+            if ($fields) {
                 $data = "SELECT `" . implode("`, `", $fields) . "` FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
             } else {
                 $data = "SELECT * FROM (" . $sql . ") AS somerandxyz WHERE " . $condition;
             }
-
         } else {
             return;
         }
 
 
-        return array(
+        return [
             "data" => $data,
             "count" => $total
-        );
+        ];
     }
 
     /**
@@ -233,22 +234,28 @@ class Sql extends AbstractAdapter {
      * @param $drillDownFilters
      * @return array|mixed
      */
-    public function getAvailableOptions($filters, $field, $drillDownFilters) {
+    public function getAvailableOptions($filters, $field, $drillDownFilters)
+    {
         $db = Db::get();
-        $baseQuery = $this->getBaseQuery($filters, array($field), true, $drillDownFilters, $field);
-        $data = array();
-        if($baseQuery) {
+        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, $field);
+        $data = [];
+        if ($baseQuery) {
             $sql = $baseQuery["data"] . " GROUP BY " . $db->quoteIdentifier($field);
             $data = $db->fetchAll($sql);
         }
 
-        $filteredData = array();
-        foreach($data as $d) {
-            if(!empty($d[$field]) || $d[$field] === 0) {
-                $filteredData[] = array("value" => $d[$field]);
+        $filteredData = [];
+        foreach ($data as $d) {
+            if (!empty($d[$field]) || $d[$field] === 0) {
+                $filteredData[] = ["value" => $d[$field]];
             }
         }
 
-        return array("data" => array_merge(array(array("value" => null)), $filteredData));
+        return [
+            "data" => array_merge([
+                        ["value" => null]
+                      ], $filteredData
+            )
+        ];
     }
 }

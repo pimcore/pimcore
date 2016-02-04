@@ -13,15 +13,14 @@
 namespace Pimcore\Model\Dao;
 
 use Pimcore\Cache;
+use Pimcore\Db;
 
-abstract class AbstractDao implements DaoInterface {
+abstract class AbstractDao implements DaoInterface
+{
+
+    use DaoTrait;
 
     const CACHEKEY = "system_resource_columns_";
-
-    /**
-     * @var \Pimcore\Model\AbstractModel
-     */
-    protected $model;
 
     /**
      * @var \Zend_Db_Adapter_Abstract
@@ -29,78 +28,61 @@ abstract class AbstractDao implements DaoInterface {
     protected $db;
 
     /**
-     * @param \Pimcore\Model\AbstractModel $model
-     * @return void
+     *
      */
-    public function setModel($model) {
-        $this->model = $model;
-        return $this;
-    }
-
-    /**
-     * @param \Zend_Db_Adapter_Abstract $conf
-     * @return void
-     */
-    public function configure($conf) {
-        $this->db = $conf;
+    public function configure()
+    {
+        $this->db = Db::get();
     }
 
     /**
      *
      */
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         $this->db->beginTransaction();
     }
 
     /**
      *
      */
-    public function commit() {
+    public function commit()
+    {
         $this->db->commit();
     }
 
     /**
      *
      */
-    public function rollBack() {
+    public function rollBack()
+    {
         $this->db->rollBack();
     }
-
-    /**
-     * @param array $data
-     * @return void
-     */
-    protected function assignVariablesToModel($data) {
-        $this->model->setValues($data);
-    }
-
 
     /**
      * @param string $table
      * @param bool $cache
      * @return array|mixed
      */
-    public  function getValidTableColumns ($table, $cache = true) {
-        
+    public function getValidTableColumns($table, $cache = true)
+    {
         $cacheKey = self::CACHEKEY . $table;
         
-        if(\Zend_Registry::isRegistered($cacheKey)) {
+        if (\Zend_Registry::isRegistered($cacheKey)) {
             $columns = \Zend_Registry::get($cacheKey);
-        }
-        else
-        {
+        } else {
             $columns = Cache::load($cacheKey);
             
-            if (!$columns || !$cache) {    
+            if (!$columns || !$cache) {
                 $columns = array();
                 $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $table);
                 foreach ($data as $d) {
                     $columns[] = $d["Field"];
                 }
-                Cache::save($columns, $cacheKey, array("system","resource"), null, 997);
+                Cache::save($columns, $cacheKey, array("system", "resource"), null, 997);
             }
             
-             \Zend_Registry::set($cacheKey, $columns);
+            \Zend_Registry::set($cacheKey, $columns);
         }
         
         return $columns;
@@ -109,10 +91,10 @@ abstract class AbstractDao implements DaoInterface {
     /** Clears the column information for the given table.
      * @param $table
      */
-    protected function resetValidTableColumnsCache($table) {
+    protected function resetValidTableColumnsCache($table)
+    {
         $cacheKey = self::CACHEKEY . $table;
         \Zend_Registry::getInstance()->offsetUnset($cacheKey);
         Cache::clearTags(array("system", "resource"));
-
     }
 }

@@ -12,7 +12,8 @@
 
 namespace Pimcore\Tool;
 
-class Cast {
+class Cast
+{
 
     /**
      * @param $class

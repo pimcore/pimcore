@@ -16,10 +16,11 @@ namespace Pimcore\Model\Webservice\Data\Document\Hardlink;
 
 use Pimcore\Model;
 
-class In extends Model\Webservice\Data\Document\Link {
+class In extends Model\Webservice\Data\Document\Link
+{
 
-    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
-
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
+    {
         $sourceId = $this->sourceId;
         $this->sourceId = null;
 
@@ -36,6 +37,4 @@ class In extends Model\Webservice\Data\Document\Link {
 
         $object->setSourceId = $sourceId;
     }
-
-
 }

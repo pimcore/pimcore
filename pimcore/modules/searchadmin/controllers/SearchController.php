@@ -16,14 +16,15 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 
-class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
+class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
+{
 
 
     /**
      * @return void
      */
-    public function findAction() {
-
+    public function findAction()
+    {
         $user = $this->getUser();
 
         $query = $this->getParam("query");
@@ -52,7 +53,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         $db = \Pimcore\Db::get();
 
         //exclude forbidden assets
-        if(in_array("asset", $types)) {
+        if (in_array("asset", $types)) {
             if (!$user->isAllowed("assets")) {
                 $forbiddenConditions[] = " `type` != 'asset' ";
             } else {
@@ -68,7 +69,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
 
 
         //exclude forbidden documents
-        if(in_array("document", $types)) {
+        if (in_array("document", $types)) {
             if (!$user->isAllowed("documents")) {
                 $forbiddenConditions[] = " `type` != 'document' ";
             } else {
@@ -83,7 +84,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         }
 
         //exclude forbidden objects
-        if(in_array("object", $types)) {
+        if (in_array("object", $types)) {
             if (!$user->isAllowed("objects")) {
                 $forbiddenConditions[] = " `type` != 'object' ";
             } else {
@@ -112,34 +113,34 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
             //}
 
             $conditionParts[] = $queryCondition;
-        }                      
+        }
 
 
         //For objects - handling of bricks
         $fields = array();
         $bricks = array();
-        if($this->getParam("fields")) {
+        if ($this->getParam("fields")) {
             $fields = $this->getParam("fields");
 
-            foreach($fields as $f) {
+            foreach ($fields as $f) {
                 $parts = explode("~", $f);
                 if (substr($f, 0, 1) == "~") {
-//                    $type = $parts[1];
+                    //                    $type = $parts[1];
 //                    $field = $parts[2];
 //                    $keyid = $parts[3];
                     // key value, ignore for now
-                } else if(count($parts) > 1) {
+                } elseif (count($parts) > 1) {
                     $bricks[$parts[0]] = $parts[0];
                 }
             }
-        }        
+        }
 
         // filtering for objects
         if ($this->getParam("filter") && $this->getParam("class")) {
             $class = Object\ClassDefinition::getByName($this->getParam("class"));
             $conditionFilters = Object\Service::getFilterCondition($this->getParam("filter"), $class);
             $join = "";
-            foreach($bricks as $ob) {
+            foreach ($bricks as $ob) {
                 $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
 
                 $join .= " `" . $ob . "`";
@@ -153,7 +154,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
             }
-            if(in_array("folder",$subtypes)){
+            if (in_array("folder", $subtypes)) {
                 $conditionTypeParts[] = $db->quote('folder');
             }
             $conditionParts[] = "( maintype IN (" . implode(",", $conditionTypeParts) . ") )";
@@ -167,8 +168,8 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         }
 
         if (is_array($classnames) and !empty($classnames[0])) {
-            if(in_array("folder",$subtypes)){
-                $classnames[]="folder";    
+            if (in_array("folder", $subtypes)) {
+                $classnames[]="folder";
             }
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);
@@ -179,12 +180,12 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
 
         //filtering for tags
         $tagIds = $this->getParam("tagIds");
-        if($tagIds) {
-            foreach($tagIds as $tagId) {
-                foreach($types as $type) {
-                    if($this->getParam("considerChildTags") =="true") {
+        if ($tagIds) {
+            foreach ($tagIds as $tagId) {
+                foreach ($types as $type) {
+                    if ($this->getParam("considerChildTags") =="true") {
                         $tag = Pimcore\Model\Element\Tag::getById($tagId);
-                        if($tag) {
+                        if ($tag) {
                             $tagPath = $tag->getFullIdPath();
                             $conditionParts[] = "id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = " . $db->quote($type) . " AND (id = " . intval($tagId) . " OR idPath LIKE " . $db->quote($tagPath . "%") . "))";
                         }
@@ -212,14 +213,14 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
         //$searcherList->setOrderKey("modificationdate");
 
         $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
-        if($sortingSettings['orderKey']) {
+        if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
                 "classname" => "subtype"
             ];
 
             $sort = $sortingSettings['orderKey'];
-            if(array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
+            if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
             $searcherList->setOrderKey($sortingSettings['orderKey']);
@@ -233,14 +234,13 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
 
         $elements=array();
         foreach ($hits as $hit) {
-
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed("list")) {
                 if ($element instanceof Object\AbstractObject) {
                     $data = Object\Service::gridObjectData($element, $fields);
-                } else if ($element instanceof Document) {
+                } elseif ($element instanceof Document) {
                     $data = Document\Service::gridDocumentData($element);
-                } else if ($element instanceof Asset) {
+                } elseif ($element instanceof Asset) {
                     $data = Asset\Service::gridAssetData($element);
                 }
 
@@ -249,11 +249,10 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin {
                 //TODO: any message that view is blocked?
                 //$data = Element\Service::gridElementData($element);
             }
-
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if($this->getParam("limit")) {
+        if ($this->getParam("limit")) {
             $totalMatches = $searcherList->getTotalCount();
         } else {
             $totalMatches = count($elements);

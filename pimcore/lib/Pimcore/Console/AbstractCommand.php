@@ -58,7 +58,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
 
         // skip if maintenance mode is on and the flag is not set
         if (Admin::isInMaintenanceMode() && !$input->getOption('ignore-maintenance-mode')) {
-            throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
+            //throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
         }
     }
 
@@ -72,8 +72,30 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         // hook logger into pimcore
         \Logger::addLogger($logger);
 
+        if ($this->output->isVerbose()) {
+            \Logger::setPriorities([
+                "info",
+                "notice",
+                "warning",
+                "error",
+                "critical",
+                "alert",
+                "emergency"
+            ]);
+        }
+
         // set all priorities
-        \Logger::setVerbosePriorities();
+        if ($this->output->isDebug()) {
+            \Logger::setVerbosePriorities();
+        }
+    }
+
+    /**
+     *
+     */
+    protected function disableLogging()
+    {
+        \Logger::removeLogger($this->getLogger());
     }
 
     /**

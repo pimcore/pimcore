@@ -177,18 +177,18 @@ abstract class Data
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false) {
-
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
         $isEmpty = true;
 
         // this is to do not treated "0" as empty
-        if(is_string($data) || is_numeric($data)) {
-            if(strlen($data) > 0) {
+        if (is_string($data) || is_numeric($data)) {
+            if (strlen($data) > 0) {
                 $isEmpty = false;
             }
         }
 
-        if(!empty($data)) {
+        if (!empty($data)) {
             $isEmpty = false;
         }
 
@@ -222,7 +222,8 @@ abstract class Data
      * @param $object
      * @return string
      */
-    public function getDataForSearchIndex($object) {
+    public function getDataForSearchIndex($object)
+    {
         // this is the default, but csv doesn't work for all data types
         return $this->getForCsvExport($object);
     }
@@ -607,10 +608,10 @@ abstract class Data
         if ($value === "NULL") {
             if ($operator == '=') {
                 $operator = "IS";
-            } else if ($operator == "!=") {
+            } elseif ($operator == "!=") {
                 $operator = "IS NOT";
             }
-        } else if (!is_array($value) && !is_object($value)) {
+        } elseif (!is_array($value) && !is_object($value)) {
             if ($operator == "LIKE") {
                 $value = $db->quote("%" . $value . "%");
             } else {
@@ -619,9 +620,10 @@ abstract class Data
         }
 
         if (in_array($operator, Object\ClassDefinition\Data::$validFilterOperators)) {
-
             return $key . " " . $operator . " " . $value . " ";
-        } else return "";
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -747,7 +749,7 @@ abstract class Data
         if (method_exists($this, "preSetData")) {
             $code .= "\t" . '$this->' . $key . " = " . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
         } else {
-        $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
+            $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
         }
 
         $code .= "\t" . 'return $this;' . "\n";
@@ -873,7 +875,8 @@ abstract class Data
      *
      * @return int|null
      */
-    public function getAsIntegerCast($number){
+    public function getAsIntegerCast($number)
+    {
         return strlen($number) === 0 ? "" : (int)$number;
     }
 
@@ -881,7 +884,8 @@ abstract class Data
      * @param $number
      * @return float
      */
-    public function getAsFloatCast($number){
+    public function getAsFloatCast($number)
+    {
         return strlen($number) === 0 ? "" : (float)$number;
     }
 
@@ -889,7 +893,8 @@ abstract class Data
      * @param $data
      * @return string
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         return "no preview";
     }
 
@@ -897,8 +902,9 @@ abstract class Data
      * @param Object\Concrete $data
      * @return bool
      */
-    public function isEmpty($data) {
-        if(empty($data)) {
+    public function isEmpty($data)
+    {
+        if (empty($data)) {
             return true;
         }
         return false;
@@ -907,7 +913,8 @@ abstract class Data
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return false;
     }
 
@@ -920,7 +927,8 @@ abstract class Data
      * @param null $object
      * @return mixed
      */
-    public function getDiffDataFromEditmode($data, $object = null) {
+    public function getDiffDataFromEditmode($data, $object = null)
+    {
         $thedata = $this->getDataFromEditmode($data[0]["data"], $object);
         return $thedata;
     }
@@ -944,7 +952,8 @@ abstract class Data
      * @param null|Object\AbstractObject $object
      * @return null|array
      */
-    public function getDiffDataForEditMode($data, $object = null) {
+    public function getDiffDataForEditMode($data, $object = null)
+    {
         $diffdata = array();
         $diffdata["data"] = $this->getDataForEditmode($data, $object);
         $diffdata["disabled"] = !($this->isDiffChangeAllowed());
@@ -988,14 +997,14 @@ abstract class Data
      * @param array $params
      * @return mixed
      */
-    protected function getDataFromObjectParam($object, $params = array()) {
-
+    protected function getDataFromObjectParam($object, $params = array())
+    {
         $data = null;
 
         $getter = "get".ucfirst($this->getName());
-        if(method_exists($object, $getter)) { // for Object\Concrete, Object\Fieldcollection\Data\AbstractData, Object\Objectbrick\Data\AbstractData
+        if (method_exists($object, $getter)) { // for Object\Concrete, Object\Fieldcollection\Data\AbstractData, Object\Objectbrick\Data\AbstractData
             $data = $object->$getter();
-        } else if ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof Object\Localizedfield) {
             $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
         }
 
@@ -1005,14 +1014,16 @@ abstract class Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
+    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    {
         // implement in child classes
     }
 
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function adoptMasterDefinition(Object\ClassDefinition\Data $masterDefinition) {
+    public function adoptMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    {
         $vars = get_object_vars($this);
         $protectedFields = array("noteditable", "invisible");
         foreach ($vars as $name => $value) {
@@ -1032,7 +1043,8 @@ abstract class Data
      * @param Model\Object\AbstractObject $object
      * @return mixed
      */
-    public function marshal($value, $object = null) {
+    public function marshal($value, $object = null)
+    {
         return $value;
     }
 
@@ -1041,8 +1053,8 @@ abstract class Data
      * @param Model\Object\AbstractObject $object
      * @return mixed
      */
-    public function unmarshal($value, $object = null) {
+    public function unmarshal($value, $object = null)
+    {
         return $value;
     }
-
 }

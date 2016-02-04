@@ -12,7 +12,8 @@
 
 namespace Pimcore;
 
-class Date extends \Zend_Date {
+class Date extends \Zend_Date
+{
 
     /**
      *
@@ -27,7 +28,8 @@ class Date extends \Zend_Date {
     /**
      * @throws \Zend_Date_Exception
      */
-    public function __wakeup () {
+    public function __wakeup()
+    {
         $this->setLocale(null);
     }
 }

@@ -93,13 +93,13 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
            'key',
            'label'
         ];
-        
+
         if(hasType) {
             fields.push('type');
             fields.push('length');
             fields.push('width');
         }
-        
+
         this.stores[title] = new Ext.data.JsonStore({
             autoDestroy: false,
             autoSave: false,
@@ -132,7 +132,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                                      "modificationdate","usermodification","byid","bypath","data","versions",
                                      "properties","permissions","permissionsforuser","childamount","apipluginbroker",
                                      "resource","parentClass","definition","locked","language"]) == false) {
-                    return true; 
+                    return true;
                 } else {
                     return t("structuredtable_invalid_key");
                 }
@@ -161,6 +161,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 allowBlank: false,
                 lazyRender: true,
                 mode: 'local',
+                editable: false,
                 store: new Ext.data.ArrayStore({
                     id: 'value',
                     fields: [

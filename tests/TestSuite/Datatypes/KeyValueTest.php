@@ -7,9 +7,11 @@
  */
 
 
-class TestSuite_Datatypes_KeyValueTest extends Test_Base {
+class TestSuite_Datatypes_KeyValueTest extends Test_Base
+{
 
-    public function testUninitialized() {
+    public function testUninitialized()
+    {
         $this->printTestName();
         $object = Test_Tool::createEmptyObject();
         $data = $object->getKeyvaluepairs();
@@ -18,5 +20,4 @@ class TestSuite_Datatypes_KeyValueTest extends Test_Base {
         // make sure that this call does not bomb out
         $fd->getDiffDataForEditMode($data, $object);
     }
-
 }

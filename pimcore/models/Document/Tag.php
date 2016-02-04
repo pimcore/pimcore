@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 
-abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface {
+abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface
+{
 
     /**
      * Options of the current tag, can contain some configurations for the editmode, or the thumbnail name, ...
@@ -79,15 +80,15 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param null $editmode
      * @return mixed
      */
-    public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null) {
-
+    public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
+    {
         $tagClass = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($type);
 
         // this is the fallback for custom document tags using prefixes
         // so we need to check if the class exists first
-        if(!\Pimcore\Tool::classExists($tagClass)) {
+        if (!\Pimcore\Tool::classExists($tagClass)) {
             $oldStyleClass = "\\Document_Tag_" . ucfirst($type);
-            if(\Pimcore\Tool::classExists($oldStyleClass)) {
+            if (\Pimcore\Tool::classExists($oldStyleClass)) {
                 $tagClass = $oldStyleClass;
             }
         }
@@ -106,13 +107,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @see Document\Tag\DocumentInterface::admin
      * @return string
      */
-    public function admin() {
+    public function admin()
+    {
 
         // get configuration data for admin
         if (method_exists($this, "getDataEditmode")) {
             $data = $this->getDataEditmode();
-        }
-        else {
+        } else {
             $data = $this->getData();
         }
 
@@ -138,14 +139,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @see Document\Tag\DocumentInterface::getData
      * @return mixed
      */
-    public function getValue() {
+    public function getValue()
+    {
         return $this->getData();
     }
 
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -153,7 +156,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param string $name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -162,7 +166,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param integer $id
      * @return void
      */
-    public function setDocumentId($id) {
+    public function setDocumentId($id)
+    {
         $this->documentId = (int) $id;
         return $this;
     }
@@ -170,14 +175,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @return integer
      */
-    public function getDocumentId() {
+    public function getDocumentId()
+    {
         return $this->documentId;
     }
 
     /**
      * @return array
      */
-    public function getOptions() {
+    public function getOptions()
+    {
         return is_array($this->options) ? $this->options : array();
     }
 
@@ -185,7 +192,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $options
      * @return void
      */
-    public function setOptions($options) {
+    public function setOptions($options)
+    {
         $this->options = $options;
         return $this;
     }
@@ -194,7 +202,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param \Pimcore\Controller\Action $controller
      * @return void
      */
-    public function setController($controller) {
+    public function setController($controller)
+    {
         $this->controller = $controller;
         return $this;
     }
@@ -202,7 +211,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @return \Pimcore\Controller\Action
      */
-    public function getController() {
+    public function getController()
+    {
         return $this->controller;
     }
 
@@ -210,7 +220,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param \Pimcore\View $view
      * @return void
      */
-    public function setView($view) {
+    public function setView($view)
+    {
         $this->view = $view;
         return $this;
     }
@@ -218,7 +229,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @return \Pimcore\View
      */
-    public function getView() {
+    public function getView()
+    {
         return $this->view;
     }
 
@@ -243,7 +255,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      *
      * @return void
      */
-    public function __sleep() {
+    public function __sleep()
+    {
 
         // here the "normal" task of __sleep ;-)
         $blockedVars = array("dao", "controller", "view", "editmode", "options");
@@ -261,16 +274,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         try {
             if ($this->editmode) {
                 $return = $this->admin();
-            }
-            else {
+            } else {
                 $return = $this->frontend();
             }
         } catch (\Exception $e) {
-            if(\Pimcore::inDebugMode()){
+            if (\Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions
                 $return = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
             }
@@ -281,13 +294,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             return $return;
         }
         return '';
-
     }
 
     /**
      * @return boolean
      */
-    public function getEditmode() {
+    public function getEditmode()
+    {
         return $this->editmode;
     }
 
@@ -295,7 +308,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param boolean $editmode
      * @return void
      */
-    public function setEditmode($editmode) {
+    public function setEditmode($editmode)
+    {
         $this->editmode = (bool) $editmode;
         return $this;
     }
@@ -305,7 +319,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @see Document\Tag\DocumentInterface::getDataForResource
      * @return void
      */
-    public function getDataForResource() {
+    public function getDataForResource()
+    {
         $this->checkValidity();
         return $this->getData();
     }
@@ -315,14 +330,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($ownerDocument, $tags = array()) {
+    public function getCacheTags($ownerDocument, $tags = array())
+    {
         return $tags;
     }
 
     /**
      * This is a dummy and is mostly implemented by relation types
      */
-    public function resolveDependencies() {
+    public function resolveDependencies()
+    {
         return array();
     }
 
@@ -334,7 +351,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param  Webservice\Data\Document\Element $wsElement
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement)
+    {
         return $wsElement;
     }
 
@@ -345,17 +363,17 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport() {
+    public function getForWebserviceExport()
+    {
         $keys = get_object_vars($this);
 
         $el = array();
         foreach ($keys as $key => $value) {
-
             if ($value instanceof Model\Element\ElementInterface) {
                 $value = $value->getId();
             }
-            $className = Webservice\Data\Mapper::findWebserviceClass($value,"out");
-            $el[$key] = Webservice\Data\Mapper::map($value,$className,"out");
+            $className = Webservice\Data\Mapper::findWebserviceClass($value, "out");
+            $el[$key] = Webservice\Data\Mapper::map($value, $className, "out");
         }
 
         unset($el["dao"]);
@@ -373,8 +391,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @return bool
      */
-    public function checkValidity() {
-        return true; 
+    public function checkValidity()
+    {
+        return true;
     }
 
     /**
@@ -402,21 +421,21 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      *
      * @return string
      */
-    public static function buildTagName($type,$name, $document = null){
+    public static function buildTagName($type, $name, $document = null)
+    {
 
         // check for persona content
-        if($document && $document instanceof Document\Page && $document->getUsePersona()) {
+        if ($document && $document instanceof Document\Page && $document->getUsePersona()) {
             $name = $document->getPersonaElementName($name);
         }
 
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
-        if(\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
+        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
             $blocks = \Zend_Registry::get("pimcore_tag_block_current");
 
             $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
             if (is_array($blocks) and count($blocks) > 0) {
-
                 if ($type == "block") {
                     $tmpBlocks = $blocks;
                     $tmpNumeration = $numeration;
@@ -432,7 +451,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
                         array_pop($blocks);
                         array_pop($numeration);
                     }
-
                 }
                 $name = $name . implode("_", $blocks) . implode("_", $numeration);
             }

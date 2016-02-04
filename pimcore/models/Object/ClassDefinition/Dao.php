@@ -17,9 +17,10 @@ namespace Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
-use Pimcore\File; 
+use Pimcore\File;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @var Object\Class\ClassDefinition
@@ -34,14 +35,15 @@ class Dao extends Model\Dao\AbstractDao {
      * @param null $id
      * @throws \Exception
      */
-    public function getById($id = null) {
+    public function getById($id = null)
+    {
         if (!$id) {
             $id = $this->model->getId();
         }
 
         $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE id = ?", $id);
 
-        if($classRaw["id"]) {
+        if ($classRaw["id"]) {
             $this->assignVariablesToModel($classRaw);
 
             $this->model->setPropertyVisibility(Serialize::unserialize($classRaw["propertyVisibility"]));
@@ -55,14 +57,15 @@ class Dao extends Model\Dao\AbstractDao {
      * @param null $name
      * @throws \Exception
      */
-    public function getByName($name = null) {
+    public function getByName($name = null)
+    {
         if (!$name) {
             $name = $this->model->getName();
         }
 
         $classRaw = $this->db->fetchRow("SELECT id FROM classes WHERE name = ?", $name);
 
-        if($classRaw["id"]) {
+        if ($classRaw["id"]) {
             $this->assignVariablesToModel($classRaw);
             // the layout is loaded in Object|Class::getByName();
         } else {
@@ -75,9 +78,10 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return mixed
      */
-    protected function getLayoutData () {
+    protected function getLayoutData()
+    {
         $file = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
-        if(is_file($file)) {
+        if (is_file($file)) {
             return Serialize::unserialize(file_get_contents($file));
         }
         return;
@@ -89,7 +93,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->update();
         }
@@ -100,17 +105,16 @@ class Dao extends Model\Dao\AbstractDao {
      * @throws \Exception
      * @throws \Zend_Db_Adapter_Exception
      */
-    public function update() {
-
+    public function update()
+    {
         $class = get_object_vars($this->model);
         $data = array();
 
         foreach ($class as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("classes"))) {
-
                 if (is_array($value) || is_object($value)) {
                     $value = Serialize::serialize($value);
-                } else  if(is_bool($value)) {
+                } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
                 $data[$key] = $value;
@@ -121,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao {
 
         // save definition as a serialized file
         $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
-        if(!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
             throw new \Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
         }
         File::put($definitionFile, Serialize::serialize($this->model->layoutDefinitions));
@@ -196,7 +200,7 @@ class Dao extends Model\Dao\AbstractDao {
                 }
 
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
-                if(!$value->isRelationType() && is_array($value->getColumnType())) {
+                if (!$value->isRelationType() && is_array($value->getColumnType())) {
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($objectDatastoreTable, $key . "__" . $fkey, $fvalue, "", "NULL");
                         $protectedDatastoreColumns[] = $key . "__" . $fkey;
@@ -229,13 +233,11 @@ class Dao extends Model\Dao\AbstractDao {
         try {
             //$this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
             $this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::debug($e);
         }
 
         $this->tableDefinitions = null;
-
     }
 
     /**
@@ -244,14 +246,15 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $protectedColumns
      * @param bool $emptyRelations
      */
-    private function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns, $emptyRelations = false) {
+    private function removeUnusedColumns($table, $columnsToRemove, $protectedColumns, $emptyRelations = false)
+    {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                     $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
 
-                    if($emptyRelations) {
+                    if ($emptyRelations) {
                         $tableRelation = "object_relations_" . $this->model->getId();
                         $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
                     }
@@ -269,14 +272,14 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $default
      * @param $null
      */
-    private function addModifyColumn ($table, $colName, $type, $default, $null) {
-
+    private function addModifyColumn($table, $colName, $type, $default, $null)
+    {
         $existingColumns = $this->getValidTableColumns($table, false);
         $existingColName = null;
 
         // check for existing column case insensitive eg a rename from myInput to myinput
         $matchingExisting = preg_grep('/^' . preg_quote($colName, '/') . '$/i', $existingColumns);
-        if(is_array($matchingExisting) && !empty($matchingExisting)) {
+        if (is_array($matchingExisting) && !empty($matchingExisting)) {
             $existingColName = current($matchingExisting);
         }
 
@@ -294,8 +297,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $field
      * @param $table
      */
-    private function addIndexToField ($field, $table) {
-
+    private function addIndexToField($field, $table)
+    {
         if ($field->getIndex()) {
             if (is_array($field->getQueryColumnType())) {
                 // multicolumn field
@@ -303,14 +306,16 @@ class Dao extends Model\Dao\AbstractDao {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
                     $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
             }
         } else {
             if (is_array($field->getQueryColumnType())) {
@@ -319,26 +324,18 @@ class Dao extends Model\Dao\AbstractDao {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
                         $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
                     $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
             }
         }
-    }
-
-    /**
-     * @param $fieldtype
-     * @return bool
-     */
-    private function isRelationType($fieldtype) {
-        if ($fieldtype == 'multihref' || $fieldtype == 'objects' || $fieldtype == 'href')
-            return true;
-        return false;
     }
 
     /**
@@ -346,7 +343,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
         $this->db->insert("classes", array("name" => $this->model->getName()));
 
         $this->model->setId($this->db->lastInsertId());
@@ -361,8 +359,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
-
+    public function delete()
+    {
         $this->db->delete("classes", $this->db->quoteInto("id = ?", $this->model->getId()));
 
         $objectTable = "object_query_" . $this->model->getId();
@@ -418,7 +416,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function updateClassNameInObjects($newName) {
+    public function updateClassNameInObjects($newName)
+    {
         $this->db->update("objects", array(
             "o_className" => $newName
         ), $this->db->quoteInto("o_classId = ?", $this->model->getId()));

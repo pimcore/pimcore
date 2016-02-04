@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\TmpStore;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $id
@@ -25,11 +26,11 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $lifetime
      * @return bool
      */
-    public function add ($id, $data, $tag, $lifetime) {
-
+    public function add($id, $data, $tag, $lifetime)
+    {
         try {
             $serialized = false;
-            if(is_object($data) || is_array($data)) {
+            if (is_object($data) || is_array($data)) {
                 $serialized = true;
                 $data = serialize($data);
             }
@@ -51,7 +52,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @param $id
      */
-    public function delete ($id) {
+    public function delete($id)
+    {
         $this->db->delete("tmp_store", "id = " . $this->db->quote($id));
     }
 
@@ -59,12 +61,12 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $id
      * @return bool
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $item = $this->db->fetchRow("SELECT * FROM tmp_store WHERE id = ?", $id);
 
-        if(is_array($item) && array_key_exists("id", $item)) {
-
-            if($item["serialized"]) {
+        if (is_array($item) && array_key_exists("id", $item)) {
+            if ($item["serialized"]) {
                 $item["data"] = unserialize($item["data"]);
             }
 
@@ -78,7 +80,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function cleanup() {
+    public function cleanup()
+    {
         $this->db->delete("tmp_store", "expiryDate < " . time());
     }
 
@@ -86,7 +89,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $tag
      * @return array
      */
-    public function getIdsByTag($tag) {
+    public function getIdsByTag($tag)
+    {
         $items = $this->db->fetchCol("SELECT id FROM tmp_store WHERE tag = ?", [$tag]);
         return $items;
     }

@@ -44,6 +44,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                         store: this.getAmountValues(),
                         value: 1,
                         mode: "local",
+                        editable: false,
                         triggerAction: "all",
                         width: 45
                     });
@@ -156,6 +157,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
             store: this.getAmountValues(),
             mode: "local",
             triggerAction: "all",
+            editable: false,
             value: 1,
             width: 55
         });
@@ -170,7 +172,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
             }
         });
         plusButton.render(plusEl);
-        
+
         Ext.get(this.id).addCls("pimcore_block_limitnotreached");
     },
 

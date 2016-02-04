@@ -9,7 +9,8 @@
 class TestSuite_Datatypes_LocalizedFieldTest extends Test_Base
 {
 
-    public function tearDown() {
+    public function tearDown()
+    {
         \Pimcore\Model\Object\Localizedfield::setStrictMode(Pimcore\Model\Object\Localizedfield::STRICT_DISABLED);
     }
 
@@ -31,7 +32,6 @@ class TestSuite_Datatypes_LocalizedFieldTest extends Test_Base
             $object->setLinput("Test");
             $this->fail("Expected an exception");
         } catch (Exception $e) {
-
         }
 
 
@@ -39,7 +39,6 @@ class TestSuite_Datatypes_LocalizedFieldTest extends Test_Base
             $object->setLinput("Test", "ko");
             $this->fail("Expected an exception");
         } catch (Exception $e) {
-
         }
     }
 }

@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model;
 
-class Redirect extends AbstractModel {
+class Redirect extends AbstractModel
+{
 
     /**
      * @var integer
@@ -92,8 +93,8 @@ class Redirect extends AbstractModel {
      * @param integer $id
      * @return Redirect
      */
-    public static function getById($id) {
-
+    public static function getById($id)
+    {
         $redirect = new self();
         $redirect->setId(intval($id));
         $redirect->getDao()->getById();
@@ -104,7 +105,8 @@ class Redirect extends AbstractModel {
     /**
      * @return Redirect
      */
-    public static function create() {
+    public static function create()
+    {
         $redirect = new self();
         $redirect->save();
 
@@ -115,21 +117,24 @@ class Redirect extends AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
      * @return string
      */
-    public function getSource() {
+    public function getSource()
+    {
         return $this->source;
     }
 
     /**
      * @return string
      */
-    public function getTarget() {
+    public function getTarget()
+    {
         return $this->target;
     }
 
@@ -137,7 +142,8 @@ class Redirect extends AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -146,7 +152,8 @@ class Redirect extends AbstractModel {
      * @param string $source
      * @return void
      */
-    public function setSource($source) {
+    public function setSource($source)
+    {
         $this->source = $source;
         return $this;
     }
@@ -155,7 +162,8 @@ class Redirect extends AbstractModel {
      * @param string $target
      * @return void
      */
-    public function setTarget($target) {
+    public function setTarget($target)
+    {
         $this->target = $target;
         return $this;
     }
@@ -164,9 +172,10 @@ class Redirect extends AbstractModel {
      * @param integer $priority
      * @return void
      */
-    public function setPriority($priority) {
-        if($priority) {
-           $this->priority = $priority; 
+    public function setPriority($priority)
+    {
+        if ($priority) {
+            $this->priority = $priority;
         }
         return $this;
     }
@@ -174,7 +183,8 @@ class Redirect extends AbstractModel {
     /**
      * @return integer
      */
-    public function getPriority() {
+    public function getPriority()
+    {
         return $this->priority;
     }
 
@@ -182,8 +192,9 @@ class Redirect extends AbstractModel {
      * @param integer $statusCode
      * @return void
      */
-    public function setStatusCode($statusCode) {
-        if($statusCode) {
+    public function setStatusCode($statusCode)
+    {
+        if ($statusCode) {
             $this->statusCode = $statusCode;
         }
         return $this;
@@ -192,14 +203,16 @@ class Redirect extends AbstractModel {
     /**
      * @return integer
      */
-    public function getStatusCode() {
+    public function getStatusCode()
+    {
         return $this->statusCode;
     }
 
     /**
      * @return string
      */
-    public function getHttpStatus() {
+    public function getHttpStatus()
+    {
         $statusCode = $this->getStatusCode();
         if (empty($statusCode)) {
             $statusCode = "301";
@@ -210,13 +223,13 @@ class Redirect extends AbstractModel {
     /**
      * @return void
      */
-    public function clearDependentCache() {
+    public function clearDependentCache()
+    {
         
         // this is mostly called in Redirect\Dao not here
         try {
             \Pimcore\Cache::clearTag("redirect");
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::crit($e);
         }
     }
@@ -227,7 +240,7 @@ class Redirect extends AbstractModel {
      */
     public function setExpiry($expiry)
     {
-        if(is_string($expiry) && !is_numeric($expiry)) {
+        if (is_string($expiry) && !is_numeric($expiry)) {
             $expiry = strtotime($expiry);
         }
         $this->expiry = $expiry;
@@ -245,7 +258,8 @@ class Redirect extends AbstractModel {
     /**
      *
      */
-    public static function maintenanceCleanUp() {
+    public static function maintenanceCleanUp()
+    {
         $list = new Redirect\Listing();
         $list->setCondition("expiry < " . time() . " AND expiry IS NOT NULL AND expiry != ''");
         $list->load();
@@ -261,7 +275,7 @@ class Redirect extends AbstractModel {
      */
     public function setSourceEntireUrl($sourceEntireUrl)
     {
-        if($sourceEntireUrl) {
+        if ($sourceEntireUrl) {
             $this->sourceEntireUrl = (bool) $sourceEntireUrl;
         } else {
             $this->sourceEntireUrl = null;
@@ -283,7 +297,7 @@ class Redirect extends AbstractModel {
      */
     public function setSourceSite($sourceSite)
     {
-        if($sourceSite) {
+        if ($sourceSite) {
             $this->sourceSite = (int) $sourceSite;
         } else {
             $this->sourceSite = null;
@@ -305,7 +319,7 @@ class Redirect extends AbstractModel {
      */
     public function setTargetSite($targetSite)
     {
-        if($targetSite) {
+        if ($targetSite) {
             $this->targetSite = (int) $targetSite;
         } else {
             $this->targetSite = null;
@@ -327,7 +341,7 @@ class Redirect extends AbstractModel {
      */
     public function setPassThroughParameters($passThroughParameters)
     {
-        if($passThroughParameters) {
+        if ($passThroughParameters) {
             $this->passThroughParameters = (bool) $passThroughParameters;
         } else {
             $this->passThroughParameters = null;

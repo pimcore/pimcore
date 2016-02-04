@@ -16,22 +16,24 @@ namespace Pimcore\Model\Translation\Website\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Translation\AbstractTranslation\Listing\Dao {
+class Dao extends Model\Translation\AbstractTranslation\Listing\Dao
+{
     /**
      * Loads a list of translations for the specified parameters, returns an array of Translation elements
      *
      * @return array
      */
 
-    public static function getTableName(){
+    public static function getTableName()
+    {
         return Model\Translation\Website\Dao::$_tableName;
     }
 
     /**
      * @return string
      */
-    public static function getItemClass () {
+    public static function getItemClass()
+    {
         return "\\Pimcore\\Model\\Translation\\Website";
     }
 }
- 

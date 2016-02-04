@@ -17,7 +17,8 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model;
 use Pimcore\Config;
 
-class Date extends Model\Document\Tag {
+class Date extends Model\Document\Tag
+{
 
     /**
      * Contains the date
@@ -31,7 +32,8 @@ class Date extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "date";
     }
 
@@ -39,7 +41,8 @@ class Date extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->date;
     }
 
@@ -48,7 +51,8 @@ class Date extends Model\Document\Tag {
      *
      * @return string
      */
-    public function getDataEditmode() {
+    public function getDataEditmode()
+    {
         if ($this->date instanceof \Zend_Date) {
             return $this->date->get(\Zend_Date::TIMESTAMP);
         }
@@ -59,8 +63,8 @@ class Date extends Model\Document\Tag {
     /**
      * @see Document\Tag\TagInterface::frontend
      */
-    public function frontend() {
-
+    public function frontend()
+    {
         if (!isset($this->options["output"]) || !$this->options["output"]) {
             $this->options["output"] = \Zend_Date::DATE_MEDIUM;
         }
@@ -74,9 +78,10 @@ class Date extends Model\Document\Tag {
      * @see Document\Tag::getDataForResource
      * @return void
      */
-    public function getDataForResource () {
+    public function getDataForResource()
+    {
         $this->checkValidity();
-        if($this->date instanceof \Zend_Date) {
+        if ($this->date instanceof \Zend_Date) {
             return $this->date->get(\Zend_Date::TIMESTAMP);
         }
         return;
@@ -87,8 +92,9 @@ class Date extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
-        if($data) {
+    public function setDataFromResource($data)
+    {
+        if ($data) {
             $this->date = new \Pimcore\Date($data);
         }
         return $this;
@@ -99,7 +105,8 @@ class Date extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         if (strlen($data) > 5) {
             // ext 2.0 returns the selected date in UTC
             date_default_timezone_set("UTC");
@@ -116,8 +123,9 @@ class Date extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty () {
-        if($this->date instanceof \Zend_Date) {
+    public function isEmpty()
+    {
+        if ($this->date instanceof \Zend_Date) {
             return false;
         }
         return true;
@@ -130,17 +138,15 @@ class Date extends Model\Document\Tag {
      * @param $idMapper
     * @throws \Exception
     */
-    public function getFromWebserviceImport($wsElement, $idMapper = null){
-
-       if(!$wsElement or empty($wsElement->value)){
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
+        if (!$wsElement or empty($wsElement->value)) {
             $this->date=null;
-       }else if(is_numeric($wsElement->value)){
-           $this->date = new \Pimcore\Date($wsElement->value);
-       } else {
-           throw new \Exception("cannot get document tag date from WS - invalid value [  ".$wsElement->value." ]");
-       }
-
-
+        } elseif (is_numeric($wsElement->value)) {
+            $this->date = new \Pimcore\Date($wsElement->value);
+        } else {
+            throw new \Exception("cannot get document tag date from WS - invalid value [  ".$wsElement->value." ]");
+        }
     }
 
     /**
@@ -149,10 +155,12 @@ class Date extends Model\Document\Tag {
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport() {
-       if($this->date){
-           return $this->date->getTimestamp();
-       } else return null;
+    public function getForWebserviceExport()
+    {
+        if ($this->date) {
+            return $this->date->getTimestamp();
+        } else {
+            return null;
+        }
     }
-
 }

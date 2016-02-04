@@ -31,13 +31,13 @@ class Json extends \Zend_Translate_Adapter
         $options     = $options + $this->_options;
 
 
-        if(!isset($this->_data[$locale])) {
+        if (!isset($this->_data[$locale])) {
             $this->_data[$locale] = [];
         }
 
         $rawTranslations = json_decode(file_get_contents($filename), true);
         foreach ($rawTranslations as $entry) {
-            if(!isset($translations[$entry["term"]])) {
+            if (!isset($translations[$entry["term"]])) {
                 $this->_data[$locale][$entry["term"]] = $entry["definition"];
             }
         }

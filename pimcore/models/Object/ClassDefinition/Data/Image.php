@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 
-class Image extends Model\Object\ClassDefinition\Data {
+class Image extends Model\Object\ClassDefinition\Data
+{
 
     /**
      * Static type of this element
@@ -68,7 +69,8 @@ class Image extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         return $this->width;
     }
 
@@ -76,7 +78,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param integer $width
      * @return void
      */
-    public function setWidth($width) {
+    public function setWidth($width)
+    {
         $this->width = $this->getAsIntegerCast($width);
         return $this;
     }
@@ -84,7 +87,8 @@ class Image extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getHeight() {
+    public function getHeight()
+    {
         return $this->height;
     }
 
@@ -92,7 +96,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param integer $height
      * @return void
      */
-    public function setHeight($height) {
+    public function setHeight($height)
+    {
         $this->height = $this->getAsIntegerCast($height);
         return $this;
     }
@@ -103,7 +108,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return integer|null
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         if ($data instanceof Asset) {
             return $data->getId();
         }
@@ -115,7 +121,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param integer $data
      * @return Asset
      */
-    public function getDataFromResource($data) {
+    public function getDataFromResource($data)
+    {
         if (intval($data) > 0) {
             return Asset\Image::getById($data);
         }
@@ -128,11 +135,11 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return integer|null
      */
-    public function getDataForQueryResource($data, $object = null) {
-
+    public function getDataForQueryResource($data, $object = null)
+    {
         if ($data instanceof Asset) {
             return $data->getId();
-        } 
+        }
         return null;
     }
 
@@ -142,7 +149,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return integer
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -152,7 +160,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return Asset
      */
-    public function getDataFromEditmode($data, $object = null) {
+    public function getDataFromEditmode($data, $object = null)
+    {
         return $this->getDataFromResource($data);
     }
 
@@ -161,7 +170,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param Asset\Image $data
      * @return string
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         if ($data instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getId() . '/width/100/height/100/aspectratio/true" />';
         }
@@ -170,26 +180,30 @@ class Image extends Model\Object\ClassDefinition\Data {
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Model\Object\AbstractObject $object
+     * @param Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object) {
+    public function getForCsvExport($object, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof Element\ElementInterface) {
             return $data->getFullPath();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
      * @param $importValue
      * @return mixed|null|Asset
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue)
+    {
         $value = null;
         if ($el = Asset::getByPath($importValue)) {
             $value = $el;
-        }
-        else {
+        } else {
             $value = null;
         }
         return $value;
@@ -202,8 +216,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array()) {
-
+    public function getCacheTags($data, $tags = array())
+    {
         $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Asset\Image) {
@@ -218,8 +232,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param $data
      * @return array
      */
-    public function resolveDependencies($data) {
-
+    public function resolveDependencies($data)
+    {
         $dependencies = array();
 
         if ($data instanceof Asset) {
@@ -238,9 +252,10 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param string $object
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
+    public function getForWebserviceExport($object)
+    {
         $data = $this->getDataFromObjectParam($object);
-        if($data instanceof Asset){
+        if ($data instanceof Asset) {
             return  $data->getId();
         }
     }
@@ -253,20 +268,19 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null) {
-
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    {
         $id = $value;
 
         if ($idMapper && !empty($value)) {
             $id = $idMapper->getMappedId("asset", $value);
             $fromMapper = true;
-
         }
 
         $asset = Asset::getById($id);
-        if(empty($id) && !$fromMapper){
+        if (empty($id) && !$fromMapper) {
             return null;
-        } else if (is_numeric($value) and $asset instanceof Asset) {
+        } elseif (is_numeric($value) and $asset instanceof Asset) {
             return $asset;
         } else {
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
@@ -298,7 +312,8 @@ class Image extends Model\Object\ClassDefinition\Data {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -308,7 +323,8 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param null $object
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null) {
+    public function getDiffVersionPreview($data, $object = null)
+    {
         $versionPreview = null;
         if ($data instanceof Asset\Image) {
             $versionPreview = "/admin/asset/get-image-thumbnail/id/" . $data->getId() . "/width/150/height/150/aspectratio/true";
@@ -339,10 +355,11 @@ class Image extends Model\Object\ClassDefinition\Data {
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array()) {
+    public function rewriteIds($object, $idMapping, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object, $params);
-        if($data instanceof Asset\Image) {
-            if(array_key_exists("asset", $idMapping) and array_key_exists($data->getId(), $idMapping["asset"])) {
+        if ($data instanceof Asset\Image) {
+            if (array_key_exists("asset", $idMapping) and array_key_exists($data->getId(), $idMapping["asset"])) {
                 return Asset::getById($idMapping["asset"][$data->getId()]);
             }
         }
@@ -352,7 +369,8 @@ class Image extends Model\Object\ClassDefinition\Data {
     /**
      * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\Object\ClassDefinition\Data $masterDefinition) {
+    public function synchronizeWithMasterDefinition(Model\Object\ClassDefinition\Data $masterDefinition)
+    {
         $this->uploadPath = $masterDefinition->uploadPath;
     }
 }

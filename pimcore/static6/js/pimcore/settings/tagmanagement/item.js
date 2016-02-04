@@ -41,7 +41,7 @@ pimcore.settings.tagmanagement.item = Class.create({
             text: t("save"),
             iconCls: "pimcore_icon_apply",
             handler: this.save.bind(this)
-        }); 
+        });
 
         this.itemContainer = new Ext.Panel({
             style: "margin: 20px 0 0 0;",
@@ -120,6 +120,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                     valueField: "id",
                     displayField: "domain",
                     triggerAction: "all",
+                    editable: false,
                     value: this.data.siteId
                 },{
                     xtype: "textfield",

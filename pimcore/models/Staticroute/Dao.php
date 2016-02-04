@@ -16,22 +16,31 @@ namespace Pimcore\Model\Staticroute;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\PhpArrayTable
+{
+
+    /**
+     *
+     */
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile("staticroutes");
+    }
 
     /**
      * @param null $id
      * @throws \Exception
      */
-    public function getById($id = null) {
-
+    public function getById($id = null)
+    {
         if ($id != null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM staticroutes WHERE id = ?", $this->model->getId());
-        $this->assignVariablesToModel($data);
-        
-        if($data["id"]) {
+        $data = $this->db->getById($this->model->getId());
+
+        if (isset($data["id"])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception("Route with id: " . $this->model->getId() . " does not exist");
@@ -43,30 +52,65 @@ class Dao extends Model\Dao\AbstractDao {
      * @param null $siteId
      * @throws \Exception
      */
-    public function getByName($name = null, $siteId = null) {
-
+    public function getByName($name = null, $siteId = null)
+    {
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT id FROM staticroutes WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
-        
-        if($data["id"]) {
-            $this->assignVariablesToModel($data);
+
+        $name = $this->model->getName();
+
+        $data = $this->db->fetchAll(function ($row) use ($name, $siteId) {
+            if ($row["name"] == $name) {
+                if (empty($row["siteId"]) || $row["siteId"] == $siteId) {
+                    return true;
+                }
+            }
+            return false;
+        }, function ($a, $b) {
+            if ($a["siteId"] == $b["siteId"]) {
+                return 0;
+            }
+            return ($a["siteId"] < $b["siteId"]) ? 1 : -1;
+        });
+
+        if (count($data) && $data[0]["id"]) {
+            $this->assignVariablesToModel($data[0]);
         } else {
             throw new \Exception("Route with name: " . $this->model->getName() . " does not exist");
         }
     }
 
     /**
-     * Save object to database
-     *
-     * @return void
+     * @throws \Exception
      */
-    public function save() {
-        if ($this->model->getId()) {
-            return $this->model->update();
+    public function save()
+    {
+        $ts = time();
+        if (!$this->model->getCreationDate()) {
+            $this->model->setCreationDate($ts);
         }
-        return $this->create();
+        $this->model->setModificationDate($ts);
+
+        try {
+            $dataRaw = get_object_vars($this->model);
+            $data = [];
+            $allowedProperties = ["id","name","pattern","reverse","module","controller",
+                "action","variables","defaults","siteId","priority","creationDate","modificationDate"];
+
+            foreach ($dataRaw as $key => $value) {
+                if (in_array($key, $allowedProperties)) {
+                    $data[$key] = $value;
+                }
+            }
+            $this->db->insertOrUpdate($data, $this->model->getId());
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        if (!$this->model->getId()) {
+            $this->model->setId($this->db->getLastInsertId());
+        }
     }
 
     /**
@@ -74,52 +118,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
-        $this->db->delete("staticroutes", $this->db->quoteInto("id = ?", $this->model->getId()));
-        
-        $this->model->clearDependentCache();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function update() {
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
-
-            $type = get_object_vars($this->model);
-
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns("staticroutes"))) {
-                    $data[$key] = $value;
-                }
-            }
-
-
-            $this->db->update("staticroutes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-        }
-        catch (\Exception $e) {
-            throw $e;
-        }
-        
-        $this->model->clearDependentCache();
-    }
-
-    /**
-     * Create a new record for the object in database
-     *
-     * @return boolean
-     */
-    public function create() {
-        $ts = time();
-        $this->model->setModificationDate($ts);
-        $this->model->setCreationDate($ts);
-
-        $this->db->insert("staticroutes", array());
-
-        $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
+    public function delete()
+    {
+        $this->db->delete($this->model->getId());
     }
 }

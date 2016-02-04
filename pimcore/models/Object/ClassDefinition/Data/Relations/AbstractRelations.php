@@ -19,7 +19,8 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Db;
 
-abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
+abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
+{
 
     /**
      * @var bool
@@ -42,7 +43,8 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
     /**
      * @return array
      */
-    public function getClasses() {
+    public function getClasses()
+    {
         $this->classes = $this->correctClasses($this->classes);
         return $this->classes;
     }
@@ -51,7 +53,8 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param array
      * @return void $classes
      */
-    public function setClasses($classes) {
+    public function setClasses($classes)
+    {
         $this->classes = $this->correctClasses($classes);
         return $this;
     }
@@ -61,14 +64,15 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param array
      * @return array
      */
-    protected function correctClasses ($classes) {
+    protected function correctClasses($classes)
+    {
 
         // this is the new method with Ext.form.MultiSelect
         /**
          * @extjs6
          * @todo this need to be refactored when extjs3 support is removed
          */
-        if((is_string($classes) && !empty($classes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($classes))) {
+        if ((is_string($classes) && !empty($classes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($classes))) {
             if (!\Pimcore\Tool\Admin::isExtJS6()) {
                 $classParts = explode(",", $classes);
             } else {
@@ -76,20 +80,20 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
             }
             $classes = array();
             foreach ($classParts as $class) {
-                if(is_array($class)) {
+                if (is_array($class)) {
                     $classes[] = $class;
-                } else if($class) {
+                } elseif ($class) {
                     $classes[] = array("classes" => $class);
                 }
             }
         }
 
         // this was the legacy method with Ext.SuperField
-        if(is_array($classes) && array_key_exists("classes",$classes)) {
+        if (is_array($classes) && array_key_exists("classes", $classes)) {
             $classes = array($classes);
         }
 
-        if(!is_array($classes)) {
+        if (!is_array($classes)) {
             $classes = array();
         }
 
@@ -99,7 +103,8 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
     /**
      * @return boolean
      */
-    public function getLazyLoading(){
+    public function getLazyLoading()
+    {
         return $this->lazyLoading;
     }
 
@@ -107,7 +112,8 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param  $lazyLoading
      * @return void
      */
-    public function setLazyLoading($lazyLoading){
+    public function setLazyLoading($lazyLoading)
+    {
         $this->lazyLoading = $lazyLoading;
         return $this;
     }
@@ -115,7 +121,8 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
     /**
      * @return bool
      */
-    public function isRemoteOwner(){
+    public function isRemoteOwner()
+    {
         return self::$remoteOwner;
     }
 
@@ -125,14 +132,15 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param Model\Object\AbstractObject $object
      * @return boolean
      */
-    protected function allowObjectRelation($object) {
+    protected function allowObjectRelation($object)
+    {
         $allowedClasses = $this->getClasses();
         $allowed = true;
         if (!$this->getObjectsAllowed()) {
             $allowed = false;
-        } else if ($this->getObjectsAllowed() and is_array($allowedClasses) and count($allowedClasses) > 0) {
+        } elseif ($this->getObjectsAllowed() and is_array($allowedClasses) and count($allowedClasses) > 0) {
             //check for allowed classes
-            if($object instanceof Object\Concrete){
+            if ($object instanceof Object\Concrete) {
                 $classname = $object->getClassName();
                 foreach ($allowedClasses as $c) {
                     $allowedClassnames[] = $c['classes'];
@@ -147,7 +155,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
             //don't check if no allowed classes set
         }
 
-        if($object instanceof Object\AbstractObject){
+        if ($object instanceof Object\AbstractObject) {
             \Logger::debug("checked object relation to target object [" . $object->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         } else {
             \Logger::debug("checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
@@ -162,19 +170,20 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param Asset $asset
      * @return boolean
      */
-    protected function allowAssetRelation($asset) {
+    protected function allowAssetRelation($asset)
+    {
         $allowedAssetTypes = $this->getAssetTypes();
         $allowed = true;
         if (!$this->getAssetsAllowed()) {
             $allowed = false;
-        } else if ($this->getAssetsAllowed() and  is_array($allowedAssetTypes) and count($allowedAssetTypes) > 0) {
+        } elseif ($this->getAssetsAllowed() and  is_array($allowedAssetTypes) and count($allowedAssetTypes) > 0) {
             //check for allowed asset types
             foreach ($allowedAssetTypes as $t) {
-                if (is_array($t) && array_key_exists("assetTypes",$t)) {
+                if (is_array($t) && array_key_exists("assetTypes", $t)) {
                     $t = $t["assetTypes"];
                 }
 
-                if($t && is_string($t)) {
+                if ($t && is_string($t)) {
                     $allowedTypes[] = $t;
                 }
             }
@@ -187,7 +196,6 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
 
         \Logger::debug("checked object relation to target asset [" . $asset->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         return $allowed;
-
     }
 
     /**
@@ -196,13 +204,14 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param Document $document
      * @return boolean
      */
-    protected function allowDocumentRelation($document) {
+    protected function allowDocumentRelation($document)
+    {
         $allowedDocumentTypes = $this->getDocumentTypes();
 
         $allowed = true;
         if (!$this->getDocumentsAllowed()) {
             $allowed = false;
-        } else if ($this->getDocumentsAllowed() and  is_array($allowedDocumentTypes) and count($allowedDocumentTypes) > 0) {
+        } elseif ($this->getDocumentsAllowed() and  is_array($allowedDocumentTypes) and count($allowedDocumentTypes) > 0) {
             //check for allowed asset types
             foreach ($allowedDocumentTypes as $t) {
                 $allowedTypes[] = $t['documentTypes'];
@@ -216,7 +225,6 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
 
         \Logger::debug("checked object relation to target document [" . $document->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         return $allowed;
-
     }
 
     /** Enrich relation with type-specific data.
@@ -225,38 +233,32 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param $classId
      * @param array $relation
      */
-    protected function enrichRelation($object, $params, &$classId, &$relation = array()) {
+    protected function enrichRelation($object, $params, &$classId, &$relation = array())
+    {
         if (!$relation) {
             $relation = array();
         }
 
-        if($object instanceof Object\Concrete) {
-
+        if ($object instanceof Object\Concrete) {
             $relation["src_id"] = $object->getId();
             $relation["ownertype"] = "object";
 
             $classId = $object->getClassId();
-
-        } else if($object instanceof Object\Fieldcollection\Data\AbstractData) {
-
+        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $relation["src_id"] = $object->getObject()->getId(); // use the id from the object, not from the field collection
             $relation["ownertype"] = "fieldcollection";
             $relation["ownername"] = $object->getFieldname();
             $relation["position"] = $object->getIndex();
 
             $classId = $object->getObject()->getClassId();
-
-        } else if ($object instanceof Object\Localizedfield) {
-
+        } elseif ($object instanceof Object\Localizedfield) {
             $relation["src_id"] = $object->getObject()->getId();
             $relation["ownertype"] = "localizedfield";
             $relation["ownername"] = "localizedfield";
             $relation["position"] = $params["language"];
 
             $classId = $object->getObject()->getClassId();
-
-        } else if ($object instanceof Object\Objectbrick\Data\AbstractData) {
-
+        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
             $relation["src_id"] = $object->getObject()->getId();
             $relation["ownertype"] = "objectbrick";
             $relation["ownername"] = $object->getFieldname();
@@ -264,7 +266,6 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
 
             $classId = $object->getObject()->getClassId();
         }
-
     }
 
     /**
@@ -272,8 +273,8 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param array $params
      * @throws \Exception
      */
-    public function save ($object, $params = array()) {
-
+    public function save($object, $params = array())
+    {
         $db = Db::get();
 
         $data = $this->getDataFromObjectParam($object, $params);
@@ -306,25 +307,26 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param array $params
      * @return null
      */
-    public function load($object, $params = array()) {
+    public function load($object, $params = array())
+    {
         $db = Db::get();
         $data = null;
 
-        if($object instanceof Object\Concrete) {
+        if ($object instanceof Object\Concrete) {
             if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or (array_key_exists("force", $params) && $params["force"])) {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", array($object->getId(), $this->getName()));
             } else {
                 return null;
             }
-        } else if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
-        } else if ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof Object\Localizedfield) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", array($object->getObject()->getId(), $this->getName(), $params["language"]));
-        } else if ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()));
 
             // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed
-            if(count($relations) < 1) {
+            if (count($relations) < 1) {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
             }
             // HACK END
@@ -358,13 +360,14 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data {
      * @param array $idMapping
      * @return array
      */
-    public function rewriteIdsService($data, $idMapping) {
-        if(is_array($data)) {
-            foreach($data as &$element) {
+    public function rewriteIdsService($data, $idMapping)
+    {
+        if (is_array($data)) {
+            foreach ($data as &$element) {
                 $id = $element->getId();
                 $type = Element\Service::getElementType($element);
 
-                if(array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
+                if (array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
                     $element = Element\Service::getElementById($type, $idMapping[$type][$id]);
                 }
             }

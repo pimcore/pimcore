@@ -12,14 +12,16 @@
 
 namespace Pimcore;
 
-class Report {
+class Report
+{
 
     /**
      * @static
      * @depricated
      * @return \Zend_Config
      */
-    public static function getConfig() {
+    public static function getConfig()
+    {
         return Config::getReportConfig();
     }
 }

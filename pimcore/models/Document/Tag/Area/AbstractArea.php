@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Tag\Area;
 
 use Pimcore\Model;
 
-abstract class AbstractArea {
+abstract class AbstractArea
+{
 
     /**
      * @var \Zend_View
@@ -42,7 +43,8 @@ abstract class AbstractArea {
      * @param $view
      * @return void
      */
-    public function setView ($view) {
+    public function setView($view)
+    {
         $this->view = $view;
         return $this;
     }
@@ -50,7 +52,8 @@ abstract class AbstractArea {
     /**
      * @return \Zend_View
      */
-    public function getView() {
+    public function getView()
+    {
         return $this->view;
     }
 
@@ -58,7 +61,8 @@ abstract class AbstractArea {
      * @param $config
      * @return void
      */
-    public function setConfig ($config) {
+    public function setConfig($config)
+    {
         $this->config = $config;
         return $this;
     }
@@ -66,7 +70,8 @@ abstract class AbstractArea {
     /**
      * @return \Zend_Config
      */
-    public function getConfig() {
+    public function getConfig()
+    {
         return $this->config;
     }
 
@@ -74,8 +79,9 @@ abstract class AbstractArea {
      * @param $key
      * @return mixed
      */
-    public function getParam($key) {
-        if(array_key_exists($key, $this->params)) {
+    public function getParam($key)
+    {
+        if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
         }
         return;
@@ -84,7 +90,8 @@ abstract class AbstractArea {
     /**
      * @return array
      */
-    public function getAllParams () {
+    public function getAllParams()
+    {
         return $this->params;
     }
 
@@ -93,7 +100,8 @@ abstract class AbstractArea {
      * @param $key
      * @return mixed
      */
-    public function _getParam($key) {
+    public function _getParam($key)
+    {
         return $this->getParam($key);
     }
 
@@ -101,7 +109,8 @@ abstract class AbstractArea {
      * @deprecated
      * @return array
      */
-    public function _getAllParams () {
+    public function _getAllParams()
+    {
         return $this->getAllParams();
     }
 
@@ -110,7 +119,8 @@ abstract class AbstractArea {
      * @param $value
      * @return void
      */
-    public function addParam ($key, $value) {
+    public function addParam($key, $value)
+    {
         $this->params[$key] = $value;
     }
 
@@ -118,7 +128,8 @@ abstract class AbstractArea {
      * @param $params
      * @return void
      */
-    public function setParams ($params) {
+    public function setParams($params)
+    {
         $this->params = $params;
         return $this;
     }

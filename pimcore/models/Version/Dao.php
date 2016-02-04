@@ -16,13 +16,15 @@ namespace Pimcore\Model\Version;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $id
      * @throws \Exception
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $data = $this->db->fetchRow("SELECT * FROM versions WHERE id = ?", $id);
 
         if (!$data["id"]) {
@@ -37,13 +39,13 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         $version = get_object_vars($this->model);
 
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("versions"))) {
-                if(is_bool($value)) {
+                if (is_bool($value)) {
                     $value = (int) $value;
                 }
                 
@@ -54,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao {
         $this->db->insertOrUpdate("versions", $data);
 
         $lastInsertId = $this->db->lastInsertId();
-        if(!$this->model->getId() && $lastInsertId) {
+        if (!$this->model->getId() && $lastInsertId) {
             $this->model->setId($lastInsertId);
         }
 
@@ -66,8 +68,9 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
-        $this->db->delete("versions", $this->db->quoteInto("id = ?", $this->model->getId() ));
+    public function delete()
+    {
+        $this->db->delete("versions", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -75,7 +78,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param integer $days
      * @return array
      */
-    public function getOutdatedVersionsDays($days) {
+    public function getOutdatedVersionsDays($days)
+    {
         $deadline = time() - (intval($days) * 86400);
 
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", array($this->model->getCid(), $this->model->getCtype(), $deadline));
@@ -86,7 +90,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $steps
      * @return array
      */
-    public function getOutdatedVersionsSteps($steps) {
+    public function getOutdatedVersionsSteps($steps)
+    {
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",1000000", array($this->model->getCid(), $this->model->getCtype()));
         return $versionIds;
     }
@@ -95,22 +100,21 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $elementTypes
      * @return array
      */
-    public function maintenanceGetOutdatedVersions ($elementTypes, $ignoreIds = array()) {
-
+    public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = array())
+    {
         $ignoreIdsList = implode(",", $ignoreIds);
-        if(!$ignoreIdsList) {
+        if (!$ignoreIdsList) {
             $ignoreIdsList = "0"; // set a default to avoid SQL errors (there's no version with ID 0)
         }
         $versionIds = array();
 
         \Logger::debug("ignore ID's: " . $ignoreIdsList);
 
-        if(!empty($elementTypes)) {
+        if (!empty($elementTypes)) {
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
-
-                if($elementType["days"] > 0) {
+                if ($elementType["days"] > 0) {
                     // by days
                     $deadline = time() - ($elementType["days"] * 86400);
                     $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (" . $ignoreIdsList . ")", array($elementType["elementType"], $deadline));
@@ -126,7 +130,7 @@ class Dao extends Model\Dao\AbstractDao {
                         $versionIds = array_merge($versionIds, $elementVersions);
 
                         // call the garbage collector if memory consumption is > 100MB
-                        if(memory_get_usage() > 100000000 && ($count % 100 == 0)) {
+                        if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
                             \Pimcore::collectGarbage();
                             sleep(1);
 

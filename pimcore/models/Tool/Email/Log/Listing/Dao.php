@@ -16,14 +16,16 @@ namespace Pimcore\Model\Tool\Email\Log\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
      *
      * @return array
      */
-    public function load() {
+    public function load()
+    {
         $emailLogs = $this->db->fetchCol("SELECT id FROM email_log" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $emailLogsArray = array();
@@ -40,7 +42,8 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return array
      */
-    public function getDataArray() {
+    public function getDataArray()
+    {
         $emailLogData = $this->db->fetchAll("SELECT * FROM email_log " . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $emailLogData;
     }
@@ -50,12 +53,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return integer
      */
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM email_log " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
         return $amount;
     }

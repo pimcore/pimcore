@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Layout;
 
 use Pimcore\Model;
 
-class Button extends Model\Object\ClassDefinition\Layout {
+class Button extends Model\Object\ClassDefinition\Layout
+{
 
     /**
      * Static type of this element
@@ -34,16 +35,17 @@ class Button extends Model\Object\ClassDefinition\Layout {
      * @var
      */
     public $text;
-	
-	/**
-	 * @var
-	 */
-	public $icon;
+    
+    /**
+     * @var
+     */
+    public $icon;
 
     /**
      * @return mixed
      */
-    public function getText() {
+    public function getText()
+    {
         return $this->text;
     }
 
@@ -51,7 +53,8 @@ class Button extends Model\Object\ClassDefinition\Layout {
      * @param $text
      * @return $this
      */
-    public function setText($text) {
+    public function setText($text)
+    {
         $this->text = $text;
         return $this;
     }
@@ -59,7 +62,8 @@ class Button extends Model\Object\ClassDefinition\Layout {
     /**
      * @return mixed
      */
-    public function getHandler() {
+    public function getHandler()
+    {
         return $this->handler;
     }
 
@@ -67,15 +71,17 @@ class Button extends Model\Object\ClassDefinition\Layout {
      * @param $handler
      * @return $this
      */
-    public function setHandler($handler) {
+    public function setHandler($handler)
+    {
         $this->handler = $handler;
         return $this;
     }
-	
-	/**
+    
+    /**
      * @return mixed
      */
-    public function getIcon() {
+    public function getIcon()
+    {
         return $this->icon;
     }
 
@@ -83,7 +89,8 @@ class Button extends Model\Object\ClassDefinition\Layout {
      * @param $icon
      * @return $this
      */
-    public function setIcon($icon) {
+    public function setIcon($icon)
+    {
         $this->icon = $icon;
         return $this;
     }

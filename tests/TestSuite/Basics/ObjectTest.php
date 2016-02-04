@@ -6,9 +6,11 @@
  */
 
 
-class TestSuite_Basics_ObjectTest extends Test_Base {
+class TestSuite_Basics_ObjectTest extends Test_Base
+{
 
-    public function setUp() {
+    public function setUp()
+    {
         Test_Tool::cleanUp();
         parent::setUp();
     }
@@ -17,7 +19,8 @@ class TestSuite_Basics_ObjectTest extends Test_Base {
     /**
      * Verifies that a object with the same parent ID cannot be created.
      */
-    public function testParentIdentical() {
+    public function testParentIdentical()
+    {
         $this->printTestName();
 
         $savedObject = Test_Tool::createEmptyObject();
@@ -28,14 +31,14 @@ class TestSuite_Basics_ObjectTest extends Test_Base {
             $savedObject->save();
             $this->fail("Expected an exception");
         } catch (Exception $e) {
-
         }
     }
 
     /**
      * Parent ID of a new object cannot be 0
      */
-    public function testParentIs0() {
+    public function testParentIs0()
+    {
         $this->printTestName();
 
         $savedObject = Test_Tool::createEmptyObject("", false);
@@ -46,8 +49,6 @@ class TestSuite_Basics_ObjectTest extends Test_Base {
             $savedObject->save();
             $this->fail("Expected an exception");
         } catch (Exception $e) {
-
         }
     }
-
 }

@@ -16,20 +16,30 @@ namespace Pimcore\Model\Staticroute\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Dao\PhpArrayTable
+{
+
+    /**
+     *
+     */
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile("staticroutes");
+    }
 
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Staticroute elements
      *
      * @return array
      */
-    public function load() {
-
-        $routesData = $this->db->fetchCol("SELECT id FROM staticroutes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+    public function load()
+    {
+        $routesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         $routes = array();
         foreach ($routesData as $routeData) {
-            $routes[] = Model\Staticroute::getById($routeData);
+            $routes[] = Model\Staticroute::getById($routeData["id"]);
         }
 
         $this->model->setRoutes($routes);
@@ -39,15 +49,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return int
      */
-    public function getTotalCount() {
-
-        try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM staticroutes " . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
-
-        }
+    public function getTotalCount()
+    {
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $amount = count($data);
 
         return $amount;
     }
-
 }

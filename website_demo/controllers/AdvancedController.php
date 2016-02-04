@@ -9,7 +9,8 @@ use Pimcore\Tool;
 
 class AdvancedController extends Action
 {
-    public function init() {
+    public function init()
+    {
         parent::init();
 
         // do something on initialization //-> see Zend Framework
@@ -18,20 +19,22 @@ class AdvancedController extends Action
         $this->enableLayout();
     }
 
-    public function preDispatch() {
+    public function preDispatch()
+    {
         parent::preDispatch();
 
         // do something before the action is called //-> see Zend Framework
     }
 
-    public function postDispatch() {
+    public function postDispatch()
+    {
         parent::postDispatch();
 
         // do something after the action is called //-> see Zend Framework
     }
 
-    public function indexAction() {
-
+    public function indexAction()
+    {
         $list = new Document\Listing();
         $list->setCondition("parentId = ? AND type IN ('link','page')", [$this->document->getId()]);
         $list->load();
@@ -39,14 +42,15 @@ class AdvancedController extends Action
         $this->view->documents = $list;
     }
 
-    public function contactFormAction() {
+    public function contactFormAction()
+    {
         $success = false;
 
-        if($this->getParam("provider")) {
+        if ($this->getParam("provider")) {
             $adapter = Tool\HybridAuth::authenticate($this->getParam("provider"));
-            if($adapter) {
+            if ($adapter) {
                 $user_data = $adapter->getUserProfile();
-                if($user_data) {
+                if ($user_data) {
                     $this->setParam("firstname", $user_data->firstName);
                     $this->setParam("lastname", $user_data->lastName);
                     $this->setParam("email", $user_data->email);
@@ -56,17 +60,17 @@ class AdvancedController extends Action
         }
 
         // getting parameters is very easy ... just call $this->getParam("yorParamKey"); regardless if's POST or GET
-        if($this->getParam("firstname") && $this->getParam("lastname") && $this->getParam("email") && $this->getParam("message")) {
+        if ($this->getParam("firstname") && $this->getParam("lastname") && $this->getParam("email") && $this->getParam("message")) {
             $success = true;
 
             $mail = new Mail();
             $mail->setIgnoreDebugMode(true);
 
             // To is used from the email document, but can also be set manually here (same for subject, CC, BCC, ...)
-            //$mail->addTo("bernhard.rusch@pimcore.org");
+            //$mail->addTo("info@pimcore.org");
 
             $emailDocument = $this->document->getProperty("email");
-            if(!$emailDocument) {
+            if (!$emailDocument) {
                 $emailDocument = Document::getById(38);
             }
 
@@ -77,7 +81,7 @@ class AdvancedController extends Action
 
         // do some validation & assign the parameters to the view
         foreach (["firstname", "lastname", "email", "message", "gender"] as $key) {
-            if($this->getParam($key)) {
+            if ($this->getParam($key)) {
                 $this->view->$key = htmlentities(strip_tags($this->getParam($key)));
             }
         }
@@ -86,7 +90,8 @@ class AdvancedController extends Action
         $this->view->success = $success;
     }
 
-    public function searchAction () {
+    public function searchAction()
+    {
         if ($this->getParam("q")) {
             try {
                 $page = $this->getParam('page');
@@ -107,26 +112,27 @@ class AdvancedController extends Action
             } catch (\Exception $e) {
                 // something went wrong: eg. limit exceeded, wrong configuration, ...
                 \Logger::err($e);
-                echo $e->getMessage();exit;
+                echo $e->getMessage();
+                exit;
             }
         }
     }
 
-    public function objectFormAction() {
-
+    public function objectFormAction()
+    {
         $success = false;
 
         // getting parameters is very easy ... just call $this->getParam("yorParamKey"); regardless if's POST or GET
-        if($this->getParam("firstname") && $this->getParam("lastname") && $this->getParam("email") && $this->getParam("terms")) {
+        if ($this->getParam("firstname") && $this->getParam("lastname") && $this->getParam("email") && $this->getParam("terms")) {
             $success = true;
 
             // for this example the class "person" and "inquiry" is used
             // first we create a person, then we create an inquiry object and link them together
 
             // check for an existing person with this name
-            $person = Object\Person::getByEmail($this->getParam("email"),1);
+            $person = Object\Person::getByEmail($this->getParam("email"), 1);
 
-            if(!$person) {
+            if (!$person) {
                 // if there isn't an existing, ... create one
                 $filename = \Pimcore\File::getValidFilename($this->getParam("email"));
 
@@ -158,13 +164,13 @@ class AdvancedController extends Action
             $inquiry->setDate(\Zend_Date::now());
             $inquiry->setTerms((bool) $this->getParam("terms"));
             $inquiry->save();
-        } else if ($this->getRequest()->isPost()) {
+        } elseif ($this->getRequest()->isPost()) {
             $this->view->error = true;
         }
 
         // do some validation & assign the parameters to the view
         foreach (["firstname", "lastname", "email", "message", "terms"] as $key) {
-            if($this->getParam($key)) {
+            if ($this->getParam($key)) {
                 $this->view->$key = htmlentities(strip_tags($this->getParam($key)));
             }
         }
@@ -173,13 +179,13 @@ class AdvancedController extends Action
         $this->view->success = $success;
     }
 
-    public function sitemapAction () {
-
+    public function sitemapAction()
+    {
         set_time_limit(900);
 
         $this->view->initial = false;
 
-        if($this->getParam("doc")) {
+        if ($this->getParam("doc")) {
             $doc = $this->getParam("doc");
         } else {
             $doc = $this->document->getProperty("mainNavStartNode");
@@ -191,15 +197,16 @@ class AdvancedController extends Action
         $this->view->doc = $doc;
     }
 
-    public function assetThumbnailListAction() {
+    public function assetThumbnailListAction()
+    {
 
         // try to get the tag where the parent folder is specified
         $parentFolder = $this->document->getElement("parentFolder");
-        if($parentFolder) {
+        if ($parentFolder) {
             $parentFolder = $parentFolder->getElement();
         }
 
-        if(!$parentFolder) {
+        if (!$parentFolder) {
             // default is the home folder
             $parentFolder = Asset::getById(1);
         }

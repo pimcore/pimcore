@@ -12,7 +12,6 @@
 
 namespace Pimcore\Tool\RestClient;
 
-class Exception extends \Exception {
-
-
+class Exception extends \Exception
+{
 }

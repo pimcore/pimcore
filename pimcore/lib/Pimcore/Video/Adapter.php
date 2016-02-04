@@ -12,7 +12,8 @@
 
 namespace Pimcore\Video;
 
-abstract class Adapter {
+abstract class Adapter
+{
 
     /**
      * @var int
@@ -81,34 +82,34 @@ abstract class Adapter {
      * @param $file
      * @return mixed
      */
-    public abstract function load($file);
+    abstract public function load($file);
 
     /**
      * @return mixed
      */
-    public abstract function save ();
+    abstract public function save();
 
     /**
      * @abstract
      * @param $timeOffset
      */
-    public abstract function saveImage($file, $timeOffset = null);
+    abstract public function saveImage($file, $timeOffset = null);
 
     /**
      * @abstract
      */
-    public abstract function getConversionStatus();
+    abstract public function getConversionStatus();
 
     /**
      * @abstract
      */
-    public abstract function destroy();
+    abstract public function destroy();
 
     /**
      * @abstract
      * @return bool
      */
-    public abstract function isFinished();
+    abstract public function isFinished();
 
     /**
      * @param $format

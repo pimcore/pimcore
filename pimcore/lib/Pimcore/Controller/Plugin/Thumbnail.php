@@ -15,66 +15,71 @@ namespace Pimcore\Controller\Plugin;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 
-class Thumbnail extends \Zend_Controller_Plugin_Abstract {
+class Thumbnail extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
-        if(preg_match("@^/website/var/tmp/image-thumbnails(.*)?/([0-9]+)/thumb__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@",$request->getPathInfo(),$matches)) {
+        if (preg_match("@^/website/var/tmp/image-thumbnails(.*)?/([0-9]+)/thumb__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $request->getPathInfo(), $matches)) {
             $assetId = $matches[2];
             $thumbnailName = $matches[3];
             $format = $matches[6];
 
-            if($asset = Asset::getById($assetId)) {
+            if ($asset = Asset::getById($assetId)) {
                 try {
                     $page = 1;
                     $thumbnailFile = null;
                     $thumbnailConfig = null;
                     $deferredConfigId = "thumb_" . $assetId . "__" . md5($request->getPathInfo());
-                    if($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
+                    if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                         $thumbnailConfig = $thumbnailConfigItem->getData();
                         TmpStore::delete($deferredConfigId);
 
-                        if(!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
+                        if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
                             throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                         }
 
                         $tmpPage = array_pop(explode("-", $thumbnailName));
-                        if(is_numeric($tmpPage)) {
+                        if (is_numeric($tmpPage)) {
                             $page = $tmpPage;
                         }
                     } else {
                         //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
-                        if(preg_match("|document_(.*)\-(\d+)$|",$thumbnailName,$matchesThumbs)){
+                        if (preg_match("|document_(.*)\-(\d+)$|", $thumbnailName, $matchesThumbs)) {
                             $thumbnailName = $matchesThumbs[1];
                             $page = (int)$matchesThumbs[2];
                         }
                         // just check if the thumbnail exists -> throws exception otherwise
                         $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
+                        if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
+                            throw new \Exception("Thumbnail '" . $thumbnailName . "' file doesn't exists");
+                        }
                     }
 
-                    if($asset instanceof Asset\Document) {
-                        $thumbnailConfig->setName(preg_replace("/\-[\d]+/","",$thumbnailConfig->getName()));
-                        $thumbnailConfig->setName(str_replace("document_","",$thumbnailConfig->getName()));
+                    if ($asset instanceof Asset\Document) {
+                        $thumbnailConfig->setName(preg_replace("/\-[\d]+/", "", $thumbnailConfig->getName()));
+                        $thumbnailConfig->setName(str_replace("document_", "", $thumbnailConfig->getName()));
 
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getImageThumbnail($thumbnailConfig, $page);
-                    } else if ($asset instanceof Asset\Image) {
+                    } elseif ($asset instanceof Asset\Image) {
                         //check if high res image is called
-                        if(array_key_exists(5, $matches)) {
-                            $highResFactor = (float) str_replace(array("@","x"),"", $matches[5]);
+                        if (array_key_exists(5, $matches)) {
+                            $highResFactor = (float) str_replace(array("@", "x"), "", $matches[5]);
                             $thumbnailConfig->setHighResolution($highResFactor);
                         }
 
                         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailConfig);
                     }
 
-                    if($thumbnailFile && file_exists($thumbnailFile)) {
+                    if ($thumbnailFile && file_exists($thumbnailFile)) {
                         $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
-                        if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
+                        if (in_array($fileExtension, array("gif", "jpeg", "jpeg", "png", "pjpeg"))) {
                             header("Content-Type: image/".$fileExtension, true);
                         } else {
                             header("Content-Type: " . $asset->getMimetype(), true);
@@ -98,17 +103,17 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
     /**
      *
      */
-    public function dispatchLoopShutdown() {
-
-        if(!Asset\Image\Thumbnail::isPictureElementInUse()) {
+    public function dispatchLoopShutdown()
+    {
+        if (!Asset\Image\Thumbnail::isPictureElementInUse()) {
             return;
         }
 
-        if(!Asset\Image\Thumbnail::getEmbedPicturePolyfill()) {
+        if (!Asset\Image\Thumbnail::getEmbedPicturePolyfill()) {
             return;
         }
 
-        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
+        if (!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
@@ -120,7 +125,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract {
         // this method is much faster than using simple_html_dom and uses less memory
         $code = '<script type="text/javascript" src="/pimcore/static/js/frontend/picturePolyfill.min.js" defer></script>';
         $headEndPosition = stripos($body, "</head>");
-        if($headEndPosition !== false) {
+        if ($headEndPosition !== false) {
             $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
         }
 

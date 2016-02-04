@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 
-class Dao extends Model\Object\Listing\Dao {
+class Dao extends Model\Object\Listing\Dao
+{
 
     /**
      * @var bool
@@ -52,28 +53,26 @@ class Dao extends Model\Object\Listing\Dao {
         // create base
         $field = $this->getTableName() . ".o_id";
         $select->from(
-            [ $this->getTableName() ]
-            , [
-                new \Zend_Db_Expr(sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field)))
-                , 'o_type'
+            [ $this->getTableName() ], [
+                new \Zend_Db_Expr(sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field))), 'o_type'
             ]
         );
 
 
         // add joins
-        $this->addJoins( $select );
+        $this->addJoins($select);
 
         // add condition
-        $this->addConditions( $select );
+        $this->addConditions($select);
 
         // group by
-        $this->addGroupBy( $select );
+        $this->addGroupBy($select);
 
         // order
-        $this->addOrder( $select );
+        $this->addOrder($select);
 
         // limit
-        $this->addLimit( $select );
+        $this->addLimit($select);
 
         return $select;
     }
@@ -82,7 +81,8 @@ class Dao extends Model\Object\Listing\Dao {
      * @return array
      * @throws
      */
-    public function loadIdList() {
+    public function loadIdList()
+    {
         try {
             return parent::loadIdList();
         } catch (\Exception $e) {
@@ -96,13 +96,14 @@ class Dao extends Model\Object\Listing\Dao {
      * @throws
      * @throws \Exception
      */
-    protected function exceptionHandler ($e) {
+    protected function exceptionHandler($e)
+    {
 
         // create view if it doesn't exist already // HACK
-        $pdoMySQL = preg_match("/Base table or view not found/",$e->getMessage());
-        $Mysqli = preg_match("/Table (.*) doesn't exist/",$e->getMessage());
+        $pdoMySQL = preg_match("/Base table or view not found/", $e->getMessage());
+        $Mysqli = preg_match("/Table (.*) doesn't exist/", $e->getMessage());
 
-        if(($Mysqli || $pdoMySQL) && $this->firstException) {
+        if (($Mysqli || $pdoMySQL) && $this->firstException) {
             $this->firstException = false;
 
             $localizedFields = new Object\Localizedfield();
@@ -120,27 +121,26 @@ class Dao extends Model\Object\Listing\Dao {
      * @throws \Exception
      * @throws \Zend_Exception
      */
-    protected function getTableName () {
-
-        if(empty($this->tableName)) {
+    protected function getTableName()
+    {
+        if (empty($this->tableName)) {
 
             // default
             $this->tableName = "object_" . $this->model->getClassId();
 
-            if(!$this->model->getIgnoreLocalizedFields()) {
-
+            if (!$this->model->getIgnoreLocalizedFields()) {
                 $language = null;
                 // check for a localized field and if they should be used for this list
-                if(property_exists("\\Pimcore\\Model\\Object\\" . ucfirst($this->model->getClassName()), "localizedfields")) {
-                    if($this->model->getLocale()) {
-                        if(Tool::isValidLanguage((string) $this->model->getLocale())) {
+                if (property_exists("\\Pimcore\\Model\\Object\\" . ucfirst($this->model->getClassName()), "localizedfields")) {
+                    if ($this->model->getLocale()) {
+                        if (Tool::isValidLanguage((string) $this->model->getLocale())) {
                             $language = (string) $this->model->getLocale();
                         }
                     }
 
-                    if(!$language && \Zend_Registry::isRegistered("Zend_Locale")) {
+                    if (!$language && \Zend_Registry::isRegistered("Zend_Locale")) {
                         $locale = \Zend_Registry::get("Zend_Locale");
-                        if(Tool::isValidLanguage((string) $locale)) {
+                        if (Tool::isValidLanguage((string) $locale)) {
                             $language = (string) $locale;
                         }
                     }
@@ -165,10 +165,11 @@ class Dao extends Model\Object\Listing\Dao {
      * @param string $column
      * @return string
      */
-    protected function getSelectPart($defaultString = "", $column = "oo_id") {
+    protected function getSelectPart($defaultString = "", $column = "oo_id")
+    {
         $selectPart = $defaultString;
         $fieldCollections = $this->model->getFieldCollections();
-        if(!empty($fieldCollections)) {
+        if (!empty($fieldCollections)) {
             $selectPart = "DISTINCT " . $column;
         }
         return $selectPart;
@@ -184,13 +185,13 @@ class Dao extends Model\Object\Listing\Dao {
     {
         // add fielcollection's
         $fieldCollections = $this->model->getFieldCollections();
-        if(!empty($fieldCollections)) {
-            foreach($fieldCollections as $fc) {
+        if (!empty($fieldCollections)) {
+            foreach ($fieldCollections as $fc) {
 
                 // join info
                 $table = 'object_collection_' . $fc['type'] . '_' . $this->model->getClassId();
                 $name = $fc['type'];
-                if(!empty($fc['fieldname'])) {
+                if (!empty($fc['fieldname'])) {
                     $name .= "~" . $fc['fieldname'];
                 }
 
@@ -201,7 +202,7 @@ class Dao extends Model\Object\Listing\Dao {
  AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
 CONDITION;
 
-                if(!empty($fc['fieldname'])) {
+                if (!empty($fc['fieldname'])) {
                     $condition .= <<<CONDITION
  AND {$this->db->quoteIdentifier($name)}.fieldname = "{$fc['fieldname']}"
 CONDITION;
@@ -210,9 +211,7 @@ CONDITION;
 
                 // add join
                 $select->joinLeft(
-                    [ $name => $table ]
-                    , $condition
-                    , ''
+                    [ $name => $table ], $condition, ''
                 );
             }
         }
@@ -220,8 +219,8 @@ CONDITION;
 
         // add brick's
         $objectbricks = $this->model->getObjectbricks();
-        if(!empty($objectbricks)) {
-            foreach($objectbricks as $ob) {
+        if (!empty($objectbricks)) {
+            foreach ($objectbricks as $ob) {
 
                 // join info
                 $table = 'object_brick_query_' . $ob . '_' . $this->model->getClassId();
@@ -230,14 +229,12 @@ CONDITION;
 
                 // add join
                 $select->joinLeft(
-                    [ $name => $table ]
-                    , <<<CONDITION
+                    [ $name => $table ], <<<CONDITION
 1
 AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
 CONDITION
                     , ''
                 );
-
             }
         }
 

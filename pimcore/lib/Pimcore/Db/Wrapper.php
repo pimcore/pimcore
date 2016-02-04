@@ -14,7 +14,8 @@ namespace Pimcore\Db;
 
 use Pimcore\Db;
 
-class Wrapper {
+class Wrapper
+{
 
     /**
      * @var \Zend_Db_Adapter_Abstract
@@ -47,7 +48,7 @@ class Wrapper {
      */
     public function getWriteResource()
     {
-        if($this->writeResource === null) {
+        if ($this->writeResource === null) {
             // get the \Zend_Db_Adapter_Abstract not the wrapper
             try {
                 $this->writeResource = Db::getConnection(true, true);
@@ -56,7 +57,7 @@ class Wrapper {
             }
         }
 
-        if($this->writeResource !== false) {
+        if ($this->writeResource !== false) {
             return $this->writeResource;
         }
 
@@ -67,7 +68,8 @@ class Wrapper {
     /**
      *
      */
-    public function closeWriteResource() {
+    public function closeWriteResource()
+    {
         $this->closeConnectionResource($this->writeResource);
         $this->writeResource = null;
     }
@@ -75,8 +77,9 @@ class Wrapper {
     /**
      * @param $resource
      */
-    public function __construct($resource = false) {
-        if($resource) {
+    public function __construct($resource = false)
+    {
+        if ($resource) {
             $this->setResource($resource);
         }
     }
@@ -96,7 +99,7 @@ class Wrapper {
      */
     public function getResource()
     {
-        if(!$this->resource) {
+        if (!$this->resource) {
             // get the \Zend_Db_Adapter_Abstract not the wrapper
             $this->resource = Db::getConnection(true);
         }
@@ -106,7 +109,8 @@ class Wrapper {
     /**
      *
      */
-    public function closeResource() {
+    public function closeResource()
+    {
         $this->closeConnectionResource($this->resource);
         $this->resource = null;
     }
@@ -114,19 +118,20 @@ class Wrapper {
     /**
      * @param \Zend_Db_Adapter_Abstract $resource
      */
-    protected function closeConnectionResource($resource) {
-        if($resource) {
+    protected function closeConnectionResource($resource)
+    {
+        if ($resource) {
             try {
                 $connectionId = null;
 
                 // unfortunately mysqli doesn't throw an exception in the case the connection is lost (issues a warning)
                 // and when sending a query to the broken connection (eg. when forking)
                 // so we have to handle mysqli and pdo_mysql differently
-                if($resource instanceof \Zend_Db_Adapter_Mysqli) {
-                    if($resource->getConnection()) {
+                if ($resource instanceof \Zend_Db_Adapter_Mysqli) {
+                    if ($resource->getConnection()) {
                         $connectionId = $resource->getConnection()->thread_id;
                     }
-                } else if ($resource instanceof \Zend_Db_Adapter_Pdo_Mysql) {
+                } elseif ($resource instanceof \Zend_Db_Adapter_Pdo_Mysql) {
                     $connectionId = $resource->fetchOne("SELECT CONNECTION_ID()");
                 }
                 \Logger::debug(get_class($resource) . ": closing MySQL-Server connection with ID: " . $connectionId);
@@ -205,7 +210,8 @@ class Wrapper {
     /**
      * @return mixed
      */
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         $this->inTransaction = true;
         return $this->__call("beginTransaction", []);
     }
@@ -213,7 +219,8 @@ class Wrapper {
     /**
      * @return mixed
      */
-    public function commit() {
+    public function commit()
+    {
         $return = $this->__call("commit", []);
         $this->inTransaction = false;
         return $return;
@@ -225,12 +232,12 @@ class Wrapper {
      * @param  $args
      * @return mixed
      */
-    public function __call($method, $args) {
+    public function __call($method, $args)
+    {
         try {
             $r = $this->callResourceMethod($method, $args);
             return $r;
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return Db::errorHandler($method, $args, $e);
         }
     }
@@ -240,18 +247,18 @@ class Wrapper {
      * @param array $args
      * @return mixed
      */
-    public function callResourceMethod ($method, $args) {
-
+    public function callResourceMethod($method, $args)
+    {
         $resource = $this->getResource();
-        if($this->inTransaction || Db::isWriteQuery($method, $args)) {
+        if ($this->inTransaction || Db::isWriteQuery($method, $args)) {
             $resource = $this->getWriteResource();
         }
 
         $capture = false;
 
-        if(\Pimcore::inAdmin()) {
+        if (\Pimcore::inAdmin()) {
             $methodsToCheck = array("query","update","delete","insert");
-            if(in_array($method, $methodsToCheck)) {
+            if (in_array($method, $methodsToCheck)) {
                 $capture = true;
                 Db::startCapturingDefinitionModifications($resource, $method, $args);
             }
@@ -259,7 +266,7 @@ class Wrapper {
 
         $r = call_user_func_array(array($resource, $method), $args);
 
-        if(\Pimcore::inAdmin() && $capture) {
+        if (\Pimcore::inAdmin() && $capture) {
             Db::stopCapturingDefinitionModifications($resource);
         }
 

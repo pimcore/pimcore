@@ -1,6 +1,6 @@
 <?php
 $pdr = PIMCORE_DOCUMENT_ROOT;
-return array (
+return array(
   'Pimcore\\Log\\Maintenance' => $pdr . '/pimcore/lib/Pimcore/Log/Maintenance.php',
   'Pimcore\\Log\\Handler\\Mail' => $pdr . '/pimcore/lib/Pimcore/Log/Handler/Mail.php',
   'Pimcore\\Log\\Handler\\ApplicationLoggerDb' => $pdr . '/pimcore/lib/Pimcore/Log/Handler/ApplicationLoggerDb.php',

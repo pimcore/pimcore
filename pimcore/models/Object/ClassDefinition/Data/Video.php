@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 
-class Video extends Model\Object\ClassDefinition\Data {
+class Video extends Model\Object\ClassDefinition\Data
+{
 
     /**
      * Static type of this element
@@ -63,7 +64,8 @@ class Video extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         return $this->width;
     }
 
@@ -71,7 +73,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param integer $width
      * @return void
      */
-    public function setWidth($width) {
+    public function setWidth($width)
+    {
         $this->width = $this->getAsIntegerCast($width);
         return $this;
     }
@@ -79,7 +82,8 @@ class Video extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getHeight() {
+    public function getHeight()
+    {
         return $this->height;
     }
 
@@ -87,7 +91,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param integer $height
      * @return void
      */
-    public function setHeight($height) {
+    public function setHeight($height)
+    {
         $this->height = $this->getAsIntegerCast($height);
         return $this;
     }
@@ -98,13 +103,14 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return integer|null
      */
-    public function getDataForResource($data, $object = null) {
-        if($data) {
+    public function getDataForResource($data, $object = null)
+    {
+        if ($data) {
             $data = clone $data;
-            if($data->getData() instanceof Asset) {
+            if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
             }
-            if($data->getPoster() instanceof Asset) {
+            if ($data->getPoster() instanceof Asset) {
                 $data->setPoster($data->getPoster()->getId());
             }
 
@@ -119,23 +125,24 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param integer $data
      * @return Asset
      */
-    public function getDataFromResource($data) {
-        if($data) {
+    public function getDataFromResource($data)
+    {
+        if ($data) {
             $raw = unserialize($data);
 
-            if($raw["type"] == "asset") {
-                if($asset = Asset::getById($raw["data"])) {
+            if ($raw["type"] == "asset") {
+                if ($asset = Asset::getById($raw["data"])) {
                     $raw["data"] = $asset;
                 }
             }
 
-            if($raw["poster"]) {
-                if($poster = Asset::getById($raw["poster"])) {
+            if ($raw["poster"]) {
+                if ($poster = Asset::getById($raw["poster"])) {
                     $raw["poster"] = $poster;
                 }
             }
 
-            if($raw["data"]) {
+            if ($raw["data"]) {
                 $video = new Object\Data\Video();
                 $video->setData($raw["data"]);
                 $video->setType($raw["type"]);
@@ -154,7 +161,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return integer|null
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -164,14 +172,14 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return integer
      */
-    public function getDataForEditmode($data, $object = null) {
-
-        if($data) {
+    public function getDataForEditmode($data, $object = null)
+    {
+        if ($data) {
             $data = clone $data;
-            if($data->getData() instanceof Asset) {
+            if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getFullpath());
             }
-            if($data->getPoster() instanceof Asset) {
+            if ($data->getPoster() instanceof Asset) {
                 $data->setPoster($data->getPoster()->getFullpath());
             }
             $data = object2array($data);
@@ -186,27 +194,27 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param null|Model\Object\AbstractObject $object
      * @return Asset
      */
-    public function getDataFromEditmode($data, $object = null) {
-
+    public function getDataFromEditmode($data, $object = null)
+    {
         $video = null;
 
-        if($data["type"] == "asset") {
-            if($asset = Asset::getByPath($data["data"])){
+        if ($data["type"] == "asset") {
+            if ($asset = Asset::getByPath($data["data"])) {
                 $data["data"] = $asset;
             } else {
                 $data["data"] = null;
             }
         }
 
-        if($data["poster"]) {
-            if($poster = Asset::getByPath($data["poster"])){
+        if ($data["poster"]) {
+            if ($poster = Asset::getByPath($data["poster"])) {
                 $data["poster"] = $poster;
             } else {
                 $data["poster"] = null;
             }
         }
 
-        if(!empty($data["data"])) {
+        if (!empty($data["data"])) {
             $video = new Object\Data\Video();
             $video->setData($data["data"]);
             $video->setType($data["type"]);
@@ -223,7 +231,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param null $object
      * @return mixed
      */
-    public function getDataForGrid($data, $object = null) {
+    public function getDataForGrid($data, $object = null)
+    {
         if ($data && $data->getType() == "asset" && $data->getData() instanceof Asset) {
             return $data->getData()->getId();
         }
@@ -234,7 +243,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param Asset\Image $data
      * @return string
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         if ($data && $data->getType() == "asset" && $data->getData() instanceof Asset) {
             return '<img src="/admin/asset/get-video-thumbnail/id/' . $data->getData()->getId() . '/width/100/height/100/aspectratio/true" />';
         }
@@ -245,34 +255,39 @@ class Video extends Model\Object\ClassDefinition\Data {
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Model\Object\AbstractObject $object
+     * @param Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object) {
+    public function getForCsvExport($object, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object);
         if ($data) {
             $value = $data->getData();
-            if($value instanceof Asset) {
+            if ($value instanceof Asset) {
                 $value = $value->getId();
             }
             return $data->getType() . "~" . $value;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
      * @param $importValue
      * @return mixed|null
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue)
+    {
         $value = null;
 
-        if($importValue && strpos($importValue, "~")) {
+        if ($importValue && strpos($importValue, "~")) {
             list($type, $data) = explode("~", $importValue);
-            if($type && $data) {
+            if ($type && $data) {
                 $video = new Object\Data\Video();
                 $video->setType($type);
-                if($type == "asset") {
-                    if($asset = Asset::getById($data)) {
+                if ($type == "asset") {
+                    if ($asset = Asset::getById($data)) {
                         $video->setData($asset);
                     } else {
                         return null;
@@ -293,8 +308,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array()) {
-
+    public function getCacheTags($data, $tags = array())
+    {
         $tags = is_array($tags) ? $tags : array();
 
         if ($data && $data->getData() instanceof Asset) {
@@ -316,8 +331,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param $data
      * @return array
      */
-    public function resolveDependencies($data) {
-
+    public function resolveDependencies($data)
+    {
         $dependencies = array();
 
         if ($data && $data->getData() instanceof Asset) {
@@ -343,9 +358,10 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param string $object
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
+    public function getForWebserviceExport($object)
+    {
         $data = $this->getDataFromObjectParam($object);
-        if($data){
+        if ($data) {
             return  $this->getDataForResource($data);
         }
     }
@@ -357,7 +373,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param mixed $relatedObject
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null) {
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    {
 
         // @TODO
         return null;
@@ -366,7 +383,8 @@ class Video extends Model\Object\ClassDefinition\Data {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return false;
     }
 
@@ -376,7 +394,8 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param null $object
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null) {
+    public function getDiffVersionPreview($data, $object = null)
+    {
         $versionPreview = null;
 
         if ($data && $data->getData() instanceof Asset) {
@@ -399,17 +418,18 @@ class Video extends Model\Object\ClassDefinition\Data {
      * @param array $params
      * @return mixed
      */
-    public function rewriteIds($object, $idMapping, $params = array()) {
+    public function rewriteIds($object, $idMapping, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data && $data->getData() instanceof Asset) {
-            if(array_key_exists("asset", $idMapping) and array_key_exists($data->getData()->getId(), $idMapping["asset"])) {
+            if (array_key_exists("asset", $idMapping) and array_key_exists($data->getData()->getId(), $idMapping["asset"])) {
                 $data->setData(Asset::getById($idMapping["asset"][$data->getData()->getId()]));
             }
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
-            if(array_key_exists("asset", $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping["asset"])) {
+            if (array_key_exists("asset", $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping["asset"])) {
                 $data->setPoster(Asset::getById($idMapping["asset"][$data->getPoster()->getId()]));
             }
         }

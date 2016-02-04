@@ -12,7 +12,8 @@
 
 namespace Pimcore\View\Helper;
 
-class HeadScript extends \Zend_View_Helper_HeadScript {
+class HeadScript extends \Zend_View_Helper_HeadScript
+{
     /**
      * Retrieve string representation
      *
@@ -28,10 +29,10 @@ class HeadScript extends \Zend_View_Helper_HeadScript {
                 continue;
             }
 
-            if(is_array($item->attributes)) {
-                if(isset($item->attributes["src"])) {
+            if (is_array($item->attributes)) {
+                if (isset($item->attributes["src"])) {
                     $realFile = PIMCORE_DOCUMENT_ROOT . $item->attributes["src"];
-                    if(file_exists($realFile)) {
+                    if (file_exists($realFile)) {
                         $item->attributes["src"] = $item->attributes["src"] . "?_dc=" . filemtime($realFile);
                     }
                 }

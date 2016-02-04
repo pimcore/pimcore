@@ -17,7 +17,8 @@ namespace Pimcore\Model\Dependency;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * Loads the relations for the given sourceId and type
@@ -26,8 +27,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param string $type
      * @return void
      */
-    public function getBySourceId($id = null, $type = null) {
-
+    public function getBySourceId($id = null, $type = null)
+    {
         if ($id && $type) {
             $this->model->setSourceId($id);
             $this->model->setSourceType($id);
@@ -60,9 +61,9 @@ class Dao extends Model\Dao\AbstractDao {
      * Clear all relations in the database
      * @param Element\ElementInterface $element
      */
-    public function cleanAllForElement($element) {
+    public function cleanAllForElement($element)
+    {
         try {
-
             $id = $element->getId();
             $type = Element\Service::getElementType($element);
 
@@ -79,8 +80,7 @@ class Dao extends Model\Dao\AbstractDao {
 
             $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $id) . " AND " . $this->db->quoteInto("sourcetype = ?", $type));
             $this->db->delete("dependencies", $this->db->quoteInto("targetid = ?", $id) . " AND " . $this->db->quoteInto("targettype = ?", $type));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::error($e);
         }
     }
@@ -91,12 +91,11 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function clear() {
-
+    public function clear()
+    {
         try {
             $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $this->model->getSourceId()) . " AND " . $this->db->quoteInto("sourcetype = ?", $this->model->getSourceType()));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::error($e);
         }
     }
@@ -106,7 +105,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         foreach ($this->model->getRequires() as $r) {
             if ($r["id"] && $r["type"]) {
                 $this->db->insert("dependencies", array(

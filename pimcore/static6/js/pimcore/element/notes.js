@@ -108,7 +108,7 @@ pimcore.element.notes = Class.create({
             var columns = [
                 {header: "ID", sortable: true, dataIndex: 'id', hidden: true, flex: 60},
                 {header: t("type"), sortable: true, dataIndex: 'type', flex: 60},
-                {header: t("element"), sortable: true, dataIndex: 'cpath', flex: 200,
+                {header: t("element"), sortable: false, dataIndex: 'cpath', flex: 200,
                     hidden: this.inElementContext,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         if(record.get("cid")) {
@@ -119,7 +119,7 @@ pimcore.element.notes = Class.create({
                 },
                 {header: t("title"), sortable: true, dataIndex: 'title', flex: 200},
                 {header: t("description"), sortable: true, dataIndex: 'description'},
-                {header: t("fields"), sortable: true, dataIndex: 'data', renderer: function(v) {
+                {header: t("fields"), sortable: false, dataIndex: 'data', renderer: function(v) {
                     if(v) {
                         return v.length;
                     }

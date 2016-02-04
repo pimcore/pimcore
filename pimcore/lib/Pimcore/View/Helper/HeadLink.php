@@ -12,7 +12,8 @@
 
 namespace Pimcore\View\Helper;
 
-class HeadLink extends \Zend_View_Helper_HeadLink {
+class HeadLink extends \Zend_View_Helper_HeadLink
+{
     /**
      * Render link elements as string
      *
@@ -23,9 +24,9 @@ class HeadLink extends \Zend_View_Helper_HeadLink {
     {
         // adds the automatic cache buster functionality
         foreach ($this as $item) {
-            if(isset($item->href)) {
+            if (isset($item->href)) {
                 $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
-                if(file_exists($realFile)) {
+                if (file_exists($realFile)) {
                     $item->href = $item->href . "?_dc=" . filemtime($realFile);
                 }
             }
@@ -33,5 +34,4 @@ class HeadLink extends \Zend_View_Helper_HeadLink {
 
         return parent::toString($indent);
     }
-
 }

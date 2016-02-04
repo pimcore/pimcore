@@ -15,8 +15,10 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Pimcore\Tool\Serialize;
+use Pimcore\Model;
 
-class Config {
+class Config extends Model\AbstractModel
+{
 
     /**
      * format of array:
@@ -66,6 +68,16 @@ class Config {
     public $highResolution;
 
     /**
+     * @var int
+     */
+    public $modificationDate;
+
+    /**
+     * @var int
+     */
+    public $creationDate;
+
+    /**
      * @var string
      */
     public $filenameSuffix;
@@ -74,28 +86,25 @@ class Config {
      * @param $config
      * @return self|bool
      */
-    public static function getByAutoDetect ($config) {
-
+    public static function getByAutoDetect($config)
+    {
         $thumbnail = null;
 
         if (is_string($config)) {
             try {
                 $thumbnail = self::getByName($config);
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 \Logger::error("requested thumbnail " . $config . " is not defined");
                 return false;
             }
-        }
-        else if (is_array($config)) {
+        } elseif (is_array($config)) {
             // check if it is a legacy config or a new one
-            if(array_key_exists("items", $config)) {
+            if (array_key_exists("items", $config)) {
                 $thumbnail = self::getByArrayConfig($config);
             } else {
                 $thumbnail = self::getByLegacyConfig($config);
             }
-        }
-        else if ($config instanceof self) {
+        } elseif ($config instanceof self) {
             $thumbnail = $config;
         }
 
@@ -103,50 +112,42 @@ class Config {
     }
 
     /**
-     * @static
-     * @param  $name
-     * @return self
+     * @param $name
+     * @return null|Config
      */
-    public static function getByName ($name) {
-
+    public static function getByName($name)
+    {
         $cacheKey = "imagethumb_" . crc32($name);
 
-        if(\Zend_Registry::isRegistered($cacheKey)) {
-            $pipe = \Zend_Registry::get($cacheKey);
-            $pipe->setName($name); // set the name again because in documents there's an automated prefixing logic
-        } else {
-            $pipe = new self();
-            $pipe->setName($name);
-            if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
-                throw new \Exception("thumbnail definition : " . $name . " does not exist");
+        try {
+            $thumbnail = \Zend_Registry::get($cacheKey);
+            $thumbnail->setName($name);
+            if (!$thumbnail) {
+                throw new \Exception("Thumbnail in registry is null");
             }
+        } catch (\Exception $e) {
+            try {
+                $thumbnail = new self();
+                $thumbnail->setName($name);
+                $thumbnail->getDao()->getByName();
 
-            \Zend_Registry::set($cacheKey, $pipe);
+                \Zend_Registry::set($cacheKey, $thumbnail);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
 
         // only return clones of configs, this is necessary since we cache the configs in the registry (see above)
         // sometimes, e.g. when using the cropping tools, the thumbnail configuration is modified on-the-fly, since
         // pass-by-reference this modifications would then go to the cache/registry (singleton), by cloning the config
         // we can bypass this problem in an elegant way without parsing the XML config again and again
-        $clone = clone $pipe;
+        $clone = clone $thumbnail;
 
         return $clone;
     }
 
-    /**
-     * @static
-     * @return string
-     */
-    public static function getWorkingDir () {
-        $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/imagepipelines";
-        if(!is_dir($dir)) {
-            \Pimcore\File::mkdir($dir);
-        }
-
-        return $dir;
-    }
-
-    public static function getPreviewConfig () {
+    public static function getPreviewConfig()
+    {
         $thumbnail = new self();
         $thumbnail->setName("pimcore-system-treepreview");
         $thumbnail->addItem("scaleByWidth", array(
@@ -164,119 +165,20 @@ class Config {
     /**
      * Returns thumbnail config for webservice export.
      */
-    public function getForWebserviceExport() {
+    public function getForWebserviceExport()
+    {
         $arrayConfig = object2array($this);
         $items = $arrayConfig["items"];
         $arrayConfig["items"] = $items;
         return $arrayConfig;
     }
 
-
-    /**
-     * @return void
-     */
-    public function save () {
-
-        $arrayConfig = object2array($this);
-
-        $items = $arrayConfig["items"];
-        $arrayConfig["items"] = array("item" => $items);
-
-        if(!empty($this->medias)) {
-            $medias = [];
-            foreach ($arrayConfig["medias"] as $name => $items) {
-                $medias[] = array(
-                    "name" => $name,
-                    "items" => array("item" => $items)
-                );
-            }
-            $arrayConfig["medias"] = array("media" => $medias);
-        } else {
-            // do not include the medias node if empty
-            unset($arrayConfig["medias"]);
-        }
-
-        $config = new \Zend_Config($arrayConfig);
-        $writer = new \Zend_Config_Writer_Xml(array(
-            "config" => $config,
-            "filename" => $this->getConfigFile()
-        ));
-        $writer->write();
-
-        return true;
-    }
-
-    /**
-     * @return void
-     */
-    public function load () {
-
-        $configXml = new \Zend_Config_Xml($this->getConfigFile());
-        $configArray = $configXml->toArray();
-
-        if(array_key_exists("items",$configArray) && is_array($configArray["items"]["item"])) {
-            if(array_key_exists("method",$configArray["items"]["item"])) {
-                $configArray["items"] = array($configArray["items"]["item"]);
-            } else {
-                $configArray["items"] = $configArray["items"]["item"];
-            }
-        } else {
-            $configArray["items"] = array("item" => array());
-        }
-
-        $medias = [];
-        if(array_key_exists("medias", $configArray) && !empty($configArray["medias"]) && is_array($configArray["medias"]["media"])) {
-
-            if(array_key_exists("name", $configArray["medias"]["media"])) {
-                $configArray["medias"]["media"] = array($configArray["medias"]["media"]);
-            }
-
-            foreach ($configArray["medias"]["media"] as $media) {
-                if(array_key_exists("items",$media) && is_array($media["items"]["item"])) {
-                    if(array_key_exists("method",$media["items"]["item"])) {
-                        $medias[$media["name"]] = array($media["items"]["item"]);
-                    } else {
-                        $medias[$media["name"]] = $media["items"]["item"];
-                    }
-                } else {
-                    $medias[$media["name"]] = array("item" => array());
-                }
-            }
-        }
-
-        $configArray["medias"] = $medias;
-
-        foreach ($configArray as $key => $value) {
-            $setter = "set" . ucfirst($key);
-            if(method_exists($this, $setter)) {
-                $this->$setter($value);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @return void
-     */
-    public function delete() {
-        if(is_file($this->getConfigFile())) {
-            unlink($this->getConfigFile());
-        }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getConfigFile () {
-        return self::getWorkingDir() . "/" . $this->getName() . ".xml";
-    }
-
     /**
      * @param string $name
      */
-    protected function createMediaIfNotExists($name) {
-        if(!array_key_exists($name, $this->medias)) {
+    protected function createMediaIfNotExists($name)
+    {
+        if (!array_key_exists($name, $this->medias)) {
             $this->medias[$name] = [];
         }
     }
@@ -286,15 +188,15 @@ class Config {
      * @param  $parameters
      * @return bool
      */
-    public function addItem ($name, $parameters, $media = null) {
-
+    public function addItem($name, $parameters, $media = null)
+    {
         $item = array(
             "method" => $name,
             "arguments" => $parameters
         );
 
         // default is added to $this->items for compatibility reasons
-        if(!$media || $media == "default") {
+        if (!$media || $media == "default") {
             $this->items[] = $item;
         } else {
             $this->createMediaIfNotExists($media);
@@ -309,9 +211,9 @@ class Config {
      * @param  $parameters
      * @return bool
      */
-    public function addItemAt ($position, $name, $parameters, $media = null) {
-
-        if(!$media || $media == "default") {
+    public function addItemAt($position, $name, $parameters, $media = null)
+    {
+        if (!$media || $media == "default") {
             $itemContainer = &$this->items;
         } else {
             $this->createMediaIfNotExists($media);
@@ -330,7 +232,8 @@ class Config {
     /**
      * @return void
      */
-    public function resetItems () {
+    public function resetItems()
+    {
         $this->items = [];
         $this->medias = [];
     }
@@ -339,8 +242,9 @@ class Config {
      * @param $name
      * @return bool
      */
-    public function selectMedia($name) {
-        if(array_key_exists($name, $this->medias)) {
+    public function selectMedia($name)
+    {
+        if (array_key_exists($name, $this->medias)) {
             $this->setItems($this->medias[$name]);
 
             $suffix = strtolower($name);
@@ -427,7 +331,7 @@ class Config {
      */
     public function setQuality($quality)
     {
-        if($quality) {
+        if ($quality) {
             $this->quality = (int) $quality;
         }
         return $this;
@@ -476,7 +380,8 @@ class Config {
     /**
      * @return bool
      */
-    public function hasMedias() {
+    public function hasMedias()
+    {
         return !empty($this->medias);
     }
 
@@ -501,20 +406,21 @@ class Config {
      * @param $config
      * @return self
      */
-    public static function getByArrayConfig ($config) {
+    public static function getByArrayConfig($config)
+    {
         $pipe = new self();
 
-        if(isset($config["format"]) && $config["format"]) {
+        if (isset($config["format"]) && $config["format"]) {
             $pipe->setFormat($config["format"]);
         }
-        if(isset($config["quality"]) && $config["quality"]) {
+        if (isset($config["quality"]) && $config["quality"]) {
             $pipe->setQuality($config["quality"]);
         }
-        if(isset($config["items"]) && $config["items"]) {
+        if (isset($config["items"]) && $config["items"]) {
             $pipe->setItems($config["items"]);
         }
 
-        if(isset($config["highResolution"]) && $config["highResolution"]) {
+        if (isset($config["highResolution"]) && $config["highResolution"]) {
             $pipe->setHighResolution($config["highResolution"]);
         }
 
@@ -532,15 +438,15 @@ class Config {
      * @param $config
      * @return self
      */
-    public static function getByLegacyConfig ($config) {
-
+    public static function getByLegacyConfig($config)
+    {
         $pipe = new self();
 
-        if(isset($config["format"])) {
+        if (isset($config["format"])) {
             $pipe->setFormat($config["format"]);
         }
 
-        if(isset($config["quality"])) {
+        if (isset($config["quality"])) {
             $pipe->setQuality($config["quality"]);
         }
 
@@ -550,48 +456,41 @@ class Config {
                 "height" => $config["height"],
                 "positioning" => "center"
             ));
-        }
-        else if (isset($config["contain"])) {
+        } elseif (isset($config["contain"])) {
             $pipe->addItem("contain", array(
                 "width" => $config["width"],
                 "height" => $config["height"]
             ));
-        }
-        else if (isset($config["frame"])) {
+        } elseif (isset($config["frame"])) {
             $pipe->addItem("frame", array(
                 "width" => $config["width"],
                 "height" => $config["height"]
             ));
-        }
-        else if (isset($config["aspectratio"]) && $config["aspectratio"]) {
-
+        } elseif (isset($config["aspectratio"]) && $config["aspectratio"]) {
             if (isset($config["height"]) && isset($config["width"]) && $config["height"] > 0 && $config["width"] > 0) {
                 $pipe->addItem("contain", array(
                     "width" => $config["width"],
                     "height" => $config["height"]
                 ));
-            }
-            else if (isset($config["height"]) && $config["height"] > 0) {
+            } elseif (isset($config["height"]) && $config["height"] > 0) {
                 $pipe->addItem("scaleByHeight", array(
                     "height" => $config["height"]
                 ));
-            }
-            else {
+            } else {
                 $pipe->addItem("scaleByWidth", array(
                     "width" => $config["width"]
                 ));
             }
-        }
-        else {
-            if(!isset($config["width"]) && isset($config["height"])) {
+        } else {
+            if (!isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("scaleByHeight", array(
                     "height" => $config["height"]
                 ));
-            } else if (isset($config["width"]) && !isset($config["height"])) {
+            } elseif (isset($config["width"]) && !isset($config["height"])) {
                 $pipe->addItem("scaleByWidth", array(
                     "width" => $config["width"]
                 ));
-            } else if (isset($config["width"]) && isset($config["height"])) {
+            } elseif (isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("resize", array(
                     "width" => $config["width"],
                     "height" => $config["height"]
@@ -599,7 +498,7 @@ class Config {
             }
         }
 
-        if(isset($config["highResolution"])) {
+        if (isset($config["highResolution"])) {
             $pipe->setHighResolution($config["highResolution"]);
         }
 
@@ -610,46 +509,45 @@ class Config {
     }
 
 
-    public function getEstimatedDimensions($originalWidth = null, $originalHeight = null) {
-
-
+    public function getEstimatedDimensions($originalWidth = null, $originalHeight = null)
+    {
         $dimensions = array();
         $transformations = $this->getItems();
-        if(is_array($transformations) && count($transformations) > 0) {
-            if($originalWidth && $originalHeight) {
+        if (is_array($transformations) && count($transformations) > 0) {
+            if ($originalWidth && $originalHeight) {
                 // this is the more accurate method than the other below
                 $dimensions["width"] = $originalWidth;
                 $dimensions["height"] = $originalHeight;
 
                 foreach ($transformations as $transformation) {
-                    if(!empty($transformation)) {
+                    if (!empty($transformation)) {
                         $arg = $transformation["arguments"];
-                        if(in_array($transformation["method"], ["resize","cover","frame", "crop"])) {
+                        if (in_array($transformation["method"], ["resize", "cover", "frame", "crop"])) {
                             $dimensions["width"] = $arg["width"];
                             $dimensions["height"] = $arg["height"];
-                        } else if ($transformation["method"] == "scaleByWidth") {
-                            if($arg["width"] <= $dimensions["width"]) {
+                        } elseif ($transformation["method"] == "scaleByWidth") {
+                            if ($arg["width"] <= $dimensions["width"]) {
                                 $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
                                 $dimensions["width"] = $arg["width"];
                             }
-                        } else if ($transformation["method"] == "scaleByHeight") {
-                            if($arg["height"] < $dimensions["height"]) {
+                        } elseif ($transformation["method"] == "scaleByHeight") {
+                            if ($arg["height"] < $dimensions["height"]) {
                                 $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
                                 $dimensions["height"] = $arg["height"];
                             }
-                        } else if ($transformation["method"] == "contain") {
+                        } elseif ($transformation["method"] == "contain") {
                             $x = $dimensions["width"] / $arg["width"];
                             $y = $dimensions["height"] / $arg["height"];
                             if ($x <= 1 && $y <= 1) {
                                 continue;
-                            } else if ($x > $y) {
+                            } elseif ($x > $y) {
                                 $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
                                 $dimensions["width"] = $arg["width"];
                             } else {
                                 $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
                                 $dimensions["height"] = $arg["height"];
                             }
-                        } else if ($transformation["method"] == "cropPercent") {
+                        } elseif ($transformation["method"] == "cropPercent") {
                             $dimensions["width"] = ceil($dimensions["width"] * ($arg["width"] / 100));
                             $dimensions["height"] = ceil($dimensions["height"] * ($arg["height"] / 100));
                         }
@@ -657,10 +555,10 @@ class Config {
                 }
             } else {
                 foreach ($transformations as $transformation) {
-                    if(!empty($transformation)) {
-                        if(is_array($transformation["arguments"]) && in_array($transformation["method"], ["resize","scaleByWidth","scaleByHeight","cover","frame"]) ) {
+                    if (!empty($transformation)) {
+                        if (is_array($transformation["arguments"]) && in_array($transformation["method"], ["resize", "scaleByWidth", "scaleByHeight", "cover", "frame"])) {
                             foreach ($transformation["arguments"] as $key => $value) {
-                                if($key == "width" || $key == "height") {
+                                if ($key == "width" || $key == "height") {
                                     $dimensions[$key] = $value;
                                 }
                             }
@@ -688,5 +586,37 @@ class Config {
     public function getColorspace()
     {
         // no functionality, just for compatibility reasons
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
     }
 }

@@ -29,15 +29,19 @@ pimcore.tool.genericiframewindow = Class.create({
 
     getTabPanel: function () {
 
-        this.reloadButton = new Ext.Button({
-            text: t("reload"),
-            iconCls: "pimcore_icon_reload",
-            handler: this.reload.bind(this)
-        });
-
         var toolbar = Ext.create('Ext.Toolbar', {
             cls: 'main-toolbar',
-            items: [this.reloadButton]
+            items: [{
+                text: t("reload"),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            }, {
+                text: t("open"),
+                iconCls: "pimcore_icon_cursor_medium",
+                handler: function () {
+                    window.open(Ext.get("pimcore_iframe_frame_" + this.id).dom.getAttribute("src"));
+                }.bind(this)
+            }]
         });
 
         if (!this.panel) {

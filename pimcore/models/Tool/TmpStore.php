@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
 
-class TmpStore extends Model\AbstractModel {
+class TmpStore extends Model\AbstractModel
+{
 
     /**
      * @var string
@@ -56,8 +57,9 @@ class TmpStore extends Model\AbstractModel {
     /**
      * @return Lock
      */
-    protected static function getInstance () {
-        if(!self::$instance) {
+    protected static function getInstance()
+    {
+        if (!self::$instance) {
             self::$instance = new self();
         }
 
@@ -71,14 +73,15 @@ class TmpStore extends Model\AbstractModel {
      * @param null $lifetime
      * @return mixed
      */
-    public static function add ($id, $data, $tag = null, $lifetime = null) {
+    public static function add($id, $data, $tag = null, $lifetime = null)
+    {
         $instance = self::getInstance();
 
-        if(!$lifetime) {
+        if (!$lifetime) {
             $lifetime = 86400;
         }
 
-        if(self::get($id)) {
+        if (self::get($id)) {
             return true;
         }
 
@@ -89,7 +92,8 @@ class TmpStore extends Model\AbstractModel {
      * @param $id
      * @return mixed
      */
-    public static function delete($id) {
+    public static function delete($id)
+    {
         $instance = self::getInstance();
         return $instance->getDao()->delete($id);
     }
@@ -98,10 +102,11 @@ class TmpStore extends Model\AbstractModel {
      * @param $id
      * @return null|TmpStore
      */
-    public static function get($id) {
+    public static function get($id)
+    {
         $item = new self;
-        if($item->getById($id)) {
-            if($item->getExpiryDate() < time()) {
+        if ($item->getById($id)) {
+            if ($item->getExpiryDate() < time()) {
                 self::delete($id);
             } else {
                 return $item;
@@ -113,7 +118,8 @@ class TmpStore extends Model\AbstractModel {
     /**
      *
      */
-    public static function cleanup() {
+    public static function cleanup()
+    {
         $instance = self::getInstance();
         $instance->getDao()->cleanup();
     }
@@ -122,7 +128,8 @@ class TmpStore extends Model\AbstractModel {
      * @param $tag
      * @return array
      */
-    public static function getIdsByTag($tag) {
+    public static function getIdsByTag($tag)
+    {
         $instance = self::getInstance();
         $items = $instance->getDao()->getIdsByTag($tag);
         return $items;

@@ -30,7 +30,6 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
-            id: "pimcore_objectbrick_editor_panel_" + this.getId(),
             items: [{
                 xtype: "textfield",
                 width: 400,
@@ -263,7 +262,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         this.baseStore[classDefinitionData.classname] = this.availableClasses[classDefinitionData.classname];
 
-        this.classDefinitionsItems.remove(this.classDefinitionsItems.get(0));
+        this.classDefinitionsItems.remove(this.classDefinitionsItems.items.get(0));
         this.classDefinitionsItems.insert(0, this.getAddControl());
         this.classDefinitionsItems.updateLayout();
 

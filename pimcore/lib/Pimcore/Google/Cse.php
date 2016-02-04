@@ -17,7 +17,8 @@ use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Model;
 
-class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator {
+class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+{
 
     /**
      * @param $query
@@ -27,14 +28,15 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
      * @param null $facet
      * @return Cse
      */
-    public static function search ($query, $offset = 0, $perPage = 10, array $config = array(), $facet = null) {
+    public static function search($query, $offset = 0, $perPage = 10, array $config = array(), $facet = null)
+    {
         $list = new self();
         $list->setConfig($config);
         $list->setOffset($offset);
         $list->setPerPage($perPage);
         $list->setQuery($query);
 
-        if(!empty($facet)) {
+        if (!empty($facet)) {
             $list->setQuery($list->getQuery() . " more:" . $facet);
         }
 
@@ -44,7 +46,8 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      *
      */
-    public function load() {
+    public function load()
+    {
         $client = Api::getSimpleClient();
         $config = $this->getConfig();
         $perPage = $this->getPerPage();
@@ -52,29 +55,29 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         $query = $this->getQuery();
 
 
-        if($client) {
+        if ($client) {
             $search = new \Google_Service_Customsearch($client);
 
             // determine language
             $language = "";
-            if(\Zend_Registry::isRegistered("Zend_Locale")) {
+            if (\Zend_Registry::isRegistered("Zend_Locale")) {
                 $locale = \Zend_Registry::get("Zend_Locale");
                 $language = $locale->getLanguage();
             }
 
-            if(!array_key_exists("hl", $config) && !empty($language)) {
+            if (!array_key_exists("hl", $config) && !empty($language)) {
                 $config["hl"] = $language;
             }
 
-            if(!array_key_exists("lr", $config) && !empty($language)) {
+            if (!array_key_exists("lr", $config) && !empty($language)) {
                 $config["lr"] = "lang_" . $language;
             }
 
-            if($query) {
-                if($offset) {
+            if ($query) {
+                if ($offset) {
                     $config["start"] = $offset + 1;
                 }
-                if(empty($perPage)) {
+                if (empty($perPage)) {
                     $perPage = 10;
                 }
 
@@ -83,10 +86,10 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
                 $cacheKey = "google_cse_" . md5($query . serialize($config));
 
                 // this is just a protection so that no query get's sent twice in a request (loops, ...)
-                if(\Zend_Registry::isRegistered($cacheKey)) {
+                if (\Zend_Registry::isRegistered($cacheKey)) {
                     $result = \Zend_Registry::get($cacheKey);
                 } else {
-                    if(!$result = Cache::load($cacheKey)) {
+                    if (!$result = Cache::load($cacheKey)) {
                         $result = $search->cse->listCse($query, $config);
                         Cache::save($result, $cacheKey, array("google_cse"), 3600, 999);
                         \Zend_Registry::set($cacheKey, $result);
@@ -148,8 +151,9 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      * @param null|mixed $googleResponse
      */
-    public function __construct ($googleResponse = null) {
-        if($googleResponse) {
+    public function __construct($googleResponse = null)
+    {
+        if ($googleResponse) {
             $this->readGoogleResponse($googleResponse);
         }
     }
@@ -157,14 +161,14 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      * @param $googleResponse
      */
-    public function readGoogleResponse($googleResponse) {
-
+    public function readGoogleResponse($googleResponse)
+    {
         $googleResponse = $googleResponse["modelData"];
         $this->setRaw($googleResponse);
 
         // available factes
-        if(array_key_exists("context", $googleResponse) && is_array($googleResponse["context"])) {
-            if(array_key_exists("facets", $googleResponse["context"]) && is_array($googleResponse["context"]["facets"])) {
+        if (array_key_exists("context", $googleResponse) && is_array($googleResponse["context"])) {
+            if (array_key_exists("facets", $googleResponse["context"]) && is_array($googleResponse["context"]["facets"])) {
                 $facets = array();
                 foreach ($googleResponse["context"]["facets"] as $facet) {
                     $facets[$facet[0]["label"]] = $facet[0]["anchor"];
@@ -177,7 +181,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         $items = array();
 
         // set promotions
-        if(array_key_exists("promotions", $googleResponse) && is_array($googleResponse["promotions"])) {
+        if (array_key_exists("promotions", $googleResponse) && is_array($googleResponse["promotions"])) {
             foreach ($googleResponse["promotions"] as $promo) {
                 $promo["type"] = "promotion";
                 $promo["formattedUrl"] = preg_replace("@^https?://@", "", $promo["link"]);
@@ -190,26 +194,26 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
 
         // set search results
         $total = intval($googleResponse["searchInformation"]["totalResults"]);
-        if($total > 100) {
+        if ($total > 100) {
             $total = 100;
         }
         $this->setTotal($total);
 
 
-        if(array_key_exists("items", $googleResponse) && is_array($googleResponse["items"])) {
+        if (array_key_exists("items", $googleResponse) && is_array($googleResponse["items"])) {
             foreach ($googleResponse["items"] as $item) {
 
                 // check for relation to document or asset
                 // first check for an image
-                if(array_key_exists("pagemap", $item) && is_array($item["pagemap"])) {
-                    if(array_key_exists("cse_image", $item["pagemap"]) && is_array($item["pagemap"]["cse_image"])) {
-                        if($item["pagemap"]["cse_image"][0]) {
+                if (array_key_exists("pagemap", $item) && is_array($item["pagemap"])) {
+                    if (array_key_exists("cse_image", $item["pagemap"]) && is_array($item["pagemap"]["cse_image"])) {
+                        if ($item["pagemap"]["cse_image"][0]) {
                             // try to get the asset id
-                            if(preg_match("/thumb_([0-9]+)__/", $item["pagemap"]["cse_image"][0]["src"], $matches)) {
+                            if (preg_match("/thumb_([0-9]+)__/", $item["pagemap"]["cse_image"][0]["src"], $matches)) {
                                 $test = $matches;
-                                if($matches[1]) {
-                                    if($image = Model\Asset::getById($matches[1])) {
-                                        if($image instanceof Model\Asset\Image) {
+                                if ($matches[1]) {
+                                    if ($image = Model\Asset::getById($matches[1])) {
+                                        if ($image instanceof Model\Asset\Image) {
                                             $item["image"] = $image;
                                         }
                                     }
@@ -225,7 +229,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
 
                 // now a document
                 $urlParts = parse_url($item["link"]);
-                if($document = Model\Document::getByPath($urlParts["path"])) {
+                if ($document = Model\Document::getByPath($urlParts["path"])) {
                     $item["document"] = $document;
                 }
 
@@ -361,7 +365,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
      */
     public function getResults($retry=true)
     {
-        if(empty($this->results) && $retry) {
+        if (empty($this->results) && $retry) {
             $this->load();
         }
         return $this->results;
@@ -393,7 +397,8 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      * @return int
      */
-    public function count() {
+    public function count()
+    {
         $this->getResults();
         return $this->getTotal();
     }
@@ -403,7 +408,8 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
      * @param int $itemCountPerPage
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage) {
+    public function getItems($offset, $itemCountPerPage)
+    {
         $this->setOffset($offset);
         $this->setPerPage($itemCountPerPage);
 
@@ -415,7 +421,8 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      * @return $this|\Zend_Paginator_Adapter_Interface
      */
-    public function getPaginatorAdapter() {
+    public function getPaginatorAdapter()
+    {
         return $this;
     }
 
@@ -425,29 +432,34 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
      */
 
 
-    public function rewind() {
+    public function rewind()
+    {
         reset($this->results);
     }
 
-    public function current() {
+    public function current()
+    {
         $this->getResults();
         $var = current($this->results);
         return $var;
     }
 
-    public function key() {
+    public function key()
+    {
         $this->getResults();
         $var = key($this->results);
         return $var;
     }
 
-    public function next() {
+    public function next()
+    {
         $this->getResults();
         $var = next($this->results);
         return $var;
     }
 
-    public function valid() {
+    public function valid()
+    {
         $this->getResults();
         $var = $this->current() !== false;
         return $var;

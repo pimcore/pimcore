@@ -16,13 +16,15 @@ namespace Pimcore\Model\Site;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $id
      * @throws \Exception
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $data = $this->db->fetchRow("SELECT * FROM sites WHERE id = ?", $id);
         if (!$data["id"]) {
             throw new \Exception("there is no site for the requested id");
@@ -34,7 +36,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $id
      * @throws \Exception
      */
-    public function getByRootId($id) {
+    public function getByRootId($id)
+    {
         $data = $this->db->fetchRow("SELECT * FROM sites WHERE rootId = ?", $id);
         if (!$data["id"]) {
             throw new \Exception("there is no site for the requested rootId");
@@ -46,7 +49,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $domain
      * @throws \Exception
      */
-    public function getByDomain($domain) {
+    public function getByDomain($domain)
+    {
         $data = $this->db->fetchRow("SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?", array($domain, "%\"" . $domain . "\"%"));
         if (!$data["id"]) {
 
@@ -54,22 +58,21 @@ class Dao extends Model\Dao\AbstractDao {
             // @TODO: refactor this to be more clear
             $sitesRaw = $this->db->fetchAll("SELECT id,domains FROM sites");
             $wildcardDomains = [];
-            foreach($sitesRaw as $site) {
-                if(!empty($site["domains"]) && strpos($site["domains"], "*")) {
+            foreach ($sitesRaw as $site) {
+                if (!empty($site["domains"]) && strpos($site["domains"], "*")) {
                     $siteDomains = unserialize($site["domains"]);
-                    if(is_array($siteDomains) && count($siteDomains) > 0) {
-                        foreach($siteDomains as $siteDomain) {
-                            if(strpos($siteDomain, "*") !==  false) {
+                    if (is_array($siteDomains) && count($siteDomains) > 0) {
+                        foreach ($siteDomains as $siteDomain) {
+                            if (strpos($siteDomain, "*") !==  false) {
                                 $wildcardDomains[$siteDomain] = $site["id"];
                             }
                         }
                     }
                 }
-
             }
 
-            foreach($wildcardDomains as $wildcardDomain => $siteId) {
-                if(preg_match("#^" . $wildcardDomain . "$#", $domain)) {
+            foreach ($wildcardDomains as $wildcardDomain => $siteId) {
+                if (preg_match("#^" . $wildcardDomain . "$#", $domain)) {
                     $data = $this->db->fetchRow("SELECT * FROM sites WHERE id = ?", array($siteId));
                 }
             }
@@ -86,7 +89,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->update();
         }
@@ -98,7 +102,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
         $ts = time();
         $this->model->setCreationDate($ts);
         $this->model->setModificationDate($ts);
@@ -113,7 +118,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function update() {
+    public function update()
+    {
         $ts = time();
         $this->model->setModificationDate($ts);
 
@@ -121,11 +127,10 @@ class Dao extends Model\Dao\AbstractDao {
 
         foreach ($site as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("sites"))) {
-
                 if (is_array($value) || is_object($value)) {
                     $value = \Pimcore\Tool\Serialize::serialize($value);
                 }
-                if(is_bool($value)) {
+                if (is_bool($value)) {
                     $value = (int) $value;
                 }
                 $data[$key] = $value;
@@ -142,7 +147,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete("sites", $this->db->quoteInto("id = ?", $this->model->getId()));
         
         $this->model->clearDependentCache();

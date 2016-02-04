@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element\Recyclebin\Item;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Staticroute
@@ -31,14 +32,16 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->items;
     }
 
@@ -46,9 +49,9 @@ class Listing extends Model\Listing\AbstractListing {
      * @param array $items
      * @return void
      */
-    public function setItems($items) {
+    public function setItems($items)
+    {
         $this->items = $items;
         return $this;
     }
-
 }

@@ -17,7 +17,8 @@ namespace Pimcore\Model\Webservice\Data;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
-class Asset extends Model\Webservice\Data {
+class Asset extends Model\Webservice\Data
+{
 
     /**
      * @var integer
@@ -91,7 +92,8 @@ class Asset extends Model\Webservice\Data {
      * @param $object
      * @param null $options
      */
-    public function map($object, $options = null) {
+    public function map($object, $options = null)
+    {
         parent::map($object, $options);
 
         $settings = $object->getCustomSettings();
@@ -122,7 +124,8 @@ class Asset extends Model\Webservice\Data {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
+    {
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
         $metadata = $this->metadata;

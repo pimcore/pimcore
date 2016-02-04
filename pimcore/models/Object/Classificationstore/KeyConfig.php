@@ -16,17 +16,18 @@ namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
 
-class KeyConfig extends Model\AbstractModel {
+class KeyConfig extends Model\AbstractModel
+{
 
     /**
      * @var array
      */
-    static $cache = array();
+    public static $cache = array();
 
     /**
      * @var bool
      */
-    static $cacheEnabled = false;
+    public static $cacheEnabled = false;
 
     /**
      * @var integer
@@ -78,7 +79,8 @@ class KeyConfig extends Model\AbstractModel {
      * @param integer $id
      * @return Model\Object\Classificationstore\KeyConfig
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         try {
             $id = intval($id);
             if (self::$cacheEnabled && self::$cache[$id]) {
@@ -93,7 +95,6 @@ class KeyConfig extends Model\AbstractModel {
 
             return $config;
         } catch (\Exception $e) {
-
         }
     }
 
@@ -103,7 +104,7 @@ class KeyConfig extends Model\AbstractModel {
     public static function setCacheEnabled($cacheEnabled)
     {
         self::$cacheEnabled = $cacheEnabled;
-        if(!$cacheEnabled){
+        if (!$cacheEnabled) {
             self::$cache = array();
         }
     }
@@ -121,7 +122,8 @@ class KeyConfig extends Model\AbstractModel {
      * @param null $groupId
      * @return KeyConfig
      */
-    public static function getByName ($name) {
+    public static function getByName($name)
+    {
         try {
             $config = new self();
             $config->setName($name);
@@ -129,14 +131,14 @@ class KeyConfig extends Model\AbstractModel {
 
             return $config;
         } catch (\Exception $e) {
-
         }
     }
 
     /**
      * @return Model\Object\Classificationstore\KeyConfig
      */
-    public static function create() {
+    public static function create()
+    {
         $config = new self();
         $config->save();
 
@@ -148,7 +150,8 @@ class KeyConfig extends Model\AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -156,7 +159,8 @@ class KeyConfig extends Model\AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -164,7 +168,8 @@ class KeyConfig extends Model\AbstractModel {
      * @param string name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -172,14 +177,16 @@ class KeyConfig extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /** Returns the key description.
      * @return mixed
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
@@ -187,7 +194,8 @@ class KeyConfig extends Model\AbstractModel {
      * @param $description
      * @return Model\Object\Classificationstore\KeyConfig
      */
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
         return $this;
     }
@@ -197,7 +205,8 @@ class KeyConfig extends Model\AbstractModel {
     /**
      * Deletes the key value key configuration
      */
-    public function delete() {
+    public function delete()
+    {
         DefinitionCache::clear($this);
 
         \Pimcore::getEventManager()->trigger("object.Classificationstore.keyConfig.preDelete", $this);
@@ -211,7 +220,8 @@ class KeyConfig extends Model\AbstractModel {
     /**
      * Saves the key config
      */
-    public function save() {
+    public function save()
+    {
         DefinitionCache::clear($this);
 
         $isUpdate = false;
@@ -336,8 +346,4 @@ class KeyConfig extends Model\AbstractModel {
     {
         $this->title = $title;
     }
-
-
-
-
 }

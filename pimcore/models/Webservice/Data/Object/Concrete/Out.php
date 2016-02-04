@@ -16,9 +16,10 @@ namespace Pimcore\Model\Webservice\Data\Object\Concrete;
 
 use Pimcore\Model;
 
-class Out extends Model\Webservice\Data\Object\Concrete {
+class Out extends Model\Webservice\Data\Object\Concrete
+{
 
-      /**
+    /**
      * @var string
      */
     public $path;
@@ -46,9 +47,4 @@ class Out extends Model\Webservice\Data\Object\Concrete {
      * @var Model\Webservice\Data\Object\Listing\Item[]
      */
     public $childs;
-
-
-
-
-    
 }

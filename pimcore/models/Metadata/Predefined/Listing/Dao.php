@@ -16,7 +16,17 @@ namespace Pimcore\Model\Metadata\Predefined\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Dao\PhpArrayTable
+{
+
+    /**
+     *
+     */
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile("predefined-asset-metadata");
+    }
 
     /**
      * Loads a list of predefined metadata definitions for the specicified parameters, returns an array of
@@ -24,28 +34,27 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $properties = array();
-        $definitions = $this->db->fetchCol("SELECT id FROM assets_metadata_predefined" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $definitions = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($definitions as $propertyData) {
-            $properties[] = Model\Metadata\Predefined::getById($propertyData);
+            $properties[] = Model\Metadata\Predefined::getById($propertyData["id"]);
         }
 
         $this->model->setDefinitions($properties);
         return $properties;
     }
 
-    public function getTotalCount() {
-
-        try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM assets_metadata_predefined " . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
-
-        }
+    /**
+     * @return int
+     */
+    public function getTotalCount()
+    {
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $amount = count($data);
 
         return $amount;
     }
-
 }

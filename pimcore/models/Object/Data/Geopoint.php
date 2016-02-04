@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model\Object\Data;
 
-class Geopoint {
+class Geopoint
+{
 
     /**
      * @var double
@@ -30,7 +31,8 @@ class Geopoint {
      * @param null $longitude
      * @param null $latitude
      */
-    public function __construct($longitude = null, $latitude = null) {
+    public function __construct($longitude = null, $latitude = null)
+    {
         if ($longitude !== null) {
             $this->setLongitude($longitude);
         }
@@ -42,7 +44,8 @@ class Geopoint {
     /**
      * @return float
      */
-    public function getLongitude() {
+    public function getLongitude()
+    {
         return $this->longitude;
     }
 
@@ -50,7 +53,8 @@ class Geopoint {
      * @param $longitude
      * @return $this
      */
-    public function setLongitude($longitude) {
+    public function setLongitude($longitude)
+    {
         $this->longitude = (double) $longitude;
         return $this;
     }
@@ -58,7 +62,8 @@ class Geopoint {
     /**
      * @return float
      */
-    public function getLatitude() {
+    public function getLatitude()
+    {
         return $this->latitude;
     }
 
@@ -66,7 +71,8 @@ class Geopoint {
      * @param $latitude
      * @return $this
      */
-    public function setLatitude($latitude) {
+    public function setLatitude($latitude)
+    {
         $this->latitude = (double) $latitude;
         return $this;
     }
@@ -74,7 +80,8 @@ class Geopoint {
     /**
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->longitude . "; " . $this->latitude;
     }
 }

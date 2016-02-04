@@ -64,7 +64,7 @@ class Profiler extends \Zend_Db_Profiler
     public function __construct($label = null)
     {
         $this->_label = $label;
-        if(!$this->_label) {
+        if (!$this->_label) {
             $this->_label = "Pimcore\\Db\\Profiler";
         }
     }
@@ -101,28 +101,29 @@ class Profiler extends \Zend_Db_Profiler
         $this->_totalElapsedTime += $profile->getElapsedSecs();
         $this->_totalQueries++;
 
-        $logEntry = $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
+        $logEntry = $profile->getQuery() . " | " . implode(",", $profile->getQueryParams());
         \Logger::debug($logEntry, [
             "connection" => $this->getConnectionId(),
             "queryNum" => $this->_totalQueries,
-            "time" => (string)round($profile->getElapsedSecs(),5)
+            "time" => (string)round($profile->getElapsedSecs(), 5)
         ]);
 
         $this->queries[] = array(
             "time" => $profile->getElapsedSecs(),
-            "query" => $profile->getQuery() . " | " . implode(",",$profile->getQueryParams())
+            "query" => $profile->getQuery() . " | " . implode(",", $profile->getQueryParams())
         );
     }
 
     /**
      * 
      */
-    public function __destruct() {
-        if(is_resource($this->logFile)) {
+    public function __destruct()
+    {
+        if (is_resource($this->logFile)) {
 
             // write the total time at the end
             $message = "\n\n\n--------------------\n";
-            $message .= "Total Elapsed Time: ". (string)round($this->_totalElapsedTime,5) . "\n";
+            $message .= "Total Elapsed Time: ". (string)round($this->_totalElapsedTime, 5) . "\n";
             $message .= "Total Queries: " . $this->_totalQueries . "\n";
             $message .= "Top Queries: \n";
 
@@ -139,11 +140,11 @@ class Profiler extends \Zend_Db_Profiler
             $count = 0;
             foreach ($this->queries as $key => $value) {
                 $count++;
-                if($count > 5) {
+                if ($count > 5) {
                     break;
                 }
 
-                $message .= "#" . $key . ":  " . (string)round($value["time"],5) . " | " . $value["query"] . "\n";
+                $message .= "#" . $key . ":  " . (string)round($value["time"], 5) . " | " . $value["query"] . "\n";
             }
             $message .= "\n";
 
@@ -152,7 +153,7 @@ class Profiler extends \Zend_Db_Profiler
 
             fwrite($this->logFile, $message);
 
-            fclose($this->logFile);    
+            fclose($this->logFile);
         }
     }
 
@@ -171,7 +172,7 @@ class Profiler extends \Zend_Db_Profiler
                                                     '%totalDuration%'),
                                               array($this->_label,
                                                     $this->getTotalNumQueries(),
-                                                    (string)round($this->_totalElapsedTime,5)),
+                                                    (string)round($this->_totalElapsedTime, 5)),
                                               $this->_label_template));
     }
 

@@ -54,26 +54,6 @@ CREATE TABLE `assets_metadata` (
   KEY `cid` (`cid`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `assets_metadata_predefined`;
-CREATE TABLE `assets_metadata_predefined` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `description` text,
-  `language` varchar(255) DEFAULT NULL,
-  `type` enum('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
-  `data` text,
-  `targetSubtype` enum('image', 'text', 'audio', 'video', 'document', 'archive', 'unknown') DEFAULT NULL,
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  `config` text,
-  PRIMARY KEY (`id`),
-  KEY `name` (`name`),
-  KEY `id` (`id`),
-  KEY `type` (`type`),
-  KEY `language` (`language`),
-  KEY `targetSubtype` (`targetSubtype`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE `cache` (
   `id` varchar(165) NOT NULL DEFAULT '',
@@ -162,22 +142,6 @@ CREATE TABLE `documents` (
   KEY `published` (`published`),
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `documents_doctypes`;
-CREATE TABLE `documents_doctypes` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
-  `template` varchar(255) DEFAULT NULL,
-  `type` enum('page','snippet','email') DEFAULT NULL,
-  `priority` int(3) DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  PRIMARY KEY  (`id`),
-  KEY `priority` (`priority`)
-) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_elements`;
 CREATE TABLE `documents_elements` (
@@ -436,28 +400,6 @@ CREATE TABLE `properties` (
   KEY `cid` (`cid`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `properties_predefined`;
-CREATE TABLE `properties_predefined` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT '',
-  `description` text,
-  `key` varchar(255) DEFAULT NULL,
-  `type` enum('text','document','asset','bool','select','object') DEFAULT NULL,
-  `data` text,
-  `config` text,
-  `ctype` enum('document','asset','object') DEFAULT NULL,
-  `inheritable` tinyint(1) unsigned DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `name` (`name`),
-  KEY `id` (`id`),
-  KEY `key` (`key`),
-  KEY `type` (`type`),
-  KEY `ctype` (`ctype`),
-  KEY `inheritable` (`inheritable`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `recyclebin`;
 CREATE TABLE `recyclebin` (
   `id` int(11) NOT NULL auto_increment,
@@ -549,26 +491,6 @@ CREATE TABLE `sites` (
   `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
-) DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS  `staticroutes`;
-CREATE TABLE `staticroutes` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `name` varchar(50) default NULL,
-  `pattern` varchar(255) default NULL,
-  `reverse` varchar(255) default NULL,
-  `module` varchar(255) default NULL,
-  `controller` varchar(255) default NULL,
-  `action` varchar(255) default NULL,
-  `variables` varchar(255) default NULL,
-  `defaults` varchar(255) default NULL,
-  `siteId` int(11) DEFAULT NULL,
-  `priority` int(3) DEFAULT '0',
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  PRIMARY KEY  (`id`),
-  KEY `priority` (`priority`),
-  KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS  `tags`;
@@ -851,13 +773,17 @@ DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
 	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
+  `title` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` TEXT NULL,
 	`type` ENUM('input','textarea','wysiwyg','checkbox','numeric','slider','select','multiselect','date','datetime','language','languagemultiselect','country','countrymultiselect','table','quantityValue','calculatedValue') NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`definition` LONGTEXT NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	INDEX `name` (`name`),
+	INDEX `enabled` (`enabled`),
+	INDEX `type` (`type`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;

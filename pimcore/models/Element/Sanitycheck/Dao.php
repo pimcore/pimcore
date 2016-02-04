@@ -16,15 +16,16 @@ namespace Pimcore\Model\Element\Sanitycheck;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * Save to database
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         $sanityCheck = get_object_vars($this->model);
 
         foreach ($sanityCheck as $key => $value) {
@@ -34,10 +35,9 @@ class Dao extends Model\Dao\AbstractDao {
         }
 
         try {
-            $this->db->insert("sanitycheck", $data);
-        }
-        catch (\Exception $e) {
-           //probably duplicate
+            $this->db->insertOrUpdate("sanitycheck", $data);
+        } catch (\Exception $e) {
+            //probably duplicate
         }
 
         return true;
@@ -48,18 +48,16 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete("sanitycheck", $this->db->quoteInto("id = ?", $this->model->getId()) . " AND " . $this->db->quoteInto("type = ?", $this->model->getType()));
     }
 
-    public  function getNext(){
-
+    public function getNext()
+    {
         $data = $this->db->fetchRow("SELECT * FROM sanitycheck LIMIT 1");
         if (is_array($data)) {
             $this->assignVariablesToModel($data);
-        }  
-
-
+        }
     }
-
 }

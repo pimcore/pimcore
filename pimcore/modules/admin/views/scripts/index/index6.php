@@ -183,7 +183,7 @@ $scripts = array(
     "pimcore/treenodelocator.js",
     "pimcore/helpers/generic-grid.js",
     "pimcore/helpers/quantityValue.js",
-    "pimcore/experimental.js",
+    "pimcore/overrides.js",
 
     "pimcore/user.js",
 

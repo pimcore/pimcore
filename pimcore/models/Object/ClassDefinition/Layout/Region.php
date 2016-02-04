@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Layout;
 
 use Pimcore\Model;
 
-class Region extends Model\Object\ClassDefinition\Layout {
+class Region extends Model\Object\ClassDefinition\Layout
+{
 
     /**
      * Static type of this element
@@ -24,5 +25,4 @@ class Region extends Model\Object\ClassDefinition\Layout {
      * @var string
      */
     public $fieldtype = "region";
-
 }

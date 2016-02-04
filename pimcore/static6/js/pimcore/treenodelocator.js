@@ -17,6 +17,7 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
                         Ext.getCmp("pimcore_panel_tree_" + elementType + "s").expand();
                         var tree = pimcore.globalmanager.get("layout_" + elementType + "_tree");
                         element.data.typePath = res.typePath;
+                        element.data.idPath = res.idPath;
                         pimcore.treenodelocator.searchInTree(element, elementType, tree.tree, res.idPath, null, button);
                     }
                 } catch (e) {
@@ -32,6 +33,9 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
 pimcore.treenodelocator.reportDone = function(element, elementType, button) {
     if (element) {
         pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, element.id);
+        var tree = element.getOwnerTree();
+        var view = tree.getView();
+        view.focusRow(element);
     }
     button.enable();
 }
@@ -124,7 +128,9 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
             if (nodePath != idPath) {
                 childNode.expand();
                 var tree = childNode.getOwnerTree();
-                tree.getSelectionModel().select(childNode)
+                tree.getSelectionModel().select(childNode);
+                var view = tree.getView();
+                view.focusRow(childNode);
                 childNode.expand(false, pimcore.treenodelocator.reloadComplete.bind(this, childNode, element, elementType, null, button));
             } else {
                 var tree = node.getOwnerTree();
@@ -180,6 +186,10 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
     }
 
     var pagingData = node.pagingData;
+    if (!pagingData) {
+        pimcore.treenodelocator.showError(node, node.data.elementType);
+        return;
+    }
 
     var activePage = Math.ceil(pagingData.offset / pagingData.limit) + 1;
     var pageCount = Math.ceil(pagingData.total / pagingData.limit);

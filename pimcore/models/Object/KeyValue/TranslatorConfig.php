@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\KeyValue;
 
 use Pimcore\Model;
 
-class TranslatorConfig extends Model\AbstractModel {
+class TranslatorConfig extends Model\AbstractModel
+{
 
     /**
      * @var integer
@@ -37,9 +38,9 @@ class TranslatorConfig extends Model\AbstractModel {
      * @param integer $id
      * @return Model\Object\KeyValue\TranslatorConfig
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         try {
-
             $config = new self();
             $config->setId(intval($id));
             $config->getDao()->getById();
@@ -53,7 +54,8 @@ class TranslatorConfig extends Model\AbstractModel {
     /**
      * @param $name
      */
-    public static function getByName ($name) {
+    public static function getByName($name)
+    {
         try {
             $config = new self();
             $config->setName($name);
@@ -68,7 +70,8 @@ class TranslatorConfig extends Model\AbstractModel {
     /**
      * @return Model\Object\KeyValue\TranslatorConfig
      */
-    public static function create() {
+    public static function create()
+    {
         $config = new self();
         $config->save();
 
@@ -79,7 +82,8 @@ class TranslatorConfig extends Model\AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -87,7 +91,8 @@ class TranslatorConfig extends Model\AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -95,7 +100,8 @@ class TranslatorConfig extends Model\AbstractModel {
      * @param string name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -113,7 +119,8 @@ class TranslatorConfig extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 }

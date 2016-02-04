@@ -64,19 +64,19 @@ class Pdf extends Model\Document\Tag
         );
     }
 
-    public function getDataForResource() {
-
+    public function getDataForResource()
+    {
         $rewritePath = function ($data) {
 
-            if(!is_array($data)) {
+            if (!is_array($data)) {
                 return array();
             }
 
             foreach ($data as &$page) {
                 foreach ($page as &$element) {
-                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
-                        foreach($element["data"] as &$metaData) {
-                            if($metaData["value"] instanceof Element\ElementInterface) {
+                    if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach ($element["data"] as &$metaData) {
+                            if ($metaData["value"] instanceof Element\ElementInterface) {
                                 $metaData["value"] = $metaData["value"]->getId();
                             }
                         }
@@ -97,12 +97,11 @@ class Pdf extends Model\Document\Tag
         );
     }
 
-    public function getDataEditmode() {
-
-
+    public function getDataEditmode()
+    {
         $rewritePath = function ($data) {
 
-            if(!is_array($data)) {
+            if (!is_array($data)) {
                 return array();
             }
 
@@ -123,7 +122,7 @@ class Pdf extends Model\Document\Tag
         $hotspots = $rewritePath($this->hotspots);
 
         $pages = 0;
-        if($asset = Asset::getById($this->id)) {
+        if ($asset = Asset::getById($this->id)) {
             $pages = $asset->getPageCount();
         }
 
@@ -140,8 +139,8 @@ class Pdf extends Model\Document\Tag
         );
     }
 
-    public function getCacheTags($ownerDocument, $tags = array()) {
-
+    public function getCacheTags($ownerDocument, $tags = array())
+    {
         $tags = is_array($tags) ? $tags : array();
 
         $asset = Asset::getById($this->id);
@@ -152,15 +151,15 @@ class Pdf extends Model\Document\Tag
 
             $getMetaDataCacheTags = function ($data, $tags) {
 
-                if(!is_array($data)) {
+                if (!is_array($data)) {
                     return $tags;
                 }
 
                 foreach ($data as $page) {
                     foreach ($page as $element) {
-                        if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
-                            foreach($element["data"] as $metaData) {
-                                if($metaData["value"] instanceof Element\ElementInterface) {
+                        if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                            foreach ($element["data"] as $metaData) {
+                                if ($metaData["value"] instanceof Element\ElementInterface) {
                                     $tags = $metaData["value"]->getCacheTags($tags);
                                 }
                             }
@@ -196,7 +195,7 @@ class Pdf extends Model\Document\Tag
 
         $getMetaDataDependencies = function ($data, $dependencies) {
 
-            if(!is_array($data)) {
+            if (!is_array($data)) {
                 return $dependencies;
             }
 
@@ -205,9 +204,8 @@ class Pdf extends Model\Document\Tag
                     if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach ($element["data"] as $metaData) {
                             if ($metaData["value"] instanceof Element\ElementInterface) {
-
                                 $elTtype = $metaData["type"];
-                                if($metaData["type"] == "link") {
+                                if ($metaData["type"] == "link") {
                                     $elTtype = "document";
                                 }
 
@@ -259,7 +257,7 @@ class Pdf extends Model\Document\Tag
 
         $rewritePath = function ($data) {
 
-            if(!is_array($data)) {
+            if (!is_array($data)) {
                 return array();
             }
 
@@ -269,12 +267,12 @@ class Pdf extends Model\Document\Tag
                         foreach ($element["data"] as &$metaData) {
                             if (in_array($metaData["type"], array("object", "asset", "document", "link"))) {
                                 $elTtype = $metaData["type"];
-                                if($metaData["type"] == "link") {
+                                if ($metaData["type"] == "link") {
                                     $elTtype = "document";
                                 }
                                 $el = Element\Service::getElementById($elTtype, $metaData["value"]);
 
-                                if(!$el && $metaData["type"] == "link") {
+                                if (!$el && $metaData["type"] == "link") {
                                     $metaData["value"] = $metaData["value"];
                                 } else {
                                     $metaData["value"] = $el;
@@ -287,7 +285,7 @@ class Pdf extends Model\Document\Tag
             return $data;
         };
 
-        if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+        if (array_key_exists("hotspots", $data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
             $data["hotspots"] = $rewritePath($data["hotspots"]);
         }
 
@@ -313,13 +311,12 @@ class Pdf extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         $pdf = Asset::getById($data["id"]);
-        if($pdf instanceof Asset\Document) {
+        if ($pdf instanceof Asset\Document) {
             $this->id = $pdf->getId();
-            if(array_key_exists("hotspots", $data) && !empty($data["hotspots"])) {
-
+            if (array_key_exists("hotspots", $data) && !empty($data["hotspots"])) {
                 $rewritePath = function ($data) {
 
-                    if(!is_array($data)) {
+                    if (!is_array($data)) {
                         return array();
                     }
 
@@ -329,12 +326,12 @@ class Pdf extends Model\Document\Tag
                                 foreach ($element["data"] as &$metaData) {
                                     if (in_array($metaData["type"], array("object", "asset", "document", "link"))) {
                                         $elTtype = $metaData["type"];
-                                        if($metaData["type"] == "link") {
+                                        if ($metaData["type"] == "link") {
                                             $elTtype = "document";
                                         }
                                         $el = Element\Service::getElementByPath($elTtype, $metaData["value"]);
 
-                                        if(!$el && $metaData["type"] == "link") {
+                                        if (!$el && $metaData["type"] == "link") {
                                             $metaData["value"] = $metaData["value"];
                                         } else {
                                             $metaData["value"] = $el;
@@ -347,7 +344,7 @@ class Pdf extends Model\Document\Tag
                     return $data;
                 };
 
-                if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+                if (array_key_exists("hotspots", $data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
                     $data["hotspots"] = $rewritePath($data["hotspots"]);
                 }
 
@@ -390,22 +387,21 @@ class Pdf extends Model\Document\Tag
             $hotspots = $this->getHotspots();
             $rewritePath = function ($data) use ($options) {
 
-                if(!is_array($data)) {
+                if (!is_array($data)) {
                     return array();
                 }
 
                 foreach ($data as &$element) {
-
-                    if(isset($options["hotspotCallback"]) && is_callable($options["hotspotCallback"])) {
+                    if (isset($options["hotspotCallback"]) && is_callable($options["hotspotCallback"])) {
                         $element = $options["hotspotCallback"]($element);
-                        if(!is_array($element)) {
+                        if (!is_array($element)) {
                             throw new \Exception("Return value must be the the array passed as parameter (can be modified)");
                         }
 
-                        if(isset($element["attributes"]) && is_array($element["attributes"])) {
+                        if (isset($element["attributes"]) && is_array($element["attributes"])) {
                             $attributes = $element["attributes"];
                             $element["attributes"] = [];
-                            foreach($attributes as $name => $value) {
+                            foreach ($attributes as $name => $value) {
                                 $element["attributes"][] = [
                                     "name" => $name,
                                     "value" => $value
@@ -414,9 +410,9 @@ class Pdf extends Model\Document\Tag
                         }
                     }
 
-                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
-                        foreach($element["data"] as &$metaData) {
-                            if($metaData["value"] instanceof Element\ElementInterface) {
+                    if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach ($element["data"] as &$metaData) {
+                            if ($metaData["value"] instanceof Element\ElementInterface) {
                                 $metaData["value"] = $metaData["value"]->getFullPath();
                             }
                         }
@@ -426,7 +422,7 @@ class Pdf extends Model\Document\Tag
                 return $data;
             };
 
-            for($i=1; $i <=$pageCount; $i++) {
+            for ($i=1; $i <=$pageCount; $i++) {
                 $pageData = array(
                     "thumbnail" => $asset->getImageThumbnail(array(
                         "width" => 200,
@@ -443,7 +439,7 @@ class Pdf extends Model\Document\Tag
                     ), $i, true)
                 );
 
-                if(is_array($hotspots) && $hotspots[$i]) {
+                if (is_array($hotspots) && $hotspots[$i]) {
                     $pageData["hotspots"] = $rewritePath($hotspots[$i]);
                 }
 
@@ -453,7 +449,7 @@ class Pdf extends Model\Document\Tag
             $data["pdf"] = $asset->getFullPath();
 
             $data["fullscreen"] = true;
-            if(isset($options["fullscreen"])) {
+            if (isset($options["fullscreen"])) {
                 $data["fullscreen"] = (bool) $options["fullscreen"];
             }
 
@@ -488,15 +484,15 @@ HTML;
         }
     }
 
-    public function getErrorCode($message = "") {
-
+    public function getErrorCode($message = "")
+    {
         $width = $this->getWidth();
-        if(strpos($this->getWidth(), "%") === false) {
+        if (strpos($this->getWidth(), "%") === false) {
             $width = ($this->getWidth()-1) . "px";
         }
 
         // only display error message in debug mode
-        if(!\Pimcore::inDebugMode()) {
+        if (!\Pimcore::inDebugMode()) {
             $message = "";
         }
 
@@ -529,9 +525,9 @@ HTML;
     public function getFromWebserviceImport($wsElement, $idMapper = null)
     {
         $data = $wsElement->value;
-        if($data->id){
+        if ($data->id) {
             $asset = Asset::getById($data->id);
-            if(!$asset){
+            if (!$asset) {
                 throw new \Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
             } else {
                 $this->id = $data->id;
@@ -542,43 +538,50 @@ HTML;
     /**
      * @param array $texts
      */
-    public function setTexts($texts){
+    public function setTexts($texts)
+    {
         $this->texts = (array)$texts;
     }
 
     /**
      * @return array
      */
-    public function getTexts(){
+    public function getTexts()
+    {
         return (array)$this->texts;
     }
 
-    public function getElement(){
+    public function getElement()
+    {
         $data = $this->getData();
         return Asset::getById($data['id']);
     }
 
-    public function getText($page){
+    public function getText($page)
+    {
         $texts = $this->getTexts();
-        if($texts[$page]){
+        if ($texts[$page]) {
             return $texts[$page];
-        }else{
+        } else {
             $asset = $this->getElement();
-            if($asset instanceof Asset\Document){
+            if ($asset instanceof Asset\Document) {
                 return $asset->getText($page);
             }
         }
     }
 
-    public function setChapters($chapters){
+    public function setChapters($chapters)
+    {
         $this->chapters = (array)$chapters;
     }
 
-    public function getChapters(){
+    public function getChapters()
+    {
         return (array)$this->chapters;
     }
 
-    public function getChapter($page){
+    public function getChapter($page)
+    {
         $chapters = $this->getChapters();
         return $chapters[$page];
     }
@@ -600,7 +603,8 @@ HTML;
     }
 
 
-    public function getHotspot($page){
+    public function getHotspot($page)
+    {
         $hotspots = $this->getHotspots();
         return $hotspots[$page];
     }
@@ -634,8 +638,9 @@ HTML;
      * @param array $idMapping
      * @return void
      */
-    public function rewriteIds($idMapping) {
-        if(array_key_exists("asset", $idMapping) and array_key_exists($this->getId(), $idMapping["asset"])) {
+    public function rewriteIds($idMapping)
+    {
+        if (array_key_exists("asset", $idMapping) and array_key_exists($this->getId(), $idMapping["asset"])) {
             $this->setId($idMapping["asset"][$this->getId()]);
         }
     }

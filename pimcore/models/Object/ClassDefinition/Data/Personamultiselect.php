@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Tool;
 
-class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
+class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect
+{
 
     /**
      * Static type of this element
@@ -30,8 +31,8 @@ class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
     /**
      *
      */
-    public function configureOptions() {
-
+    public function configureOptions()
+    {
         $list = new Tool\Targeting\Persona\Listing();
         $list->setOrder("asc");
         $list->setOrderKey("name");
@@ -51,9 +52,10 @@ class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
     /**
      *
      */
-    public function __wakeup() {
+    public function __wakeup()
+    {
         $options = $this->getOptions();
-        if(\Pimcore::inAdmin() || empty($options)) {
+        if (\Pimcore::inAdmin() || empty($options)) {
             $this->configureOptions();
         }
     }

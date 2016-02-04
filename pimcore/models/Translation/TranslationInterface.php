@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model\Translation;
 
-interface TranslationInterface {
+interface TranslationInterface
+{
 
     public static function getByKey($id);
 }

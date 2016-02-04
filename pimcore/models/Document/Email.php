@@ -256,5 +256,4 @@ class Email extends Model\Document\PageSnippet
     {
         return $this->getAsArray('Bcc');
     }
-
 }

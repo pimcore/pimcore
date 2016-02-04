@@ -16,6 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Document\Snippet;
 
 use Pimcore\Model;
 
-class Incoming extends Model\Webservice\Data\Document\Snippet {
-
+class Incoming extends Model\Webservice\Data\Document\Snippet
+{
 }

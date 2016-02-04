@@ -17,7 +17,8 @@ namespace Pimcore\Model\Webservice\Data;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
-abstract class Document extends Model\Webservice\Data {
+abstract class Document extends Model\Webservice\Data
+{
 
     /**
      * @var integer
@@ -63,13 +64,14 @@ abstract class Document extends Model\Webservice\Data {
      * @param $object
      * @param null $options
      */
-    public function map($object, $options = null) {
+    public function map($object, $options = null)
+    {
         parent::map($object);
 
         $keys = get_object_vars($this);
         if (array_key_exists("childs", $keys)) {
             if ($object->hasChilds()) {
-                $this->childs = array(); 
+                $this->childs = array();
                 foreach ($object->getChilds() as $child) {
                     $item = new Webservice\Data\Document\Listing\Item();
                     $item->id = $child->getId();
@@ -80,6 +82,4 @@ abstract class Document extends Model\Webservice\Data {
             }
         }
     }
-
-
 }

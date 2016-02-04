@@ -4,19 +4,19 @@
 
 
 
-#### /website_demo/var/config/system.xml ###
+#### /website_demo/var/config/system.php ###
 # change db configuration to:
 
-  <database>
-    <adapter>Mysqli</adapter>
-    <params>
-      <host>localhost</host>
-      <username>pimcore_demo</username>
-      <password>secretpassword</password>
-      <dbname>pimcore_demo_pimcore</dbname>
-      <port>3306</port>
-    </params>
-  </database>
+  "database" => [
+      "adapter" => "Mysqli",
+      "params" => [
+          "host" => "localhost",
+          "username" => "pimcore_demo",
+          "password" => "secretpassword",
+          "dbname" => "pimcore_demo_pimcore",
+          "port" => "3306"
+      ]
+  ],
 
 
 ### /website_demo/dump/pimcore.sql

@@ -6,7 +6,8 @@
  * Time: 09:29
  * To change this template use File | Settings | File Templates.
  */
-class Test_Base extends PHPUnit_Framework_TestCase {
+class Test_Base extends PHPUnit_Framework_TestCase
+{
 
     /** If true (default) the base will make sure that the unittest class exists
      * @var bool
@@ -14,7 +15,8 @@ class Test_Base extends PHPUnit_Framework_TestCase {
     public $needsTestClass = true;
 
 
-    public function printTestName() {
+    public function printTestName()
+    {
         try {
             throw new Exception();
         } catch (Exception $e) {
@@ -23,12 +25,12 @@ class Test_Base extends PHPUnit_Framework_TestCase {
         }
     }
 
-    public function setUp() {
+    public function setUp()
+    {
         if ($this->needsTestClass) {
             // either unittest class already exists or it must be created
             $class = Object_Class::getByName("unittest");
             if (!$class) {
-
                 $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
                 $importData = $conf->toArray();
 
@@ -49,7 +51,7 @@ class Test_Base extends PHPUnit_Framework_TestCase {
                 $class->setModificationDate(time());
 
                 $fd = $class->getFieldDefinition("objectswithmetadata");
-                if($fd) {
+                if ($fd) {
                     $fd->setAllowedClassId($class->getId());
                 }
 

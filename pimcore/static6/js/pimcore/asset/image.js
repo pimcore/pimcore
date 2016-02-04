@@ -191,6 +191,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     store: [["JPEG", "JPEG"],["PNG","PNG"]],
                     mode: "local",
                     value: "JPEG",
+                    editable: false,
                     width: 200
                 }, {
                     xtype: "numberfield",

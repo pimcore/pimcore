@@ -14,6 +14,9 @@
 /vendor/*
 !/vendor/.dummy
 
+# misc
+/php-cs-fixer.phar
+
 # PhpStorm / IDEA
 .idea
 # NetBeans

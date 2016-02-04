@@ -16,7 +16,8 @@ namespace Pimcore\Model\User\Workspace;
 
 use Pimcore\Model;
 
-class AbstractWorkspace extends Model\AbstractModel {
+class AbstractWorkspace extends Model\AbstractModel
+{
 
     /**
      * @var int

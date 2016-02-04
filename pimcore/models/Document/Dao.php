@@ -29,7 +29,6 @@ class Dao extends Model\Element\Dao
             $data = $this->db->fetchRow("SELECT documents.*, tree_locks.locked FROM documents
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                     WHERE documents.id = ?", $id);
-
         } catch (\Exception $e) {
         }
 
@@ -91,7 +90,6 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -100,10 +98,9 @@ class Dao extends Model\Element\Dao
     public function update()
     {
         try {
-
             $typeSpecificTable = null;
             $validColumnsTypeSpecific = [];
-            if(in_array($this->model->getType(), ["email","hardlink","link","page","snippet"])) {
+            if (in_array($this->model->getType(), ["email", "hardlink", "link", "page", "snippet"])) {
                 $typeSpecificTable = "documents_" . $this->model->getType();
                 $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
             }
@@ -119,21 +116,21 @@ class Dao extends Model\Element\Dao
 
                 // check if the getter exists
                 $getter = "get" . ucfirst($key);
-                if(!method_exists($this->model,$getter)) {
+                if (!method_exists($this->model, $getter)) {
                     continue;
                 }
 
                 // get the value from the getter
-                if(in_array($key, $this->getValidTableColumns("documents")) || in_array($key, $validColumnsTypeSpecific)) {
+                if (in_array($key, $this->getValidTableColumns("documents")) || in_array($key, $validColumnsTypeSpecific)) {
                     $value = $this->model->$getter();
                 } else {
                     continue;
                 }
 
-                if(is_bool($value)) {
+                if (is_bool($value)) {
                     $value = (int)$value;
                 }
-                if(is_array($value)) {
+                if (is_array($value)) {
                     $value = Serialize::serialize($value);
                 }
 
@@ -152,7 +149,7 @@ class Dao extends Model\Element\Dao
             // update the values in the database
             $this->db->insertOrUpdate("documents", $dataDocument);
 
-            if($typeSpecificTable) {
+            if ($typeSpecificTable) {
                 $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
             }
 
@@ -177,7 +174,8 @@ class Dao extends Model\Element\Dao
     /**
      * @throws \Zend_Db_Adapter_Exception
      */
-    public function updateWorkspaces() {
+    public function updateWorkspaces()
+    {
         $this->db->update("users_workspaces_document", array(
             "cpath" => $this->model->getRealFullPath()
         ), "cid = " . $this->model->getId());
@@ -215,17 +213,14 @@ class Dao extends Model\Element\Dao
      */
     public function getCurrentFullPath()
     {
-
         $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
         } catch (\Exception $e) {
             \Logger::error("could not  get current document path from DB");
-
         }
 
         return $path;
-
     }
 
     /**
@@ -235,7 +230,6 @@ class Dao extends Model\Element\Dao
      */
     public function getProperties($onlyInherited = false, $onlyDirect = false)
     {
-
         $properties = array();
 
         if ($onlyDirect) {
@@ -251,7 +245,6 @@ class Dao extends Model\Element\Dao
         });
 
         foreach ($propertiesRaw as $propertyRaw) {
-
             try {
                 $property = new Model\Property();
                 $property->setType($propertyRaw["type"]);
@@ -339,8 +332,6 @@ class Dao extends Model\Element\Dao
 
             $query = "select count(*) from documents d where parentId = ?
                     and (select list as locate from users_workspaces_document where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;";
-
-
         } else {
             $query = "SELECT COUNT(*) AS count FROM documents WHERE parentId = ?";
         }
@@ -348,15 +339,16 @@ class Dao extends Model\Element\Dao
         return $c;
     }
 
-	/**
-	 * Quick test if there are siblings
-	 *
-	 * @return boolean
-	 */
-	public function hasSiblings() {
-		$c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
-		return (bool)$c;
-	}
+    /**
+     * Quick test if there are siblings
+     *
+     * @return boolean
+     */
+    public function hasSiblings()
+    {
+        $c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+        return (bool)$c;
+    }
 
     /**
      * @return bool
@@ -404,7 +396,8 @@ class Dao extends Model\Element\Dao
     /**
      *
      */
-    public function unlockPropagate() {
+    public function unlockPropagate()
+    {
         $lockIds = $this->db->fetchCol("SELECT id from documents WHERE path LIKE " . $this->db->quote($this->model->getFullPath() . "/%") . " OR id = " . $this->model->getId());
         $this->db->delete("tree_locks", "type = 'document' AND id IN (" . implode(",", $lockIds) . ")");
         return $lockIds;
@@ -477,5 +470,4 @@ class Dao extends Model\Element\Dao
         $index++;
         return $index;
     }
-
 }

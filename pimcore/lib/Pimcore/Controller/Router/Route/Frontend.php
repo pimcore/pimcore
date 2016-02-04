@@ -13,14 +13,15 @@
 namespace Pimcore\Controller\Router\Route;
 
 use Pimcore\Tool;
-use Pimcore\Config; 
+use Pimcore\Config;
 use Pimcore\Cache;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Staticroute;
 
-class Frontend extends \Zend_Controller_Router_Route_Abstract {
+class Frontend extends \Zend_Controller_Router_Route_Abstract
+{
 
     /**
      * @var array
@@ -30,8 +31,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
     /**
      * @param $type
      */
-    public static function addDirectRouteDocumentType($type) {
-        if(!in_array($type, self::$directRouteTypes)) {
+    public static function addDirectRouteDocumentType($type)
+    {
+        if (!in_array($type, self::$directRouteTypes)) {
             self::$directRouteTypes[] = $type;
         }
     }
@@ -39,7 +41,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
     /**
      * @return array
      */
-    public static function getDirectRouteDocumentTypes() {
+    public static function getDirectRouteDocumentTypes()
+    {
         return self::$directRouteTypes;
     }
 
@@ -61,7 +64,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
     /**
      * @return int
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return 1;
     }
 
@@ -70,7 +74,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      * @param \Zend_Config $config
      * @return Frontend
      */
-    public static function getInstance(\Zend_Config $config) {
+    public static function getInstance(\Zend_Config $config)
+    {
         return new self();
     }
 
@@ -79,10 +84,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      * @param bool $partial
      * @return array|bool
      */
-    public function match($path, $partial = false) {
+    public function match($path, $partial = false)
+    {
 
         // this allows the usage of UTF8 URLs and within static routes
-        $path = urldecode($path); 
+        $path = urldecode($path);
 
         $front = \Zend_Controller_Front::getInstance();
         $matchFound = false;
@@ -100,7 +106,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
         if ($config->general->http_auth) {
             $username = $config->general->http_auth->username;
             $password = $config->general->http_auth->password;
-            if($username && $password) {
+            if ($username && $password) {
                 $adapter = new \Zend_Auth_Adapter_Http(array(
                     "accept_schemes" => "basic",
                     "realm" => Tool::getHostname()
@@ -142,7 +148,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
         // do not allow requests including /index.php/ => SEO
         // this is after the first redirect check, to allow redirects in index.php?xxx
-        if(preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
+        if (preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
             $redirectUrl = $matches[1];
             $redirectUrl = ltrim($redirectUrl, "/");
             $redirectUrl = "/" . $redirectUrl;
@@ -156,14 +162,14 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
             if ($config->general->redirect_to_maindomain && $config->general->domain && $config->general->domain != Tool::getHostname() && !Site::isSiteRequest() && !Tool::isFrontentRequestByAdmin()) {
                 $hostRedirect = $config->general->domain;
             }
-            if(Site::isSiteRequest()) {
+            if (Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
-                if($site->getRedirectToMainDomain() && $site->getMainDomain() != Tool::getHostname()) {
+                if ($site->getRedirectToMainDomain() && $site->getMainDomain() != Tool::getHostname()) {
                     $hostRedirect = $site->getMainDomain();
                 }
             }
 
-            if($hostRedirect && !isset($_GET["pimcore_disable_host_redirect"])) {
+            if ($hostRedirect && !isset($_GET["pimcore_disable_host_redirect"])) {
                 $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $hostRedirect . $_SERVER["REQUEST_URI"];
 
                 header("HTTP/1.1 301 Moved Permanently");
@@ -174,7 +180,6 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                 exit;
             }
         } catch (\Exception $e) {
-
         }
 
 
@@ -186,9 +191,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
         // you can also call a page by it's ID /?pimcore_document=XXXX
         if (!$matchFound) {
-            if(!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
+            if (!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
                 $doc = Document::getById($params["pimcore_document"] ? $params["pimcore_document"] : $params["pdid"]);
-                if($doc instanceof Document) {
+                if ($doc instanceof Document) {
                     $path = $doc->getFullPath();
                 }
             }
@@ -202,12 +207,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
                 // check for a pretty url inside a site
                 if (!$document && Site::isSiteRequest()) {
-
                     $documentService = new Document\Service();
                     $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite(Site::getCurrentSite(), $originalPath);
 
                     if ($sitePrettyDocId) {
-                        if($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                        if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
                             $document = $sitePrettyDoc;
                             // undo the modification of the path by the site detection (prefixing with site root path)
                             // this is not necessary when using pretty-urls and will cause problems when validating the
@@ -218,35 +222,34 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                 }
 
                 // check for a parent hardlink with childs
-                if(!$document instanceof Document) {
+                if (!$document instanceof Document) {
                     $hardlinkedParentDocument = $this->getNearestDocumentByPath($path, true);
-                    if($hardlinkedParentDocument instanceof Document\Hardlink) {
-                        if($hardLinkedDocument = Document\Hardlink\Service::getChildByPath($hardlinkedParentDocument, $path)) {
+                    if ($hardlinkedParentDocument instanceof Document\Hardlink) {
+                        if ($hardLinkedDocument = Document\Hardlink\Service::getChildByPath($hardlinkedParentDocument, $path)) {
                             $document = $hardLinkedDocument;
                         }
                     }
                 }
 
                 // check for direct hardlink
-                if($document instanceof Document\Hardlink) {
+                if ($document instanceof Document\Hardlink) {
                     $hardlinkParentDocument = $document;
                     $document = Document\Hardlink\Service::wrap($hardlinkParentDocument);
                 }
 
                 if ($document instanceof Document) {
                     if (in_array($document->getType(), self::getDirectRouteDocumentTypes())) {
-
-                        if (Tool::isFrontentRequestByAdmin() || $document->isPublished() ) {
+                        if (Tool::isFrontentRequestByAdmin() || $document->isPublished()) {
 
                             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
-                            if($document instanceof Document\Page
+                            if ($document instanceof Document\Page
                                 && !($document instanceof Document\Hardlink\Wrapper\WrapperInterface)
                                 && $document->getPrettyUrl()
                                 && !Tool::isFrontentRequestByAdmin()
                             ) {
-                                if(rtrim(strtolower($document->getPrettyUrl())," /") != rtrim(strtolower($originalPath),"/")) {
+                                if (rtrim(strtolower($document->getPrettyUrl()), " /") != rtrim(strtolower($originalPath), "/")) {
                                     $redirectUrl = $document->getPrettyUrl();
-                                    if($_SERVER["QUERY_STRING"]) {
+                                    if ($_SERVER["QUERY_STRING"]) {
                                         $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
                                     }
                                     header("Location: " . $redirectUrl, true, 301);
@@ -270,12 +273,12 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                             // the only reason for this is: SEO, Analytics, ... there is no system specific reason, pimcore would work also with a trailing slash without problems
                             // use $originalPath because of the sites
                             // only do redirecting with GET requests
-                            if(strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
-                                if($config->documents->allowtrailingslash) {
-                                    if($config->documents->allowtrailingslash == "no") {
-                                        if(substr($originalPath, strlen($originalPath)-1,1) == "/" && $originalPath != "/") {
-                                            $redirectUrl = rtrim($originalPath,"/");
-                                            if($_SERVER["QUERY_STRING"]) {
+                            if (strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
+                                if ($config->documents->allowtrailingslash) {
+                                    if ($config->documents->allowtrailingslash == "no") {
+                                        if (substr($originalPath, strlen($originalPath)-1, 1) == "/" && $originalPath != "/") {
+                                            $redirectUrl = rtrim($originalPath, "/");
+                                            if ($_SERVER["QUERY_STRING"]) {
                                                 $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
                                             }
                                             header("Location: " . $redirectUrl, true, 301);
@@ -284,11 +287,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                                     }
                                 }
 
-                                if($config->documents->allowcapitals) {
-                                    if($config->documents->allowcapitals == "no") {
-                                        if(strtolower($originalPath) != $originalPath) {
+                                if ($config->documents->allowcapitals) {
+                                    if ($config->documents->allowcapitals == "no") {
+                                        if (strtolower($originalPath) != $originalPath) {
                                             $redirectUrl = strtolower($originalPath);
-                                            if($_SERVER["QUERY_STRING"]) {
+                                            if ($_SERVER["QUERY_STRING"]) {
                                                 $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
                                             }
                                             header("Location: " . $redirectUrl, true, 301);
@@ -300,14 +303,13 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
                             $matchFound = true;
                         }
-                    } else if ($document->getType() == "link")  {
+                    } elseif ($document->getType() == "link") {
                         // if the document is a link just redirect to the location/href of the link
-                        header("Location: " . $document->getHref(),true,301);
+                        header("Location: " . $document->getHref(), true, 301);
                         exit;
                     }
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 // no suitable page found
                 $foo = "bar";
             }
@@ -316,28 +318,24 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
         // test if there is a suitable static route
         if (!$matchFound) {
             try {
-                
-                $cacheKey = "system_route_staticroute";
-                if (!$routes = Cache::load($cacheKey)) {
-                
-                    $list = new Staticroute\Listing();
-                    $list->setOrderKey("priority");
-                    $list->setOrder("DESC");
-                    $routes = $list->load();
-                    
-                    Cache::save($routes, $cacheKey, array("system","staticroute","route"), null, 998);
-                }
-                
-                foreach ($routes as $route) {
+                $list = new Staticroute\Listing();
+                $list->setOrder(function ($a, $b) {
+                    if ($a["priority"] == $b["priority"]) {
+                        return 0;
+                    }
+                    return ($a["priority"] < $b["priority"]) ? 1 : -1;
+                });
+                $routes = $list->load();
 
-                    if(!$matchFound) {
+                foreach ($routes as $route) {
+                    if (!$matchFound) {
                         $routeParams = $route->match($originalPath, $params);
-                        if($routeParams) {
+                        if ($routeParams) {
                             $params = $routeParams;
 
                             // try to get nearest document to the route
                             $document = $this->getNearestDocumentByPath($path, false, array("page", "snippet", "hardlink"));
-                            if($document instanceof Document\Hardlink) {
+                            if ($document instanceof Document\Hardlink) {
                                 $document = Document\Hardlink\Service::wrap($document);
                             }
                             $params["document"] = $document;
@@ -355,8 +353,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                         }
                     }
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 // no suitable route found
             }
         }
@@ -371,7 +368,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
         }
         
         // remove pimcore magic parameters
-        unset($params["pimcore_outputfilters_disabled"]); 
+        unset($params["pimcore_outputfilters_disabled"]);
         unset($params["pimcore_document"]);
         unset($params["nocache"]);
         
@@ -385,12 +382,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      * @param array $types
      * @return Document|Document\PageSnippet|null|string
      */
-    protected function getNearestDocumentByPath ($path, $ignoreHardlinks = false, $types = array()) {
-
-        if($this->nearestDocumentByPath instanceof Document) {
+    protected function getNearestDocumentByPath($path, $ignoreHardlinks = false, $types = array())
+    {
+        if ($this->nearestDocumentByPath instanceof Document) {
             $document = $this->nearestDocumentByPath;
         } else {
-
             $pathes = array();
 
             $pathes[] = "/";
@@ -408,11 +404,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
             foreach ($pathes as $p) {
                 if ($document = Document::getByPath($p)) {
-                    if(empty($types) || in_array($document->getType(), $types)) {
+                    if (empty($types) || in_array($document->getType(), $types)) {
                         $this->nearestDocumentByPath = $document;
                         break;
                     }
-                } else if (Site::isSiteRequest()) {
+                } elseif (Site::isSiteRequest()) {
                     // also check for a pretty url in a site
                     $site = Site::getCurrentSite();
                     $documentService = new Document\Service();
@@ -422,7 +418,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
 
                     $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite($site, $originalPath);
                     if ($sitePrettyDocId) {
-                        if($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                        if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
                             $this->nearestDocumentByPath = $sitePrettyDoc;
                             break;
                         }
@@ -432,10 +428,10 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
         }
 
 
-        if($document) {
-            if(!$ignoreHardlinks) {
-                if($document instanceof Document\Hardlink) {
-                    if($hardLinkedDocument = Document\Hardlink\Service::getNearestChildByPath($document, $path)) {
+        if ($document) {
+            if (!$ignoreHardlinks) {
+                if ($document instanceof Document\Hardlink) {
+                    if ($hardLinkedDocument = Document\Hardlink\Service::getNearestChildByPath($document, $path)) {
                         $document = $hardLinkedDocument;
                     } else {
                         $document = Document\Hardlink\Service::wrap($document);
@@ -454,33 +450,32 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      * @param bool $override
      * @return void
      */
-    protected function checkForRedirect ($override = false) {
+    protected function checkForRedirect($override = false)
+    {
 
         // not for admin requests
-        if(Tool::isFrontentRequestByAdmin()) {
+        if (Tool::isFrontentRequestByAdmin()) {
             return;
         }
 
         try {
-
             $front = \Zend_Controller_Front::getInstance();
             $config = Config::getSystemConfig();
 
             // get current site if available
             $sourceSite = null;
-            if(Site::isSiteRequest()) {
+            if (Site::isSiteRequest()) {
                 $sourceSite = Site::getCurrentSite();
             }
 
             $cacheKey = "system_route_redirect";
             if (empty($this->redirects) && !($this->redirects = Cache::load($cacheKey))) {
-
                 $list = new Redirect\Listing();
                 $list->setOrder("DESC");
                 $list->setOrderKey("priority");
                 $this->redirects = $list->load();
 
-                Cache::save($this->redirects, $cacheKey, array("system","redirect","route"), null, 998);
+                Cache::save($this->redirects, $cacheKey, array("system", "redirect", "route"), null, 998);
             }
 
             $requestScheme = ($_SERVER['HTTPS'] == 'on') ? \Zend_Controller_Request_Http::SCHEME_HTTPS : \Zend_Controller_Request_Http::SCHEME_HTTP;
@@ -488,19 +483,18 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
             $matchUrl = $requestScheme . "://" . $_SERVER["HTTP_HOST"] . $matchRequestUri;
 
             foreach ($this->redirects as $redirect) {
-
                 $matchAgainst = $matchRequestUri;
-                if($redirect->getSourceEntireUrl()) {
+                if ($redirect->getSourceEntireUrl()) {
                     $matchAgainst = $matchUrl;
                 }
 
                 // if override is true the priority has to be 99 which means that overriding is ok
-                if(!$override || ($override && $redirect->getPriority() == 99)) {
+                if (!$override || ($override && $redirect->getPriority() == 99)) {
                     if (@preg_match($redirect->getSource(), $matchAgainst, $matches)) {
 
                         // check for a site
-                        if($sourceSite) {
-                            if($sourceSite->getId() != $redirect->getSourceSite()) {
+                        if ($sourceSite) {
+                            if ($sourceSite->getId() != $redirect->getSourceSite()) {
                                 continue;
                             }
                         }
@@ -508,9 +502,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                         array_shift($matches);
 
                         $target = $redirect->getTarget();
-                        if(is_numeric($target)){
+                        if (is_numeric($target)) {
                             $d = Document::getById($target);
-                            if($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
+                            if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
                                 $target = $d->getFullPath();
                             } else {
                                 \Logger::error("Target of redirect no found (Document-ID: " . $target . ")!");
@@ -519,9 +513,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                         }
 
                         // replace escaped % signs so that they didn't have effects to vsprintf (PIMCORE-1215)
-                        $target = str_replace("\\%","###URLENCODE_PLACEHOLDER###", $target);
+                        $target = str_replace("\\%", "###URLENCODE_PLACEHOLDER###", $target);
                         $url = @vsprintf($target, $matches);
-                        if(empty($url)) {
+                        if (empty($url)) {
                             // vsprintf() failed, just ose the original again
                             $url = $target;
                         }
@@ -530,7 +524,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                         // support for pcre backreferences
                         $url = replace_pcre_backreferences($url, $matches);
 
-                        if($redirect->getTargetSite() && !preg_match("@http(s)?://@i", $url)) {
+                        if ($redirect->getTargetSite() && !preg_match("@http(s)?://@i", $url)) {
                             try {
                                 $targetSite = Site::getById($redirect->getTargetSite());
 
@@ -538,20 +532,20 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                                 // the root-path will be replaced so that the page can be shown
                                 $url = preg_replace("@^" . $targetSite->getRootPath() . "/@", "/", $url);
                                 $url = $requestScheme . "://" . $targetSite->getMainDomain() . $url;
-                            } catch (\Exception $e){
+                            } catch (\Exception $e) {
                                 \Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
                                 continue;
                             }
-                        } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {
+                        } elseif (!preg_match("@http(s)?://@i", $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {
                             // prepend the host and scheme to avoid infinite loops when using "domain" redirects
                             $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $url;
                         }
 
                         // pass-through parameters if specified
                         $queryString = $_SERVER["QUERY_STRING"];
-                        if($redirect->getPassThroughParameters() && !empty($queryString)) {
+                        if ($redirect->getPassThroughParameters() && !empty($queryString)) {
                             $glue = "?";
-                            if(strpos($url, "?")) {
+                            if (strpos($url, "?")) {
                                 $glue = "&";
                             }
 
@@ -568,8 +562,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
                     }
                 }
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             // no suitable route found
         }
     }
@@ -581,19 +574,19 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      * @param bool $partial
      * @return string
      */
-    public function assemble($data = array(), $reset = false, $encode = true, $partial = false) {
-
+    public function assemble($data = array(), $reset = false, $encode = true, $partial = false)
+    {
         $pathPrefix = "";
         $hasPath = false;
 
         // try to get document from controller front
         $front = \Zend_Controller_Front::getInstance();
 
-        if(array_key_exists("document", $data) && $data["document"] instanceof Document) {
+        if (array_key_exists("document", $data) && $data["document"] instanceof Document) {
             $pathPrefix = $data["document"]->getFullPath();
             unset($data["document"]);
             $hasPath = true;
-        } else if($doc = $front->getRequest()->getParam("document")) {
+        } elseif ($doc = $front->getRequest()->getParam("document")) {
             $pathPrefix = $doc->getFullPath();
             $hasPath = true;
         }
@@ -601,13 +594,13 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
         $pathPrefix = ltrim($pathPrefix, "/");
 
         // this is only to append parameters to an existing document
-        if(!$reset) {
+        if (!$reset) {
             $data = array_merge($_GET, $data);
         }
 
-        if(!empty($data)) {
+        if (!empty($data)) {
             return $pathPrefix . "?" . array_urlencode($data);
-        } else if($hasPath) {
+        } elseif ($hasPath) {
             return $pathPrefix;
         }
 
@@ -618,7 +611,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
      * @param $name
      * @return mixed
      */
-    public function getDefault($name) {
+    public function getDefault($name)
+    {
         if (isset($this->_defaults[$name])) {
             return $this->_defaults[$name];
         }
@@ -627,8 +621,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract {
     /**
      * @return array
      */
-    public function getDefaults() {
+    public function getDefaults()
+    {
         return $this->_defaults;
     }
-
 }

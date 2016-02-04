@@ -16,15 +16,16 @@ namespace Pimcore\Model\Schedule\Task\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of thumanils for the specicifies parameters, returns an array of Schedule\Task elements
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $tasks = array();
         $tasksData = $this->db->fetchCol("SELECT id FROM schedule_tasks" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -35,5 +36,4 @@ class Dao extends Model\Listing\Dao\AbstractDao {
         $this->model->setTasks($tasks);
         return $tasks;
     }
-
 }

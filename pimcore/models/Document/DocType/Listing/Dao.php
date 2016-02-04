@@ -16,24 +16,44 @@ namespace Pimcore\Model\Document\DocType\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Dao\PhpArrayTable
+{
+
+    /**
+     *
+     */
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile("document-types");
+    }
 
     /**
      * Loads a list of document-types for the specicifies parameters, returns an array of Document\DocType elements
      *
      * @return array
      */
-    public function load() {
-
-        $docTypesData = $this->db->fetchCol("SELECT id FROM documents_doctypes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+    public function load()
+    {
+        $docTypesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         $docTypes = array();
         foreach ($docTypesData as $docTypeData) {
-            $docTypes[] = Model\Document\DocType::getById($docTypeData);
+            $docTypes[] = Model\Document\DocType::getById($docTypeData["id"]);
         }
 
         $this->model->setDocTypes($docTypes);
         return $docTypes;
     }
 
+    /**
+     * @return int
+     */
+    public function getTotalCount()
+    {
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $amount = count($data);
+
+        return $amount;
+    }
 }

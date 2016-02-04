@@ -37,10 +37,12 @@
         "ext-bz2" : "*",
         "ext-openssl" : "*",
         "zendframework/zendframework1": "~1.12",
-        "symfony/console": "~2.7",
-        "symfony/finder": "~2.7",
-        "symfony/var-dumper": "~2.7",
-        "symfony/css-selector": "~2.7",
+        "symfony/console": "~3",
+        "symfony/finder": "~3",
+        "symfony/process": "~3",
+        "symfony/var-dumper": "~3",
+        "symfony/css-selector": "~3",
+        "symfony/event-dispatcher": "~3",
         "filp/whoops": "~1",
         "tijsverkoyen/css-to-inline-styles": "~1.5",
         "hybridauth/hybridauth": "~2",
@@ -51,6 +53,8 @@
         "monolog/monolog": "~1",
         "sabre/dav": "~3.1",
         "pear/net_url2": "~2.2",
+        "ramsey/uuid": "~3",
+        "endroid/qrcode": "~1.5",
         "linfo/linfo": "~3",
         "vrana/adminer": "~4.2"
     },
@@ -67,6 +71,8 @@
     },
     "autoload": {
         "psr-4": {
+            "Pimcore\\Model\\Object\\": "website/var/classes/Object",
+            "Pimcore\\Model\\": "pimcore/models",
             "Pimcore\\": "pimcore/lib/Pimcore"
         }
     },

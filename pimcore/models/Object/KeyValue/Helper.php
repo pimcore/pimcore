@@ -18,12 +18,14 @@ namespace Pimcore\Model\Object\KeyValue;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Helper {
+class Helper
+{
 
     /** Returns the group/key config as XML.
      * @return mixed
      */
-    public static function export() {
+    public static function export()
+    {
         $xml = new \SimpleXMLElement('<xml/>');
 
         $groupConfigList = new Object\KeyValue\GroupConfig\Listing();
@@ -62,7 +64,8 @@ class Helper {
     /** Imports the group/key config from XML.
      * @param $config
      */
-    public static function import($config) {
+    public static function import($config)
+    {
         if (is_array($config["groups"])) {
             $groups = $config["groups"]["group"];
             if (!isset($groups[0])) {
@@ -115,5 +118,4 @@ class Helper {
             }
         }
     }
-
 }

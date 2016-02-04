@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model;
 
-class Glossary extends AbstractModel {
+class Glossary extends AbstractModel
+{
 
     /**
      * @var integer
@@ -76,8 +77,8 @@ class Glossary extends AbstractModel {
      * @param integer $id
      * @return Glossary
      */
-    public static function getById($id) {
-
+    public static function getById($id)
+    {
         $glossary = new self();
         $glossary->setId(intval($id));
         $glossary->getDao()->getById();
@@ -88,7 +89,8 @@ class Glossary extends AbstractModel {
     /**
      * @return Glossary
      */
-    public static function create() {
+    public static function create()
+    {
         $glossary = new self();
         $glossary->save();
 
@@ -100,7 +102,8 @@ class Glossary extends AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -108,7 +111,8 @@ class Glossary extends AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -117,7 +121,8 @@ class Glossary extends AbstractModel {
      * @param string $text
      * @return void
      */
-    public function setText($text) {
+    public function setText($text)
+    {
         $this->text = $text;
         return $this;
     }
@@ -125,7 +130,8 @@ class Glossary extends AbstractModel {
     /**
      * @return string
      */
-    public function getText() {
+    public function getText()
+    {
         return $this->text;
     }
 
@@ -133,7 +139,8 @@ class Glossary extends AbstractModel {
      * @param string $link
      * @return void
      */
-    public function setLink($link) {
+    public function setLink($link)
+    {
         $this->link = $link;
         return $this;
     }
@@ -141,7 +148,8 @@ class Glossary extends AbstractModel {
     /**
      * @return string
      */
-    public function getLink() {
+    public function getLink()
+    {
         return $this->link;
     }
 
@@ -150,7 +158,8 @@ class Glossary extends AbstractModel {
      * @param string $abbr
      * @return void
      */
-    public function setAbbr($abbr) {
+    public function setAbbr($abbr)
+    {
         $this->abbr = $abbr;
         return $this;
     }
@@ -158,7 +167,8 @@ class Glossary extends AbstractModel {
     /**
      * @return string
      */
-    public function getAbbr() {
+    public function getAbbr()
+    {
         return $this->abbr;
     }
 
@@ -167,7 +177,8 @@ class Glossary extends AbstractModel {
      * @param string $acronym
      * @return void
      */
-    public function setAcronym($acronym) {
+    public function setAcronym($acronym)
+    {
         $this->acronym = $acronym;
         return $this;
     }
@@ -175,7 +186,8 @@ class Glossary extends AbstractModel {
     /**
      * @return string
      */
-    public function getAcronym() {
+    public function getAcronym()
+    {
         return $this->acronym;
     }
 
@@ -184,7 +196,8 @@ class Glossary extends AbstractModel {
      * @param string $language
      * @return void
      */
-    public function setLanguage($language) {
+    public function setLanguage($language)
+    {
         $this->language = $language;
         return $this;
     }
@@ -192,7 +205,8 @@ class Glossary extends AbstractModel {
     /**
      * @return string
      */
-    public function getLanguage() {
+    public function getLanguage()
+    {
         return $this->language;
     }
 
@@ -238,7 +252,7 @@ class Glossary extends AbstractModel {
      */
     public function setSite($site)
     {
-        if($site instanceof Site) {
+        if ($site instanceof Site) {
             $site = $site->getId();
         }
         $this->site = (int) $site;

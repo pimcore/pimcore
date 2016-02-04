@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-class Note extends Model\AbstractModel {
+class Note extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -68,8 +69,8 @@ class Note extends Model\AbstractModel {
      * @param $id
      * @return Element\Note
      */
-    public static function getById ($id) {
-
+    public static function getById($id)
+    {
         try {
             $note = new self();
             $note->getDao()->getById($id);
@@ -86,7 +87,8 @@ class Note extends Model\AbstractModel {
      * @param string $type
      * @param mixed $data
      */
-    public function addData($name, $type, $data) {
+    public function addData($name, $type, $data)
+    {
         $this->data[$name] = array(
             "type" => $type,
             "data" => $data
@@ -97,19 +99,21 @@ class Note extends Model\AbstractModel {
      * @param ElementInterface $element
      * @return $this
      */
-    public function setElement(ElementInterface $element) {
+    public function setElement(ElementInterface $element)
+    {
         $this->setCid($element->getId());
         $this->setCtype(Service::getType($element));
         return $this;
     }
 
-    public function save() {
+    public function save()
+    {
 
         // check if there's a valid user
-        if(!$this->getUser()) {
+        if (!$this->getUser()) {
             // try to use the logged in user
-            if(\Pimcore::inAdmin()) {
-                if($user = \Pimcore\Tool\Admin::getCurrentUser()) {
+            if (\Pimcore::inAdmin()) {
+                if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
                     $this->setUser($user->getId());
                 }
             }

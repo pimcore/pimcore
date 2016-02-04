@@ -12,7 +12,8 @@
 
 namespace Pimcore\View\Helper;
 
-class EditmodeTooltip extends \Zend_View_Helper_Abstract {
+class EditmodeTooltip extends \Zend_View_Helper_Abstract
+{
 
     /**
      * @var int
@@ -22,7 +23,8 @@ class EditmodeTooltip extends \Zend_View_Helper_Abstract {
     /**
      * @return array
      */
-    protected function getDefaultEditmodeTooltipOptions(){
+    protected function getDefaultEditmodeTooltipOptions()
+    {
         return array("autoHide" => true,
                      "title" => null,
                      "icon" => "/pimcore/static/img/icon/information.png"
@@ -33,7 +35,8 @@ class EditmodeTooltip extends \Zend_View_Helper_Abstract {
      * @param $id
      * @return string
      */
-    protected function getTooltipIdentifier($id){
+    protected function getTooltipIdentifier($id)
+    {
         return "editmode_tooltip_" . $id;
     }
 
@@ -45,14 +48,15 @@ class EditmodeTooltip extends \Zend_View_Helper_Abstract {
      * @param array $options
      * @return string
      */
-    public function editmodeTooltip($html,$title = null,$options = array()){
-        if($html){
-            $options = array_merge($this->getDefaultEditmodeTooltipOptions(),$options);
+    public function editmodeTooltip($html, $title = null, $options = array())
+    {
+        if ($html) {
+            $options = array_merge($this->getDefaultEditmodeTooltipOptions(), $options);
             self::$editmodeTooltipsIncrementer++;
             $options["target"] = $this->getTooltipIdentifier(self::$editmodeTooltipsIncrementer);
             $options["html"] = $html;
 
-            if(!is_null($title)){
+            if (!is_null($title)) {
                 $options["title"] = $title;
             }
 

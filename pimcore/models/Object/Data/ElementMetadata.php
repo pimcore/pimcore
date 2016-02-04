@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class ElementMetadata extends Model\AbstractModel {
+class ElementMetadata extends Model\AbstractModel
+{
 
     /**
      * @var Model\Element\ElementInterface
@@ -45,7 +46,8 @@ class ElementMetadata extends Model\AbstractModel {
      * @param null $element
      * @throws \Exception
      */
-    public function __construct($fieldname, $columns = array(), $element = null) {
+    public function __construct($fieldname, $columns = array(), $element = null)
+    {
         $this->fieldname = $fieldname;
         $this->element = $element;
         $this->columns = $columns;
@@ -57,21 +59,21 @@ class ElementMetadata extends Model\AbstractModel {
      * @return mixed|void
      * @throws \Exception
      */
-    public function __call($name, $arguments) {
-
-        if(substr($name, 0, 3) == "get") {
+    public function __call($name, $arguments)
+    {
+        if (substr($name, 0, 3) == "get") {
             $key = strtolower(substr($name, 3, strlen($name)-3));
 
-            if(in_array($key, $this->columns)) {
+            if (in_array($key, $this->columns)) {
                 return $this->data[$key];
             }
 
             throw new \Exception("Requested data $key not available");
         }
 
-        if(substr($name, 0, 3) == "set") {
+        if (substr($name, 0, 3) == "set") {
             $key = strtolower(substr($name, 3, strlen($name)-3));
-            if(in_array($key, $this->columns)) {
+            if (in_array($key, $this->columns)) {
                 $this->data[$key] = $arguments[0];
             } else {
                 throw new \Exception("Requested data $key not available");
@@ -85,7 +87,8 @@ class ElementMetadata extends Model\AbstractModel {
      * @param $ownername
      * @param $position
      */
-    public function save($object, $ownertype = "object", $ownername, $position) {
+    public function save($object, $ownertype = "object", $ownername, $position)
+    {
         $element = $this->getElement();
         $type = Model\Element\Service::getElementType($element);
         $this->getDao()->save($object, $ownertype, $ownername, $position, $type);
@@ -100,7 +103,8 @@ class ElementMetadata extends Model\AbstractModel {
      * @param $position
      * @return mixed
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type) {
+    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type)
+    {
         return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position, $type);
     }
 
@@ -108,7 +112,8 @@ class ElementMetadata extends Model\AbstractModel {
      * @param $fieldname
      * @return $this
      */
-    public function setFieldname($fieldname) {
+    public function setFieldname($fieldname)
+    {
         $this->fieldname = $fieldname;
         return $this;
     }
@@ -116,7 +121,8 @@ class ElementMetadata extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getFieldname() {
+    public function getFieldname()
+    {
         return $this->fieldname;
     }
 
@@ -124,7 +130,8 @@ class ElementMetadata extends Model\AbstractModel {
      * @param $element
      * @return $this
      */
-    public function setElement($element) {
+    public function setElement($element)
+    {
         $this->element = $element;
         return $this;
     }
@@ -132,7 +139,8 @@ class ElementMetadata extends Model\AbstractModel {
     /**
      * @return Object\Concrete
      */
-    public function getElement() {
+    public function getElement()
+    {
         return $this->element;
     }
 
@@ -140,7 +148,8 @@ class ElementMetadata extends Model\AbstractModel {
      * @param $columns
      * @return $this
      */
-    public function setColumns($columns) {
+    public function setColumns($columns)
+    {
         $this->columns = $columns;
         return $this;
     }
@@ -148,14 +157,16 @@ class ElementMetadata extends Model\AbstractModel {
     /**
      * @return array
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return $this->columns;
     }
 
     /**
      * @return mixed
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getElement()->__toString();
     }
 }

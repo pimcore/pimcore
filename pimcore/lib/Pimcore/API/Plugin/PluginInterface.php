@@ -12,7 +12,8 @@
 
 namespace Pimcore\API\Plugin;
 
-interface PluginInterface  {
+interface PluginInterface
+{
 
     /**
      * @return string $statusMessage
@@ -52,4 +53,3 @@ interface PluginInterface  {
      */
     public static function getTranslationFileDirectory();
 }
-

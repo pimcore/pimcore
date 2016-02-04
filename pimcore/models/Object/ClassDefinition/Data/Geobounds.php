@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
+class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
+{
 
 
     /**
@@ -65,7 +66,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         if ($data instanceof Object\Data\Geobounds) {
             return array(
                 $this->getName() . "__NElongitude" => $data->getNorthEast()->getLongitude(),
@@ -87,12 +89,13 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param array $data
      * @return string 
      */
-    public function getDataFromResource($data) {
-        if($data[$this->getName() . "__NElongitude"] && $data[$this->getName() . "__NElatitude"] && $data[$this->getName() . "__SWlongitude"] && $data[$this->getName() . "__SWlatitude"]) {
+    public function getDataFromResource($data)
+    {
+        if ($data[$this->getName() . "__NElongitude"] && $data[$this->getName() . "__NElatitude"] && $data[$this->getName() . "__SWlongitude"] && $data[$this->getName() . "__SWlatitude"]) {
             $ne = new Object\Data\Geopoint($data[$this->getName() . "__NElongitude"], $data[$this->getName() . "__NElatitude"]);
             $sw = new Object\Data\Geopoint($data[$this->getName() . "__SWlongitude"], $data[$this->getName() . "__SWlatitude"]);
             
-            return new Object\Data\Geobounds($ne,$sw);
+            return new Object\Data\Geobounds($ne, $sw);
         }
         return;
     }
@@ -103,7 +106,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -113,8 +117,9 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return array
      */
-    public function getDataForEditmode($data, $object = null) {
-        if($data instanceof Object\Data\Geobounds) {
+    public function getDataForEditmode($data, $object = null)
+    {
+        if ($data instanceof Object\Data\Geobounds) {
             return array(
                 "NElongitude" => $data->getNorthEast()->getLongitude(),
                 "NElatitude" => $data->getNorthEast()->getLatitude(),
@@ -125,7 +130,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
         return;
     }
 
-    public function getDataForGrid($data, $object = null) {
+    public function getDataForGrid($data, $object = null)
+    {
         return $this->getDataForEditmode($data, $object);
     }
 
@@ -135,12 +141,13 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return Object\Data\Geobounds
      */
-    public function getDataFromEditmode($data, $object = null) {
-        if($data["NElongitude"] !== null && $data["NElatitude"] !== null && $data["SWlongitude"] !== null && $data["SWlatitude"] !== null) {
+    public function getDataFromEditmode($data, $object = null)
+    {
+        if ($data["NElongitude"] !== null && $data["NElatitude"] !== null && $data["SWlongitude"] !== null && $data["SWlatitude"] !== null) {
             $ne = new Object\Data\Geopoint($data["NElongitude"], $data["NElatitude"]);
             $sw = new Object\Data\Geopoint($data["SWlongitude"], $data["SWlatitude"]);
             
-            return new Object\Data\Geobounds($ne,$sw);
+            return new Object\Data\Geobounds($ne, $sw);
         }
         return;
     }
@@ -150,40 +157,46 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param Object\Data\Geobounds $data
      * @return string
      */
-    public function getVersionPreview($data) {
-        if($data instanceof Object\Data\Geobounds) {
+    public function getVersionPreview($data)
+    {
+        if ($data instanceof Object\Data\Geobounds) {
             return $data->getNorthEast()->getLongitude() . "," . $data->getNorthEast()->getLatitude() . " " . $data->getSouthWest()->getLongitude() . "," . $data->getSouthWest()->getLatitude();
         }
         return "";
     }
 
-    
+
 
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Model\Object\AbstractObject $object
+     * @param Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object) {
+    public function getForCsvExport($object, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object);
-        if($data instanceof Object\Data\Geobounds){
+        if ($data instanceof Object\Data\Geobounds) {
             return  $data->getNorthEast()->getLongitude().",".$data->getNorthEast()->getLatitude()."|".$data->getSouthWest()->getLongitude().",".$data->getSouthWest()->getLatitude();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
      * @param string $importValue
      * @return null|Object\ClassDefinition\Data|Object\Data\Geobounds
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue)
+    {
         $points = explode("|", $importValue);
         $value = null;
-        if(is_array($points) and count($points)==2){
-            $northEast = explode(",",$points[0]);
-            $southWest = explode(",",$points[1]);
+        if (is_array($points) and count($points)==2) {
+            $northEast = explode(",", $points[0]);
+            $southWest = explode(",", $points[1]);
             if ($northEast[0] && $northEast[1] && $southWest[0] && $southWest[1]) {
-                $value = new Object\Data\Geobounds(new Object\Data\Geopoint($northEast[0],$northEast[1]),new Object\Data\Geopoint($southWest[0],$southWest[1]));
+                $value = new Object\Data\Geobounds(new Object\Data\Geopoint($northEast[0], $northEast[1]), new Object\Data\Geopoint($southWest[0], $southWest[1]));
             }
         }
 
@@ -196,7 +209,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param string $object
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
+    public function getForWebserviceExport($object)
+    {
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof Object\Data\Geobounds) {
             return array(
@@ -205,7 +219,9 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
                 "SWlongitude" => $data->getSouthWest()->getLongitude(),
                 "SWlatitude" => $data->getSouthWest()->getLatitude()
             );
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -215,15 +231,16 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null) {
-        if(empty($value)){
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    {
+        if (empty($value)) {
             return null;
         } else {
             $value = (array) $value;
-            if($value["NElongitude"] !== null && $value["NElatitude"] !== null && $value["SWlongitude"] !== null && $value["SWlatitude"] !== null) {
+            if ($value["NElongitude"] !== null && $value["NElatitude"] !== null && $value["SWlongitude"] !== null && $value["SWlatitude"] !== null) {
                 $ne = new Object\Data\Geopoint($value["NElongitude"], $value["NElatitude"]);
                 $sw = new Object\Data\Geopoint($value["SWlongitude"], $value["SWlatitude"]);
-                return new Object\Data\Geobounds($ne,$sw);
+                return new Object\Data\Geobounds($ne, $sw);
             } else {
                 throw new \Exception("cannot get values from web service import - invalid data");
             }
@@ -233,7 +250,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 }

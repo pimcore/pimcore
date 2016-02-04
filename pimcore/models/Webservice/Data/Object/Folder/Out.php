@@ -16,9 +16,10 @@ namespace Pimcore\Model\Webservice\Data\Object\Folder;
 
 use Pimcore\Model;
 
-class Out extends Model\Webservice\Data\Object\Folder {
+class Out extends Model\Webservice\Data\Object\Folder
+{
 
-      /**
+    /**
      * @var string
      */
     public $path;

@@ -17,24 +17,25 @@ use Pimcore\Tool\Authentication;
 use Pimcore\Config;
 use Pimcore\Model\User;
 
-class Webservice extends Action {
+class Webservice extends Action
+{
 
     /**
      * @throws \Exception
      */
-    public function init() {
-
+    public function init()
+    {
         $conf = Config::getSystemConfig();
-        if(!$conf->webservice->enabled) {
+        if (!$conf->webservice->enabled) {
             throw new \Exception("Webservice API isn't enabled");
         }
 
-        if(!$this->getParam("apikey") && $_COOKIE["pimcore_admin_sid"]){
+        if (!$this->getParam("apikey") && $_COOKIE["pimcore_admin_sid"]) {
             $user = Authentication::authenticateSession();
-            if(!$user instanceof User) {
+            if (!$user instanceof User) {
                 throw new \Exception("User is not valid");
             }
-        } else if (!$this->getParam("apikey")) {
+        } elseif (!$this->getParam("apikey")) {
             throw new \Exception("API key missing");
         } else {
             $apikey = $this->getParam("apikey");
@@ -43,11 +44,11 @@ class Webservice extends Action {
             $userList->setCondition("apiKey = ? AND type = ? AND active = 1", array($apikey, "user"));
             $users = $userList->load();
 
-            if(!is_array($users) or count($users)!==1){
+            if (!is_array($users) or count($users)!==1) {
                 throw new \Exception("API key error.");
             }
 
-            if(!$users[0]->getApiKey()){
+            if (!$users[0]->getApiKey()) {
                 throw new \Exception("Couldn't get API key for user.");
             }
 

@@ -9,7 +9,8 @@
 class Test_SuiteBase extends PHPUnit_Framework_TestSuite
 {
 
-    protected function setUp() {
+    protected function setUp()
+    {
         // turn off frontend mode by default
         Object_Abstract::setHideUnpublished(false);
 
@@ -47,7 +48,7 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $class->setLayoutDefinitions($layout);
 
             $fd = $class->getFieldDefinition("objectswithmetadata");
-            if($fd) {
+            if ($fd) {
                 $fd->setAllowedClassId($class->getId());
             }
 
@@ -75,7 +76,7 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $class->setLayoutDefinitions($layout);
 
             $fd = $class->getFieldDefinition("objectswithmetadata");
-            if($fd) {
+            if ($fd) {
                 $fd->setAllowedClassId($class->getId());
             }
 
@@ -113,13 +114,10 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
                 throw $e;
             }
         }
-
-
     }
 
-    protected function tearDown() {
+    protected function tearDown()
+    {
         Test_Tool::cleanUp();
     }
-
-
 }

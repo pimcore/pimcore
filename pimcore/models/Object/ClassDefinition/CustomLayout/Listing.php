@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\CustomLayout;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Object\ClassDefinition\CustomLayout\Listing
@@ -29,7 +30,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param $key
      * @return bool
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 

@@ -18,7 +18,8 @@ use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Model;
 
-class LibreOffice extends Ghostscript {
+class LibreOffice extends Ghostscript
+{
 
     /**
      * @var string
@@ -28,10 +29,11 @@ class LibreOffice extends Ghostscript {
     /**
      * @return bool
      */
-    public function isAvailable() {
+    public function isAvailable()
+    {
         try {
             $lo = self::getLibreOfficeCli();
-            if($lo && parent::isAvailable()) { // LibreOffice and GhostScript is necessary
+            if ($lo && parent::isAvailable()) { // LibreOffice and GhostScript is necessary
                 return true;
             }
         } catch (\Exception $e) {
@@ -45,10 +47,11 @@ class LibreOffice extends Ghostscript {
      * @param string $fileType
      * @return bool
      */
-    public function isFileTypeSupported($fileType) {
+    public function isFileTypeSupported($fileType)
+    {
 
         // it's also possible to pass a path or filename
-        if(preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/", $fileType)) {
+        if (preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/", $fileType)) {
             return true;
         }
 
@@ -59,11 +62,11 @@ class LibreOffice extends Ghostscript {
      * @return mixed
      * @throws \Exception
      */
-    public static function getLibreOfficeCli () {
-
+    public static function getLibreOfficeCli()
+    {
         $loPath = Config::getSystemConfig()->assets->libreoffice;
-        if($loPath) {
-            if(@is_executable($loPath)) {
+        if ($loPath) {
+            if (@is_executable($loPath)) {
                 return $loPath;
             } else {
                 \Logger::critical("LibreOffice binary: " . $loPath . " is not executable");
@@ -77,7 +80,7 @@ class LibreOffice extends Ghostscript {
         );
 
         foreach ($paths as $path) {
-            if(@is_executable($path)) {
+            if (@is_executable($path)) {
                 return $path;
             }
         }
@@ -90,15 +93,16 @@ class LibreOffice extends Ghostscript {
      * @return $this
      * @throws \Exception
      */
-    public function load($path) {
+    public function load($path)
+    {
 
         // avoid timeouts
         $maxExecTime = (int) ini_get("max_execution_time");
-        if($maxExecTime > 1 && $maxExecTime < 250) {
+        if ($maxExecTime > 1 && $maxExecTime < 250) {
             set_time_limit(250);
         }
 
-        if(!$this->isFileTypeSupported($path)) {
+        if (!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . " only Microsoft/Libre/Open-Office/PDF documents are currently supported";
             \Logger::error($message);
             throw new \Exception($message);
@@ -106,8 +110,8 @@ class LibreOffice extends Ghostscript {
 
         // first we have to create a pdf out of the document (if it isn't already one), so that we can pass it to ghostscript
         // unfortunately there isn't an other way at the moment
-        if(!preg_match("/\.?pdf$/", $path)) {
-            if(!parent::isFileTypeSupported($path)) {
+        if (!preg_match("/\.?pdf$/", $path)) {
+            if (!parent::isFileTypeSupported($path)) {
                 $this->path = $this->getPdf($path);
             }
         } else {
@@ -124,10 +128,10 @@ class LibreOffice extends Ghostscript {
      * @return null|string|void
      * @throws \Exception
      */
-    public function getPdf($path = null) {
-
+    public function getPdf($path = null)
+    {
         $pdfPath = null;
-        if(!$path && $this->path) {
+        if (!$path && $this->path) {
             $path = $this->path;
         }
 
@@ -140,13 +144,13 @@ class LibreOffice extends Ghostscript {
         }
 
         $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . "/document-pdf-cache/document_" . md5($path . filemtime($path)) . "__libreoffice.pdf";
-        if(!is_dir(dirname($pdfFile))) {
+        if (!is_dir(dirname($pdfFile))) {
             File::mkdir(dirname($pdfFile));
         }
 
         $lockKey = "soffice";
 
-        if(!file_exists($pdfFile)) {
+        if (!file_exists($pdfFile)) {
 
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
@@ -158,8 +162,8 @@ class LibreOffice extends Ghostscript {
 
             \Logger::debug("LibreOffice Output was: " . $out);
 
-            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($path) . "$/", ".pdf",basename($path));
-            if(file_exists($tmpName)) {
+            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($path) . "$/", ".pdf", basename($path));
+            if (file_exists($tmpName)) {
                 rename($tmpName, $pdfFile);
                 $pdfPath = $pdfFile;
             } else {
@@ -167,8 +171,6 @@ class LibreOffice extends Ghostscript {
                 \Logger::error($message);
                 throw new \Exception($message);
             }
-
-
         } else {
             $pdfPath = $pdfFile;
         }
@@ -182,22 +184,22 @@ class LibreOffice extends Ghostscript {
      * @return bool|string
      * @throws \Exception
      */
-    public function getText($page = null, $path = null) {
-
+    public function getText($page = null, $path = null)
+    {
         $path = $path ? $path : $this->path;
 
-        if($page || parent::isFileTypeSupported($path)) {
+        if ($page || parent::isFileTypeSupported($path)) {
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
             return parent::getText($page, $this->getPdf($path));
-        } else if(File::getFileExtension($path)) {
+        } elseif (File::getFileExtension($path)) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
             $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to txt:Text --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
             $out = Console::exec($cmd, null, 240);
 
             \Logger::debug("LibreOffice Output was: " . $out);
 
-            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($path) . "$/", ".txt",basename($path));
-            if(file_exists($tmpName)) {
+            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($path) . "$/", ".txt", basename($path));
+            if (file_exists($tmpName)) {
                 $text = file_get_contents($tmpName);
                 $text = \Pimcore\Tool\Text::convertToUTF8($text);
                 unlink($tmpName);

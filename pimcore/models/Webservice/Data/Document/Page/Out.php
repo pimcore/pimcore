@@ -16,7 +16,8 @@ namespace Pimcore\Model\Webservice\Data\Document\Page;
 
 use Pimcore\Model;
 
-class Out extends Model\Webservice\Data\Document\Page {
+class Out extends Model\Webservice\Data\Document\Page
+{
 
 
     /**
@@ -43,6 +44,4 @@ class Out extends Model\Webservice\Data\Document\Page {
      * @var Model\Webservice\Data\Document\Listing\Item[]
      */
     public $childs;
-
-
 }

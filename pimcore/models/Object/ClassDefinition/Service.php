@@ -18,15 +18,16 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 
-class Service  {
+class Service
+{
 
     /**
      * @static
      * @param  Object\ClassDefinition $class
      * @return string
      */
-    public static function generateClassDefinitionJson($class){
-
+    public static function generateClassDefinitionJson($class)
+    {
         $data = Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out", "out");
         unset($data->id);
         unset($data->name);
@@ -49,11 +50,11 @@ class Service  {
      * @param $json
      * @return bool
      */
-    public static function importClassDefinitionFromJson($class, $json, $throwException = false) {
-
+    public static function importClassDefinitionFromJson($class, $json, $throwException = false)
+    {
         $userId = 0;
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        if($user) {
+        if ($user) {
             $userId = $user->getId();
         }
 
@@ -88,8 +89,8 @@ class Service  {
      * @param $fieldCollection
      * @return string
      */
-    public static function generateFieldCollectionJson($fieldCollection){
-
+    public static function generateFieldCollectionJson($fieldCollection)
+    {
         unset($fieldCollection->key);
         unset($fieldCollection->fieldDefinitions);
 
@@ -103,8 +104,8 @@ class Service  {
      * @param $json
      * @return bool
      */
-    public static function importFieldCollectionFromJson($fieldCollection, $json, $throwException = false) {
-
+    public static function importFieldCollectionFromJson($fieldCollection, $json, $throwException = false)
+    {
         $importData = \Zend_Json::decode($json);
 
         $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
@@ -119,17 +120,17 @@ class Service  {
      * @param $objectBrick
      * @return string
      */
-    public static function generateObjectBrickJson($objectBrick){
-
+    public static function generateObjectBrickJson($objectBrick)
+    {
         unset($objectBrick->key);
         unset($objectBrick->fieldDefinitions);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
-        if(is_array($objectBrick->classDefinitions)) {
-            foreach($objectBrick->classDefinitions as &$cd) {
+        if (is_array($objectBrick->classDefinitions)) {
+            foreach ($objectBrick->classDefinitions as &$cd) {
                 $class = Object\ClassDefinition::getById($cd["classname"]);
-                if($class) {
+                if ($class) {
                     $cd["classname"] = $class->getName();
                 }
             }
@@ -145,22 +146,22 @@ class Service  {
      * @param $json
      * @return bool
      */
-    public static function importObjectBrickFromJson($objectBrick, $json, $throwException = false) {
-
+    public static function importObjectBrickFromJson($objectBrick, $json, $throwException = false)
+    {
         $importData = \Zend_Json::decode($json);
 
         // reverse map the class name to the class ID, see: self::generateObjectBrickJson()
         $toAssignClassDefinitions = [];
-        if(is_array($importData["classDefinitions"])) {
-            foreach($importData["classDefinitions"] as &$cd) {
-                if(is_numeric($cd["classname"])) {
+        if (is_array($importData["classDefinitions"])) {
+            foreach ($importData["classDefinitions"] as &$cd) {
+                if (is_numeric($cd["classname"])) {
                     $class = Object\ClassDefinition::getById($cd["classname"]);
-                    if($class) {
+                    if ($class) {
                         $toAssignClassDefinitions[] = $cd;
                     }
                 } else {
                     $class = Object\ClassDefinition::getByName($cd["classname"]);
-                    if($class) {
+                    if ($class) {
                         $cd["classname"] = $class->getId();
                         $toAssignClassDefinitions[] = $cd;
                     }
@@ -183,10 +184,9 @@ class Service  {
      * @return bool
      * @throws \Exception
      */
-    public static function generateLayoutTreeFromArray($array, $throwException = false) {
-
+    public static function generateLayoutTreeFromArray($array, $throwException = false)
+    {
         if (is_array($array) && count($array) > 0) {
-
             $class = "\\Pimcore\\Model\\Object\\ClassDefinition\\".ucfirst($array["datatype"])."\\" . ucfirst($array["fieldtype"]);
             if (!\Pimcore\Tool::classExists($class)) {
                 $class = "\\Object_Class_" .ucfirst($array["datatype"])."_" . ucfirst($array["fieldtype"]);
@@ -198,14 +198,14 @@ class Service  {
             if ($class) {
                 $item = new $class();
 
-                if(method_exists($item,"addChild")) { // allows childs
+                if (method_exists($item, "addChild")) { // allows childs
 
                     $item->setValues($array, array("childs"));
 
-                    if(is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]){
+                    if (is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]) {
                         $childO = self::generateLayoutTreeFromArray($array["childs"], $throwException);
                         $item->addChild($childO);
-                    } else if (is_array($array["childs"]) && count($array["childs"]) > 0) {
+                    } elseif (is_array($array["childs"]) && count($array["childs"]) > 0) {
                         foreach ($array["childs"] as $child) {
                             $childO = self::generateLayoutTreeFromArray($child, $throwException);
                             if ($childO !== false) {
@@ -235,7 +235,8 @@ class Service  {
      * @param $tableDefinitions
      * @param $tableNames
      */
-    public static function updateTableDefinitions(&$tableDefinitions, $tableNames) {
+    public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
+    {
         if (!is_array($tableDefinitions)) {
             $tableDefinitions = array();
         }
@@ -247,7 +248,7 @@ class Service  {
         }
 
         foreach ($tmp as $tableName => $columns) {
-            foreach($columns as $column) {
+            foreach ($columns as $column) {
                 $column["Type"] = strtolower($column["Type"]);
                 if (strtolower($column["Null"]) == "yes") {
                     $column["Null"] = "null";
@@ -268,7 +269,8 @@ class Service  {
      * @param $null
      * @return bool
      */
-    public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null) {
+    public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
+    {
         $tableDefinition = $tableDefinitions[$table];
         if ($tableDefinition) {
             $colDefinition = $tableDefinition[$colName];
@@ -277,7 +279,7 @@ class Service  {
                     $default = null;
                 }
 
-                if (  $colDefinition["Type"] == $type && strtolower($colDefinition["Null"]) == strtolower($null)
+                if ($colDefinition["Type"] == $type && strtolower($colDefinition["Null"]) == strtolower($null)
                     && $colDefinition["Default"] == $default) {
                     return true;
                 }
@@ -285,6 +287,4 @@ class Service  {
         }
         return false;
     }
-
-
 }

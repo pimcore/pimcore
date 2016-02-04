@@ -16,15 +16,16 @@ namespace Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of custom layouts for the specified parameters, returns an array of Object\ClassDefinition\CustomLayout elements
      *
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $layouts = array();
 
         $layoutsRaw = $this->db->fetchCol("SELECT id FROM custom_layouts" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -38,12 +39,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
         return $layouts;
     }
 
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM custom_layouts " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
 
         return $amount;

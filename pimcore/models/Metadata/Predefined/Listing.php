@@ -14,41 +14,42 @@
 
 namespace Pimcore\Model\Metadata\Predefined;
 
-class Listing extends \Pimcore\Model\Listing\AbstractListing {
+class Listing extends \Pimcore\Model\Listing\JsonListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Metadata\Predefined
      *
      * @var array
      */
-    public $properties = array();
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @return boolean
-     */
-    public function isValidOrderKey($key) {
-        return true;
-    }
+    public $definitions = array();
 
     /**
      * @return array
      */
-    public function getDefinitions() {
+    public function getDefinitions()
+    {
         return $this->definitions;
     }
 
     /**
-     * @param array $properties
-     * @return void
+     * @param $definitions
+     * @return $this
      */
-    public function setDefinitions($definitions) {
+    public function setDefinitions($definitions)
+    {
         $this->definitions = $definitions;
         return $this;
     }
 
-    public static function getByTargetType($type, $subTypes) {
+    /**
+     * @param $type
+     * @param $subTypes
+     * @return Listing
+     * @throws \Exception
+     */
+    public static function getByTargetType($type, $subTypes)
+    {
         if ($type != "asset") {
             throw new \Exception("other types than assets are currently not supported");
         }
@@ -60,14 +61,16 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
         }
 
         if (is_array($subTypes)) {
-            $types = array();
-            $db = \Pimcore\Db::get();
-            foreach ($subTypes as $item) {
-                $types[] = $db->quote($item);
-            }
+            $list->setFilter(function ($row) use ($subTypes) {
+                if (empty($row["targetSubtype"])) {
+                    return true;
+                }
 
-            $condition = "(ISNULL(targetSubtype) OR targetSubtype = '' OR targetSubtype IN (" . implode(',',$types) . "))" ;
-            $list->setCondition($condition);
+                if (in_array($row["targetSubtype"], $subTypes)) {
+                    return true;
+                }
+                return false;
+            });
         }
         $list = $list->load();
         return $list;
@@ -78,27 +81,28 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @param $language
      * @return \Pimcore\Model\Metadata\Predefined
      */
-    public static function getByKeyAndLanguage($key, $language, $targetSubtype = null) {
-
-        $db = \Pimcore\Db::get();
+    public static function getByKeyAndLanguage($key, $language, $targetSubtype = null)
+    {
         $list = new self();
-        $condition = "name = " . $db->quote($key);
-        if ($language) {
-            $condition .= " AND language = " . $db->quote($language);
-        } else {
-            $condition .= " AND (language = '' OR LANGUAGE IS NULL)";
-        }
 
-        if($targetSubtype) {
-            $condition .= " AND targetSubtype = " . $db->quote($targetSubtype);
-        }
+        $list->setFilter(function ($row) use ($key, $language, $targetSubtype) {
+            if ($row["name"] != $key) {
+                return false;
+            }
 
-        $list->setCondition($condition);
+            if ($language && $language != $row["language"]) {
+                return false;
+            }
+
+            if ($targetSubtype && $targetSubtype != $row["targetSubtype"]) {
+                return false;
+            }
+        });
+
         $list = $list->load();
         if ($list) {
             return $list[0];
         }
         return null;
     }
-
 }

@@ -18,7 +18,8 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 use Pimcore\Model;
 
-class Newsletter {
+class Newsletter
+{
 
     /**
      * @var Object\ClassDefinition
@@ -29,8 +30,8 @@ class Newsletter {
      * @param Model\Tool\Newsletter\Config $newsletter
      * @param Object\Concrete $object
      */
-    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null) {
-
+    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null)
+    {
         $params = array(
             "gender" => $object->getGender(),
             'firstname' => $object->getFirstname(),
@@ -43,15 +44,15 @@ class Newsletter {
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
 
-        if(\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
             $mail->init("newsletter");
         }
 
-        if(!Tool::getHostUrl() && $hostUrl) {
+        if (!Tool::getHostUrl() && $hostUrl) {
             $mail->setHostUrl($hostUrl);
         }
 
-        if($emailAddress) {
+        if ($emailAddress) {
             $mail->addTo($emailAddress);
         } else {
             $mail->addTo($object->getEmail());
@@ -60,22 +61,20 @@ class Newsletter {
         $mail->setParams($params);
 
         // render the document and rewrite the links (if analytics is enabled)
-        if($newsletter->getGoogleAnalytics()) {
-            if($content = $mail->getBodyHtmlRendered()){
-
+        if ($newsletter->getGoogleAnalytics()) {
+            if ($content = $mail->getBodyHtmlRendered()) {
                 include_once("simple_html_dom.php");
 
                 $html = str_get_html($content);
-                if($html) {
+                if ($html) {
                     $links = $html->find("a");
-                    foreach($links as $link) {
-
-                        if(preg_match("/^(mailto)/", trim(strtolower($link->href)))) {
+                    foreach ($links as $link) {
+                        if (preg_match("/^(mailto)/", trim(strtolower($link->href)))) {
                             continue;
                         }
 
                         $glue = "?";
-                        if(strpos($link->href, "?")) {
+                        if (strpos($link->href, "?")) {
                             $glue = "&";
                         }
                         $link->href = $link->href . $glue . "utm_source=Newsletter&utm_medium=Email&utm_campaign=" . $newsletter->getName();
@@ -97,18 +96,18 @@ class Newsletter {
      * @param null $classId
      * @throws \Exception
      */
-    public function __construct($classId = null) {
-
+    public function __construct($classId = null)
+    {
         $class = null;
-        if(is_string($classId)) {
+        if (is_string($classId)) {
             $class = Object\ClassDefinition::getByName($classId);
-        } else if (is_int($classId)) {
+        } elseif (is_int($classId)) {
             $class = Object\ClassDefinition::getById($classId);
-        } else if ($classId !== null) {
+        } elseif ($classId !== null) {
             throw new \Exception("No valid class identifier given (class name or ID)");
         }
 
-        if($class instanceof Object\ClassDefinition) {
+        if ($class instanceof Object\ClassDefinition) {
             $this->setClass($class);
         }
     }
@@ -116,7 +115,8 @@ class Newsletter {
     /**
      * @return string
      */
-    protected function getClassName() {
+    protected function getClassName()
+    {
         return "\\Pimcore\\Model\\Object\\" . ucfirst($this->getClass()->getName());
     }
 
@@ -124,13 +124,13 @@ class Newsletter {
      * @param array $params
      * @return bool
      */
-    public function checkParams ($params) {
-
-        if(!array_key_exists("email", $params)) {
+    public function checkParams($params)
+    {
+        if (!array_key_exists("email", $params)) {
             return false;
         }
 
-        if(strlen($params["email"]) < 6 || !strpos($params["email"], "@") || !strpos($params["email"], ".")) {
+        if (strlen($params["email"]) < 6 || !strpos($params["email"], "@") || !strpos($params["email"], ".")) {
             return false;
         }
 
@@ -142,15 +142,15 @@ class Newsletter {
      * @return mixed
      * @throws \Exception
      */
-    public function subscribe ($params) {
-
+    public function subscribe($params)
+    {
         $onlyCreateVersion = false;
         $className = $this->getClassName();
         $object = new $className;
 
         // check for existing e-mail
         $existingObject = $className::getByEmail($params["email"], 1);
-        if($existingObject) {
+        if ($existingObject) {
             // if there's an existing user with this email address, do not overwrite the contents, but create a new
             // version which will be published as soon as the contact gets verified (token/email)
             $object = $existingObject;
@@ -158,13 +158,13 @@ class Newsletter {
             //throw new \Exception("email address '" . $params["email"] . "' already exists");
         }
 
-        if(!array_key_exists("email", $params)) {
+        if (!array_key_exists("email", $params)) {
             throw new \Exception("key 'email' is a mandatory parameter");
         }
 
         $object->setValues($params);
 
-        if(!$object->getParentId()) {
+        if (!$object->getParentId()) {
             $object->setParentId(1);
         }
 
@@ -176,7 +176,7 @@ class Newsletter {
         $object->setPublished(true);
         $object->setKey(\Pimcore\File::getValidFilename($object->getEmail() . "~" . substr(uniqid(), -3)));
 
-        if(!$onlyCreateVersion) {
+        if (!$onlyCreateVersion) {
             $object->save();
         }
 
@@ -189,7 +189,7 @@ class Newsletter {
         $token = str_replace("=", "~", $token); // base64 can contain = which isn't safe in URL's
         $object->setProperty("token", "text", $token);
 
-        if(!$onlyCreateVersion) {
+        if (!$onlyCreateVersion) {
             $object->save();
         } else {
             $object->saveVersion();
@@ -206,8 +206,8 @@ class Newsletter {
      * @param array $params
      * @throws \Exception
      */
-    public function sendConfirmationMail($object, $mailDocument, $params = array()) {
-
+    public function sendConfirmationMail($object, $mailDocument, $params = array())
+    {
         $defaultParameters = array(
             "gender" => $object->getGender(),
             'firstname' => $object->getFirstname(),
@@ -231,21 +231,20 @@ class Newsletter {
      * @return bool
      * @throws \Zend_Json_Exception
      */
-    public function getObjectByToken($token) {
-
+    public function getObjectByToken($token)
+    {
         $originalToken = $token;
         $token = str_replace("~", "=", $token); // base64 can contain = which isn't safe in URL's
 
         $data = \Zend_Json::decode(base64_decode($token));
-        if($data) {
-            if($object = Object::getById($data["id"])) {
-
-                if($version = $object->getLatestVersion()) {
+        if ($data) {
+            if ($object = Object::getById($data["id"])) {
+                if ($version = $object->getLatestVersion()) {
                     $object = $version->getData();
                 }
 
-                if($object->getProperty("token") == $originalToken) {
-                    if($object->getEmail() == $data["email"]) {
+                if ($object->getProperty("token") == $originalToken) {
+                    if ($object->getEmail() == $data["email"]) {
                         return $object;
                     }
                 }
@@ -258,12 +257,11 @@ class Newsletter {
      * @param string $token
      * @return bool
      */
-    public function confirm($token) {
-
+    public function confirm($token)
+    {
         $object = $this->getObjectByToken($token);
-        if($object) {
-
-            if($version = $object->getLatestVersion()) {
+        if ($object) {
+            if ($version = $object->getLatestVersion()) {
                 $object = $version->getData();
                 $object->setPublished(true);
             }
@@ -283,10 +281,10 @@ class Newsletter {
      * @param string $token
      * @return bool
      */
-    public function unsubscribeByToken ($token) {
-
+    public function unsubscribeByToken($token)
+    {
         $object = $this->getObjectByToken($token);
-        if($object) {
+        if ($object) {
             return $this->unsubscribe($object);
         }
 
@@ -297,12 +295,12 @@ class Newsletter {
      * @param string $email
      * @return bool
      */
-    public function unsubscribeByEmail($email) {
-
+    public function unsubscribeByEmail($email)
+    {
         $className = $this->getClassName();
         $objects = $className::getByEmail($email);
-        if(count($objects)) {
-            foreach($objects as $object) {
+        if (count($objects)) {
+            foreach ($objects as $object) {
                 $this->unsubscribe($object);
             }
             return true;
@@ -316,8 +314,9 @@ class Newsletter {
      * @param $object
      * @return bool
      */
-    public function unsubscribe($object) {
-        if($object) {
+    public function unsubscribe($object)
+    {
+        if ($object) {
             $object->setNewsletterActive(false);
             $object->save();
 
@@ -332,7 +331,8 @@ class Newsletter {
      * @param $object
      * @param $title
      */
-    public function addNoteOnObject($object, $title) {
+    public function addNoteOnObject($object, $title)
+    {
         $note = new Model\Element\Note();
         $note->setElement($object);
         $note->setDate(time());
@@ -363,6 +363,4 @@ class Newsletter {
     {
         return $this->class;
     }
-
-
 }

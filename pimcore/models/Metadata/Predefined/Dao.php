@@ -16,66 +16,93 @@ namespace Pimcore\Model\Metadata\Predefined;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\PhpArrayTable
+{
 
     /**
-     * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param integer $id
-     * @return void
      */
-    public function getById($id = null) {
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile("predefined-asset-metadata");
+    }
 
+    /**
+     * @param null $id
+     * @throws \Exception
+     */
+    public function getById($id = null)
+    {
         if ($id != null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined WHERE id = ?", $this->model->getId());
-        $this->assignVariablesToModel($data);
+        $data = $this->db->getById($this->model->getId());
+
+        if (isset($data["id"])) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception("Predefined asset metadata with id: " . $this->model->getId() . " does not exist");
+        }
     }
 
 
     /**
-     * Get the data for the object from database for the given name, or from the name which is set in the object
-     *
-     * @param string $name
-     * @return void
+     * @param null $name
+     * @param null $language
+     * @throws \Exception
      */
-    public function getByNameAndLanguage($name = null, $language = null) {
+    public function getByNameAndLanguage($name = null, $language = null)
+    {
+        $data = $this->db->fetchAll(function ($row) use ($name, $language) {
+            $return = true;
+            if ($name && $row["name"] != $name) {
+                $return = false;
+            }
+            if ($language && $row["language"] != $language) {
+                $return = false;
+            }
+            return $return;
+        });
 
-        $condition = [];
-        $params = [];
-        if ($name != null) {
-            $condition[] = "`name` = ?";
-            $params[] = $name;
-            $this->model->setName($name);
+        if (count($data) && $data[0]["id"]) {
+            $this->assignVariablesToModel($data[0]);
+        } else {
+            throw new \Exception("Predefined asset metadata with name: " . $name . " and language: " . $language . " does not exist");
         }
-
-        if ($language != null) {
-            $condition[] = "`language` = ?";
-            $params[] = $language;
-            $this->model->setLanguage($language);
-        }
-
-        $data = [];
-        if($condition) {
-            $condition = " WHERE " . implode(" AND ", $condition);
-            $data = $this->db->fetchRow("SELECT * FROM assets_metadata_predefined" . $condition, $params);
-        }
-
-        $this->assignVariablesToModel($data);
     }
 
     /**
-     * Save object to database
-     *
-     * @return void
+     * @throws \Exception
      */
-    public function save() {
-        if ($this->model->getId()) {
-            return $this->model->update();
+    public function save()
+    {
+        $ts = time();
+        if (!$this->model->getCreationDate()) {
+            $this->model->setCreationDate($ts);
         }
-        return $this->create();
+        $this->model->setModificationDate($ts);
+
+        try {
+            $dataRaw = get_object_vars($this->model);
+            $data = [];
+            $allowedProperties = ["id","name","description","language","type","data",
+                "targetSubtype","config","creationDate","modificationDate"];
+
+            foreach ($dataRaw as $key => $value) {
+                if (in_array($key, $allowedProperties)) {
+                    $data[$key] = $value;
+                }
+            }
+            $this->db->insertOrUpdate($data, $this->model->getId());
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        if (!$this->model->getId()) {
+            $this->model->setId($this->db->getLastInsertId());
+        }
     }
 
     /**
@@ -83,50 +110,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
-        $this->db->delete("assets_metadata_predefined", $this->db->quoteInto("id = ?", $this->model->getId()));
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function update() {
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
-
-            $type = get_object_vars($this->model);
-
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns("assets_metadata_predefined"))) {
-                    if(is_bool($value)) {
-                        $value = (int)$value;
-                    }
-                    $data[$key] = $value;
-                }
-            }
-
-            $this->db->update("assets_metadata_predefined", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
-        }
-        catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Create a new record for the object in database
-     *
-     * @return boolean
-     */
-    public function create() {
-        $ts = time();
-        $this->model->setCreationDate($ts);
-        $this->model->setModificationDate($ts);
-
-        $this->db->insert("assets_metadata_predefined", array());
-
-        $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
+    public function delete()
+    {
+        $this->db->delete($this->model->getId());
     }
 }

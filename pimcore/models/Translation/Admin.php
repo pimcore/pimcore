@@ -17,7 +17,8 @@ namespace Pimcore\Model\Translation;
 use Pimcore\Model;
 use Pimcore\Tool;
 
-class Admin extends AbstractTranslation {
+class Admin extends AbstractTranslation
+{
 
     /**
      * @param $id
@@ -28,16 +29,17 @@ class Admin extends AbstractTranslation {
      * @throws \Exception
      * @throws \Zend_Exception
      */
-    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null) {
-        if($user = Tool\Admin::getCurrentUser()) {
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
+    {
+        if ($user = Tool\Admin::getCurrentUser()) {
             $language = $user->getLanguage();
-        } else if ($user = Tool\Authentication::authenticateSession()) {
+        } elseif ($user = Tool\Authentication::authenticateSession()) {
             $language = $user->getLanguage();
-        } else if(\Zend_Registry::isRegistered("Zend_Locale")) {
+        } elseif (\Zend_Registry::isRegistered("Zend_Locale")) {
             $language = (string) \Zend_Registry::get("Zend_Locale");
         }
 
-        if(!in_array($language,Tool\Admin::getLanguages())){
+        if (!in_array($language, Tool\Admin::getLanguages())) {
             $config = \Pimcore\Config::getSystemConfig();
             $language = $config->general->language;
         }

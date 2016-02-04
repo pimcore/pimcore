@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Targeting;
 
 use Pimcore\Model;
 
-class Persona extends Model\AbstractModel {
+class Persona extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -52,7 +53,8 @@ class Persona extends Model\AbstractModel {
      * @param $id
      * @return null|Persona
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         try {
             $persona = new self();
             $persona->setId(intval($id));
@@ -67,10 +69,11 @@ class Persona extends Model\AbstractModel {
      * add the persona to the current user
      * @param $id
      */
-    public static function fire ($id) {
+    public static function fire($id)
+    {
         $front = \Zend_Controller_Front::getInstance();
         $plugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Targeting");
-        if($plugin instanceof \Pimcore\Controller\Plugin\Targeting) {
+        if ($plugin instanceof \Pimcore\Controller\Plugin\Targeting) {
             $plugin->addPersona($id);
         }
     }
@@ -79,9 +82,10 @@ class Persona extends Model\AbstractModel {
      * @param $id
      * @return bool
      */
-    public static function isIdActive($id) {
+    public static function isIdActive($id)
+    {
         $persona = Model\Tool\Targeting\Persona::getById($id);
-        if($persona) {
+        if ($persona) {
             return $persona->getActive();
         }
         return false;
@@ -148,7 +152,7 @@ class Persona extends Model\AbstractModel {
      */
     public function setConditions($conditions)
     {
-        if(!$conditions) {
+        if (!$conditions) {
             $conditions = array();
         }
         $this->conditions = $conditions;

@@ -16,7 +16,8 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
-class Folder extends UserRole\Folder {
+class Folder extends UserRole\Folder
+{
 
     /**
      * @var string

@@ -12,6 +12,6 @@
 
 namespace Pimcore\Cache\Backend;
 
-class MemcachedSliced extends Memcached {
-
+class MemcachedSliced extends Memcached
+{
 }

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element\Data;
 
 use Pimcore\Model;
 
-class MarkerHotspotItem implements \ArrayAccess {
+class MarkerHotspotItem implements \ArrayAccess
+{
 
     /**
      * @var string
@@ -36,10 +37,11 @@ class MarkerHotspotItem implements \ArrayAccess {
     /**
      * @param $data
      */
-    public function __construct($data) {
-        foreach($data as $key => $value) {
+    public function __construct($data)
+    {
+        foreach ($data as $key => $value) {
             $setter = "set" . $key;
-            if(method_exists($this, $setter)) {
+            if (method_exists($this, $setter)) {
                 $this->$setter($value);
             }
         }
@@ -121,8 +123,8 @@ class MarkerHotspotItem implements \ArrayAccess {
      */
     public function offsetGet($offset)
     {
-        if($this->offsetExists($offset)) {
-            if($offset == "value" && in_array($this->type, ["object","asset","document"])) {
+        if ($this->offsetExists($offset)) {
+            if ($offset == "value" && in_array($this->type, ["object", "asset", "document"])) {
                 return Model\Element\Service::getElementById($this->type, $this->value);
             } else {
                 return $this->$offset;
@@ -146,8 +148,8 @@ class MarkerHotspotItem implements \ArrayAccess {
      */
     public function offsetSet($offset, $value)
     {
-        if($this->offsetExists($offset)) {
-            if($value instanceof Model\Element\ElementInterface) {
+        if ($this->offsetExists($offset)) {
+            if ($value instanceof Model\Element\ElementInterface) {
                 $value = $value->getId();
             }
 
@@ -166,7 +168,7 @@ class MarkerHotspotItem implements \ArrayAccess {
      */
     public function offsetUnset($offset)
     {
-        if($this->offsetExists($offset)) {
+        if ($this->offsetExists($offset)) {
             $this->$offset = null;
         }
     }

@@ -14,7 +14,8 @@ namespace Pimcore\API\Plugin;
 
 use Pimcore\Tool;
 
-class Broker {
+class Broker
+{
 
     /**
      * Array of instance of objects extending Pimcore_API_Plugin_Abstract
@@ -34,9 +35,9 @@ class Broker {
      * @return mixed|Broker
      * @throws \Zend_Exception
      */
-    public static function getInstance() {
-
-        if(\Zend_Registry::isRegistered("Pimcore_API_Plugin_Broker")) {
+    public static function getInstance()
+    {
+        if (\Zend_Registry::isRegistered("Pimcore_API_Plugin_Broker")) {
             $broker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
             if ($broker instanceof Broker) {
                 return $broker;
@@ -52,7 +53,8 @@ class Broker {
      * @param $module
      * @throws \Exception
      */
-    public function registerModule($module) {
+    public function registerModule($module)
+    {
         if (Tool::classExists($module)) {
             $moduleInstance = new $module;
             $moduleInstance->init();
@@ -69,7 +71,8 @@ class Broker {
      * @return $this
      * @throws Exception
      */
-    public function registerPlugin(AbstractPlugin $plugin, $stackIndex = null) {
+    public function registerPlugin(AbstractPlugin $plugin, $stackIndex = null)
+    {
         if (false !== array_search($plugin, $this->_plugins, true)) {
             throw new Exception('Plugin already registered');
         }
@@ -113,7 +116,8 @@ class Broker {
      * @return $this
      * @throws Exception
      */
-    public function unregisterPlugin($plugin) {
+    public function unregisterPlugin($plugin)
+    {
         if ($plugin instanceof AbstractPlugin) {
             // Given a plugin object, find it in the array
             $key = array_search($plugin, $this->_plugins, true);
@@ -139,7 +143,8 @@ class Broker {
      * @param  string $class
      * @return bool
      */
-    public function hasPlugin($class) {
+    public function hasPlugin($class)
+    {
         foreach ($this->_plugins as $plugin) {
             $type = get_class($plugin);
             if ($class == $type) {
@@ -156,7 +161,8 @@ class Broker {
      * @param  string $class
      * @return bool
      */
-    public function hasModule($class) {
+    public function hasModule($class)
+    {
         foreach ($this->_systemModules as $module) {
             $type = get_class($module);
             if ($class == $type) {
@@ -170,7 +176,8 @@ class Broker {
      * @param $class
      * @return array|bool
      */
-    public function getPlugin($class) {
+    public function getPlugin($class)
+    {
         $found = array();
         foreach ($this->_plugins as $plugin) {
             $type = get_class($plugin);
@@ -194,7 +201,8 @@ class Broker {
      *
      * @return array
      */
-    public function getPlugins() {
+    public function getPlugins()
+    {
         return $this->_plugins;
     }
 
@@ -203,7 +211,8 @@ class Broker {
      *
      * @return array
      */
-    public function getModules() {
+    public function getModules()
+    {
         return $this->_systemModules;
     }
 
@@ -211,10 +220,11 @@ class Broker {
      * Returns Plugins and Modules
      * @return array
      */
-    public function getSystemComponents(){
+    public function getSystemComponents()
+    {
         $modules = (array)$this->getModules();
         $plugins = (array)$this->getPlugins();
-        return array_merge($modules,$plugins);
+        return array_merge($modules, $plugins);
     }
 
 
@@ -223,8 +233,8 @@ class Broker {
      * @param string $language
      * @return Array $translations
      */
-    public function getTranslations($language) {
-
+    public function getTranslations($language)
+    {
         $translations = array();
         foreach ($this->_plugins as $plugin) {
             try {
@@ -233,17 +243,15 @@ class Broker {
                     $languageFile = PIMCORE_PLUGINS_PATH . $pluginLanguageFile;
 
                     if (is_file($languageFile) and strtolower(substr($languageFile, -4, 4)) == ".csv") {
-
                         $handle = fopen($languageFile, "r");
-                        while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+                        while (($data = fgetcsv($handle, 0, ",")) !== false) {
                             $pluginTranslations[$data[0]] = $data[1];
                         }
                         fclose($handle);
 
-                        if(is_array($pluginTranslations)){
+                        if (is_array($pluginTranslations)) {
                             $translations = array_merge($translations, $pluginTranslations);
                         }
-
                     }
                 }
             } catch (Exception $e) {
@@ -251,6 +259,5 @@ class Broker {
             }
         }
         return $translations;
-
     }
 }

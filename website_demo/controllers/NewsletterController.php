@@ -4,10 +4,11 @@ use Website\Controller\Action;
 use Pimcore\Tool\Newsletter;
 use Pimcore\Model;
 
-class NewsletterController extends Action {
+class NewsletterController extends Action
+{
 
-    public function subscribeAction () {
-
+    public function subscribeAction()
+    {
         $this->enableLayout();
 
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
@@ -15,11 +16,11 @@ class NewsletterController extends Action {
 
         $this->view->success = false;
 
-        if($newsletter->checkParams($params)) {
+        if ($newsletter->checkParams($params)) {
             try {
                 $params["parentId"] = 1; // default folder (home) where we want to save our subscribers
                 $newsletterFolder = Model\Object::getByPath("/crm/newsletter");
-                if($newsletterFolder) {
+                if ($newsletterFolder) {
                     $params["parentId"] = $newsletterFolder->getId();
                 }
 
@@ -41,21 +42,21 @@ class NewsletterController extends Action {
         }
     }
 
-    public function confirmAction() {
-
+    public function confirmAction()
+    {
         $this->enableLayout();
 
         $this->view->success = false;
 
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
 
-        if($newsletter->confirm($this->getParam("token"))) {
+        if ($newsletter->confirm($this->getParam("token"))) {
             $this->view->success = true;
         }
     }
 
-    public function unsubscribeAction() {
-
+    public function unsubscribeAction()
+    {
         $this->enableLayout();
 
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
@@ -63,12 +64,12 @@ class NewsletterController extends Action {
         $unsubscribeMethod = null;
         $success = false;
 
-        if($this->getParam("email")) {
+        if ($this->getParam("email")) {
             $unsubscribeMethod = "email";
             $success = $newsletter->unsubscribeByEmail($this->getParam("email"));
         }
 
-        if($this->getParam("token")) {
+        if ($this->getParam("token")) {
             $unsubscribeMethod = "token";
             $success = $newsletter->unsubscribeByToken($this->getParam("token"));
         }
@@ -77,7 +78,7 @@ class NewsletterController extends Action {
         $this->view->unsubscribeMethod = $unsubscribeMethod;
     }
 
-    public function standardMailAction() {
-
+    public function standardMailAction()
+    {
     }
 }

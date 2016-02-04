@@ -16,11 +16,11 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
-class Unknown extends Model\Asset {
+class Unknown extends Model\Asset
+{
 
     /**
      * @var string
      */
     public $type = "unknown";
-
 }

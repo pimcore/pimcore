@@ -12,37 +12,39 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Config; 
+use Pimcore\Config;
 
-class Console {
-	/**
-	 * @var string system environment
-	 */
-	private static $systemEnvironment;
+class Console
+{
+    /**
+     * @var string system environment
+     */
+    private static $systemEnvironment;
 
     /**
      * @static
      * @return string "windows" or "unix"
      */
-    public static function getSystemEnvironment(){
-		if (self::$systemEnvironment == null) {
-			if(stripos(php_uname("s"), "windows") !== false) {
-				self::$systemEnvironment = 'windows';
-			}else{
-				self::$systemEnvironment = 'unix';
-			}
-		}
-		return self::$systemEnvironment;
+    public static function getSystemEnvironment()
+    {
+        if (self::$systemEnvironment == null) {
+            if (stripos(php_uname("s"), "windows") !== false) {
+                self::$systemEnvironment = 'windows';
+            } else {
+                self::$systemEnvironment = 'unix';
+            }
+        }
+        return self::$systemEnvironment;
     }
 
     /**
      * @return mixed
      * @throws \Exception
      */
-    public static function getPhpCli () {
-
-        if(Config::getSystemConfig()->general->php_cli) {
-            if(@is_executable(Config::getSystemConfig()->general->php_cli)) {
+    public static function getPhpCli()
+    {
+        if (Config::getSystemConfig()->general->php_cli) {
+            if (@is_executable(Config::getSystemConfig()->general->php_cli)) {
                 return (string) Config::getSystemConfig()->general->php_cli;
             } else {
                 \Logger::critical("PHP-CLI binary: " . Config::getSystemConfig()->general->php_cli . " is not executable");
@@ -58,7 +60,7 @@ class Console {
         );
 
         foreach ($paths as $path) {
-            if(@is_executable($path)) {
+            if (@is_executable($path)) {
                 return $path;
             }
         }
@@ -66,11 +68,12 @@ class Console {
         throw new \Exception("No php executable found, please configure the correct path in the system settings");
     }
 
-    public static function getTimeoutBinary () {
+    public static function getTimeoutBinary()
+    {
         $paths = array("/usr/bin/timeout","/usr/local/bin/timeout","/bin/timeout");
 
         foreach ($paths as $path) {
-            if(@is_executable($path)) {
+            if (@is_executable($path)) {
                 return $path;
             }
         }
@@ -84,27 +87,27 @@ class Console {
      * @param null $timeout
      * @return string
      */
-    public static function exec ($cmd, $outputFile = null, $timeout = null) {
-
-        if($timeout && self::getTimeoutBinary()) {
+    public static function exec($cmd, $outputFile = null, $timeout = null)
+    {
+        if ($timeout && self::getTimeoutBinary()) {
 
             // check if --kill-after flag is supported in timeout
             $killafter = "";
             $out = self::exec(self::getTimeoutBinary() . " --help");
-            if(strpos($out, "--kill-after")) {
+            if (strpos($out, "--kill-after")) {
                 $killafter = " -k 1m";
             }
 
             $cmd = self::getTimeoutBinary() . $killafter . " " . $timeout . "s " . $cmd;
-        } else if($timeout) {
+        } elseif ($timeout) {
             \Logger::warn("timeout binary not found, executing command without timeout");
         }
 
-        if($outputFile) {
+        if ($outputFile) {
             $cmd = $cmd . " > ". $outputFile ." 2>&1";
         } else {
             // send stderr to /dev/null otherwise this goes to the apache error log and can fill it up pretty quickly
-            if(self::getSystemEnvironment() != 'windows') {
+            if (self::getSystemEnvironment() != 'windows') {
                 $cmd .= " 2> /dev/null";
             }
         }
@@ -121,10 +124,11 @@ class Console {
      * @param null|string $outputFile
      * @return int
      */
-    public static function execInBackground($cmd, $outputFile = null) {
+    public static function execInBackground($cmd, $outputFile = null)
+    {
 
         // windows systems
-        if(self::getSystemEnvironment() == 'windows') {
+        if (self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
         } else {
             return self::execInBackgroundUnix($cmd, $outputFile);
@@ -137,14 +141,14 @@ class Console {
      * @param string $outputFile
      * @return int
      */
-    protected static function execInBackgroundUnix ($cmd, $outputFile) {
-
-        if(!$outputFile) {
+    protected static function execInBackgroundUnix($cmd, $outputFile)
+    {
+        if (!$outputFile) {
             $outputFile = "/dev/null";
         }
 
         $nice = "";
-        if(@is_executable("/usr/bin/nice")) {
+        if (@is_executable("/usr/bin/nice")) {
             $nice = "/usr/bin/nice -n 19 ";
         }
 
@@ -163,9 +167,9 @@ class Console {
      * @param string $outputFile
      * @return int
      */
-    protected static function execInBackgroundWindows($cmd, $outputFile) {
-
-        if(!$outputFile) {
+    protected static function execInBackgroundWindows($cmd, $outputFile)
+    {
+        if (!$outputFile) {
             $outputFile = "NUL";
         }
 
@@ -184,18 +188,19 @@ class Console {
      *
      * @return array
      */
-    public static function getOptions($onlyFullNotationArgs = false){
-        GLOBAL $argv;
+    public static function getOptions($onlyFullNotationArgs = false)
+    {
+        global $argv;
         $options = array();
         $tmpOptions = $argv;
         array_shift($tmpOptions);
 
-        foreach($tmpOptions as $optionString){
-            if($onlyFullNotationArgs && substr($optionString,0,2) != '--'){
+        foreach ($tmpOptions as $optionString) {
+            if ($onlyFullNotationArgs && substr($optionString, 0, 2) != '--') {
                 continue;
             }
-            $exploded = explode("=",$optionString,2);
-            $options[str_replace('-','',$exploded[0])] =  $exploded[1];
+            $exploded = explode("=", $optionString, 2);
+            $options[str_replace('-', '', $exploded[0])] =  $exploded[1];
         }
 
         return $options;
@@ -207,14 +212,15 @@ class Console {
      * @param string $arrayConcatenator
      * @return string
      */
-    public static function getOptionString($options,$concatenator = '=',$arrayConcatenator = ','){
+    public static function getOptionString($options, $concatenator = '=', $arrayConcatenator = ',')
+    {
         $string = '';
 
-        foreach($options as $key => $value){
+        foreach ($options as $key => $value) {
             $string .= '--' . $key;
-            if($value){
-                if(is_array($value)){
-                    $value = implode($arrayConcatenator,$value);
+            if ($value) {
+                if (is_array($value)) {
+                    $value = implode($arrayConcatenator, $value);
                 }
                 $string .= $concatenator . "'" . $value . "'";
             }
@@ -228,10 +234,12 @@ class Console {
      * @param array $allowedUsers
      * @throws \Exception
      */
-    public static function checkExecutingUser($allowedUsers = array()){
-        $owner = fileowner(PIMCORE_CONFIGURATION_SYSTEM);
-        if($owner == false){
-            throw new \Exception("Couldn't get user from file " . PIMCORE_CONFIGURATION_SYSTEM);
+    public static function checkExecutingUser($allowedUsers = array())
+    {
+        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        $owner = fileowner($configFile);
+        if ($owner == false) {
+            throw new \Exception("Couldn't get user from file " . $configFile);
         }
         $userData = posix_getpwuid($owner);
         $allowedUsers[] = $userData['name'];
@@ -239,19 +247,18 @@ class Console {
         $scriptExecutingUserData = posix_getpwuid(posix_geteuid());
         $scriptExecutingUser = $scriptExecutingUserData['name'];
 
-        if(!in_array($scriptExecutingUser,$allowedUsers)){
-            throw new \Exception("The current system user is not allowed to execute this script. Allowed users: '" . implode(',',$allowedUsers) ."' Executing user: '$scriptExecutingUser'.");
+        if (!in_array($scriptExecutingUser, $allowedUsers)) {
+            throw new \Exception("The current system user is not allowed to execute this script. Allowed users: '" . implode(',', $allowedUsers) ."' Executing user: '$scriptExecutingUser'.");
         }
     }
 
     /**
      * @throws \Exception
      */
-    public static function checkCliExecution() {
+    public static function checkCliExecution()
+    {
         if (php_sapi_name() != 'cli') {
             throw new \Exception("Script execution is restricted to CLI");
         }
     }
-
-
 }

@@ -18,11 +18,13 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 
-class DefinitionCache {
+class DefinitionCache
+{
 
-    static $cache = array();
+    public static $cache = array();
 
-    public static function get($id, $type = "key") {
+    public static function get($id, $type = "key")
+    {
         $key = $type . $id;
         $config = self::$cache[$key];
         if ($config) {
@@ -36,7 +38,6 @@ class DefinitionCache {
         }
         self::put($config);
         return $config;
-
     }
 
     public static function put($config)
@@ -49,8 +50,8 @@ class DefinitionCache {
         self::$cache[$key] = $config;
     }
 
-    public static function clear($config) {
-
+    public static function clear($config)
+    {
         if ($config) {
             $type = self::getType($config);
             if (!$type) {
@@ -62,17 +63,15 @@ class DefinitionCache {
         } else {
             self::$cache = array();
         }
-
     }
 
-    protected static function getType($config) {
+    protected static function getType($config)
+    {
         if ($config instanceof KeyConfig) {
             $type = "key";
-        } else if ($config instanceof GroupConfig) {
+        } elseif ($config instanceof GroupConfig) {
             $type = "group";
         }
         return $type;
     }
-
-
 }

@@ -16,7 +16,8 @@ namespace Pimcore\Model\Schedule\Task;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Schedule\Task
@@ -31,14 +32,16 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getTasks() {
+    public function getTasks()
+    {
         return $this->tasks;
     }
 
@@ -46,7 +49,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param array $tasks
      * @return void
      */
-    public function setTasks($tasks) {
+    public function setTasks($tasks)
+    {
         $this->tasks = $tasks;
         return $this;
     }

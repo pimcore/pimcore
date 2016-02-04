@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-class Tag extends Model\AbstractModel {
+class Tag extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -54,7 +55,8 @@ class Tag extends Model\AbstractModel {
      * @param $id
      * @return Pimcore\Model\Element\Tag
      */
-    public static function getById ($id) {
+    public static function getById($id)
+    {
         try {
             $tag = new self();
             $tag->getDao()->getById($id);
@@ -72,7 +74,8 @@ class Tag extends Model\AbstractModel {
      * @param $cId
      * @return Tag[]
      */
-    public static function getTagsForElement($cType, $cId) {
+    public static function getTagsForElement($cType, $cId)
+    {
         $tag = new Tag();
         return $tag->getDao()->getTagsForElement($cType, $cId);
     }
@@ -84,7 +87,8 @@ class Tag extends Model\AbstractModel {
      * @param $cId
      * @param Tag $tag
      */
-    public static function addTagToElement($cType, $cId, Tag $tag) {
+    public static function addTagToElement($cType, $cId, Tag $tag)
+    {
         $tag->getDao()->addTagToElement($cType, $cId);
     }
 
@@ -95,7 +99,8 @@ class Tag extends Model\AbstractModel {
      * @param $cId
      * @param Tag $tag
      */
-    public static function removeTagFromElement($cType, $cId, Tag $tag) {
+    public static function removeTagFromElement($cType, $cId, Tag $tag)
+    {
         $tag->getDao()->removeTagFromElement($cType, $cId);
     }
 
@@ -107,7 +112,8 @@ class Tag extends Model\AbstractModel {
      * @param $cId
      * @param Tag[] $tag
      */
-    public static function setTagsForElement($cType, $cId, array $tags) {
+    public static function setTagsForElement($cType, $cId, array $tags)
+    {
         $tag = new Tag();
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
     }
@@ -118,12 +124,14 @@ class Tag extends Model\AbstractModel {
      * @param array $tagIds
      * @param bool|false $replace
      */
-    public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false) {
+    public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false)
+    {
         $tag = new Tag();
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
     }
 
-    public function save() {
+    public function save()
+    {
         $this->correctPath();
         $this->getDao()->save();
     }
@@ -187,8 +195,9 @@ class Tag extends Model\AbstractModel {
     /**
      * @return Tag
      */
-    public function getParent() {
-        if($this->parent == null) {
+    public function getParent()
+    {
+        if ($this->parent == null) {
             $this->parent = Tag::getById($this->getParentId());
         }
         return $this->parent;
@@ -205,18 +214,20 @@ class Tag extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getFullIdPath() {
+    public function getFullIdPath()
+    {
         return $this->getIdPath() . $this->getId() . "/";
     }
 
-    public function getNamePath($includeOwnName = true) {
+    public function getNamePath($includeOwnName = true)
+    {
         //set id path to correct value
         $parentNames = [];
-        if($includeOwnName) {
+        if ($includeOwnName) {
             $parentNames[] = $this->getName();
         }
         $parent = $this->getParent();
-        while($parent) {
+        while ($parent) {
             $parentNames[] = $parent->getName();
             $parent = $parent->getParent();
         }
@@ -228,8 +239,9 @@ class Tag extends Model\AbstractModel {
     /**
      * @return Tag[]
      */
-    public function getChildren() {
-        if($this->children == null) {
+    public function getChildren()
+    {
+        if ($this->children == null) {
             $listing = new Tag\Listing();
             $listing->setCondition("parentId = ?", $this->getId());
             $listing->setOrderKey("name");
@@ -238,26 +250,27 @@ class Tag extends Model\AbstractModel {
         return $this->children;
     }
 
-    public function hasChildren() {
+    public function hasChildren()
+    {
         return count($this->getChildren()) > 0;
     }
 
 
-    public function correctPath() {
+    public function correctPath()
+    {
         //set id path to correct value
         $parentIds = [];
         $parent = $this->getParent();
-        while($parent) {
+        while ($parent) {
             $parentIds[] = $parent->getId();
             $parent = $parent->getParent();
         }
 
         $parentIds = array_reverse($parentIds);
-        if($parentIds) {
+        if ($parentIds) {
             $this->idPath = "/" . implode("/", $parentIds) . "/";
         } else {
             $this->idPath = "/";
         }
     }
-
 }

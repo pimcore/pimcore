@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class Country extends Model\Object\ClassDefinition\Data\Select {
+class Country extends Model\Object\ClassDefinition\Data\Select
+{
 
     /**
      * Static type of this element
@@ -31,11 +32,13 @@ class Country extends Model\Object\ClassDefinition\Data\Select {
     public $restrictTo = null;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->buildOptions();
     }
 
-    private function buildOptions() {
+    private function buildOptions()
+    {
         $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
         $options = array();
@@ -55,7 +58,8 @@ class Country extends Model\Object\ClassDefinition\Data\Select {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -67,7 +71,7 @@ class Country extends Model\Object\ClassDefinition\Data\Select {
         /**
          * @extjs6
          */
-        if(is_array($restrictTo)) {
+        if (is_array($restrictTo)) {
             $restrictTo = implode(",", $restrictTo);
         }
 

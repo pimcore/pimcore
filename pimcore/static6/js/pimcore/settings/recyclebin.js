@@ -13,7 +13,6 @@ pimcore.registerNS("pimcore.settings.recyclebin");
 pimcore.settings.recyclebin = Class.create({
 
     initialize: function () {
-
         this.getTabPanel();
     },
 
@@ -94,7 +93,7 @@ pimcore.settings.recyclebin = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
         var typesColumns = [
-            {header: t("type"), flex: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
+            {header: t("type"), width: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
                 return '<img src="/pimcore/static6/img/icon/' + d + '.png" />';
             }},
             {header: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string'},
@@ -161,7 +160,7 @@ pimcore.settings.recyclebin = Class.create({
             bbar: this.pagingtoolbar,
             stripeRows: true,
             selModel: Ext.create('Ext.selection.RowModel', {}),
-            plugins: ['gridfilters'],
+            plugins: ['pimcore.gridfilters'],
             columns : typesColumns,
             tbar: toolbar,
             listeners: {
@@ -207,9 +206,9 @@ pimcore.settings.recyclebin = Class.create({
         Ext.getCmp("pimcore_recyclebin_button_restore").disable();
         Ext.getCmp("pimcore_recyclebin_button_delete").disable();
     },
-    
+
     onRestore: function () {
-        
+
         pimcore.helpers.loadingShow();
 
         var selections = this.grid.getSelectionModel().getSelected();
@@ -226,7 +225,7 @@ pimcore.settings.recyclebin = Class.create({
             success: function () {
                 this.store.reload();
                 this.grid.getView().refresh();
-                
+
                 // refresh all trees
                 try {
                     if(pimcore.globalmanager.get("layout_document_tree").tree.rendered) {
@@ -252,7 +251,7 @@ pimcore.settings.recyclebin = Class.create({
                 catch (e) {
                     console.log(e);
                 }
-                
+
                 pimcore.helpers.loadingHide();
             }.bind(this)
         });

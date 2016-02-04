@@ -46,29 +46,25 @@ class Test_Tool
         $propertiesStringArray = array();
         ksort($properties);
         if (is_array($properties)) {
-
             foreach ($properties as $key => $value) {
-
                 if ($value->type == "asset" || $value->type == "object" || $value->type == "document") {
                     if ($value->data instanceof Element_Interface) {
                         $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data->getId();
                     } else {
                         $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ": null";
                     }
-
-                } else if ($value->type == 'date') {
+                } elseif ($value->type == 'date') {
                     if ($value->data instanceof Zend_Date) {
                         $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data->getTimestamp();
                     }
-                } else if ($value->type == "bool") {
+                } elseif ($value->type == "bool") {
                     $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . (bool)$value->data;
-                } else if ($value->type == "text" || $value->type == "select") {
+                } elseif ($value->type == "text" || $value->type == "select") {
                     $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data;
                 } else {
                     throw new Exception("Unknow property of type [ " . $value->type . " ]");
                 }
             }
-
         }
         return $propertiesStringArray;
     }
@@ -80,13 +76,11 @@ class Test_Tool
      */
     public static function createAssetComparisonString($asset, $ignoreCopyDifferences = false)
     {
-
         if ($asset instanceof Asset) {
-
             $a = array();
 
             //custom settings
-            if(is_array($asset->getCustomSettings())){
+            if (is_array($asset->getCustomSettings())) {
                 $a["customSettings"] = serialize($asset->getCustomSettings());
             }
 
@@ -114,7 +108,9 @@ class Test_Tool
             $a = array_merge($a, self::createPropertiesComparisonString($properties));
 
             return implode(",", $a);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -122,14 +118,13 @@ class Test_Tool
      * @param  Asset $asset2
      * @return bool
      */
-    public static function assetsAreEqual($asset1, $asset2, $ignoreCopyDifferences = false, $id = false) {
-
+    public static function assetsAreEqual($asset1, $asset2, $ignoreCopyDifferences = false, $id = false)
+    {
         if ($asset1 instanceof Asset and $asset2 instanceof Asset) {
-
             $a1Hash = self::createAssetComparisonString($asset1, $ignoreCopyDifferences);
             $a2Hash = self::createAssetComparisonString($asset2, $ignoreCopyDifferences);
 
-            if(!$id) {
+            if (!$id) {
                 $id = uniqid();
             }
 
@@ -145,8 +140,9 @@ class Test_Tool
 
 
             return $a1Hash === $a2Hash ? true : false;
-
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -156,7 +152,6 @@ class Test_Tool
     protected static function createDocumentComparisonString($document, $ignoreCopyDifferences = false)
     {
         if ($document instanceof Document) {
-
             $d = array();
 
             if ($document instanceof Document_PageSnippet) {
@@ -166,7 +161,7 @@ class Test_Tool
                     if ($value instanceof Document_Tag_Video) {
                         //with video can't use frontend(), it includes random id
                         $d["element_" . $key] = $value->getName() . ":" . $value->type . "_" . $value->id;
-                    } else if (!$value instanceof Document_Tag_Block) {
+                    } elseif (!$value instanceof Document_Tag_Block) {
                         $d["element_" . $key] = $value->getName() . ":" . $value->frontend();
                     } else {
                         $d["element_" . $key] = $value->getName();
@@ -203,7 +198,9 @@ class Test_Tool
             $d = array_merge($d, self::createPropertiesComparisonString($properties));
 
             return implode(",", $d);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -213,9 +210,7 @@ class Test_Tool
      */
     public static function documentsAreEqual($doc1, $doc2, $ignoreCopyDifferences = false)
     {
-
         if ($doc1 instanceof Document and $doc2 instanceof Document) {
-
             $d1Hash = self::createDocumentComparisonString($doc1, $ignoreCopyDifferences);
             $d2Hash = self::createDocumentComparisonString($doc2, $ignoreCopyDifferences);
 
@@ -233,10 +228,9 @@ class Test_Tool
             fclose($fh);
   */
             return $d1Hash === $d2Hash ? true : false;
-
-        } else return false;
-
-
+        } else {
+            return false;
+        }
     }
 
 
@@ -248,13 +242,10 @@ class Test_Tool
         // plus omit fields which don't have get method
         $getter = "get" . ucfirst($key);
         if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Fieldcollections) {
-
             if ($object->$getter()) {
-
                 $collection = $object->$getter();
                 $items = $collection->getItems();
                 if (is_array($items)) {
-
                     $returnValue = array();
                     $counter = 0;
                     foreach ($items as $item) {
@@ -266,7 +257,7 @@ class Test_Tool
 
                             if ($v instanceof Object_Class_Data_Link) {
                                 $fieldValue = serialize($v);
-                            } else if ($v instanceof Object_Class_Data_Password or $fd instanceof Object_Class_Data_Nonownerobjects) {
+                            } elseif ($v instanceof Object_Class_Data_Password or $fd instanceof Object_Class_Data_Nonownerobjects) {
                                 $fieldValue=null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -275,15 +266,11 @@ class Test_Tool
                             $returnValue[$counter][$k] = $fieldValue;
                         }
                         $counter++;
-
-
                     }
                     return serialize($returnValue);
                 }
-
             }
-        } else if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Localizedfields) {
-
+        } elseif (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Localizedfields) {
             $data = $object->$getter();
             $lData = array();
 
@@ -299,11 +286,10 @@ class Test_Tool
 
             foreach ($data->getItems() as $language => $values) {
                 foreach ($fd->getFieldDefinitions() as $fd) {
-
                     Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
 
-                    $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(),$fd,$object);;
-
+                    $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(), $fd, $object);
+                    ;
                 }
             }
             if ($localeBak) {
@@ -311,10 +297,9 @@ class Test_Tool
             }
 
             return serialize($lData);
-
-        } else if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Link) {
+        } elseif (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Link) {
             return serialize($fd);
-        } else if (method_exists($object, $getter) and !$fd instanceof Object_Class_Data_Password and !$fd instanceof Object_Class_Data_Nonownerobjects) {
+        } elseif (method_exists($object, $getter) and !$fd instanceof Object_Class_Data_Password and !$fd instanceof Object_Class_Data_Nonownerobjects) {
             return $fd->getForCsvExport($object);
         }
     }
@@ -325,14 +310,10 @@ class Test_Tool
      */
     protected static function createObjectComparisonString($object, $ignoreCopyDifferences)
     {
-
         if ($object instanceof Object_Abstract) {
-
-
             $o = array();
 
             if ($object instanceof Object_Concrete) {
-
                 foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
                     $o[$key] = self::getComparisonDataForField($key, $value, $object);
                 }
@@ -357,25 +338,23 @@ class Test_Tool
             $o = array_merge($o, self::createPropertiesComparisonString($properties));
 
             return implode(",", $o);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     public static function objectsAreEqual($object1, $object2, $ignoreCopyDifferences)
     {
-
         if ($object1 instanceof Object_Abstract and $object2 instanceof Object_Abstract) {
-
-
             $o1Hash = self::createObjectComparisonString($object1, $ignoreCopyDifferences);
             $o2Hash = self::createObjectComparisonString($object2, $ignoreCopyDifferences);
 
             $id = uniqid();
 
             return $o1Hash === $o2Hash ? true : false;
-
-        } else return false;
-
-
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -385,13 +364,11 @@ class Test_Tool
      */
     public static function resetRegistry()
     {
-
         $conf = Zend_Registry::get('pimcore_config_test');
         Zend_Registry::_unsetInstance();
         Zend_Registry::set('pimcore_config_test', $conf);
         Pimcore::initConfiguration();
         Pimcore::initPlugins();
-
     }
 
     /**
@@ -399,7 +376,8 @@ class Test_Tool
      * @param bool $save
      * @return Object_Unittest
      */
-    public static function createEmptyObject($keyPrefix = "", $save = true) {
+    public static function createEmptyObject($keyPrefix = "", $save = true)
+    {
         if ($keyPrefix == null) {
             $keyPrefix = "";
         }
@@ -416,7 +394,8 @@ class Test_Tool
         return $emptyObject;
     }
 
-    public static function createEmptyObjects($keyPrefix = "", $save = true, $count = 10) {
+    public static function createEmptyObjects($keyPrefix = "", $save = true, $count = 10)
+    {
         $result = array();
         for ($i = 0; $i < $count; $i++) {
             $result[] = self::createEmptyObject($keyPrefix, $save);
@@ -430,7 +409,8 @@ class Test_Tool
      * @param bool $save
      * @return Object_Unittest
      */
-    public static function createFullyFledgedObject($keyPrefix = "", $save = true, $seed = 1) {
+    public static function createFullyFledgedObject($keyPrefix = "", $save = true, $seed = 1)
+    {
         if ($keyPrefix == null) {
             $keyPrefix = "";
         }
@@ -482,7 +462,6 @@ class Test_Tool
             Test_Data::fillFieldCollection($object, "myfieldcollection", $seed);
         } catch (Exception $e) {
             print($e . "\n");
-
         }
 
         if ($save) {
@@ -499,7 +478,8 @@ class Test_Tool
      * @param bool $save
      * @return Document_Page
      */
-    public static function createEmptyDocumentPage($keyPrefix = "", $save = true) {
+    public static function createEmptyDocumentPage($keyPrefix = "", $save = true)
+    {
         if ($keyPrefix == null) {
             $keyPrefix = "";
         }
@@ -523,7 +503,8 @@ class Test_Tool
      * @param bool $save
      * @return Asset_Image
      */
-    public static function createImageAsset($keyPrefix = "", $data, $save = true) {
+    public static function createImageAsset($keyPrefix = "", $data, $save = true)
+    {
         if ($keyPrefix == null) {
             $keyPrefix = "";
         }
@@ -553,7 +534,8 @@ class Test_Tool
 
 
 
-    public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true) {
+    public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true)
+    {
         Pimcore::collectGarbage();
 
         if ($cleanObjects) {
@@ -607,7 +589,8 @@ class Test_Tool
     /** Returns the total number of objects.
      * @return int object count.
      */
-    public static function getObjectCount() {
+    public static function getObjectCount()
+    {
         $list = new Object_List();
         $childs = $list->load();
         return count($childs);
@@ -616,7 +599,8 @@ class Test_Tool
     /** Returns the total number of assets.
      * @return int object count.
      */
-    public static function getAssetCount() {
+    public static function getAssetCount()
+    {
         $list = new Asset_List();
         $childs = $list->load();
         return count($childs);
@@ -625,10 +609,10 @@ class Test_Tool
     /** Returns the total number of documents.
      * @return int object count.
      */
-    public static function getDocoumentCount() {
+    public static function getDocoumentCount()
+    {
         $list = new Document_List();
         $childs = $list->load();
         return count($childs);
     }
-
 }

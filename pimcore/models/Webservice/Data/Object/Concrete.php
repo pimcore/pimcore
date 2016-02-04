@@ -17,7 +17,8 @@ namespace Pimcore\Model\Webservice\Data\Object;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
-class Concrete extends Model\Webservice\Data\Object {
+class Concrete extends Model\Webservice\Data\Object
+{
 
     /**
      * @var Webservice\Data\Object\Element[]
@@ -34,7 +35,8 @@ class Concrete extends Model\Webservice\Data\Object {
      * @param $object
      * @param null $options
      */
-    public function map($object, $options = null) {
+    public function map($object, $options = null)
+    {
         parent::map($object);
 
         $this->className = $object->getClassName();
@@ -42,11 +44,10 @@ class Concrete extends Model\Webservice\Data\Object {
         $fd = $object->getClass()->getFieldDefinitions();
 
         foreach ($fd as $field) {
-
             $getter = "get".ucfirst($field->getName());
 
-            //only expose fields which have a get method 
-            if(method_exists($object,$getter)){
+            //only expose fields which have a get method
+            if (method_exists($object, $getter)) {
                 $el = new Webservice\Data\Object\Element();
                 $el->name = $field->getName();
                 $el->type = $field->getFieldType();
@@ -58,7 +59,6 @@ class Concrete extends Model\Webservice\Data\Object {
 
                 $this->elements[] = $el;
             }
-
         }
     }
 
@@ -68,8 +68,8 @@ class Concrete extends Model\Webservice\Data\Object {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
-
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
+    {
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
             $method = "set" . $key;
@@ -87,8 +87,8 @@ class Concrete extends Model\Webservice\Data\Object {
 
                 $setter = "set" . ucfirst($element->name);
                 if (method_exists($object, $setter)) {
-                    $tag = $object->getClass()->getFieldDefinition($element->name);
-                    if($tag) {
+                    $tag = $class->getFieldDefinition($element->name);
+                    if ($tag) {
                         if ($class instanceof Model\Object\ClassDefinition\Data\Fieldcollections) {
                             $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object,
                                 $idMapper));
@@ -98,13 +98,11 @@ class Concrete extends Model\Webservice\Data\Object {
                     } else {
                         \Logger::error("tag for field " . $element->name . " not found");
                     }
-
                 } else {
-                    if(!$disableMappingExceptions) {
-                        throw new \Exception("No element [ " . $element->name . " ] of type [ " . $element->type . " ] found in class definition " . $class);
+                    if (!$disableMappingExceptions) {
+                        throw new \Exception("No element [ " . $element->name . " ] of type [ " . $element->type . " ] found in class definition [" . $class->getId() . "] | " . $class->getName());
                     }
                 }
-
             }
         }
     }

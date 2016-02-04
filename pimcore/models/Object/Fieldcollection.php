@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
-class Fieldcollection extends Model\AbstractModel implements \Iterator {
+class Fieldcollection extends Model\AbstractModel implements \Iterator
+{
 
     /**
      * @var array
@@ -32,11 +33,12 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      * @param array $items
      * @param null $fieldname
      */
-    public function __construct ($items = array(), $fieldname = null) {
-        if(!empty($items)) {
+    public function __construct($items = array(), $fieldname = null)
+    {
+        if (!empty($items)) {
             $this->setItems($items);
         }
-        if($fieldname) {
+        if ($fieldname) {
             $this->setFieldname($fieldname);
         }
     }
@@ -44,7 +46,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return array
      */
-    public function getItems () {
+    public function getItems()
+    {
         return $this->items;
     }
 
@@ -52,7 +55,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      * @param $items
      * @return void
      */
-    public function setItems ($items) {
+    public function setItems($items)
+    {
         $this->items = $items;
         return $this;
     }
@@ -60,7 +64,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return
      */
-    public function getFieldname () {
+    public function getFieldname()
+    {
         return $this->fieldname;
     }
 
@@ -68,7 +73,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      * @param $fieldname
      * @return void
      */
-    public function setFieldname ($fieldname) {
+    public function setFieldname($fieldname)
+    {
         $this->fieldname = $fieldname;
         return $this;
     }
@@ -76,7 +82,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return array
      */
-    public function getItemDefinitions () {
+    public function getItemDefinitions()
+    {
         $definitions = array();
         foreach ($this->getItems() as $item) {
             $definitions[$item->getType()] = $item->getDefinition();
@@ -90,16 +97,16 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      * @param $object
      * @return void
      */
-    public function save ($object) {
-
+    public function save($object)
+    {
         $this->getDao()->save($object);
         $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
 
-        if(is_array($this->getItems())) {
+        if (is_array($this->getItems())) {
             $index = 0;
             foreach ($this->getItems() as $collection) {
-                if($collection instanceof Fieldcollection\Data\AbstractData) {
-                    if(in_array($collection->getType(),$allowedTypes)) {
+                if ($collection instanceof Fieldcollection\Data\AbstractData) {
+                    if (in_array($collection->getType(), $allowedTypes)) {
                         $collection->setFieldname($this->getFieldname());
                         $collection->setIndex($index++);
 
@@ -117,8 +124,9 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return bool
      */
-    public function isEmpty () {
-        if(count($this->getItems()) < 1) {
+    public function isEmpty()
+    {
+        if (count($this->getItems()) < 1) {
             return true;
         }
         return false;
@@ -128,7 +136,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      * @param $item
      * @return void
      */
-    public function add ($item) {
+    public function add($item)
+    {
         $this->items[] = $item;
     }
 
@@ -136,9 +145,10 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      * @param $index
      * @return void
      */
-    public function remove ($index) {
-        if($this->items[$index]) {
-            array_splice($this->items,$index,1);
+    public function remove($index)
+    {
+        if ($this->items[$index]) {
+            array_splice($this->items, $index, 1);
         }
     }
 
@@ -146,8 +156,9 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
      * @param $index
      * @return 
      */
-    public function get ($index) {
-        if($this->items[$index]) {
+    public function get($index)
+    {
+        if ($this->items[$index]) {
             return $this->items[$index];
         }
     }
@@ -155,7 +166,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return int
      */
-    public function getCount() {
+    public function getCount()
+    {
         return count($this->getItems());
     }
     
@@ -168,14 +180,16 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /*
      *
      */
-    public function rewind() {
+    public function rewind()
+    {
         reset($this->items);
     }
 
     /**
      * @return mixed
      */
-    public function current() {
+    public function current()
+    {
         $var = current($this->items);
         return $var;
     }
@@ -183,7 +197,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return mixed
      */
-    public function key() {
+    public function key()
+    {
         $var = key($this->items);
         return $var;
     }
@@ -191,7 +206,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return mixed
      */
-    public function next() {
+    public function next()
+    {
         $var = next($this->items);
         return $var;
     }
@@ -199,7 +215,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator {
     /**
      * @return bool
      */
-    public function valid() {
+    public function valid()
+    {
         $var = $this->current() !== false;
         return $var;
     }

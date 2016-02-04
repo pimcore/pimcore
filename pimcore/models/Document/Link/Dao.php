@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Link;
 
 use Pimcore\Model;
 
-class Dao extends Model\Document\Dao {
+class Dao extends Model\Document\Dao
+{
 
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
@@ -24,7 +25,8 @@ class Dao extends Model\Document\Dao {
      * @param integer $id
      * @throws \Exception
      */
-    public function getById($id = null) {
+    public function getById($id = null)
+    {
         try {
             if ($id != null) {
                 $this->model->setId($id);
@@ -38,13 +40,10 @@ class Dao extends Model\Document\Dao {
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
                 $this->model->getHref();
-            }
-            else {
+            } else {
                 throw new \Exception("Link with the ID " . $this->model->getId() . " doesn't exists");
             }
-
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -54,18 +53,17 @@ class Dao extends Model\Document\Dao {
      *
      * @throws \Exception
      */
-    public function create() {
+    public function create()
+    {
         try {
             parent::create();
 
             $this->db->insert("documents_link", array(
                 "id" => $this->model->getId()
             ));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -73,14 +71,13 @@ class Dao extends Model\Document\Dao {
      *
      * @throws \Exception
      */
-    public function delete() {
+    public function delete()
+    {
         try {
             $this->db->delete("documents_link", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
-
 }

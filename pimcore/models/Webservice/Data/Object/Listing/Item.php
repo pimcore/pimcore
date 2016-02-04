@@ -16,6 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Object\Listing;
 
 use Pimcore\Model;
 
-class Item extends Model\Webservice\Data\Element\Listing\Item {
-    
+class Item extends Model\Webservice\Data\Element\Listing\Item
+{
 }

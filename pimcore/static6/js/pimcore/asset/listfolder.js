@@ -125,6 +125,7 @@ pimcore.asset.listfolder = Class.create({
             width: 80,
             value: 20,
             triggerAction: "all",
+            editable: false,
             listeners: {
                 select: function (box, rec, index) {
                     this.store.setPageSize(intval(rec.data.field1));

@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
+class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
+{
 
     /**
      * Static type of this element
@@ -60,7 +61,8 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         if ($data instanceof Object\Data\Geopoint) {
             return array(
                 $this->getName() . "__longitude" => $data->getLongitude(),
@@ -78,8 +80,9 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param string $data
      * @return string
      */
-    public function getDataFromResource($data) {
-        if($data[$this->getName() . "__longitude"] && $data[$this->getName() . "__latitude"]) {
+    public function getDataFromResource($data)
+    {
+        if ($data[$this->getName() . "__longitude"] && $data[$this->getName() . "__latitude"]) {
             return new Object\Data\Geopoint($data[$this->getName() . "__longitude"], $data[$this->getName() . "__latitude"]);
         }
         return;
@@ -91,7 +94,8 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -101,7 +105,8 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null)
+    {
         if ($data instanceof Object\Data\Geopoint) {
             return array(
                 "longitude" => $data->getLongitude(),
@@ -118,8 +123,9 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null) {
-        if($data["longitude"] || $data["latitude"] ) {
+    public function getDataFromEditmode($data, $object = null)
+    {
+        if ($data["longitude"] || $data["latitude"]) {
             return new Object\Data\Geopoint($data["longitude"], $data["latitude"]);
         }
         return;
@@ -130,34 +136,40 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param string $data
      * @return string
      */
-    public function getVersionPreview($data) {
-        if($data instanceof Object\Data\Geopoint) {
+    public function getVersionPreview($data)
+    {
+        if ($data instanceof Object\Data\Geopoint) {
             return $data->getLongitude() . "," . $data->getLatitude();
         }
         return "";
     }
 
-   
 
-     /**
-      * converts object data to a simple string value or CSV Export
-      * @abstract
-      * @param Model\Object\AbstractObject $object
-      * @return string
-      */
-    public function getForCsvExport($object) {
+
+    /**
+     * converts object data to a simple string value or CSV Export
+     * @abstract
+     * @param Object\AbstractObject $object
+     * @param array $params
+     * @return string
+     */
+    public function getForCsvExport($object, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object);
-        if($data instanceof Object\Data\Geopoint){
+        if ($data instanceof Object\Data\Geopoint) {
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
             return $data->getLatitude() . "," . $data->getLongitude();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
      * @param string $importValue
      * @return null|Object\ClassDefinition\Data|Object\Data\Geopoint
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue)
+    {
         $coords = explode(",", $importValue);
 
         $value = null;
@@ -174,8 +186,8 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param string $object
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
-
+    public function getForWebserviceExport($object)
+    {
         $data = $this->getDataFromObjectParam($object);
         
         if ($data instanceof Object\Data\Geopoint) {
@@ -183,7 +195,9 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
                 "longitude" => $data->getLongitude(),
                 "latitude" => $data->getLatitude()
             );
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -193,12 +207,13 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null) {
-        if(empty($value)){
-            return null;   
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    {
+        if (empty($value)) {
+            return null;
         } else {
             $value = (array) $value;
-            if($value["longitude"] !== null && $value["latitude"] !== null ) {
+            if ($value["longitude"] !== null && $value["latitude"] !== null) {
                 return new Object\Data\Geopoint($value["longitude"], $value["latitude"]);
             } else {
                 throw new \Exception("cannot get values from web service import - invalid data");
@@ -209,7 +224,8 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 }

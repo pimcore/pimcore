@@ -16,7 +16,8 @@ namespace Pimcore\Model\Site;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Staticroute
@@ -31,14 +32,16 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
     /**
      * @return array
      */
-    public function getSites() {
+    public function getSites()
+    {
         return $this->sites;
     }
 
@@ -46,7 +49,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param array $sites
      * @return void
      */
-    public function setSites($sites) {
+    public function setSites($sites)
+    {
         $this->sites = $sites;
         return $this;
     }

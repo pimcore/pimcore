@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 
-class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
+class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect
+{
 
     /**
      * Static type of this element
@@ -31,7 +32,8 @@ class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
     public $restrictTo = null;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
         $options = array();
@@ -56,7 +58,7 @@ class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
         /**
          * @extjs6
          */
-        if(is_array($restrictTo)) {
+        if (is_array($restrictTo)) {
             $restrictTo = implode(",", $restrictTo);
         }
 
@@ -74,7 +76,8 @@ class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect {
     /**
      * @return array
      */
-    public function getOptions() {
+    public function getOptions()
+    {
         return $this->options;
     }
 }

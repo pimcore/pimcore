@@ -14,9 +14,11 @@ namespace Pimcore\Loader;
 
 use Pimcore\Tool;
 
-class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
+class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
+{
 
-    public function autoload($class) {
+    public function autoload($class)
+    {
 
         // manual aliasing
         $classAliases = [
@@ -29,7 +31,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
             "Pimcore\\Model\\Cache" => "Pimcore\\Cache",
         ];
 
-        if(array_key_exists($class, $classAliases)) {
+        if (array_key_exists($class, $classAliases)) {
             class_alias($classAliases[$class], $class);
             return;
         }
@@ -37,27 +39,27 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
         parent::autoload($class);
 
         // compatibility from Resource => Dao
-        if(strpos($class, "Resource") && !class_exists($class, false) && !interface_exists($class, false)) {
-            $daoClass = str_replace("Resource","Dao",$class);
-            if(Tool::classExists($daoClass) || Tool::interfaceExists($daoClass)) {
-                if(!class_exists($class, false) && !interface_exists($class, false)) {
+        if (strpos($class, "Resource") && !class_exists($class, false) && !interface_exists($class, false)) {
+            $daoClass = str_replace("Resource", "Dao", $class);
+            if (Tool::classExists($daoClass) || Tool::interfaceExists($daoClass)) {
+                if (!class_exists($class, false) && !interface_exists($class, false)) {
                     class_alias($daoClass, $class);
                 }
             }
         }
 
         // reverse compatibility from namespaced to prefixed class names e.g. Pimcore\Model\Document => Document
-        if(strpos($class, "Pimcore\\") === 0) {
+        if (strpos($class, "Pimcore\\") === 0) {
 
             // first check for a model, if it doesnt't work fall back to the default autoloader
-            if(!class_exists($class, false) && !interface_exists($class, false)) {
-                if(!$this->loadModel($class)) {
+            if (!class_exists($class, false) && !interface_exists($class, false)) {
+                if (!$this->loadModel($class)) {
                     $loader = \Zend_Loader_Autoloader::getInstance();
                     $loader->autoload($class);
                 }
             }
 
-            if(class_exists($class, false) || interface_exists($class, false)) {
+            if (class_exists($class, false) || interface_exists($class, false)) {
                 // create an alias
                 $alias = str_replace("\\", "_", $class);
                 $alias = preg_replace("/_Abstract([^_]+)/", "_Abstract", $alias);
@@ -66,13 +68,13 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
                 $alias = preg_replace("/_Listing$/", "_List", $alias);
                 $alias = str_replace("Object_ClassDefinition", "Object_Class", $alias);
 
-                if(strpos($alias, "Pimcore_Model") === 0) {
-                    if(!preg_match("/^Pimcore_Model_(Abstract|List|Resource|Cache)/", $alias)) {
+                if (strpos($alias, "Pimcore_Model") === 0) {
+                    if (!preg_match("/^Pimcore_Model_(Abstract|List|Resource|Cache)/", $alias)) {
                         $alias = str_replace("Pimcore_Model_", "", $alias);
                     }
                 }
 
-                if(!class_exists($alias, false) && !interface_exists($alias, false)) {
+                if (!class_exists($alias, false) && !interface_exists($alias, false)) {
                     class_alias($class, $alias);
                     return; // skip here, nothing more to do ...
                 }
@@ -81,15 +83,15 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
 
         // compatibility layer from prefixed to namespaced e.g. Document => Pimcore\Model\Document
         $isLegacyClass = preg_match("/^(Pimcore_|Asset|Dependency|Document|Element|Glossary|Metadata|Object|Property|Redirect|Schedule|Site|Staticroute|Tool|Translation|User|Version|Webservice|WebsiteSetting|Search)/", $class);
-        if(!class_exists($class, false) && !interface_exists($class, false) && $isLegacyClass) {
+        if (!class_exists($class, false) && !interface_exists($class, false) && $isLegacyClass) {
 
             // this is for debugging purposes, to find legacy class names
-            if(PIMCORE_DEBUG) {
+            if (PIMCORE_DEBUG) {
                 $backtrace = debug_backtrace();
-                foreach($backtrace as $step) {
-                    if(isset($step["file"]) && !empty($step["file"]) && $step["function"] != "class_exists") {
+                foreach ($backtrace as $step) {
+                    if (isset($step["file"]) && !empty($step["file"]) && $step["function"] != "class_exists") {
                         $logName = "legacy-class-names";
-                        if(preg_match("@^" . preg_quote(PIMCORE_PATH, "@") . "@", $step["file"])) {
+                        if (preg_match("@^" . preg_quote(PIMCORE_PATH, "@") . "@", $step["file"])) {
                             $logName .= "-admin";
                         }
 
@@ -106,32 +108,33 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader {
             $namespacedClass = preg_replace("/([^_]+)_Interface$/", "$1_$1Interface", $namespacedClass);
             $namespacedClass = str_replace("_", "\\", $namespacedClass);
 
-            if(strpos($namespacedClass, "Pimcore") !== 0) {
+            if (strpos($namespacedClass, "Pimcore") !== 0) {
                 $namespacedClass = "Pimcore\\Model\\" . $namespacedClass;
             }
 
             // check if the class is a model, if so, load it
             $this->loadModel($namespacedClass);
 
-            if(Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
-                if(!class_exists($class, false) && !interface_exists($class, false)) {
+            if (Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
+                if (!class_exists($class, false) && !interface_exists($class, false)) {
                     class_alias($namespacedClass, $class);
                 }
             }
         }
     }
 
-    protected function loadModel($class) {
-        if(strpos($class, "Pimcore\\Model\\") === 0) {
-            $modelFile = PIMCORE_PATH . "/models/" . str_replace(["Pimcore\\Model\\","\\"], ["","/"], $class) . ".php";
-            if(file_exists($modelFile)) {
+    protected function loadModel($class)
+    {
+        if (strpos($class, "Pimcore\\Model\\") === 0) {
+            $modelFile = PIMCORE_PATH . "/models/" . str_replace(["Pimcore\\Model\\", "\\"], ["", "/"], $class) . ".php";
+            if (file_exists($modelFile)) {
                 include_once $modelFile;
                 return true;
             }
 
-            if(strpos($class, "Pimcore\\Model\\Object\\") === 0) {
-                $modelFile = PIMCORE_CLASS_DIRECTORY . "/" . str_replace(["Pimcore\\Model\\","\\"], ["","/"], $class) . ".php";
-                if(file_exists($modelFile)) {
+            if (strpos($class, "Pimcore\\Model\\Object\\") === 0) {
+                $modelFile = PIMCORE_CLASS_DIRECTORY . "/" . str_replace(["Pimcore\\Model\\", "\\"], ["", "/"], $class) . ".php";
+                if (file_exists($modelFile)) {
                     include_once $modelFile;
                     return true;
                 }

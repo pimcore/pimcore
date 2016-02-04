@@ -16,25 +16,26 @@ namespace Pimcore\Model\Tool\Setup;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      *
      */
-    public function database () {
-        
+    public function database()
+    {
         $mysqlInstallScript = file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql");
 
         // remove comments in SQL script
-        $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/","",$mysqlInstallScript);
+        $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", "", $mysqlInstallScript);
 
         // get every command as single part
-        $mysqlInstallScripts = explode(";",$mysqlInstallScript);
+        $mysqlInstallScripts = explode(";", $mysqlInstallScript);
 
         // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..." seems to be a PDO bug after some googling
         foreach ($mysqlInstallScripts as $m) {
             $sql = trim($m);
-            if(strlen($sql) > 0) {
+            if (strlen($sql) > 0) {
                 $sql .= ";";
                 $this->db->query($m);
             }
@@ -51,38 +52,37 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $file
      * @throws \Zend_Db_Adapter_Exception
      */
-	public function insertDump($file) {
-
-		$sql = file_get_contents($file);
-		
-		// we have to use the raw connection here otherwise \Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
-		// and mysqli causes troubles because it doesn't support multiple queries
-		if($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {
-			$mysqli = $this->db->getConnection();
-			$mysqli->multi_query($sql);
-			
-			// loop through results, because ->multi_query() is asynchronous
-			do {
-				if($result = $mysqli->store_result()){
-					$mysqli->free_result();
-				}
-			} while($mysqli->next_result());
-			
-		} else if ($this->db->getResource() instanceof \Zend_Db_Adapter_Pdo_Mysql) {
-			$this->db->getConnection()->exec($sql);
-		}
-				
-		\Pimcore\Db::reset();
+    public function insertDump($file)
+    {
+        $sql = file_get_contents($file);
+        
+        // we have to use the raw connection here otherwise \Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
+        // and mysqli causes troubles because it doesn't support multiple queries
+        if ($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {
+            $mysqli = $this->db->getConnection();
+            $mysqli->multi_query($sql);
+            
+            // loop through results, because ->multi_query() is asynchronous
+            do {
+                if ($result = $mysqli->store_result()) {
+                    $mysqli->free_result();
+                }
+            } while ($mysqli->next_result());
+        } elseif ($this->db->getResource() instanceof \Zend_Db_Adapter_Pdo_Mysql) {
+            $this->db->getConnection()->exec($sql);
+        }
+                
+        \Pimcore\Db::reset();
 
         // set the id of the system user to 0
-        $this->db->update("users",array("id" => 0), $this->db->quoteInto("name = ?", "system"));
-	}
+        $this->db->update("users", array("id" => 0), $this->db->quoteInto("name = ?", "system"));
+    }
 
     /**
      * @throws \Zend_Db_Adapter_Exception
      */
-    public function contents () {
-
+    public function contents()
+    {
         $this->db->insert("assets", array(
             "id" => 1,
             "parentId" => 0,
@@ -137,7 +137,7 @@ class Dao extends Model\Dao\AbstractDao {
             "admin" => 1,
             "active" => 1
         ));
-        $this->db->update("users",array("id" => 0), $this->db->quoteInto("name = ?", "system"));
+        $this->db->update("users", array("id" => 0), $this->db->quoteInto("name = ?", "system"));
 
 
         $userPermissions = array(

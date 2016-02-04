@@ -16,13 +16,15 @@ namespace Pimcore\Model\Element\Recyclebin\Item;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $id
      * @throws \Exception
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $data = $this->db->fetchRow("SELECT * FROM recyclebin WHERE id = ?", $id);
 
         if (!$data["id"]) {
@@ -37,8 +39,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
-
+    public function save()
+    {
         $version = get_object_vars($this->model);
 
         foreach ($version as $key => $value) {
@@ -50,8 +52,7 @@ class Dao extends Model\Dao\AbstractDao {
         try {
             $this->db->insert("recyclebin", $data);
             $this->model->setId($this->db->lastInsertId());
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::error($e);
         }
 
@@ -63,7 +64,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete("recyclebin", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 }

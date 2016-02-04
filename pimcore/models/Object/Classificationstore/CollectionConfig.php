@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
 
-class CollectionConfig extends Model\AbstractModel {
+class CollectionConfig extends Model\AbstractModel
+{
 
     /** Group id.
      * @var integer
@@ -49,16 +50,15 @@ class CollectionConfig extends Model\AbstractModel {
      * @param integer $id
      * @return Model\Object\Classificationstore\CollectionConfig
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         try {
-
             $config = new self();
             $config->setId(intval($id));
             $config->getDao()->getById();
 
             return $config;
         } catch (\Exception $e) {
-
         }
     }
 
@@ -66,7 +66,8 @@ class CollectionConfig extends Model\AbstractModel {
      * @param $name
      * @return CollectionConfig
      */
-    public static function getByName ($name) {
+    public static function getByName($name)
+    {
         try {
             $config = new self();
             $config->setName($name);
@@ -74,14 +75,14 @@ class CollectionConfig extends Model\AbstractModel {
 
             return $config;
         } catch (\Exception $e) {
-
         }
     }
 
     /**
      * @return Model\Object\Classificationstore\CollectionConfig
      */
-    public static function create() {
+    public static function create()
+    {
         $config = new self();
         $config->save();
 
@@ -92,7 +93,8 @@ class CollectionConfig extends Model\AbstractModel {
      * @param integer $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = (int) $id;
         return $this;
     }
@@ -100,7 +102,8 @@ class CollectionConfig extends Model\AbstractModel {
     /**
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -109,7 +112,8 @@ class CollectionConfig extends Model\AbstractModel {
      * @param string name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -117,14 +121,16 @@ class CollectionConfig extends Model\AbstractModel {
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /** Returns the description.
      * @return mixed
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
@@ -132,7 +138,8 @@ class CollectionConfig extends Model\AbstractModel {
      * @param $description
      * @return Model\Object\Classificationstore\CollectionConfig
      */
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
         return $this;
     }
@@ -140,7 +147,8 @@ class CollectionConfig extends Model\AbstractModel {
     /**
      * Deletes the key value group configuration
      */
-    public function delete() {
+    public function delete()
+    {
         \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.preDelete", $this);
         parent::delete();
         \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.postDelete", $this);
@@ -149,7 +157,8 @@ class CollectionConfig extends Model\AbstractModel {
     /**
      * Saves the collection config
      */
-    public function save() {
+    public function save()
+    {
         $isUpdate = false;
 
         if ($this->getId()) {
@@ -204,7 +213,4 @@ class CollectionConfig extends Model\AbstractModel {
     {
         return $this->creationDate;
     }
-
-
-
 }

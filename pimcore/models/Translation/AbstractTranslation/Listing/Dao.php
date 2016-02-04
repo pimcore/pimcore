@@ -17,12 +17,14 @@ namespace Pimcore\Model\Translation\AbstractTranslation\Listing;
 use Pimcore\Model;
 use Pimcore\Cache;
 
-abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface {
+abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
+{
 
     /**
      * @return int
      */
-    public function getTotalCount() {
+    public function getTotalCount()
+    {
         $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
         return $amount;
     }
@@ -30,7 +32,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     /**
      * @return int
      */
-    public function getCount() {
+    public function getCount()
+    {
         if (count($this->model->getObjects()) > 0) {
             return count($this->model->getObjects());
         }
@@ -42,24 +45,24 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     /**
      * @return array|mixed
      */
-    public function getAllTranslations() {
-
+    public function getAllTranslations()
+    {
         $cacheKey = static::getTableName()."_data";
-        if(!$translations = Cache::load($cacheKey)) {
+        if (!$translations = Cache::load($cacheKey)) {
             $itemClass = static::getItemClass();
             $translations = array();
             $translationsData = $this->db->fetchAll("SELECT * FROM " . static::getTableName());
 
             foreach ($translationsData as $t) {
-                if(!$translations[$t["key"]]) {
+                if (!$translations[$t["key"]]) {
                     $translations[$t["key"]] = new $itemClass();
                     $translations[$t["key"]]->setKey($t["key"]);
                 }
 
-                $translations[$t["key"]]->addTranslation($t["language"],$t["text"]);
+                $translations[$t["key"]]->addTranslation($t["language"], $t["text"]);
 
                 //for legacy support
-                if($translations[$t["key"]]->getDate() < $t["creationDate"]){
+                if ($translations[$t["key"]]->getDate() < $t["creationDate"]) {
                     $translations[$t["key"]]->setDate($t["creationDate"]);
                 }
 
@@ -67,7 +70,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
                 $translations[$t["key"]]->setModificationDate($t["modificationDate"]);
             }
 
-            Cache::save($translations, $cacheKey, array("translator","translate"), 999);
+            Cache::save($translations, $cacheKey, array("translator", "translate"), 999);
         }
 
         
@@ -77,7 +80,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     /**
      * @return array
      */
-    public function loadRaw() {
+    public function loadRaw()
+    {
         $translationsData = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $translationsData;
     }
@@ -85,8 +89,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     /**
      * @return array
      */
-    public function load () {
-
+    public function load()
+    {
         $allTranslations = $this->getAllTranslations();
         $translations = array();
         $this->model->setGroupBy("key");
@@ -103,9 +107,10 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     /**
      * @return bool
      */
-    public function isCacheable() {
+    public function isCacheable()
+    {
         $count = $this->db->fetchOne("SELECT COUNT(*) FROM " . static::getTableName());
-        if($count > 5000) {
+        if ($count > 5000) {
             return false;
         }
         return true;
@@ -114,20 +119,21 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     /**
      *
      */
-    public function cleanup() {
+    public function cleanup()
+    {
         $keysToDelete = $this->db->fetchCol("SELECT `key` FROM " . static::getTableName() . " as tbl1 WHERE
                (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
                = (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key`) GROUP BY `key`;");
 
-        if(is_array($keysToDelete) && !empty($keysToDelete)) {
+        if (is_array($keysToDelete) && !empty($keysToDelete)) {
             $preparedKeys = array();
             foreach ($keysToDelete as $value) {
-                if(strpos($value, ":") === false) { // colon causes problems due to a ZF bug, so we exclude them
+                if (strpos($value, ":") === false) { // colon causes problems due to a ZF bug, so we exclude them
                     $preparedKeys[] = $this->db->quote($value);
                 }
             }
 
-            if(!empty($preparedKeys)) {
+            if (!empty($preparedKeys)) {
                 $this->db->delete(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
             }
         }

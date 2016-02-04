@@ -14,7 +14,8 @@ namespace Pimcore\Model\Search\Backend\Data;
 
 use Pimcore\Model\Element;
 
-class Id {
+class Id
+{
 
     /**
      * @var int
@@ -29,9 +30,10 @@ class Id {
     /**
      * @param $webResource
      */
-    public function __construct($webResource) {
+    public function __construct($webResource)
+    {
         $this->id = $webResource->getId();
-        if($webResource instanceof Element\ElementInterface) {
+        if ($webResource instanceof Element\ElementInterface) {
             $this->type = Element\Service::getType($webResource);
         } else {
             $this->type = "unknown";
@@ -41,14 +43,16 @@ class Id {
     /**
      * @return int
      */
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
      * @return string
      */
-    public function getType(){
+    public function getType()
+    {
         return $this->type;
     }
 }

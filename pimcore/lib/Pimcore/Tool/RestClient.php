@@ -305,7 +305,6 @@ class RestClient
                 $value = $tmp;
             }
             $wsData->$key = $value;
-
         }
         return $wsData;
     }
@@ -363,7 +362,7 @@ class RestClient
 
         $bodyObj = json_decode($body);
 
-        if($bodyObj === NULL) {
+        if ($bodyObj === null) {
             throw new \Exception("No valid JSON data: '" . $body . "'");
         }
 
@@ -586,7 +585,7 @@ class RestClient
             $object = new Object\Folder();
             $wsDocument->reverseMap($object);
             return $object;
-        } else if ($wsDocument->type == "object" || $wsDocument->type == "variant") {
+        } elseif ($wsDocument->type == "object" || $wsDocument->type == "variant") {
             $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
             // check for a mapped class
             $classname = Tool::getModelClassMapping($classname);
@@ -609,9 +608,7 @@ class RestClient
             } else {
                 throw new Exception("Unable to deocode object, class [" . $classname . "] does not exist");
             }
-
         }
-
     }
 
     /**
@@ -1096,10 +1093,10 @@ class RestClient
      * @param array $params
      * @return string
      */
-    public function buildEndpointUrl($customUrlPath,$params = array())
+    public function buildEndpointUrl($customUrlPath, $params = array())
     {
         $url = $this->getBaseUrl() . $customUrlPath . "?apikey=" . $this->getApiKey();
-        if(!empty($params)){
+        if (!empty($params)) {
             $url .= '&' . http_build_query($params);
         }
         return $url;

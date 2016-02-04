@@ -18,6 +18,6 @@ namespace Pimcore\Model\Listing\Dao\Mysql;
 
 use Pimcore\Model\Listing;
 
-abstract class AbstractMysql extends Listing\Dao\AbstractDao {
-
+abstract class AbstractMysql extends Listing\Dao\AbstractDao
+{
 }

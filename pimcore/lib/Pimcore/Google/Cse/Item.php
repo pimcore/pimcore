@@ -12,7 +12,8 @@
 
 namespace Pimcore\Google\Cse;
 
-class Item {
+class Item
+{
 
     /**
      * @var array
@@ -78,8 +79,8 @@ class Item {
     /**
      * @param array $data
      */
-    public function __construct($data) {
-
+    public function __construct($data)
+    {
         $this->setRaw($data);
         $this->setValues($data);
     }
@@ -88,10 +89,11 @@ class Item {
      * @param array $data
      * @return $this
      */
-    public function setValues($data = array()) {
+    public function setValues($data = array())
+    {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
-                $this->setValue($key,$value);
+                $this->setValue($key, $value);
             }
         }
         return $this;
@@ -102,7 +104,8 @@ class Item {
      * @param  $value
      * @return void
      */
-    public function setValue($key, $value) {
+    public function setValue($key, $value)
+    {
         $method = "set" . $key;
         if (method_exists($this, $method)) {
             $this->$method($value);

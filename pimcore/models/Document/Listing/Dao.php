@@ -17,20 +17,22 @@ namespace Pimcore\Model\Document\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of objects (all are an instance of Document) for the given parameters an return them
      *
      * @return array
      */
-    public function load() {
+    public function load()
+    {
         $documents = array();
         $documentsData = $this->db->fetchAll("SELECT id,type FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($documentsData as $documentData) {
-            if($documentData["type"]) {
-                if($doc = Document::getById($documentData["id"])) {
+            if ($documentData["type"]) {
+                if ($doc = Document::getById($documentData["id"])) {
                     $documents[] = $doc;
                 }
             }
@@ -45,35 +47,39 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return array
      */
-    public function loadIdList() {
+    public function loadIdList()
+    {
         $documentIds = $this->db->fetchCol("SELECT id FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $documentIds;
     }
 
-    public function loadIdPathList() {
+    public function loadIdPathList()
+    {
         $documentIds = $this->db->fetchAll("SELECT id, CONCAT(path,`key`) as path FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $documentIds;
     }
 
-    protected function getCondition() {
+    protected function getCondition()
+    {
         if ($cond = $this->model->getCondition()) {
             if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
                 return " WHERE (" . $cond . ") AND published = 1";
             }
             return " WHERE " . $cond . " ";
-        }
-    else if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
+        } elseif (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
             return " WHERE published = 1";
         }
         return "";
     }
 
-    public function getCount() {
+    public function getCount()
+    {
         $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM documents" . $this->getCondition() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $amount;
     }
 
-    public function getTotalCount() {
+    public function getTotalCount()
+    {
         $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM documents" . $this->getCondition(), $this->model->getConditionVariables());
         return $amount;
     }

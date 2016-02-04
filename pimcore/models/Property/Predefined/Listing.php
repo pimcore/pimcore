@@ -16,7 +16,8 @@ namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\JsonListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Property\Predefined
@@ -26,18 +27,10 @@ class Listing extends Model\Listing\AbstractListing {
     public $properties = array();
 
     /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @return boolean
-     */
-    public function isValidOrderKey($key) {
-        return true;
-    }
-
-    /**
      * @return array
      */
-    public function getProperties() {
+    public function getProperties()
+    {
         return $this->properties;
     }
 
@@ -45,7 +38,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @param array $properties
      * @return void
      */
-    public function setProperties($properties) {
+    public function setProperties($properties)
+    {
         $this->properties = $properties;
         return $this;
     }

@@ -131,6 +131,7 @@ pimcore.settings.glossary = Class.create({
             {header: t("language"), flex: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
                 store: this.languages,
                 mode: "local",
+                editable: false,
                 triggerAction: "all"
             })},
             casesensitiveCheck,
@@ -139,6 +140,7 @@ pimcore.settings.glossary = Class.create({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",
+                editable: false,
                 triggerAction: "all"
             }), renderer: function (siteId) {
                 var store = pimcore.globalmanager.get("sites");

@@ -16,14 +16,16 @@ namespace Pimcore\Model\Document\Folder;
 
 use Pimcore\Model;
 
-class Dao extends Model\Document\Dao {
+class Dao extends Model\Document\Dao
+{
 
     /**
      * Deletes the folder
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         parent::delete();
     }
 }

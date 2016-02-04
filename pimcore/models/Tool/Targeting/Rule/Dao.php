@@ -17,21 +17,22 @@ namespace Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param null $id
      * @throws \Exception
      */
-    public function getById($id = null) {
-
+    public function getById($id = null)
+    {
         if ($id != null) {
             $this->model->setId($id);
         }
 
         $data = $this->db->fetchRow("SELECT * FROM targeting_rules WHERE id = ?", $this->model->getId());
 
-        if($data["id"]) {
+        if ($data["id"]) {
             $data["conditions"] = Serialize::unserialize($data["conditions"]);
             $data["actions"] = Serialize::unserialize($data["actions"]);
             $this->assignVariablesToModel($data);
@@ -44,15 +45,15 @@ class Dao extends Model\Dao\AbstractDao {
      * @param string $name
      * @throws \Exception
      */
-    public function getByName($name = null) {
-
+    public function getByName($name = null)
+    {
         if ($name != null) {
             $this->model->setName($name);
         }
 
         $data = $this->db->fetchAll("SELECT id FROM targeting_rules WHERE name = ?", $this->model->getName());
 
-        if(count($data) === 1) {
+        if (count($data) === 1) {
             $this->getById($data[0]["id"]);
         } else {
             throw new \Exception("target with name " . $this->model->getId() . " doesn't exist or isn't unique");
@@ -64,7 +65,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->model->update();
         }
@@ -76,24 +78,25 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->delete("targeting_rules", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
      * @throws \Exception
      */
-    public function update() {
-
+    public function update()
+    {
         try {
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns("targeting_rules"))) {
-                    if(is_array($value) || is_object($value)) {
+                    if (is_array($value) || is_object($value)) {
                         $value = Serialize::serialize($value);
                     }
-                    if(is_bool($value)) {
+                    if (is_bool($value)) {
                         $value = (int) $value;
                     }
                     $data[$key] = $value;
@@ -101,8 +104,7 @@ class Dao extends Model\Dao\AbstractDao {
             }
 
             $this->db->update("targeting_rules", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -112,7 +114,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
+    public function create()
+    {
         $this->db->insert("targeting_rules", array());
 
         $this->model->setId($this->db->lastInsertId());

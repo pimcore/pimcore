@@ -16,6 +16,6 @@ namespace Pimcore\Model\Webservice\Data\Object\Concrete;
 
 use Pimcore\Model;
 
-class In extends Model\Webservice\Data\Object\Concrete {
-
+class In extends Model\Webservice\Data\Object\Concrete
+{
 }

@@ -20,7 +20,8 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 
-class Href extends Model\Document\Tag {
+class Href extends Model\Document\Tag
+{
 
     /**
      * ID of the source object
@@ -54,7 +55,8 @@ class Href extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
 
         //TODO: getType != $type ... that might be dangerous
         return "href";
@@ -64,7 +66,8 @@ class Href extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return array(
             "id" => $this->id,
             "type" => $this->type,
@@ -77,10 +80,10 @@ class Href extends Model\Document\Tag {
      *
      * @return mixed
      */
-    public function getDataEditmode() {
-	
-		$this->setElement();
-	
+    public function getDataEditmode()
+    {
+        $this->setElement();
+    
         if ($this->element instanceof Element\ElementInterface) {
             return array(
                 "id" => $this->id,
@@ -97,10 +100,10 @@ class Href extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return void
      */
-    public function frontend() {
-
-		$this->setElement();
-	
+    public function frontend()
+    {
+        $this->setElement();
+    
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return "";
@@ -118,8 +121,8 @@ class Href extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
-
+    public function setDataFromResource($data)
+    {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
         }
@@ -137,8 +140,8 @@ class Href extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
-
+    public function setDataFromEditmode($data)
+    {
         $this->id = $data["id"];
         $this->type = $data["type"];
         $this->subtype = $data["subtype"];
@@ -152,10 +155,11 @@ class Href extends Model\Document\Tag {
      *
      * @return void
      */
-    private function setElement() {
-		if(!$this->element) {
-			$this->element = Element\Service::getElementById($this->type, $this->id);
-		}
+    private function setElement()
+    {
+        if (!$this->element) {
+            $this->element = Element\Service::getElementById($this->type, $this->id);
+        }
         return $this;
     }
 
@@ -164,10 +168,10 @@ class Href extends Model\Document\Tag {
      *
      * @return mixed
      */
-    public function getElement() {
-
-		$this->setElement();
-	
+    public function getElement()
+    {
+        $this->setElement();
+    
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return false;
@@ -181,10 +185,10 @@ class Href extends Model\Document\Tag {
      *
      * @return mixed
      */
-    public function getFullPath() {
-
-		$this->setElement();
-	
+    public function getFullPath()
+    {
+        $this->setElement();
+    
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return false;
@@ -198,10 +202,10 @@ class Href extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
-		
-		$this->setElement();
-	
+    public function isEmpty()
+    {
+        $this->setElement();
+    
         if ($this->getElement() instanceof Element\ElementInterface) {
             return false;
         }
@@ -211,10 +215,10 @@ class Href extends Model\Document\Tag {
     /**
      * @return array
      */
-    public function resolveDependencies() {
-
+    public function resolveDependencies()
+    {
         $dependencies = array();
-		$this->setElement();
+        $this->setElement();
 
         if ($this->element instanceof Element\ElementInterface) {
             $elementType = Element\Service::getElementType($this->element);
@@ -233,10 +237,10 @@ class Href extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
         if ($data->id !==null) {
-
             $this->type = $data->type;
             $this->subtype = $data->subtype;
             $this->id = $data->id;
@@ -252,25 +256,25 @@ class Href extends Model\Document\Tag {
 
             if ($this->type == "asset") {
                 $this->element = Asset::getById($this->id);
-                if(!$this->element instanceof Asset){
+                if (!$this->element instanceof Asset) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
                         throw new \Exception("cannot get values from web service import - referenced asset with id [ ".$data->id." ] is unknown");
                     }
                 }
-            } else if ($this->type == "document") {
+            } elseif ($this->type == "document") {
                 $this->element = Document::getById($this->id);
-                if(!$this->element instanceof Document){
+                if (!$this->element instanceof Document) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
                         throw new \Exception("cannot get values from web service import - referenced document with id [ ".$data->id." ] is unknown");
                     }
                 }
-            } else if ($this->type == "object") {
+            } elseif ($this->type == "object") {
                 $this->element = Object\AbstractObject::getById($this->id);
-                if(!$this->element instanceof Object\AbstractObject){
+                if (!$this->element instanceof Object\AbstractObject) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {
@@ -291,11 +295,12 @@ class Href extends Model\Document\Tag {
     /**
      * @return bool
      */
-    public function checkValidity() {
+    public function checkValidity()
+    {
         $sane = true;
-        if($this->id){
+        if ($this->id) {
             $el = Element\Service::getElementById($this->type, $this->id);
-            if(!$el instanceof Element\ElementInterface){
+            if (!$el instanceof Element\ElementInterface) {
                 $sane = false;
                 \Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
                 $this->id = null;
@@ -305,14 +310,13 @@ class Href extends Model\Document\Tag {
             }
         }
         return $sane;
-    
     }
 
     /**
      * @return array
      */
-    public function __sleep() {
-
+    public function __sleep()
+    {
         $finalVars = array();
         $parentVars = parent::__sleep();
         $blockedVars = array("element");
@@ -329,8 +333,9 @@ class Href extends Model\Document\Tag {
      * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
      * @return void
      */
-    public function load () {
-        if(!$this->element) {
+    public function load()
+    {
+        if (!$this->element) {
             $this->setElement();
         }
     }
@@ -384,10 +389,10 @@ class Href extends Model\Document\Tag {
      * @param array $idMapping
      * @return void
      */
-    public function rewriteIds($idMapping) {
-        if(array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
+    public function rewriteIds($idMapping)
+    {
+        if (array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->id = $idMapping[$this->type][$this->getId()];
         }
     }
-
 }

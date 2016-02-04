@@ -16,12 +16,14 @@ namespace Pimcore\Model\User\Permission\Definition;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      *
      */
-    public function save() {
+    public function save()
+    {
         try {
             $this->db->insert("users_permission_definitions", array(
                 "key" => $this->model->getKey()

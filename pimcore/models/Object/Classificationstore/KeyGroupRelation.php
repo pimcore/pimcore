@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
 
-class KeyGroupRelation extends Model\AbstractModel {
+class KeyGroupRelation extends Model\AbstractModel
+{
 
     /**
      * @var integer
@@ -55,7 +56,8 @@ class KeyGroupRelation extends Model\AbstractModel {
     /**
      * @return Model\Object\Classificationstore\KeyGroupRelation
      */
-    public static function create() {
+    public static function create()
+    {
         $config = new self();
         $config->save();
 
@@ -173,9 +175,4 @@ class KeyGroupRelation extends Model\AbstractModel {
     {
         $this->sorter = $sorter;
     }
-
-
-
-
-
 }

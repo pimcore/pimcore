@@ -15,9 +15,10 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Tool; 
+use Pimcore\Tool;
 
-class Language extends Model\Object\ClassDefinition\Data\Select {
+class Language extends Model\Object\ClassDefinition\Data\Select
+{
 
     /**
      * Static type of this element
@@ -34,16 +35,15 @@ class Language extends Model\Object\ClassDefinition\Data\Select {
     /**
      *
      */
-    public function configureOptions () {
-
+    public function configureOptions()
+    {
         $validLanguages = (array) Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
         $options = array();
 
         foreach ($locales as $short => $translation) {
-
-            if($this->getOnlySystemLanguages()) {
-                if(!in_array($short, $validLanguages)) {
+            if ($this->getOnlySystemLanguages()) {
+                if (!in_array($short, $validLanguages)) {
                     continue;
                 }
             }
@@ -60,7 +60,8 @@ class Language extends Model\Object\ClassDefinition\Data\Select {
     /**
      * @return bool
      */
-    public function getOnlySystemLanguages () {
+    public function getOnlySystemLanguages()
+    {
         return $this->onlySystemLanguages;
     }
 
@@ -68,7 +69,8 @@ class Language extends Model\Object\ClassDefinition\Data\Select {
      * @param $value
      * @return $this
      */
-    public function setOnlySystemLanguages ($value) {
+    public function setOnlySystemLanguages($value)
+    {
         $this->onlySystemLanguages = (bool) $value;
         return $this;
     }
@@ -76,9 +78,8 @@ class Language extends Model\Object\ClassDefinition\Data\Select {
     /**
      *
      */
-    public function __wakeup () {
+    public function __wakeup()
+    {
         $this->configureOptions();
     }
-
-   
 }

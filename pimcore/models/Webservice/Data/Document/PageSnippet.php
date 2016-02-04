@@ -17,7 +17,8 @@ namespace Pimcore\Model\Webservice\Data\Document;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
-class PageSnippet extends Model\Webservice\Data\Document {
+class PageSnippet extends Model\Webservice\Data\Document
+{
     
     /**
      * @var string
@@ -40,24 +41,22 @@ class PageSnippet extends Model\Webservice\Data\Document {
     public $elements;
 
 
-    public function map($object, $options = null) {
-
+    public function map($object, $options = null)
+    {
         $originalElements = array();
-        if(is_array($object->getElements())){
+        if (is_array($object->getElements())) {
             $originalElements=$object->getElements();
         }
 
         parent::map($object);
 
         $this->elements = array();
-        foreach($originalElements as $element) {
-
+        foreach ($originalElements as $element) {
             $el = new Webservice\Data\Document\Element();
             $el->name = $element->getName();
             $el->type = $element->getType();
             $el->value = $element->getForWebserviceExport();
             $this->elements[] = $el;
-
         }
     }
 
@@ -67,16 +66,16 @@ class PageSnippet extends Model\Webservice\Data\Document {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function reverseMap ($object, $disableMappingExceptions = false, $idMapper = null) {
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
+    {
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
         
         $object->childs = null;
         $object->elements = array();
 
-        if(is_array($this->elements)) {
+        if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
-
-                $tag = Model\Document\Tag::factory($element->type,$element->name,$this->id);
+                $tag = Model\Document\Tag::factory($element->type, $element->name, $this->id);
                 $tag->getFromWebserviceImport($element, $idMapper);
 
                 $object->elements[$element->name] = $tag;

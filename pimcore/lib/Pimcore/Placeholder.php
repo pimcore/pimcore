@@ -49,8 +49,9 @@ class Placeholder
      * @param $classPrefix
      * @throws \Exception
      */
-    public static function addPlaceholderClassPrefix($classPrefix){
-        if(!is_string($classPrefix) || $classPrefix == ''){
+    public static function addPlaceholderClassPrefix($classPrefix)
+    {
+        if (!is_string($classPrefix) || $classPrefix == '') {
             throw new \Exception('$classPrefix has to be a valid string and mustn\'t be empty');
         }
 
@@ -62,16 +63,17 @@ class Placeholder
      * @return bool
      * @throws \Exception
      */
-    public static function removePlaceholderClassPrefix($classPrefix){
-        if(!is_string($classPrefix) || $classPrefix == ''){
+    public static function removePlaceholderClassPrefix($classPrefix)
+    {
+        if (!is_string($classPrefix) || $classPrefix == '') {
             throw new \Exception('$classPrefix has to be a valid string and mustn\'t be empty');
         }
 
-        $arrayIndex = array_search($classPrefix,self::$placeholderClassPrefixes);
+        $arrayIndex = array_search($classPrefix, self::$placeholderClassPrefixes);
 
-        if($arrayIndex === false){
+        if ($arrayIndex === false) {
             return false;
-        }else{
+        } else {
             unset(self::$placeholderClassPrefixes[$arrayIndex]);
             return true;
         }
@@ -82,7 +84,8 @@ class Placeholder
      * @static
      * @return array
      */
-    public static function getPlaceholderClassPrefixes(){
+    public static function getPlaceholderClassPrefixes()
+    {
         return array_reverse(self::$placeholderClassPrefixes);
     }
 
@@ -172,7 +175,6 @@ class Placeholder
         preg_match_all($regex, $contentString, $matches);
 
         if (is_array($matches[1])) {
-
             foreach ($matches[1] as $key => $match) {
                 $placeholderString = $matches[0][$key]; //placeholder string
                 $placeholderClass = $matches[1][$key]; //placeholder php class
@@ -182,8 +184,8 @@ class Placeholder
                 if ($placeholderConfigString) {
                     //try to create the json config object
                     try {
-                        $configJsonString = str_replace(array("&quot;","'"), '"', $placeholderConfigString);
-                        $placeholderConfig = new \Zend_Config_Json($configJsonString,null,array('ignoreconstants' => true));
+                        $configJsonString = str_replace(array("&quot;", "'"), '"', $placeholderConfigString);
+                        $placeholderConfig = new \Zend_Config_Json($configJsonString, null, array('ignoreconstants' => true));
                     } catch (\Exception $e) {
                         \Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;
@@ -214,7 +216,7 @@ class Placeholder
      * @param null | Model\Document $document
      * @return string
      */
-    public function replacePlaceholders($mixed, $params = array(), $document = null,$enableLayoutOnPlaceholderReplacement = true)
+    public function replacePlaceholders($mixed, $params = array(), $document = null, $enableLayoutOnPlaceholderReplacement = true)
     {
         if (is_string($mixed)) {
             $contentString = $mixed;
@@ -248,16 +250,15 @@ class Placeholder
     {
         $stringReplaced = null;
         if (!empty($placeholderStack)) {
-
             foreach ($placeholderStack as $placeholder) {
                 $placeholderObject = null;
                 $placeholderClassPrefixes = self::getPlaceholderClassPrefixes();
 
                 $placeholderObject = null;
 
-                foreach($placeholderClassPrefixes as $classPrefix){
+                foreach ($placeholderClassPrefixes as $classPrefix) {
                     $className = $classPrefix . $placeholder['placeholderClass'];
-                    if(Tool::classExists($className)){
+                    if (Tool::classExists($className)) {
                         $placeholderObject = new $className();
                         break;
                     }

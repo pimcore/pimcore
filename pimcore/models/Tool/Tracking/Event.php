@@ -16,7 +16,8 @@ namespace Pimcore\Model\Tool\Tracking;
 
 use Pimcore\Model;
 
-class Event extends Model\AbstractModel {
+class Event extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -52,7 +53,8 @@ class Event extends Model\AbstractModel {
      * @param $id
      * @return Event
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         $event = new self();
         $event->getDao()->getById(intval($id));
 
@@ -68,12 +70,13 @@ class Event extends Model\AbstractModel {
      * @param $year
      * @return Event
      */
-    public static function getByDate($category, $action, $label, $day, $month, $year) {
+    public static function getByDate($category, $action, $label, $day, $month, $year)
+    {
         $event = new self();
         try {
             $event->getDao()->getByDate($category, $action, $label, $day, $month, $year);
         } catch (\Exception $e) {
-            $event->setTimestamp(mktime(1,0,0,$month, $day, $year));
+            $event->setTimestamp(mktime(1, 0, 0, $month, $day, $year));
             $event->setCategory($category);
             $event->setAction($action);
             $event->setLabel($label);

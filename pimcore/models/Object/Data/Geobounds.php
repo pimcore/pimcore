@@ -14,7 +14,8 @@
 
 namespace Pimcore\Model\Object\Data;
 
-class Geobounds {
+class Geobounds
+{
 
     /**
      * @var Geopoint
@@ -30,7 +31,8 @@ class Geobounds {
      * @param null $nortEast
      * @param null $southWest
      */
-    public function __construct($nortEast = null, $southWest = null) {
+    public function __construct($nortEast = null, $southWest = null)
+    {
         if ($nortEast) {
             $this->setNorthEast($nortEast);
         }
@@ -42,7 +44,8 @@ class Geobounds {
     /**
      * @return Geopoint
      */
-    public function getNorthEast() {
+    public function getNorthEast()
+    {
         return $this->nortEast;
     }
 
@@ -50,7 +53,8 @@ class Geobounds {
      * @param $nortEast
      * @return $this
      */
-    public function setNorthEast($nortEast) {
+    public function setNorthEast($nortEast)
+    {
         $this->nortEast = $nortEast;
         return $this;
     }
@@ -58,7 +62,8 @@ class Geobounds {
     /**
      * @return Geopoint
      */
-    public function getSouthWest() {
+    public function getSouthWest()
+    {
         return $this->southWest;
     }
 
@@ -66,7 +71,8 @@ class Geobounds {
      * @param $southWest
      * @return $this
      */
-    public function setSouthWest($southWest) {
+    public function setSouthWest($southWest)
+    {
         $this->southWest = $southWest;
         return $this;
     }
@@ -74,15 +80,16 @@ class Geobounds {
     /**
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         $string = "";
-        if($this->nortEast) {
+        if ($this->nortEast) {
             $string .= $this->nortEast;
         }
-        if(!empty($string)) {
+        if (!empty($string)) {
             $string .= " - ";
         }
-        if($this->nortEast) {
+        if ($this->nortEast) {
             $string .= $this->nortWest;
         }
 

@@ -16,13 +16,15 @@ namespace Pimcore\Model\Tool\Tracking\Event;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $id
      * @throws \Exception
      */
-    public function getById($id) {
+    public function getById($id)
+    {
         $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE id = ?", $id);
         if (!$data["id"]) {
             throw new \Exception("there is no event for the requested id");
@@ -39,7 +41,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param $year
      * @throws \Exception
      */
-    public function getByDate($category, $action, $label, $day, $month, $year) {
+    public function getByDate($category, $action, $label, $day, $month, $year)
+    {
         $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE category = ? AND action = ? AND label = ? AND day = ? AND month = ? AND year = ?", array((string) $category, (string) $action, (string) $label, $day, $month, $year));
         if (!$data["id"]) {
             throw new \Exception("there is no event for the requested id");
@@ -50,8 +53,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      *
      */
-    public function save() {
-
+    public function save()
+    {
         $data = array(
             "category" => (string) $this->model->getCategory(),
             "action" => (string) $this->model->getAction(),

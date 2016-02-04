@@ -17,15 +17,17 @@ namespace Pimcore\Model\Object\Objectbrick\Definition;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Dao extends Model\Object\Fieldcollection\Definition\Dao {
+class Dao extends Model\Object\Fieldcollection\Definition\Dao
+{
 
     /**
      * @param Object\ClassDefinition $class
      * @param bool $query
      * @return string
      */
-    public function getTableName (Object\ClassDefinition $class, $query = false) {
-        if($query) {
+    public function getTableName(Object\ClassDefinition $class, $query = false)
+    {
+        if ($query) {
             return "object_brick_query_" . $this->model->getKey() . "_" . $class->getId();
         } else {
             return "object_brick_store_" . $this->model->getKey() . "_" . $class->getId();
@@ -35,7 +37,8 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao {
     /**
      * @param Object\ClassDefinition $class
      */
-    public function delete (Object\ClassDefinition $class) {
+    public function delete(Object\ClassDefinition $class)
+    {
         $table = $this->getTableName($class, false);
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
 
@@ -46,8 +49,8 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao {
     /**
      * @param Object\ClassDefinition $class
      */
-    public function createUpdateTable (Object\ClassDefinition $class) {
-
+    public function createUpdateTable(Object\ClassDefinition $class)
+    {
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
 
@@ -78,7 +81,6 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao {
         Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
 
         foreach ($this->model->getFieldDefinitions() as $value) {
-
             $key = $value->getName();
 
 
@@ -92,7 +94,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao {
             }
 
             // if a datafield requires more than one column in the datastore table => only for non-relation types
-            if(!$value->isRelationType() && is_array($value->getColumnType())) {
+            if (!$value->isRelationType() && is_array($value->getColumnType())) {
                 foreach ($value->getColumnType() as $fkey => $fvalue) {
                     $this->addModifyColumn($tableStore, $key . "__" . $fkey, $fvalue, "", "NULL");
                     $protectedColumnsStore[] = $key . "__" . $fkey;
@@ -114,7 +116,6 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao {
             // add indices
             $this->addIndexToField($value, $tableStore);
             $this->addIndexToField($value, $tableQuery);
-
         }
 
         $this->removeUnusedColumns($tableStore, $columnsToRemoveStore, $protectedColumnsStore);

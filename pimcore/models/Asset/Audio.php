@@ -16,11 +16,11 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
-class Audio extends Model\Asset {
+class Audio extends Model\Asset
+{
 
     /**
      * @var string
      */
     public $type = "audio";
-
 }

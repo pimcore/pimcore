@@ -16,15 +16,16 @@ namespace Pimcore\Model\User\AbstractUser;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     /**
      * @param $id
      * @throws \Exception
      */
-    public function getById($id) {
-
-        if($this->model->getType()) {
+    public function getById($id)
+    {
+        if ($this->model->getType()) {
             $data = $this->db->fetchRow("SELECT * FROM users WHERE `type` = ? AND id = ?", array($this->model->getType(), $id));
         } else {
             $data = $this->db->fetchRow("SELECT * FROM users WHERE `id` = ?", $id);
@@ -35,29 +36,25 @@ class Dao extends Model\Dao\AbstractDao {
         } else {
             throw new \Exception("user doesn't exist");
         }
-
-
     }
 
     /**
      * @param $name
      * @throws \Exception
      */
-    public function getByName($name) {
+    public function getByName($name)
+    {
         try {
             $data = $this->db->fetchRow("SELECT * FROM users WHERE `type` = ? AND `name` = ?", array($this->model->getType(), $name));
 
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
-            }
-            else {
+            } else {
                 throw new \Exception("user doesn't exist");
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
 
@@ -65,8 +62,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @return bool
      * @throws \Exception
      */
-    public function save() {
-
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->model->update();
         }
@@ -76,7 +73,8 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @throws \Exception
      */
-    public function create() {
+    public function create()
+    {
         try {
             $this->db->insert("users", array(
                 "name" => $this->model->getName(),
@@ -86,8 +84,7 @@ class Dao extends Model\Dao\AbstractDao {
             $this->model->setId($this->db->lastInsertId());
 
             return $this->save();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -97,7 +94,8 @@ class Dao extends Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function hasChilds() {
+    public function hasChilds()
+    {
         $c = $this->db->fetchOne("SELECT id FROM users WHERE parentId = ?",  $this->model->getId());
         return (bool) $c;
     }
@@ -106,10 +104,10 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @throws \Exception
      */
-    public function update() {
+    public function update()
+    {
         try {
-
-            if(strlen($this->model->getName()) < 2) {
+            if (strlen($this->model->getName()) < 2) {
                 throw new \Exception("Name of user/role must be at least 2 characters long");
             }
 
@@ -117,10 +115,9 @@ class Dao extends Model\Dao\AbstractDao {
             $dataRaw = get_object_vars($this->model);
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns("users"))) {
-
                     if (is_bool($value)) {
                         $value = (int) $value;
-                    } else if(in_array($key, ["permissions", "roles", "docTypes", "classes"])) {
+                    } elseif (in_array($key, ["permissions", "roles", "docTypes", "classes"])) {
                         // permission and roles are stored as csv
                         $value = implode(",", $value);
                     }
@@ -128,10 +125,8 @@ class Dao extends Model\Dao\AbstractDao {
                 }
             }
 
-            $this->db->update("users", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
-
-        }
-        catch (\Exception $e) {
+            $this->db->update("users", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -139,15 +134,14 @@ class Dao extends Model\Dao\AbstractDao {
     /**
      * @throws \Exception
      */
-    public function delete() {
-
+    public function delete()
+    {
         $userId = $this->model->getId();
         \Logger::debug("delete user with ID: " . $userId);
 
         try {
-            $this->db->delete("users", $this->db->quoteInto("id = ?", $userId ));
-        }
-        catch (\Exception $e) {
+            $this->db->delete("users", $this->db->quoteInto("id = ?", $userId));
+        } catch (\Exception $e) {
             throw $e;
         }
     }

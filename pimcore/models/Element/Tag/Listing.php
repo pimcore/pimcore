@@ -16,7 +16,8 @@ namespace Pimcore\Model\Element\Tag;
 
 use Pimcore\Model;
 
-class Listing extends Model\Listing\AbstractListing {
+class Listing extends Model\Listing\AbstractListing
+{
 
     /**
      * Contains the results of the list. They are all an instance of Tag
@@ -31,7 +32,8 @@ class Listing extends Model\Listing\AbstractListing {
      * @todo remove the dummy-always-true rule
      * @return boolean
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
@@ -52,5 +54,4 @@ class Listing extends Model\Listing\AbstractListing {
     {
         return $this->tags;
     }
-
 }

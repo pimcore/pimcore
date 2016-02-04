@@ -12,10 +12,10 @@
 pimcore.registerNS("pimcore.element.selector.abstract");
 pimcore.element.selector.abstract = Class.create({
 
-    
+
     initialize: function (parent) {
         this.parent = parent;
-        
+
         this.initStore();
 
         if(this.parent.multiselect) {
@@ -35,15 +35,15 @@ pimcore.element.selector.abstract = Class.create({
             this.searchPanel.add(this.getTagsPanel());
         }
 
-        
+
         this.parent.setSearch(this.searchPanel);
     },
-    
+
     addToSelection: function (data) {
-        
+
         // check for dublicates
         var existingItem = this.selectionStore.find("id", data.id);
-        
+
         if(existingItem < 0) {
             this.selectionStore.add(data);
         }
@@ -97,16 +97,16 @@ pimcore.element.selector.abstract = Class.create({
 
         return this.tagsPanel;
     },
-    
+
     getData: function () {
         if(this.parent.multiselect) {
             this.tmpData = [];
-            
+
             if(this.selectionStore.getCount() > 0) {
                 this.selectionStore.each(function (rec) {
                     this.tmpData.push(rec.data);
                 }.bind(this));
-                
+
                 return this.tmpData;
             } else {
                 // is the store is empty and a item is selected take this
@@ -115,7 +115,7 @@ pimcore.element.selector.abstract = Class.create({
                     this.tmpData.push(selected.data);
                 }
             }
-            
+
             return this.tmpData;
         } else {
             var selected = this.getGrid().getSelectionModel().getSelected();
@@ -153,6 +153,7 @@ pimcore.element.selector.abstract = Class.create({
             width: 80,
             value: 50,
             triggerAction: "all",
+            editable: false,
             listeners: {
                 select: function (box, rec, index) {
                     var store = this.pagingtoolbar.getStore();

@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 
-class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
+class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
+{
 
     /**
      * Static type of this element
@@ -54,7 +55,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         return Serialize::serialize($data);
     }
 
@@ -63,7 +65,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param string $data
      * @return string
      */
-    public function getDataFromResource($data) {
+    public function getDataFromResource($data)
+    {
         return Serialize::unserialize($data);
     }
 
@@ -73,7 +76,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $this->getDataForResource($data, $object);
     }
 
@@ -83,7 +87,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null)
+    {
         if (!empty($data)) {
             if (is_array($data)) {
                 $points = array();
@@ -105,8 +110,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null|Model\Object\AbstractObject $object
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null) {
-
+    public function getDataFromEditmode($data, $object = null)
+    {
         if (is_array($data)) {
             $points = array();
             foreach ($data as $point) {
@@ -122,18 +127,20 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param string $data
      * @return string
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         return "";
     }
 
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Model\Object\AbstractObject $object
+     * @param Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object) {
-
+    public function getForCsvExport($object, $params = array())
+    {
         $data = $this->getDataFromObjectParam($object);
         if (!empty($data)) {
             $dataArray = $this->getDataForEditmode($data);
@@ -144,8 +151,6 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
                 }
                 return implode("|", $rows);
             }
-
-
         }
         return null;
     }
@@ -154,7 +159,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param $importValue
      * @return array|mixed
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue)
+    {
         $rows = explode("|", $importValue);
         $points = array();
         if (is_array($rows)) {
@@ -171,11 +177,14 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param string $object
      * @return mixed
      */
-    public function getForWebserviceExport($object) {
+    public function getForWebserviceExport($object)
+    {
         $data = $this->getDataFromObjectParam($object);
         if (!empty($data)) {
             return $this->getDataForEditmode($data, $object);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -185,14 +194,15 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null) {
-        if(empty($value)){
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    {
+        if (empty($value)) {
             return null;
-        } else if (is_array($value)) {
+        } elseif (is_array($value)) {
             $points = array();
             foreach ($value as $point) {
                 $point = (array) $point;
-                if($point["longitude"]!=null and  $point["latitude"]!=null){
+                if ($point["longitude"]!=null and  $point["latitude"]!=null) {
                     $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
                 } else {
                     throw new \Exception("cannot get values from web service import - invalid data");
@@ -207,7 +217,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -217,7 +228,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo {
      * @param null $object
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null) {
+    public function getDiffVersionPreview($data, $object = null)
+    {
         if (!empty($data)) {
             $line = "";
             $isFirst = true;

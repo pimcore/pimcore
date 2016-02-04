@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Data\Extension;
 
 use Pimcore\Model;
 
-trait Text {
+trait Text
+{
 
     /**
      * Checks if data is valid for current data field
@@ -36,14 +37,16 @@ trait Text {
      * @param $data
      * @return bool
      */
-    public function isEmpty($data) {
+    public function isEmpty($data)
+    {
         return (strlen($data) < 1);
     }
 
     /** True if change is allowed in edit mode.
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed()
+    {
         return true;
     }
 
@@ -52,7 +55,8 @@ trait Text {
      * @param string $data
      * @return string
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         // remove all <script> tags, to prevent XSS in the version preview
         // this should normally be filtered in the project specific controllers/action (/website folder) but just to be sure
         $data = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $data);

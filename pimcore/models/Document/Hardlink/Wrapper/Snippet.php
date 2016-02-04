@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
 use Pimcore\Model;
 
-class Snippet extends Model\Document\Snippet implements Model\Document\Hardlink\Wrapper\WrapperInterface {
+class Snippet extends Model\Document\Snippet implements Model\Document\Hardlink\Wrapper\WrapperInterface
+{
 
     use Model\Document\Hardlink\Wrapper;
 }

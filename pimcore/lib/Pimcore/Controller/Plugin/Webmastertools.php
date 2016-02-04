@@ -12,21 +12,22 @@
 
 namespace Pimcore\Controller\Plugin;
 
-class Webmastertools extends \Zend_Controller_Plugin_Abstract {
+class Webmastertools extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
-            
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
         $conf = \Pimcore\Config::getReportConfig();
-        if($conf->webmastertools->sites) {
+        if ($conf->webmastertools->sites) {
             $sites = $conf->webmastertools->sites->toArray();
             
-            if(is_array($sites)) {
+            if (is_array($sites)) {
                 foreach ($sites as $site) {
-                    if($site["verification"]) {
-                       if($request->getRequestUri() == ("/".$site["verification"])) {
+                    if ($site["verification"]) {
+                        if ($request->getRequestUri() == ("/".$site["verification"])) {
                             echo "google-site-verification: " . $site["verification"];
                             exit;
                         }

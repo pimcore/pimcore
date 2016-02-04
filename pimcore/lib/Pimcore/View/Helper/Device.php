@@ -14,7 +14,8 @@ namespace Pimcore\View\Helper;
 
 use Pimcore\Tool\DeviceDetector;
 
-class Device extends \Zend_View_Helper_Abstract {
+class Device extends \Zend_View_Helper_Abstract
+{
 
     /**
      * @var DeviceDetector
@@ -25,7 +26,8 @@ class Device extends \Zend_View_Helper_Abstract {
      * @param null $default
      * @return DeviceDetector
      */
-    public function device($default = null){
+    public function device($default = null)
+    {
         return DeviceDetector::getInstance($default);
     }
 }

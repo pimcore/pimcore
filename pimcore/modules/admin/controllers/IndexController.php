@@ -14,9 +14,11 @@ use Pimcore\Config;
 use Pimcore\Tool;
 use Pimcore\Model;
 
-class Admin_IndexController extends \Pimcore\Controller\Action\Admin {
+class Admin_IndexController extends \Pimcore\Controller\Action\Admin
+{
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         // IE compatibility
         //$this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
@@ -44,14 +46,14 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin {
 
         //mail settings
         $mailIncomplete = false;
-        if($sysConfig->email) {
-            if(!$sysConfig->email->debug->emailaddresses) {
+        if ($sysConfig->email) {
+            if (!$sysConfig->email->debug->emailaddresses) {
                 $mailIncomplete = true;
             }
-            if(!$sysConfig->email->sender->email){
+            if (!$sysConfig->email->sender->email) {
                 $mailIncomplete = true;
             }
-            if($sysConfig->email->method == "smtp" && !$sysConfig->email->smtp->host){
+            if ($sysConfig->email->method == "smtp" && !$sysConfig->email->smtp->host) {
                 $mailIncomplete = true;
             }
         }
@@ -95,25 +97,19 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin {
 
         // csrf token
         $user = $this->getUser();
-        $this->view->csrfToken = Tool\Session::useSession(function($adminSession) use ($user) {
-            if(!isset($adminSession->csrfToken) && !$adminSession->csrfToken) {
+        $this->view->csrfToken = Tool\Session::useSession(function ($adminSession) use ($user) {
+            if (!isset($adminSession->csrfToken) && !$adminSession->csrfToken) {
                 $adminSession->csrfToken = sha1(microtime() . $user->getName() . uniqid());
             }
             return $adminSession->csrfToken;
         });
 
-        if ($this->getParam("extjs6")) {
+        if (\Pimcore\Tool\Admin::isExtJS6()) {
             $this->forward("index6");
-        } else {
-            $config = \Pimcore\Config::getSystemConfig();
-            if ($config->general->extjs6) {
-                $this->forward("index6");
-            }
-
         }
     }
 
-    public function index6Action() {
-
+    public function index6Action()
+    {
     }
 }

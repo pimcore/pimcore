@@ -17,14 +17,16 @@ namespace Pimcore\Model\Tool\UUID\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Tool\UUID;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
      *
      * @return array
      */
-    public function load() {
+    public function load()
+    {
         $items = $this->db->fetchCol("SELECT uuid FROM " . Resource::TABLE_NAME ." ". $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         $result = array();
         foreach ($items as $uuid) {
@@ -39,12 +41,11 @@ class Dao extends Model\Listing\Dao\AbstractDao {
      *
      * @return integer
      */
-    public function getTotalCount() {
-
+    public function getTotalCount()
+    {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Resource::TABLE_NAME ." " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
-
         }
         return $amount;
     }

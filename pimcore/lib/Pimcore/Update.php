@@ -12,7 +12,8 @@
 
 namespace Pimcore;
 
-class Update {
+class Update
+{
 
     /**
      * @var string
@@ -32,9 +33,9 @@ class Update {
     /**
      * @return bool
      */
-    public static function isWriteable () {
-        
-        if(self::$dryRun) {
+    public static function isWriteable()
+    {
+        if (self::$dryRun) {
             return true;
         }
         
@@ -51,17 +52,20 @@ class Update {
     }
 
     /**
+     * @param null $currentRev
      * @return array
      * @throws \Exception
      */
-    public static function getAvailableUpdates() {
+    public static function getAvailableUpdates($currentRev = null)
+    {
+        if (!$currentRev) {
+            $currentRev = Version::$revision;
+        }
 
-        $currentRev = Version::$revision;
-                
         self::cleanup();
  
-        if(PIMCORE_DEVMODE){
-            $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);    
+        if (PIMCORE_DEVMODE) {
+            $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);
         } else {
             $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?revision=" . $currentRev);
         }
@@ -70,10 +74,9 @@ class Update {
 
         $revisions = array();
         $releases = array();
-        if($xml instanceof \SimpleXMLElement){
-            if(isset($xml->revision)) {
+        if ($xml instanceof \SimpleXMLElement) {
+            if (isset($xml->revision)) {
                 foreach ($xml->revision as $r) {
-
                     $date = new \Zend_Date($r->date);
 
                     if (strlen(strval($r->version)) > 0) {
@@ -83,8 +86,7 @@ class Update {
                             "version" => strval($r->version),
                             "text" => strval($r->id) . " - " . $date->get(\Zend_Date::DATETIME_MEDIUM)
                         );
-                    }
-                    else {
+                    } else {
                         $revisions[] = array(
                             "id" => strval($r->id),
                             "date" => strval($r->date),
@@ -105,11 +107,14 @@ class Update {
 
     /**
      * @param $toRevision
+     * @param null $currentRev
      * @return array
      */
-    public static function getJobs ($toRevision) {
-        
-        $currentRev = Version::$revision;
+    public static function getJobs($toRevision, $currentRev = null)
+    {
+        if (!$currentRev) {
+            $currentRev = Version::$revision;
+        }
         
         $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
@@ -118,10 +123,9 @@ class Update {
         $updateScripts = array();
         $revisions = array();
         
-        if(isset($xml->download)) {
+        if (isset($xml->download)) {
             foreach ($xml->download as $download) {
-
-                if($download->type == "script") {
+                if ($download->type == "script") {
                     $updateScripts[(string) $download->revision]["preupdate"] = array(
                         "type" => "preupdate",
                         "revision" => (string) $download->revision
@@ -135,7 +139,7 @@ class Update {
         }
         
         
-        if(isset($xml->download)) {
+        if (isset($xml->download)) {
             foreach ($xml->download as $download) {
                 $jobs["parallel"][] = array(
                     "type" => "download",
@@ -150,7 +154,7 @@ class Update {
         $revisions = array_unique($revisions);
         
         foreach ($revisions as $revision) {
-            if($updateScripts[$revision]["preupdate"]) {                   
+            if ($updateScripts[$revision]["preupdate"]) {
                 $jobs["procedural"][] = $updateScripts[$revision]["preupdate"];
             }
             
@@ -160,7 +164,7 @@ class Update {
             );
             
             
-            if($updateScripts[$revision]["postupdate"]) {                   
+            if ($updateScripts[$revision]["postupdate"]) {
                 $jobs["procedural"][] = $updateScripts[$revision]["postupdate"];
             }
         }
@@ -181,8 +185,8 @@ class Update {
      * @param $url
      * @throws \Zend_Db_Adapter_Exception
      */
-    public static function downloadData ($revision, $url) {
-        
+    public static function downloadData($revision, $url)
+    {
         $db = Db::get();
         
         $db->query("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
@@ -193,32 +197,31 @@ class Update {
         );");
         
         $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision;
-        if(!is_dir($downloadDir)) {
+        if (!is_dir($downloadDir)) {
             File::mkdir($downloadDir);
         }
         
         $filesDir = $downloadDir . "/files";
-        if(!is_dir($filesDir)) {
+        if (!is_dir($filesDir)) {
             File::mkdir($filesDir);
         }
         
         $scriptsDir = $downloadDir . "/scripts";
-        if(!is_dir($scriptsDir)) {
+        if (!is_dir($scriptsDir)) {
             File::mkdir($scriptsDir);
         }
         
         $xml = Tool::getHttpData($url);
-        if($xml) {
+        if ($xml) {
             $parserOptions = LIBXML_NOCDATA;
-            if(defined("LIBXML_PARSEHUGE")) {
+            if (defined("LIBXML_PARSEHUGE")) {
                 $parserOptions = LIBXML_NOCDATA | LIBXML_PARSEHUGE;
             }
 
             $updateFiles = simplexml_load_string($xml, null, $parserOptions);
             
             foreach ($updateFiles->file as $file) {
-                
-                if($file->type == "file") {
+                if ($file->type == "file") {
                     if ($file->action == "update" || $file->action == "add") {
                         $newFile = $filesDir . "/" . $file->id . "-" . $file->revision;
                         File::put($newFile, base64_decode((string) $file->content));
@@ -230,7 +233,7 @@ class Update {
                         "path" => (string) $file->path,
                         "action" => (string)$file->action
                     ));
-                } else if ($file->type == "script") {
+                } elseif ($file->type == "script") {
                     $newScript = $scriptsDir. $file->path;
                     File::put($newScript, base64_decode((string) $file->content));
                 }
@@ -241,36 +244,35 @@ class Update {
     /**
      * @param $revision
      */
-    public static function installData ($revision) {
-        
+    public static function installData($revision)
+    {
         $db = Db::get();
         $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", $revision);
         
         foreach ($files as $file) {
             if ($file["action"] == "update" || $file["action"] == "add") {
                 if (!is_dir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]))) {
-                    if(!self::$dryRun) {
+                    if (!self::$dryRun) {
                         File::mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]));
                     }
                 }
 
-                if(array_key_exists("id", $file) && $file["id"]) {
+                if (array_key_exists("id", $file) && $file["id"]) {
                     // this is the new style, see https://www.pimcore.org/issues/browse/PIMCORE-2722
                     $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . $file["id"] . "-" . $file["revision"];
                 } else {
                     // this is the old style, which we still have to support here, otherwise there's the risk that the
                     // running update cannot be finished
-                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/","~~~",$file["path"]);
+                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/", "~~~", $file["path"]);
                 }
 
                 $destFile = PIMCORE_DOCUMENT_ROOT . $file["path"];
                 
-                if(!self::$dryRun) {
+                if (!self::$dryRun) {
                     copy($srcFile, $destFile);
                 }
-            }
-            else if ($file["action"] == "delete") {
-                if(!self::$dryRun) {
+            } elseif ($file["action"] == "delete") {
+                if (!self::$dryRun) {
                     if (file_exists(PIMCORE_DOCUMENT_ROOT . $file["path"])) {
                         unlink(PIMCORE_DOCUMENT_ROOT . $file["path"]);
                     }
@@ -293,8 +295,8 @@ class Update {
      * @param $type
      * @return array
      */
-    public static function executeScript ($revision, $type) {
-        
+    public static function executeScript($revision, $type)
+    {
         $script = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision . "/scripts/" . $type . ".php";
 
         $maxExecutionTime = 900;
@@ -303,14 +305,13 @@ class Update {
 
         Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
 
-        if(is_file($script)) {
+        if (is_file($script)) {
             ob_start();
             try {
-                if(!self::$dryRun) {
+                if (!self::$dryRun) {
                     include($script);
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 \Logger::error($e);
             }
             $outputMessage = ob_get_clean();
@@ -327,8 +328,9 @@ class Update {
     /**
      *
      */
-    public static function clearOPCaches() {
-        if(function_exists("opcache_reset")) {
+    public static function clearOPCaches()
+    {
+        if (function_exists("opcache_reset")) {
             opcache_reset();
         }
     }
@@ -336,7 +338,8 @@ class Update {
     /**
      *
      */
-    public static function cleanup () {
+    public static function cleanup()
+    {
         
         // remove database tmp table
         $db = Db::get();
@@ -346,22 +349,22 @@ class Update {
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update", true);
     }
 
-    public static function updateMaxmindDb () {
-
+    public static function updateMaxmindDb()
+    {
         $downloadUrl = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz";
         $geoDbFile = PIMCORE_CONFIGURATION_DIRECTORY . "/GeoLite2-City.mmdb";
         $geoDbFileGz = $geoDbFile . ".gz";
 
         $firstTuesdayOfMonth = strtotime(date("F") . " 2013 tuesday");
         $filemtime = 0;
-        if(file_exists($geoDbFile)) {
+        if (file_exists($geoDbFile)) {
             $filemtime = filemtime($geoDbFile);
         }
 
         // update if file is older than 30 days, or if it is the first tuesday of the month
-        if($filemtime < (time()-30*86400) || (date("m/d/Y") == date("m/d/Y", $firstTuesdayOfMonth) && $filemtime < time()-86400)) {
+        if ($filemtime < (time()-30*86400) || (date("m/d/Y") == date("m/d/Y", $firstTuesdayOfMonth) && $filemtime < time()-86400)) {
             $data = Tool::getHttpData($downloadUrl);
-            if(strlen($data) > 1000000) {
+            if (strlen($data) > 1000000) {
                 File::put($geoDbFileGz, $data);
 
                 @unlink($geoDbFile);

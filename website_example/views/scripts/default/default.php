@@ -80,7 +80,7 @@
 
     .buttons a {
         display: inline-block;
-        background: #289fdc;
+        background: #0078be;
         color:#fff;
         padding: 5px 10px;
         margin-right: 10px;

@@ -1893,7 +1893,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             }
         }
     });
-    
+
     fieldPath.on("render", function (el) {
         // add drop zone
         new Ext.dd.DropZone(el.getEl(), {
@@ -2211,7 +2211,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             fieldLabel: t('type'),
             name: 'type',
             triggerAction: 'all',
-            editable: true,
+            editable: false,
             width: 270,
             mode: "local",
             store: ["asset","youtube","vimeo"],

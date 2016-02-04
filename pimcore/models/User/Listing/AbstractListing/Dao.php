@@ -16,21 +16,22 @@ namespace Pimcore\Model\User\Listing\AbstractListing;
 
 use Pimcore\Model;
 
-class Dao extends Model\Listing\Dao\AbstractDao {
+class Dao extends Model\Listing\Dao\AbstractDao
+{
 
     /**
      * Loads a list of users for the specifies parameters, returns an array of User elements
      * @return array
      */
-    public function load() {
-
+    public function load()
+    {
         $items = array();
         $usersData = $this->db->fetchAll("SELECT id,type FROM users" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($usersData as $userData) {
             $className = Model\User\Service::getClassNameForType($userData["type"]);
             $item = $className::getById($userData["id"]);
-            if($item) {
+            if ($item) {
                 $items[] = $item;
             }
         }
@@ -42,18 +43,18 @@ class Dao extends Model\Listing\Dao\AbstractDao {
     /**
      * @return string
      */
-    protected function getCondition() {
+    protected function getCondition()
+    {
         $condition = parent::getCondition();
-        if(!empty($condition)){
+        if (!empty($condition)) {
             $condition.=" AND ";
         } else {
             $condition = " WHERE ";
         }
 
         $types = array($this->model->getType(), $this->model->getType() . "folder");
-        $condition .= "id > 0 AND `type` IN ('" . implode("','",$types) . "')";
+        $condition .= "id > 0 AND `type` IN ('" . implode("','", $types) . "')";
 
         return $condition;
     }
-
 }

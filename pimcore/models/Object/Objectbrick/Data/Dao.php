@@ -17,7 +17,8 @@ namespace Pimcore\Model\Object\Objectbrick\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
 
     /**
@@ -30,7 +31,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param Object\Concrete $object
      * @throws \Exception
      */
-    public function save (Object\Concrete $object) {
+    public function save(Object\Concrete $object)
+    {
 
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
         $inheritedValues = Object\AbstractObject::doGetInheritedValues();
@@ -52,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao {
         // remove all relations
         try {
             $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::warning("Error during removing old relations: " . $e);
         }
 
@@ -62,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao {
             if (method_exists($fd, "save")) {
                 // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                 $fd->save($this->model);
-            } else if ($fd->getColumnType()) {
+            } elseif ($fd->getColumnType()) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object);
                     $data = array_merge($data, $insertDataArray);
@@ -89,10 +91,10 @@ class Dao extends Model\Dao\AbstractDao {
 
         $inheritanceEnabled = $object->getClass()->getAllowInherit();
         $parentData = null;
-        if($inheritanceEnabled) {
+        if ($inheritanceEnabled) {
             // get the next suitable parent for inheritance
             $parentForInheritance = $object->getNextParentForInheritance();
-            if($parentForInheritance) {
+            if ($parentForInheritance) {
                 // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
                 // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
@@ -119,15 +121,15 @@ class Dao extends Model\Dao\AbstractDao {
                 }
 
                 // if the current value is empty and we have data from the parent, we just use it
-                if($isEmpty && $parentData) {
-                    foreach($columnNames as $columnName) {
-                        if(array_key_exists($columnName, $parentData)) {
+                if ($isEmpty && $parentData) {
+                    foreach ($columnNames as $columnName) {
+                        if (array_key_exists($columnName, $parentData)) {
                             $data[$columnName] = $parentData[$columnName];
                         }
                     }
                 }
 
-                if($inheritanceEnabled) {
+                if ($inheritanceEnabled) {
                     //get changed fields for inheritance
                     if ($fd->isRelationType()) {
                         if (is_array($insertData)) {
@@ -135,7 +137,7 @@ class Dao extends Model\Dao\AbstractDao {
                             foreach ($insertData as $insertDataKey => $insertDataValue) {
                                 if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                } else if ($oldData[$insertDataKey] != $insertDataValue) {
+                                } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                     $doInsert = true;
                                     break;
                                 }
@@ -147,24 +149,23 @@ class Dao extends Model\Dao\AbstractDao {
                         } else {
                             if ($isEmpty && $oldData[$key] == $parentData[$key]) {
                                 // do nothing, ... value is still empty and parent data is equal to current data in query table
-                            } else if ($oldData[$key] != $insertData) {
+                            } elseif ($oldData[$key] != $insertData) {
                                 $this->inheritanceHelper->addRelationToCheck($key, $fd);
                             }
                         }
-
                     } else {
                         if (is_array($insertData)) {
                             foreach ($insertData as $insertDataKey => $insertDataValue) {
                                 if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                } else if ($oldData[$insertDataKey] != $insertDataValue) {
+                                } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                     $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
                                 }
                             }
                         } else {
                             if ($isEmpty && $oldData[$key] == $parentData[$key]) {
                                 // do nothing, ... value is still empty and parent data is equal to current data in query table
-                            } else if ($oldData[$key] != $insertData) {
+                            } elseif ($oldData[$key] != $insertData) {
                                 // data changed, do check and update
                                 $this->inheritanceHelper->addFieldToCheck($key, $fd);
                             }
@@ -181,14 +182,14 @@ class Dao extends Model\Dao\AbstractDao {
 
         // HACK: see a few lines above!
         Object\AbstractObject::setGetInheritedValues($inheritedValues);
-
     }
 
     /**
      * @param Object\Concrete $object
      * @return void
      */
-    public function delete(Object\Concrete $object) {
+    public function delete(Object\Concrete $object)
+    {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $this->db->delete($storeTable, $this->db->quoteInto("o_id = ?", $object->getId()));
@@ -214,12 +215,12 @@ class Dao extends Model\Dao\AbstractDao {
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
-                    if($fd->isRelationType()) {
-                        if($oldData[$key] != null) {
+                    if ($fd->isRelationType()) {
+                        if ($oldData[$key] != null) {
                             $this->inheritanceHelper->addRelationToCheck($key, $fd);
                         }
                     } else {
-                        if($oldData[$key] != null) {
+                        if ($oldData[$key] != null) {
                             $this->inheritanceHelper->addFieldToCheck($key, $fd);
                         }
                     }
@@ -242,8 +243,8 @@ class Dao extends Model\Dao\AbstractDao {
      * @param  string $field
      * @return array
      */
-    public function getRelationData($field, $forOwner, $remoteClassId) {
-
+    public function getRelationData($field, $forOwner, $remoteClassId)
+    {
         $id = $this->model->getObject()->getId();
         if ($remoteClassId) {
             $classId = $remoteClassId;
@@ -289,6 +290,8 @@ class Dao extends Model\Dao\AbstractDao {
 
         if (is_array($relations) and count($relations) > 0) {
             return $relations;
-        } else return array();
+        } else {
+            return array();
+        }
     }
 }

@@ -14,21 +14,22 @@ namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Model\Tool;
 
-class QrCode extends \Zend_Controller_Plugin_Abstract {
+class QrCode extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
-
-        if(preg_match("@^/qr~-~code/([a-zA-Z0-9_\-]+)@",$request->getPathInfo(), $matches)) {
-            if(array_key_exists(1, $matches) && !empty($matches[1])) {
-                try {
-                    $code = Tool\Qrcode\Config::getByName($matches[1]);
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
+        if (preg_match("@^/qr~-~code/([a-zA-Z0-9_\-]+)@", $request->getPathInfo(), $matches)) {
+            if (array_key_exists(1, $matches) && !empty($matches[1])) {
+                $code = Tool\Qrcode\Config::getByName($matches[1]);
+                if ($code) {
                     $url = $code->getUrl();
-                    if($code->getGoogleAnalytics()) {
+                    if ($code->getGoogleAnalytics()) {
                         $glue = "?";
-                        if(strpos($url, "?")) {
+                        if (strpos($url, "?")) {
                             $glue = "&";
                         }
 
@@ -38,9 +39,7 @@ class QrCode extends \Zend_Controller_Plugin_Abstract {
 
                     header("Location: " . $url, true, 302);
                     exit;
-
-                } catch (\Exception $e) {
-                    // nothing to do
+                } else {
                     \Logger::error("called an QR code but '" . $matches[1] . " is not a code in the system.");
                 }
             }

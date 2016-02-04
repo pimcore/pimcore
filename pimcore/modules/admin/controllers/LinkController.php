@@ -14,9 +14,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 
-class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document {
+class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
+{
 
-    public function getDataByIdAction() {
+    public function getDataByIdAction()
+    {
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
@@ -42,7 +44,8 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document {
         $this->_helper->json(false);
     }
 
-    public function saveAction() {
+    public function saveAction()
+    {
         if ($this->getParam("id")) {
             $link = Document\Link::getById($this->getParam("id"));
             $this->setValuesToDocument($link);
@@ -68,7 +71,8 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document {
         $this->_helper->json(false);
     }
 
-    protected function setValuesToDocument(Document\Link $link) {
+    protected function setValuesToDocument(Document\Link $link)
+    {
 
         // data
         $data = \Zend_Json::decode($this->getParam("data"));
@@ -78,13 +82,11 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document {
                 $data["linktype"] = "internal";
                 $data["internalType"] = "document";
                 $data["internal"] = $document->getId();
-            }
-            else if ($asset = Asset::getByPath($data["path"])) {
+            } elseif ($asset = Asset::getByPath($data["path"])) {
                 $data["linktype"] = "internal";
                 $data["internalType"] = "asset";
                 $data["internal"] = $asset->getId();
-            }
-            else {
+            } else {
                 $data["linktype"] = "direct";
                 $data["direct"] = $data["path"];
             }
@@ -95,5 +97,4 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document {
         $link->setValues($data);
         $this->addPropertiesToDocument($link);
     }
-
 }

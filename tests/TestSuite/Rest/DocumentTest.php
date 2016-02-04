@@ -7,15 +7,18 @@
  */
 
 
-class TestSuite_Rest_DocumentTest extends Test_BaseRest {
+class TestSuite_Rest_DocumentTest extends Test_BaseRest
+{
 
-    public function setUp() {
-//        // every single rest test assumes a clean database
+    public function setUp()
+    {
+        //        // every single rest test assumes a clean database
         Test_Tool::cleanUp();
         parent::setUp();
     }
 
-    public function testCreate() {
+    public function testCreate()
+    {
         $this->printTestName();
         $this->assertEquals(1, Test_Tool::getDocoumentCount());
 
@@ -46,7 +49,8 @@ class TestSuite_Rest_DocumentTest extends Test_BaseRest {
 
 
 
-    public function testDelete() {
+    public function testDelete()
+    {
         $this->printTestName();
         $document = Test_Tool::createEmptyDocumentPage();
 
@@ -66,7 +70,8 @@ class TestSuite_Rest_DocumentTest extends Test_BaseRest {
     }
 
 
-    public function testFolder() {
+    public function testFolder()
+    {
         $this->printTestName();
 
         // create folder but don't save it
@@ -94,5 +99,4 @@ class TestSuite_Rest_DocumentTest extends Test_BaseRest {
         $folderDirect = Document::getById($id);
         $this->assertNull($folderDirect, "folder still exists");
     }
-
 }

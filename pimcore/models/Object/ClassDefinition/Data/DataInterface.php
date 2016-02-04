@@ -14,13 +14,17 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
-interface DataInterface {
+interface DataInterface
+{
 
     /**
+     * converts object data to a simple string value or CSV Export
+     * @abstract
      * @param $object
-     * @return mixed
+     * @param array $params
+     * @return string
      */
-    public function getForCsvExport($object);
+    public function getForCsvExport($object, $params = array());
 
     /**
      * @param $importValue
@@ -28,4 +32,3 @@ interface DataInterface {
      */
     public function getFromCsvImport($importValue);
 }
- 

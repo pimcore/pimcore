@@ -133,6 +133,7 @@ pimcore.settings.website = Class.create({
                         store: pimcore.globalmanager.get("sites"),
                         valueField: "id",
                         displayField: "domain",
+                        editable: false,
                         triggerAction: "all"
                 }),
                 renderer: function (siteId) {

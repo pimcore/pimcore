@@ -16,11 +16,11 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
-class Text extends Model\Asset {
+class Text extends Model\Asset
+{
 
     /**
      * @var string
      */
     public $type = "text";
-
 }

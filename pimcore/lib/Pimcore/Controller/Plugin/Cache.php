@@ -15,7 +15,8 @@ namespace Pimcore\Controller\Plugin;
 use Pimcore\Tool;
 use Pimcore\Cache as CacheManager;
 
-class Cache extends \Zend_Controller_Plugin_Abstract {
+class Cache extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @var string
@@ -45,23 +46,25 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
     /**
      *
      */
-    public function disableExpireHeader() {
+    public function disableExpireHeader()
+    {
         $this->addExpireHeader = false;
     }
 
     /**
      *
      */
-    public function enableExpireHeader() {
+    public function enableExpireHeader()
+    {
         $this->addExpireHeader = true;
     }
 
     /**
      * @return bool
      */
-    public function disable($reason = null) {
-
-        if($reason) {
+    public function disable($reason = null)
+    {
+        if ($reason) {
             $this->disableReason = $reason;
         }
 
@@ -72,7 +75,8 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
     /**
      * @return bool
      */
-    public function enable() {
+    public function enable()
+    {
         $this->enabled = true;
         return true;
     }
@@ -80,7 +84,8 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
     /**
      * @return bool
      */
-    public function isEnabled() {
+    public function isEnabled()
+    {
         return $this->enabled;
     }
 
@@ -88,8 +93,8 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
      * @param \Zend_Controller_Request_Abstract $request
      * @return bool|void
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
-
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
         $requestUri = $request->getRequestUri();
         $excludePatterns = array();
 
@@ -100,7 +105,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
 
         // disable the output-cache if browser wants the most recent version
         // unfortunately only Chrome + Firefox if not using SSL
-        if(!$request->isSecure()) {
+        if (!$request->isSecure()) {
             if (isset($_SERVER["HTTP_CACHE_CONTROL"]) && $_SERVER["HTTP_CACHE_CONTROL"] == "no-cache") {
                 return $this->disable("HTTP Header Cache-Control: no-cache was sent");
             }
@@ -113,14 +118,13 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
         try {
             $conf = \Pimcore\Config::getSystemConfig();
             if ($conf->cache) {
-
                 $conf = $conf->cache;
 
                 if (!$conf->enabled) {
                     return $this->disable();
                 }
 
-                if(\Pimcore::inDebugMode()) {
+                if (\Pimcore::inDebugMode()) {
                     return $this->disable("in debug mode");
                 }
 
@@ -146,7 +150,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
                 }
 
                 // output-cache is always disabled when logged in at the admin ui
-                if(isset($_COOKIE["pimcore_admin_sid"])) {
+                if (isset($_COOKIE["pimcore_admin_sid"])) {
                     return $this->disable("backend user is logged in");
                 }
             } else {
@@ -183,9 +187,11 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
         ];
 
         $cacheItem = null;
-        foreach($cacheKeys as $cacheKey) {
+        foreach ($cacheKeys as $cacheKey) {
             $cacheItem = CacheManager::load($cacheKey, true);
-            if($cacheItem) break;
+            if ($cacheItem) {
+                break;
+            }
         }
 
         if (is_array($cacheItem) && !empty($cacheItem)) {
@@ -214,20 +220,19 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
     /**
      *
      */
-    public function dispatchLoopShutdown() {
-
-        if($this->enabled && session_id()) {
+    public function dispatchLoopShutdown()
+    {
+        if ($this->enabled && session_id()) {
             $this->disable("session in use");
         }
 
-        if($this->disableReason) {
+        if ($this->disableReason) {
             $this->getResponse()->setHeader("X-Pimcore-Output-Cache-Disable-Reason", $this->disableReason, true);
         }
 
         if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200) {
             try {
-
-                if($this->lifetime && $this->addExpireHeader) {
+                if ($this->lifetime && $this->addExpireHeader) {
                     // add cache control for proxies and http-caches like varnish, ...
                     $this->getResponse()->setHeader("Cache-Control", "public, max-age=" . $this->lifetime, true);
 
@@ -244,13 +249,12 @@ class Cache extends \Zend_Controller_Plugin_Abstract {
 
                 $cacheKey = $this->defaultCacheKey;
                 $deviceDetector = Tool\DeviceDetector::getInstance();
-                if($deviceDetector->wasUsed()) {
+                if ($deviceDetector->wasUsed()) {
                     $cacheKey .= "_" . $deviceDetector->getDevice();
                 }
 
                 CacheManager::save($cacheItem, $cacheKey, array("output"), $this->lifetime, 1000);
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 \Logger::error($e);
                 return;
             }

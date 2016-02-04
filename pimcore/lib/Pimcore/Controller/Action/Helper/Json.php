@@ -12,7 +12,8 @@
 
 namespace Pimcore\Controller\Action\Helper;
 
-class Json extends \Zend_Controller_Action_Helper_Json {
+class Json extends \Zend_Controller_Action_Helper_Json
+{
 
     /**
      * @param mixed $data
@@ -21,9 +22,9 @@ class Json extends \Zend_Controller_Action_Helper_Json {
      * @param bool $encodeData
      * @return string|void
      */
-    public function direct($data, $sendNow = true, $keepLayouts = false, $encodeData = true) {
-
-        if($encodeData) {
+    public function direct($data, $sendNow = true, $keepLayouts = false, $encodeData = true)
+    {
+        if ($encodeData) {
             $data = \Pimcore\Tool\Serialize::removeReferenceLoops($data);
         }
 

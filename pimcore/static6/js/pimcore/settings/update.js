@@ -159,6 +159,7 @@ pimcore.settings.update = Class.create({
                         width: 400,
                         store: storeReleases,
                         triggerAction: "all",
+                        editable: false,
                         displayField: "version",
                         valueField: "id"
                     }
@@ -210,6 +211,7 @@ pimcore.settings.update = Class.create({
                         width: 400,
                         store: storeRevisions,
                         triggerAction: "all",
+                        editable: false,
                         valueField: "id"
                     }
                 ],

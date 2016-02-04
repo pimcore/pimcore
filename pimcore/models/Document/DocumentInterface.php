@@ -16,7 +16,8 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 
-interface DocumentInterface extends Model\Element\ElementInterface {
+interface DocumentInterface extends Model\Element\ElementInterface
+{
 
     /**
      * @param string $path

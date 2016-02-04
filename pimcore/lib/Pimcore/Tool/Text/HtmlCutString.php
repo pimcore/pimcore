@@ -10,13 +10,15 @@
 
 namespace Pimcore\Tool\Text;
 
-class HtmlCutString {
+class HtmlCutString
+{
 
     /**
      * @param $string
      * @param $limit
      */
-    function __construct($string, $limit) {
+    public function __construct($string, $limit)
+    {
         // create dom element using the html string
         $this->tempDiv = new \DomDocument;
         $this->tempDiv->loadXML('<div>' . $string . '</div>');
@@ -30,7 +32,8 @@ class HtmlCutString {
     /**
      * @return string
      */
-    function cut() {
+    public function cut()
+    {
         // create empty document to store new html
         $this->newDiv = new \DomDocument;
         // cut the string by parsing through each element
@@ -42,7 +45,8 @@ class HtmlCutString {
     /**
      * @param $node
      */
-    function deleteChildren($node) {
+    public function deleteChildren($node)
+    {
         while (isset($node->firstChild)) {
             $this->deleteChildren($node->firstChild);
             $node->removeChild($node->firstChild);
@@ -54,7 +58,8 @@ class HtmlCutString {
      * @param $newParent
      * @return bool
      */
-    function searchEnd($parseDiv, $newParent) {
+    public function searchEnd($parseDiv, $newParent)
+    {
         foreach ($parseDiv->childNodes as $ele) {
             // not text node
             if ($ele->nodeType != 3) {
@@ -66,9 +71,9 @@ class HtmlCutString {
                 $this->deleteChildren($newEle);
                 $newParent->appendChild($newEle);
                 $res = $this->searchEnd($ele, $newEle);
-                if ($res)
+                if ($res) {
                     return $res;
-                else {
+                } else {
                     continue;
                 }
             }
@@ -93,8 +98,8 @@ class HtmlCutString {
  * @param $limit
  * @return string
  */
-function cut_html_string($string, $limit) {
+function cut_html_string($string, $limit)
+{
     $output = new HtmlCutString($string, $limit);
     return $output->cut();
 }
-

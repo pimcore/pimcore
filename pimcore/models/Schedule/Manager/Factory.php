@@ -16,35 +16,16 @@ namespace Pimcore\Model\Schedule\Manager;
 
 use Pimcore\Model;
 
-class Factory {
+class Factory
+{
     /**
      * @static
      * @param  string $pidFile
-     * @return Procedural|Daemon
+     * @return Procedural
      */
-    public static function getManager($pidFile, $type = null) {
-
-        // default manager, is always available
-        $availableManagers = array("procedural");
-
-        // check if pcntl is available
-        if(function_exists("pcntl_fork") and function_exists("pcntl_waitpid") and function_exists("pcntl_wexitstatus") and function_exists("pcntl_signal")){
-            $availableManagers[] = "daemon";
-        }
-
-        // force a specific type
-        if(!in_array($type, $availableManagers)) {
-            $type = "procedural";
-        }
-
-        if($type == "daemon") {
-            \Logger::info("Using Schedule\\Manage\\_Daemon as maintenance manager");
-            $manager = new Daemon($pidFile);
-        } else {
-            \Logger::info("Using Schedule\\Manager\\Procedural as maintenance manager");
-            $manager = new Procedural($pidFile);
-        }
-
+    public static function getManager($pidFile)
+    {
+        $manager = new Procedural($pidFile);
         return $manager;
     }
 }

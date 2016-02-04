@@ -4,13 +4,14 @@ namespace Website\Controller;
 
 use Pimcore\Controller\Action\Frontend;
 
-class Action extends Frontend {
+class Action extends Frontend
+{
 
-    public function init () {
-
+    public function init()
+    {
         parent::init();
 
-        if(\Zend_Registry::isRegistered("Zend_Locale")) {
+        if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = \Zend_Registry::get("Zend_Locale");
         } else {
             $locale = new \Zend_Locale("en");

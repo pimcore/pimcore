@@ -14,16 +14,17 @@
 
 namespace Pimcore\Model\Webservice;
 
-class JsonEncoder {
+class JsonEncoder
+{
 
-    public function encode($data,$returnData = false) {
-
+    public function encode($data, $returnData = false)
+    {
         $data = \Pimcore\Tool\Serialize::removeReferenceLoops($data);
         $data = \Zend_Json::encode($data, null, array());
 
-        if($returnData){
+        if ($returnData) {
             return $data;
-        }else{
+        } else {
             $response = \Zend_Controller_Front::getInstance()->getResponse();
             $response->setHeader('Content-Type', 'application/json', true);
             $response->setBody($data);
@@ -32,7 +33,8 @@ class JsonEncoder {
         }
     }
 
-    public function decode($data){
+    public function decode($data)
+    {
         $data = \Zend_Json::decode($data);
         return $data;
     }

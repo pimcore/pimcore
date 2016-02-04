@@ -15,25 +15,24 @@ $stepMethodMapping = [
     "mysql" => "mysqlData"
 ];
 
-if(empty($initInfo["errors"])) {
-
+if (empty($initInfo["errors"])) {
     $backup->mysqlTables($existingTables);
 
     foreach ($initInfo["steps"] as $step) {
-        if(!is_array($step[1])) {
+        if (!is_array($step[1])) {
             $step[1] = array();
         }
 
-        if(array_key_exists($step[0], $stepMethodMapping)) {
+        if (array_key_exists($step[0], $stepMethodMapping)) {
 
             // skip these tables => content / data
-            if(in_array($step[1]["name"], ["tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "locks", "email_log", "tmp_store"])) {
+            if (in_array($step[1]["name"], ["tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "locks", "email_log", "tmp_store"])) {
                 continue;
             }
 
-            verboseMessage("execute: " . $step[0] . " | with the following parameters: " . implode(",",$step[1]));
+            verboseMessage("execute: " . $step[0] . " | with the following parameters: " . implode(",", $step[1]));
             $return = call_user_func_array([$backup, $stepMethodMapping[$step[0]]], $step[1]);
-            if($return["filesize"]) {
+            if ($return["filesize"]) {
                 verboseMessage("current filesize of the backup is: " . $return["filesize"]);
             }
         }
@@ -52,6 +51,7 @@ file_put_contents($finalDest, $dumpData);
 
 verboseMessage("Dump is here: " . $finalDest);
 
-function verboseMessage ($m) {
-        echo $m . "\n";
+function verboseMessage($m)
+{
+    echo $m . "\n";
 }

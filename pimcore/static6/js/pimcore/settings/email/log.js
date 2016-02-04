@@ -101,7 +101,7 @@ pimcore.settings.email.log = Class.create({
         {
             header: t('email_log_sent_Date'),
             dataIndex: "sentDate",
-            width: 130,
+            width: 150,
             flex: false,
             sortable: false,
             renderer: function (d) {

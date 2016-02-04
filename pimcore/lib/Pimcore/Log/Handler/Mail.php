@@ -16,7 +16,8 @@ use Monolog\Logger;
 use Monolog\Handler\MailHandler;
 use Pimcore\Tool;
 
-class Mail extends MailHandler {
+class Mail extends MailHandler
+{
 
     /**
      * @var null
@@ -41,10 +42,9 @@ class Mail extends MailHandler {
      */
     public function send($content, array $records)
     {
-        $mail = Tool::getMail(array($this->address),"pimcore log notification");
+        $mail = Tool::getMail(array($this->address), "pimcore log notification");
         $mail->setIgnoreDebugMode(true);
         $mail->setBodyText($content);
         $mail->send();
     }
-
 }

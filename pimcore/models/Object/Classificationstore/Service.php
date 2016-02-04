@@ -18,13 +18,15 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 
-class Service {
+class Service
+{
 
     /**
      * @param $keyConfig
      * @return Object\ClassDefinition\Data
      */
-    public static function getFieldDefinitionFromKeyConfig($keyConfig) {
+    public static function getFieldDefinitionFromKeyConfig($keyConfig)
+    {
         $definition = $keyConfig->getDefinition();
         $definition = json_decode($definition, true);
         $type = $keyConfig->getType();
@@ -53,5 +55,4 @@ class Service {
         $dataDefinition->setValues($definition);
         return $dataDefinition;
     }
-
 }

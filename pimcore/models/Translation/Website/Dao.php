@@ -16,7 +16,8 @@ namespace Pimcore\Model\Translation\Website;
 
 use Pimcore\Model;
 
-class Dao extends Model\Translation\AbstractTranslation\Dao {
+class Dao extends Model\Translation\AbstractTranslation\Dao
+{
 
     /**
      * @var string
@@ -26,7 +27,8 @@ class Dao extends Model\Translation\AbstractTranslation\Dao {
     /**
      * @return mixed
      */
-    public static function getTableName(){
+    public static function getTableName()
+    {
         return Model\Translation\Website\Dao::$_tableName;
     }
 }

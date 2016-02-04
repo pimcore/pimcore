@@ -18,7 +18,8 @@ use Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Model\Document;
 
-class Snippet extends Model\Document\Tag {
+class Snippet extends Model\Document\Tag
+{
 
     /**
      * Contains the ID of the linked snippet
@@ -39,7 +40,8 @@ class Snippet extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "snippet";
     }
 
@@ -47,7 +49,8 @@ class Snippet extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->id;
     }
 
@@ -72,7 +75,8 @@ class Snippet extends Model\Document\Tag {
      *
      * @return mixed
      */
-    public function getDataEditmode() {
+    public function getDataEditmode()
+    {
         if ($this->snippet instanceof Document\Snippet) {
             return array(
                 "id" => $this->id,
@@ -86,7 +90,8 @@ class Snippet extends Model\Document\Tag {
      * @see Document\Tag\TagInterface::frontend
      * @return string
      */
-    public function frontend() {
+    public function frontend()
+    {
         if ($this->getView() instanceof \Zend_View) {
             try {
                 if ($this->snippet instanceof Document\Snippet) {
@@ -97,18 +102,18 @@ class Snippet extends Model\Document\Tag {
 
                         // check if output-cache is enabled, if so, we're also using the cache here
                         $cacheKey = null;
-                        if($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+                        if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
 
                             // cleanup params to avoid serializing Element\ElementInterface objects
                             $cacheParams = $params;
                             array_walk($cacheParams, function (&$value, $key) {
-                                if($value instanceof Model\Element\ElementInterface) {
+                                if ($value instanceof Model\Element\ElementInterface) {
                                     $value = $value->getId();
                                 }
                             });
 
                             $cacheKey = "tag_snippet__" . md5(serialize($cacheParams));
-                            if($content = Cache::load($cacheKey)) {
+                            if ($content = Cache::load($cacheKey)) {
                                 return $content;
                             }
                         }
@@ -116,8 +121,8 @@ class Snippet extends Model\Document\Tag {
                         $content = $this->getView()->action($this->snippet->getAction(), $this->snippet->getController(), $this->snippet->getModule(), $params);
 
                         // write contents to the cache, if output-cache is enabled
-                        if($cacheConfig) {
-                            Cache::save($content, $cacheKey, array("output","output_inline"), $cacheConfig["lifetime"]);
+                        if ($cacheConfig) {
+                            Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
                         }
 
                         // we need to add a component id to all first level html containers
@@ -129,7 +134,7 @@ class Snippet extends Model\Document\Tag {
                     return "";
                 }
             } catch (\Exception $e) {
-                if(\Pimcore::inDebugMode()) {
+                if (\Pimcore::inDebugMode()) {
                     return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
                 }
                 \Logger::error($e);
@@ -144,7 +149,8 @@ class Snippet extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         if (intval($data) > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
@@ -157,7 +163,8 @@ class Snippet extends Model\Document\Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
         if (intval($data) > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
@@ -168,8 +175,9 @@ class Snippet extends Model\Document\Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
-        if($this->snippet instanceof Document\Snippet) {
+    public function isEmpty()
+    {
+        if ($this->snippet instanceof Document\Snippet) {
             return false;
         }
         return true;
@@ -179,11 +187,11 @@ class Snippet extends Model\Document\Tag {
     /**
      * @return array
      */
-    public function resolveDependencies () {
+    public function resolveDependencies()
+    {
         $dependencies = array();
         
         if ($this->snippet instanceof Document\Snippet) {
-
             $key = "document_" . $this->snippet->getId();
 
             $dependencies[$key] = array(
@@ -201,10 +209,10 @@ class Snippet extends Model\Document\Tag {
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    {
         $data = $wsElement->value;
         if ($data->id !==null) {
-
             $this->id = $data->id;
             if (is_numeric($this->id)) {
                 $this->snippet = Document\Snippet::getById($this->id);
@@ -214,8 +222,6 @@ class Snippet extends Model\Document\Tag {
             } else {
                 throw new \Exception("cannot get values from web service import - id is not valid");
             }
-
-
         }
     }
 
@@ -223,8 +229,8 @@ class Snippet extends Model\Document\Tag {
     /**
      * @return array
      */
-    public function __sleep() {
-
+    public function __sleep()
+    {
         $finalVars = array();
         $parentVars = parent::__sleep();
         $blockedVars = array("snippet");
@@ -242,7 +248,8 @@ class Snippet extends Model\Document\Tag {
      *
      * @return void
      */
-    public function load () {
+    public function load()
+    {
         $this->snippet = Document::getById($this->id);
     }
 
@@ -261,9 +268,10 @@ class Snippet extends Model\Document\Tag {
      * @param array $idMapping
      * @return void
      */
-    public function rewriteIds($idMapping) {
+    public function rewriteIds($idMapping)
+    {
         $id = $this->getId();
-        if(array_key_exists("document",$idMapping) && array_key_exists($id, $idMapping["document"])) {
+        if (array_key_exists("document", $idMapping) && array_key_exists($id, $idMapping["document"])) {
             $this->id = $idMapping["document"][$id];
         }
     }

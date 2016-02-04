@@ -12,7 +12,8 @@
 
 namespace Pimcore\Controller\Plugin;
 
-class Less extends \Zend_Controller_Plugin_Abstract {
+class Less extends \Zend_Controller_Plugin_Abstract
+{
 
     /**
      * @var bool
@@ -28,11 +29,11 @@ class Less extends \Zend_Controller_Plugin_Abstract {
      * @param \Zend_Controller_Request_Abstract $request
      * @return bool|void
      */
-    public function routeStartup(\Zend_Controller_Request_Abstract $request) {
-
+    public function routeStartup(\Zend_Controller_Request_Abstract $request)
+    {
         $this->conf = \Pimcore\Config::getSystemConfig();
 
-        if($request->getParam('disable_less_compiler') || $_COOKIE["disable_less_compiler"]){
+        if ($request->getParam('disable_less_compiler') || $_COOKIE["disable_less_compiler"]) {
             return $this->disable();
         }
 
@@ -43,13 +44,13 @@ class Less extends \Zend_Controller_Plugin_Abstract {
         if (!$this->conf->outputfilters->less) {
             return $this->disable();
         }
-
     }
 
     /**
      * @return bool
      */
-    public function disable() {
+    public function disable()
+    {
         $this->enabled = false;
         return true;
     }
@@ -57,14 +58,13 @@ class Less extends \Zend_Controller_Plugin_Abstract {
     /**
      *
      */
-    public function dispatchLoopShutdown() {
-
-        if(!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
+    public function dispatchLoopShutdown()
+    {
+        if (!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
         
         if ($this->enabled) {
-
             include_once("simple_html_dom.php");
 
             $body = $this->getResponse()->getBody();
@@ -73,4 +73,3 @@ class Less extends \Zend_Controller_Plugin_Abstract {
         }
     }
 }
-

@@ -16,41 +16,45 @@ namespace Pimcore\Model\Tool\UUID;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
 
     const TABLE_NAME = 'uuids';
 
     /**
      *
      */
-    public function save () {
+    public function save()
+    {
         $data = get_object_vars($this->model);
 
-        foreach($data as $key => $value){
-            if(!in_array($key, $this->getValidTableColumns(static::TABLE_NAME))){
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $this->getValidTableColumns(static::TABLE_NAME))) {
                 unset($data[$key]);
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME,$data);
+        $this->db->insertOrUpdate(self::TABLE_NAME, $data);
     }
 
     /**
      * @throws \Exception
      */
-    public function delete(){
+    public function delete()
+    {
         $uuid = $this->model->getUuid();
-        if(!$uuid){
+        if (!$uuid) {
             throw new \Exception("Couldn't delete UUID - no UUID specified.");
         }
-        $this->db->delete(self::TABLE_NAME,"uuid='". $uuid ."'");
+        $this->db->delete(self::TABLE_NAME, "uuid='". $uuid ."'");
     }
 
     /**
      * @param $uuid
      * @return Tool\UUID
      */
-    public function getByUuid($uuid){
+    public function getByUuid($uuid)
+    {
         $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME ." where uuid='" . $uuid . "'");
         $model = new Model\Tool\UUID();
         $model->setValues($data);

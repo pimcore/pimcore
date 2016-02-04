@@ -112,7 +112,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     openBrick: function (id) {
         if(Ext.getCmp("pimcore_objectbrick_editor_panel_" + id)) {
-            this.getEditPanel().setActiveTab(Ext.getCmp("pimcore_class_editor_panel_" + id));
+            this.getEditPanel().setActiveTab(Ext.getCmp("pimcore_objectbrick_editor_panel_" + id));
             return;
         }
 
@@ -128,7 +128,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
     addFieldPanel: function (response) {
 
         var data = Ext.decode(response.responseText);
-        var fieldPanel = new pimcore.object.objectbricks.field(data, this, this.openBrick.bind(this, data.key));
+        var fieldPanel = new pimcore.object.objectbricks.field(data, this, this.openBrick.bind(this, data.key), "pimcore_objectbrick_editor_panel_");
         pimcore.layout.refresh();
         
     },

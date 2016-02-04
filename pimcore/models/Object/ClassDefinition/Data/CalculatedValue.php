@@ -16,8 +16,10 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\Object;
 
-class CalculatedValue extends Model\Object\ClassDefinition\Data {
+class CalculatedValue extends Model\Object\ClassDefinition\Data
+{
 
     /**
      * Static type of this element
@@ -60,7 +62,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
     /**
      * @return integer
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         return $this->width;
     }
 
@@ -68,7 +71,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param integer $width
      * @return void
      */
-    public function setWidth($width) {
+    public function setWidth($width)
+    {
         $this->width = intval($width);
     }
 
@@ -84,8 +88,9 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param $columnLength
      * @return $this
      */
-    public function setColumnLength($columnLength) {
-        if($columnLength) {
+    public function setColumnLength($columnLength)
+    {
+        if ($columnLength) {
             $this->columnLength = $columnLength;
         }
         return $this;
@@ -117,7 +122,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null)
+    {
         // nothing to do
     }
 
@@ -126,7 +132,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataFromResource($data) {
+    public function getDataFromResource($data)
+    {
         // nothing to do
     }
 
@@ -135,7 +142,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null) {
+    public function getDataForQueryResource($data, $object = null)
+    {
         return $data;
     }
 
@@ -144,7 +152,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null)
+    {
         if ($data instanceof Model\Object\Data\CalculatedValue) {
             $data = Model\Object\Service::getCalculatedFieldValueForEditMode($object, $data);
         }
@@ -156,7 +165,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getDataFromEditmode($data, $object = null) {
+    public function getDataFromEditmode($data, $object = null)
+    {
     }
 
     /**
@@ -164,7 +174,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param float $data
      * @return float
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data)
+    {
         return $data;
     }
 
@@ -175,17 +186,20 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param boolean $omitMandatoryCheck
      * @throws Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
         // nothing to do
     }
 
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object_Abstract $object
+     * @param Object\AbstractObject $object
+     * @param array $params
      * @return string
      */
-    public function getForCsvExport($object) {
+    public function getForCsvExport($object, $params = array())
+    {
         \Logger::debug("csv not supported");
         //TODO
     }
@@ -196,7 +210,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param string $importValue
      * @return double
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue)
+    {
         // nothing to do
     }
 
@@ -206,7 +221,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param string $object
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
+    public function getForWebserviceExport($object)
+    {
         //TODO
     }
 
@@ -215,25 +231,30 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport($value)
+    {
         // nothing to do
     }
 
     /**
      * @return string
      */
-    public function getQueryColumnType() {
+    public function getQueryColumnType()
+    {
         return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
     }
 
-    public function getColumnType() {
+    public function getColumnType()
+    {
         return null;
     }
-    public function save() {
+    public function save()
+    {
         // nothing to do
     }
 
-    public function load() {
+    public function load()
+    {
     }
 
     /**
@@ -434,8 +455,4 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data {
 
         return $code;
     }
-
-
-
-
 }

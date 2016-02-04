@@ -16,7 +16,8 @@ namespace Pimcore\Model\Object\Data;
 
 use Pimcore\Model\Asset;
 
-class Video {
+class Video
+{
 
     /**
      * @var string

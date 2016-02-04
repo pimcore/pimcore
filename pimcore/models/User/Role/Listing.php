@@ -16,7 +16,8 @@ namespace Pimcore\Model\User\Role;
 
 use Pimcore\Model;
 
-class Listing extends Model\User\Listing\AbstractListing {
+class Listing extends Model\User\Listing\AbstractListing
+{
 
     /**
      * @var string
@@ -27,7 +28,8 @@ class Listing extends Model\User\Listing\AbstractListing {
      * Alias for $this->getItems()
      * @return array
      */
-    public function getRoles() {
+    public function getRoles()
+    {
         return $this->getItems();
     }
 }

@@ -121,7 +121,8 @@ class Mail extends \Zend_Mail
      * @param $url
      * @return $this
      */
-    public function setHostUrl($url){
+    public function setHostUrl($url)
+    {
         $this->hostUrl = $url;
         return $this;
     }
@@ -129,7 +130,8 @@ class Mail extends \Zend_Mail
     /**
      * @return null
      */
-    public function getHostUrl(){
+    public function getHostUrl()
+    {
         return $this->hostUrl;
     }
 
@@ -148,7 +150,7 @@ class Mail extends \Zend_Mail
     public function __construct($charset = null)
     {
         // using $charset as param to be compatible with \Zend_Mail
-        if(is_array($charset) || self::$forcePimcoreMode) {
+        if (is_array($charset) || self::$forcePimcoreMode) {
             $options = $charset;
             parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
 
@@ -165,7 +167,7 @@ class Mail extends \Zend_Mail
                 $this->setHostUrl($options['hostUrl']);
             }
         } else {
-            if($charset === null) {
+            if ($charset === null) {
                 $charset = "UTF-8";
             }
             parent::__construct($charset);
@@ -194,7 +196,6 @@ class Mail extends \Zend_Mail
         }
 
         if ($emailSettings['method'] == "smtp") {
-
             $config = array();
             if ($emailSettings['smtp']['name']) {
                 $config['name'] = $emailSettings['smtp']['name'];
@@ -231,7 +232,8 @@ class Mail extends \Zend_Mail
      * @param $value
      * @return $this
      */
-    public function setIgnoreDebugMode($value){
+    public function setIgnoreDebugMode($value)
+    {
         $this->ignoreDebugMode = (bool)$value;
         return $this;
     }
@@ -241,7 +243,8 @@ class Mail extends \Zend_Mail
      *
      * @return bool
      */
-    public function getIgnoreDebugMode(){
+    public function getIgnoreDebugMode()
+    {
         return $this->ignoreDebugMode;
     }
 
@@ -250,7 +253,8 @@ class Mail extends \Zend_Mail
      * @param $value
      * @return $this
      */
-    public function setEnableLayoutOnPlaceholderRendering($value){
+    public function setEnableLayoutOnPlaceholderRendering($value)
+    {
         $this->enableLayoutOnPlaceholderRendering = (bool)$value;
         return $this;
     }
@@ -258,7 +262,8 @@ class Mail extends \Zend_Mail
     /**
      * @return bool
      */
-    public function getEnableLayoutOnPlaceholderRendering(){
+    public function getEnableLayoutOnPlaceholderRendering()
+    {
         return $this->enableLayoutOnPlaceholderRendering;
     }
 
@@ -270,13 +275,13 @@ class Mail extends \Zend_Mail
      * @static
      * @return void
      */
-    public static function determineHtml2TextIsInstalled() {
-
+    public static function determineHtml2TextIsInstalled()
+    {
         self::$html2textInstalled = false;
         $paths = array("/usr/bin/html2text","/usr/local/bin/html2text", "/bin/html2text");
 
         foreach ($paths as $path) {
-            if(@is_executable($path)) {
+            if (@is_executable($path)) {
                 self::$html2textInstalled = true;
                 return true;
             }
@@ -289,10 +294,11 @@ class Mail extends \Zend_Mail
      * @param string $options
      * @return \Pimcore\Mail
      */
-    public function setHtml2TextOptions($options = ''){
-        if(is_string($options)){
+    public function setHtml2TextOptions($options = '')
+    {
+        if (is_string($options)) {
             $this->html2textOptions = $options;
-        }else{
+        } else {
             \Logger::warn('Html2Text options ignored. You have to pass a string');
         }
         return $this;
@@ -303,7 +309,8 @@ class Mail extends \Zend_Mail
      *
      * @return string
      */
-    public function getHtml2TextOptions(){
+    public function getHtml2TextOptions()
+    {
         return $this->html2textOptions;
     }
 
@@ -433,7 +440,7 @@ class Mail extends \Zend_Mail
      * @param array $params
      * @return \Pimcore\Mail Provides fluent interface
      */
-    public function setParams(Array $params)
+    public function setParams(array $params)
     {
         foreach ($params as $key => $value) {
             $this->setParam($key, $value);
@@ -487,7 +494,7 @@ class Mail extends \Zend_Mail
      * @param array $params
      * @return \Pimcore\Mail Provides fluent interface
      */
-    public function unsetParams(Array $params)
+    public function unsetParams(array $params)
     {
         foreach ($params as $param) {
             $this->unsetParam($param);
@@ -523,8 +530,7 @@ class Mail extends \Zend_Mail
         $document = $this->getDocument();
 
         if ($document instanceof Model\Document\Email) {
-
-            if(!$this->recipientsCleared){
+            if (!$this->recipientsCleared) {
                 $to = $document->getToAsArray();
                 if (!empty($to)) {
                     $this->addTo($to);
@@ -543,7 +549,7 @@ class Mail extends \Zend_Mail
 
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = $document->getFromAsArray();
-            if(!empty($fromArray)) {
+            if (!empty($fromArray)) {
                 list($from) = $fromArray;
                 if ($from) {
                     $this->clearFrom();
@@ -572,7 +578,8 @@ class Mail extends \Zend_Mail
     /**
      *
      */
-    public function setTo($email, $name = '') {
+    public function setTo($email, $name = '')
+    {
         $this->_to = [];
         $this->_recipients = [];
         $this->clearHeader("To");
@@ -597,16 +604,16 @@ class Mail extends \Zend_Mail
         // filter email addresses
         $blockedAddresses = array();
         foreach ($this->getRecipients() as $recipient) {
-            if(Model\Tool\Email\Blacklist::getByAddress($recipient)) {
+            if (Model\Tool\Email\Blacklist::getByAddress($recipient)) {
                 $blockedAddresses[] = $recipient;
             }
         }
-        if(!empty($blockedAddresses)) {
+        if (!empty($blockedAddresses)) {
             foreach ($blockedAddresses as $blockedAddress) {
                 foreach (["To", "Cc", "Bcc"] as $type) {
                     $tmp = $this->_headers[$type];
                     foreach ($tmp as $key => &$value) {
-                        if(strpos($value, $blockedAddress) !== false) {
+                        if (strpos($value, $blockedAddress) !== false) {
                             unset($this->_headers[$type][$key]);
                             unset($this->_recipients[$value]);
                         }
@@ -618,16 +625,16 @@ class Mail extends \Zend_Mail
         $this->setSubject($this->getSubjectRendered());
 
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
-        if($bodyHtmlRendered){
+        if ($bodyHtmlRendered) {
             $this->setBodyHtml($bodyHtmlRendered);
         }
 
         $bodyTextRendered = $this->getBodyTextRendered();
-        if($bodyTextRendered){
+        if ($bodyTextRendered) {
             $this->setBodyText($bodyTextRendered);
         }
 
-        if($this->ignoreDebugMode == false){
+        if ($this->ignoreDebugMode == false) {
             $this->checkDebugMode();
         }
 
@@ -656,29 +663,29 @@ class Mail extends \Zend_Mail
                 throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
             }
 
-            if($this->preventDebugInformationAppending != true){
+            if ($this->preventDebugInformationAppending != true) {
                 //adding the debug information to the html email
                 $html = $this->getBodyHtml();
                 if ($html instanceof \Zend_Mime_Part) {
-                        $rawHtml = $html->getRawContent();
+                    $rawHtml = $html->getRawContent();
 
-                        $debugInformation = MailHelper::getDebugInformation('html', $this);
-                        $debugInformationStyling = MailHelper::getDebugInformationCssStyle();
+                    $debugInformation = MailHelper::getDebugInformation('html', $this);
+                    $debugInformationStyling = MailHelper::getDebugInformationCssStyle();
 
-                        $rawHtml = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $rawHtml);
-                        $rawHtml = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $rawHtml);
+                    $rawHtml = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $rawHtml);
+                    $rawHtml = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $rawHtml);
 
 
-                        $this->setBodyHtml($rawHtml);
+                    $this->setBodyHtml($rawHtml);
                 }
 
                 $text = $this->getBodyText();
 
-                if($text instanceof \Zend_Mime_Part){
-                        $rawText = $text->getRawContent();
-                        $debugInformation = MailHelper::getDebugInformation('text',$this);
-                        $rawText .= $debugInformation;
-                        $this->setBodyText($rawText);
+                if ($text instanceof \Zend_Mime_Part) {
+                    $rawText = $text->getRawContent();
+                    $debugInformation = MailHelper::getDebugInformation('text', $this);
+                    $rawText .= $debugInformation;
+                    $this->setBodyText($rawText);
                 }
 
                 //setting debug subject
@@ -718,7 +725,7 @@ class Mail extends \Zend_Mail
         if (!$subject && $this->getDocument()) {
             $subject = $this->getDocument()->getSubject();
         }
-        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
+        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
     }
 
 
@@ -735,9 +742,9 @@ class Mail extends \Zend_Mail
         //and not the content of the Document!
         if ($html instanceof \Zend_Mime_Part) {
             $rawHtml = $html->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
+            $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
         } elseif ($this->getDocument() instanceof Model\Document) {
-            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
+            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
         } else {
             $content = null;
         }
@@ -763,21 +770,20 @@ class Mail extends \Zend_Mail
         //if the content was manually set with $obj->setBodyText(); this content will be used
         if ($text instanceof \Zend_Mime_Part) {
             $rawText = $text->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
+            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
         } else {
             //creating text version from html email if html2text is installed
             try {
                 include_once("simple_html_dom.php");
-                include_once("html2text.php");
 
                 $htmlContent = $this->getBodyHtmlRendered();
                 $html = str_get_html($htmlContent);
-                if($html) {
-                    $body = $html->find("body",0);
-                    if($body) {
-                        $style = $body->find("style",0);
-                        if ($style){
-                             $style->clear();
+                if ($html) {
+                    $body = $html->find("body", 0);
+                    if ($body) {
+                        $style = $body->find("style", 0);
+                        if ($style) {
+                            $style->clear();
                         }
                         $htmlContent = $body->innertext;
                     }
@@ -785,9 +791,7 @@ class Mail extends \Zend_Mail
                     $html->clear();
                     unset($html);
                 }
-               $content = $this->html2Text($htmlContent);
-
-
+                $content = $this->html2Text($htmlContent);
             } catch (\Exception $e) {
                 \Logger::err($e);
                 $content = "";
@@ -833,7 +837,8 @@ class Mail extends \Zend_Mail
      *
      * @return \Pimcore\Mail
      */
-    public function preventDebugInformationAppending(){
+    public function preventDebugInformationAppending()
+    {
         $this->preventDebugInformationAppending = true;
         return $this;
     }
@@ -854,7 +859,7 @@ class Mail extends \Zend_Mail
      */
     public function enableHtml2textBinary()
     {
-        if (self::getHtml2textInstalled()){
+        if (self::getHtml2textInstalled()) {
             $this->html2textBinaryEnabled = true;
         } else {
             throw new \Exception("trying to enable html2text binary,
@@ -870,24 +875,22 @@ class Mail extends \Zend_Mail
      */
     public static function getHtml2textInstalled()
     {
-        if (is_null(self::$html2textInstalled)){
+        if (is_null(self::$html2textInstalled)) {
             self::determineHtml2TextIsInstalled();
         }
         return self::$html2textInstalled;
     }
 
     /**
-     *  generates text version of htmlContent
-     *  uses html2text binary if it was successfully enabled by calling
-     *  enableHtml2textBinary(), otherwise it uses html2text php version
-     *  @returns string
+     * @param $htmlContent
+     * @return string
      */
-    protected  function html2Text($htmlContent)
+    protected function html2Text($htmlContent)
     {
-        if ($this->getHtml2TextBinaryEnabled()){
+        if ($this->getHtml2TextBinaryEnabled()) {
             $content = "";
             //html2text doesn't support unicode
-            if ($this->getCharset()=="UTF-8"){
+            if ($this->getCharset()=="UTF-8") {
                 $htmlContent = utf8_decode($htmlContent);
             }
             //using temporary file so we don't have problems with special characters
@@ -897,10 +900,9 @@ class Mail extends \Zend_Mail
                 @unlink($tmpFileName);
             }
             return $content;
-
-        }   else {
-            return @html2text($htmlContent);
         }
+
+        return "";
     }
 
     /**
@@ -909,11 +911,11 @@ class Mail extends \Zend_Mail
      * @param  string $email
      * @return \Zend_Mail Provides fluent interface
      */
-    public function setSender($email) {
+    public function setSender($email)
+    {
         $email = $this->_filterEmail($email);
         $this->sender = $email;
-        $this->_storeHeader('Sender', $this->_formatAddress($email,null), true);
+        $this->_storeHeader('Sender', $this->_formatAddress($email, null), true);
         return $this;
     }
-
 }

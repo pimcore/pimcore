@@ -16,9 +16,11 @@ namespace Pimcore\Model\Element\Recyclebin;
 
 use Pimcore\Model;
 
-class Dao extends Model\Dao\AbstractDao {
+class Dao extends Model\Dao\AbstractDao
+{
     
-    public function flush () {
+    public function flush()
+    {
         $this->db->delete("recyclebin");
     }
 }
