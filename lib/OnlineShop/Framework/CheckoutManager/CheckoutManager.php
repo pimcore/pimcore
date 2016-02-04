@@ -517,6 +517,9 @@ class CheckoutManager implements ICheckoutManager
      */
     public function isFinished()
     {
+        if( !$this->currentStep ) {
+            return false;
+        }
         $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
         return count($this->checkoutStepOrder) > $indexCurrentStep;
     }
