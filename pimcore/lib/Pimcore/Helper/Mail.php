@@ -213,7 +213,7 @@ CSS;
                 $path = $matches[2][$key];
                 $fileType = $matches[3][$key];
 
-                if(strpos($path, '//') === 0) {
+                if (strpos($path, '//') === 0) {
                     $absolutePath = "http:" . $path;
                 } elseif (strpos($path, '/') === 0) {
                     $absolutePath = $hostUrl . $path;

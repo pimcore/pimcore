@@ -89,7 +89,7 @@ class Pimcore
         if (self::inDebugMode() && $frontend && !$conf->general->disable_whoops && !defined("HHVM_VERSION")) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-            if(\Whoops\Util\Misc::isAjaxRequest()) {
+            if (\Whoops\Util\Misc::isAjaxRequest()) {
                 $jsonErrorHandler = new \Whoops\Handler\JsonResponseHandler;
                 $whoops->pushHandler($jsonErrorHandler);
             }
