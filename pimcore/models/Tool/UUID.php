@@ -120,7 +120,7 @@ class UUID extends Model\AbstractModel
     {
         $this->setItemId($item->getId());
 
-        if($item instanceof Model\Element\ElementInterface) {
+        if ($item instanceof Model\Element\ElementInterface) {
             $this->setType(Model\Element\Service::getElementType($item));
         } elseif ($item instanceof Model\Object\ClassDefinition) {
             $this->setType("class");
