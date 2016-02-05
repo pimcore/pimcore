@@ -20,4 +20,4 @@ It's most important features are:
 
 ### E-Commerce Framework Demo
 
-The e-commerce framework demo implementation can be downloaded at http://www.pimcore.org/download/onlineshop-demo.zip. Please be aware, that this demo is not always based on the latest build of the e-commerce framework. You can use this demo as a blueprint for a basic e-commerce application, but you are not allowed to reuse the included template, as this is not open-source.
+The e-commerce framework demo implementation can be downloaded at http://www.pimcore.org/files/onlineshop-demo.zip. Please be aware, that this demo is not always based on the latest build of the e-commerce framework. You can use this demo as a blueprint for a basic e-commerce application, but you are not allowed to reuse the included template, as this is not open-source.
