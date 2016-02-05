@@ -27,7 +27,6 @@ pimcore.report.custom.settings = Class.create({
         this.panel = new Ext.Panel({
             title: t("custom_reports"),
             bodyStyle: "padding: 10px;",
-            autoScroll: true,
             layout: "fit",
             items: [editor.getTabPanel()]
         });
