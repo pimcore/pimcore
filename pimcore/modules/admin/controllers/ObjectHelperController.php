@@ -696,9 +696,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $objectData = [];
                 foreach ($fields as $field) {
                     $fieldData = $this->getCsvFieldData($field, $object);
-                    if ($fieldData) {
-                        $objectData[$field] = $fieldData;
-                    }
+                    $objectData[$field] = $fieldData;
                 }
                 $objects[] = $objectData;
             } else {
