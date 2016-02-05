@@ -22,12 +22,14 @@ class OnlineShop_ConfigController extends Pimcore\Controller\Action\Admin
 
         $params = [];
 
-        foreach ($config->onlineshop->pimcore as $confName => $conf) {
-            $entries = [];
-            foreach($conf as $entryName => $entry) {
-                $entries[$entryName] = $entry->toArray();
+        if (is_array($config->onlineshop->pimcore)) {
+            foreach ($config->onlineshop->pimcore as $confName => $conf) {
+                $entries = [];
+                foreach($conf as $entryName => $entry) {
+                    $entries[$entryName] = $entry->toArray();
+                }
+                $params[$confName] = $entries;
             }
-            $params[$confName] = $entries;
         }
 
         $javascript="pimcore.registerNS(\"pimcore.plugin.OnlineShop.plugin.config\");";
