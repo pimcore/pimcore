@@ -9,7 +9,8 @@ use Pimcore\Model;
 class TestController extends Action
 {
 
-    public function testAction() {
+    public function testAction()
+    {
     }
 
     public function thumbnailAction()
