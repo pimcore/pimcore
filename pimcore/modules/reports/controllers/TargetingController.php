@@ -16,8 +16,7 @@ use Pimcore\Model\Document;
 class Reports_TargetingController extends \Pimcore\Controller\Action\Admin
 {
 
-    public function init()
-    {
+    public function init() {
         parent::init();
 
         // check permissions
