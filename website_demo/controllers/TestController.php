@@ -9,12 +9,10 @@ use Pimcore\Model;
 class TestController extends Action
 {
 
-    public function testAction()
-    {
+    public function testAction() {
     }
 
-    public function thumbnailAction()
-    {
+    public function thumbnailAction() {
         $a = Asset::getById(22);
         $a->clearThumbnails(true);
         $t = $a->getThumbnail("content");
