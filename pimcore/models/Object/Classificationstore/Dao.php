@@ -179,9 +179,6 @@ class Dao extends Model\Dao\AbstractDao
         $classificationStore->setGroupCollectionMappings($groupCollectionMapping);
     }
 
-
-
-
     /**
      *
      */
@@ -206,11 +203,14 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
             `type` VARCHAR(50) NULL,
-            PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`)
+            PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`),
+            INDEX `o_id` (`o_id`),
+            INDEX `groupId` (`groupId`),
+            INDEX `keyId` (`keyId`),
+            INDEX `fieldname` (`fieldname`),
+            INDEX `language` (`language`)
         ) DEFAULT CHARSET=utf8;");
 
-
-//
         $this->tableDefinitions = null;
     }
 }
