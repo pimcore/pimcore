@@ -37,12 +37,11 @@ class View extends \Zend_View
     public function tag($type, $realName, $options = array())
     {
         $type = strtolower($type);
+        $document = $this->document;
+        $name = Model\Document\Tag::buildTagName($type, $realName, $document);
 
         try {
-            $document = $this->document;
-            $name = Model\Document\Tag::buildTagName($type, $realName, $document);
-
-            if ($document instanceof Model\Document) {
+            if ($document instanceof Model\Document\PageSnippet) {
                 $tag = $document->getElement($name);
                 if ($tag instanceof Model\Document\Tag && $tag->getType() == $type) {
 
@@ -55,7 +54,7 @@ class View extends \Zend_View
                     $tag->setController($this->controller);
                     $tag->setView($this);
                     $tag->setEditmode($this->editmode);
-                    
+
                     $tag->setOptions($options);
                 } else {
                     $tag = Model\Document\Tag::factory($type, $name, $document->getId(), $options, $this->controller, $this, $this->editmode);
@@ -65,7 +64,7 @@ class View extends \Zend_View
                 // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
                 $tag->setRealName($realName);
             }
-            
+
             return $tag;
         } catch (\Exception $e) {
             \Logger::warning($e);

@@ -415,14 +415,18 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * Creates the Tag name for an element - must be called at runtime because of the block numeration
      * @param $type
      * @param $name
-     *
+     * @param null $document
      * @return string
+     * @throws \Exception
+     * @throws \Zend_Exception
      */
     public static function buildTagName($type, $name, $document = null)
     {
+        if(!preg_match("@^[ -~]+$@", $name)) {
+            throw new \Exception("Only ASCII characters are allowed as the name for an editable, your name was: " . $name);
+        }
 
         // check for persona content
         if ($document && $document instanceof Document\Page && $document->getUsePersona()) {
@@ -454,6 +458,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
                 }
                 $name = $name . implode("_", $blocks) . implode("_", $numeration);
             }
+        }
+
+        if(strlen($name) > 750) {
+            throw new \Exception("Composite name is longer than 750 characters - use shorter names for your editables or reduce amount of nesting levels. Name is: " . $name);
         }
 
         return $name;
