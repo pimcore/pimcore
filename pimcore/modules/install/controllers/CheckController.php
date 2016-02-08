@@ -457,18 +457,26 @@ class Install_CheckController extends \Pimcore\Controller\Action
 
         // website/var writable
         $websiteVarWritable = true;
-        $files = rscandir(PIMCORE_WEBSITE_VAR);
 
-        foreach ($files as $file) {
-            if (!is_writable($file)) {
-                $websiteVarWritable = false;
+        try {
+            $files = $this->rscandir(PIMCORE_WEBSITE_VAR);
+
+            foreach ($files as $file) {
+                if (!is_writable($file)) {
+                    $websiteVarWritable = false;
+                }
             }
-        }
 
-        $checksFS[] = array(
-            "name" => "/website/var/ writeable",
-            "state" => $websiteVarWritable ? "ok" : "error"
-        );
+            $checksFS[] = array(
+                "name" => "/website/var/ writeable",
+                "state" => $websiteVarWritable ? "ok" : "error"
+            );
+        } catch (\Exception $e) {
+            $checksFS[] = array(
+                "name" => "/website/var/ (not checked - too many files)",
+                "state" => "warning"
+            );
+        }
 
         // pimcore writeable
         $checksFS[] = array(
@@ -604,5 +612,27 @@ class Install_CheckController extends \Pimcore\Controller\Action
         $this->view->checksPHP = $checksPHP;
         $this->view->checksMySQL = $checksMySQL;
         $this->view->checksFS = $checksFS;
+    }
+
+    protected function rscandir($base = '', &$data = array())
+    {
+        if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists
+            $base .= DIRECTORY_SEPARATOR;
+        }
+
+        if(count($data) > 20) {
+            throw new \Exception("limit of 2000 files reached");
+        }
+
+        $array = array_diff(scandir($base), array('.', '..', '.svn'));
+        foreach ($array as $value) {
+            if (is_dir($base . $value)) {
+                $data[] = $base . $value . DIRECTORY_SEPARATOR;
+                $data = $this->rscandir($base . $value . DIRECTORY_SEPARATOR, $data);
+            } elseif (is_file($base . $value)) {
+                $data[] = $base . $value;
+            }
+        }
+        return $data;
     }
 }
