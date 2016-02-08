@@ -198,6 +198,9 @@ class Authentication
 
         $key = $passwordHash;
 
+        if(empty($key)) {
+            throw new \Exception("User needs a password to generate a token");
+        }
 
         // append pkcs5 padding to the data
         $blocksize = mcrypt_get_block_size($algorithm, $mode);
