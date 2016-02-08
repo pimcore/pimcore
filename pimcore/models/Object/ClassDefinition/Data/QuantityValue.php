@@ -342,7 +342,17 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function marshal($value, $object = null)
     {
-        return serialize($value);
+        if (is_array($value)) {
+            return array(
+                "value" => $value[$this->getName() . "__value"],
+                "value2" => $value[$this->getName() . "__unit"]
+            );
+        } else {
+            return array(
+                "value" => null,
+                "value2" => null
+            );
+        }
     }
 
     /** See marshal
@@ -352,7 +362,15 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function unmarshal($value, $object = null)
     {
-        return unserialize($value);
+        if (is_array($value)) {
+            return array(
+                $this->getName() . "__value" => $value["value"],
+                $this->getName() . "__unit" => $value["value2"],
+
+            );
+        } else {
+            return null;
+        }
     }
 
 

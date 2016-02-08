@@ -1045,7 +1045,7 @@ abstract class Data
      */
     public function marshal($value, $object = null)
     {
-        return $value;
+        return array("value" => $value);
     }
 
     /** See marshal
@@ -1053,8 +1053,12 @@ abstract class Data
      * @param Model\Object\AbstractObject $object
      * @return mixed
      */
-    public function unmarshal($value, $object = null)
+    public function unmarshal($data, $object = null)
     {
-        return $value;
+        if (is_array($data)) {
+            return $data["value"];
+
+        };
+        return null;
     }
 }

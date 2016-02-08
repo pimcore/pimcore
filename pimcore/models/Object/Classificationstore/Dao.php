@@ -76,13 +76,14 @@ class Dao extends Model\Dao\AbstractDao
                         "o_id" => $objectId,
                         "collectionId" => $collectionId,
                         "groupId" => $groupId,
+                        "value" => $value["value"],
+                        "value2" =>$value["value2"],
                         "keyId" => $keyId,
-                        "value" => $value,
                         "fieldname" => $fieldname,
                         "language" => $language,
                         "type" => $keyConfig->getType()
-
                     );
+
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
             }
@@ -151,7 +152,10 @@ class Dao extends Model\Dao\AbstractDao
             $collectionId = $item["collectionId"];
             $groupCollectionMapping[$groupId] = $collectionId;
 
-            $value = $item["value"];
+            $value = array(
+                "value" => $item["value"],
+                "value2" => $item["value2"]
+            );
 
             $keyConfig = DefinitionCache::get($keyId);
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
@@ -200,6 +204,7 @@ class Dao extends Model\Dao\AbstractDao
             `groupId` BIGINT(20) NOT NULL,
             `keyId` BIGINT(20) NOT NULL,
             `value` LONGTEXT NOT NULL,
+	        `value2` LONGTEXT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
             `type` VARCHAR(50) NULL,
