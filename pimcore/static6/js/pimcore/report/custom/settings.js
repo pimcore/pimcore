@@ -13,33 +13,40 @@ pimcore.registerNS("pimcore.report.custom.settings");
 pimcore.report.custom.settings = Class.create({
 
     initialize: function (parent) {
-        this.parent = parent;
+        this.getPanel();
     },
 
-    getKey: function () {
-        return "custom";
+    activate: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.setActiveItem("pimcore_custom_reports_settings");
     },
 
-    getLayout: function () {
+    getPanel: function () {
 
         var editor = new pimcore.report.custom.panel();
 
-        this.panel = new Ext.Panel({
-            title: t("custom_reports"),
-            bodyStyle: "padding: 10px;",
-            layout: "fit",
-            items: [editor.getTabPanel()]
-        });
+        if (!this.panel) {
+            this.panel = new Ext.Panel({
+                id: "pimcore_custom_reports_settings",
+                title: t("custom_reports"),
+                iconCls: "pimcore_icon_reports",
+                bodyStyle: "padding: 10px;",
+                layout: "fit",
+                closable:true,
+                items: [editor.getTabPanel()]
+            });
+
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.add(this.panel);
+            tabPanel.setActiveItem("pimcore_custom_reports_settings");
+
+            this.panel.on("destroy", function () {
+                pimcore.globalmanager.remove("custom_reports_settings");
+            }.bind(this));
+
+            pimcore.layout.refresh();
+        }
 
         return this.panel;
-    },
-
-    getValues: function () {
-        /*var formData = this.panel.getForm().getFieldValues();
-        return formData;*/
-
     }
 });
-
-
-pimcore.report.settings.broker.push("pimcore.report.custom.settings");

@@ -732,6 +732,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+            settingsItems.push({
+                text: t("custom_reports"),
+                iconCls: "pimcore_icon_reports",
+                handler: this.showCustomReports
+            });
+        }
+
         // tags for elements
         if(user.isAllowed("tags_config")) {
             settingsItems.push({
@@ -1074,6 +1082,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
+        }
+    },
+
+    showCustomReports: function () {
+        try {
+            pimcore.globalmanager.get("custom_reports_settings").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("custom_reports_settings", new pimcore.report.custom.settings());
         }
     },
 
