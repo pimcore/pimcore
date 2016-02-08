@@ -142,11 +142,12 @@ pimcore.object.versions = Class.create({
     },
 
     onRowClick: function(grid, record, tr, rowIndex, e, eOpts ) {
-        if (grid.getSelectionModel().getCount() > 1) {
-            if (grid.getSelectionModel().getCount() > 2) {
-                grid.getSelectionModel().clearSelections();
-                return;
-            }
+        var selModel = grid.getSelectionModel();
+        if (selModel.getCount() > 2) {
+            selModel.select(record);
+        }
+
+        if (selModel.getCount() > 1) {
             this.compareVersions(grid, rowIndex, event);
         }
         else {
