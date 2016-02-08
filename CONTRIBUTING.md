@@ -28,7 +28,7 @@ The following terms are used throughout this agreement:
 * **You** - the person or legal entity including its affiliates asked to accept this agreement. An affiliate is any 
 entity that controls or is controlled by the legal entity, or is under common control with it.
 
-* **Project** - is an umbrella term that refers to any and all pimcore open source projects.
+* **Project** - is an umbrella term that refers to any and all pimcore projects.
 
 * **Contribution** - any type of work that is submitted to a Project, including any modifications or additions to 
 existing work.
