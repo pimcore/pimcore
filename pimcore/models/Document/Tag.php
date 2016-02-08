@@ -424,7 +424,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public static function buildTagName($type, $name, $document = null)
     {
-        if(!preg_match("@^[ -~]+$@", $name)) {
+        if (!preg_match("@^[ -~]+$@", $name)) {
             throw new \Exception("Only ASCII characters are allowed as the name for an editable, your name was: " . $name);
         }
 
@@ -460,7 +460,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             }
         }
 
-        if(strlen($name) > 750) {
+        if (strlen($name) > 750) {
             throw new \Exception("Composite name is longer than 750 characters - use shorter names for your editables or reduce amount of nesting levels. Name is: " . $name);
         }
 
