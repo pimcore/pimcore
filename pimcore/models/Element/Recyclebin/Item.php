@@ -86,14 +86,14 @@ class Item extends Model\AbstractModel
     {
         $item = new self();
         $item->getDao()->getById($id);
-        
+
         return $item;
     }
 
     /**
      *
      */
-    public function restore()
+    public function restore($user = null)
     {
         $raw = file_get_contents($this->getStoreageFile());
         $element = Serialize::unserialize($raw);
@@ -116,7 +116,13 @@ class Item extends Model\AbstractModel
             }
         }
 
-        
+        if(\Pimcore\Tool\Admin::getCurrentUser()) {
+            $parent = $element->getParent();
+            if(!$parent->isAllowed("publish")) {
+                throw new \Exception("Not sufficient permissions");
+            }
+        }
+
         $this->restoreChilds($element);
         $this->delete();
     }
@@ -144,9 +150,9 @@ class Item extends Model\AbstractModel
         // serialize data
         Element\Service::loadAllFields($this->element);
         $data = Serialize::serialize($this->getElement());
-        
+
         $this->getDao()->save();
-        
+
         if (!is_dir(PIMCORE_RECYCLEBIN_DIRECTORY)) {
             File::mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
         }
@@ -207,7 +213,7 @@ class Item extends Model\AbstractModel
         if (method_exists($element, "getScheduledTasks")) {
             $element->getScheduledTasks();
         }
-        
+
         $element->_fulldump = true;
 
         // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
@@ -234,7 +240,7 @@ class Item extends Model\AbstractModel
     public function restoreChilds(Element\ElementInterface $element)
     {
         $restoreBinaryData = function ($element, $scope) {
-            // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
+            // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
                 $binFile = $scope->getStorageFileBinary($element);
                 if (file_exists($binFile)) {
@@ -247,7 +253,7 @@ class Item extends Model\AbstractModel
         $restoreBinaryData($element, $this);
 
         $element->save();
-        
+
         if (method_exists($element, "getChilds")) {
             if ($element instanceof Object\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
