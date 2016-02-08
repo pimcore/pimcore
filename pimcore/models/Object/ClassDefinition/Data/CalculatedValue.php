@@ -231,7 +231,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         // nothing to do
     }

@@ -434,7 +434,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @return mixed
      * @throws \Exception
      */
-    public function getFromWebserviceImport($data, $relatedObject, $idMapper = null)
+    public function getFromWebserviceImport($data, $relatedObject = null, $idMapper = null)
     {
         $containerName = "\\Pimcore\\Model\\Object\\" . ucfirst($relatedObject->getClass()->getName()) . "\\" . ucfirst($this->getName());
         $container = new $containerName($relatedObject, $this->getName());
