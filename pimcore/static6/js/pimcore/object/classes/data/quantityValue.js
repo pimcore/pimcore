@@ -61,7 +61,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 xtype: 'combobox',
                 name: 'defaultUnit',
                 triggerAction: "all",
-                editable: false,
+                editable: true,
                 typeAhead: true,
                 selectOnFocus: true,
                 fieldLabel: t('default_unit'),
