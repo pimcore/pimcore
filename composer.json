@@ -43,6 +43,7 @@
         "symfony/var-dumper": "~3",
         "symfony/css-selector": "~3",
         "symfony/event-dispatcher": "~3",
+        "symfony/dom-crawler": "~3",
         "filp/whoops": "~2",
         "tijsverkoyen/css-to-inline-styles": "~1.5",
         "hybridauth/hybridauth": "~2",

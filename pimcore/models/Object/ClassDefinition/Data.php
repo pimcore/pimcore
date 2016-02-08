@@ -1057,7 +1057,6 @@ abstract class Data
     {
         if (is_array($data)) {
             return $data["value"];
-
         };
         return null;
     }
