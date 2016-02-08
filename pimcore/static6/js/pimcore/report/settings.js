@@ -127,6 +127,7 @@ pimcore.report.settings = Class.create({
             }
             catch (e) {
                 console.log("unable to get configuration for report");
+                console.log(e);
             }
         }
 

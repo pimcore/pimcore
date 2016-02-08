@@ -79,8 +79,6 @@ pimcore.report.analytics.settings = Class.create({
 
     getConfiguration: function (key, name, id) {
 
-        id = id + "";
-        var itemId = id.replace(/\./g, '_');
         var config = {
             xtype: "fieldset",
             defaults: {
@@ -93,7 +91,7 @@ pimcore.report.analytics.settings = Class.create({
                     fieldLabel: t("analytics_trackid_code"),
                     name: "trackid_" + id,
                     width: 670,
-                    id: "report_settings_analytics_trackid_" + itemId,
+                    id: "report_settings_analytics_trackid_" + id,
                     value: this.parent.getValue("analytics.sites." + key + ".trackid")
                 },{
                     xtype: "fieldset",
@@ -109,7 +107,7 @@ pimcore.report.analytics.settings = Class.create({
                         name: "universal_configuration_" + id,
                         height: 100,
                         width: 650,
-                        id: "report_settings_analytics_universal_configuration_" + itemId,
+                        id: "report_settings_analytics_universal_configuration_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".universal_configuration")
                     },{
                         xtype: "textarea",
@@ -117,7 +115,7 @@ pimcore.report.analytics.settings = Class.create({
                         name: "additionalcodebeforeinit" + id,
                         height: 100,
                         width: 650,
-                        id: "report_settings_analytics_additionalcodebeforeinit_" + itemId,
+                        id: "report_settings_analytics_additionalcodebeforeinit_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforeinit")
                     },{
                         xtype: "textarea",
@@ -125,7 +123,7 @@ pimcore.report.analytics.settings = Class.create({
                         name: "additionalcodebeforepageview" + id,
                         height: 100,
                         width: 650,
-                        id: "report_settings_analytics_additionalcodebeforepageview_" + itemId,
+                        id: "report_settings_analytics_additionalcodebeforepageview_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforepageview")
                     },{
                         xtype: "textarea",
@@ -133,19 +131,19 @@ pimcore.report.analytics.settings = Class.create({
                         name: "additionalcode_" + id,
                         height: 100,
                         width: 650,
-                        id: "report_settings_analytics_additionalcode_" + itemId,
+                        id: "report_settings_analytics_additionalcode_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
                     },{
                         xtype: "checkbox",
                         fieldLabel: t("analytics_asynchronous_code"),
                         name: "asynchronouscode_" + id,
-                        id: "report_settings_analytics_asynchronouscode_" + itemId,
+                        id: "report_settings_analytics_asynchronouscode_" + id,
                         checked: this.parent.getValue("analytics.sites." + key + ".asynchronouscode")
                     },{
                         xtype: "checkbox",
                         fieldLabel: t("analytics_retargeting_code"),
                         name: "retargetingcode_" + id,
-                        id: "report_settings_analytics_retargetingcode_" + itemId,
+                        id: "report_settings_analytics_retargetingcode_" + id,
                         checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
                     }]
                 },{
@@ -184,7 +182,7 @@ pimcore.report.analytics.settings = Class.create({
                                 load: function(id) {
                                     var cmp = Ext.getCmp("report_settings_analytics_profile_" + id);
                                     cmp.setValue(this.parent.getValue("analytics.sites." + key + ".profile"));
-                                }.bind(this, itemId)
+                                }.bind(this, id)
                             }
                         }),
                         listeners: {
@@ -192,28 +190,28 @@ pimcore.report.analytics.settings = Class.create({
                                 Ext.getCmp("report_settings_analytics_trackid_" + id).setValue(record.get("trackid"));
                                 Ext.getCmp("report_settings_analytics_accountid_" + id).setValue(record.get("accountid"));
                                 Ext.getCmp("report_settings_analytics_internalid_" + id).setValue(record.get("internalid"));
-                            }.bind(this, itemId)
+                            }.bind(this, id)
                         },
                         valueField: 'id',
                         width: 650,
                         forceSelection: true,
                         triggerAction: 'all',
                         hiddenName: 'profile_' + id,
-                        id: "report_settings_analytics_profile_" + itemId,
+                        id: "report_settings_analytics_profile_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".profile")
                     },{
                         xtype: "textfield",
                         fieldLabel: t("analytics_accountid"),
                         name: "accountid_" + id,
                         width: 650,
-                        id: "report_settings_analytics_accountid_" + itemId,
+                        id: "report_settings_analytics_accountid_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".accountid")
                     },{
                         xtype: "textfield",
                         fieldLabel: t("analytics_internalid"),
                         width: 650,
                         name: "internalid_" + id,
-                        id: "report_settings_analytics_internalid_" + itemId,
+                        id: "report_settings_analytics_internalid_" + id,
                         value: this.parent.getValue("analytics.sites." + key + ".internalid")
                     }]
                 }
@@ -230,26 +228,24 @@ pimcore.report.analytics.settings = Class.create({
         var sitesData = {};
 
         sites.each(function (record) {
-            var id = record.data.id;
+            var id = record.get("id");
             if (id == "default") {
                 key = "default";
             } else {
                 key = "site_" + id;
             }
 
-            var itemId = id.replace(/\./g, '_');
-
             sitesData[key] = {
-                profile: Ext.getCmp("report_settings_analytics_profile_" + itemId).getValue(),
-                trackid: Ext.getCmp("report_settings_analytics_trackid_" + itemId).getValue(),
-                asynchronouscode: Ext.getCmp("report_settings_analytics_asynchronouscode_" + itemId).getValue(),
-                retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + itemId).getValue(),
-                additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + itemId).getValue(),
-                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + itemId).getValue(),
-                additionalcodebeforeinit: Ext.getCmp("report_settings_analytics_additionalcodebeforeinit_" + itemId).getValue(),
-                accountid: Ext.getCmp("report_settings_analytics_accountid_" + itemId).getValue(),
-                internalid: Ext.getCmp("report_settings_analytics_internalid_" + itemId).getValue(),
-                universal_configuration: Ext.getCmp("report_settings_analytics_universal_configuration_" + itemId).getValue()
+                profile: Ext.getCmp("report_settings_analytics_profile_" + id).getValue(),
+                trackid: Ext.getCmp("report_settings_analytics_trackid_" + id).getValue(),
+                asynchronouscode: Ext.getCmp("report_settings_analytics_asynchronouscode_" + id).getValue(),
+                retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + id).getValue(),
+                additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + id).getValue(),
+                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id).getValue(),
+                additionalcodebeforeinit: Ext.getCmp("report_settings_analytics_additionalcodebeforeinit_" + id).getValue(),
+                accountid: Ext.getCmp("report_settings_analytics_accountid_" + id).getValue(),
+                internalid: Ext.getCmp("report_settings_analytics_internalid_" + id).getValue(),
+                universal_configuration: Ext.getCmp("report_settings_analytics_universal_configuration_" + id).getValue()
             };
         }, this);
 

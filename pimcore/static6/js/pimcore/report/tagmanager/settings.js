@@ -9,31 +9,24 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-pimcore.registerNS("pimcore.report.webmastertools.settings");
-pimcore.report.webmastertools.settings = Class.create({
+pimcore.registerNS("pimcore.report.tagmanager.settings");
+pimcore.report.tagmanager.settings = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
     },
 
     getKey: function () {
-        return "webmastertools";
+        return "tagmanager";
     },
 
     getLayout: function () {
 
         this.panel = new Ext.FormPanel({
-            title: "Google Webmastertools",
+            title: "Google Tag Manager",
             bodyStyle: "padding: 10px;",
             autoScroll: true,
             items: [
-                {
-                    xtype: "displayfield",
-                    width: 670,
-                    hideLabel: true,
-                    value: "&nbsp;<br />" + t("webastertools_settings_description"),
-                    cls: "pimcore_extra_label"
-                },
                 {
                     xtype: "panel",
                     style: "padding:30px 0 0 0;",
@@ -67,18 +60,19 @@ pimcore.report.webmastertools.settings = Class.create({
     },
 
     getConfiguration: function (key, name, id) {
+
         var config = {
             xtype: "fieldset",
             title: name,
             items: [
                 {
                     xtype: "textfield",
-                    fieldLabel: t("verification_filename_text") + " (google1d765d927ceexxxx.html)",
-                    name: "verification",
+                    fieldLabel: "Container-ID" + " (GTM-AB1234)",
+                    name: "containerId",
                     labelWidth: 250,
-                    width: 650,
-                    value: this.parent.getValue("webmastertools.sites." + key + ".verification"),
-                    id: "report_settings_webmastertools_verification_" + id
+                    width: 450,
+                    value: this.parent.getValue("tagmanager.sites." + key + ".containerId"),
+                    id: "report_settings_tagmanager_containerId_" + id
                 }
             ]
         };
@@ -94,6 +88,7 @@ pimcore.report.webmastertools.settings = Class.create({
 
         sites.each(function (record) {
             var id = record.get("id");
+            var key = "";
             if (id == "default") {
                 key = "default";
             } else {
@@ -101,7 +96,7 @@ pimcore.report.webmastertools.settings = Class.create({
             }
 
             sitesData[key] = {
-                verification: Ext.getCmp("report_settings_webmastertools_verification_" + id).getValue()
+                containerId: Ext.getCmp("report_settings_tagmanager_containerId_" + id).getValue()
             };
         }, this);
 
@@ -114,4 +109,4 @@ pimcore.report.webmastertools.settings = Class.create({
 });
 
 
-pimcore.report.settings.broker.push("pimcore.report.webmastertools.settings");
+pimcore.report.settings.broker.push("pimcore.report.tagmanager.settings");
