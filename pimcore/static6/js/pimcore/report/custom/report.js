@@ -314,10 +314,17 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             });
 
         } else if(data.chartType == 'pie') {
+            var chartFields = [];
+            if (data.pieLabelColumn) {
+                chartFields.push(data.pieLabelColumn);
+            };
+            if (data.pieColumn) {
+                chartFields.push(data.pieColumn);
+            }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/reports/custom-report/chart/?',
-                [data.pieLabelColumn, data.pieColumn],
+                chartFields,
                 400000000
             );
             var proxy = this.chartStore.getProxy();
