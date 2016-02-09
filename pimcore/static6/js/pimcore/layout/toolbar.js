@@ -380,7 +380,7 @@ pimcore.layout.toolbar = Class.create({
             marketingItems.push({
                 text: t("reports"),
                 iconCls: "pimcore_icon_reports",
-                handler: this.showReports
+                handler: this.showReports.bind(this, null)
             });
         }
 
