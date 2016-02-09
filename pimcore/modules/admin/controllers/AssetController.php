@@ -1574,15 +1574,14 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $start = $this->getParam("start");
             }
 
-            if ($this->getParam("dir")) {
-                $order = $this->getParam("dir");
-            }
-
-            if ($this->getParam("sort")) {
-                $orderKey = $this->getParam("sort");
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if ($sortingSettings['orderKey']) {
+                $orderKey = $sortingSettings['orderKey'];
                 if ($orderKey == "fullpath") {
-                    $orderKey = array("path" , "filename");
+                    $orderKey = array("path", "filename");
                 }
+
+                $order = $sortingSettings['order'];
             }
 
             $conditionFilters = array();
