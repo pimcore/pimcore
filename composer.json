@@ -56,6 +56,7 @@
         "ramsey/uuid": "~3",
         "endroid/qrcode": "~1.5",
         "linfo/linfo": "~3",
+        "amnuts/opcache-gui": "~2",
         "vrana/adminer": "~4.2"
     },
     "require-dev": {

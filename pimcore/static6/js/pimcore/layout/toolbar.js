@@ -344,6 +344,10 @@ pimcore.layout.toolbar = Class.create({
                         iconCls: "pimcore_icon_php",
                         handler: this.showPhpInfo
                     },{
+                        text: "PHP OPcache Status",
+                        iconCls: "pimcore_icon_reports",
+                        handler: this.showOpcacheStatus
+                    },{
                         text: "System-Requirements Check",
                         iconCls: "pimcore_icon_systemrequirements",
                         handler: this.showSystemRequirementsCheck
@@ -1376,6 +1380,20 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
                 "/admin/external_linfo/", "pimcore_icon_server_info", "Server Info"));
+        }
+
+    },
+
+    showOpcacheStatus: function () {
+
+        var id = "opcachestatus";
+
+        try {
+            pimcore.globalmanager.get(id).activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
+                "/admin/external_opcache/", "pimcore_icon_reports", "PHP OPcache Status"));
         }
 
     },
