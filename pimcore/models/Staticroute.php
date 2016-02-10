@@ -21,17 +21,17 @@ class Staticroute extends AbstractModel
      * @var integer
      */
     public $id;
-    
+
     /**
      * @var string
      */
     public $name;
-    
+
     /**
      * @var string
      */
     public $pattern;
-    
+
     /**
      * @var string
      */
@@ -149,7 +149,7 @@ class Staticroute extends AbstractModel
 
         return $route;
     }
-    
+
     /**
      * @param string $name
      * @return Staticroute
@@ -357,7 +357,7 @@ class Staticroute extends AbstractModel
     {
         return $this->priority;
     }
-    
+
     /**
      * @param string $name
      * @return void
@@ -375,7 +375,7 @@ class Staticroute extends AbstractModel
     {
         return $this->name;
     }
-    
+
     /**
      * @param string $reverse
      * @return void
@@ -450,7 +450,6 @@ class Staticroute extends AbstractModel
 
         $parametersInReversePattern = array();
         $parametersGet = array();
-        $parametersNotNamed = array();
         $url = $this->getReverse();
         $forbiddenCharacters = array("#",":","?");
 
@@ -458,8 +457,6 @@ class Staticroute extends AbstractModel
         foreach ($urlParams as $key => $param) {
             if (strpos($this->getReverse(), "%" . $key) !== false) {
                 $parametersInReversePattern[$key] = $param;
-            } elseif (is_numeric($key)) {
-                $parametersNotNamed[$key] = $param;
             } else {
                 // only append the get parameters if there are defined in $urlOptions
                 // or if they are defined in $_GET an $reset is false
@@ -490,22 +487,9 @@ class Staticroute extends AbstractModel
         }
 
 
-        // not named parameters
-        $o = array();
-        foreach ($parametersNotNamed as $option) {
-            $option = str_replace($forbiddenCharacters, "", $option);
-            $o[] = str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode_ignore_slash($option) : $option);
-        }
-
         // remove optional parts
         $url = preg_replace("/\{([^\}]+)?%[^\}]+\}/", "", $url);
         $url = str_replace(array("{", "}"), "", $url);
-
-        $url = @vsprintf($url, $o);
-        if (empty($url)) {
-            $url = "ERROR_IN_YOUR_URL_CONFIGURATION:~ONE_PARAMETER_IS_MISSING_TO_GENERATE_THE_URL";
-            return $url;
-        }
 
         // optional get parameters
         if (!empty($parametersGet)) {
@@ -517,10 +501,6 @@ class Staticroute extends AbstractModel
             $url .= "?" . $getParams;
         }
 
-        // convert tmp urlencode escape char back to real escape char
-        $url = str_replace($urlEncodeEscapeCharacters, "%", $url);
-
-        
         return $url;
     }
 
