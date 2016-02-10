@@ -198,7 +198,7 @@ class Authentication
 
         $key = $passwordHash;
 
-        if(empty($key)) {
+        if (empty($key)) {
             throw new \Exception("User needs a password to generate a token");
         }
 

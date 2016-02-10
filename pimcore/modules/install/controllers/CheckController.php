@@ -620,7 +620,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $base .= DIRECTORY_SEPARATOR;
         }
 
-        if(count($data) > 20) {
+        if (count($data) > 20) {
             throw new \Exception("limit of 2000 files reached");
         }
 

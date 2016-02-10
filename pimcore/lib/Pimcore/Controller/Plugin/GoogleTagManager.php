@@ -58,7 +58,7 @@ class GoogleTagManager extends \Zend_Controller_Plugin_Abstract
         if ($this->enabled && isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
             $containerId = $reportConfig->tagmanager->sites->$siteKey->containerId;
 
-            if($containerId) {
+            if ($containerId) {
                 $code = <<<CODE
 <!-- Google Tag Manager -->
 <noscript><iframe src="//www.googletagmanager.com/ns.html?id=$containerId"
