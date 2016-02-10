@@ -106,7 +106,6 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
     {
         $letter = Newsletter\Config::getByName($this->getParam("name"));
         $data = \Zend_Json::decode($this->getParam("configuration"));
-        $data = array_htmlspecialchars($data);
 
         if ($emailDoc = Document::getByPath($data["document"])) {
             $data["document"] = $emailDoc->getId();

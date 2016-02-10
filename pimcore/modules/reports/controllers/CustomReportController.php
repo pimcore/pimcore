@@ -70,7 +70,6 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
     {
         $report = CustomReport\Config::getByName($this->getParam("name"));
         $data = \Zend_Json::decode($this->getParam("configuration"));
-        $data = array_htmlspecialchars($data);
         foreach ($data as $key => $value) {
             $setter = "set" . ucfirst($key);
             if (method_exists($report, $setter)) {

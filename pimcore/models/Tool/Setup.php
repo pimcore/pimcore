@@ -26,7 +26,7 @@ class Setup extends Model\AbstractModel
     public function config($config = array())
     {
         $settings = null;
-    
+
         // check for an initial configuration template
         // used eg. by the demo installer
         $configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.template.php";
@@ -43,7 +43,7 @@ class Setup extends Model\AbstractModel
             } catch (\Exception $e) {
             }
         }
-        
+
         // set default configuration if no template is present
         if (!$settings) {
             // write configuration file
@@ -101,9 +101,6 @@ class Setup extends Model\AbstractModel
 
         $settings = array_replace_recursive($settings, $config);
 
-        // convert all special characters to their entities so the xml writer can put it into the file
-        $settings = array_htmlspecialchars($settings);
-
         // create initial /website/var folder structure
         // @TODO: should use values out of startup.php (Constants)
         $varFolders = array("areas","assets","backup","cache","classes","config","email","log","plugins","recyclebin","search","system","tmp","versions","webdav");
@@ -123,7 +120,7 @@ class Setup extends Model\AbstractModel
         $this->getDao()->contents();
         $this->createOrUpdateUser($config);
     }
-    
+
     /**
      * @param array $config
      */
@@ -133,13 +130,13 @@ class Setup extends Model\AbstractModel
             "username" => "admin",
             "password" => md5(microtime())
         );
-        
+
         $settings = array_replace_recursive($defaultConfig, $config);
-        
+
         if ($user = Model\User::getByName($settings["username"])) {
             $user->delete();
         }
-        
+
         $user = Model\User::create(array(
             "parentId" => 0,
             "username" => $settings["username"],

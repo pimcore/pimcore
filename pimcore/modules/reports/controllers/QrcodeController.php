@@ -80,7 +80,6 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
     {
         $code = Qrcode\Config::getByName($this->getParam("name"));
         $data = \Zend_Json::decode($this->getParam("configuration"));
-        $data = array_htmlspecialchars($data);
 
         foreach ($data as $key => $value) {
             $setter = "set" . ucfirst($key);
