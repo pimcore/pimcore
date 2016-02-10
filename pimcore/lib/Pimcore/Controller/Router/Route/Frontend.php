@@ -98,7 +98,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
         $params = array_merge($_GET, $_POST);
         $params = array_merge($routeingDefaults, $params);
-        
+
         // set the original path
         $originalPath = $path;
 
@@ -357,7 +357,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                 // no suitable route found
             }
         }
-        
+
         // test if there is a suitable redirect
         if (!$matchFound) {
             $this->checkForRedirect(false);
@@ -366,12 +366,12 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
         if (!$matchFound) {
             return false;
         }
-        
+
         // remove pimcore magic parameters
         unset($params["pimcore_outputfilters_disabled"]);
         unset($params["pimcore_document"]);
         unset($params["nocache"]);
-        
+
         return $params;
     }
 
@@ -512,17 +512,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                             }
                         }
 
-                        // replace escaped % signs so that they didn't have effects to vsprintf (PIMCORE-1215)
-                        $target = str_replace("\\%", "###URLENCODE_PLACEHOLDER###", $target);
-                        $url = @vsprintf($target, $matches);
-                        if (empty($url)) {
-                            // vsprintf() failed, just ose the original again
-                            $url = $target;
-                        }
-                        $url = str_replace("###URLENCODE_PLACEHOLDER###", "%", $url);
-
                         // support for pcre backreferences
-                        $url = replace_pcre_backreferences($url, $matches);
+                        $url = replace_pcre_backreferences($target, $matches);
 
                         if ($redirect->getTargetSite() && !preg_match("@http(s)?://@i", $url)) {
                             try {
