@@ -44,7 +44,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
 
             $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
             if ($newsletter->getObjectFilterSQL()) {
-                $conditions[] = $newsletter->getObjectFilterSQL();
+                $conditions[] = "(" . $newsletter->getObjectFilterSQL() . ")";
             }
             if ($newsletter->getPersonas()) {
                 $class = Model\Object\ClassDefinition::getByName($newsletter->getClass());
