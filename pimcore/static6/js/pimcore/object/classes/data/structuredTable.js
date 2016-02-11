@@ -141,7 +141,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
 
         var typesColumns = [
-            {header: t("position"), flex: 10, sortable: true, dataIndex: 'position',
+            {header: t("position"), width: 100, sortable: true, dataIndex: 'position',
                                     editor: new Ext.form.NumberField({})},
             {header: t("key"), flex: 50, sortable: true, dataIndex: 'key',
                                     editor: keyTextField},
