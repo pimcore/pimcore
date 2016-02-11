@@ -446,7 +446,7 @@ class Staticroute extends AbstractModel
         }
 
         // merge with defaults
-        $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions );
+        $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
 
         $parametersInReversePattern = array();
         $parametersGet = array();
