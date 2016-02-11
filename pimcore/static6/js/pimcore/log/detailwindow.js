@@ -111,12 +111,13 @@ pimcore.log.detailwindow = Class.create({
             text = text.substr(0, 60) + "...";
         }
 
+        var html = Ext.String.format('<a href="{0}" target="_blank">{1}</a>', this.data.fileobject, text);
         items.push({
             xtype: "displayfield",
             fieldLabel: t('log_fileobject'),
             name: "fileobject",
             readOnly: true,
-            html: Ext.String.format('<a href="{0}" target="_blank">{1}</a>', this.data.fileobject, text),
+            value: html,
             width: 540
         });
 
