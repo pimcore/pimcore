@@ -679,6 +679,9 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             // sync plugin
             $server->addPlugin(new \Sabre\DAV\Sync\Plugin());
 
+            // browser plugin
+            $server->addPlugin(new Sabre\DAV\Browser\Plugin());
+
             $server->exec();
         } catch (\Exception $e) {
             \Logger::error($e);
@@ -1052,7 +1055,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         if ($this->getParam("start")) {
             $start = $this->getParam("start");
         }
-        
+
         $condition = "path LIKE '" . ($folder->getFullPath() == "/" ? "/%'" : $folder->getFullPath() . "/%'") ." AND type != 'folder'";
 
         $list = Asset::getList(array(
