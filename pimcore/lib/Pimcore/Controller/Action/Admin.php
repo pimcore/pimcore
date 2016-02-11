@@ -121,14 +121,13 @@ abstract class Admin extends Action
             if (!$this->getUser() instanceof Model\User && !($this->getParam("module") == "admin" && $this->getParam("controller") == "login")) {
 
                 // put a detailed message into the debug.log
-                \Logger::error("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!");
-                \Logger::error(array(
+                \Logger::error("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!", [
                     "server" => $_SERVER,
                     "get" => $_GET,
                     "post" => $_POST,
                     "session" => $_SESSION,
                     "cookie" => $_COOKIE
-                ));
+                ]);
 
                 // send a auth header for the client (is covered by the ajax object in javascript)
                 $this->getResponse()->setHeader("X-Pimcore-Auth", "required");
@@ -237,21 +236,21 @@ abstract class Admin extends Action
         //add translations to registry
         $coreLanguageFile = AdminTool::getLanguageFile("en");
         $translator = new \Zend_Translate('Pimcore\Translate\Adapter\Json', $coreLanguageFile, 'en');
-        
+
         $availableLanguages = AdminTool::getLanguages();
-        
+
         foreach ($availableLanguages as $lang) {
             if ($lang != "en") {
                 $languageFile = AdminTool::getLanguageFile($lang);
                 $translator->addTranslation($languageFile, $lang);
             }
         }
-        
+
         if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = \Zend_Registry::get("Zend_Locale");
             @$translator->setLocale($locale);
         }
-        
+
         \Zend_Registry::set("Zend_Translate", $translator);
 
         if ($instance) {
