@@ -558,7 +558,7 @@ pimcore.settings.system = Class.create({
                                         {
                                             fieldLabel: t("email_smtp_ssl"),
                                             xtype: "combo",
-                                            width: 130,
+                                            width: 425,
                                             name: "email.smtp.ssl",
                                             value: this.getValue("email.smtp.ssl"),
                                             store: [
@@ -584,7 +584,7 @@ pimcore.settings.system = Class.create({
                                         {
                                             fieldLabel: t("email_smtp_auth_method"),
                                             xtype: "combo",
-                                            width: 130,
+                                            width: 425,
                                             name: "email.smtp.auth.method",
                                             value: this.getValue("email.smtp.auth.method"),
                                             store: [
