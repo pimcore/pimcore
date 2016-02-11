@@ -146,7 +146,7 @@ CREATE TABLE `documents` (
 DROP TABLE IF EXISTS `documents_elements`;
 CREATE TABLE `documents_elements` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(750) CHARACTER SET ascii DEFAULT NULL,
+  `name` varchar(750) CHARACTER SET ascii DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
   `data` longtext,
   PRIMARY KEY (`documentId`,`name`),
