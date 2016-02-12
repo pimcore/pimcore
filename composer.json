@@ -3,7 +3,9 @@
   "type": "pimcore-plugin",
   "require": {
     "pimcore/installer-plugin": ">=1"
-    , "klarna/checkout": "1.2.0"
+  },
+  "suggest": {
+    "klarna/checkout": "1.2.0"
     , "elasticsearch/elasticsearch": "1.2.2"
-  }
+  },
 }
