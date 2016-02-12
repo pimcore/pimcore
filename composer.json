@@ -1,0 +1,7 @@
+{
+  "name": "pimcore-partner/ecommerce-framework",
+  "type": "pimcore-plugin",
+  "require": {
+    "pimcore/installer-plugin": ">=1"
+  }
+}
