@@ -632,6 +632,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         var content = Ext.get(element).down(".pimcore_area_editmode");
 
+        if( content === null && element.getAttribute('data-editmmode-button-ref') !== null)
+        {
+            content = Ext.getBody().down( '#' + element.getAttribute('data-editmmode-button-ref' ) );
+        }
+
         this.editmodeWindow = new Ext.Window({
             modal: true,
             width: 550,
@@ -670,6 +675,14 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     "click": this.editmodeSave.bind(this)
                 },
                 icon: "/pimcore/static6/img/icon/tick.png"
+            },{
+                text: t("cancel"),
+                handler: function() {
+                    content.addCls("pimcore_area_editmode_hidden");
+                    element.setAttribute('data-editmmode-button-ref', content.getAttribute("id") );
+                    this.editmodeWindow.close();
+                }.bind(this),
+                icon: "/pimcore/static6/img/icon/cancel.png"
             }]
         });
         this.editmodeWindow.show();
