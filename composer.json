@@ -7,5 +7,12 @@
   "suggest": {
     "klarna/checkout": "1.2.0"
     , "elasticsearch/elasticsearch": "1.2.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\": "models/Pimcore",
+      "OnlineShop\\": "lib/OnlineShop",
+      "OnlineShop\\": "models/OnlineShop"
+    }
   }
 }
