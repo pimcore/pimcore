@@ -11,7 +11,7 @@
  */
 
 
-class OnlineShop_VoucherController extends Pimcore\Controller\Action\Admin
+class EcommerceFramework_VoucherController extends Pimcore\Controller\Action\Admin
 {
 
     /**

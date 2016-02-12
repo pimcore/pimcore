@@ -11,7 +11,7 @@
  */
 
 
-class OnlineShop_FindologicController extends Pimcore\Controller\Action\Frontend
+class EcommerceFramework_FindologicController extends Pimcore\Controller\Action\Frontend
 {
     /**
      * create xml output for findologic

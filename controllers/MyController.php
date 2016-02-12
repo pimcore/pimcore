@@ -11,7 +11,7 @@
  */
 
 
-class OnlineShop_MyController extends Website_Controller_Action {
+class EcommerceFramework_MyController extends Website_Controller_Action {
 
 
     public function testAction() {

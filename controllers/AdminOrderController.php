@@ -13,7 +13,7 @@
 
 use OnlineShop\Framework\OrderManager\Order\Listing\Filter;
 
-class OnlineShop_AdminOrderController extends Pimcore\Controller\Action\Admin
+class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\Admin
 {
     /**
      * @var OnlineShop\Framework\OrderManager\IOrderManager

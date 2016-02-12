@@ -11,7 +11,7 @@
  */
 
 
-class OnlineShop_PricingController extends Pimcore\Controller\Action\Admin
+class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Admin
 {
     /**
      * init pricing config system
