@@ -155,19 +155,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 handler: this.reload.bind(this)
             });
 
-            // extras menu
-            var extrasMenu = [];
-
-            if(extrasMenu.length > 0) {
-                this.toolbarButtons.extras = new Ext.Button({
-                    text: t('extras'),
-                    iconCls: "pimcore_icon_extras_medium",
-                    scale: "medium",
-                    hideOnClick: false,
-                    menu: extrasMenu
-                });
-            }
-
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete_medium",

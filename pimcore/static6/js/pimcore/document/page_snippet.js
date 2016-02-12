@@ -155,19 +155,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 handler: this.reload.bind(this)
             });
 
-            // extras menu
-            var extrasMenu = [];
-
-            if(extrasMenu.length > 0) {
-                this.toolbarButtons.extras = new Ext.Button({
-                    text: t('extras'),
-                    iconCls: "pimcore_icon_extras_medium",
-                    scale: "small",
-                    hideOnClick: false,
-                    menu: extrasMenu
-                });
-            }
-
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete_medium",
@@ -209,13 +196,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 iconCls: "pimcore_icon_info_large",
                 handler: this.showMetaInfo.bind(this)
             });
-
-
-
-            if(typeof this.toolbarButtons.extras != "undefined") {
-                buttons.push("-");
-                buttons.push(this.toolbarButtons.extras);
-            }
 
 
             buttons.push("-");
