@@ -3,5 +3,7 @@
   "type": "pimcore-plugin",
   "require": {
     "pimcore/installer-plugin": ">=1"
+    , "klarna/checkout": "*"
+    , "elasticsearch/elasticsearch": "*"
   }
 }
