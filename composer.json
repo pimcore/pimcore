@@ -7,5 +7,5 @@
   "suggest": {
     "klarna/checkout": "1.2.0"
     , "elasticsearch/elasticsearch": "1.2.2"
-  },
+  }
 }
