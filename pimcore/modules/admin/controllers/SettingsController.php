@@ -414,9 +414,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "hide_edit_image" => $values["assets.hide_edit_image"]
             ),
             "services" => array(
-                "translate" => array(
-                    "apikey" => $values["services.translate.apikey"]
-                ),
                 "google" => array(
                     "client_id" => $values["services.google.client_id"],
                     "email" => $values["services.google.email"],

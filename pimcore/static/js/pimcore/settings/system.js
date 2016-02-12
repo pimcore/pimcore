@@ -1132,25 +1132,6 @@ pimcore.settings.system = Class.create({
                                 name: 'services.google.browserapikey',
                                 value: this.getValue("services.google.browserapikey"),
                                 width: 650
-                            },{
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                style: "margin-top: 10px;",
-                                width: 600,
-                                value: "&nbsp;"
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: "<b>" + t('translate_api_key') + "</b>",
-                                cls: "pimcore_extra_label"
-                            },
-                            {
-                                fieldLabel: t('api_key'),
-                                name: 'services.translate.apikey',
-                                value: this.getValue("services.translate.apikey"),
-                                width: 650
                             }
                         ]
                     },

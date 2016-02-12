@@ -160,7 +160,7 @@ abstract class Document extends Admin
                 $document = $this->getLatestVersion($document);
             }
 
-            // set _fulldump otherwise the properties will be removed because of the session-serialize 
+            // set _fulldump otherwise the properties will be removed because of the session-serialize
             $document->_fulldump = true;
             $this->setValuesToDocument($document);
 
@@ -182,35 +182,6 @@ abstract class Document extends Admin
             $key = "document_" . $doc->getId();
             $session->$key = $doc;
         }, "pimcore_documents");
-    }
-
-    /**
-     * @throws \Zend_Json_Exception
-     */
-    public function translateAction()
-    {
-        $conf = Config::getSystemConfig();
-        $key  = $conf->services->translate->apikey;
-        $locale = new \Zend_Locale($this->getParam("language"));
-        $language = $locale->getLanguage();
-
-        $supportedTypes = array("input","textarea","wysiwyg");
-        $data = \Zend_Json::decode($this->getParam("data"));
-
-        foreach ($data as &$d) {
-            if (in_array($d["type"], $supportedTypes)) {
-                $response = Tool::getHttpData("https://www.googleapis.com/language/translate/v2?key=" . $key . "&q=" . urlencode($d["data"]) . "&target=" . $language);
-
-                $tData = \Zend_Json::decode($response);
-                if ($tData["data"]["translations"][0]["translatedText"]) {
-                    $d["data"] = $tData["data"]["translations"][0]["translatedText"];
-                }
-            }
-        }
-
-        $this->getRequest()->setParam("data", \Zend_Json::encode($data));
-
-        $this->saveToSessionAction();
     }
 
     /**

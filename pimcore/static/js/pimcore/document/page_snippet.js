@@ -158,36 +158,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             // extras menu
             var extrasMenu = [];
 
-            // translation menu
-            if(pimcore.settings.google_translate_api_key) {
-                var translationMenu = [];
-                for (var p=0; p<pimcore.settings.websiteLanguages.length; p++) {
-
-                    translationMenu.push({
-                        text: pimcore.available_languages[pimcore.settings.websiteLanguages[p]],
-                        handler: function (lang) {
-                            Ext.Ajax.request({
-                                url: this.urlprefix + this.getType() + '/translate/language/' + lang,
-                                method: "post",
-                                params: this.getSaveData(),
-                                success: function () {
-                                    this.edit.reload(true);
-                                }.bind(this)
-                            });
-                        }.bind(this, pimcore.settings.websiteLanguages[p])
-                    });
-                }
-
-                if(translationMenu.length > 0) {
-                    extrasMenu.push({
-                        text: t("translate_content_to"),
-                        iconCls: "pimcore_icon_translations",
-                        hideOnClick: false,
-                        menu: translationMenu
-                    });
-                }
-            }
-
             if(extrasMenu.length > 0) {
                 this.toolbarButtons.extras = new Ext.Button({
                     text: t('extras'),
