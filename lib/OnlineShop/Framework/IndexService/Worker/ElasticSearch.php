@@ -100,7 +100,6 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
      */
     public function getElasticSearchClient() {
         if(empty($this->elasticSearchClient)) {
-            require_once PIMCORE_DOCUMENT_ROOT . '/plugins/OnlineShop/vendor/autoload.php';
             $this->elasticSearchClient = new \Elasticsearch\Client($this->tenantConfig->getElasticSearchClientParams());
         }
         return $this->elasticSearchClient;

@@ -60,10 +60,6 @@ class Klarna implements IPayment
         {
             $this->endpoint = 'https://checkout.testdrive.klarna.com/checkout/orders';
         }
-
-
-        // init autoloader
-        require_once PIMCORE_DOCUMENT_ROOT . '/plugins/OnlineShop/vendor/autoload.php';
     }
 
 
