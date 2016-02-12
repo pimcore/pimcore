@@ -131,7 +131,8 @@ class File
      * @param $path
      * @param $data
      */
-    public static function putPhpFile($path, $data) {
+    public static function putPhpFile($path, $data)
+    {
         self::put($path, $data);
 
         if (function_exists("opcache_reset")) {

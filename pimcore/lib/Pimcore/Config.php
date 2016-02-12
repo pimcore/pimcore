@@ -274,9 +274,10 @@ class Config
      * @param $name
      * @return mixed
      */
-    public static function getFlag($name) {
-        if(isset($settings["flags"])) {
-            if(isset($settings["flags"][$name])) {
+    public static function getFlag($name)
+    {
+        if (isset($settings["flags"])) {
+            if (isset($settings["flags"][$name])) {
                 return $settings["flags"][$name];
             }
         }
@@ -288,11 +289,11 @@ class Config
      * @param $name
      * @param $value
      */
-    public static function setFlag($name, $value) {
-
+    public static function setFlag($name, $value)
+    {
         $settings = self::getSystemConfig()->toArray();
 
-        if(!isset($settings["flags"])) {
+        if (!isset($settings["flags"])) {
             $settings["flags"] = [];
         }
 
