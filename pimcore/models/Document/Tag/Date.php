@@ -112,7 +112,6 @@ class Date extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         if (strlen($data) > 5) {
-
             $timestamp = strtotime($data);
             $this->setDateFromTimestamp($timestamp);
         }
@@ -167,7 +166,8 @@ class Date extends Model\Document\Tag
     /**
      * @param $timestamp
      */
-    protected function setDateFromTimestamp($timestamp) {
+    protected function setDateFromTimestamp($timestamp)
+    {
         if (\Pimcore\Config::getFlag("useZendDate")) {
             $this->date = new \Pimcore\Date($timestamp);
         } else {

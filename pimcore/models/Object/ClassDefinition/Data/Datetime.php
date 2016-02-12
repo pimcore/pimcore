@@ -115,7 +115,8 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param $timestamp
      * @return \DateTime|\Pimcore\Date
      */
-    protected function getDateFromTimestamp($timestamp) {
+    protected function getDateFromTimestamp($timestamp)
+    {
         if (\Pimcore\Config::getFlag("useZendDate")) {
             $date = new \Pimcore\Date($timestamp);
         } else {
@@ -194,7 +195,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
     public function getFromCsvImport($importValue)
     {
         $timestamp = strtotime($importValue);
-        if($timestamp) {
+        if ($timestamp) {
             return $this->getDateFromTimestamp($timestamp);
         }
 
