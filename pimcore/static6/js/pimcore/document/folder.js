@@ -121,14 +121,14 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
             this.toolbarButtons.publish = new Ext.Button({
                 text: t('save'),
-                iconCls: "pimcore_icon_publish_medium",
+                iconCls: "pimcore_icon_publish",
                 scale: "small",
                 handler: this.save.bind(this)
             });
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete_folder'),
-                iconCls: "pimcore_icon_delete_medium",
+                iconCls: "pimcore_icon_delete",
                 scale: "small",
                 handler: this.remove.bind(this)
             });
@@ -146,29 +146,32 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
             buttons.push("-");
 
-            this.toolbarButtons.reload = new Ext.Button({
+            var moreButtons = [];
+
+            moreButtons.push({
                 text: t('reload'),
-                iconCls: "pimcore_icon_reload_medium",
-                scale: "small",
+                iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
             });
-            buttons.push(this.toolbarButtons.reload);
 
-            buttons.push({
+            moreButtons.push({
                 text: t('show_in_tree'),
-                iconCls: "pimcore_icon_download_showintree",
-                scale: "small",
+                iconCls: "pimcore_icon_show_in_tree",
                 handler: this.selectInTree.bind(this)
             });
 
-
-            buttons.push({
+            moreButtons.push({
                 text: t("show_metainfo"),
-                scale: "small",
-                iconCls: "pimcore_icon_info_large",
+                iconCls: "pimcore_icon_info",
                 handler: this.showMetaInfo.bind(this)
             });
 
+            buttons.push({
+                text: t("more"),
+                iconCls: "pimcore_icon_more",
+                scale: "small",
+                menu: moreButtons
+            });
 
             buttons.push("-");
             buttons.push({

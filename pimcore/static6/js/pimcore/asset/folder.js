@@ -206,7 +206,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
             this.toolbarButtons.publish = new Ext.Button({
                 text: t("save"),
-                iconCls: "pimcore_icon_publish_medium",
+                iconCls: "pimcore_icon_publish",
                 scale: "small",
                 handler: this.save.bind(this)
             });
@@ -217,7 +217,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete_folder'),
-                iconCls: "pimcore_icon_delete_medium",
+                iconCls: "pimcore_icon_delete",
                 scale: "small",
                 handler: this.remove.bind(this)
             });
@@ -225,40 +225,43 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 buttons.push(this.toolbarButtons.remove);
             }
 
-            this.toolbarButtons.download = new Ext.Button({
-                text: t("download_as_zip"),
-                iconCls: "pimcore_icon_download_zip_medium",
-                scale: "small",
-                handler: this.downloadZip.bind(this)
-            });
-            buttons.push(this.toolbarButtons.download);
-
             buttons.push("-");
 
-            this.toolbarButtons.reload = new Ext.Button({
+            var moreButtons = [];
+
+            moreButtons.push({
+                text: t("download_as_zip"),
+                iconCls: "pimcore_icon_download_zip",
+                handler: this.downloadZip.bind(this)
+            });
+
+            moreButtons.push({
                 text: t('reload'),
-                iconCls: "pimcore_icon_reload_medium",
-                scale: "small",
+                iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
             });
-            buttons.push(this.toolbarButtons.reload);
 
-            buttons.push({
+            moreButtons.push({
                 text: t('show_in_tree'),
-                iconCls: "pimcore_icon_download_showintree",
-                scale: "small",
+                iconCls: "pimcore_icon_show_in_tree",
                 handler: this.selectInTree.bind(this)
             });
 
             var user = pimcore.globalmanager.get("user");
             if (user.admin) {
-                buttons.push({
+                moreButtons.push({
                     text: t("show_metainfo"),
-                    scale: "small",
-                    iconCls: "pimcore_icon_info_large",
+                    iconCls: "pimcore_icon_info",
                     handler: this.showMetaInfo.bind(this)
                 });
             }
+
+            buttons.push({
+                text: t("more"),
+                iconCls: "pimcore_icon_more",
+                scale: "small",
+                menu: moreButtons
+            });
 
             buttons.push("-");
             buttons.push({

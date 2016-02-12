@@ -1,5 +1,9 @@
 [
     {
+        "term": "more",
+        "definition": "More"
+    },
+    {
         "term": "brightness",
         "definition": "Brightness"
     },

@@ -307,7 +307,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             this.toolbarButtons.save = new Ext.SplitButton({
                 text: t('save'),
-                iconCls: "pimcore_icon_save_medium",
+                iconCls: "pimcore_icon_save",
                 scale: "small",
                 handler: this.unpublish.bind(this),
                 menu:[{
@@ -320,7 +320,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             this.toolbarButtons.publish = new Ext.SplitButton({
                 text: t('save_and_publish'),
-                iconCls: "pimcore_icon_publish_medium",
+                iconCls: "pimcore_icon_publish",
                 scale: "small",
                 handler: this.publish.bind(this),
                 menu: [{
@@ -341,44 +341,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 ]
             });
 
-
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
-                iconCls: "pimcore_icon_unpublish_medium",
+                iconCls: "pimcore_icon_unpublish",
                 scale: "small",
                 handler: this.unpublish.bind(this)
             });
 
-            var reloadConfig = {
-                text: t('reload'),
-                iconCls: "pimcore_icon_reload_medium",
-                scale: "small",
-                handler: this.reload.bind(this, this.data.currentLayoutId)
-            }
-
-            if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
-                var menu = [];
-                for (var i = 0; i < this.data.validLayouts.length; i++) {
-                    var menuLabel = ts(this.data.validLayouts[i].name);
-                    if (Number(this.data.currentLayoutId) == this.data.validLayouts[i].id) {
-                        menuLabel = "<b>" + menuLabel + "</b>";
-                    }
-                    menu.push(
-                        {
-                            text: menuLabel,
-                            iconCls: "pimcore_icon_reload",
-                            handler: this.reload.bind(this, this.data.validLayouts[i].id)
-                        });
-                    reloadConfig.menu = menu;
-                }
-                this.toolbarButtons.reload = new Ext.SplitButton(reloadConfig);
-            } else {
-                this.toolbarButtons.reload = new Ext.Button(reloadConfig);
-            }
-
             this.toolbarButtons.remove = new Ext.Button({
                 text: t("delete"),
-                iconCls: "pimcore_icon_delete_medium",
+                iconCls: "pimcore_icon_delete",
                 scale: "small",
                 handler: this.remove.bind(this)
             });
@@ -399,25 +371,52 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             buttons.push("-");
 
-            buttons.push(this.toolbarButtons.reload);
+            var moreButtons = [];
+
+            var reloadConfig = {
+                text: t('reload'),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this, this.data.currentLayoutId)
+            }
+
+            if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
+                var menu = [];
+                for (var i = 0; i < this.data.validLayouts.length; i++) {
+                    var menuLabel = ts(this.data.validLayouts[i].name);
+                    if (Number(this.data.currentLayoutId) == this.data.validLayouts[i].id) {
+                        menuLabel = "<b>" + menuLabel + "</b>";
+                    }
+                    menu.push({
+                        text: menuLabel,
+                        iconCls: "pimcore_icon_reload",
+                        handler: this.reload.bind(this, this.data.validLayouts[i].id)
+                    });
+                }
+                reloadConfig.menu = menu;
+            }
+
+            moreButtons.push(reloadConfig);
 
             if(this.data.general.o_type != "variant" || this.data.general.showVariants) {
-                buttons.push({
+                moreButtons.push({
                     text: t('show_in_tree'),
-                    iconCls: "pimcore_icon_download_showintree",
-                    scale: "small",
+                    iconCls: "pimcore_icon_show_in_tree",
                     handler: this.selectInTree.bind(this, this.data.general.o_type)
                 });
             }
 
-
-            buttons.push({
+            moreButtons.push({
                 text: t("show_metainfo"),
-                scale: "small",
-                iconCls: "pimcore_icon_info_large",
+                iconCls: "pimcore_icon_info",
                 handler: this.showMetaInfo.bind(this)
             });
 
+            buttons.push({
+                text: t("more"),
+                iconCls: "pimcore_icon_more",
+                scale: "small",
+                menu: moreButtons
+            });
 
             buttons.push("-");
             buttons.push({

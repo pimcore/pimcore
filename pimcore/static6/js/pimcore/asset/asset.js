@@ -149,7 +149,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             if (this.isAllowed("delete") && !this.data.locked) {
                 this.toolbarButtons.remove = new Ext.Button({
                     text: t('delete'),
-                    iconCls: "pimcore_icon_delete_medium",
+                    iconCls: "pimcore_icon_delete",
                     scale: "small",
                     handler: this.remove.bind(this)
                 });
@@ -161,55 +161,49 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             if (this.isAllowed("publish")) {
                 this.toolbarButtons.upload = new Ext.Button({
                     text: t("upload"),
-                    iconCls: "pimcore_icon_upload_medium",
+                    iconCls: "pimcore_icon_upload",
                     scale: "small",
                     handler: this.upload.bind(this)
                 });
                 buttons.push(this.toolbarButtons.upload);
             }
 
-            buttons.push("-");
-
-            buttons.push({
-                text: t('reload'),
-                iconCls: "pimcore_icon_reload_medium",
-                scale: "small",
-                handler: this.reload.bind(this)
-            });
-
-            buttons.push({
-                text: t('show_in_tree'),
-                iconCls: "pimcore_icon_download_showintree",
-                scale: "small",
-                handler: this.selectInTree.bind(this)
-            });
-
-
-            buttons.push({
-                text: t("show_metainfo"),
-                scale: "small",
-                iconCls: "pimcore_icon_info_large",
-                handler: this.showMetaInfo.bind(this)
-            });
-
-
-            buttons.push("-");
-
             buttons.push({
                 text: t("download"),
-                iconCls: "pimcore_icon_download_medium",
+                iconCls: "pimcore_icon_download",
                 scale: "small",
                 handler: function () {
                     pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
                 }.bind(this)
             });
 
+            buttons.push("-");
+
+            var moreButtons = [];
+
+            moreButtons.push({
+                text: t('reload'),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            });
+
+            moreButtons.push({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_show_in_tree",
+                handler: this.selectInTree.bind(this)
+            });
+
+            moreButtons.push({
+                text: t("show_metainfo"),
+                iconCls: "pimcore_icon_info",
+                handler: this.showMetaInfo.bind(this)
+            });
+
             // only for videos and images
             if (this.isAllowed("publish") && in_array(this.data.type,["image","video"])) {
-                buttons.push({
+                moreButtons.push({
                     text: t("clear_thumbnails"),
                     iconCls: "pimcore_icon_menu_clear_thumbnails",
-                    scale: "small",
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/asset/clear-thumbnail",
@@ -220,6 +214,13 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     }.bind(this)
                 });
             }
+
+            buttons.push({
+                text: t("more"),
+                iconCls: "pimcore_icon_more",
+                scale: "small",
+                menu: moreButtons
+            });
 
             buttons.push("-");
             buttons.push({
