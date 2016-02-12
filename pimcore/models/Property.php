@@ -76,8 +76,6 @@ class Property extends AbstractModel
             if ($el) {
                 $this->data = $el->getId();
             }
-        } elseif ($this->type == "date") {
-            $this->data = new \Zend_Date($data);
         } elseif ($this->type == "bool") {
             $this->data = false;
             if (!empty($data)) {
@@ -278,14 +276,14 @@ class Property extends AbstractModel
         $this->inheritable = (bool) $inheritable;
         return $this;
     }
-    
+
     /**
      * @return array
      */
     public function resolveDependencies()
     {
         $dependencies = array();
-        
+
         if ($this->getData() instanceof ElementInterface) {
             $elementType = Element\Service::getElementType($this->getData());
             $key = $elementType . "_" . $this->getData()->getId();
@@ -294,7 +292,7 @@ class Property extends AbstractModel
                 "type" => $elementType
             );
         }
-        
+
         return $dependencies;
     }
 

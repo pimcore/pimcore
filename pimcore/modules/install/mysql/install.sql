@@ -390,7 +390,7 @@ CREATE TABLE `properties` (
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
   `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `name` varchar(255) NOT NULL DEFAULT '',
-  `type` enum('text','date','document','asset','object','bool','select') DEFAULT NULL,
+  `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
