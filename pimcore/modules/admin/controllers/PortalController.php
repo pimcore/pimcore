@@ -328,11 +328,12 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             $a = $db->fetchOne("SELECT COUNT(*) AS count FROM assets WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
             $d = $db->fetchOne("SELECT COUNT(*) AS count FROM documents WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
 
-            $date = new \Zend_Date($start);
+            $date = new \DateTime();
+            $date->setTimestamp($start);
 
             $data[] = array(
                 "timestamp" => $start,
-                "datetext" => $date->get(\Zend_Date::DATE_LONG),
+                "datetext" => $date->format("Y-m-d"),
                 "objects" => (int) $o,
                 "documents" => (int) $d,
                 "assets" => (int) $a

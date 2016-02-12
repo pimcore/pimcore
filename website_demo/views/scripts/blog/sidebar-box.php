@@ -15,7 +15,7 @@
                 <a href="<?= $detailLink ?>" class="list-group-item">
                     <h5 class="list-group-item-heading"><?= $article->getTitle(); ?></h5>
                     <p class="list-group-item-text">
-                        <i class="glyphicon glyphicon-calendar"></i> <?= $article->getDate()->get(Zend_Date::DATETIME_MEDIUM); ?>
+                        <i class="glyphicon glyphicon-calendar"></i> <?= $article->getDate()->format("d/m/Y"); ?>
                     </p>
                 </a>
             <?php } ?>

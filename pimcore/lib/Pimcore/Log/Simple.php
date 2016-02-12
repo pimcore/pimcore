@@ -36,8 +36,10 @@ class Simple
                 File::put($log, "");
             }
 
+            $date = new \DateTime("now");
+
             $f = fopen($log, "a+");
-            fwrite($f, \Zend_Date::now()->getIso() . " : " . $message . "\n");
+            fwrite($f, $date->format(\DateTime::ISO8601) . " : " . $message . "\n");
             fclose($f);
         }
     }

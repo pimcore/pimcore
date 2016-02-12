@@ -77,8 +77,8 @@ abstract class Mapper
      */
     public static function map($object, $apiclass, $type, $options = null)
     {
-        if ($object instanceof \Zend_Date) {
-            $object=$object->toString();
+        if ($object instanceof \Zend_Date || $object instanceof \DateTime) {
+            $object = $object->getTimestamp();
         } elseif (is_object($object)) {
             if (Tool::classExists($apiclass)) {
                 $new = new $apiclass();

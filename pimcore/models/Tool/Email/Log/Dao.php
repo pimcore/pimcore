@@ -152,9 +152,9 @@ class Dao extends Model\Dao\AbstractDao
         if (is_string($value) || is_int($value) || is_null($value)) {
             $class->data = array('type' => 'simple',
                 'value' => $value);
-        } elseif ($value instanceof \Zend_Date) {
+        } elseif ($value instanceof \DateTime) {
             $class->data = array('type' => 'simple',
-                'value' => $value->get(\Zend_Date::DATETIME));
+                'value' => $value->format("Y-m-d H:i"));
         } elseif (is_object($value) && method_exists($value, 'getId')) {
             $class->data = array('type' => 'object',
                 'objectId' => $value->getId(),

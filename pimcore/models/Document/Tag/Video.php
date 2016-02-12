@@ -617,14 +617,15 @@ class Video extends Model\Document\Tag
 
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">' . "\n";
 
-            $uploadDate = new \Zend_Date($video->getCreationDate());
+            $uploadDate = new \DateTime();
+            $uploadDate->setTimestamp($video->getCreationDate());
 
             $jsonLd = [
                 "@context" => "http://schema.org",
                 "@type" => "VideoObject",
                 "name" => $this->getTitle(),
                 "description" => $this->getDescription(),
-                "uploadDate" => $uploadDate->get(\Zend_Date::ISO_8601),
+                "uploadDate" => $uploadDate->format(\DateTime::ISO8601),
                 "duration" => $durationString,
                 "contentUrl" => Tool::getHostUrl() . $urls["mp4"],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",

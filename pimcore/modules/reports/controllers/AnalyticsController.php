@@ -401,8 +401,9 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     protected function formatDimension($type, $value)
     {
         if (strpos($type, "date") !== false) {
-            $date = new \Zend_Date(strtotime($value));
-            return $date->get(\Zend_Date::DATE_MEDIUM);
+            $date = new \DateTime();
+            $date->setTimestamp(strtotime($value));
+            return $date->format("Y-m-d");
         }
 
         return $value;

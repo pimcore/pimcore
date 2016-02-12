@@ -197,22 +197,23 @@ class Cache extends \Zend_Controller_Plugin_Abstract
         if (is_array($cacheItem) && !empty($cacheItem)) {
             header("X-Pimcore-Output-Cache-Tag: " . $cacheKey, true, 200);
             header("X-Pimcore-Output-Cache-Date: " . $cacheItem["date"]);
-            
+
             foreach ($cacheItem["rawHeaders"] as $header) {
                 header($header);
             }
-    
+
             foreach ($cacheItem["headers"] as $header) {
                 header($header['name'] . ': ' . $header['value'], $header['replace']);
             }
-            
+
             echo $cacheItem["content"];
             exit;
         } else {
             // set headers to tell the client to not cache the contents
             // this can/will be overwritten in $this->dispatchLoopShutdown() if the cache is enabled
-            $date = new \Zend_Date(1);
-            $this->getResponse()->setHeader("Expires", $date->get(\Zend_Date::RFC_1123), true);
+            $date = new \DateTime();
+            $date->setTimestamp(1);
+            $this->getResponse()->setHeader("Expires", $date->format(\DateTime::RFC1123), true);
             $this->getResponse()->setHeader("Cache-Control", "max-age=0, no-cache", true);
         }
     }
@@ -237,14 +238,17 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                     $this->getResponse()->setHeader("Cache-Control", "public, max-age=" . $this->lifetime, true);
 
                     // add expire header
-                    $this->getResponse()->setHeader("Expires", \Zend_Date::now()->add($this->lifetime)->get(\Zend_Date::RFC_1123), true);
+                    $date = new \DateTime("now");
+                    $date->add(new \DateInterval("PT" . $this->lifetime . "S"));
+                    $this->getResponse()->setHeader("Expires", $date->format(\DateTime::RFC1123), true);
                 }
 
+                $now = new \DateTime("now");
                 $cacheItem = array(
                     "headers" => $this->getResponse()->getHeaders(),
                     "rawHeaders" => $this->getResponse()->getRawHeaders(),
                     "content" => $this->getResponse()->getBody(),
-                    "date" => \Zend_Date::now()->getIso()
+                    "date" => $now->format(\DateTime::ISO8601)
                 );
 
                 $cacheKey = $this->defaultCacheKey;

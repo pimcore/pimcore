@@ -62,13 +62,13 @@ class Date extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
-     * @param \Zend_Date $data
+     * @param \Zend_Date|\DateTime $data
      * @param null|Object\AbstractObject $object
      * @return integer
      */
     public function getDataForResource($data, $object = null)
     {
-        if ($data instanceof \Zend_Date) {
+        if ($data) {
             return $data->getTimestamp();
         }
     }
@@ -76,51 +76,67 @@ class Date extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param integer $data
-     * @return \Zend_Date
+     * @return \Zend_Date|\DateTime
      */
     public function getDataFromResource($data)
     {
         if ($data) {
-            return new \Pimcore\Date($data);
+            return $this->getDateFromTimestamp($data);
         }
+        return null;
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
-     * @param \Zend_Date $data
+     * @param \Zend_Date|\DateTime $data
      * @param null|Object\AbstractObject $object
      * @return integer
      */
     public function getDataForQueryResource($data, $object = null)
     {
-        if ($data instanceof \Zend_Date) {
+        if ($data) {
             return $data->getTimestamp();
         }
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param \Zend_Date $data
+     * @param \Zend_Date\DateTime $data
      * @param null|Object\AbstractObject $object
      * @return string
      */
     public function getDataForEditmode($data, $object = null)
     {
-        if ($data instanceof \Zend_Date) {
+        if ($data) {
             return $data->getTimestamp();
         }
+    }
+
+    /**
+     * @param $timestamp
+     * @return \DateTime|\Pimcore\Date
+     */
+    protected function getDateFromTimestamp($timestamp) {
+        if (\Pimcore\Config::getFlag("useZendDate")) {
+            $date = new \Pimcore\Date($timestamp);
+        } else {
+            $date = new \DateTime();
+            $date->setTimestamp($timestamp);
+        }
+
+        return $date;
     }
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param integer $data
      * @param null|Object\AbstractObject $object
-     * @return \Zend_Date
+     * @return \Zend_Date|\DateTime
      */
     public function getDataFromEditmode($data, $object = null)
     {
         if ($data) {
-            return new \Pimcore\Date($data / 1000);
+            return $this->getDateFromTimestamp($data / 1000);
         }
         return false;
     }
@@ -132,7 +148,7 @@ class Date extends Model\Object\ClassDefinition\Data
      */
     public function getDataForGrid($data, $object = null)
     {
-        if ($data instanceof \Zend_Date) {
+        if ($data) {
             return $data->getTimestamp();
         } else {
             return null;
@@ -141,13 +157,15 @@ class Date extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
-     * @param \Zend_Date $data
+     * @param \Zend_Date|\DateTime $data
      * @return string
      */
     public function getVersionPreview($data)
     {
         if ($data instanceof \Zend_Date) {
             return $data->get(\Zend_Date::DATE_MEDIUM);
+        } elseif ($data instanceof \DateTime) {
+            return $data->format("Y-m-d");
         }
     }
 
@@ -192,10 +210,11 @@ class Date extends Model\Object\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object);
         if ($data instanceof \Zend_Date) {
-            return $data->toString();
-        } else {
-            return null;
+            return $data->toString("Y-m-d", "php");
+        } elseif ($data instanceof \DateTime) {
+            return $data->format("Y-m-d");
         }
+        return null;
     }
 
     /**
@@ -204,27 +223,22 @@ class Date extends Model\Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue)
     {
-        try {
-            $value = new \Pimcore\Date(strtotime($importValue));
-            return $value;
-        } catch (\Exception $e) {
-            return null;
+        $timestamp = strtotime($importValue);
+        if($timestamp) {
+            return $this->getDateFromTimestamp($timestamp);
         }
+
+        return null;
     }
 
     /**
      * converts data to be exposed via webservices
-     * @param string $object
+     * @param Object\Concrete $object
      * @return mixed
      */
     public function getForWebserviceExport($object)
     {
-        $data = $this->getDataFromObjectParam($object);
-        if ($data instanceof \Zend_Date) {
-            return $data->toString();
-        } else {
-            return null;
-        }
+        return $this->getForCsvExport($object);
     }
 
     /**
@@ -240,7 +254,7 @@ class Date extends Model\Object\ClassDefinition\Data
         if (empty($value)) {
             return null;
         } elseif ($timestamp !== false) {
-            return new \Pimcore\Date($timestamp);
+            return $this->getDateFromTimestamp($timestamp);
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
@@ -273,7 +287,7 @@ class Date extends Model\Object\ClassDefinition\Data
     {
         $thedata = $data[0]["data"];
         if ($thedata) {
-            return new \Pimcore\Date($thedata);
+            return $this->getDateFromTimestamp($thedata);
         } else {
             return null;
         }
@@ -289,7 +303,7 @@ class Date extends Model\Object\ClassDefinition\Data
         $result = array();
 
         $thedata = null;
-        if ($data instanceof \Zend_Date) {
+        if ($data) {
             $thedata = $data->getTimestamp();
         };
         $diffdata = array();

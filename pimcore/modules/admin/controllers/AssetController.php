@@ -995,8 +995,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $this->getResponse()->clearAllHeaders();
 
         $lifetime = 300;
+        $date = new \DateTime("now");
+        $date->add(new \DateInterval("PT" . $lifetime . "S"));
+
         header("Cache-Control: public, max-age=" . $lifetime, true);
-        header("Expires: " . \Zend_Date::now()->add($lifetime)->get(\Zend_Date::RFC_1123), true);
+        header("Expires: " . $date->format(\DateTime::RFC1123), true);
         header("Pragma: ");
     }
 

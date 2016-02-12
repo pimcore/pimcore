@@ -32,7 +32,7 @@ class NewsletterController extends Action
                 $newsletter->sendConfirmationMail($user, Model\Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), array("additional" => "parameters"));
 
                 // do some other stuff with the new user
-                $user->setDateRegister(\Zend_Date::now());
+                $user->setDateRegister(new \DateTime());
                 $user->save();
 
                 $this->view->success = true;

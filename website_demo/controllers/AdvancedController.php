@@ -147,12 +147,12 @@ class AdvancedController extends Action
                 $person->setFirstname($this->getParam("firstname"));
                 $person->setLastname($this->getParam("lastname"));
                 $person->setEmail($this->getParam("email"));
-                $person->setDateRegister(\Zend_Date::now());
+                $person->setDateRegister(new \DateTime());
                 $person->save();
             }
 
             // now we create the inquiry object and link the person in it
-            $inquiryFilename = \Pimcore\File::getValidFilename(Zend_Date::now()->get(Zend_Date::DATETIME_MEDIUM) . "~" . $person->getEmail());
+            $inquiryFilename = \Pimcore\File::getValidFilename(date("Y-m-d") . "~" . $person->getEmail());
             $inquiry = new Object\Inquiry();
             $inquiry->setParent(Object::getByPath("/inquiries")); // we store all objects in /inquiries
             $inquiry->setKey($inquiryFilename); // the filename of the object
@@ -161,7 +161,7 @@ class AdvancedController extends Action
             // now we fill in the data
             $inquiry->setMessage($this->getParam("message"));
             $inquiry->setPerson($person);
-            $inquiry->setDate(\Zend_Date::now());
+            $inquiry->setDate(new \DateTime());
             $inquiry->setTerms((bool) $this->getParam("terms"));
             $inquiry->save();
         } elseif ($this->getRequest()->isPost()) {

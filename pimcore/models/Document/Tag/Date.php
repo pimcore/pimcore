@@ -23,7 +23,7 @@ class Date extends Model\Document\Tag
     /**
      * Contains the date
      *
-     * @var \Zend_Date
+     * @var \Zend_Date|\DateTime
      */
     public $date;
 
@@ -53,11 +53,11 @@ class Date extends Model\Document\Tag
      */
     public function getDataEditmode()
     {
-        if ($this->date instanceof \Zend_Date) {
-            return $this->date->get(\Zend_Date::TIMESTAMP);
+        if ($this->date) {
+            return $this->date->getTimestamp();
         }
-        $date = new \Zend_Date();
-        $date->get(\Zend_Date::TIMESTAMP);
+
+        return null;
     }
 
     /**
@@ -65,67 +65,67 @@ class Date extends Model\Document\Tag
      */
     public function frontend()
     {
-        if (!isset($this->options["output"]) || !$this->options["output"]) {
-            $this->options["output"] = \Zend_Date::DATE_MEDIUM;
+        if (!isset($this->options["format"]) || !$this->options["format"]) {
+            $this->options["format"] = \DateTime::ISO8601;
         }
 
         if ($this->date instanceof \Zend_Date) {
             return $this->date->toString($this->options["format"], "php");
+        } elseif ($this->date instanceof \DateTime) {
+            return $this->date->format($this->options["format"]);
         }
     }
-    
+
     /**
      * @see Document\Tag::getDataForResource
-     * @return void
+     * @return int|null
      */
     public function getDataForResource()
     {
         $this->checkValidity();
-        if ($this->date instanceof \Zend_Date) {
-            return $this->date->get(\Zend_Date::TIMESTAMP);
+        if ($this->date) {
+            return $this->date->getTimestamp();
         }
-        return;
+
+        return null;
     }
-    
+
     /**
      * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromResource($data)
     {
         if ($data) {
-            $this->date = new \Pimcore\Date($data);
+            $this->setDateFromTimestamp($data);
         }
+
         return $this;
     }
 
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
         if (strlen($data) > 5) {
-            // ext 2.0 returns the selected date in UTC
-            date_default_timezone_set("UTC");
 
-            $this->date = new \Pimcore\Date($data, \Zend_Date::ISO_8601);
-            $this->date->setTimezone(Config::getSystemConfig()->general->timezone);
-
-            // set default timezone
-            date_default_timezone_set(Config::getSystemConfig()->general->timezone);
+            $timestamp = strtotime($data);
+            $this->setDateFromTimestamp($timestamp);
         }
+
         return $this;
     }
-    
+
     /**
      * @return boolean
      */
     public function isEmpty()
     {
-        if ($this->date instanceof \Zend_Date) {
+        if ($this->date) {
             return false;
         }
         return true;
@@ -141,9 +141,9 @@ class Date extends Model\Document\Tag
     public function getFromWebserviceImport($wsElement, $idMapper = null)
     {
         if (!$wsElement or empty($wsElement->value)) {
-            $this->date=null;
+            $this->date = null;
         } elseif (is_numeric($wsElement->value)) {
-            $this->date = new \Pimcore\Date($wsElement->value);
+            $this->setDateFromTimestamp($wsElement->value);
         } else {
             throw new \Exception("cannot get document tag date from WS - invalid value [  ".$wsElement->value." ]");
         }
@@ -161,6 +161,18 @@ class Date extends Model\Document\Tag
             return $this->date->getTimestamp();
         } else {
             return null;
+        }
+    }
+
+    /**
+     * @param $timestamp
+     */
+    protected function setDateFromTimestamp($timestamp) {
+        if (\Pimcore\Config::getFlag("useZendDate")) {
+            $this->date = new \Pimcore\Date($timestamp);
+        } else {
+            $this->date = new \DateTime();
+            $this->date->setTimestamp($timestamp);
         }
     }
 }

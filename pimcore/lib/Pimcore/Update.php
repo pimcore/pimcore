@@ -4,7 +4,7 @@
  *
  * This source file is subject to the GNU General Public License version 3 (GPLv3)
  * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code. 
+ * files that are distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
@@ -38,7 +38,7 @@ class Update
         if (self::$dryRun) {
             return true;
         }
-        
+
         // check permissions
         $files = rscandir(PIMCORE_PATH . "/");
 
@@ -47,7 +47,7 @@ class Update
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -63,7 +63,7 @@ class Update
         }
 
         self::cleanup();
- 
+
         if (PIMCORE_DEVMODE) {
             $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);
         } else {
@@ -77,20 +77,21 @@ class Update
         if ($xml instanceof \SimpleXMLElement) {
             if (isset($xml->revision)) {
                 foreach ($xml->revision as $r) {
-                    $date = new \Zend_Date($r->date);
+                    $date = new \DateTime();
+                    $date->setTimestamp((int) $r->date);
 
                     if (strlen(strval($r->version)) > 0) {
                         $releases[] = array(
                             "id" => strval($r->id),
                             "date" => strval($r->date),
                             "version" => strval($r->version),
-                            "text" => strval($r->id) . " - " . $date->get(\Zend_Date::DATETIME_MEDIUM)
+                            "text" => strval($r->id) . " - " . $date->format("Y-m-d H:i")
                         );
                     } else {
                         $revisions[] = array(
                             "id" => strval($r->id),
                             "date" => strval($r->date),
-                            "text" => strval($r->id) . " - " . $date->get(\Zend_Date::DATETIME_MEDIUM)
+                            "text" => strval($r->id) . " - " . $date->format("Y-m-d H:i")
                         );
                     }
                 }
@@ -115,14 +116,14 @@ class Update
         if (!$currentRev) {
             $currentRev = Version::$revision;
         }
-        
+
         $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
-        
+
         $jobs = array();
         $updateScripts = array();
         $revisions = array();
-        
+
         if (isset($xml->download)) {
             foreach ($xml->download as $download) {
                 if ($download->type == "script") {
@@ -137,8 +138,8 @@ class Update
                 }
             }
         }
-        
-        
+
+
         if (isset($xml->download)) {
             foreach ($xml->download as $download) {
                 $jobs["parallel"][] = array(
@@ -146,37 +147,37 @@ class Update
                     "revision" => (string) $download->revision,
                     "url" => (string) $download->url
                 );
-                
+
                 $revisions[] = (int) $download->revision;
             }
         }
-        
+
         $revisions = array_unique($revisions);
-        
+
         foreach ($revisions as $revision) {
             if ($updateScripts[$revision]["preupdate"]) {
                 $jobs["procedural"][] = $updateScripts[$revision]["preupdate"];
             }
-            
+
             $jobs["procedural"][] = array(
                 "type" => "files",
                 "revision" => $revision
             );
-            
-            
+
+
             if ($updateScripts[$revision]["postupdate"]) {
                 $jobs["procedural"][] = $updateScripts[$revision]["postupdate"];
             }
         }
- 
+
         $jobs["procedural"][] = array(
             "type" => "clearcache"
         );
- 
+
         $jobs["procedural"][] = array(
             "type" => "cleanup"
         );
-        
+
         return $jobs;
     }
 
@@ -188,29 +189,29 @@ class Update
     public static function downloadData($revision, $url)
     {
         $db = Db::get();
-        
+
         $db->query("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
           `id` int(11) NULL DEFAULT NULL,
           `revision` int(11) NULL DEFAULT NULL,
           `path` varchar(255) NULL DEFAULT NULL,
           `action` varchar(50) NULL DEFAULT NULL
         );");
-        
+
         $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision;
         if (!is_dir($downloadDir)) {
             File::mkdir($downloadDir);
         }
-        
+
         $filesDir = $downloadDir . "/files";
         if (!is_dir($filesDir)) {
             File::mkdir($filesDir);
         }
-        
+
         $scriptsDir = $downloadDir . "/scripts";
         if (!is_dir($scriptsDir)) {
             File::mkdir($scriptsDir);
         }
-        
+
         $xml = Tool::getHttpData($url);
         if ($xml) {
             $parserOptions = LIBXML_NOCDATA;
@@ -219,14 +220,14 @@ class Update
             }
 
             $updateFiles = simplexml_load_string($xml, null, $parserOptions);
-            
+
             foreach ($updateFiles->file as $file) {
                 if ($file->type == "file") {
                     if ($file->action == "update" || $file->action == "add") {
                         $newFile = $filesDir . "/" . $file->id . "-" . $file->revision;
                         File::put($newFile, base64_decode((string) $file->content));
                     }
-                    
+
                     $db->insert(self::$tmpTable, array(
                         "id" => $file->id,
                         "revision" => $revision,
@@ -248,7 +249,7 @@ class Update
     {
         $db = Db::get();
         $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", $revision);
-        
+
         foreach ($files as $file) {
             if ($file["action"] == "update" || $file["action"] == "add") {
                 if (!is_dir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]))) {
@@ -267,7 +268,7 @@ class Update
                 }
 
                 $destFile = PIMCORE_DOCUMENT_ROOT . $file["path"];
-                
+
                 if (!self::$dryRun) {
                     copy($srcFile, $destFile);
                 }
@@ -340,11 +341,11 @@ class Update
      */
     public static function cleanup()
     {
-        
+
         // remove database tmp table
         $db = Db::get();
         $db->query("DROP TABLE IF EXISTS `" . self::$tmpTable . "`");
-        
+
         //delete tmp data
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update", true);
     }

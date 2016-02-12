@@ -21,7 +21,7 @@
             <h4 class="media-heading">
                 <a href="<?= $detailLink; ?>"><?= $news->getTitle(); ?></a>
                 <br />
-                <small><i class="glyphicon glyphicon-calendar"></i> <?= $news->getDate()->get(Zend_Date::DATETIME_MEDIUM); ?></small>
+                <small><i class="glyphicon glyphicon-calendar"></i> <?= $news->getDate()->format("d/m/Y"); ?></small>
             </h4>
             <?= $news->getShortText(); ?>
         </div>

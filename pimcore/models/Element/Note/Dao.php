@@ -58,7 +58,9 @@ class Dao extends Model\Dao\AbstractDao
                 }
             } elseif ($type == "date") {
                 if ($data > 0) {
-                    $data = new \Zend_Date($data);
+                    $date = new \DateTime();
+                    $date->setTimestamp($data);
+                    $data = $date;
                 }
             } elseif ($type == "bool") {
                 $data = (bool) $data;
@@ -115,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = $data->getId();
                 }
             } elseif ($type == "date") {
-                if ($data instanceof \Zend_Date) {
+                if ($data instanceof \DateTime) {
                     $data = $data->getTimestamp();
                 }
             } elseif ($type == "bool") {

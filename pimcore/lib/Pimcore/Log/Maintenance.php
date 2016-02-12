@@ -167,7 +167,7 @@ class Maintenance
                     $mail->setIgnoreDebugMode(true);
                     $mail->setBodyHtml($html);
                     $mail->addTo($receivers);
-                    $mail->setSubject('Error Log ' . \Pimcore_Tool::getHostUrl());
+                    $mail->setSubject('Error Log ' . \Pimcore\Tool::getHostUrl());
                     $mail->send();
                 }
             }
@@ -184,7 +184,8 @@ class Maintenance
 
         $db = \Pimcore\Db::get();
 
-        $tablename =  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . "_" . \Zend_Date::now()->get(\Zend_Date::MONTH) . '_' .\Zend_Date::now()->get(\Zend_Date::YEAR);
+        $date = new \DateTime("now");
+        $tablename =  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . "_" . $date->format("m") . '_' . $date->format("Y");
 
         if ($config->archive_alternative_database) {
             $tablename = $config->archive_alternative_database . '.' . $tablename;

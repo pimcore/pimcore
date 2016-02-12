@@ -18,7 +18,7 @@ use Pimcore\Model;
 
 class Admin_ElementController extends \Pimcore\Controller\Action\Admin
 {
-    
+
     public function lockElementAction()
     {
         Element\Editlock::lock($this->getParam("id"), $this->getParam("type"));
@@ -154,7 +154,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
                             );
                         }
                     } elseif ($type == "date") {
-                        if ($d["data"] instanceof \Zend_Date) {
+                        if (is_object($d["data"])) {
                             $data = $d["data"]->getTimestamp();
                         }
                     }

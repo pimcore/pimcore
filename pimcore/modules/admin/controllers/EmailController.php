@@ -502,8 +502,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                 "id" => (int) $mail->key()
             );
 
-            $date = new \Zend_Date($message->date);
-            $mailData["date"] = $date->get(\Zend_Date::DATETIME_MEDIUM);
+            $date = new \DateTime();
+            $date->setTimestamp($message->date);
+            $mailData["date"] = $date->format("Y-m-d");
 
             $mails[] = $mailData;
 
