@@ -112,9 +112,8 @@ pimcore.settings.website = Class.create({
                 header: t("name"),
                 dataIndex: 'name',
                 width: 200,
-                editor: new Ext.form.TextField({
-                    allowBlank: false
-                }),
+                editable: true,
+                getEditor: this.getCellEditor.bind(this),
                 sortable: true
             },
             {
@@ -231,7 +230,9 @@ pimcore.settings.website = Class.create({
                 beforeedit: function(editor, context, eOpts) {
                     //need to clear cached editors of cell-editing editor in order to
                     //enable different editors per row
-                    editor.editors.each(Ext.destroy, Ext);
+                    editor.editors.each(function() {
+                        Ext.destroy, Ext
+                    });
                     editor.editors.clear();
                 }
             }
