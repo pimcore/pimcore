@@ -293,16 +293,22 @@ class Test_Data
     public static function fillDate($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $object->$setter($date = new Pimcore_Date("2000-12-24", "yyyy-MM-dd"));
+        $date = new \DateTime();
+        $date->setDate(2000, 12, 24);
+
+        $object->$setter($date);
     }
 
     public static function assertDate($object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
         $value = $object->$getter();
-        $expected = new Pimcore_Date("2000-12-24", "yyyy-MM-dd");
-        if ($value != $expected) {
-            print("   expected " . $expected . " but was " . $value);
+
+        $expected = new \DateTime();
+        $expected->setDate(2000, 12, 24);
+
+        if ($value->format("Y-m-d") != $expected->format("Y-m-d")) {
+            print("   expected " . $expected->format("Y-m-d") . " but was " . $value->format("Y-m-d"));
             return false;
         }
         return true;
