@@ -179,7 +179,7 @@ pimcore.document.edit = Class.create({
 
     setLayoutFrameDimensions: function (width, height) {
         Ext.get(this.iframeName).setStyle({
-            height: (height-3) + "px"
+            height: (height-7) + "px"
         });
     },
 
