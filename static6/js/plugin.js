@@ -97,7 +97,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                 iconCls: "plugin_onlineshop_clear_config_cache",
                 handler: function () {
                     Ext.Ajax.request({
-                        url: '/plugin/OnlineShop/admin/clear-cache'
+                        url: '/plugin/EcommerceFramework/admin/clear-cache'
                     });
                 }
             }
