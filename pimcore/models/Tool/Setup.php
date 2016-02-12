@@ -109,7 +109,7 @@ class Setup extends Model\AbstractModel
         }
 
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
-        File::put($configFile, to_php_data_file_format($settings));
+        File::putPhpFile($configFile, to_php_data_file_format($settings));
     }
 
     /**

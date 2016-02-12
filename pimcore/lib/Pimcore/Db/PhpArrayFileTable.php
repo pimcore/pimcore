@@ -187,10 +187,6 @@ class PhpArrayFileTable
     protected function save()
     {
         $contents = to_php_data_file_format($this->data);
-        File::put($this->filePath, $contents);
-
-        if (function_exists("opcache_reset")) {
-            opcache_reset();
-        }
+        File::putPhpFile($this->filePath, $contents);
     }
 }

@@ -269,4 +269,36 @@ class Config
     {
         \Zend_Registry::set("pimcore_config_model_classmapping", $config);
     }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public static function getFlag($name) {
+        if(isset($settings["flags"])) {
+            if(isset($settings["flags"][$name])) {
+                return $settings["flags"][$name];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public static function setFlag($name, $value) {
+
+        $settings = self::getSystemConfig()->toArray();
+
+        if(!isset($settings["flags"])) {
+            $settings["flags"] = [];
+        }
+
+        $settings["flags"][$name] = $value;
+
+        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        File::putPhpFile($configFile, to_php_data_file_format($settings));
+    }
 }

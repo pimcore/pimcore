@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -88,7 +88,7 @@ class File
                 }
             }
         }
-        
+
         // add to store
         self::$isIncludeableCache[$filename] = $isIncludeAble;
 
@@ -125,6 +125,18 @@ class File
         $return = file_put_contents($path, $data);
         @chmod($path, self::$defaultMode);
         return $return;
+    }
+
+    /**
+     * @param $path
+     * @param $data
+     */
+    public static function putPhpFile($path, $data) {
+        self::put($path, $data);
+
+        if (function_exists("opcache_reset")) {
+            opcache_reset();
+        }
     }
 
     /**

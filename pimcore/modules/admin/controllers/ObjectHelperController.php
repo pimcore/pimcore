@@ -345,7 +345,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         $configFile = \Pimcore\Config::locateConfigFile("customviews.php");
-        File::put($configFile, to_php_data_file_format($settings));
+        File::putPhpFile($configFile, to_php_data_file_format($settings));
 
 
         $this->_helper->json(array("success" => $success));

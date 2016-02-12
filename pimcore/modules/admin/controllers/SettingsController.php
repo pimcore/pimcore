@@ -314,8 +314,8 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $values = \Zend_Json::decode($this->getParam("data"));
 
         // email settings
-        $oldConfig = Config::getSystemConfig();
-        $oldValues = $oldConfig->toArray();
+        $existingConfig = Config::getSystemConfig();
+        $existingValues = $existingConfig->toArray();
 
         // fallback languages
         $fallbackLanguages = array();
@@ -333,8 +333,8 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
 
         // delete views if fallback languages has changed or the language is no more available
-        $fallbackLanguagesChanged = array_diff_assoc($oldValues['general']['fallbackLanguages'], $fallbackLanguages);
-        $dbName = $oldConfig->get("database")->toArray()["params"]["dbname"];
+        $fallbackLanguagesChanged = array_diff_assoc($existingValues['general']['fallbackLanguages'], $fallbackLanguages);
+        $dbName = $existingValues["database"]["params"]["dbname"];
         foreach ($fallbackLanguagesChanged as $language => $dummy) {
             $this->deleteViews($language, $dbName);
         }
@@ -374,7 +374,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "instanceIdentifier" => $values["general.instanceIdentifier"],
                 "show_cookie_notice" => $values["general.show_cookie_notice"],
             ),
-            "database" => $oldValues["database"], // db cannot be changed here
             "documents" => array(
                 "versions" => array(
                     "days" => $values["documents.versions.days"],
@@ -458,11 +457,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         // email & newsletter
         foreach (array("email", "newsletter") as $type) {
-            $smtpPassword = $values[$type . ".smtp.auth.password"];
-            if (empty($smtpPassword)) {
-                $smtpPassword = $oldValues[$type]['smtp']['auth']['password'];
-            }
-
             $settings[$type] = array(
                 "sender" => array(
                     "name" => $values[$type . ".sender.name"],
@@ -479,10 +473,14 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     "auth" => array(
                         "method" => $values[$type . ".smtp.auth.method"],
                         "username" => $values[$type . ".smtp.auth.username"],
-                        "password" => $smtpPassword
                     )
                 )
             );
+
+            $smtpPassword = $values[$type . ".smtp.auth.password"];
+            if (!empty($smtpPassword)) {
+                $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
+            }
 
             if (array_key_exists($type . ".debug.emailAddresses", $values)) {
                 $settings[$type]["debug"] = array("emailaddresses" => $values[$type . ".debug.emailAddresses"]);
@@ -506,8 +504,10 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $settings["newsletter"]["usespecific"] = $values["newsletter.usespecific"];
 
 
+        $settings = array_merge($existingValues, $settings);
+
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
-        File::put($configFile, to_php_data_file_format($settings));
+        File::putPhpFile($configFile, to_php_data_file_format($settings));
 
         $this->_helper->json(array("success" => true));
     }
@@ -1414,11 +1414,11 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
         return $resultItem;
     }
-    
+
     public function getAvailableAlgorithmsAction()
     {
         $options = array();
-        
+
         $algorithms = hash_algos();
         foreach ($algorithms as $algorithm) {
             $options[] = array(

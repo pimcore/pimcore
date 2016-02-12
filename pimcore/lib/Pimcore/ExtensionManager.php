@@ -51,7 +51,7 @@ class ExtensionManager
         self::$config = $config;
 
         $file = \Pimcore\Config::locateConfigFile("extensions.php");
-        File::put($file, to_php_data_file_format(self::$config->toArray()));
+        File::putPhpFile($file, to_php_data_file_format(self::$config->toArray()));
     }
 
     /**

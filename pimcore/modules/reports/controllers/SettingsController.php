@@ -14,7 +14,7 @@ use Pimcore\File;
 
 class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports
 {
-    
+
     public function getAction()
     {
         $this->checkPermission("system_settings");
@@ -28,7 +28,7 @@ class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Report
 
         $this->_helper->json($response);
     }
-    
+
     public function saveAction()
     {
         $this->checkPermission("system_settings");
@@ -36,7 +36,7 @@ class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Report
         $values = \Zend_Json::decode($this->getParam("data"));
 
         $configFile = \Pimcore\Config::locateConfigFile("reports.php");
-        File::put($configFile, to_php_data_file_format($values));
+        File::putPhpFile($configFile, to_php_data_file_format($values));
 
         $this->_helper->json(array("success" => true));
     }
