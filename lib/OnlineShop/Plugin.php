@@ -14,7 +14,7 @@ namespace OnlineShop;
 
 class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
 
-    public static $configFile = "/OnlineShop/config/plugin_config.xml";
+    public static $configFile = "/EcommerceFramework/config/plugin_config.xml";
 
     public function init() {
         parent::init();
