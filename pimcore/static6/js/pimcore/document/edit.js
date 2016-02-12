@@ -52,9 +52,9 @@ pimcore.document.edit = Class.create({
                 });
             };
 
-            var tbar = [{
-                text: t("refresh"),
+            var lbar = [{
                 iconCls: "pimcore_icon_reload",
+                tooltip: t("refresh"),
                 handler: this.reload.bind(this)
             },"-",{
                 tooltip: t("highlight_editable_elements"),
@@ -122,7 +122,7 @@ pimcore.document.edit = Class.create({
                     }
                 });
 
-                tbar.push("->", this.persona, {
+                lbar.push("->", this.persona, {
                     tooltip: t("clear_content_of_selected_persona"),
                     iconCls: "pimcore_icon_cleanup",
                     handler: cleanupFunction.bind(this)
@@ -139,7 +139,7 @@ pimcore.document.edit = Class.create({
                 forceLayout: true,
                 hideMode: "offsets",
                 iconCls: "pimcore_icon_tab_edit",
-                tbar: tbar
+                lbar: lbar
             };
 
             if(typeof additionalConfig == "object") {

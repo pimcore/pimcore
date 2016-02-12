@@ -162,6 +162,10 @@ body > .x-mask {
     padding: 7px 0 6px 8px;
 }
 
+.x-toolbar-default.x-toolbar-default-vertical {
+    padding: 6px 8px 0;
+}
+
 .x-btn-default-small, .x-btn-default-medium, .x-btn-default-large {
     border-color: #000;
 }
