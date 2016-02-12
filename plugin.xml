@@ -7,6 +7,19 @@
 
         <pluginIframeSrc>/plugin/EcommerceFramework/admin/settings</pluginIframeSrc>
 
+        <!-- include paths relative to plugin-directory -->
+        <pluginIncludePaths>
+            <path>/EcommerceFramework/lib</path>
+            <path>/EcommerceFramework/models</path>
+            <path>/EcommerceFramework/controllers</path>
+            <path>/EcommerceFramework/vendor</path>
+        </pluginIncludePaths>
+
+        <!-- namespaces to register with autoloader-->
+        <pluginNamespaces>
+            <namespace>OnlineShop</namespace>
+        </pluginNamespaces>
+
         <pluginJsPaths>
             <path>/EcommerceFramework/static/js/indexfieldselectionfield/data/indexFieldSelectionField.js</path>
             <path>/EcommerceFramework/static/js/indexfieldselectionfield/tags/indexFieldSelectionField.js</path>
@@ -36,8 +49,8 @@
             <path>/plugin/EcommerceFramework/config/js-config</path>
         </pluginJsPaths-extjs6>
         <pluginCssPaths>
-           <path>/EcommerceFramework/static/css/backend.css</path>
-           <path>/EcommerceFramework/static/css/pricing.css</path>
+            <path>/EcommerceFramework/static/css/backend.css</path>
+            <path>/EcommerceFramework/static/css/pricing.css</path>
         </pluginCssPaths>
         <pluginCssPaths-extjs6>
             <path>/EcommerceFramework/static6/css/backend.css</path>

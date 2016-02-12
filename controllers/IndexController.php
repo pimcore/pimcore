@@ -11,7 +11,7 @@
  */
 
 
-class OnlineShop_IndexController extends Pimcore\Controller\Action\Admin {
+class EcommerceFramework_IndexController extends Pimcore\Controller\Action\Admin {
 
     public function getFilterGroupsAction() {
         $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();

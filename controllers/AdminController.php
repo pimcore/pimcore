@@ -11,7 +11,7 @@
  */
 
 
-class OnlineShop_AdminController extends \Pimcore\Controller\Action\Admin {
+class EcommerceFramework_AdminController extends \Pimcore\Controller\Action\Admin {
 
     public function settingsAction() {
         if($this->getRequest()->isPost()) {

@@ -11,7 +11,7 @@
  */
 
 
-class OnlineShop_ConfigController extends Pimcore\Controller\Action\Admin
+class EcommerceFramework_ConfigController extends Pimcore\Controller\Action\Admin
 {
 
     public function jsConfigAction() {
@@ -22,7 +22,7 @@ class OnlineShop_ConfigController extends Pimcore\Controller\Action\Admin
 
         $params = [];
 
-        if (is_array($config->onlineshop->pimcore)) {
+        if ($config->onlineshop->pimcore instanceof \Zend_Config) {
             foreach ($config->onlineshop->pimcore as $confName => $conf) {
                 $entries = [];
                 foreach($conf as $entryName => $entry) {
