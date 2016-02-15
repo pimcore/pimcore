@@ -194,6 +194,40 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 handler: this.showMetaInfo.bind(this)
             });
 
+            var translationsMenu = [];
+            if(this.data["translations"]) {
+                Ext.iterate(this.data["translations"], function (language, documentId, myself) {
+                    translationsMenu.push({
+                        text: pimcore.available_languages[language],
+                        iconCls: "pimcore_icon_language_" + language,
+                        handler: function () {
+                            pimcore.helpers.openElement(documentId, "document");
+                        }
+                    });
+                });
+            }
+
+            moreButtons.push({
+                text: t("translation"),
+                iconCls: "pimcore_icon_translations",
+                menu: [{
+                    text: t("new_document"),
+                    menu: [{
+                        text: t("using_inheritance"),
+                        handler: this.createTranslation.bind(this, true)
+                    },{
+                        text: t("empty_document"),
+                        handler: this.createTranslation.bind(this, false)
+                    }]
+                }, {
+                    text: t("link_existing_document"),
+                    handler: this.linkTranslation.bind(this)
+                }, {
+                    text: t("open_translation"),
+                    menu: translationsMenu,
+                    hidden: !translationsMenu.length
+                }]
+            });
 
             buttons.push({
                 text: t("more"),
@@ -344,5 +378,233 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?document_" + this.data.id + "_" + this.data.type
             }
         ], "document");
+    },
+
+    linkTranslation: function () {
+        var win = new Ext.Window({
+            width: 600,
+            bodyStyle: "padding:10px",
+            items: [{
+                xtype: "textfield",
+                name: "translation",
+                itemId: "translation",
+                width: "100%",
+                cls: "input_drop_target",
+                fieldLabel: t("translation"),
+                listeners: {
+                        "render": function (el) {
+                            new Ext.dd.DropZone(el.getEl(), {
+                                reference: this,
+                                ddGroup: "element",
+                                getTargetFromEvent: function(e) {
+                                    return this.getEl();
+                                }.bind(el),
+
+                                onNodeOver : function(target, dd, e, data) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                },
+
+                                onNodeDrop : function (target, dd, e, data) {
+                                    data = data.records[0].data;
+                                    if (data.elementType == "document") {
+                                        this.setValue(data.path);
+                                        return true;
+                                    }
+                                    return false;
+                                }.bind(el)
+                            });
+                        }
+                    }
+            }],
+            buttons: [{
+                text: t("cancel"),
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    win.close();
+                }
+            }, {
+                text: t("apply"),
+                iconCls: "pimcore_icon_apply",
+                handler: function () {
+
+                    Ext.Ajax.request({
+                        url: "/admin/document/translation-add",
+                        params: {
+                            sourceId: this.id,
+                            targetPath: win.getComponent("translation").getValue()
+                        },
+                        success: function (response) {
+                            this.reload();
+                        }.bind(this)
+                    });
+
+                    win.close();
+                }.bind(this)
+            }]
+        });
+
+        win.show();
+    },
+
+    createTranslation: function (inheritance) {
+
+        var languagestore = [];
+        var websiteLanguages = pimcore.settings.websiteLanguages;
+        var selectContent = "";
+        for (var i=0; i<websiteLanguages.length; i++) {
+            if(this.data.properties["language"]["data"] != websiteLanguages[i]) {
+                selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
+                languagestore.push([websiteLanguages[i], selectContent]);
+            }
+        }
+
+        var pageForm = new Ext.form.FormPanel({
+            border: false,
+            defaults: {
+                labelWidth: 170
+            },
+            items: [{
+                xtype: "combo",
+                name: "language",
+                store: languagestore,
+                editable: false,
+                triggerAction: 'all',
+                mode: "local",
+                fieldLabel: t('language'),
+                listeners: {
+                    select: function (el) {
+                        pageForm.getComponent("parent").disable();
+                        Ext.Ajax.request({
+                            url: "/admin/document/translation-determine-parent",
+                            params: {
+                                language: el.getValue(),
+                                id: this.id
+                            },
+                            success: function (response) {
+                                var data = Ext.decode(response.responseText);
+                                if(data["success"]) {
+                                    pageForm.getComponent("parent").setValue(data["targetPath"]);
+                                }
+                                pageForm.getComponent("parent").enable();
+                            }
+                        });
+                    }.bind(this)
+                }
+            }, {
+                xtype: "textfield",
+                name: "parent",
+                itemId: "parent",
+                width: "100%",
+                cls: "input_drop_target",
+                fieldLabel: t("parent_document"),
+                listeners: {
+                    "render": function (el) {
+                        new Ext.dd.DropZone(el.getEl(), {
+                            reference: this,
+                            ddGroup: "element",
+                            getTargetFromEvent: function(e) {
+                                return this.getEl();
+                            }.bind(el),
+
+                            onNodeOver : function(target, dd, e, data) {
+                                return Ext.dd.DropZone.prototype.dropAllowed;
+                            },
+
+                            onNodeDrop : function (target, dd, e, data) {
+                                data = data.records[0].data;
+                                if (data.elementType == "document") {
+                                    this.setValue(data.path);
+                                    return true;
+                                }
+                                return false;
+                            }.bind(el)
+                        });
+                    }
+                }
+            },{
+                xtype: "textfield",
+                width: "100%",
+                fieldLabel: t('key'),
+                itemId: "key",
+                name: 'key',
+                enableKeyEvents: true,
+                listeners: {
+                    keyup: function (el) {
+                        pageForm.getComponent("name").setValue(el.getValue());
+                    }
+                }
+            },{
+                xtype: "textfield",
+                itemId: "name",
+                fieldLabel: t('navigation'),
+                name: 'name',
+                width: "100%"
+            },{
+                xtype: "textfield",
+                itemId: "title",
+                fieldLabel: t('title'),
+                name: 'title',
+                width: "100%"
+            }]
+        });
+
+        var win = new Ext.Window({
+            width: 600,
+            bodyStyle: "padding:10px",
+            items: [pageForm],
+            buttons: [{
+                text: t("cancel"),
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    win.close();
+                }
+            }, {
+                text: t("apply"),
+                iconCls: "pimcore_icon_apply",
+                handler: function () {
+
+                    var params = pageForm.getForm().getFieldValues();
+                    win.disable();
+
+                    Ext.Ajax.request({
+                        url: "/admin/element/get-subtype",
+                        params: {
+                            id: pageForm.getComponent("parent").getValue(),
+                            type: "document"
+                        },
+                        success: function (response) {
+                            var res = Ext.decode(response.responseText);
+                            if(res.success) {
+                                if(params["key"].length >= 1) {
+                                    params["parentId"] = res["id"];
+                                    params["type"] = this.getType();
+                                    params["translationsBaseDocument"] = this.id;
+                                    if(inheritance) {
+                                        params["inheritanceSource"] = this.id;
+                                    }
+
+                                    Ext.Ajax.request({
+                                        url: "/admin/document/add/",
+                                        params: params,
+                                        success: function (response) {
+                                            response = Ext.decode(response.responseText);
+                                            if (response && response.success) {
+                                                pimcore.helpers.openDocument(response.id, response.type);
+                                            }
+                                        }
+                                    });
+                                }
+
+                                win.close();
+                            } else {
+                                Ext.MessageBox.alert(t("error"), t("element_not_found"));
+                            }
+                        }.bind(this)
+                    });
+                }.bind(this)
+            }]
+        });
+
+        win.show();
     }
 });

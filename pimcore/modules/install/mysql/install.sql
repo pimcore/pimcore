@@ -217,6 +217,17 @@ CREATE TABLE `documents_snippet` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `documents_translations`;
+CREATE TABLE `documents_translations` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `sourceId` int(11) unsigned NOT NULL DEFAULT '0',
+  `language` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`sourceId`,`language`),
+  KEY `id` (`id`),
+  KEY `sourceId` (`sourceId`),
+  KEY `language` (`language`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `edit_lock`;
 CREATE TABLE `edit_lock` (
   `id` int(11) NOT NULL auto_increment,

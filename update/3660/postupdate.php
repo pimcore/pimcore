@@ -1,7 +1,17 @@
 <?php
 
 // get db connection
-$db = Pimcore_Resource::get();
+$db = Pimcore\Db::get();
+
+$tables = $db->query("CREATE TABLE `documents_translations` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `sourceId` int(11) unsigned NOT NULL DEFAULT '0',
+  `language` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`sourceId`,`language`),
+  KEY `id` (`id`),
+  KEY `sourceId` (`sourceId`),
+  KEY `language` (`language`)
+) DEFAULT CHARSET=utf8;");
 
 $tables = $db->fetchAll("SHOW TABLES LIKE 'object_classificationstore_groups_%'");
 

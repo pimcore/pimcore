@@ -11,6 +11,7 @@
  */
 
 use Pimcore\Tool\Session;
+use Pimcore\File;
 use Pimcore\Tool;
 use Pimcore\Config;
 use Pimcore\Model\Document;
@@ -121,7 +122,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     "published" => false
                 );
 
-                $createValues["key"] = $this->getParam("key");
+                $createValues["key"] = File::getValidFilename($this->getParam("key"));
 
                 // check for a docType
                 $docType = Document\DocType::getById(intval($this->getParam("docTypeId")));
@@ -130,9 +131,19 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     $createValues["controller"] = $docType->getController();
                     $createValues["action"] = $docType->getAction();
                     $createValues["module"] = $docType->getModule();
+                } elseif ($this->getParam("translationsBaseDocument")) {
+                    $translationsBaseDocument = Document::getById($this->getParam("translationsBaseDocument"));
+                    $createValues["template"] = $translationsBaseDocument->getTemplate();
+                    $createValues["controller"] = $translationsBaseDocument->getController();
+                    $createValues["action"] = $translationsBaseDocument->getAction();
+                    $createValues["module"] = $translationsBaseDocument->getModule();
                 } elseif ($this->getParam("type") == "page" || $this->getParam("type") == "snippet" || $this->getParam("type") == "email") {
                     $createValues["controller"] = Config::getSystemConfig()->documents->default_controller;
                     $createValues["action"] = Config::getSystemConfig()->documents->default_action;
+                }
+
+                if($this->getParam("inheritanceSource")) {
+                    $createValues["contentMasterDocumentId"] = $this->getParam("inheritanceSource");
                 }
 
                 switch ($this->getParam("type")) {
@@ -205,6 +216,13 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         if ($success) {
+
+            if ($this->getParam("translationsBaseDocument")) {
+                $translationsBaseDocument = Document::getById($this->getParam("translationsBaseDocument"));
+                $service = new Document\Service();
+                $service->addTranslation($translationsBaseDocument, $document);
+            }
+
             $this->_helper->json(array(
                 "success" => $success,
                 "id" => $document->getId(),
@@ -1115,5 +1133,45 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $this->_helper->json(array("success" => true));
+    }
+
+
+    public function translationDetermineParentAction()
+    {
+        $success = false;
+        $targetPath = null;
+
+        $document = Document::getById($this->getParam("id"));
+        if($document) {
+            $service = new Document\Service;
+            $translations = $service->getTranslations($document->getParent());
+            if(isset($translations[$this->getParam("language")])) {
+                $targetDocument = Document::getById($translations[$this->getParam("language")]);
+                $targetPath = $targetDocument->getFullPath();
+                $success = true;
+            }
+        }
+
+
+        $this->_helper->json([
+            "success" => $success,
+            "targetPath" => $targetPath
+        ]);
+    }
+
+    public function translationAddAction()
+    {
+
+        $sourceDocument = Document::getById($this->getParam("sourceId"));
+        $targetDocument = Document::getByPath($this->getParam("targetPath"));
+
+        if($sourceDocument && $targetDocument) {
+            $service = new Document\Service;
+            $service->addTranslation($sourceDocument, $targetDocument);
+        }
+
+        $this->_helper->json([
+            "success" => true
+        ]);
     }
 }

@@ -49,6 +49,12 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         $redirectList->setCondition("target = ?", $page->getId());
         $page->redirects = $redirectList->load();
 
+        // translations
+        $service = new Document\Service;
+        $translations = $service->getTranslations($page);
+        unset($translations[$page->getProperty("language")]);
+        $page->translations = $translations;
+
         // unset useless data
         $page->setElements(null);
         $page->childs = null;

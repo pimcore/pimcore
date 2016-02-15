@@ -45,4 +45,69 @@ class Dao extends Model\Dao\AbstractDao
             LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
             WHERE documents_hardlink.sourceId = ? AND documents.path LIKE ?", array($document->getId(), $site->getRootPath() . "/%"));
     }
+
+    /**
+     * @param Document $document
+     * @return int
+     */
+    public function getTranslationSourceId(Document $document)
+    {
+
+        $sourceId = $this->db->fetchOne("SELECT sourceId FROM documents_translations WHERE id = ?", $document->getId());
+        if(!$sourceId) {
+            $sourceId = $document->getId();
+        }
+
+        return $sourceId;
+    }
+
+    /**
+     * @param Document $document
+     * @return array
+     */
+    public function getTranslations(Document $document)
+    {
+        $sourceId = $this->getTranslationSourceId($document);
+
+        $data = $this->db->fetchAll("SELECT id,language FROM documents_translations WHERE sourceId = ?", [$sourceId]);
+
+        $translations = [];
+        foreach($data as $translation) {
+            $translations[$translation["language"]] = $translation["id"];
+        }
+
+        // add language from source document
+        $sourceDocument = Document::getById($sourceId);
+        $translations[$sourceDocument->getProperty("language")] = $sourceDocument->getId();
+
+        return $translations;
+    }
+
+    /**
+     * @param Document $document
+     * @param Document $translation
+     * @param $language
+     */
+    public function addTranslation(Document $document, Document $translation, $language = null)
+    {
+        $sourceId = $this->getTranslationSourceId($document);
+
+        if(!$language) {
+            $language = $translation->getProperty("language");
+        }
+
+        $this->db->insertOrUpdate("documents_translations", [
+            "id" => $translation->getId(),
+            "sourceId" => $sourceId,
+            "language" => $language
+        ]);
+    }
+
+    /**
+     * @param Document $document
+     */
+    public function removeTranslation(Document $document)
+    {
+        $this->db->delete("documents_translations", "id = " . $document->getId());
+    }
 }

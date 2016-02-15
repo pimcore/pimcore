@@ -4,6 +4,26 @@
         "definition": "More"
     },
     {
+        "term": "open_translation",
+        "definition": "Open Translation"
+    },
+    {
+        "term": "link_existing_document",
+        "definition": "Link existing Document"
+    },
+    {
+        "term": "using_inheritance",
+        "definition": "Using Inheritance"
+    },
+    {
+        "term": "empty_document",
+        "definition": "Empty Document"
+    },
+    {
+        "term": "new_document",
+        "definition": "New Document"
+    },
+    {
         "term": "brightness",
         "definition": "Brightness"
     },
