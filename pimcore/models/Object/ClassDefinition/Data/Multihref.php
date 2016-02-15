@@ -369,11 +369,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element["type"] == "object") {
-                    $e = Object::getById($element["id"]);
+                    $e = Object::getById($element["elementId"]);
                 } elseif ($element["type"] == "asset") {
-                    $e = Asset::getById($element["id"]);
+                    $e = Asset::getById($element["elementId"]);
                 } elseif ($element["type"] == "document") {
-                    $e = Document::getById($element["id"]);
+                    $e = Document::getById($element["elementId"]);
                 }
 
                 if ($e instanceof Element\ElementInterface) {

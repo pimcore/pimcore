@@ -37,7 +37,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 }.bind(this)
             },
             fields: [
-                "id",
+                "elementId",
                 "path",
                 "type",
                 "subtype"
@@ -47,26 +47,26 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function(field) {
         return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
-                renderer: function (key, value, metaData, record) {
-                                this.applyPermissionStyle(key, value, metaData, record);
+            renderer: function (key, value, metaData, record) {
+                this.applyPermissionStyle(key, value, metaData, record);
 
-                                if(record.data.inheritedFields[key]
-                                                        && record.data.inheritedFields[key].inherited == true) {
-                                    metaData.tdCls += " grid_value_inherited";
-                                }
+                if(record.data.inheritedFields[key]
+                    && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
 
-                                if (value && value.length > 0) {
+                if (value && value.length > 0) {
 
-                                    // only show 10 relations in the grid
-                                    var maxAmount = 10;
-                                    if(value.length > maxAmount) {
-                                        value.splice(maxAmount, (value.length - maxAmount) );
-                                        value.push("...");
-                                    }
+                    // only show 10 relations in the grid
+                    var maxAmount = 10;
+                    if(value.length > maxAmount) {
+                        value.splice(maxAmount, (value.length - maxAmount) );
+                        value.push("...");
+                    }
 
-                                    return value.join("<br />");
-                                }
-                            }.bind(this, field.key)};
+                    return value.join("<br />");
+                }
+            }.bind(this, field.key)};
     },
 
     getLayoutEdit: function() {
@@ -134,7 +134,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     sortable: false
                 },
                 items: [
-                    {header: 'ID', dataIndex: 'id', width: 50},
+                    {header: 'ID', dataIndex: 'elementId', width: 50},
                     {header: t("path"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
@@ -184,7 +184,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                                 if (data.data.type == "object" && data.data.subtype != "folder") {
                                     subtype = "object";
                                 }
-                                pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
+                                pimcore.helpers.openElement(data.data.elementId, data.data.type, subtype);
                             }.bind(this)
                         }]
                     },
@@ -257,7 +257,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                                 }
                             } else {
                                 var initData = {
-                                    id: data.id,
+                                    elementId: data.id,
                                     path: data.path,
                                     type: data.elementType
                                 };
@@ -276,7 +276,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                                 }
 
                                 // check for existing element
-                                if (!this.elementAlreadyExists(initData.id, initData.type)) {
+
+                                if (!this.elementAlreadyExists(initData.elementId, initData.type)) {
                                     this.store.add(initData);
                                     return true;
                                 }
@@ -305,11 +306,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
 
     getLayoutShow: function () {
-
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             columns: [
-                {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
+                {header: 'ID', dataIndex: 'elementId', width: 50, sortable: false},
                 {header: t("path"), dataIndex: 'path', width: 200, sortable: false},
                 {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {header: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
@@ -325,7 +325,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                             if (data.data.type == "object" && data.data.subtype != "folder") {
                                 subtype = "object";
                             }
-                            pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
+                            pimcore.helpers.openElement(data.data.elementId, data.data.type, subtype);
                         }.bind(this)
                     }]
                 }
@@ -348,7 +348,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"]) {
                     this.store.add({
-                        id: data["id"],
+                        elementId: data["id"],
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
@@ -382,7 +382,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 if (data.data.type == "object" && data.data.subtype != "folder") {
                     subtype = "object";
                 }
-                pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
+
+                pimcore.helpers.openElement(data.data.elementId, data.data.type, subtype);
             }.bind(this, data)
         }));
 
@@ -457,7 +458,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         // check for existing element
         var result = this.store.queryBy(function (id, type, record, rid) {
-            if (record.data.id == id && record.data.type == type) {
+            if (record.data.elementId == id && record.data.type == type) {
                 return true;
             }
             return false;
@@ -472,6 +473,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     addDataFromSelector: function (items) {
         if (items.length > 0) {
             for (var i = 0; i < items.length; i++) {
+
                 if (!this.elementAlreadyExists(items[i].id, items[i].type)) {
 
                     var subtype = items[i].subtype;
@@ -484,7 +486,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     }
 
                     this.store.add({
-                        id: items[i].id,
+                        elementId: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].type,
                         subtype: subtype
@@ -607,7 +609,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         if(!this.isRendered()) {
             return false;
         }
-        
+
         return this.dataChanged;
-    } 
+    }
 });
