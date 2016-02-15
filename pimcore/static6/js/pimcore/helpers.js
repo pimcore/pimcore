@@ -1296,7 +1296,7 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
     }
 };
 
-pimcore.helpers.selectElementInTree = function (type, id) {
+pimcore.helpers.selectElementInTree = function (type, id, callback) {
     try {
         Ext.Ajax.request({
             url: "/admin/element/get-id-path/",
@@ -1309,7 +1309,7 @@ pimcore.helpers.selectElementInTree = function (type, id) {
                 if(res.success) {
                     Ext.getCmp("pimcore_panel_tree_" + type + "s").expand();
                     var tree = pimcore.globalmanager.get("layout_" + type + "_tree");
-                    pimcore.helpers.selectPathInTree(tree.tree, res.idPath);
+                    pimcore.helpers.selectPathInTree(tree.tree, res.idPath, callback);
                 }
             }
         });
