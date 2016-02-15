@@ -20,6 +20,12 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
                         var tree = pimcore.globalmanager.get("layout_" + elementType + "_tree");
                         element.data.typePath = res.typePath;
                         element.data.idPath = res.idPath;
+
+                        if (elementType == "object" &&  typeof element.data.general == "undefined") {
+                            element.data.general = {
+                                fullpath: element.data.fullpath
+                            };
+                        }
                         var callback = function() {
                             if (button) {
                                 button.enable();

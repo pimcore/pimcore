@@ -97,11 +97,12 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                         pimcore.helpers.openAsset(data[1], data[0]);
                     },
                     "afterrender": function(el) {
-                        el.on("itemcontextmenu",  function(view, record, item, index, e, eOpts ) {
-                            e.stopEvent();
-                            this.showContextMenu(item, event);
-                        }.bind(this), null, {preventDefault: true});
-
+                        el.on("itemcontextmenu",
+                            function(view, record, item, index, e, eOpts ) {
+                                e.stopEvent();
+                                this.showContextMenu(item, event, record);
+                            }.bind(this),
+                        null, {preventDefault: true});
                     }.bind(this)
                 }
             }),
@@ -148,9 +149,8 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         return this.tabbar;
     },
 
-    showContextMenu: function(node, event) {
-        var data = node.getAttribute("id");
-        var idPath = node.getAttribute("data-idpath");
+    showContextMenu: function(domEl, event, node) {
+        var data = domEl.getAttribute("id");
         var splitted = data.split("_");
         var type = splitted[0];
         var id = splitted[1];
@@ -166,18 +166,16 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         menu.add(new Ext.menu.Item({
             text: t('show_in_tree'),
             iconCls: "pimcore_icon_show_in_tree",
-            handler: function (idPath) {
+            handler: function () {
                 try {
                     try {
-                        Ext.getCmp("pimcore_panel_tree_assets").expand();
-                        var tree = pimcore.globalmanager.get("layout_asset_tree");
-                        pimcore.helpers.selectPathInTree(tree.tree, idPath);
+                        pimcore.treenodelocator.showInTree(node, "asset", this);
                     } catch (e) {
                         console.log(e);
                     }
 
                 } catch (e2) { console.log(e2); }
-            }.bind(this, idPath)
+            }
         }));
         menu.add(new Ext.menu.Item({
             text: t('delete'),

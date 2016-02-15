@@ -212,18 +212,16 @@ pimcore.asset.listfolder = Class.create({
             menu.add(new Ext.menu.Item({
                 text: t('show_in_tree'),
                 iconCls: "pimcore_icon_show_in_tree",
-                handler: function (data) {
+                handler: function () {
                     try {
                         try {
-                            Ext.getCmp("pimcore_panel_tree_assets").expand();
-                            var tree = pimcore.globalmanager.get("layout_asset_tree");
-                            pimcore.helpers.selectPathInTree(tree.tree, data.data.idPath);
+                            pimcore.treenodelocator.showInTree(record, "asset", this);
                         } catch (e) {
                             console.log(e);
                         }
 
                     } catch (e2) { console.log(e2); }
-                }.bind(grid, data)
+                }
             }));
             menu.add(new Ext.menu.Item({
                 text: t('delete'),

@@ -374,18 +374,16 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             menu.add(new Ext.menu.Item({
                 text: t('show_in_tree'),
                 iconCls: "pimcore_icon_show_in_tree",
-                handler: function (data) {
+                handler: function () {
                     try {
                         try {
-                            Ext.getCmp("pimcore_panel_tree_objects").expand();
-                            var tree = pimcore.globalmanager.get("layout_object_tree");
-                            pimcore.helpers.selectPathInTree(tree.tree, data.data.idPath);
+                            pimcore.treenodelocator.showInTree(record, "object", this);
                         } catch (e) {
                             console.log(e);
                         }
 
                     } catch (e2) { console.log(e2); }
-                }.bind(grid, data)
+                }
             }));
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
