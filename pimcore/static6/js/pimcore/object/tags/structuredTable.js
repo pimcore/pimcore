@@ -161,7 +161,12 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         }
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                "edit": function () {
+                    this.dataChanged = true;
+                }.bind(this)
+            }
         });
 
         this.component = Ext.create('Ext.grid.Panel', {
@@ -193,10 +198,6 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                 this.cellEditing
             ]
         });
-
-        this.component.on("afteredit", function() {
-            this.dataChanged = true;
-        }.bind(this));
 
         this.component.reference = this;
 
