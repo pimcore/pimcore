@@ -54,6 +54,7 @@
         "sabre/dav": "~3.1",
         "pear/net_url2": "~2.2",
         "ramsey/uuid": "~3",
+        "colinmollenhour/credis": "~1",
         "endroid/qrcode": "~1.5",
         "linfo/linfo": "~3",
         "amnuts/opcache-gui": "~2",

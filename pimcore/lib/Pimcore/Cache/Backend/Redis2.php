@@ -39,10 +39,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // adapted from https://github.com/colinmollenhour/Cm_Cache_Backend_Redis
 
-namespace {
-    include_once(__DIR__ . "/Redis2/Client.php");
-}
-
 namespace Pimcore\Cache\Backend {
 
 class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
