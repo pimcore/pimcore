@@ -276,6 +276,8 @@ class Config
      */
     public static function getFlag($name)
     {
+        $settings = self::getSystemConfig()->toArray();
+
         if (isset($settings["flags"])) {
             if (isset($settings["flags"][$name])) {
                 return $settings["flags"][$name];
