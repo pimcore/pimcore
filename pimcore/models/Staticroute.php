@@ -478,8 +478,7 @@ class Staticroute extends AbstractModel
         foreach ($parametersInReversePattern as $key => $value) {
             $value = str_replace($forbiddenCharacters, "", $value);
             if (strlen($value) > 0) {
-
-                if($encode) {
+                if ($encode) {
                     $value = urlencode_ignore_slash($value);
                 }
                 $value = str_replace("%", $urlEncodeEscapeCharacters, $value);
@@ -503,7 +502,7 @@ class Staticroute extends AbstractModel
         }
 
         // convert tmp urlencode escape char back to real escape char
-        $url = str_replace($urlEncodeEscapeCharacters, "%",$url);
+        $url = str_replace($urlEncodeEscapeCharacters, "%", $url);
 
         return $url;
     }
