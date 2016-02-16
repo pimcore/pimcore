@@ -142,7 +142,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     $createValues["action"] = Config::getSystemConfig()->documents->default_action;
                 }
 
-                if($this->getParam("inheritanceSource")) {
+                if ($this->getParam("inheritanceSource")) {
                     $createValues["contentMasterDocumentId"] = $this->getParam("inheritanceSource");
                 }
 
@@ -216,7 +216,6 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         if ($success) {
-
             if ($this->getParam("translationsBaseDocument")) {
                 $translationsBaseDocument = Document::getById($this->getParam("translationsBaseDocument"));
                 $service = new Document\Service();
@@ -1142,10 +1141,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $targetPath = null;
 
         $document = Document::getById($this->getParam("id"));
-        if($document) {
+        if ($document) {
             $service = new Document\Service;
             $translations = $service->getTranslations($document->getParent());
-            if(isset($translations[$this->getParam("language")])) {
+            if (isset($translations[$this->getParam("language")])) {
                 $targetDocument = Document::getById($translations[$this->getParam("language")]);
                 $targetPath = $targetDocument->getFullPath();
                 $success = true;
@@ -1161,11 +1160,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
     public function translationAddAction()
     {
-
         $sourceDocument = Document::getById($this->getParam("sourceId"));
         $targetDocument = Document::getByPath($this->getParam("targetPath"));
 
-        if($sourceDocument && $targetDocument) {
+        if ($sourceDocument && $targetDocument) {
             $service = new Document\Service;
             $service->addTranslation($sourceDocument, $targetDocument);
         }
@@ -1181,7 +1179,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $language = null;
 
         $document = Document::getByPath($this->getParam("path"));
-        if($document) {
+        if ($document) {
             $success = true;
             $language = $document->getProperty("language");
         }

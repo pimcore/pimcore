@@ -52,9 +52,8 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getTranslationSourceId(Document $document)
     {
-
         $sourceId = $this->db->fetchOne("SELECT sourceId FROM documents_translations WHERE id = ?", $document->getId());
-        if(!$sourceId) {
+        if (!$sourceId) {
             $sourceId = $document->getId();
         }
 
@@ -72,12 +71,12 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAll("SELECT id,language FROM documents_translations WHERE sourceId = ?", [$sourceId]);
 
         $translations = [];
-        foreach($data as $translation) {
+        foreach ($data as $translation) {
             $translations[$translation["language"]] = $translation["id"];
         }
 
         // add language from source document
-        if(!empty($translations)) {
+        if (!empty($translations)) {
             $sourceDocument = Document::getById($sourceId);
             $translations[$sourceDocument->getProperty("language")] = $sourceDocument->getId();
         }
@@ -94,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $sourceId = $this->getTranslationSourceId($document);
 
-        if(!$language) {
+        if (!$language) {
             $language = $translation->getProperty("language");
         }
 
@@ -114,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // if $document is a source-document, we need to move them over to a new document
         $newSourceId = $this->db->fetchOne("SELECT id FROM documents_translations WHERE sourceId = ?", $document->getId());
-        if($newSourceId) {
+        if ($newSourceId) {
             $this->db->update("documents_translations", ["sourceId" => $newSourceId], "sourceId = " . $document->getId());
             $this->db->delete("documents_translations", "id = " . $newSourceId);
         }
