@@ -146,6 +146,18 @@ abstract class Document extends Admin
     }
 
     /**
+     * @param Model\Document $document
+     */
+    protected function addTranslationsData(Model\Document $document)
+    {
+        $service = new Model\Document\Service;
+        $translations = $service->getTranslations($document);
+        $language = $document->getProperty("language");
+        unset($translations[$language]);
+        $document->translations = $translations;
+    }
+
+    /**
      *
      */
     public function saveToSessionAction()

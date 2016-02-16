@@ -166,6 +166,8 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 handler: this.showMetaInfo.bind(this)
             });
 
+            moreButtons.push(this.getTranslationButtons());
+
             buttons.push({
                 text: t("more"),
                 iconCls: "pimcore_icon_more",

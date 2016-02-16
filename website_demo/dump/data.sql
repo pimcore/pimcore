@@ -1839,6 +1839,7 @@ INSERT INTO `documents_snippet` VALUES ('69','','default','default','/includes/s
 
 
 INSERT INTO `documents_translations` VALUES ('23','22','de');
+INSERT INTO `documents_translations` VALUES ('41','40','de');
 INSERT INTO `documents_translations` VALUES ('46','12','de');
 INSERT INTO `documents_translations` VALUES ('47','15','de');
 INSERT INTO `documents_translations` VALUES ('48','16','de');

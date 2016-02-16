@@ -39,6 +39,7 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
             $link->sourcePath = $link->getSourceDocument()->getFullpath();
         }
 
+        $this->addTranslationsData($link);
         $this->minimizeProperties($link);
 
         if ($link->isAllowed("view")) {

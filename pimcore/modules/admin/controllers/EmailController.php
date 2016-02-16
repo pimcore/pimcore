@@ -43,7 +43,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $email->setElements(null);
         $email->childs = null;
 
-        // cleanup properties
+        $this->addTranslationsData($email);
         $this->minimizeProperties($email);
 
         if ($email->isAllowed("view")) {

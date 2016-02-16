@@ -35,6 +35,7 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
         $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
+        $this->addTranslationsData($folder);
         $this->minimizeProperties($folder);
 
         if ($folder->isAllowed("view")) {

@@ -42,6 +42,7 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
             $snippet->contentMasterDocumentPath = $snippet->getContentMasterDocument()->getRealFullPath();
         }
 
+        $this->addTranslationsData($snippet);
         $this->minimizeProperties($snippet);
 
         // unset useless data

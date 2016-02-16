@@ -37,6 +37,7 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
         $link->setLocked($link->isLocked());
         $link->setParent(null);
 
+        $this->addTranslationsData($link);
         $this->minimizeProperties($link);
 
         if ($link->isAllowed("view")) {
