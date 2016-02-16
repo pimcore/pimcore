@@ -409,15 +409,18 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             sortinfo: this.sortinfo,
             columns: {}
         };
-        var cm = this.gridPanel.getColumnModel();
-        for (var i=0; i<cm.config.length; i++) {
-            if(cm.config[i].dataIndex) {
-                config.columns[cm.config[i].dataIndex] = {
-                    name: cm.config[i].dataIndex,
+
+        var cm = this.gridPanel.getView().getHeaderCt().getGridColumns();
+
+        for (var i=0; i < cm.length; i++) {
+            if(cm[i].dataIndex) {
+                config.columns[cm[i].dataIndex] = {
+                    name: cm[i].dataIndex,
                     position: i,
-                    hidden: cm.config[i].hidden,
-                    fieldConfig: this.fieldObject[cm.config[i].dataIndex]
+                    hidden: cm[i].hidden,
+                    fieldConfig: this.fieldObject[cm[i].dataIndex]
                 };
+
             }
         }
 
