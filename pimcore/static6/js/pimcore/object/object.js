@@ -577,6 +577,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             nodeElInner.removeCls("pimcore_unpublished");
                         }
                     }
+                    delete record.data.cls;
+                    record.data.published = true;
                 }
             } catch (e) {
                 console.log(e);
@@ -608,6 +610,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             nodeElInner.addCls("pimcore_unpublished");
                         }
                     }
+                    record.data.cls = "pimcore_unpublished";
+                    record.data.published = false;
                 }
             } catch (e) {
                 console.log(e);

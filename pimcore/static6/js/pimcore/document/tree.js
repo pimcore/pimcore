@@ -232,12 +232,15 @@ pimcore.document.tree = Class.create({
                     node.data.path = node.data.basePath + "/" + node.data.text;
 
                     if (!node.data.published) {
+                        node.data.cls = "pimcore_unpublished";
                         var view = tree.getView();
                         var nodeEl = Ext.fly(view.getNodeByRecord(node));
                         var nodeElInner = nodeEl.down(".x-grid-td");
                         if (nodeElInner) {
                             nodeElInner.addCls("pimcore_unpublished");
                         }
+                    } else {
+                        delete node.data.cls;
                     }
                 }
                 else {
@@ -1084,6 +1087,7 @@ pimcore.document.tree = Class.create({
                         var nodeEl = Ext.fly(view.getNodeByRecord(record));
 
                         if (task == 'unpublish') {
+                            record.data.cls = "pimcore_unpublished";
                             var nodeElInner = nodeEl.down(".x-grid-td");
                             if (nodeElInner) {
                                 nodeElInner.addCls("pimcore_unpublished");
@@ -1099,6 +1103,7 @@ pimcore.document.tree = Class.create({
                             if (nodeElInner) {
                                 nodeElInner.removeCls('pimcore_unpublished');
                             }
+                            delete record.data.cls;
                             record.data.published = true;
                             if (pimcore.globalmanager.exists("document_" + record.data.id)) {
                                 pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.show();

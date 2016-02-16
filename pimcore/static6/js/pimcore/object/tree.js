@@ -1071,6 +1071,8 @@ pimcore.object.tree = Class.create({
                                 nodeElInner.addCls('pimcore_unpublished');
                             }
                             record.data.published = false;
+                            record.data.cls = "pimcore_unpublished";
+
                             if (pimcore.globalmanager.exists("object_" + record.data.id)) {
                                 pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.hide();
                             }
@@ -1079,6 +1081,7 @@ pimcore.object.tree = Class.create({
                             if (nodeElInner) {
                                 nodeElInner.removeCls('pimcore_unpublished');
                             }
+                            delete record.data.cls;
 
                             record.data.published = true;
                             if (pimcore.globalmanager.exists("object_" + record.data.id)) {
