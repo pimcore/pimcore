@@ -586,7 +586,6 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         } else if (type == "document" && this.fieldConfig.documentsAllowed) {
             subType = data.type;
             isAllowed = false;
-            console.log(this.fieldConfig.documentTypes);
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
                     if (this.fieldConfig.documentTypes[i].documentTypes == subType) {
