@@ -42,6 +42,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
     public function getDataByIdAction()
     {
         $document = Document::getById($this->getParam("id"));
+        $document = clone $document;
+
         if ($document->isAllowed("view")) {
             $this->_helper->json($document);
         }

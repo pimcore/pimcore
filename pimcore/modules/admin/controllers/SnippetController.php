@@ -28,8 +28,7 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
         Element\Editlock::lock($this->getParam("id"), "document");
 
         $snippet = Document\Snippet::getById($this->getParam("id"));
-        $modificationDate = $snippet->getModificationDate();
-        
+        $snippet = clone $snippet;
         $snippet = $this->getLatestVersion($snippet);
 
         $snippet->setVersions(array_splice($snippet->getVersions(), 0, 1));

@@ -283,6 +283,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         Element\Editlock::lock($this->getParam("id"), "object");
 
         $object = Object::getById(intval($this->getParam("id")));
+        $object = clone $object;
 
         // set the latest available version for editmode
         $latestObject = $this->getLatestVersion($object);

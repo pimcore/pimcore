@@ -49,6 +49,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         Element\Editlock::lock($this->getParam("id"), "asset");
 
         $asset = Asset::getById(intval($this->getParam("id")));
+        $asset = clone $asset;
 
         if (!$asset instanceof Asset) {
             $this->_helper->json(array("success" => false, "message" => "asset doesn't exist"));

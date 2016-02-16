@@ -30,7 +30,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         Element\Editlock::lock($this->getParam("id"), "document");
 
         $email = Document\Email::getById($this->getParam("id"));
+        $email = clone $email;
         $email = $this->getLatestVersion($email);
+
         $email->setVersions(array_splice($email->getVersions(), 0, 1));
         $email->idPath = Element\Service::getIdPath($email);
         $email->userPermissions = $email->getUserPermissions();

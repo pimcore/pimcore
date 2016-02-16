@@ -31,6 +31,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         Element\Editlock::lock($this->getParam("id"), "document");
 
         $page = Document\Page::getById($this->getParam("id"));
+        $page = clone $page;
         $page = $this->getLatestVersion($page);
 
         $page->setVersions(array_splice($page->getVersions(), 0, 1));

@@ -28,6 +28,8 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
         Element\Editlock::lock($this->getParam("id"), "document");
 
         $folder = Document\Folder::getById($this->getParam("id"));
+        $folder = clone $folder;
+
         $folder->idPath = Element\Service::getIdPath($folder);
         $folder->userPermissions = $folder->getUserPermissions();
         $folder->setLocked($folder->isLocked());

@@ -28,6 +28,8 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
         Element\Editlock::lock($this->getParam("id"), "document");
 
         $link = Document\Hardlink::getById($this->getParam("id"));
+        $link = clone $link;
+
         $link->idPath = Element\Service::getIdPath($link);
         $link->userPermissions = $link->getUserPermissions();
         $link->setLocked($link->isLocked());

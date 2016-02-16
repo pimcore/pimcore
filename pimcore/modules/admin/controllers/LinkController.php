@@ -29,6 +29,8 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
         Element\Editlock::lock($this->getParam("id"), "document");
 
         $link = Document\Link::getById($this->getParam("id"));
+        $link = clone $link;
+
         $link->setObject(null);
         $link->idPath = Element\Service::getIdPath($link);
         $link->userPermissions = $link->getUserPermissions();
