@@ -24,7 +24,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         this.store = new Ext.data.ArrayStore({
             data: this.data,
             fields: [
-                "elementId",
+                "id",
                 "path",
                 "type",
                 "subtype"
@@ -40,7 +40,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     sortable: false
                 },
                 items: [
-                    {header: 'ID', dataIndex: 'elementId', width: 50},
+                    {header: 'ID', dataIndex: 'id', width: 50},
                     {header: t("path"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
@@ -172,7 +172,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"]) {
                     this.store.add({
-                        elementId: data["id"],
+                        id: data["id"],
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
@@ -193,7 +193,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         var data = record.data;
 
         var initData = {
-            elementId: data.id,
+            id: data.id,
             path: data.path,
             type: data.elementType
         };
@@ -212,7 +212,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         }
 
         // check for existing element
-        if (!this.elementAlreadyExists(initData.elementId, initData.type)) {
+        if (!this.elementAlreadyExists(initData.id, initData.type)) {
             this.store.add(initData);
             return true;
         }
@@ -241,7 +241,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                 if (record.data.type == "object" && record.data.subtype != "folder") {
                     subtype = "object";
                 }
-                pimcore.helpers.openElement(record.data.elementId, record.data.type, subtype);
+                pimcore.helpers.openElement(record.data.id, record.data.type, subtype);
             }.bind(this, record)
         }));
 
@@ -273,7 +273,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
         // check for existing element
         var result = this.store.queryBy(function (id, type, record, rid) {
-            if (record.data.elementId == id && record.data.type == type) {
+            if (record.data.id == id && record.data.type == type) {
                 return true;
             }
             return false;
@@ -300,7 +300,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     }
 
                     this.store.add({
-                        elementId: items[i].id,
+                        id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].type,
                         subtype: subtype
