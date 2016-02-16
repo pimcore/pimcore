@@ -1807,7 +1807,16 @@ INSERT INTO `documents_snippet` VALUES (69,'','default','default','/includes/sid
 
 
 
-
+INSERT INTO `documents_translations` VALUES ('23','22','de');
+INSERT INTO `documents_translations` VALUES ('46','12','de');
+INSERT INTO `documents_translations` VALUES ('47','15','de');
+INSERT INTO `documents_translations` VALUES ('48','16','de');
+INSERT INTO `documents_translations` VALUES ('49','17','de');
+INSERT INTO `documents_translations` VALUES ('50','4','de');
+INSERT INTO `documents_translations` VALUES ('51','3','de');
+INSERT INTO `documents_translations` VALUES ('52','5','de');
+INSERT INTO `documents_translations` VALUES ('53','27','de');
+INSERT INTO `documents_translations` VALUES ('58','57','de');
 
 
 
