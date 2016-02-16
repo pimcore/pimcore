@@ -23,6 +23,20 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         }
 
+        var modelName = 'ObjectsMultihrefEntry';
+        if(!Ext.ClassManager.isCreated(modelName) ) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: 'rowId',
+                fields: [
+                    'id',
+                    'path',
+                    'type',
+                    'subtype'
+                ]
+            });
+        }
+
         this.store = new Ext.data.ArrayStore({
             data: this.data,
             listeners: {
@@ -36,37 +50,32 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     this.dataChanged = true;
                 }.bind(this)
             },
-            fields: [
-                "id",
-                "path",
-                "type",
-                "subtype"
-            ]
+            model: modelName
         });
     },
 
     getGridColumnConfig: function(field) {
         return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
-                renderer: function (key, value, metaData, record) {
-                                this.applyPermissionStyle(key, value, metaData, record);
+            renderer: function (key, value, metaData, record) {
+                this.applyPermissionStyle(key, value, metaData, record);
 
-                                if(record.data.inheritedFields[key]
-                                                        && record.data.inheritedFields[key].inherited == true) {
-                                    metaData.tdCls += " grid_value_inherited";
-                                }
+                if(record.data.inheritedFields[key]
+                    && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
 
-                                if (value && value.length > 0) {
+                if (value && value.length > 0) {
 
-                                    // only show 10 relations in the grid
-                                    var maxAmount = 10;
-                                    if(value.length > maxAmount) {
-                                        value.splice(maxAmount, (value.length - maxAmount) );
-                                        value.push("...");
-                                    }
+                    // only show 10 relations in the grid
+                    var maxAmount = 10;
+                    if(value.length > maxAmount) {
+                        value.splice(maxAmount, (value.length - maxAmount) );
+                        value.push("...");
+                    }
 
-                                    return value.join("<br />");
-                                }
-                            }.bind(this, field.key)};
+                    return value.join("<br />");
+                }
+            }.bind(this, field.key)};
     },
 
     getLayoutEdit: function() {
@@ -606,7 +615,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         if(!this.isRendered()) {
             return false;
         }
-        
+
         return this.dataChanged;
-    } 
+    }
 });

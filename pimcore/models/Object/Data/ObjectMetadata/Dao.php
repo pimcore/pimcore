@@ -112,7 +112,7 @@ class Dao extends Model\Dao\AbstractDao
               `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
               `ownername` VARCHAR(70) NOT NULL DEFAULT '',
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
-              PRIMARY KEY (`o_id`, `dest_id`, `fieldname`, `column`, `ownertype`, `ownername`, `position`),
+              PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`),
               INDEX `o_id` (`o_id`),
               INDEX `dest_id` (`dest_id`),
               INDEX `fieldname` (`fieldname`),

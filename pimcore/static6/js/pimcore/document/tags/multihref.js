@@ -21,20 +21,30 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
         this.setupWrapper();
 
+        var modelName = 'DocumentsMultihrefEntry';
+        if(!Ext.ClassManager.isCreated(modelName) ) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: 'rowId',
+                fields: [
+                    'id',
+                    'path',
+                    'type',
+                    'subtype'
+                ]
+            });
+        }
+
         this.store = new Ext.data.ArrayStore({
             data: this.data,
-            fields: [
-                "id",
-                "path",
-                "type",
-                "subtype"
-            ]
+            model: modelName
         });
 
         var elementConfig = {
             store: this.store,
             bodyStyle: "color:#000",
             selModel: Ext.create('Ext.selection.RowModel', {}),
+
             columns: {
                 defaults: {
                     sortable: false
@@ -216,6 +226,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             this.store.add(initData);
             return true;
         }
+
         return false;
 
     },
