@@ -1174,4 +1174,21 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             "success" => true
         ]);
     }
+
+    public function translationCheckLanguageAction()
+    {
+        $success = false;
+        $language = null;
+
+        $document = Document::getByPath($this->getParam("path"));
+        if($document) {
+            $success = true;
+            $language = $document->getProperty("language");
+        }
+
+        $this->_helper->json([
+            "success" => $success,
+            "language" => $language
+        ]);
+    }
 }

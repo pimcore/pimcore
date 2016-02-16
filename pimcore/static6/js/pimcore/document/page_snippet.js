@@ -198,7 +198,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             if(this.data["translations"]) {
                 Ext.iterate(this.data["translations"], function (language, documentId, myself) {
                     translationsMenu.push({
-                        text: pimcore.available_languages[language],
+                        text: pimcore.available_languages[language] + " [" + language + "]",
                         iconCls: "pimcore_icon_language_" + language,
                         handler: function () {
                             pimcore.helpers.openElement(documentId, "document");
@@ -381,7 +381,29 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
     },
 
     linkTranslation: function () {
-        var win = new Ext.Window({
+
+        var win = null;
+
+        var checkLanguage = function (el) {
+
+            Ext.Ajax.request({
+                url: "/admin/document/translation-check-language",
+                params: {
+                    path: el.getValue()
+                },
+                success: function (response) {
+                    var data = Ext.decode(response.responseText);
+                    if(data["success"]) {
+                        win.getComponent("language").setValue(pimcore.available_languages[data["language"]] + " [" + data["language"] + "]");
+                        win.getComponent("language").show();
+                    } else {
+                        win.getComponent("language").hide();
+                    }
+                }
+            });
+        };
+
+        win = new Ext.Window({
             width: 600,
             bodyStyle: "padding:10px",
             items: [{
@@ -391,6 +413,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 width: "100%",
                 cls: "input_drop_target",
                 fieldLabel: t("translation"),
+                enableKeyListeners: true,
                 listeners: {
                         "render": function (el) {
                             new Ext.dd.DropZone(el.getEl(), {
@@ -413,8 +436,17 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                                     return false;
                                 }.bind(el)
                             });
-                        }
+                        },
+                        "change": checkLanguage,
+                        "keyup": checkLanguage
                     }
+            },{
+                xtype: "displayfield",
+                name: "language",
+                itemId: "language",
+                value: "",
+                hidden: true,
+                fieldLabel: t("language")
             }],
             buttons: [{
                 text: t("cancel"),
@@ -594,11 +626,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                                         }
                                     });
                                 }
-
-                                win.close();
                             } else {
                                 Ext.MessageBox.alert(t("error"), t("element_not_found"));
                             }
+
+                            win.close();
                         }.bind(this)
                     });
                 }.bind(this)

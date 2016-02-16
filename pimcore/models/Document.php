@@ -756,6 +756,10 @@ class Document extends Element\AbstractElement
         $d = $this->getDependencies();
         $d->cleanAllForElement($this);
 
+        // remove translations
+        $service = new Document\Service;
+        $service->removeTranslation($this);
+
         $this->getDao()->delete();
 
         // clear cache

@@ -4,6 +4,10 @@
         "definition": "More"
     },
     {
+        "term": "parent_document",
+        "definition": "Parent Document"
+    },
+    {
         "term": "open_translation",
         "definition": "Open Translation"
     },
