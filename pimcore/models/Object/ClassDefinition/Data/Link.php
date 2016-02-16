@@ -319,10 +319,10 @@ class Link extends Model\Object\ClassDefinition\Data
             return null;
         } elseif (is_array($value) and !empty($value['text']) and !empty($value['direct'])) {
             $link = new Object\Data\Link();
-            foreach ($value as $key => $value) {
+            foreach ($value as $key => $v) {
                 $method = "set" . ucfirst($key);
                 if (method_exists($link, $method)) {
-                    $link->$method($value);
+                    $link->$method($v);
                 } else {
                     throw new \Exception("cannot get values from web service import - invalid data. Unknown Object\\Data\\Link setter [ " . $method . " ]");
                 }
@@ -347,10 +347,21 @@ class Link extends Model\Object\ClassDefinition\Data
             }
 
             $link = new Object\Data\Link();
-            foreach ($value as $key => $value) {
+            foreach ($value as $key => $v) {
                 $method = "set" . ucfirst($key);
                 if (method_exists($link, $method)) {
-                    $link->$method($value);
+                    $link->$method($v);
+                } else {
+                    throw new \Exception("cannot get values from web service import - invalid data. Unknown Object\\Data\\Link setter [ " . $method . " ]");
+                }
+            }
+            return $link;
+        } else if (is_array($value)){
+            $link = new Object\Data\Link();
+            foreach ($value as $key => $v) {
+                $method = "set" . ucfirst($key);
+                if (method_exists($link, $method)) {
+                    $link->$method($v);
                 } else {
                     throw new \Exception("cannot get values from web service import - invalid data. Unknown Object\\Data\\Link setter [ " . $method . " ]");
                 }
