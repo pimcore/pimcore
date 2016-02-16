@@ -478,11 +478,12 @@ class Staticroute extends AbstractModel
         foreach ($parametersInReversePattern as $key => $value) {
             $value = str_replace($forbiddenCharacters, "", $value);
             if (strlen($value) > 0) {
-                $url = str_replace(
-                    "%" . $key,
-                    str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode_ignore_slash($value) : $value),
-                    $url
-                );
+
+                if($encode) {
+                    $value = urlencode_ignore_slash($value);
+                }
+                $value = str_replace("%", $urlEncodeEscapeCharacters, $value);
+                $url = str_replace("%" . $key, $value, $url);
             }
         }
 
@@ -500,6 +501,9 @@ class Staticroute extends AbstractModel
             }
             $url .= "?" . $getParams;
         }
+
+        // convert tmp urlencode escape char back to real escape char
+        $url = str_replace($urlEncodeEscapeCharacters, "%",$url);
 
         return $url;
     }
