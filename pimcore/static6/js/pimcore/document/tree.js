@@ -223,7 +223,7 @@ pimcore.document.tree = Class.create({
             try{
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
-                    // set new pathes
+                    // set new paths
                     var newBasePath = newParent.data.path;
                     if (newBasePath == "/") {
                         newBasePath = "";
