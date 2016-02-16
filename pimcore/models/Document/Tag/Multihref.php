@@ -50,7 +50,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
         if (empty($this->elements)) {
             $this->elements = array();
             foreach ($this->elementIds as $elementId) {
-                $el = Element\Service::getElementById($elementId["type"], $elementId["elementId"]);
+                $el = Element\Service::getElementById($elementId["type"], $elementId["id"]);
                 if ($el instanceof Element\ElementInterface) {
                     $this->elements[] = $el;
                 }
@@ -211,10 +211,10 @@ class Multihref extends Model\Document\Tag implements \Iterator
 
         foreach ($this->elementIds as &$elementId) {
             $type = $elementId["type"];
-            $id = $elementId["elementId"];
+            $id = $elementId["id"];
 
             if (array_key_exists($type, $idMapping) and array_key_exists((int) $id, $idMapping[$type])) {
-                $elementId["elementId"] = $idMapping[$type][$id];
+                $elementId["id"] = $idMapping[$type][$id];
             }
         }
 
