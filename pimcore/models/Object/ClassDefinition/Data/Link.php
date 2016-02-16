@@ -356,7 +356,7 @@ class Link extends Model\Object\ClassDefinition\Data
                 }
             }
             return $link;
-        } else if (is_array($value)){
+        } elseif (is_array($value)) {
             $link = new Object\Data\Link();
             foreach ($value as $key => $v) {
                 $method = "set" . ucfirst($key);
