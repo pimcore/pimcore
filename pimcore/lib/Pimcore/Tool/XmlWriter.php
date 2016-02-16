@@ -150,8 +150,9 @@ class XmlWriter extends \Zend_Config_Writer_Xml
         $sData = (string) $data;
         $child = @$xml->addChild($key, $sData);
 
-        if ((string)$child != $sData) {
-            $child = $xml->$key->addCData((string) $data);
+        if((string)$child != $sData) {
+            $xml->{$key} = NULL;
+            $child = $xml->{$key}->addCData((string) $data);
         }
         return $child;
     }
