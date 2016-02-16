@@ -91,7 +91,7 @@
                     ?>
                 </div>
             </div>
-            <?= $this->inc("/shared/includes/languages"); ?>
+            <?= $this->template("/includes/language.php"); ?>
         </div>
     </div>
 </div>

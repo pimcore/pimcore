@@ -721,10 +721,6 @@ INSERT INTO `dependencies` VALUES ('document','51','document','41');
 INSERT INTO `dependencies` VALUES ('document','52','document','5');
 INSERT INTO `dependencies` VALUES ('document','52','document','41');
 INSERT INTO `dependencies` VALUES ('document','53','document','41');
-INSERT INTO `dependencies` VALUES ('document','54','document','40');
-INSERT INTO `dependencies` VALUES ('document','55','document','40');
-INSERT INTO `dependencies` VALUES ('document','56','document','40');
-INSERT INTO `dependencies` VALUES ('document','56','document','41');
 INSERT INTO `dependencies` VALUES ('document','57','document','15');
 INSERT INTO `dependencies` VALUES ('document','57','document','40');
 INSERT INTO `dependencies` VALUES ('document','58','document','41');
@@ -854,9 +850,6 @@ INSERT INTO `documents` VALUES ('50','41','page','einfuehrung','/de/','0','1','1
 INSERT INTO `documents` VALUES ('51','41','page','einfache-beispiele','/de/','1','1','1382957793','1382957910','0','0');
 INSERT INTO `documents` VALUES ('52','41','page','beispiele-fur-fortgeschrittene','/de/','2','1','1382957961','1382957999','0','0');
 INSERT INTO `documents` VALUES ('53','51','page','neuigkeiten','/de/einfache-beispiele/','9','1','1382958188','1382958240','0','0');
-INSERT INTO `documents` VALUES ('54','1','folder','shared','/','4','1','1382959757','1382959757','0','0');
-INSERT INTO `documents` VALUES ('55','54','folder','includes','/shared/','1','1','1382959767','1382959768','0','0');
-INSERT INTO `documents` VALUES ('56','55','snippet','languages','/shared/includes/','1','1','1382959774','1382959822','0','0');
 INSERT INTO `documents` VALUES ('57','40','snippet','sidebar','/en/','4','1','1382962826','1388735598','0','0');
 INSERT INTO `documents` VALUES ('58','41','snippet','sidebar','/de/','3','1','1382962891','1382962906','0','0');
 INSERT INTO `documents` VALUES ('59','4','snippet','sidebar','/en/introduction/','1','1','1382962940','1388738272','0','0');
@@ -1667,9 +1660,6 @@ INSERT INTO `documents_elements` VALUES ('53','myNumber','numeric','');
 INSERT INTO `documents_elements` VALUES ('53','mySelect','select','');
 INSERT INTO `documents_elements` VALUES ('53','myTextarea','textarea','');
 INSERT INTO `documents_elements` VALUES ('53','myWysiwyg','wysiwyg','');
-INSERT INTO `documents_elements` VALUES ('56','languages','block','a:2:{i:0;s:1:\"1\";i:1;s:1:\"2\";}');
-INSERT INTO `documents_elements` VALUES ('56','linklanguages1','link','a:14:{s:4:\"text\";s:7:\"English\";s:4:\"path\";s:3:\"/en\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:2:\"en\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:40;s:12:\"internalType\";s:8:\"document\";}');
-INSERT INTO `documents_elements` VALUES ('56','linklanguages2','link','a:14:{s:4:\"text\";s:6:\"German\";s:4:\"path\";s:3:\"/de\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:2:\"de\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:41;s:12:\"internalType\";s:8:\"document\";}');
 INSERT INTO `documents_elements` VALUES ('57','blogArticles','select','3');
 INSERT INTO `documents_elements` VALUES ('57','teasers','block','a:1:{i:0;s:1:\"1\";}');
 INSERT INTO `documents_elements` VALUES ('57','teaserteasers1','snippet','15');
@@ -1840,7 +1830,6 @@ INSERT INTO `documents_snippet` VALUES ('46','','default','default','/includes/f
 INSERT INTO `documents_snippet` VALUES ('47','','default','default','/snippets/standard-teaser.php','0');
 INSERT INTO `documents_snippet` VALUES ('48','','default','default','/snippets/standard-teaser.php','0');
 INSERT INTO `documents_snippet` VALUES ('49','','default','default','/snippets/standard-teaser.php','0');
-INSERT INTO `documents_snippet` VALUES ('56','','default','default','/includes/language.php','0');
 INSERT INTO `documents_snippet` VALUES ('57','','default','default','/includes/sidebar.php','0');
 INSERT INTO `documents_snippet` VALUES ('58','','default','default','/includes/sidebar.php','0');
 INSERT INTO `documents_snippet` VALUES ('59','','default','default','/includes/sidebar.php','0');
@@ -2329,11 +2318,8 @@ INSERT INTO `search_backend_data` VALUES ('52','/de/beispiele-fur-fortgeschritte
 INSERT INTO `search_backend_data` VALUES ('53','/examples/south-africa/img_0322.jpg','asset','image','image','1','1368596810','1368632468','0','0','ID: 53  \nPath: /examples/south-africa/img_0322.jpg  \nimg_0322.jpg','');
 INSERT INTO `search_backend_data` VALUES ('53','/de/einfache-beispiele/neuigkeiten','document','page','page','1','1382958188','1382958240','0','0','ID: 53  \nPath: /de/einfache-beispiele/neuigkeiten  \n Neuigkeiten Alle strukturierten Daten werden in \"Objects\" gespeichert.&nbsp; ','blog:/en/advanced-examples/blog sidebar:/de/sidebar mainNavStartNode:/de language:de leftNavStartNode:/de navigation_name:Neuigkeiten ');
 INSERT INTO `search_backend_data` VALUES ('54','/examples/singapore','asset','folder','folder','1','1368596871','1368632468','0','0','ID: 54  \nPath: /examples/singapore  \nsingapore','');
-INSERT INTO `search_backend_data` VALUES ('54','/shared','document','folder','folder','1','1382959757','1382959757','0','0','ID: 54  \nPath: /shared  \nshared','sidebar:/en/sidebar mainNavStartNode:/en leftNavStartNode:/en language:en blog:/en/advanced-examples/blog ');
 INSERT INTO `search_backend_data` VALUES ('55','/examples/singapore/dsc03778.jpg','asset','image','image','1','1368597116','1368632468','0','0','ID: 55  \nPath: /examples/singapore/dsc03778.jpg  \ndsc03778.jpg','');
-INSERT INTO `search_backend_data` VALUES ('55','/shared/includes','document','folder','folder','1','1382959767','1382959768','0','0','ID: 55  \nPath: /shared/includes  \nincludes','sidebar:/en/sidebar mainNavStartNode:/en leftNavStartNode:/en language:en blog:/en/advanced-examples/blog ');
 INSERT INTO `search_backend_data` VALUES ('56','/examples/singapore/dsc03807.jpg','asset','image','image','1','1368597117','1368632468','0','0','ID: 56  \nPath: /examples/singapore/dsc03807.jpg  \ndsc03807.jpg','');
-INSERT INTO `search_backend_data` VALUES ('56','/shared/includes/languages','document','snippet','snippet','1','1382959774','1382959822','0','0','ID: 56  \nPath: /shared/includes/languages  \n English German ','sidebar:/en/sidebar mainNavStartNode:/en leftNavStartNode:/en language:en blog:/en/advanced-examples/blog ');
 INSERT INTO `search_backend_data` VALUES ('57','/examples/singapore/dsc03835.jpg','asset','image','image','1','1368597119','1368632468','0','0','ID: 57  \nPath: /examples/singapore/dsc03835.jpg  \ndsc03835.jpg','');
 INSERT INTO `search_backend_data` VALUES ('57','/en/sidebar','document','snippet','snippet','1','1382962826','1388735598','0','0','ID: 57  \nPath: /en/sidebar  \n3 ','sidebar:/en/sidebar mainNavStartNode:/en leftNavStartNode:/en language:en blog:/en/advanced-examples/blog ');
 INSERT INTO `search_backend_data` VALUES ('58','/de/sidebar','document','snippet','snippet','1','1382962891','1382962906','0','0','ID: 58  \nPath: /de/sidebar  \n ','blog:/en/advanced-examples/blog mainNavStartNode:/de sidebar:/de/sidebar leftNavStartNode:/de language:de ');
@@ -2638,13 +2624,12 @@ INSERT INTO `translations_website` VALUES ('website übersetzungen','en','','0',
 
 INSERT INTO `tree_locks` VALUES ('12','document','self');
 INSERT INTO `tree_locks` VALUES ('46','document','self');
-INSERT INTO `tree_locks` VALUES ('56','document','self');
 
 
 
 
 INSERT INTO `users` VALUES ('0','0','user','system','',NULL,NULL,NULL,'','','1','1','','','0','0','0','','',NULL);
-INSERT INTO `users` VALUES ('37','0','user','admin','$2y$10$56PpbHkB2BirJT.MDlSomO4UnDz3HmE1fa8CsPEbg06N4hIsr3h1m',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','','',NULL);
+INSERT INTO `users` VALUES ('38','0','user','admin','$2y$10$nzibZ5Ck0.ZZy.mYhjpjrO.HAMGgWTDsNgGY.KT8KIuY/y1OO.cJ2',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','','',NULL);
 
 
 
