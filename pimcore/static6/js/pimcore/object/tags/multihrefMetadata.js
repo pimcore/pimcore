@@ -50,9 +50,17 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         }
 
 
+        var modelName = 'ObjectsMultihrefMetadataEntry';
+        if(!Ext.ClassManager.isCreated(modelName) ) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: 'rowId',
+                fields: fields
+            });
+        }
+
         this.store = new Ext.data.JsonStore({
             data: this.data,
-            idProperty: 'id',
             listeners: {
                 add:function() {
                     this.dataChanged = true;
@@ -67,7 +75,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                     this.dataChanged = true;
                 }.bind(this)
             },
-            fields: fields
+            model: modelName
         });
 
     },
@@ -269,7 +277,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 }
                 //,
                 //this.getCreateControl()
-                 ]);
+            ]);
         }
 
         if (this.fieldConfig.assetsAllowed) {
