@@ -102,8 +102,6 @@ pimcore.document.edit = Class.create({
                     editable: false,
                     triggerAction: 'all',
                     width: 240,
-                    cls: "pimcore_icon_persona_select",
-                    emptyText: t("edit_content_for_persona"),
                     listeners: {
                         select: function (el) {
                             if(this.document.isDirty()) {
@@ -122,7 +120,14 @@ pimcore.document.edit = Class.create({
                     }
                 });
 
-                lbar.push("->", this.persona, {
+
+                lbar.push("->", {
+                    tooltip: t("edit_content_for_persona"),
+                    iconCls: "pimcore_icon_personas",
+                    arrowVisible: false,
+                    menuAlign: "tl",
+                    menu: [this.persona]
+                }, {
                     tooltip: t("clear_content_of_selected_persona"),
                     iconCls: "pimcore_icon_cleanup",
                     handler: cleanupFunction.bind(this)
