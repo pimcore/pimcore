@@ -270,7 +270,12 @@ class Update
                 $destFile = PIMCORE_DOCUMENT_ROOT . $file["path"];
 
                 if (!self::$dryRun) {
-                    copy($srcFile, $destFile);
+                    if($file["path"] == "/composer.json") {
+                        // composer.json needs some special processing
+                        self::installComposerJson($srcFile, $destFile);
+                    } else {
+                        copy($srcFile, $destFile);
+                    }
                 }
             } elseif ($file["action"] == "delete") {
                 if (!self::$dryRun) {
@@ -324,6 +329,26 @@ class Update
             "message" => $outputMessage,
             "success" => true
         );
+    }
+
+    /**
+     * @param $newFile
+     * @param $oldFile
+     */
+    public static function installComposerJson($newFile, $oldFile)
+    {
+        $existingContents = file_get_contents($oldFile);
+        $newContents = file_get_contents($newFile);
+
+        $existingContents = json_decode($existingContents, true);
+        $newContents = json_decode($newContents, true);
+
+        if($existingContents && $newContents) {
+            $mergeResult = array_replace_recursive($existingContents, $newContents);
+            $newJson = json_encode($mergeResult);
+            $newJson = \Zend_Json::prettyPrint($newJson);
+            File::put($oldFile, $newJson);
+        }
     }
 
     /**
