@@ -257,6 +257,15 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         }));
 
         menu.add(new Ext.menu.Item({
+            text: t('show_in_tree'),
+            iconCls: "pimcore_icon_fileexplorer",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                pimcore.treenodelocator.showInTree(record.data.id, record.data.type);
+            }.bind(this)
+        }));
+
+        menu.add(new Ext.menu.Item({
             text: t('search'),
             iconCls: "pimcore_icon_search",
             handler: function (item) {
