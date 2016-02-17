@@ -270,7 +270,7 @@ class Update
                 $destFile = PIMCORE_DOCUMENT_ROOT . $file["path"];
 
                 if (!self::$dryRun) {
-                    if($file["path"] == "/composer.json") {
+                    if ($file["path"] == "/composer.json") {
                         // composer.json needs some special processing
                         self::installComposerJson($srcFile, $destFile);
                     } else {
@@ -343,7 +343,7 @@ class Update
         $existingContents = json_decode($existingContents, true);
         $newContents = json_decode($newContents, true);
 
-        if($existingContents && $newContents) {
+        if ($existingContents && $newContents) {
             $mergeResult = array_replace_recursive($existingContents, $newContents);
             $newJson = json_encode($mergeResult);
             $newJson = \Zend_Json::prettyPrint($newJson);
