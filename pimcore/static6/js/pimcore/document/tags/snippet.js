@@ -200,7 +200,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                 iconCls: "pimcore_icon_fileexplorer",
                 handler: function (item) {
                     item.parentMenu.destroy();
-                    pimcore.helpers.selectElementInTree("document", this.data.id);
+                    pimcore.treenodelocator.showInTree(this.data.id, "document");
                 }.bind(this)
             }));
         }

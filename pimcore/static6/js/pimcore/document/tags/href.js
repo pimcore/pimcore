@@ -227,7 +227,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                 iconCls: "pimcore_icon_fileexplorer",
                 handler: function (item) {
                     item.parentMenu.destroy();
-                    pimcore.helpers.selectElementInTree(this.data.elementType, this.data.id);
+                    pimcore.treenodelocator.showInTree(this.data.id, "document");
                 }.bind(this)
             }));
         }

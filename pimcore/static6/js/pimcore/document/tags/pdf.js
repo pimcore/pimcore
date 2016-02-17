@@ -98,7 +98,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                 iconCls: "pimcore_icon_fileexplorer",
                 handler: function (item) {
                     item.parentMenu.destroy();
-                    pimcore.helpers.selectElementInTree("asset", this.data.id);
+                    pimcore.treenodelocator.showInTree(this.data.id, "asset");
                 }.bind(this)
             }));
         }

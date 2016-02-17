@@ -163,7 +163,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                 iconCls: "pimcore_icon_fileexplorer",
                 handler: function (item) {
                     item.parentMenu.destroy();
-                    pimcore.helpers.selectElementInTree("asset", this.datax.id);
+                    pimcore.treenodelocator.showInTree(this.datax.id, "asset");
                 }.bind(this)
             }));
         }
