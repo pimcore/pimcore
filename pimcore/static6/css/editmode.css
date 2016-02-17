@@ -23,6 +23,11 @@
     font-family: "courier new", courier !important;
 }
 
+.cke {
+    /* needs to go over the ExtJS panels */
+    z-index: 100000 !important;
+}
+
 /* pimcore editables */
 
 .pimcore_tag_image .x-panel-body {
