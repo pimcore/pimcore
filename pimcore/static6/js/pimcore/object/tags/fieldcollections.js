@@ -359,7 +359,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
                 // no check for dirty, ... always send all field to the server
                 for (var u=0; u<element.fields.length; u++) {
-                    elementData[element.fields[u].getName()] = element.fields[u].getValue();
+                    try {
+                        if(element.fields[u].isDirty()) {
+                            elementData[element.fields[u].getName()] = element.fields[u].getValue();
+                        }
+                    } catch (e) {
+                        console.log(e);
+                        elementData[element.fields[u].getName()] = "";
+                    }
                 }
 
                 data.push({
