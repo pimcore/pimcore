@@ -16,7 +16,12 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
     type: "indexFieldSelectionField",
 
     initialize: function (data, fieldConfig) {
-        this.data = data;
+        if(data) {
+            this.data = data;
+        } else {
+            this.data = "";
+        }
+
         this.fieldConfig = fieldConfig;
 
         this.store = new Ext.data.JsonStore({
@@ -163,10 +168,10 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
 
     getLayoutShow: function () {
 
-        this.fieldsCombobox = this.getLayoutEdit();
-        this.fieldsCombobox.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.fieldsCombobox;
+        return this.component;
     },
 
     getValue: function () {
