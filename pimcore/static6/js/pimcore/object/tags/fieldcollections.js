@@ -357,14 +357,15 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             if(this.currentElements[this.component.items.items[s].key]) {
                 element = this.currentElements[this.component.items.items[s].key];
 
-                // no check for dirty, ... always send all field to the server
                 for (var u=0; u<element.fields.length; u++) {
                     try {
+                        // no check for dirty, ... always send all field to the server
                         elementData[element.fields[u].getName()] = element.fields[u].getValue();
                     } catch (e) {
                         console.log(e);
                         elementData[element.fields[u].getName()] = "";
                     }
+
                 }
 
                 data.push({
