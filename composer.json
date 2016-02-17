@@ -1,5 +1,6 @@
 {
     "name": "pimcore/pimcore",
+    "type": "project",
     "description": "Content & Product Management Framework (CMS/PIM/E-Commerce)",
     "keywords": ["CMS","PIM","DAM","E-Commerce","RAD","Product Information Management"],
     "homepage": "http://www.pimcore.org/",
