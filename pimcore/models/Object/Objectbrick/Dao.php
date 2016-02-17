@@ -93,6 +93,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
      */
     public function delete(Object\Concrete $object)
     {
+        // this is to clean up also the inherited values
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
