@@ -305,10 +305,9 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
 
         if ($type == "asset") {
             $element = Asset::getById($id);
-        } else if ($type == "document") {
+        } elseif ($type == "document") {
             $element = Document::getById($id);
             $data["index"] = $element->getIndex();
-
         } else {
             $element = Object::getById($id);
         }

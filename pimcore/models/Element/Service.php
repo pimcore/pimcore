@@ -74,9 +74,9 @@ class Service extends Model\AbstractModel
             if ($type != "folder") {
                 if ($element instanceof Document) {
                     $type = "document";
-                } else if ($element instanceof Object\AbstractObject) {
+                } elseif ($element instanceof Object\AbstractObject) {
                     $type = "object";
-                } else if ($element instanceof Asset) {
+                } elseif ($element instanceof Asset) {
                     $type = "asset";
                 } else {
                     throw new \Exception("unknown type");
