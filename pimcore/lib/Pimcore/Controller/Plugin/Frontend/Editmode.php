@@ -78,8 +78,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 "/pimcore/static6/js/pimcore/document/tags/areablock.js",
                 "/pimcore/static6/js/pimcore/document/tags/area.js",
                 "/pimcore/static6/js/pimcore/document/tags/pdf.js",
-                "/pimcore/static6/js/pimcore/document/edit/helper.js",
-                "/pimcore/static6/js/pimcore/treenodelocator.js",
+                "/pimcore/static6/js/pimcore/document/edit/helper.js"
             );
 
             $editmodeStylesheets = array(
@@ -223,7 +222,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
         // combine the pimcore scripts in non-devmode
         if ($conf->general->devmode) {
             foreach ($editmodeScripts as $script) {
-                $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . time() . '"></script>';
+                $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . '"></script>';
                 $editmodeHeadHtml .= "\n";
             }
         } else {
