@@ -181,6 +181,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             name: 'fieldname',
             disableKeyFilter: "true",
             valueNotFoundText: "",
+            editable: false,
             listeners: {
                 focus: function(){
                     fieldComboStore.load();
