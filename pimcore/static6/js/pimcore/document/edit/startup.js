@@ -35,10 +35,12 @@ var pimcore_system_i18n = parent.pimcore_system_i18n;
 if (typeof pimcore == "object") {
     pimcore.registerNS("pimcore.globalmanager");
     pimcore.registerNS("pimcore.helpers");
+    pimcore.registerNS("pimcore.treenodelocator");
 
     pimcore.globalmanager = parent.pimcore.globalmanager;
     pimcore.helpers = parent.pimcore.helpers;
     pimcore.settings = parent.pimcore.settings;
+    pimcore.treenodelocator = parent.pimcore.treenodelocator;
 }
 
 if (pimcore_document_id) {

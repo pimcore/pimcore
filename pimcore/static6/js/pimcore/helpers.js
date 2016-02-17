@@ -1259,64 +1259,6 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
     uploadWindowCompatible.updateLayout();
 };
 
-pimcore.helpers.selectPathInTreeActiveSelections = {};
-pimcore.helpers.selectPathInTree = function (tree, path, callback) {
-    try {
-
-        var hash = tree.getId() + "~" + path;
-        if(typeof pimcore.helpers.selectPathInTreeActiveSelections[hash] != "undefined") {
-            if(typeof callback == "function") {
-                callback(false);
-            }
-            return false;
-        }
-        pimcore.helpers.selectPathInTreeActiveSelections[hash] = hash;
-
-        var initialData = {
-            tree: tree,
-            path: path,
-            callback: callback
-        };
-
-        tree.selectPath(path, null, '/', function (success, node) {
-            if(!success) {
-                Ext.MessageBox.alert(t("error"), t("not_possible_with_paging"));
-            } else {
-                if(typeof initialData["callback"] == "function") {
-                    initialData["callback"]();
-                }
-            }
-
-            delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
-        });
-
-    } catch (e) {
-        delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
-        console.log(e);
-    }
-};
-
-pimcore.helpers.selectElementInTree = function (type, id, callback) {
-    try {
-        Ext.Ajax.request({
-            url: "/admin/element/get-id-path/",
-            params: {
-                id: id,
-                type: type
-            },
-            success: function (response) {
-                var res = Ext.decode(response.responseText);
-                if(res.success) {
-                    Ext.getCmp("pimcore_panel_tree_" + type + "s").expand();
-                    var tree = pimcore.globalmanager.get("layout_" + type + "_tree");
-                    pimcore.helpers.selectPathInTree(tree.tree, res.idPath, callback);
-                }
-            }
-        });
-    } catch (e) {
-        console.log(e);
-    }
-};
 
 pimcore.helpers.getClassForIcon = function (icon) {
 

@@ -2,10 +2,6 @@ pimcore.registerNS("pimcore.treenodelocator.x");
 
 pimcore.treenodelocator.showInTree = function(id, elementType, button) {
 
-        //var element = {
-        //    id: id
-        //}
-
         if (button) {
             button.disable();
         }
