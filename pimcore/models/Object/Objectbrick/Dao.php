@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -28,16 +28,16 @@ class Dao extends Model\Object\Fieldcollection\Dao
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = array();
-        
+
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
                 $definition = Object\Objectbrick\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
             }
-             
+
             $tableName = $definition->getTableName($object->getClass(), false);
-            
+
             try {
                 $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = ? AND fieldname = ?", array($object->getId(), $this->model->getFieldname()));
             } catch (\Exception $e) {
@@ -93,6 +93,16 @@ class Dao extends Model\Object\Fieldcollection\Dao
      */
     public function delete(Object\Concrete $object)
     {
-        throw new \Exception("Not implemented yet");
+        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+        foreach ($fieldDef->getAllowedTypes() as $type) {
+            try {
+                $definition = Object\Objectbrick\Definition::getByKey($type);
+            } catch (\Exception $e) {
+                continue;
+            }
+
+            $tableName = $definition->getTableName($object->getClass(), true);
+            $this->db->delete($tableName, "o_id = " . $object->getId());
+        }
     }
 }

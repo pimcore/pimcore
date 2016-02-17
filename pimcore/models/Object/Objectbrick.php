@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -136,7 +136,7 @@ class Objectbrick extends Model\AbstractModel
         foreach ($this->getItems() as $item) {
             $definitions[$item->getType()] = $item->getDefinition();
         }
-        
+
         return $definitions;
     }
 
@@ -239,7 +239,7 @@ class Objectbrick extends Model\AbstractModel
 
     /**
      * @param Concrete $object
-     * @return void 
+     * @return void
      */
     public function delete(Concrete $object)
     {
@@ -250,5 +250,7 @@ class Objectbrick extends Model\AbstractModel
                 }
             }
         }
+
+        $this->getDao()->delete($object);
     }
 }
