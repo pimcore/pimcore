@@ -35,6 +35,9 @@ RewriteRule ^plugins/.*$ / [F,L]
 RewriteRule ^pimcore/.*$ / [F,L]
 
 # restrict access to dotfiles
+RewriteCond %{REQUEST_FILENAME} -d [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule (^\.|/\.) - [F,L]
 
 # restrict access to potentially sensitive directories and files
