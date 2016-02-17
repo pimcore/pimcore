@@ -222,7 +222,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
         // combine the pimcore scripts in non-devmode
         if ($conf->general->devmode) {
             foreach ($editmodeScripts as $script) {
-                $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . time() . '"></script>';
+                $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . '"></script>';
                 $editmodeHeadHtml .= "\n";
             }
         } else {
@@ -277,7 +277,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
                     $html = str_replace("</head>", $editmodeHeadHtml . "\n\n</head>", $html);
 
-                    $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js?time=" . time();
+                    $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js";
                     if (!\Pimcore\Tool\Admin::isExtJS6()) {
                         $startupJavascript = "/pimcore/static/js/pimcore/document/edit/startup.js";
                     }
