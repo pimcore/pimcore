@@ -16,7 +16,7 @@ pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
         if(type != "variant" || this.data.general.showVariants) {
             try {
-                pimcore.treenodelocator.showInTree(this, "object", button)
+                pimcore.treenodelocator.showInTree(this.id, "object", button)
             } catch (e) {
                 console.log(e);
             }

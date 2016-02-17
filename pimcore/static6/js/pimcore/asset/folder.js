@@ -169,7 +169,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             handler: function () {
                 try {
                     try {
-                        pimcore.treenodelocator.showInTree(node, "asset", this);
+                        pimcore.treenodelocator.showInTree(node.id, "asset", this);
                     } catch (e) {
                         console.log(e);
                     }

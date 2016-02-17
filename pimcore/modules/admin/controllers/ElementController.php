@@ -301,36 +301,26 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
     {
         $id = $this->getParam("id");
         $type = $this->getParam("type");
+        $data = array();
 
         if ($type == "asset") {
-            $asset = Asset::getById($id);
-            $typePath = Element\Service::getTypePath($asset);
-            $data = array(
-                "success" => true,
-                "idPath" => Element_Service::getIdPath($asset),
-                "typePath" => $typePath
-            );
-            $this->_helper->json($data);
+            $element = Asset::getById($id);
         } else if ($type == "document") {
-            $document = Document::getById($id);
-            $typePath = Element\Service::getTypePath($document);
-            $data = array(
-                "success" => true,
-                "idPath" => Element_Service::getIdPath($document),
-                "typePath" => $typePath,
-                "fullpath" => $document->getFullPath()
-            );
-            $this->_helper->json($data);
+            $element = Document::getById($id);
+            $data["index"] = $element->getIndex();
+
         } else {
-            $object = Object_Abstract::getById($id);
-            $typePath = Element\Service::getTypePath($object);
-            $data = array(
-                "success" => true,
-                "idPath" => Element_Service::getIdPath($object),
-                "typePath" => $typePath
-            );
-            $this->_helper->json($data);
+            $element = Object::getById($id);
         }
+        $typePath = Element\Service::getTypePath($element);
+
+        $data["success"] = true;
+        $data["idPath"] = Element\Service::getIdPath($element);
+        $data["typePath"] = $typePath;
+        $data["fullpath"] = $element->getFullPath();
+
+
+        $this->_helper->json($data);
     }
 
 

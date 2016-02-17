@@ -215,7 +215,7 @@ pimcore.asset.listfolder = Class.create({
                 handler: function () {
                     try {
                         try {
-                            pimcore.treenodelocator.showInTree(record, "asset", this);
+                            pimcore.treenodelocator.showInTree(record.id, "asset", this);
                         } catch (e) {
                             console.log(e);
                         }

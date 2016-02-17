@@ -1,6 +1,10 @@
 pimcore.registerNS("pimcore.treenodelocator.x");
 
-pimcore.treenodelocator.showInTree = function(element, elementType, button) {
+pimcore.treenodelocator.showInTree = function(id, elementType, button) {
+
+        //var element = {
+        //    id: id
+        //}
 
         if (button) {
             button.disable();
@@ -9,7 +13,7 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
         Ext.Ajax.request({
             url: "/admin/element/type-path",
             params: {
-                id: element.id,
+                id: id,
                 type: elementType
             },
             success: function (response) {
@@ -18,24 +22,14 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
                     if (res.success) {
                         Ext.getCmp("pimcore_panel_tree_" + elementType + "s").expand();
                         var tree = pimcore.globalmanager.get("layout_" + elementType + "_tree");
-                        element.data.typePath = res.typePath;
-                        element.data.idPath = res.idPath;
 
-                        if (elementType == "document") {
-                            element.data.fullpath = res.fullpath;
-                        }
 
-                        if (elementType == "object" &&  typeof element.data.general == "undefined") {
-                            element.data.general = {
-                                fullpath: element.data.fullpath
-                            };
-                        }
                         var callback = function() {
                             if (button) {
                                 button.enable();
                             }
                         }
-                        pimcore.treenodelocator.searchInTree(element, elementType, tree.tree, res.idPath, callback);
+                        pimcore.treenodelocator.searchInTree(res, elementType, tree.tree, res.idPath, callback);
                     }
                 } catch (e) {
                     console.log(e);
@@ -47,12 +41,12 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
 }
 
 
-pimcore.treenodelocator.reportDone = function(element, elementType, callback) {
-    if (element) {
-        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, element.id);
-        var tree = element.getOwnerTree();
+pimcore.treenodelocator.reportDone = function(node, elementType, callback) {
+    if (node) {
+        pimcore.helpers.removeTreeNodeLoadingIndicator(node, node.id);
+        var tree = node.getOwnerTree();
         var view = tree.getView();
-        view.focusRow(element);
+        view.focusRow(node);
     }
     if (typeof callback == "function") {
             callback();
@@ -115,24 +109,24 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
     var nodeParts = nodePath.split("/");
 
     if (elementType == "document") {
-        fullPath = element.data.fullpath;
-        var elementKey = element.data.index;
+        fullPath = element.fullpath;
+        var elementKey = element.index;
     } else {
         if (elementType == "asset") {
-            fullPath = element.data.path + element.data.filename;
+            fullPath = element.path + element.filename;
         } else if (elementType == "object") {
-            fullPath = element.data.general.fullpath;
+            fullPath = element.fullpath;
         }
         var elementParts = fullPath.split("/");
         var elementKey = elementParts[nodeParts.length - 1];
     }
 
 
-    var typePath = element.data.typePath;
+    var typePath = element.typePath;
     var typeParts = typePath.split("/");
     var eType = typeParts[nodeParts.length];
 
-    var idPath = element.data.idPath;
+    var idPath = element.idPath;
 
     if (idPath == nodePath) {
         var tree = node.getOwnerTree();

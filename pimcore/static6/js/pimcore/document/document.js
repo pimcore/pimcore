@@ -56,7 +56,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         try {
             Ext.getCmp("pimcore_panel_tree_documents").expand();
             var tree = pimcore.globalmanager.get("layout_document_tree");
-            pimcore.treenodelocator.showInTree(this, "document");
+            pimcore.treenodelocator.showInTree(this.id, "document");
         } catch (e) {
             console.log(e);
         }

@@ -377,7 +377,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 handler: function () {
                     try {
                         try {
-                            pimcore.treenodelocator.showInTree(record, "object", this);
+                            pimcore.treenodelocator.showInTree(record.id, "object", this);
                         } catch (e) {
                             console.log(e);
                         }

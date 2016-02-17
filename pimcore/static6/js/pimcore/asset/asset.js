@@ -44,7 +44,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     selectInTree: function (button) {
         try {
-            pimcore.treenodelocator.showInTree(this, "asset", button)
+            pimcore.treenodelocator.showInTree(this.id, "asset", button)
         } catch (e) {
             console.log(e);
         }
