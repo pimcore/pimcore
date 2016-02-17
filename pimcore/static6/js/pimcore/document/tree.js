@@ -216,6 +216,10 @@ pimcore.document.tree = Class.create({
     onTreeNodeMove: function (node, oldParent, newParent, index, eOpts ) {
         var tree = node.getOwnerTree();
 
+        if (newParent.pagingData) {
+            index += newParent.pagingData.offset;
+        }
+
         this.updateDocument(node.data.id, {
             parentId: newParent.data.id,
             index: index

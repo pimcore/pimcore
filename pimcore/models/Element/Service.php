@@ -52,6 +52,46 @@ class Service extends Model\AbstractModel
 
     /**
      * @static
+     * @param  $element
+     * @return string
+     */
+    public static function getTypePath($element)
+    {
+        $path = "";
+
+        if ($element instanceof ElementInterface) {
+            $elementType = self::getElementType($element);
+            $nid = $element->getParentId();
+            $ne = self::getElementById($elementType, $nid);
+        }
+
+        if ($ne) {
+            $path = self::getTypePath($ne, $path);
+        }
+
+        if ($element) {
+            $type = $element->getType();
+            if ($type != "folder") {
+                if ($element instanceof Document) {
+                    $type = "document";
+                } else if ($element instanceof Object\AbstractObject) {
+                    $type = "object";
+                } else if ($element instanceof Asset) {
+                    $type = "asset";
+                } else {
+                    throw new \Exception("unknown type");
+                }
+            }
+            $path = $path . "/" . $type;
+        }
+
+        return $path;
+    }
+
+
+
+    /**
+     * @static
      * @param  $list array | \Pimcore\Model\Listing\AbstractListing
      * @return array
      */

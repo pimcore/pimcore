@@ -304,16 +304,26 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
 
         if ($type == "asset") {
             $asset = Asset::getById($id);
-            $typePath = self::getAssetTypePath($asset);
+            $typePath = Element\Service::getTypePath($asset);
             $data = array(
                 "success" => true,
                 "idPath" => Element_Service::getIdPath($asset),
                 "typePath" => $typePath
             );
             $this->_helper->json($data);
+        } else if ($type == "document") {
+            $document = Document::getById($id);
+            $typePath = Element\Service::getTypePath($document);
+            $data = array(
+                "success" => true,
+                "idPath" => Element_Service::getIdPath($document),
+                "typePath" => $typePath,
+                "fullpath" => $document->getFullPath()
+            );
+            $this->_helper->json($data);
         } else {
             $object = Object_Abstract::getById($id);
-            $typePath = self::getTypePath($object);
+            $typePath = Element\Service::getTypePath($object);
             $data = array(
                 "success" => true,
                 "idPath" => Element_Service::getIdPath($object),
@@ -323,51 +333,6 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-    public static function getAssetTypePath($element)
-    {
-        $path = "";
-
-        if ($element) {
-            $parentId = $element->getParentId();
-            if ($parentId) {
-                $ne = Asset::getById($element->getParentId());
-            }
-        }
-
-        if ($ne) {
-            $path = self::getAssetTypePath($ne, $path);
-        }
-
-        if ($element) {
-            $path = $path . "/" . $element->getType();
-        }
-
-        return $path;
-    }
-
-
-
-    public static function getTypePath($element)
-    {
-        $path = "";
-
-        if ($element) {
-            $parentId = $element->getParentId();
-            if ($parentId) {
-                $ne = Object_Abstract::getById($element->getParentId());
-            }
-        }
-
-        if ($ne) {
-            $path = self::getTypePath($ne, $path);
-        }
-
-        if ($element) {
-            $path = $path . "/" . $element->getType();
-        }
-
-        return $path;
-    }
 
     public function versionUpdateAction()
     {

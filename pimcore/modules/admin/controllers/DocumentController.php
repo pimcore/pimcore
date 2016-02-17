@@ -842,7 +842,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
     }
 
     /**
-     * @param $element
+     * @param $element Document
      * @return array
      */
     protected function getTreeNodeConfig($element)
@@ -851,6 +851,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
         $tmpDocument = array(
             "id" => $childDocument->getId(),
+            "idx" => intval($childDocument->getIndex()),
             "text" => $childDocument->getKey(),
             "type" => $childDocument->getType(),
             "path" => $childDocument->getFullPath(),

@@ -21,6 +21,10 @@ pimcore.treenodelocator.showInTree = function(element, elementType, button) {
                         element.data.typePath = res.typePath;
                         element.data.idPath = res.idPath;
 
+                        if (elementType == "document") {
+                            element.data.fullpath = res.fullpath;
+                        }
+
                         if (elementType == "object" &&  typeof element.data.general == "undefined") {
                             element.data.general = {
                                 fullpath: element.data.fullpath
@@ -110,14 +114,19 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
     var nodePath = node.getPath();
     var nodeParts = nodePath.split("/");
 
-    if (elementType == "asset") {
-        fullPath = element.data.path + element.data.filename;
+    if (elementType == "document") {
+        fullPath = element.data.fullpath;
+        var elementKey = element.data.index;
     } else {
-        fullPath = element.data.general.fullpath;
+        if (elementType == "asset") {
+            fullPath = element.data.path + element.data.filename;
+        } else if (elementType == "object") {
+            fullPath = element.data.general.fullpath;
+        }
+        var elementParts = fullPath.split("/");
+        var elementKey = elementParts[nodeParts.length - 1];
     }
 
-    var elementParts = fullPath.split("/");
-    var elementKey = elementParts[nodeParts.length - 1];
 
     var typePath = element.data.typePath;
     var typeParts = typePath.split("/");
@@ -162,17 +171,26 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
 
     for (i = 0; i < childCount; i++) {
         var childNode = childNodes[i];
-        if (childNode.data.type == "folder") {
-            lastFolderChild = childNode;
-            if (!firstFolderChild) {
-                firstFolderChild = childNode;
-            }
-        }
 
-        if (childNode.data.type != "folder") {
+        if (elementType == "document") {
             lastelementChild = childNode;
             if (!firstelementChild) {
                 firstelementChild = childNode;
+            }
+        } else {
+
+            if (childNode.data.type == "folder") {
+                lastFolderChild = childNode;
+                if (!firstFolderChild) {
+                    firstFolderChild = childNode;
+                }
+            }
+
+            if (childNode.data.type != "folder") {
+                lastelementChild = childNode;
+                if (!firstelementChild) {
+                    firstelementChild = childNode;
+                }
             }
         }
     }
@@ -182,21 +200,32 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
     var firstKey = null;
     var lastKey = null;
 
-    if (eType == "folder") {
-        if (firstFolderChild && elementKey < firstFolderChild.data.text) {
+    if (elementType == "document") {
+        if (firstelementChild && elementKey < firstelementChild.data.idx) {
             direction = -1;
-        } else if (lastFolderChild && elementKey > lastFolderChild.data.text) {
+        } else if (lastelementChild && elementKey > lastelementChild.data.idx) {
             direction = 1;
-        } else if (firstelementChild) {
-            direction = -1;
+        } else {
+            pimcore.treenodelocator.showError(node, node.data.elementType);
         }
+
     } else {
-        if (lastFolderChild) {
-            direction = 1;
-        } else if (firstelementChild && elementKey < firstelementChild.data.text) {
-            direction = -1;
-        } else if (lastelementChild && elementKey > lastelementChild.data.text) {
-            direction = 1;
+        if (eType == "folder") {
+            if (firstFolderChild && elementKey < firstFolderChild.data.text) {
+                direction = -1;
+            } else if (lastFolderChild && elementKey > lastFolderChild.data.text) {
+                direction = 1;
+            } else if (firstelementChild) {
+                direction = -1;
+            }
+        } else {
+            if (lastFolderChild) {
+                direction = 1;
+            } else if (firstelementChild && elementKey < firstelementChild.data.text) {
+                direction = -1;
+            } else if (lastelementChild && elementKey > lastelementChild.data.text) {
+                direction = 1;
+            }
         }
     }
 
