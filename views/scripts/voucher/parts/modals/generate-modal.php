@@ -49,7 +49,7 @@
             <!-- dialog buttons -->
             <div class="modal-footer">
                 <?php // TODO correct URL !?>
-                <a href="/plugin/OnlineShop/voucher/generate?id=<?= $this->getParam('id') ?>" class="btn btn-primary js-loading" data-msg="Generating Codes, please wait. This can take some minutes.">Generate</a>
+                <a href="/plugin/EcommerceFramework/voucher/generate?id=<?= $this->getParam('id') ?>" class="btn btn-primary js-loading" data-msg="Generating Codes, please wait. This can take some minutes.">Generate</a>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>

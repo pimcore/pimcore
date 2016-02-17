@@ -14,7 +14,7 @@
 ?>
 
 <head>
-    <link href="/plugins/OnlineShop/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 

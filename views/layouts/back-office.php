@@ -25,10 +25,10 @@
     <title>Online-Shop Back Office</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/plugins/OnlineShop/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/plugins/OnlineShop/static/css/back-office.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/css/back-office.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -104,8 +104,8 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="/plugins/OnlineShop/static/vendor/jquery-1.11.1.min.js"></script>
-<script src="/plugins/OnlineShop/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/jquery-1.11.1.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 
 <script>
     var pimcore = parent.pimcore;
@@ -113,7 +113,7 @@
 
 <?= $this->headScript() ?>
 
-<!--<script src="/plugins/OnlineShop/static/js/back-office.js"></script>-->
+<!--<script src="/plugins/EcommerceFramework/static/js/back-office.js"></script>-->
 
 </body>
 </html>

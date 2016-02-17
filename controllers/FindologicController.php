@@ -71,7 +71,7 @@ XML;
             $doc = new DOMDocument();
             $doc->loadXML( $xml );
 
-            var_dump( $doc->schemaValidate('plugins/OnlineShop/static/vendor/findologic/export.xsd') );
+            var_dump( $doc->schemaValidate('plugins/EcommerceFramework/static/vendor/findologic/export.xsd') );
         }
         else
         {

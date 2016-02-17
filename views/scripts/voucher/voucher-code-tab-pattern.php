@@ -14,11 +14,11 @@
 ?>
 
 <head>
-    <link href="/plugins/OnlineShop/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/plugins/OnlineShop/static/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="/plugins/OnlineShop/static/vendor/pickadate.classic.css" rel="stylesheet">
-    <link href="/plugins/OnlineShop/static/vendor/pickadate.classic.date.css" rel="stylesheet">
-    <link href="/plugins/OnlineShop/static/css/voucherservice/style.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/pickadate.classic.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/pickadate.classic.date.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/css/voucherservice/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -232,14 +232,14 @@ if ($this->paginator) {
 <?= $this->template('voucher/parts/modals/cleanup-reservations-modal.php', ['urlParams' => $urlParams]) ?>
 
 <!--Plugin and Lib Scripts -->
-<script src="/plugins/OnlineShop/static/vendor/jquery-2.1.3.min.js"></script>
-<script src="/plugins/OnlineShop/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/jquery-2.1.3.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 
-<script src="/plugins/OnlineShop/static/vendor/picker.v3.5.3.js"></script>
-<script src="/plugins/OnlineShop/static/vendor/picker.date.v3.5.3.js"></script>
-<script src="/plugins/OnlineShop/static/vendor/chart.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/picker.v3.5.3.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/picker.date.v3.5.3.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/chart.min.js"></script>
 
-<script src="/plugins/OnlineShop/static/js/voucherservice/voucherSeriesTabScript.js"></script>
+<script src="/plugins/EcommerceFramework/static/js/voucherservice/voucherSeriesTabScript.js"></script>
 
 
 <!--Script for statistics-->

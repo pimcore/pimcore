@@ -22,7 +22,7 @@ class OnlineShop_Framework_Pricing_Condition_DateRange_Test extends Test_Base
 //        Test_Tool::cleanUp();
         parent::setUp();
 
-        set_include_path(get_include_path() . PATH_SEPARATOR . '/plugins/onlineshop/www/plugins/OnlineShop/lib');
+        set_include_path(get_include_path() . PATH_SEPARATOR . '/plugins/EcommerceFramework/www/plugins/OnlineShop/lib');
 
         $this->environment = new \OnlineShop\Framework\PricingManager\Environment;
     }

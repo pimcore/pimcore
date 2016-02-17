@@ -52,7 +52,7 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
     }
 
     protected function getVersionFile(){
-        return PIMCORE_WEBSITE_VAR.'/plugins/OnlineShop/elasticsearch-index-version-' . $this->indexName.'.txt';
+        return PIMCORE_WEBSITE_VAR.'/plugins/EcommerceFramework/elasticsearch-index-version-' . $this->indexName.'.txt';
     }
 
     /**
