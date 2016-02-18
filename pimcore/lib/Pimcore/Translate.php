@@ -34,7 +34,7 @@ class Translate extends \Zend_Translate_Adapter
      * @var bool
      */
     protected $isCacheable = true;
-    
+
 
     /**
      * @param $locale
@@ -125,9 +125,9 @@ class Translate extends \Zend_Translate_Adapter
      */
     public function translate($messageId, $locale = null)
     {
+        $messageId = trim($messageId);
         $messageIdOriginal = $messageId;
         $messageId = mb_strtolower($messageId);
-        $messageId = trim($messageId);
 
         // the maximum length of message-id's is 255
         if (strlen($messageId) > 255) {
@@ -165,7 +165,7 @@ class Translate extends \Zend_Translate_Adapter
         if (empty($this->_translate[$locale])) {
             $this->_loadTranslationData(null, $locale);
         }
-        
+
         if (!empty($this->_translate[$locale][$messageId])) {
             // return original translation
             return $this->_translate[$locale][$messageId];
