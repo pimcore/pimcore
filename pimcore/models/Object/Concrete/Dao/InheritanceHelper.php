@@ -46,6 +46,41 @@ class InheritanceHelper
     const ID_FIELD = "oo_id";
 
     /**
+     * @var mixed|\Zend_Db_Adapter_Abstract
+     */
+    protected $db;
+
+    /**
+     * @var array
+     */
+    protected $fields = [];
+
+    /**
+     * @var array
+     */
+    protected $relations = [];
+
+    /**
+     * @var array
+     */
+    protected $fieldIds = [];
+
+    /**
+     * @var array
+     */
+    protected $deletionFieldIds = [];
+
+    /**
+     * @var array
+     */
+    protected $fieldDefinitions = [];
+
+    /**
+     * @var
+     */
+    protected $classId;
+
+    /**
      * @param $classId
      * @param null $idField
      * @param null $storetable
@@ -55,11 +90,7 @@ class InheritanceHelper
     public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null)
     {
         $this->db = \Pimcore\Db::get();
-        $this->fields = array();
-        $this->relations = array();
-        $this->fieldIds = array();
-        $this->deletionFieldIds = array();
-        $this->fieldDefinitions = [];
+        $this->classId = $classId;
 
         if ($storetable == null) {
             $this->storetable = self::STORE_TABLE . $classId;
@@ -292,7 +323,7 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = Object::getById($currentParentId);
 
-            $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ? GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC", $object->getFullPath() . "/%");
+            $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ? AND o_classId = ? GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC", [$object->getFullPath() . "/%", $this->classId]);
 
             $objects = array();
 
