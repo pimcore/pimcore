@@ -323,7 +323,7 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = Object::getById($currentParentId);
 
-            $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ? AND o_classId = ? GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC", [$object->getFullPath() . "/%", $this->classId]);
+            $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ? GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC", $object->getFullPath() . "/%");
 
             $objects = array();
 
@@ -344,6 +344,7 @@ class InheritanceHelper
                 $o->id = $r['id'];
                 $o->values = $r;
                 $o->type = $r["type"];
+                $o->classId = $r["classId"];
                 $o->childs = $this->buildTree($r['id'], $fields, $parentIdGroups);
 
                 $objects[] = $o;
@@ -390,7 +391,7 @@ class InheritanceHelper
 
         if (is_array($treeChildren)) {
             foreach ($treeChildren as $child) {
-                if ($child->type != "folder") {
+                if ($child->classId == $this->classId) {
                     $ids[] = $child->id;
                 }
                 $ids = array_merge($ids, $this->extractObjectIdsFromTreeChildren($child->childs));
