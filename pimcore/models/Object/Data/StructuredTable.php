@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -20,7 +20,7 @@ class StructuredTable
     /**
      * @var array
      */
-    public $data;
+    public $data = [];
 
     /**
      * @param array $data
