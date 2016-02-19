@@ -14,6 +14,10 @@ namespace OnlineShop\Framework\PaymentManager\Payment;
 
 class QPay implements IPayment
 {
+    // supported hashing algorithms
+    const HASH_ALGO_MD5 = 'md5';
+    const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
+
     /**
      * @var string
      */
@@ -33,6 +37,12 @@ class QPay implements IPayment
      * @var string
      */
     protected $paymenttype = 'SELECT';
+
+    /**
+     * Keep old implementation for backwards compatibility
+     * @var string
+     */
+    protected $hashAlgorithm = self::HASH_ALGO_MD5;
 
     /**
      * @var string[]
@@ -76,8 +86,27 @@ class QPay implements IPayment
             $this->paymenttype = $settings->paymenttype;
         }
 
+        $this->initHashAlgorithm($settings);
         $this->initOptionalPaymentProperties($settings);
+
         $this->currencyLocale = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale();
+    }
+
+    /**
+     * Initialize hash algorithm
+     *
+     * @param \Zend_Config $settings
+     */
+    protected function initHashAlgorithm(\Zend_Config $settings)
+    {
+        if ($settings->hashAlgorithm) {
+            $hashAlgorithm = (string) $settings->hashAlgorithm;
+            if (!in_array($hashAlgorithm, [static::HASH_ALGO_MD5, static::HASH_ALGO_HMAC_SHA512])) {
+                throw new \InvalidArgumentException(sprintf('%s is no valid hash algorithm', $hashAlgorithm));
+            }
+
+            $this->hashAlgorithm = $hashAlgorithm;
+        }
     }
 
     /**
@@ -160,10 +189,12 @@ class QPay implements IPayment
             }
         }
 
-        // generate fingerprint
+        // set fingerprint order
         $paymentData['requestFingerprintOrder'] = ''; // make sure the key is in the order array
         $paymentData['requestFingerprintOrder'] = implode(',', array_keys($paymentData));
-        $fingerprint = md5(implode('', $paymentData));
+
+        // compute fingerprint
+        $fingerprint = $this->computeFingerprint(array_values($paymentData));
 
         // create form
         $form = new \Zend_Form(array('disableLoadDefaultDecorators' => false));
@@ -220,18 +251,16 @@ class QPay implements IPayment
             throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
         }
 
-
-        // check fingerprint
-        $fields = explode(',', $response['responseFingerprintOrder']);
-        $fingerprint = '';
-        foreach($fields as $field)
-        {
-            $fingerprint .= $field == 'secret' ? $this->secret : $response[ $field ];
+        // build fingerprint params
+        $fingerprintParams = [];
+        $fingerprintFields = explode(',', $response['responseFingerprintOrder']);
+        foreach ($fingerprintFields as $field) {
+            $fingerprintParams[] = $field === 'secret' ? $this->secret : $response[$field];
         }
 
-        $fingerprint = md5($fingerprint);
-        if($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint'])
-        {
+        // compute and check fingerprint
+        $fingerprint = $this->computeFingerprint($fingerprintParams);
+        if ($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint']) {
             // fingerprint is wrong, ignore this response
             return new \OnlineShop\Framework\PaymentManager\Status(
                 $response['orderIdent']
@@ -240,7 +269,6 @@ class QPay implements IPayment
                 , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
             );
         }
-
 
         // handle
         $authorizedData = array_intersect_key($response, $authorizedData);
@@ -321,7 +349,7 @@ class QPay implements IPayment
 
 
             // add fingerprint
-            $request['requestFingerprint'] = $this->computeFingerprint(
+            $request['requestFingerprint'] = $this->computeFingerprint([
                 $request['customerId']
                 , $request['toolkitPassword']
                 , $this->secret
@@ -331,7 +359,7 @@ class QPay implements IPayment
                 , $request['orderDescription']
                 , $request['amount']
                 , $request['currency']
-            );
+            ]);
 
         }
         else
@@ -352,7 +380,7 @@ class QPay implements IPayment
 
 
             // add fingerprint
-            $request['requestFingerprint'] = $this->computeFingerprint(
+            $request['requestFingerprint'] = $this->computeFingerprint([
                 $request['customerId']
                 , $request['toolkitPassword']
                 , $this->secret
@@ -361,8 +389,7 @@ class QPay implements IPayment
                 , $request['orderNumber']
                 , $request['amount']
                 , $request['currency']
-            );
-
+            ]);
         }
 
 
@@ -429,21 +456,47 @@ class QPay implements IPayment
         // TODO: Implement executeCredit() method.
     }
 
-
     /**
+     * Compute fingerprint for array of input parameters depending on configured algorithm
+     *
+     * @param array $params
      * @return string
      */
-    protected function computeFingerprint()
+    protected function computeFingerprint(array $params)
     {
-        $seed = '';
-        for ($i=0; $i<func_num_args(); $i++)
-        {
-            $seed .= func_get_arg($i);
-        }
+        $data   = implode('', $params);
+        $result = null;
 
-        return md5($seed);
+        switch ($this->hashAlgorithm) {
+            case static::HASH_ALGO_MD5:
+                return $this->computeMd5Fingerprint($data);
+
+            case static::HASH_ALGO_HMAC_SHA512:
+                return $this->computeHmacSha512Fingerprint($data);
+        }
     }
 
+    /**
+     * Compute MD5 fingerprint
+     *
+     * @param $data
+     * @return string
+     */
+    protected function computeMd5Fingerprint($data)
+    {
+        return md5($data);
+    }
+
+    /**
+     * Calculate HMAC_SHA512 fingerprint
+     *
+     * @param $data
+     * @return string
+     */
+    protected function computeHmacSha512Fingerprint($data)
+    {
+        return hash_hmac('sha512', $data, $this->secret);
+    }
 
     /**
      * @param $url
