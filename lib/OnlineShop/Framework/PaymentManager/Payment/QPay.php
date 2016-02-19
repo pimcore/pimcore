@@ -44,6 +44,16 @@ class QPay implements IPayment
      */
     protected $currencyLocale;
 
+    /**
+     * Whitelist of optional properties allowed for payment init
+     * @var array
+     */
+    protected $optionalPaymentProperties = [
+        'imageURL',
+        'confirmURL',
+        'confirmMail',
+        'displayText'
+    ];
 
     /**
      * @param \Zend_Config $xml
@@ -62,14 +72,37 @@ class QPay implements IPayment
         $this->customer = $settings->customer;
         $this->toolkitPassword = $settings->toolkitPassword;
 
-        if($settings->paymenttype)
-        {
+        if ($settings->paymenttype) {
             $this->paymenttype = $settings->paymenttype;
         }
 
+        $this->initOptionalPaymentProperties($settings);
         $this->currencyLocale = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale();
     }
 
+    /**
+     * Initialize optional payment properties from config
+     *
+     * @param \Zend_Config $settings
+     */
+    protected function initOptionalPaymentProperties(\Zend_Config $settings)
+    {
+        if ($settings->optionalPaymentProperties instanceof \Zend_Config) {
+            $configArray = $settings->optionalPaymentProperties->toArray();
+            if (isset($configArray['property'])) {
+                // Zend_Config behaves differently if there's just a single object in the set
+                if (is_array($configArray['property'])) {
+                    foreach ($configArray['property'] as $optionalProperty) {
+                        $this->optionalPaymentProperties[] = $optionalProperty;
+                    }
+                } elseif (is_string($configArray['property'])) {
+                    $this->optionalPaymentProperties[] = $configArray['property'];
+                }
+            }
+
+            $this->optionalPaymentProperties = array_unique($this->optionalPaymentProperties);
+        }
+    }
 
     /**
      * @return string
@@ -78,7 +111,6 @@ class QPay implements IPayment
     {
         return 'Qpay';
     }
-
 
     /**
      * start payment
@@ -92,90 +124,70 @@ class QPay implements IPayment
     public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
     {
         // check params
-        $required = [  'successURL' => null
-                       , 'cancelURL' => null
-                       , 'failureURL' => null
-                       , 'serviceURL' => null
-                       , 'orderDescription' => null
-                       , 'orderIdent' => null
-                       , 'language' => null
+        $required = [
+            'successURL' => null
+            , 'cancelURL' => null
+            , 'failureURL' => null
+            , 'serviceURL' => null
+            , 'orderDescription' => null
+            , 'orderIdent' => null
+            , 'language' => null
         ];
-        $check = array_intersect_key($config, $required);
 
-        if(count($required) != count($check))
-        {
+        $check = array_intersect_key($config, $required);
+        if (count($required) != count($check)) {
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $check)))));
         }
-
 
         // collect payment data
         $paymentData['secret'] = $this->secret;
         $paymentData['customerId'] = $this->customer;
         $paymentData['amount'] = round($price->getAmount(), 2);
         $paymentData['currency'] = $price->getCurrency()->getShortName();
-        $paymentData['language'] = $config['language'];
-        $paymentData['orderDescription'] = $config['orderDescription'];
-        $paymentData['successURL'] = $config['successURL'];
-        if(array_key_exists('confirmURL', $config)) {
-            $paymentData['confirmURL'] = $config['confirmURL'];
-        }
         $paymentData['duplicateRequestCheck'] = 'yes';
-        $paymentData['orderIdent'] = $config['orderIdent'];
-        $paymentData['requestfingerprintorder'] = '';
 
-        if(array_key_exists('displayText', $config)) {
-            $paymentData['displayText'] = $config['displayText'];
-        }
-        if(array_key_exists('confirmMail', $config)) {
-            $paymentData['confirmMail'] = $config['confirmMail'];
+        // can be overridden by adding paymentType to optional properties and passing its value in config
+        $paymentData['paymentType'] = $this->paymenttype;
+
+        foreach ($required as $property => $null) {
+            $paymentData[$property] = $config[$property];
         }
 
-
+        // handle optional properties
+        foreach ($this->optionalPaymentProperties as $optionalProperty) {
+            if (array_key_exists($optionalProperty, $config)) {
+                $paymentData[$optionalProperty] = $config[$optionalProperty];
+            }
+        }
 
         // generate fingerprint
-        $paymentData['requestfingerprintorder'] = implode(',', array_keys($paymentData));
+        $paymentData['requestFingerprintOrder'] = ''; // make sure the key is in the order array
+        $paymentData['requestFingerprintOrder'] = implode(',', array_keys($paymentData));
         $fingerprint = md5(implode('', $paymentData));
-
 
         // create form
         $form = new \Zend_Form(array('disableLoadDefaultDecorators' => false));
-        $form->setAction( 'https://www.qenta.com/qpay/init.php' );
-        $form->setMethod( 'post' );
-        $form->addElement( 'hidden', 'customerId', array('value' => $this->customer) );
-        $form->addElement( 'hidden', 'paymenttype', array('value' => $this->paymenttype) );
-        $form->addElement( 'hidden', 'amount', array('value' => $paymentData['amount']) );
-        $form->addElement( 'hidden', 'currency', array('value' => $paymentData['currency']) );
-        $form->addElement( 'hidden', 'language', array('value' => $paymentData['language']) );
-        $form->addElement( 'hidden', 'orderDescription', array('value' => $paymentData['orderDescription']) );
-        $form->addElement( 'hidden', 'orderIdent', array('value' => $paymentData['orderIdent']) );
-        $form->addElement( 'hidden', 'requestfingerprintorder', array('value' => $paymentData['requestfingerprintorder']) );
-        $form->addElement( 'hidden', 'requestfingerprint', array('value' => $fingerprint) );
-        $form->addElement( 'hidden', 'successURL', array('value' => $config['successURL']) );
-        $form->addElement( 'hidden', 'failureURL', array('value' => $config['failureURL']) );
-        $form->addElement( 'hidden', 'cancelURL', array('value' => $config['cancelURL']) );
-        $form->addElement( 'hidden', 'serviceURL', array('value' => $config['serviceURL']) );
-        if(array_key_exists('confirmURL', $config)) {
-            $form->addElement( 'hidden', 'confirmURL', array('value' => $config['confirmURL']) );
-        }
-        if(array_key_exists('confirmMail', $config)) {
-            $form->addElement('hidden', 'confirmMail', array('value' => $config['confirmMail']));
-        }
-        $form->addElement( 'hidden', 'duplicateRequestCheck', array('value' => 'yes') );
+        $form->setAction('https://www.qenta.com/qpay/init.php');
+        $form->setMethod('post');
 
-        // add optional data
-        if(array_key_exists('displayText', $config)) {
-            $form->addElement( 'hidden', 'displayText', array('value' => $config['displayText']) );
+        // omit these keys from the form
+        $blacklistedFormKeys = ['secret'];
+        foreach ($paymentData as $property => $value) {
+            if (in_array($property, $blacklistedFormKeys)) {
+                continue;
+            }
+
+            $form->addElement('hidden', $property, ['value' => $value]);
         }
-        if(array_key_exists('imageURL', $config)) {
-            $form->addElement( 'hidden', 'imageURL', array('value' => $config['imageURL']) );
-        }
+
+        // add fingerprint to request
+        $form->addElement('hidden', 'requestFingerprint', ['value' => $fingerprint]);
 
         // add submit button
-        $form->addElement( 'submit', 'submitbutton' );
+        $form->addElement('submit', 'submitbutton');
 
         return $form;
     }
-
 
     /**
      * @param mixed $response
