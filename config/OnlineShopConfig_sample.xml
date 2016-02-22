@@ -136,6 +136,25 @@
                             <secret>B8AKTPWBRMNBV455FG6M2DANE99WU2</secret>
                             <customer>D200001</customer>
                             <toolkitPassword>jcv45z</toolkitPassword>
+
+                            <!--
+                                define optional properties which can be used in initPayment (see Wirecard documentation)
+                                https://git.io/v2ty1
+                            -->
+                            <!--
+                            <optionalPaymentProperties>
+                                <property>paymentType</property>
+                                <property>financialInstitution</property>
+                            </optionalPaymentProperties>
+                            -->
+
+                            <!--
+                                set hash algorithm to HMAC-SHA512
+                                https://git.io/v2tyV
+                            -->
+                            <!--
+                            <hashAlgorithm>hmac_sha512</hashAlgorithm>
+                            -->
                         </sandbox>
                         <test>
                             <secret>CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ</secret>
