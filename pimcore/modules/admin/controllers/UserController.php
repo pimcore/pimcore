@@ -178,7 +178,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         if (is_array($childList)) {
             foreach ($childList as $user) {
                 if ($user->getId() == $currentUser->getId()) {
-                    throw new Exception("Cannot delete current user");
+                    throw new \Exception("Cannot delete current user");
                 }
                 if ($user->getId() && $currentUser->getId() && $user->getName() != "system") {
                     $currentList[] = $user;

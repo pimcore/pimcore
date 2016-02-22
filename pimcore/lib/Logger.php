@@ -212,7 +212,7 @@ class Logger
             $call["line"] = $backtrace[1]["line"];
 
             if (is_object($message) || is_array($message)) {
-                if (!$message instanceof Exception) {
+                if (!$message instanceof \Exception) {
                     $message = print_r($message, true);
                 }
             }
@@ -237,17 +237,17 @@ class Logger
             }
         }
     }
-    
-    
+
+
     /**
      * $l is for backward compatibility
      **/
-    
+
      public static function emergency($m, $context = [])
      {
          self::log($m, "emergency", $context);
      }
-    
+
     public static function emerg($m, $context = [])
     {
         self::log($m, "emergency", $context);
@@ -262,42 +262,42 @@ class Logger
     {
         self::log($m, "critical", $context);
     }
-    
+
     public static function crit($m, $context = [])
     {
         self::log($m, "critical", $context);
     }
-    
+
     public static function error($m, $context = [])
     {
         self::log($m, "error", $context);
     }
-    
+
     public static function err($m, $context = [])
     {
         self::log($m, "error", $context);
     }
-    
+
     public static function warning($m, $context = [])
     {
         self::log($m, "warning", $context);
     }
-    
+
     public static function warn($m, $context = [])
     {
         self::log($m, "warning", $context);
     }
-    
+
     public static function notice($m, $context = [])
     {
         self::log($m, "notice", $context);
     }
-    
+
     public static function info($m, $context = [])
     {
         self::log($m, "info", $context);
     }
-    
+
     public static function debug($m, $context = [])
     {
         self::log($m, "debug", $context);

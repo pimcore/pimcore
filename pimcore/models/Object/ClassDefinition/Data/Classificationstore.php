@@ -397,12 +397,12 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Model\Object\AbstractObject $object
-     * @return mixed
+     * @param Object\AbstractObject $object
+     * @throws \Exception
      */
     public function getForWebserviceExport($object)
     {
-        throw new Exception("not supported");
+        throw new \Exception("not supported");
     }
 
     /**
@@ -414,7 +414,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
-        throw new Exception("not supported");
+        throw new \Exception("not supported");
     }
 
 
@@ -747,25 +747,24 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
 
-    /** See parent class.
+    /**
      * @param mixed $data
      * @param null $object
-     * @return array|null
+     * @throws \Exception
      */
     public function getDiffDataForEditmode($data, $object = null)
     {
-        throw new Exception("not supported");
+        throw new \Exception("not supported");
     }
 
-    /** See parent class.
+    /**
      * @param $data
      * @param null $object
-     * @return null|Pimcore_Date
+     * @throws \Exception
      */
-
     public function getDiffDataFromEditmode($data, $object = null)
     {
-        throw new Exception("not supported");
+        throw new \Exception("not supported");
     }
 
     /** True if change is allowed in edit mode.

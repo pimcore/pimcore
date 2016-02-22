@@ -61,7 +61,7 @@ class SearchBackendReindexCommand extends AbstractCommand
                         }
 
                         $searchEntry->save();
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         \Logger::err($e);
                     }
                 }

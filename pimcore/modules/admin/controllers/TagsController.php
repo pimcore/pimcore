@@ -32,7 +32,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
             $tag->delete();
             $this->_helper->json(['success' => true]);
         } else {
-            throw new Exception("Tag with ID " . $this->getParam("id") . " not found.");
+            throw new \Exception("Tag with ID " . $this->getParam("id") . " not found.");
         }
     }
 
@@ -52,7 +52,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(['success' => true]);
         } else {
-            throw new Exception("Tag with ID " . $this->getParam("id") . " not found.");
+            throw new \Exception("Tag with ID " . $this->getParam("id") . " not found.");
         }
     }
 

@@ -26,7 +26,7 @@ class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin
                     $unit->delete();
                     $this->_helper->json(array("data" => array(), "success" => true));
                 } else {
-                    throw new Exception("Unit with id " . $id . " not found.");
+                    throw new \Exception("Unit with id " . $id . " not found.");
                 }
             } elseif ($this->getParam("xaction") == "update") {
                 $data = Zend_Json::decode($this->getParam("data"));
@@ -36,7 +36,7 @@ class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin
                     $unit->save();
                     $this->_helper->json(array("data" => get_object_vars($unit), "success" => true));
                 } else {
-                    throw new Exception("Unit with id " . $data['id'] . " not found.");
+                    throw new \Exception("Unit with id " . $data['id'] . " not found.");
                 }
             } elseif ($this->getParam("xaction") == "create") {
                 $data = Zend_Json::decode($this->getParam("data"));
@@ -114,7 +114,7 @@ class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin
             $string = implode(",", $quotedArray);
             $list->setCondition("id IN (" . $string . ")");
         }
-        
+
         $units = $list->getUnits();
         $this->_helper->json(array("data" => $units, "success" => true, "total" => $list->getTotalCount()));
     }

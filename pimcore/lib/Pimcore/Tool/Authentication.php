@@ -39,7 +39,7 @@ class Authentication
 
     /**
      * @static
-     * @throws Exception
+     * @throws \Exception
      * @return User
      */
     public static function authenticateSession()
@@ -65,7 +65,7 @@ class Authentication
 
     /**
      * @static
-     * @throws Exception
+     * @throws \Exception
      * @return User
      */
     public static function authenticateHttpBasic()

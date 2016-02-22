@@ -246,7 +246,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
             $file= resolvePath($file);
             if (strpos($file, PIMCORE_DOCUMENT_ROOT) !== 0) {
-                throw new Exception("not allowed");
+                throw new \Exception("not allowed");
             }
 
             if (is_writeable(dirname($file))) {
@@ -273,7 +273,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
             $file= resolvePath($file);
             if (strpos($file, PIMCORE_DOCUMENT_ROOT) !== 0) {
-                throw new Exception("not allowed");
+                throw new \Exception("not allowed");
             }
 
             if (is_writeable(dirname($file))) {
