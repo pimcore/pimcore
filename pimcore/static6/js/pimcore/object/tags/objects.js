@@ -225,7 +225,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 collectionMenu.push({
                     text: ts(allowedClasses[i]),
                     handler: this.create.bind(this, allowedClasses[i]),
-                    iconCls: "pimcore_icon_fieldcollections"
+                    iconCls: "pimcore_icon_fieldcollection"
                 });
             }
         }

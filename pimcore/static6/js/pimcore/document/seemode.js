@@ -50,7 +50,7 @@ pimcore.document.seemode = Class.create({
             buttons: [
                 {
                     text: t("edit_current_page"),
-                    iconCls: "pimcore_icon_tab_edit",
+                    iconCls: "pimcore_icon_edit",
                     handler: this.edit.bind(this)
                 }
             ]

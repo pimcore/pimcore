@@ -116,7 +116,7 @@ pimcore.layout.portal = Class.create({
                     {
                         type: 'button',
                         text: t("add_portlet"),
-                        iconCls: "pimcore_icon_portlet_add",
+                        iconCls: "pimcore_icon_add",
                         menu: portletMenu
                     }
                 ]

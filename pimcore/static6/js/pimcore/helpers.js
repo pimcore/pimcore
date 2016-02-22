@@ -418,7 +418,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
 
         var errWin = new Ext.Window({
             modal: true,
-            iconCls: "icon_notification_error",
+            iconCls: "pimcore_icon_error",
             title: title,
             width: 700,
             height: 500,
@@ -1165,7 +1165,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
             name: 'Filedata',
             buttonText: "",
             buttonConfig: {
-                iconCls: 'pimcore_icon_upload_single'
+                iconCls: 'pimcore_icon_upload'
             },
             listeners: {
                 change: function () {
@@ -1230,7 +1230,7 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
             name: filename,
             buttonText: "",
             buttonConfig: {
-                iconCls: 'pimcore_icon_upload_single'
+                iconCls: 'pimcore_icon_upload'
             },
             listeners: {
                 change: function () {

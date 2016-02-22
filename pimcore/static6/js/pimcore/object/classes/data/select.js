@@ -97,7 +97,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             },
             {
                 xtype: "button",
-                iconCls: "pimcore_icon_tab_edit",
+                iconCls: "pimcore_icon_edit",
                 handler: this.showoptioneditor.bind(this)
 
             }],

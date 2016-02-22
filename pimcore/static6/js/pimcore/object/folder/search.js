@@ -15,7 +15,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     fieldObject: {},
 
     title: t('search_edit'),
-    icon: "pimcore_icon_tab_search",
+    icon: "pimcore_icon_search",
     onlyDirectChildren: false,
 
     sortinfo: {},
@@ -238,7 +238,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 cls: 'pimcore_object_grid_panel',
                 tbar: [this.languageInfo, "-", this.toolbarFilterInfo, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
                     text: t("search_and_move"),
-                    iconCls: "pimcore_icon_search_and_move",
+                    iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
                     handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
                         function () {
                             this.store.reload();

@@ -19,7 +19,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             this.panel = new Ext.Panel({
                 id: "pimcore_users",
                 title: t("users"),
-                iconCls: "pimcore_icon_users",
+                iconCls: "pimcore_icon_user",
                 border: false,
                 layout: "border",
                 closable:true,
@@ -204,14 +204,14 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
         if (record.data.allowChildren) {
             menu.add(new Ext.menu.Item({
                 text: t('add_folder'),
-                iconCls: "pimcore_icon_folder_add",
+                iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "userfolder", null, record)
                 }
             }));
             menu.add(new Ext.menu.Item({
                 text: t('add_user'),
-                iconCls: "pimcore_icon_user_add",
+                iconCls: "pimcore_icon_user pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "user", null, record)
                 }
@@ -219,7 +219,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
         } else if (record.data.elementType == "user") {
             menu.add(new Ext.menu.Item({
                 text: t('clone_user'),
-                iconCls: "pimcore_icon_user_add",
+                iconCls: "pimcore_icon_user pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "user", record, record)
                 }

@@ -400,12 +400,12 @@ pimcore.object.tree = Class.create({
                         // create menu item
                         tmp = {
                             text: classGroupRecord.get("translatedText"),
-                            iconCls: "pimcore_icon_object_add",
+                            iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
                             handler: this.addObject.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
                         };
 
                         // add special icon
-                        if (classGroupRecord.get("icon")) {
+                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
                             tmp.icon = classGroupRecord.get("icon");
                             tmp.iconCls = "";
                         }
@@ -418,12 +418,12 @@ pimcore.object.tree = Class.create({
                         // create menu item
                         tmp = {
                             text: classGroupRecord.get("translatedText"),
-                            iconCls: "pimcore_icon_object_import",
+                            iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
                             handler: this.importObjects.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
                         };
 
                         // add special icon
-                        if (classGroupRecord.get("icon")) {
+                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
                             tmp.icon = classGroupRecord.get("icon");
                             tmp.iconCls = "";
                         }
@@ -443,11 +443,11 @@ pimcore.object.tree = Class.create({
                     /* == menu entry: create new object == */
                     tmpMenuEntry = {
                         text: classGroupRecord.get("translatedText"),
-                        iconCls: "pimcore_icon_object_add",
+                        iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
                         handler: this.addObject.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
                     };
 
-                    if (classGroupRecord.get("icon")) {
+                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
                         tmpMenuEntry.icon = classGroupRecord.get("icon");
                         tmpMenuEntry.iconCls = "";
                     }
@@ -458,11 +458,11 @@ pimcore.object.tree = Class.create({
                     /* == menu entry: import object == */
                     tmpMenuEntryImport = {
                         text: classGroupRecord.get("translatedText"),
-                        iconCls: "pimcore_icon_object_import",
+                        iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
                         handler: this.importObjects.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
                     };
 
-                    if (classGroupRecord.get("icon")) {
+                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
                         tmpMenuEntryImport.icon = classGroupRecord.get("icon");
                         tmpMenuEntryImport.iconCls = "";
                     }
@@ -478,7 +478,7 @@ pimcore.object.tree = Class.create({
             if (!isVariant) {
                 menu.add(new Ext.menu.Item({
                     text: t('add_object'),
-                    iconCls: "pimcore_icon_object_add",
+                    iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
                     hideOnClick: false,
                     menu: objectMenu.objects
                 }));
@@ -487,7 +487,7 @@ pimcore.object.tree = Class.create({
             if (record.data.allowVariants) {
                 menu.add(new Ext.menu.Item({
                     text: t("add_variant"),
-                    iconCls: "pimcore_icon_tree_variant",
+                    iconCls: "pimcore_icon_variant",
                     handler: this.createVariant.bind(this, tree, record)
                 }));
             }
@@ -496,7 +496,7 @@ pimcore.object.tree = Class.create({
                 //if (this.attributes.type == "folder") {
                 menu.add(new Ext.menu.Item({
                     text: t('add_folder'),
-                    iconCls: "pimcore_icon_folder_add",
+                    iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                     handler: this.addFolder.bind(this, tree, record)
                 }));
                 //}
@@ -505,7 +505,7 @@ pimcore.object.tree = Class.create({
                 menu.add({
                     text: t('import_csv'),
                     hideOnClick: false,
-                    iconCls: "pimcore_icon_object_csv_import",
+                    iconCls: "pimcore_icon_object pimcore_icon_overlay_upload",
                     menu: objectMenu.importer
                 });
 
@@ -589,13 +589,13 @@ pimcore.object.tree = Class.create({
             if (record.data.published && record.data.permissions.unpublish) {
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
-                    iconCls: "pimcore_icon_tree_unpublish",
+                    iconCls: "pimcore_icon_unpublish",
                     handler: this.publishObject.bind(this, tree, record, 'unpublish')
                 }));
             } else if (!record.data.published && record.data.permissions.publish) {
                 menu.add(new Ext.menu.Item({
                     text: t('publish'),
-                    iconCls: "pimcore_icon_tree_publish",
+                    iconCls: "pimcore_icon_publish",
                     handler: this.publishObject.bind(this, tree, record, 'publish')
                 }));
             }
@@ -613,7 +613,7 @@ pimcore.object.tree = Class.create({
         if (record.data.permissions.create) {
             menu.add(new Ext.menu.Item({
                 text: t('search_and_move'),
-                iconCls: "pimcore_icon_search_and_move",
+                iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
                 handler: this.searchAndMove.bind(this, tree, record)
             }));
         }
@@ -621,7 +621,7 @@ pimcore.object.tree = Class.create({
         if (record.data.permissions.rename && this.id != 1 && !record.data.locked) {
             menu.add(new Ext.menu.Item({
                 text: t('rename'),
-                iconCls: "pimcore_icon_edit_key",
+                iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 handler: this.editKey.bind(this, tree, record)
             }));
         }
@@ -635,7 +635,7 @@ pimcore.object.tree = Class.create({
                 if (record.data.lockOwner) { // add unlock
                     lockMenu.push({
                         text: t('unlock'),
-                        iconCls: "pimcore_icon_lock_delete",
+                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                         handler: function () {
                             this.updateObject(tree, record, {locked: null}, function () {
                                 this.refresh(this.tree.getRootNode());
@@ -645,7 +645,7 @@ pimcore.object.tree = Class.create({
                 } else {
                     lockMenu.push({
                         text: t('lock'),
-                        iconCls: "pimcore_icon_lock_add",
+                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
                         handler: function () {
                             try {
                                 this.updateObject(tree, record, {locked: "self"}, function () {
@@ -659,7 +659,7 @@ pimcore.object.tree = Class.create({
 
                     lockMenu.push({
                         text: t('lock_and_propagate_to_childs'),
-                        iconCls: "pimcore_icon_lock_add_propagate",
+                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                         handler: function () {
                             try {
                                 this.updateObject(tree, record, {locked: "propagate"},
@@ -677,7 +677,7 @@ pimcore.object.tree = Class.create({
                     // add unlock and propagate to children functionality
                     lockMenu.push({
                         text: t('unlock_and_propagate_to_children'),
-                        iconCls: "pimcore_icon_lock_delete",
+                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                         handler: function () {
                             Ext.Ajax.request({
                                 url: "/admin/element/unlock-propagate",

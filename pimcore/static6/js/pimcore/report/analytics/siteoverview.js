@@ -31,7 +31,7 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
     },
 
     getIconCls: function () {
-        return "pimcore_icon_analytics_overview";
+        return "pimcore_icon_analytics";
     },
 
 
@@ -162,5 +162,5 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
 });
 
 // add to report broker
-pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_report_analytics_group");
+pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
 pimcore.report.broker.addReport(pimcore.report.analytics.overview, "analytics");

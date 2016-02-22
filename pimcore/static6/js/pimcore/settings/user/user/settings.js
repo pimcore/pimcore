@@ -267,7 +267,7 @@ pimcore.settings.user.user.settings = Class.create({
                     {
                     xtype: "button",
                     test: t("Generate"),
-                    iconCls: "pimcore_icon_menu_clear_cache",
+                    iconCls: "pimcore_icon_clear_cache",
                     handler: function (e) {
                         this.apiKeyField.setValue(md5(uniqid()) + md5(uniqid()));
                     }.bind(this)

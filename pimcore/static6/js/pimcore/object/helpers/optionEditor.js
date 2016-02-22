@@ -59,7 +59,7 @@ pimcore.object.helpers.optionEditor = Class.create({
             width: 800,
             height: 500,
             title: t('csv_seperated_options'),
-            iconCls: "pimcore_icon_tab_edit",
+            iconCls: "pimcore_icon_edit",
             layout: "fit",
             closeAction:'close',
             plain: true,

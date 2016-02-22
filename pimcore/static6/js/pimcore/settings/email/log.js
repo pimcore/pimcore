@@ -68,7 +68,7 @@ pimcore.settings.email.log = Class.create({
                 layout: "fit",
                 items: [this.grid],
                 closable: this.document ? false : true,
-                iconCls: "pimcore_icon_email_transfer",
+                iconCls: "pimcore_icon_email pimcore_icon_overlay_go",
                 listeners: {
                     activate: function() {
                         this.store.load();

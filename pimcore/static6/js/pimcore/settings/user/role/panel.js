@@ -110,7 +110,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
         if (record.data.allowChildren) {
             menu.add(new Ext.menu.Item({
                 text: t('add_folder'),
-                iconCls: "pimcore_icon_folder_add",
+                iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "rolefolder", null, record)
                 }

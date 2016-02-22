@@ -21,7 +21,7 @@ pimcore.layout.portlets.modifiedDocuments = Class.create(pimcore.layout.portlets
     },
 
     getIcon: function () {
-        return "pimcore_icon_portlet_modified_documents";
+        return "pimcore_icon_document";
     },
 
     getLayout: function (portletId) {

@@ -86,7 +86,7 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
             
             this.editPanel = new Ext.Panel({
                 title: t("edit"),
-                iconCls: "pimcore_icon_tab_edit",
+                iconCls: "pimcore_icon_edit",
                 bodyStyle: "padding: 10px;",
                 items: [this.editArea]
             });

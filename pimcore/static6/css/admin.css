@@ -276,7 +276,7 @@
 }
 
 .pimcore_droptarget_image  {
-    background: url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #fff;
+    background: url(/pimcore/static6/img/flat-color-icons/target.svg) center center/45px no-repeat #fff;
 }
 
 
@@ -311,7 +311,7 @@
 
 .pimcore_property_droptarget {
     height: 16px;
-    background: url(/pimcore/static6/img/icon/drop-16.png) right top no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right top/20px no-repeat !important;
 }
 
 .pimcore_property_inherited {
@@ -1022,7 +1022,7 @@ span.warning {
 }
 
 .pimcore_droptarget_input, .input_drop_target, .input_drop_target input  {
-    background: url(/pimcore/static6/img/icon/drop-16.png) right center no-repeat transparent !important;
+    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right center/20px no-repeat transparent !important;
     cursor: default;
 }
 

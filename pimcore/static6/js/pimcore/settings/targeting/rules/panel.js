@@ -25,7 +25,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                 layout: "border",
                 closable: true,
                 border: false,
-                iconCls: "pimcore_icon_tab_targeting",
+                iconCls: "pimcore_icon_targeting",
                 items: [this.getTree(), this.getTabPanel()]
             });
         }

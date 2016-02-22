@@ -23,7 +23,7 @@ pimcore.object.fieldcollection = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_fieldcollections",
                 title: t("field_collections"),
-                iconCls: "pimcore_icon_fieldcollections",
+                iconCls: "pimcore_icon_fieldcollection",
                 border: false,
                 layout: "border",
                 closable:true,
@@ -85,7 +85,7 @@ pimcore.object.fieldcollection = Class.create({
                     items: [
                         {
                             text: t("add_fieldcollection"),
-                            iconCls: "pimcore_icon_fieldcollection_add",
+                            iconCls: "pimcore_icon_fieldcollection pimcore_icon_overlay_add",
                             handler: this.addField.bind(this)
                         }
                     ]

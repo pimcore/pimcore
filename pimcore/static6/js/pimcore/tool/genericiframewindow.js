@@ -37,7 +37,7 @@ pimcore.tool.genericiframewindow = Class.create({
                 handler: this.reload.bind(this)
             }, {
                 text: t("open"),
-                iconCls: "pimcore_icon_cursor_medium",
+                iconCls: "pimcore_icon_cursor",
                 handler: function () {
                     window.open(Ext.get("pimcore_iframe_frame_" + this.id).dom.getAttribute("src"));
                 }.bind(this)

@@ -183,7 +183,7 @@ pimcore.element.tag.tree = Class.create({
             hasEntries = true;
             menu.add(new Ext.menu.Item({
                 text: t('rename'),
-                iconCls: "pimcore_icon_edit_key",
+                iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 handler: function(tree, record) {
                     Ext.MessageBox.prompt(t('rename_tag'), t('enter_new_name_of_the_tag'), function(tree, record, button, value) {
                         if (button == "ok" && value.length > 2) {

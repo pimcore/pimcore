@@ -26,7 +26,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>');
 
         var button = new Ext.Button({
-            iconCls: "pimcore_icon_edit_video",
+            iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
             cls: "pimcore_edit_link_button",
             handler: this.openEditor.bind(this)
         });

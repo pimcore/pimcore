@@ -45,7 +45,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         Ext.get(id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text">' + this.getLinkContent() + '</span>');
 
         var button = new Ext.Button({
-            iconCls: "pimcore_icon_edit_link",
+            iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
             cls: "pimcore_edit_link_button",
             listeners: {
                 "click": this.openEditor.bind(this)

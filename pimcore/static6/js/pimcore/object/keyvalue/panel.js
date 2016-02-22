@@ -42,13 +42,13 @@ pimcore.object.keyvalue.configpanel = Class.create({
 
             panelButtons.push({
                 text: t("import"),
-                iconCls: "pimcore_icon_class_import",
+                iconCls: "pimcore_icon_class pimcore_icon_overlay_upload",
                 handler: this.upload.bind(this)
             });
 
             panelButtons.push({
                 text: t("export"),
-                iconCls: "pimcore_icon_class_export",
+                iconCls: "pimcore_icon_class pimcore_icon_overlay_download",
                 handler: function() {
                     pimcore.helpers.download(this.getExportUrl());
                 }.bind(this)

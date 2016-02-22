@@ -114,7 +114,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             toolbarItems.push({
                 xtype: "button",
                 cls: "pimcore_inline_upload",
-                iconCls: "pimcore_icon_upload_single",
+                iconCls: "pimcore_icon_upload",
                 handler: this.uploadDialog.bind(this)
             });
         }

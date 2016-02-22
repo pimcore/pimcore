@@ -237,7 +237,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                         },{
                             xtype: "button",
                             text: t("apply"),
-                            iconCls: "pimcore_icon_analytics_apply",
+                            iconCls: "pimcore_icon_save",
                             cls: "pimcore_analytics_filter_form_item",
                             handler: function () {
                                 this.store.load({
@@ -255,5 +255,5 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
 });
 
 // add to report broker
-pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_report_analytics_group");
+pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
 pimcore.report.broker.addReport(pimcore.report.analytics.elementexplorer, "analytics");

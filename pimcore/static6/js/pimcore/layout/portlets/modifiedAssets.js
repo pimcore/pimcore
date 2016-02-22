@@ -21,7 +21,7 @@ pimcore.layout.portlets.modifiedAssets = Class.create(pimcore.layout.portlets.ab
     },
 
     getIcon: function () {
-        return "pimcore_icon_portlet_modified_assets";
+        return "pimcore_icon_asset";
     },
 
     getLayout: function (portletId) {

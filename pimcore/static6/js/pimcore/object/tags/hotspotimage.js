@@ -106,7 +106,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     handler: this.openSearchEditor.bind(this)
                 },{
                     xtype: "button",
-                    iconCls: "pimcore_icon_upload_single",
+                    iconCls: "pimcore_icon_upload",
                     cls: "pimcore_inline_upload",
                     handler: this.uploadDialog.bind(this)
                 }]

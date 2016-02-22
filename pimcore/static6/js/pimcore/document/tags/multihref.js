@@ -141,7 +141,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     {
                         xtype: "button",
                         cls: "pimcore_inline_upload",
-                        iconCls: "pimcore_icon_upload_single",
+                        iconCls: "pimcore_icon_upload",
                         handler: this.uploadDialog.bind(this)
                     }
                 ]
@@ -258,7 +258,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
         menu.add(new Ext.menu.Item({
             text: t('show_in_tree'),
-            iconCls: "pimcore_icon_fileexplorer",
+            iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
             handler: function (item) {
                 item.parentMenu.destroy();
                 pimcore.treenodelocator.showInTree(record.data.id, record.data.type);

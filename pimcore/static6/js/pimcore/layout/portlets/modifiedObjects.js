@@ -22,7 +22,7 @@ pimcore.layout.portlets.modifiedObjects = Class.create(pimcore.layout.portlets.a
     },
 
     getIcon: function () {
-        return "pimcore_icon_portlet_modified_objects";
+        return "pimcore_icon_object";
     },
 
     getLayout: function (portletId) {

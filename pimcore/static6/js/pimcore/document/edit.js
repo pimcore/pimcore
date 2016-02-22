@@ -143,7 +143,7 @@ pimcore.document.edit = Class.create({
                 bodyCls: "pimcore_overflow_scrolling",
                 forceLayout: true,
                 hideMode: "offsets",
-                iconCls: "pimcore_icon_tab_edit",
+                iconCls: "pimcore_icon_edit",
                 lbar: lbar
             };
 

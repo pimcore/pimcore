@@ -168,11 +168,11 @@ pimcore.log.admin = Class.create({
                 buttons: [{
                     text: t("log_reset_search"),
                     handler: this.clearValues.bind(this),
-                    iconCls: "pimcore_icon_cancel"
+                    iconCls: "pimcore_icon_stop"
                 },{
                     text: t("log_search"),
                     handler: this.find.bind(this),
-                    iconCls: "pimcore_icon_tab_search"
+                    iconCls: "pimcore_icon_search"
                 }],
                 items: [ {
                     xtype:'fieldset',

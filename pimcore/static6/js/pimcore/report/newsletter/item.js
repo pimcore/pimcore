@@ -45,13 +45,13 @@ pimcore.report.newsletter.item = Class.create({
 
         panelButtons.push({
             text: t("send_test_newsletter"),
-            iconCls: "pimcore_icon_send_test",
+            iconCls: "pimcore_icon_email pimcore_icon_overlay_error",
             handler: this.sendTest.bind(this)
         });
 
         panelButtons.push({
             text: t("send_newsletter"),
-            iconCls: "pimcore_icon_send",
+            iconCls: "pimcore_icon_email pimcore_icon_overlay_go",
             handler: this.send.bind(this)
         });
 

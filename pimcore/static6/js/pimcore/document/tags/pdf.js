@@ -95,7 +95,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
             menu.add(new Ext.menu.Item({
                 text: t('show_in_tree'),
-                iconCls: "pimcore_icon_fileexplorer",
+                iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
                 handler: function (item) {
                     item.parentMenu.destroy();
                     pimcore.treenodelocator.showInTree(this.data.id, "asset");
@@ -114,7 +114,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
         menu.add(new Ext.menu.Item({
             text: t('upload'),
-            iconCls: "pimcore_icon_upload_single",
+            iconCls: "pimcore_icon_upload",
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.uploadDialog();

@@ -143,7 +143,7 @@ pimcore.document.pages.preview = Class.create({
                 border: false,
                 layout: "border",
                 tbar: tbar,
-                iconCls: "pimcore_icon_tab_preview",
+                iconCls: "pimcore_icon_preview",
                 items: [this.framePanel]
             });
 

@@ -27,7 +27,7 @@ pimcore.settings.bouncemailinbox = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_bouncemailinbox",
                 title: t("bounce_mail_inbox"),
-                iconCls: "pimcore_icon_bouncemail",
+                iconCls: "pimcore_icon_email pimcore_icon_overlay_error",
                 border: false,
                 layout: "fit",
                 closable:true,

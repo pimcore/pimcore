@@ -22,7 +22,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
     },
 
     getIcon: function () {
-        return "pimcore_icon_portlet_custom_reports";
+        return "pimcore_icon_reports";
     },
 
     getLayout: function (portletId) {

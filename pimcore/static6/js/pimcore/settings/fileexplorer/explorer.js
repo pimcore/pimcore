@@ -19,7 +19,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
         this.panel = new Ext.Panel({
             id: "pimcore_fileexplorer",
             title: t("server_fileexplorer"),
-            iconCls: "pimcore_icon_fileexplorer",
+            iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
             border: false,
             layout: "border",
             closable:true,
@@ -92,14 +92,14 @@ pimcore.settings.fileexplorer.explorer = Class.create({
         if (record.data.type == "folder") {
             menu.add(new Ext.menu.Item({
                 text: t('new_file'),
-                iconCls: "pimcore_icon_newfile",
+                iconCls: "pimcore_icon_file pimcore_icon_overlay_add",
                 handler: this.addNewFile.bind(this, record),
                 disabled: !record.data.writeable
             }));
 
             menu.add(new Ext.menu.Item({
                 text: t('new_folder'),
-                iconCls: "pimcore_icon_newfolder",
+                iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 handler: this.addNewFolder.bind(this, record),
                 disabled: !record.data.writeable
             }));

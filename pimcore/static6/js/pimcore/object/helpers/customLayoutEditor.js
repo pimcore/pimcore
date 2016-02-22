@@ -46,7 +46,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         this.exportButton = new Ext.Button(
             {
                 text: t("export"),
-                iconCls: "pimcore_icon_class_export",
+                iconCls: "pimcore_icon_class pimcore_icon_overlay_download",
                 disabled: true,
                 handler: function() {
                     pimcore.helpers.download(this.getExportUrl());
@@ -57,7 +57,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         this.importButton = new Ext.Button(
             {
                 text: t("import"),
-                iconCls: "pimcore_icon_class_import",
+                iconCls: "pimcore_icon_class pimcore_icon_overlay_upload",
                 disabled: true,
                 handler: this.upload.bind(this)
             }

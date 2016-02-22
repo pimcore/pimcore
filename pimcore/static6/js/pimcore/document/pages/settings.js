@@ -256,7 +256,7 @@ pimcore.document.pages.settings = Class.create({
                 title: t('settings'),
                 border: false,
                 autoScroll: true,
-                iconCls: "pimcore_icon_tab_settings",
+                iconCls: "pimcore_icon_settings",
                 bodyStyle:'padding:0 10px 0 10px;',
                 items: [
                     {

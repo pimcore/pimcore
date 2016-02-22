@@ -138,7 +138,7 @@ pimcore.document.versions = Class.create({
                 title: t('versions'),
                 border: false,
                 layout: "border",
-                iconCls: "pimcore_icon_tab_versions",
+                iconCls: "pimcore_icon_versions",
                 items: [this.grid,preview]
             });
 
@@ -199,14 +199,14 @@ pimcore.document.versions = Class.create({
         if(this.store.getAt(rowIndex).get("public")) {
             menu.add(new Ext.menu.Item({
                 text: t('open'),
-                iconCls: "pimcore_icon_menu_webbrowser",
+                iconCls: "pimcore_icon_cursor",
                 handler: this.openVersion.bind(this, rowIndex, grid)
             }));
         }
 
         menu.add(new Ext.menu.Item({
             text: t('edit'),
-            iconCls: "pimcore_icon_menu_settings",
+            iconCls: "pimcore_icon_edit",
             handler: this.editVersion.bind(this, rowIndex, grid)
         }));
 

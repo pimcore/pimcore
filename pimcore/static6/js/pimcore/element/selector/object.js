@@ -46,7 +46,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 handler: function () {
                     window.open("http://dev.mysql.com/doc/refman/5.6/en/fulltext-boolean.html");
                 },
-                iconCls: "pimcore_icon_menu_help"
+                iconCls: "pimcore_icon_help"
             })]
         };
 

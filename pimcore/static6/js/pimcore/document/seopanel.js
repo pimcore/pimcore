@@ -28,7 +28,7 @@ pimcore.document.seopanel = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_document_seopanel",
                 title: t("seo_document_editor"),
-                iconCls: "pimcore_icon_seo_document",
+                iconCls: "pimcore_icon_seo",
                 border: false,
                 layout: "fit",
                 closable:true,
@@ -166,7 +166,7 @@ pimcore.document.seopanel = Class.create({
             }.bind(this, tree)
         },{
             text: t('open_in_new_window'),
-            iconCls: "pimcore_icon_open_in_new_window",
+            iconCls: "pimcore_icon_open",
             handler: function (record) {
                 window.open(record.data.path);
             }.bind(this, record)

@@ -44,7 +44,7 @@ pimcore.document.snippets.settings = Class.create({
                 border: false,
                 autoScroll: true,
                 bodyStyle:'padding:0 10px 0 10px;',
-                iconCls: "pimcore_icon_tab_settings",
+                iconCls: "pimcore_icon_settings",
                 items: [
                     {
                         xtype:'fieldset',

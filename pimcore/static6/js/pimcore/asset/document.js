@@ -89,7 +89,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
                 title: t("preview"),
                 bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="' + frameUrl + '" frameborder="0" id="asset_document_edit_' + this.id + '"></iframe>',
-                iconCls: "pimcore_icon_tab_edit"
+                iconCls: "pimcore_icon_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
                 Ext.get("asset_document_edit_" + this.id).setStyle({

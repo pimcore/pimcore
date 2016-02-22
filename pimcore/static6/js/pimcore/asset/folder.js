@@ -84,7 +84,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             layout:'fit',
             bodyCls: "asset_folder_preview",
             title: t("content"),
-            iconCls: "pimcore_icon_asset_folder_preview",
+            iconCls: "pimcore_icon_asset",
             items: new Ext.DataView({
                 store: this.store,
                 autoScroll: true,
@@ -229,7 +229,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
             moreButtons.push({
                 text: t("download_as_zip"),
-                iconCls: "pimcore_icon_download_zip",
+                iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
                 handler: this.downloadZip.bind(this)
             });
 

@@ -36,7 +36,7 @@ pimcore.element.dependencies = Class.create({
                 title: t('dependencies'),
                 border: false,
                 scrollable: "y",
-                iconCls: "pimcore_icon_tab_dependencies",
+                iconCls: "pimcore_icon_dependencies",
                 listeners:{
                     activate: this.getData.bind(this)
                 }

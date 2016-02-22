@@ -102,7 +102,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 ],
                 html: '<iframe src="' + this.getEditUrlPixlr("express") + '" frameborder="0" id="asset_image_edit_'
                                                                             + this.id + '"></iframe>',
-                iconCls: "pimcore_icon_tab_edit"
+                iconCls: "pimcore_icon_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
                 Ext.get("asset_image_edit_" + this.id).setStyle({
@@ -239,7 +239,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             this.displayPanel = new Ext.Panel({
                 title: t("view"),
                 layout: "border",
-                iconCls: "pimcore_icon_tab_view",
+                iconCls: "pimcore_icon_view",
                 items: [{
                     region: "center",
                     html: '&nbsp;',

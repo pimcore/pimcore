@@ -27,7 +27,7 @@ pimcore.object.klass = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_classes",
                 title: t("classes"),
-                iconCls: "pimcore_icon_classes",
+                iconCls: "pimcore_icon_class",
                 border: false,
                 layout: "border",
                 closable:true,
@@ -86,7 +86,7 @@ pimcore.object.klass = Class.create({
                     items: [
                         {
                             text: t("add_class"),
-                            iconCls: "pimcore_icon_class_add",
+                            iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
                             handler: this.addClass.bind(this)
                         }
                     ]
@@ -192,7 +192,7 @@ pimcore.object.klass = Class.create({
         var menu = new Ext.menu.Menu();
         menu.add(new Ext.menu.Item({
             text: t('delete'),
-            iconCls: "pimcore_icon_class_delete",
+            iconCls: "pimcore_icon_class pimcore_icon_overlay_delete",
             handler: this.deleteClass.bind(this, tree, record)
         }));
 

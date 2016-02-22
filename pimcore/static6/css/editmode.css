@@ -114,25 +114,28 @@
 }
 
 .pimcore_icon_plus {
-	background: url(/pimcore/static6/img/icon/add.png) !important;
+	background: url(/pimcore/static6/img/flat-color-icons/plus.svg) !important;
 }
 
 .pimcore_icon_minus {
-	background: url(/pimcore/static6/img/icon/delete.png) !important;
+	background: url(/pimcore/static6/img/flat-color-icons/minus.svg) !important;
 }
 
 .pimcore_icon_up {
-	background: url(/pimcore/static6/img/icon/arrow_up.png) !important;
+	background: url(/pimcore/static6/img/flat-color-icons/collapse.svg) !important;
 }
 
 .pimcore_icon_down {
-	background: url(/pimcore/static6/img/icon/arrow_down.png) !important;
+	background: url(/pimcore/static6/img/flat-color-icons/expand.svg) !important;
 }
 
 .pimcore_icon_edit {
-	background: url(/pimcore/static6/img/icon/pencil_go.png) !important;
+	background: url(/pimcore/static6/img/flat-color-icons/edit.svg) !important;
 }
 
+.pimcore_icon_move {
+    background: url(/pimcore/static6/img/flat-color-icons/arrows.svg) !important;
+}
 
 
 .pimcore_area_dropzone {
@@ -184,29 +187,29 @@
 
 .pimcore_tag_snippet_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+	background:url(/pimcore/static6/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
 }
 
 .pimcore_tag_image_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+	background:url(/pimcore/static6/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
     height: 100px;
 }
 
 .pimcore_tag_video_empty {
 	border: 1px solid #d0d0d0 !important;
 	/*background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
-    background:url(/pimcore/static6/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
+    background:url(/pimcore/static6/img/flat-color-icons/film_reel.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
 }
 
 .pimcore_tag_href input{
-	background: url(/pimcore/static6/img/icon/drop-16.png) right center no-repeat #fff;
+	background: url(/pimcore/static6/img/flat-color-icons/target.svg) right center/20px no-repeat #fff;
 	cursor: default;
 }
 
 .pimcore_tag_droptarget {
-    background: url(/pimcore/static6/img/icon/drop-16.png) center center no-repeat;
+    background: url(/pimcore/static6/img/flat-color-icons/target.svg) center center/20px no-repeat;
     position:absolute;
     width:20px;
     height:20px;
@@ -246,7 +249,7 @@
 }
 
 .pimcore_droptarget_input  {
-	background: url(/pimcore/static6/img/icon/drop-16.png) right 2px no-repeat #fff !important;
+	background: url(/pimcore/static6/img/flat-color-icons/target.svg) right 2px/20px no-repeat #fff !important;
 	cursor: default;
 }
 

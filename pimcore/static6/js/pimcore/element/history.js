@@ -29,7 +29,7 @@ pimcore.element.history = Class.create({
                 title:t("element_history"),
                 border:false,
                 layout:"fit",
-                iconCls:"pimcore_icon_tab_schedule",
+                iconCls:"pimcore_icon_schedule",
                 closable:true
             });
 

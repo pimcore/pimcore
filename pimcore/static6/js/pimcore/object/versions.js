@@ -120,7 +120,7 @@ pimcore.object.versions = Class.create({
                 bodyStyle:'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: "border",
-                iconCls: "pimcore_icon_tab_versions",
+                iconCls: "pimcore_icon_versions",
                 items: [grid,preview]
             });
 

@@ -316,7 +316,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         getClass: function (v, meta, rec) {
                             var klass = "pimcore_action_column";
                             if (!rec.data.inherited) {
-                                klass +=  " pimcore_icon_cross";
+                                klass +=  " pimcore_icon_cancel";
                             }
                             return klass;
 

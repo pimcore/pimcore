@@ -122,7 +122,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.assetsAllowed) {
             items.push({
                 xtype: "button",
-                iconCls: "pimcore_icon_upload_single",
+                iconCls: "pimcore_icon_upload",
                 cls: "pimcore_inline_upload",
                 style: "margin-left: 5px",
                 handler: this.uploadDialog.bind(this)
@@ -259,7 +259,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             menu.add(new Ext.menu.Item({
                 text: t('upload'),
                 cls: "pimcore_inline_upload",
-                iconCls: "pimcore_icon_upload_single",
+                iconCls: "pimcore_icon_upload",
                 handler: function (item) {
                     item.parentMenu.destroy();
                     this.uploadDialog();

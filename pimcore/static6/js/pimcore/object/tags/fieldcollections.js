@@ -120,7 +120,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             collectionMenu.push({
                 text: ts(rec.data.key),
                 handler: this.addBlock.bind(this,blockElement, rec.data.key),
-                iconCls: "pimcore_icon_fieldcollections"
+                iconCls: "pimcore_icon_fieldcollection"
             });
         }.bind(this, blockElement));
 

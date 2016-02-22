@@ -491,7 +491,7 @@ pimcore.report.custom.item = Class.create({
             items.push({
                 cls: "pimcore_block_button_plus",
                 text: ts(classMenu[0].text),
-                iconCls: "pimcore_icon_plus_no_repeat",
+                iconCls: "pimcore_icon_plus",
                 handler: classMenu[0].handler
             });
         } else if (classMenu.length > 1) {

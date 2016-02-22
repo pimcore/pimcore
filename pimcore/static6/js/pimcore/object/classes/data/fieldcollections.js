@@ -47,7 +47,7 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
     },
 
     getIconClass: function () {
-        return "pimcore_icon_fieldcollections";
+        return "pimcore_icon_fieldcollection";
     },
 
     getLayout: function ($super) {

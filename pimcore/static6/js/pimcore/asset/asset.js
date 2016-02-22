@@ -127,7 +127,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
                 this.toolbarButtons.publish = Ext.create("Ext.button.Split", {
                     text: t("save_and_publish"),
-                    iconCls: "pimcore_icon_publish_medium",
+                    iconCls: "pimcore_icon_publish",
                     scale: "small",
                     handler: this.save.bind(this),
                     menu: [{
