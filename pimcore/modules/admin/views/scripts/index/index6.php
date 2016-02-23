@@ -108,7 +108,7 @@
 <?php // define stylesheets ?>
 <?php
 $styles = array(
-    "/admin/misc/admin-css?extjs6=1",
+    "/admin/misc/admin-css?extjs6=true",
     "/pimcore/static6/css/icons.css",
     "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
     "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",

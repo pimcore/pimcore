@@ -58,7 +58,7 @@
 <?php // define stylesheets ?>
 <?php
 $styles = array(
-    "/admin/misc/admin-css",
+    "/admin/misc/admin-css?extjs3=true",
     "/pimcore/static/css/icons.css",
     "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
     "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
