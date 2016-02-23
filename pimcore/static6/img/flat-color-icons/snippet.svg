@@ -6,8 +6,8 @@
 	.st0{fill:#90CAF9;}
 	.st1{fill:#E1F5FE;}
 </style>
-<polygon class="st0" points="40,45 8,45 8,3 30,3 40,13 "/>
-<polygon class="st1" points="38.5,14 29,14 29,4.5 "/>
-<polygon class="st1" points="37,28 27,22 27,34 "/>
-<polygon class="st1" points="11.4,28 21.4,34 21.4,22 "/>
+<polygon class="st0" points="44.3,45 3.7,45 3.7,3 31.6,3 44.3,13 "/>
+<polygon class="st1" points="42.3,14 30.3,14 30.3,4.5 "/>
+<polygon class="st1" points="38.5,30 28.5,21.8 28.5,38.3 "/>
+<polygon class="st1" points="8.9,30 18.9,38.3 18.9,21.8 "/>
 </svg>
