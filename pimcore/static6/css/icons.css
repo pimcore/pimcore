@@ -881,7 +881,7 @@
 }
 
 .pimcore_icon_image {
-    background: url(/pimcore/static6/img/flat-color-icons/picture.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/image.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_externalImage {
@@ -945,7 +945,7 @@
 }
 
 .pimcore_icon_localizedfields {
-    background: url(/pimcore/static6/img/icon/translation.png) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/localizedfields.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_qrcode {

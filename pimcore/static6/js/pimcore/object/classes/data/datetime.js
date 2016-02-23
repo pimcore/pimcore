@@ -41,7 +41,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
     },
 
     getIconClass:function () {
-        return "pimcore_icon_date";
+        return "pimcore_icon_datetime";
     },
 
     getLayout:function ($super) {
