@@ -28,9 +28,18 @@
 
 .x-tab-default-top {
     border-color: #3c3f41;
-    background-color: #f6f6f6;
+    background-color: #d1d6db;
     padding-top: 5px;
     padding-bottom: 5px;
+    -webkit-box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
+    -moz-box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
+    box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
+}
+
+.x-tab-default-top.x-tab-active {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
 }
 
 .x-tab-over.x-tab-default.x-tab-over {
