@@ -33,5 +33,6 @@ foreach ($locales as $short => $translation) {
             <td><?= $lang["display"] ?></td>
         </tr>
     <?php
+
 } ?>
 </table>

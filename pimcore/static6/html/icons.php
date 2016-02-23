@@ -1,6 +1,6 @@
 <?php
 
-    include_once ("../../cli/startup.php");
+    include_once("../../cli/startup.php");
 
     $iconDir = realpath(__DIR__ . '/../img');
     $icons = rscandir($iconDir . '/flat-color-icons/');
@@ -47,12 +47,14 @@
     </div>
 
     <div id="icons">
-        <?php foreach($icons as $icon) { ?>
+        <?php foreach ($icons as $icon) {
+    ?>
             <div class="icon">
                 <img style="width:50px;" src="<?= str_replace(PIMCORE_DOCUMENT_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
                 <div class="label"><?= basename($icon) ?></div>
             </div>
-        <?php } ?>
+        <?php 
+} ?>
     </div>
 
 </body>

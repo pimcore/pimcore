@@ -57,7 +57,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
     public function getTreeAction()
     {
         $defaultIcon = "/pimcore/static6/img/flat-color-icons/timeline.svg";
-        if(!\Pimcore\Tool\Admin::isExtJS6()) {
+        if (!\Pimcore\Tool\Admin::isExtJS6()) {
             $defaultIcon = '/pimcore/static6/img/icon/database_gear.png';
         }
 
