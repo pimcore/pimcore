@@ -27,7 +27,7 @@ pimcore.object.classes.layout.tabpanel = Class.create(pimcore.object.classes.lay
     },
 
     getIconClass: function () {
-        return "pimcore_icon_layout_tabpanel";
+        return "pimcore_icon_tabpanel";
     }
 
 });

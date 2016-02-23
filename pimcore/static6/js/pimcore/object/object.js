@@ -308,7 +308,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.save = new Ext.SplitButton({
                 text: t('save'),
                 iconCls: "pimcore_icon_save",
-                scale: "small",
+                scale: "medium",
                 handler: this.unpublish.bind(this),
                 menu:[{
                     text: t('save_close'),
@@ -321,7 +321,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.publish = new Ext.SplitButton({
                 text: t('save_and_publish'),
                 iconCls: "pimcore_icon_publish",
-                scale: "small",
+                scale: "medium",
                 handler: this.publish.bind(this),
                 menu: [{
                     text: t('save_pubish_close'),
@@ -344,14 +344,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
                 iconCls: "pimcore_icon_unpublish",
-                scale: "small",
+                scale: "medium",
                 handler: this.unpublish.bind(this)
             });
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t("delete"),
                 iconCls: "pimcore_icon_delete",
-                scale: "small",
+                scale: "medium",
                 handler: this.remove.bind(this)
             });
 
@@ -414,7 +414,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push({
                 text: t("more"),
                 iconCls: "pimcore_icon_more",
-                scale: "small",
+                scale: "medium",
                 menu: moreButtons
             });
 
@@ -422,22 +422,22 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push({
                 xtype: 'tbtext',
                 text: t("id") + " " + this.data.general.o_id,
-                scale: "small"
+                scale: "medium"
             });
 
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
                 text: ts(this.data.general.o_className),
-                scale: "small"
+                scale: "medium"
             });
 
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
-                text: '&nbsp;&nbsp;<img src="/pimcore/static6/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
+                text: '&nbsp;&nbsp;<img src="/pimcore/static6/img/flat-color-icons/medium_priority.svg" style="height: 16px;" align="absbottom" />&nbsp;&nbsp;'
                     + t("this_is_a_newer_not_published_version"),
-                scale: "small",
+                scale: "medium",
                 hidden: true
             });
 

@@ -11,6 +11,7 @@
 
 @import '/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css';
 @import 'ext-modifications.css';
+@import 'icons.css';
 
 .cke * {
     box-sizing: content-box !important;
@@ -111,30 +112,6 @@
 .pimcore_block_button_type,
 .pimcore_block_button_type button {
     cursor: move !important;
-}
-
-.pimcore_icon_plus {
-	background: url(/pimcore/static6/img/flat-color-icons/plus.svg) !important;
-}
-
-.pimcore_icon_minus {
-	background: url(/pimcore/static6/img/flat-color-icons/minus.svg) !important;
-}
-
-.pimcore_icon_up {
-	background: url(/pimcore/static6/img/flat-color-icons/collapse.svg) !important;
-}
-
-.pimcore_icon_down {
-	background: url(/pimcore/static6/img/flat-color-icons/expand.svg) !important;
-}
-
-.pimcore_icon_edit {
-	background: url(/pimcore/static6/img/flat-color-icons/edit.svg) !important;
-}
-
-.pimcore_icon_move {
-    background: url(/pimcore/static6/img/flat-color-icons/arrows.svg) !important;
 }
 
 

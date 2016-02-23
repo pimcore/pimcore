@@ -85,16 +85,8 @@ pimcore.extensionmanager.admin = Class.create({
 
         var typesColumns = [
             {header: t("type"), width: 50, sortable: false, dataIndex: 'type', renderer:
-                                        function (value, metaData, record, rowIndex, colIndex, store) {
-
-                var icon = "";
-                if(value == "plugin") {
-                    icon = "cog.png";
-                } else if (value == "brick") {
-                    icon = "bricks.png";
-                }
-                return '<img src="/pimcore/static6/img/icon/' + icon + '" alt="'+ t("value") +'" title="'
-                                                             + t("value") +'" />';
+            function (value, metaData, record, rowIndex, colIndex, store) {
+                return '<div class="pimcore_icon_' + value + '" style="min-height: 16px;" title="' + t("value") +'"></div>';
             }},
             {header: "ID", width: 100, sortable: true, dataIndex: 'id', flex: 1},
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name', flex: 2},

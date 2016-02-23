@@ -45,7 +45,7 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
                 "->",{
                     xtype: "button",
                     text: t("cancel"),
-                    icon: "/pimcore/static6/img/icon/cancel.png",
+                    iconCls: "pimcore_icon_cancel",
                     handler: function () {
                         this.searchWindow.close();
                     }.bind(this)
@@ -165,7 +165,7 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
         items.push({
             xtype: "button",
             text: t("search"),
-            icon: "/pimcore/static6/img/icon/magnifier.png",
+            iconCls: "pimcore_icon_search",
             handler: function () {
                 var formValue = this.searchfield.getValue();
 

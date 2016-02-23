@@ -46,7 +46,7 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
             "->",{
                 xtype: "button",
                 text: t("cancel"),
-                icon: "/pimcore/static6/img/icon/cancel.png",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     this.searchWindow.close();
                 }.bind(this)
@@ -147,7 +147,7 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
             items: [
                 {
                     tooltip: t('remove'),
-                    icon: "/pimcore/static6/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)

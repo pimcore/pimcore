@@ -205,7 +205,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             this.toolbarButtons.publish = new Ext.Button({
                 text: t("save"),
                 iconCls: "pimcore_icon_publish",
-                scale: "small",
+                scale: "medium",
                 handler: this.save.bind(this)
             });
 
@@ -216,7 +216,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete_folder'),
                 iconCls: "pimcore_icon_delete",
-                scale: "small",
+                scale: "medium",
                 handler: this.remove.bind(this)
             });
             if (this.isAllowed("delete") && !this.data.locked && this.data.id != 1) {
@@ -257,7 +257,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             buttons.push({
                 text: t("more"),
                 iconCls: "pimcore_icon_more",
-                scale: "small",
+                scale: "medium",
                 menu: moreButtons
             });
 
@@ -265,7 +265,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             buttons.push({
                 xtype: 'tbtext',
                 text: this.data.id,
-                scale: "small"
+                scale: "medium"
             });
 
             this.toolbar = new Ext.Toolbar({

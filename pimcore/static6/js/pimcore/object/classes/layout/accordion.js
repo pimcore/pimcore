@@ -27,7 +27,7 @@ pimcore.object.classes.layout.accordion = Class.create(pimcore.object.classes.la
     },
 
     getIconClass: function () {
-        return "pimcore_icon_layout_accordion";
+        return "pimcore_icon_accordion";
     }
 
 });

@@ -174,7 +174,7 @@ pimcore.settings.website = Class.create({
                 xtype:'actioncolumn',
                 width:40,
                 tooltip:t('empty'),
-                icon: "/pimcore/static6/img/icon/bin_empty.png",
+                icon: "/pimcore/static6/img/flat-color-icons/full_trash.svg",
                 handler:function (grid, rowIndex) {
                     grid.getStore().getAt(rowIndex).set("data","");
                 }.bind(this)
@@ -185,7 +185,7 @@ pimcore.settings.website = Class.create({
                 xtype:'actioncolumn',
                 width:40,
                 tooltip:t('delete'),
-                icon:"/pimcore/static6/img/icon/cross.png",
+                icon:"/pimcore/static6/img/flat-color-icons/delete.svg",
                 handler:function (grid, rowIndex) {
                     grid.getStore().removeAt(rowIndex);
                 }.bind(this)
@@ -297,8 +297,7 @@ pimcore.settings.website = Class.create({
 
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
 
-        return '<div style="background: url(/pimcore/static6/img/icon/' + value + '.png) center center no-repeat; '
-            + 'height: 16px;" data-id="' + record.get("id") + '">&nbsp;</div>';
+        return '<div class="pimcore_icon_' + value + '" data-id="' + record.get("id") + '">&nbsp;</div>';
     },
 
     getCellEditor: function (record) {

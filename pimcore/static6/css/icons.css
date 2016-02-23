@@ -9,17 +9,18 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-[class*="pimcore_icon"] {
-    /*image-rendering: pixelated;*/
-}
-
 .x-tree-icon {
     width: 18px!important;
 }
 
+.x-btn-icon-el {
+    /* this is for pimcore_icon_overlay_* */
+    position: relative;
+}
+
 .pimcore_icon_overlay_add, .pimcore_icon_overlay_delete, .pimcore_icon_overlay_edit, .pimcore_icon_overlay_go,
 .pimcore_icon_overlay_download, .pimcore_icon_overlay_upload, .pimcore_icon_overlay_search, .pimcore_icon_overlay_error {
-    position: relative;
+    /*position: relative;*/
 }
 
 .pimcore_icon_overlay_add:before {
@@ -107,7 +108,7 @@
 }
 
 .pimcore_icon_page {
-    background: url(/pimcore/static6/img/flat-color-icons/document.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/page.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_folder {
@@ -123,15 +124,15 @@
 }
 
 .pimcore_icon_document {
-    background: url(/pimcore/static6/img/flat-color-icons/file.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/document.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_asset {
-    background: url(/pimcore/static6/img/flat-color-icons/gallery.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/asset.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_object {
-    background: url(/pimcore/static6/img/flat-color-icons/database.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/object.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_snippet {
@@ -196,10 +197,6 @@
 
 .pimcore_icon_lock {
     background: url(/pimcore/static6/img/flat-color-icons/lock.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_lock_add_propagate {
-    background: url(/pimcore/static6/img/icon/lock_go.png) center center no-repeat !important;
 }
 
 .pimcore_icon_cursor {
@@ -319,7 +316,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/flash_on.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_fieldcollection {
+.pimcore_icon_fieldcollection, .pimcore_icon_fieldcollections {
     background: url(/pimcore/static6/img/flat-color-icons/fieldcollection.svg) center center no-repeat !important;
 }
 
@@ -339,27 +336,27 @@
     background: url(/pimcore/static6/img/flat-color-icons/timeline.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_layout_region {
+.pimcore_icon_region {
     background: url(/pimcore/static6/img/flat-color-icons/template.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_layout_accordion {
+.pimcore_icon_accordion {
     background: url(/pimcore/static6/img/flat-color-icons/accordion.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_layout_fieldset {
+.pimcore_icon_fieldset {
     background: url(/pimcore/static6/img/flat-color-icons/fieldset.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_layout_panel {
+.pimcore_icon_panel {
     background: url(/pimcore/static6/img/flat-color-icons/panel.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_layout_tabpanel {
+.pimcore_icon_tabpanel {
     background: url(/pimcore/static6/img/flat-color-icons/tabs.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_layout_button {
+.pimcore_icon_button {
     background: url(/pimcore/static6/img/flat-color-icons/button.svg) center center no-repeat !important;
 }
 
@@ -367,7 +364,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/button.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_layout_text {
+.pimcore_icon_text {
     background: url(/pimcore/static6/img/flat-color-icons/kindle.svg) center center no-repeat !important;
 }
 
@@ -444,7 +441,7 @@
 
 
 
-.pimcore_icon_stop {
+.pimcore_icon_stop, .pimcore_icon_cancel {
     background: url(/pimcore/static6/img/flat-color-icons/cancel.svg) center center no-repeat !important;
 }
 
@@ -461,7 +458,7 @@
 }
 
 .pimcore_icon_welcome {
-    background: url(/pimcore/static6/img/flat-color-icons/rating.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/star.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_reports {
@@ -525,7 +522,7 @@
 }
 
 .pimcore_icon_minus {
-    background: url(/pimcore/static6/img/flat-color-icons/minus.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/delete.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_up {
@@ -534,6 +531,10 @@
 
 .pimcore_icon_down {
     background: url(/pimcore/static6/img/flat-color-icons/expand.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_move {
+    background: url(/pimcore/static6/img/flat-color-icons/arrows.svg) !important;
 }
 
 .pimcore_icon_empty {
@@ -581,7 +582,7 @@
 }
 
 .pimcore_icon_seo {
-    background: url(/pimcore/static6/img/flat-color-icons/news.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/google.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_robots {
@@ -653,7 +654,7 @@
 }
 
 .pimcore_icon_highlight {
-    background: url(/pimcore/static6/img/icon/lightning.png) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/idea.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_info {
@@ -689,7 +690,7 @@
 }
 
 .pimcore_icon_more {
-    background: url(/pimcore/static6/img/flat-color-icons/idea.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/more.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_export{
@@ -828,7 +829,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/clock.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_objectbricks {
+.pimcore_icon_objectbricks, .pimcore_icon_brick {
     background: url(/pimcore/static6/img/flat-color-icons/bricks.svg) center center no-repeat !important;
 }
 
@@ -912,7 +913,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/overtime.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_checkbox {
+.pimcore_icon_checkbox, .pimcore_icon_bool {
     background: url(/pimcore/static6/img/flat-color-icons/checkmark.svg) center center no-repeat !important;
 }
 

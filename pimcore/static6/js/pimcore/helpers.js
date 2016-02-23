@@ -1998,7 +1998,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                 listeners: {
                     "click": callback["save"]
                 },
-                icon: "/pimcore/static6/img/icon/tick.png"
+                iconCls: "pimcore_icon_save"
             }
         ]
     });
@@ -2196,7 +2196,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
                 listeners: {
                     "click": callback["save"]
                 },
-                icon: "/pimcore/static6/img/icon/tick.png"
+                iconCls: "pimcore_icon_save"
             }
         ]
     });

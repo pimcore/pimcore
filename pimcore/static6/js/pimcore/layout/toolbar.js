@@ -438,7 +438,7 @@ pimcore.layout.toolbar = Class.create({
         if(user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
             seoMenu.push({
                 text: t("seo_document_editor"),
-                iconCls: "pimcore_icon_seo",
+                iconCls: "pimcore_icon_document pimcore_icon_overlay_search",
                 handler: this.showDocumentSeo
             });
         }

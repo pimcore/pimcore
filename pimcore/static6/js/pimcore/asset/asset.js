@@ -128,7 +128,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 this.toolbarButtons.publish = Ext.create("Ext.button.Split", {
                     text: t("save_and_publish"),
                     iconCls: "pimcore_icon_publish",
-                    scale: "small",
+                    scale: "medium",
                     handler: this.save.bind(this),
                     menu: [{
                         text: t('save_pubish_close'),
@@ -150,7 +150,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 this.toolbarButtons.remove = new Ext.Button({
                     text: t('delete'),
                     iconCls: "pimcore_icon_delete",
-                    scale: "small",
+                    scale: "medium",
                     handler: this.remove.bind(this)
                 });
                 buttons.push(this.toolbarButtons.remove);
@@ -162,7 +162,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 this.toolbarButtons.upload = new Ext.Button({
                     text: t("upload"),
                     iconCls: "pimcore_icon_upload",
-                    scale: "small",
+                    scale: "medium",
                     handler: this.upload.bind(this)
                 });
                 buttons.push(this.toolbarButtons.upload);
@@ -171,7 +171,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push({
                 text: t("download"),
                 iconCls: "pimcore_icon_download",
-                scale: "small",
+                scale: "medium",
                 handler: function () {
                     pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
                 }.bind(this)
@@ -218,7 +218,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push({
                 text: t("more"),
                 iconCls: "pimcore_icon_more",
-                scale: "small",
+                scale: "medium",
                 menu: moreButtons
             });
 
@@ -226,7 +226,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             buttons.push({
                 xtype: 'tbtext',
                 text: t("id") + " " + this.data.id,
-                scale: "small"
+                scale: "medium"
             });
 
 

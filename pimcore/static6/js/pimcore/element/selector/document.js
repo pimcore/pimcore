@@ -144,9 +144,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 columns: [
                     {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                            return '<div style="background: url(/pimcore/static6/img/icon/'
-                                + value + '.png) center center no-repeat; height: 16px;" name="'
-                                + t(record.data.subtype) + '">&nbsp;</div>';
+                            return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
                     {header: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
@@ -191,9 +189,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
             var columns = [
                 {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="background: url(/pimcore/static6/img/icon/' + value
-                            + '.png) center center no-repeat; height: 16px;" name="'
-                            + t(record.data.subtype) + '">&nbsp;</div>';
+                        return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
                 {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},

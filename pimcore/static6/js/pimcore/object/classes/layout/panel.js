@@ -27,7 +27,7 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
     },
 
     getIconClass: function () {
-        return "pimcore_icon_layout_panel";
+        return "pimcore_icon_panel";
     },
 
     getLayout: function ($super) {

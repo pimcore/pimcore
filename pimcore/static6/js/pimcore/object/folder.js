@@ -150,14 +150,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             this.toolbarButtons.publish = new Ext.Button({
                 text: t('save'),
                 iconCls: "pimcore_icon_publish",
-                scale: "small",
+                scale: "medium",
                 handler: this.save.bind(this)
             });
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete_folder'),
                 iconCls: "pimcore_icon_delete",
-                scale: "small",
+                scale: "medium",
                 handler: this.remove.bind(this)
             });
 
@@ -196,7 +196,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             buttons.push({
                 text: t("more"),
                 iconCls: "pimcore_icon_more",
-                scale: "small",
+                scale: "medium",
                 menu: moreButtons
             });
 
@@ -204,7 +204,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             buttons.push({
                 xtype: 'tbtext',
                 text: this.data.general.o_id,
-                scale: "small"
+                scale: "medium"
             });
 
             this.toolbar = new Ext.Toolbar({

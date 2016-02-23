@@ -89,7 +89,7 @@ pimcore.element.tag.assignment = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('delete'),
-                                icon: "/pimcore/static6/img/icon/cross.png",
+                                icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                                 handler: function (tree, grid, rowIndex) {
                                     var record = grid.getStore().getAt(rowIndex);
 

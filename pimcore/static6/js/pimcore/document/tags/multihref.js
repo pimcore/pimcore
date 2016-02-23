@@ -60,7 +60,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         items:[
                             {
                                 tooltip:t('up'),
-                                icon:"/pimcore/static6/img/icon/arrow_up.png",
+                                icon:"/pimcore/static6/img/flat-color-icons/up.svg",
                                 handler:function (grid, rowIndex) {
                                     if (rowIndex > 0) {
                                         var rec = grid.getStore().getAt(rowIndex);
@@ -77,7 +77,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         items:[
                             {
                                 tooltip:t('down'),
-                                icon:"/pimcore/static6/img/icon/arrow_down.png",
+                                icon:"/pimcore/static6/img/flat-color-icons/down.svg",
                                 handler:function (grid, rowIndex) {
                                     if (rowIndex < (grid.getStore().getCount() - 1)) {
                                         var rec = grid.getStore().getAt(rowIndex);
@@ -93,7 +93,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         width: 30,
                         items: [{
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/icon/pencil_go.png",
+                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 var subtype = data.data.subtype;
@@ -109,7 +109,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         width: 30,
                         items: [{
                             tooltip: t('remove'),
-                            icon: "/pimcore/static6/img/icon/cross.png",
+                            icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this)

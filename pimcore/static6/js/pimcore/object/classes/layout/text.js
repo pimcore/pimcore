@@ -27,7 +27,7 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
     },
 
     getIconClass: function () {
-        return "pimcore_icon_layout_text";
+        return "pimcore_icon_text";
     },
 
     getLayout: function ($super) {

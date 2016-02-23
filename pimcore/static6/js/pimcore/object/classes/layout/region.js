@@ -27,7 +27,7 @@ pimcore.object.classes.layout.region = Class.create(pimcore.object.classes.layou
     },
 
     getIconClass: function () {
-        return "pimcore_icon_layout_region";
+        return "pimcore_icon_region";
     }
 
 });

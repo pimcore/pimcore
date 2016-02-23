@@ -323,7 +323,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.data = null;
 
         this.getBody().down('.x-autocontainer-innerCt').setStyle({
-            backgroundImage: "url(/pimcore/static6/img/icon/drop-40.png)"
+            backgroundImage: ""
         });
         this.dirty = true;
         this.getBody().repaint();

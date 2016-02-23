@@ -472,7 +472,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     getMenuConfigForBrick: function (brick, scope, element) {
 
-        var menuText = "<b>" + brick.name + "</b>";
+        var menuText = brick.name;
         if(brick.description) {
             menuText += " | " + brick.description;
         }
@@ -674,7 +674,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 listeners: {
                     "click": this.editmodeSave.bind(this)
                 },
-                icon: "/pimcore/static6/img/icon/tick.png"
+                iconCls: "pimcore_icon_save"
             },{
                 text: t("cancel"),
                 handler: function() {
@@ -682,7 +682,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     element.setAttribute('data-editmmode-button-ref', content.getAttribute("id") );
                     this.editmodeWindow.close();
                 }.bind(this),
-                icon: "/pimcore/static6/img/icon/cancel.png"
+                iconCls: "pimcore_icon_cancel"
             }]
         });
         this.editmodeWindow.show();

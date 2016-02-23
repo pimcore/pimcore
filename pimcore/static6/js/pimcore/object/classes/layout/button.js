@@ -27,7 +27,7 @@ pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layou
     },
 
     getIconClass: function () {
-        return "pimcore_icon_layout_button";
+        return "pimcore_icon_button";
     },
 
     getLayout: function () {

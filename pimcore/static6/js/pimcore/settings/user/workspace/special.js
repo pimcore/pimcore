@@ -46,7 +46,7 @@ pimcore.settings.user.workspace.special = Class.create({
 
         var customLayouts = {
             text: t("custom_layouts"),
-            icon: "/pimcore/static6/img/icon/cog_edit.png",
+            icon: "/pimcore/static6/img/flat-color-icons/settings.svg",
             type: "layouts",
             leaf: true
         };
@@ -60,7 +60,7 @@ pimcore.settings.user.workspace.special = Class.create({
 
         var localizedFieldsView = {
             text: t("view"),
-            icon: "/pimcore/static6/img/icon/cog_edit.png",
+            icon: "/pimcore/static6/img/flat-color-icons/settings.svg",
             type: "lView",
             leaf: true
         };
@@ -69,7 +69,7 @@ pimcore.settings.user.workspace.special = Class.create({
             text: t("edit"),
             type: "lEdit",
             leaf: true,
-            icon: "/pimcore/static6/img/icon/cog_edit.png",
+            icon: "/pimcore/static6/img/flat-color-icons/settings.svg",
         };
 
 

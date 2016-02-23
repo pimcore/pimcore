@@ -44,7 +44,7 @@ pimcore.object.classificationstore.keyDefinitionWindow = Class.create({
             "->",{
                 xtype: "button",
                 text: t("cancel"),
-                icon: "/pimcore/static6/img/icon/cancel.png",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     this.window.close();
                 }.bind(this)

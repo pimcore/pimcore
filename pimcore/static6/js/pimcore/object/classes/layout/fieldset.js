@@ -27,7 +27,7 @@ pimcore.object.classes.layout.fieldset = Class.create(pimcore.object.classes.lay
     },
 
     getIconClass: function () {
-        return "pimcore_icon_layout_fieldset";
+        return "pimcore_icon_fieldset";
     },
 
     getLayout: function ($super) {

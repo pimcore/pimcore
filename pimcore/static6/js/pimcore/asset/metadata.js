@@ -214,7 +214,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('open'),
-                                icon: "/pimcore/static6/img/icon/pencil_go.png",
+                                icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
                                 handler: function (grid, rowIndex) {
                                     var pData = grid.getStore().getAt(rowIndex).data;
                                     if (pData.data) {
@@ -235,7 +235,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('delete'),
-                                icon: "/pimcore/static6/img/icon/cross.png",
+                                icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                                 handler: function (grid, rowIndex) {
                                     grid.getStore().removeAt(rowIndex);
                                 }.bind(this)
@@ -325,8 +325,7 @@ pimcore.asset.metadata = Class.create({
         if (value == "input") {
             value = "text";
         }
-        return '<div style="background: url(/pimcore/static6/img/icon/' + value + '.png) '
-            + 'center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
+        return '<div class="pimcore_icon_' + value + ' pimcore_property_grid_type_column" name="' + record.data.name + '">&nbsp;</div>';
     },
 
 

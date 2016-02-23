@@ -310,8 +310,8 @@
 
 
 .pimcore_property_droptarget {
-    height: 16px;
-    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right top/20px no-repeat !important;
+    min-height: 18px;
+    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right 5px center/17px no-repeat !important;
 }
 
 .pimcore_property_inherited {
@@ -942,6 +942,7 @@ span.warning {
 .pimcore_document_property_language_label {
     background-position: 85px 9px !important;
     position: relative;
+    background-size: 16px 16px;
 }
 
 .pimcore_document_property_language_label:after {
@@ -1022,7 +1023,7 @@ span.warning {
 }
 
 .pimcore_droptarget_input, .input_drop_target, .input_drop_target input  {
-    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right center/20px no-repeat transparent !important;
+    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right 5px center/20px no-repeat transparent !important;
     cursor: default;
 }
 

@@ -99,7 +99,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             items: [
                 {
                     tooltip: t('remove'),
-                    icon: "/pimcore/static6/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var colId = data.data.colId;
@@ -261,7 +261,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             items: [
                 {
                     tooltip: t('remove'),
-                    icon: "/pimcore/static6/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;

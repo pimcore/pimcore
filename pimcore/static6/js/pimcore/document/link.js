@@ -117,7 +117,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             this.toolbarButtons.publish = new Ext.Button({
                 text: t('save_and_publish'),
                 iconCls: "pimcore_icon_publish",
-                scale: "small",
+                scale: "medium",
                 handler: this.publish.bind(this)
             });
 
@@ -125,14 +125,14 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
                 iconCls: "pimcore_icon_unpublish",
-                scale: "small",
+                scale: "medium",
                 handler: this.unpublish.bind(this)
             });
 
             this.toolbarButtons.remove = new Ext.Button({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
-                scale: "small",
+                scale: "medium",
                 handler: this.remove.bind(this)
             });
 
@@ -171,7 +171,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             buttons.push({
                 text: t("more"),
                 iconCls: "pimcore_icon_more",
-                scale: "small",
+                scale: "medium",
                 menu: moreButtons
             });
 
@@ -179,7 +179,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             buttons.push({
                 xtype: 'tbtext',
                 text: this.data.id,
-                scale: "small"
+                scale: "medium"
             });
 
             this.toolbar = new Ext.Toolbar({

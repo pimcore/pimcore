@@ -80,7 +80,7 @@ pimcore.settings.httpErrorLog = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/icon/world_go.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         window.open(data.get("path"));

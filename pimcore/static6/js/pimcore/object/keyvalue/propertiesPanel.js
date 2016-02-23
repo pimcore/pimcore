@@ -95,7 +95,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             items: [
                 {
                     tooltip: t("keyvalue_detailed_configuration"),
-                    icon: "/pimcore/static6/img/icon/building_edit.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/department.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
@@ -156,7 +156,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             items: [
                 {
                     tooltip: t('keyvalue_find_group'),
-                    icon: "/pimcore/static6/img/icon/magnifier.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/search.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
@@ -175,7 +175,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             items: [
                 {
                     tooltip: t('remove'),
-                    icon: "/pimcore/static6/img/icon/cross.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
@@ -325,7 +325,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                 {
                     xtype: "button",
                     text: t("search"),
-                    icon: "/pimcore/static6/img/icon/magnifier.png",
+                    iconCls: "pimcore_icon_search",
                     handler: function () {
                         var formValue = this.searchfield.getValue();
 
@@ -346,7 +346,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             bbar: ["->",{
                 xtype: "button",
                 text: t("cancel"),
-                icon: "/pimcore/static6/img/icon/cancel.png",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     this.searchWindow.close();
                 }.bind(this)

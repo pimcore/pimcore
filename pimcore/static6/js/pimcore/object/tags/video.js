@@ -287,7 +287,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                             this.updateVideo();
                         }.bind(this)
                     },
-                    icon: "/pimcore/static6/img/icon/tick.png"
+                    iconCls: "pimcore_icon_save"
                 }
             ]
         });

@@ -59,7 +59,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 '-', {
                     xtype: 'button',
                     text: t('empty'),
-                    icon: '/pimcore/static6/img/icon/bin.png',
+                    iconCls: "pimcore_icon_empty",
                     handler: function () {
                         this.latitude.setValue(null);
                         this.longitude.setValue(null);
@@ -68,7 +68,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 }, '->', {
                     xtype: 'button',
                     text: t('open_search_editor'),
-                    icon: '/pimcore/static6/img/icon/magnifier.png',
+                    iconCls: "pimcore_icon_search",
                     handler: this.openPicker.bind(this)
                 }
             ]
@@ -157,19 +157,19 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             bbar: [this.searchfield,{
                 xtype: 'button',
                 text: t('search'),
-                icon: '/pimcore/static6/img/icon/magnifier.png',
+                iconCls: "pimcore_icon_search",
                 handler: this.geocode.bind(this)
             }, '->', {
                 xtype: 'button',
                 text: t('cancel'),
-                icon: '/pimcore/static6/img/icon/cancel.png',
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     this.searchWindow.close();
                 }.bind(this)
             },{
                 xtype: 'button',
                 text: 'OK',
-                icon: '/pimcore/static6/img/icon/tick.png',
+                iconCls: "pimcore_icon_save",
                 handler: function () {
                     if (this.overlay) {
                         var point = this.overlay.getPosition();
