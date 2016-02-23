@@ -47,7 +47,7 @@
 
         /* grid column header icon in translations [ <?= $language ?> ] */
         .x-grid3-hd-translation_column_<?= strtolower($language) ?> {
-            background: url(<?= $iconFile ?>) no-repeat 3px 3px !important;
+            background: url(<?= $iconFile ?>) no-repeat 3px 3px/16px 16px !important;
             padding-left:22px !important;
         }
     <?php } else { ?>
@@ -58,7 +58,7 @@
 
         /* grid column header icon in translations [ <?= $language ?> ] */
         .x-column-header_<?= strtolower($language) ?> {
-            background: url(<?= $iconFile ?>) no-repeat 3px center !important;
+            background: url(<?= $iconFile ?>) no-repeat left center/contain !important;
             padding-left:22px !important;
         }
     <?php } ?>
