@@ -610,14 +610,6 @@ pimcore.object.tree = Class.create({
             }));
         }
 
-        if (record.data.permissions.create) {
-            menu.add(new Ext.menu.Item({
-                text: t('search_and_move'),
-                iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
-                handler: this.searchAndMove.bind(this, tree, record)
-            }));
-        }
-
         if (record.data.permissions.rename && this.id != 1 && !record.data.locked) {
             menu.add(new Ext.menu.Item({
                 text: t('rename'),
@@ -627,88 +619,103 @@ pimcore.object.tree = Class.create({
         }
 
 
-        if (this.id != 1) {
-            var user = pimcore.globalmanager.get("user");
-            if (user.admin) { // only admins are allowed to change locks in frontend
+        // advanced menu
+        var advancedMenuItems = [];
+        var user = pimcore.globalmanager.get("user");
 
-                var lockMenu = [];
-                if (record.data.lockOwner) { // add unlock
-                    lockMenu.push({
-                        text: t('unlock'),
-                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
-                        handler: function () {
-                            this.updateObject(tree, record, {locked: null}, function () {
-                                this.refresh(this.tree.getRootNode());
-                            }.bind(this));
-                        }.bind(this)
-                    });
-                } else {
-                    lockMenu.push({
-                        text: t('lock'),
-                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
-                        handler: function () {
-                            try {
-                                this.updateObject(tree, record, {locked: "self"}, function () {
-                                    this.refresh(this.tree.getRootNode());
-                                }.bind(this));
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }.bind(this)
-                    });
-
-                    lockMenu.push({
-                        text: t('lock_and_propagate_to_childs'),
-                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
-                        handler: function () {
-                            try {
-                                this.updateObject(tree, record, {locked: "propagate"},
-                                    function () {
-                                        this.refresh(this.tree.getRootNode());
-                                    }.bind(this));
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }.bind(this)
-                    });
-                }
-
-                if(record.data.locked) {
-                    // add unlock and propagate to children functionality
-                    lockMenu.push({
-                        text: t('unlock_and_propagate_to_children'),
-                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
-                        handler: function () {
-                            Ext.Ajax.request({
-                                url: "/admin/element/unlock-propagate",
-                                params: {
-                                    id: record.data.id,
-                                    type: "object"
-                                },
-                                success: function () {
-                                    this.refresh(record.parentNode);
-                                }.bind(this)
-                            });
-                        }.bind(this)
-                    });
-                }
-
-                menu.add(new Ext.menu.Item({
-                    text: t('lock'),
-                    iconCls: "pimcore_icon_lock",
-                    hideOnClick: false,
-                    menu: lockMenu
-                }));
-            }
+        if (record.data.permissions.create) {
+            advancedMenuItems.push({
+                text: t('search_and_move'),
+                iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
+                handler: this.searchAndMove.bind(this, tree, record)
+            });
         }
 
+        if (record.data.id != 1 && user.admin) {
+            var lockMenu = [];
+            if (record.data.lockOwner) { // add unlock
+                lockMenu.push({
+                    text: t('unlock'),
+                    iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
+                    handler: function () {
+                        this.updateObject(tree, record, {locked: null}, function () {
+                            this.refresh(this.tree.getRootNode());
+                        }.bind(this));
+                    }.bind(this)
+                });
+            } else {
+                lockMenu.push({
+                    text: t('lock'),
+                    iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
+                    handler: function () {
+                        try {
+                            this.updateObject(tree, record, {locked: "self"}, function () {
+                                this.refresh(this.tree.getRootNode());
+                            }.bind(this));
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }.bind(this)
+                });
 
+                lockMenu.push({
+                    text: t('lock_and_propagate_to_childs'),
+                    iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
+                    handler: function () {
+                        try {
+                            this.updateObject(tree, record, {locked: "propagate"},
+                                function () {
+                                    this.refresh(this.tree.getRootNode());
+                                }.bind(this));
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }.bind(this)
+                });
+            }
 
-        menu.add(new Ext.menu.Item({
+            if(record.data.locked) {
+                // add unlock and propagate to children functionality
+                lockMenu.push({
+                    text: t('unlock_and_propagate_to_children'),
+                    iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/element/unlock-propagate",
+                            params: {
+                                id: record.data.id,
+                                type: "object"
+                            },
+                            success: function () {
+                                this.refresh(record.parentNode);
+                            }.bind(this)
+                        });
+                    }.bind(this)
+                });
+            }
+
+            advancedMenuItems.push({
+                text: t('lock'),
+                iconCls: "pimcore_icon_lock",
+                hideOnClick: false,
+                menu: lockMenu
+            });
+        }
+
+        if(advancedMenuItems.length) {
+            menu.add({
+                text: t('advanced'),
+                iconCls: "pimcore_icon_more",
+                hideOnClick: false,
+                menu: advancedMenuItems
+            });
+        }
+
+        menu.add({
             text: t('refresh'),
             iconCls: "pimcore_icon_reload",
             handler: this.reloadNode.bind(this, tree, record)
-        }));
+        });
 
 
         menu.showAt(e.pageX+1, e.pageY+1);

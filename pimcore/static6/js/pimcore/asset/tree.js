@@ -543,81 +543,90 @@ pimcore.asset.tree = Class.create({
             }));
         }
 
+        // advanced menu
+        var advancedMenuItems = [];
+        var user = pimcore.globalmanager.get("user");
+
         if (record.data.permissions.create && !record.data.locked) {
-            menu.add(new Ext.menu.Item({
+            advancedMenuItems.push({
                 text: t('search_and_move'),
                 iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
                 handler: this.searchAndMove.bind(this, tree, record)
-            }));
+            });
         }
 
-        if (record.data.id != 1) {
-            var user = pimcore.globalmanager.get("user");
-            if(user.admin) { // only admins are allowed to change locks in frontend
+        if (record.data.id != 1 && user.admin) {
+            var lockMenu = [];
+            if(record.data.lockOwner) { // add unlock
+                lockMenu.push({
+                    text: t('unlock'),
+                    iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
+                    handler: function () {
+                        this.updateAsset(record.data.id, {locked: null}, function () {
+                            this.refresh(this.tree.getRootNode());
+                        }.bind(this));
+                    }.bind(this)
+                });
+            } else {
+                lockMenu.push({
+                    text: t('lock'),
+                    iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
+                    handler: function () {
+                        this.updateAsset(record.data.id, {locked: "self"}, function () {
+                            this.refresh(this.tree.getRootNode());
+                        }.bind(this));
+                    }.bind(this)
+                });
 
-                var lockMenu = [];
-                if(record.data.lockOwner) { // add unlock
+                if(record.data.type == "folder") {
                     lockMenu.push({
-                        text: t('unlock'),
-                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
+                        text: t('lock_and_propagate_to_childs'),
+                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                         handler: function () {
-                            this.updateAsset(record.data.id, {locked: null}, function () {
-                                this.refresh(this.tree.getRootNode());
-                            }.bind(this));
+                            this.updateAsset(tree, record, {locked: "propagate"},
+                                function () {
+                                    this.refresh(this.tree.getRootNode());
+                                }.bind(this));
                         }.bind(this)
                     });
-                } else {
-                    lockMenu.push({
-                        text: t('lock'),
-                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
-                        handler: function () {
-                            this.updateAsset(record.data.id, {locked: "self"}, function () {
-                                this.refresh(this.tree.getRootNode());
-                            }.bind(this));
-                        }.bind(this)
-                    });
+                }
+            }
 
-                    if(record.data.type == "folder") {
-                        lockMenu.push({
-                            text: t('lock_and_propagate_to_childs'),
-                            iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
-                            handler: function () {
-                                this.updateAsset(tree, record, {locked: "propagate"},
-                                    function () {
-                                        this.refresh(this.tree.getRootNode());
-                                    }.bind(this));
+            if(record.data.locked) {
+                // add unlock and propagate to children functionality
+                lockMenu.push({
+                    text: t('unlock_and_propagate_to_children'),
+                    iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/element/unlock-propagate",
+                            params: {
+                                id: record.data.id,
+                                type: "asset"
+                            },
+                            success: function () {
+                                this.refresh(this.tree.getRootNode());
                             }.bind(this)
                         });
-                    }
-                }
-
-                if(record.data.locked) {
-                    // add unlock and propagate to children functionality
-                    lockMenu.push({
-                        text: t('unlock_and_propagate_to_children'),
-                        iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
-                        handler: function () {
-                            Ext.Ajax.request({
-                                url: "/admin/element/unlock-propagate",
-                                params: {
-                                    id: record.data.id,
-                                    type: "asset"
-                                },
-                                success: function () {
-                                    this.refresh(this.tree.getRootNode());
-                                }.bind(this)
-                            });
-                        }.bind(this)
-                    });
-                }
-
-                menu.add(new Ext.menu.Item({
-                    text: t('lock'),
-                    iconCls: "pimcore_icon_lock",
-                    hideOnClick: false,
-                    menu:lockMenu
-                }));
+                    }.bind(this)
+                });
             }
+
+            advancedMenuItems.push({
+                text: t('lock'),
+                iconCls: "pimcore_icon_lock",
+                hideOnClick: false,
+                menu:lockMenu
+            });
+        }
+
+        if(advancedMenuItems.length) {
+            menu.add({
+                text: t('advanced'),
+                iconCls: "pimcore_icon_more",
+                hideOnClick: false,
+                menu: advancedMenuItems
+            });
         }
 
         if (record.data.type == "folder") {
