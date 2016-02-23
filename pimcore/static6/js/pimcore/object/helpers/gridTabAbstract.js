@@ -59,7 +59,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var columnConfig = new Ext.menu.Item({
             text: t("grid_column_config"),
-            iconCls: "pimcore_icon_grid_column_config",
+            iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: this.openColumnConfig.bind(this)
         });
         var menu = grid.headerCt.getMenu();

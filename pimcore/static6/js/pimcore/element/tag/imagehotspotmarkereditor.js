@@ -46,7 +46,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             tbar: [{
                 xtype: "button",
                 text: t("add_marker"),
-                iconCls: "pimcore_icon_add_marker",
+                iconCls: "pimcore_icon_marker pimcore_icon_overlay_add",
                 handler: function () {
                     this.addMarker();
 
@@ -54,7 +54,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             }, {
                 xtype: "button",
                 text: t("add_hotspot"),
-                iconCls: "pimcore_icon_add_hotspot",
+                iconCls: "pimcore_icon_image_region pimcore_icon_overlay_add",
                 handler: function () {
                     this.addHotspot();
                 }.bind(this)
@@ -279,7 +279,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
             menu.add(new Ext.menu.Item({
                 text: t("add_data"),
-                iconCls: "pimcore_icon_add_data",
+                iconCls: "pimcore_icon_metadata pimcore_icon_overlay_add",
                 handler: function (id, item) {
                     item.parentMenu.destroy();
 

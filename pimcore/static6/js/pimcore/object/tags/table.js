@@ -148,23 +148,23 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             ],
             tbar: [
                 {
-                    iconCls: "pimcore_tag_table_addcol",
+                    iconCls: "pimcore_icon_table_col pimcore_icon_overlay_add",
                     handler: this.addColumn.bind(this)
                 },
                 {
-                    iconCls: "pimcore_tag_table_delcol",
+                    iconCls: "pimcore_icon_table_col pimcore_icon_overlay_delete",
                     handler: this.deleteColumn.bind(this)
                 },
                 {
-                    iconCls: "pimcore_tag_table_addrow",
+                    iconCls: "pimcore_icon_table_row pimcore_icon_overlay_add",
                     handler: this.addRow.bind(this)
                 },
                 {
-                    iconCls: "pimcore_tag_table_delrow",
+                    iconCls: "pimcore_icon_table_row pimcore_icon_overlay_delete",
                     handler: this.deleteRow.bind(this)
                 },
                 {
-                    iconCls: "pimcore_tag_table_empty",
+                    iconCls: "pimcore_icon_empty",
                     handler: this.emptyStore.bind(this)
                 }
             ]

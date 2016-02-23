@@ -405,7 +405,7 @@ pimcore.object.tree = Class.create({
                         };
 
                         // add special icon
-                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
+                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                             tmp.icon = classGroupRecord.get("icon");
                             tmp.iconCls = "";
                         }
@@ -423,7 +423,7 @@ pimcore.object.tree = Class.create({
                         };
 
                         // add special icon
-                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
+                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                             tmp.icon = classGroupRecord.get("icon");
                             tmp.iconCls = "";
                         }
@@ -447,7 +447,7 @@ pimcore.object.tree = Class.create({
                         handler: this.addObject.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
                     };
 
-                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
+                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                         tmpMenuEntry.icon = classGroupRecord.get("icon");
                         tmpMenuEntry.iconCls = "";
                     }
@@ -462,7 +462,7 @@ pimcore.object.tree = Class.create({
                         handler: this.importObjects.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
                     };
 
-                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/icon/database_gear.png") {
+                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                         tmpMenuEntryImport.icon = classGroupRecord.get("icon");
                         tmpMenuEntryImport.iconCls = "";
                     }

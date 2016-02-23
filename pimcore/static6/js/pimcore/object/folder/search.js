@@ -264,7 +264,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     }.bind(this)
                 }, "-", {
                     text: t("grid_column_config"),
-                    iconCls: "pimcore_icon_grid_column_config",
+                    iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
                     handler: this.openColumnConfig.bind(this)
                 }]
             });

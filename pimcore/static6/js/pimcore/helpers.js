@@ -2570,7 +2570,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
             menu.add(new Ext.menu.Item({
                 text: t("add_data"),
-                iconCls: "pimcore_icon_add_data",
+                iconCls: "pimcore_icon_metadata pimcore_icon_overlay_add",
                 handler: function (id, item) {
                     item.parentMenu.destroy();
 
@@ -2638,7 +2638,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         this.editTextVersionWindow = new Ext.Window({
             width: 800,
             height: 400,
-            iconCls: "pimcore_icon_edit_pdf_text",
+            iconCls: "pimcore_icon_text",
             title: t('pimcore_icon_edit_pdf_text'),
             layout: "fit",
             closeAction:'close',
@@ -2686,13 +2686,13 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             tbar: [{
                 xtype: "button",
                 text: t("add_hotspot"),
-                iconCls: "pimcore_icon_add_hotspot",
+                iconCls: "pimcore_icon_image_region pimcore_icon_overlay_add",
                 handler: addHotspot
             },
                 {
                     xtype: "button",
                     text: t("pimcore_icon_edit_pdf_text"),
-                    iconCls: "pimcore_icon_edit_pdf_text",
+                    iconCls: "pimcore_icon_text",
                     handler: editTextVersion
                 },
                 "->",

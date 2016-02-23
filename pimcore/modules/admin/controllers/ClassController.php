@@ -56,6 +56,12 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function getTreeAction()
     {
+        $defaultIcon = "/pimcore/static6/img/flat-color-icons/timeline.svg";
+        if(!\Pimcore\Tool\Admin::isExtJS6()) {
+            $defaultIcon = '/pimcore/static6/img/icon/database_gear.png';
+        }
+
+
         $classesList = new Object\ClassDefinition\Listing();
         $classesList->setOrderKey("name");
         $classesList->setOrder("asc");
@@ -80,7 +86,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 $classItems[] = array(
                     "id" => $classItem->getId(),
                     "text" => $classItem->getName(),
-                    "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static6/img/icon/database_gear.png',
+                    "icon" => $classItem->getIcon() ? $classItem->getIcon() : $defaultIcon,
                     "propertyVisibility" => $classItem->getPropertyVisibility(),
                     "qtipCfg" => array(
                         "title" => "ID: " . $classItem->getId()
@@ -165,7 +171,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                         // no group
                         $class['id'] = $classes[0]->getId();
                         $class['text'] = $classes[0]->getName();
-                        $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : '/pimcore/static6/img/icon/database_gear.png';
+                        $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : $defaultIcon;
                         $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
                         $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
                     } else {
@@ -180,7 +186,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                                 "id" => $classItem->getId(),
                                 "text" => $classItem->getName(),
                                 "leaf" => true,
-                                "icon" => $classItem->getIcon() ? $classItem->getIcon() : '/pimcore/static6/img/icon/database_gear.png',
+                                "icon" => $classItem->getIcon() ? $classItem->getIcon() : $defaultIcon,
                                 "propertyVisibility" => $classItem->getPropertyVisibility(),
                                 "qtipCfg" => array(
                                     "title" => "ID: " . $classItem->getId()

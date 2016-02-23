@@ -285,7 +285,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
                 menu.add(new Ext.menu.Item({
                     text: t('add_marker_or_hotspots'),
-                    iconCls: "pimcore_icon_image_add_hotspot",
+                    iconCls: "pimcore_icon_image pimcore_icon_overlay_edit",
                     handler: function (item) {
                         item.parentMenu.destroy();
 
