@@ -516,7 +516,13 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $tmpAsset["leaf"] = true;
             $tmpAsset["expandable"] = false;
             $tmpAsset["expanded"] = false;
-            $tmpAsset["iconCls"] = "pimcore_icon_" . File::getFileExtension($asset->getFilename());
+
+            $tmpAsset["iconCls"] = "pimcore_icon_asset_unknown";
+
+            $fileExt = File::getFileExtension($asset->getFilename());
+            if($fileExt) {
+                $tmpAsset["iconCls"] = "pimcore_icon_" . File::getFileExtension($asset->getFilename());
+            }
         }
 
         $tmpAsset["qtipCfg"] = array(
