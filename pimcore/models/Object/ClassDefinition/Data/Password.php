@@ -19,6 +19,7 @@ use Pimcore\Model\Object;
 
 class Password extends Model\Object\ClassDefinition\Data
 {
+    const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
     /**
      * Static type of this element
@@ -142,23 +143,25 @@ class Password extends Model\Object\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null)
     {
-        
-        // is already a hashed string
-        if (strlen($data) >= 32) {
-            return $data;
-        } elseif (empty($data)) {
+        if (empty($data)) {
             return null;
         }
-    
-        if ($this->salt != '') {
-            if ($this->saltlocation == 'back') {
-                $data = $data . $this->salt;
-            } elseif ($this->saltlocation == 'front') {
-                $data = $this->salt . $data;
+
+        if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
+            $info = password_get_info($data);
+
+            // is already a hashed string
+            if ($info['algo'] !== 0) {
+                return $data;
+            }
+        } else {
+            // is already a hashed string
+            if (strlen($data) >= 32) {
+                return $data;
             }
         }
-        
-        $hashed = hash($this->algorithm, $data);
+
+        $hashed = $this->calculateHash($data);
 
         // set the hashed password back to the object, to be sure that is not plain-text after the first save
         // this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406
@@ -166,7 +169,77 @@ class Password extends Model\Object\ClassDefinition\Data
             $setter = "set" . ucfirst($this->getName());
             $object->$setter($hashed);
         }
+
         return $hashed;
+    }
+
+    /**
+     * Calculate hash according to configured parameters
+     *
+     * @param $data
+     * @return bool|null|string
+     */
+    public function calculateHash($data)
+    {
+        $hash = null;
+        if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
+            $hash = password_hash($data, PASSWORD_DEFAULT);
+        } else {
+            if (!empty($this->salt)) {
+                if ($this->saltlocation == 'back') {
+                    $data = $data . $this->salt;
+                } elseif ($this->saltlocation == 'front') {
+                    $data = $this->salt . $data;
+                }
+            }
+
+            $hash = hash($this->algorithm, $data);
+        }
+
+        return $hash;
+    }
+
+    /**
+     * Verify password. Optionally re-hash the password if needed.
+     *
+     * Re-hash will be performed if PHP's password_hash default params (algorithm, cost) differ
+     * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
+     * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
+     *
+     * @param $password
+     * @param Object\AbstractObject $object
+     * @param bool|true $updateHash
+     * @return bool
+     */
+    public function verifyPassword($password, Object\AbstractObject $object, $updateHash = true)
+    {
+        $getter = 'get' . ucfirst($this->getName());
+        $setter = 'set' . ucfirst($this->getName());
+
+        $objectHash = $object->$getter();
+        if (null === $objectHash || empty($objectHash)) {
+            return false;
+        }
+
+        $result = false;
+        if ($this->getAlgorithm() === static::HASH_FUNCTION_PASSWORD_HASH) {
+            $result = (true === password_verify($password, $objectHash));
+
+            if ($result && $updateHash) {
+                // password needs rehash (e.g PASSWORD_DEFAULT changed to a stronger algorithm)
+                if (true === password_needs_rehash($objectHash, PASSWORD_DEFAULT)) {
+                    $newHash = $this->calculateHash($password);
+
+                    $object->$setter($newHash);
+                    $object->save();
+                }
+            }
+        } else {
+            $hash   = $this->calculateHash($password);
+            $result = $hash === $objectHash;
+        }
+
+        return $result;
     }
 
     /**

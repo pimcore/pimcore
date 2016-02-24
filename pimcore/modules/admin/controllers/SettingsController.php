@@ -1414,7 +1414,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
     public function getAvailableAlgorithmsAction()
     {
-        $options = array();
+        $options = array(
+            array(
+                'key'   => 'password_hash',
+                'value' => 'password_hash',
+            )
+        );
 
         $algorithms = hash_algos();
         foreach ($algorithms as $algorithm) {
