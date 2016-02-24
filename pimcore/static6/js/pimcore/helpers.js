@@ -39,6 +39,22 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
             ctrl:true,
             shift:true
+        },  {
+            key:"c",
+            fn: top.pimcore.helpers.openClassEditor,
+            ctrl:true,
+            shift:true
+        }, {
+            key:"l",
+            fn: top.pimcore.helpers.openInTree,
+            ctrl:true,
+            shift:true
+        }, {
+            key:"i",
+            fn: top.pimcore.helpers.showMetaInfo,
+            ctrl: false,
+            shift:false,
+            alt: true
         }, {
             key:"d",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
@@ -52,6 +68,14 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
         }]
     });
 };
+
+pimcore.helpers.openClassEditor = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("classes")) {
+        var toolbar = pimcore.globalmanager.get("layout_toolbar");
+        toolbar.editClasses();
+    }
+}
 
 pimcore.helpers.openWelcomePage = function(keyCode, e) {
 
@@ -481,6 +505,44 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
         }
     }
 };
+
+pimcore.helpers.showMetaInfo = function (keyCode, e) {
+
+    e.stopEvent();
+
+    var tabpanel = Ext.getCmp("pimcore_panel_tabs");
+    var activeTab = tabpanel.getActiveTab();
+
+    if (activeTab) {
+        if (activeTab.initialConfig.document) {
+            activeTab.initialConfig.document.showMetaInfo();
+        } else if (activeTab.initialConfig.asset) {
+            activeTab.initialConfig.asset.showMetaInfo();
+        } else if (activeTab.initialConfig.object) {
+            activeTab.initialConfig.object.showMetaInfo();
+        }
+    }
+};
+
+pimcore.helpers.openInTree = function (keyCode, e) {
+
+    e.stopEvent();
+
+    var tabpanel = Ext.getCmp("pimcore_panel_tabs");
+    var activeTab = tabpanel.getActiveTab();
+
+    if (activeTab) {
+        if (activeTab.initialConfig.document || activeTab.initialConfig.asset || activeTab.initialConfig.object) {
+            var tabId = activeTab.id;
+            var parts = tabId.split("_");
+            var type = parts[0];
+            var elementId = parts[1];
+            pimcore.treenodelocator.showInTree(elementId, type);
+
+        }
+    }
+};
+
 
 
 pimcore.helpers.handleF5 = function (keyCode, e) {
