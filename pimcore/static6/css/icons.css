@@ -13,7 +13,7 @@
     width: 18px!important;
 }
 
-.x-btn-icon-el {
+.x-btn-icon-el, .x-tab-icon-el {
     /* this is for pimcore_icon_overlay_* */
     position: relative;
 }
