@@ -12,14 +12,14 @@
 @import 'ext-modifications.css';
 
 #pimcore_body {
-    padding: 10px 10px 5px 70px !important;
+    padding: 4px 10px 0 60px !important;
     background: #222;
 }
 
 #pimcore_navigation {
     position: absolute;
-    left: 11px;
-    top: -3px;
+    left: 8px;
+    top: -10px;
 }
 
 #pimcore_navigation ul {
@@ -31,69 +31,172 @@
 #pimcore_navigation li {
     display: block;
     list-style: none;
-    width: 46px;
-    margin-bottom: 20px;
+    width: 44px;
+    height:44px;
     cursor: pointer;
     color: #d7d7d7;
-    font-size: 10px;
+    text-indent: -9999px; /* hide text contents */
+    filter: grayscale(100%) brightness(200%);
+    -webkit-filter: grayscale(100%) brightness(200%);
+
+    background-position: center center;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-image: url(/pimcore/static6/img/flat-color-icons/puzzle.svg);
+}
+
+#pimcore_navigation li:hover, #pimcore_logout:hover {
+    filter: grayscale(0%) brightness(100%);
+    -webkit-filter: grayscale(0%) brightness(100%);
+}
+
+#pimcore_menu_file {
+    background-image: url(/pimcore/static6/img/flat-color-icons/four-squares.svg) !important;
+}
+
+#pimcore_menu_extras {
+    background-image: url(/pimcore/static6/img/flat-color-icons/like.svg) !important;
+}
+
+#pimcore_menu_marketing {
+    background-image: url(/pimcore/static6/img/flat-color-icons/bullish.svg) !important;
+}
+
+#pimcore_menu_settings {
+    background-image: url(/pimcore/static6/img/flat-color-icons/settings.svg) !important;
+}
+
+#pimcore_menu_maintenance {
+    background-image: url(/pimcore/static6/img/flat-color-icons/automotive.svg) !important;
+    filter: grayscale(0%) !important;
+    -webkit-filter: grayscale(0%) !important;
+}
+
+#pimcore_menu_search {
+    background-image: url(/pimcore/static6/img/flat-color-icons/search.svg) !important;
+}
+
+
+#pimcore_status {
+    position: absolute;
+    z-index: 10;
+    left: 8px;
+    bottom: 115px;
+    width: 44px;
+}
+
+#pimcore_status > * {
+    height:30px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    display: block;
+}
+
+#pimcore_status_debug {
+    background-image: url(/pimcore/static6/img/flat-color-icons/medium_priority.svg);
+}
+
+#pimcore_status_dev {
+    background-image: url(/pimcore/static6/img/flat-color-icons/high_priority.svg);
+}
+
+#pimcore_status_email {
+    background-image: url(/pimcore/static6/img/flat-color-icons/email.svg);
+}
+
+#pimcore_status_update {
+    background-image: url(/pimcore/static6/img/flat-color-icons/refresh.svg);
+}
+
+#pimcore_status_maintenance {
+    background-image: url(/pimcore/static6/img/flat-color-icons/factory.svg);
+}
+
+#pimcore_logout {
+    position: absolute;
+    z-index: 2;
+    bottom: -5px;
+    left: 8px;
+    width: 44px;
+    height:44px;
+    background: url(/pimcore/static6/img/flat-color-icons/logout.svg) center center/20px no-repeat;
+
+    filter: grayscale(100%) brightness(200%);
+    -webkit-filter: grayscale(100%) brightness(200%);
+}
+
+
+#pimcore_avatar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 60px;
+    height: 80px;
     text-align: center;
-    font-family: Arial;
-    overflow: hidden;
-    word-wrap: break-word;
-    line-height: 12px;
+    background: #3c3f41;
 }
 
-#pimcore_navigation li:hover {
-    color: #fff;
-    text-shadow: 0 0 4px #000;
+#pimcore_avatar img {
+    position: absolute;
+    left: 12px;
+    bottom: 34px;
+    width:36px;
+    border-radius: 18px;
 }
 
-#pimcore_navigation li.pimcore_menu_avatar {
-    height: 46px;
-    overflow: hidden;
-    background: #ccc;
-    border:1px solid #e5e5e5;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    background: #f5f5f5;
-    margin-bottom: 20px;
-    cursor:default;
+#pimcore_loading.loaded {
+    position: absolute;
+    z-index: 10;
+    left: 8px;
+    bottom: 90px;
+    width:44px;
+    padding:0;
 }
 
-#pimcore_navigation li.pimcore_menu_avatar img  {
-    width: 46px;
+#pimcore_loading.loaded .spinner {
+    width: 44px;
+    margin:0;
 }
 
-#pimcore_navigation [class^="icon-"]:before, #pimcore_navigation [class*=" icon-"]:before {
-    font-size: 28px;
-    padding-bottom: 2px;
-}
-
-#pimcore_logo {
-    position:absolute;
-    bottom: 20px;
-    left: 18px;
-}
-
-#pimcore_logo img {
-    width:110px;
-    height: 26px;
-    padding-left: 2px;
-    transform: rotate(270deg);
-    transform-origin: 14px 12px;
-
-}
-
-#pimcore_logo .spinner {
-    margin: 0;
-    transform: rotate(90deg);
-    transform-origin: 40px -17px;
-}
-
-#pimcore_logo .spinner > div {
+#pimcore_loading.loaded .spinner > div {
     background-color: #fff;
+    width: 10px;
+    height: 10px;
 }
+
+#pimcore_menu_tooltip {
+    position: absolute;
+    color: #FFFFFF;
+    background: #000000;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 6px;
+
+    padding: 0 10px;
+
+    opacity: 0.8;
+    left: 60px;
+    top: 50%;
+    margin-top: -15px;
+    margin-left: 15px;
+    z-index: 999;
+}
+
+#pimcore_menu_tooltip:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -8px;
+    width: 0; height: 0;
+    border-right: 8px solid #000000;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
 
 .pimcore_hidden {
     display:none !important;
@@ -876,10 +979,6 @@ span.warning {
     margin:0;
 }
 
-#pimcore_menu_maintenance {
-    color:#dc2626 !important;
-}
-
 .password_valid .x-form-trigger-wrap {
     border-color: #9ecb2d !important;
 }
@@ -1032,24 +1131,6 @@ span.warning {
     padding: 0 5px;
 }
 
-.pimcore_statusbar {
-    background-color: #222;
-    padding: 5px 0 0 0;
-}
-
-.pimcore_statusbar .x-toolbar-text-default {
-    color: #fff;
-}
-
-.pimcore_statusbar .fa {
-    padding-right: 5px;
-}
-
-.pimcore_statusbar a {
-    color: #fff;
-}
-
-
 .pimcore_navigation_flyout.x-menu-default {
     border-color: #000;
 }
@@ -1184,6 +1265,11 @@ span.warning {
 
 #pimcore_panel_tabs > .x-tab-bar {
     background: #222222;
+
+    background-image: url(/pimcore/static6/img/logo-gray.svg);
+    background-repeat: no-repeat;
+    background-position: right 22px top 4px;
+    background-size: 80px;
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body {

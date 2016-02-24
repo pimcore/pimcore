@@ -72,10 +72,6 @@
 
 <body>
 
-<div id="pimcore_logo" style="display: none;">
-    <img src="/pimcore/static6/img/logo-white.svg"/>
-</div>
-
 <div id="pimcore_loading">
     <div class="spinner">
         <div class="bounce1"></div>
@@ -84,21 +80,32 @@
     </div>
 </div>
 
+<div id="pimcore_avatar" style="display:none;">
+    <img src="/admin/user/get-image" />
+</div>
+
+<a id="pimcore_logout" href="/admin/login/logout/" style="display: none"></a>
+
 <div id="pimcore_navigation" style="display:none;">
     <ul>
-        <li id="pimcore_menu_avatar" class="pimcore_menu_avatar">
-            <img src="/admin/user/get-image" />
-        </li>
-        <li id="pimcore_menu_file" class="pimcore_menu_item icon-th-large"><?= $this->translate("file"); ?></li>
-        <li id="pimcore_menu_extras" class="pimcore_menu_item icon-rocket pimcore_menu_needs_children"><?= $this->translate("extras"); ?></li>
-        <li id="pimcore_menu_marketing" class="pimcore_menu_item icon-chart-bar pimcore_menu_needs_children"><?= $this->translate("marketing"); ?></li>
-        <li id="pimcore_menu_settings" class="pimcore_menu_item icon-cog-alt pimcore_menu_needs_children"><?= $this->translate("settings"); ?></li>
-        <li id="pimcore_menu_maintenance" class="pimcore_menu_item icon-hammer" style="display:none;"><?= $this->translate("deactivate_maintenance"); ?></li>
-        <li id="pimcore_menu_search" class="pimcore_menu_item icon-search pimcore_menu_needs_children"><?= $this->translate("search"); ?></li>
-        <li id="pimcore_menu_logout" class="pimcore_menu_item icon-logout"><?= $this->translate("logout"); ?></li>
+        <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item"></li>
+        <li id="pimcore_menu_extras" data-menu-tooltip="<?= $this->translate("extras") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <li id="pimcore_menu_marketing" data-menu-tooltip="<?= $this->translate("marketing") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <li id="pimcore_menu_settings" data-menu-tooltip="<?= $this->translate("settings") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <li id="pimcore_menu_maintenance" data-menu-tooltip="<?= $this->translate("deactivate_maintenance") ?>" class="pimcore_menu_item " style="display:none;"></li>
+        <li id="pimcore_menu_search" data-menu-tooltip="<?= $this->translate("search") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
     </ul>
 </div>
 
+<div id="pimcore_status">
+    <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
+    <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
+    <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
+    <a id="pimcore_status_maintenance" data-menu-tooltip="<?= $this->translate("maintenance_not_active") ?>" style="display: none;" href="https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854184#Installation(Apache)-SetuptheMaintenance-Script"></a>
+    <div id="pimcore_status_update" data-menu-tooltip="<?= $this->translate("update_available") ?>" style="display: none;"></div>
+</div>
+
+<div id="pimcore_menu_tooltip" style="display: none;"></div>
 
 <script type="text/javascript">
     var pimcore = {}; // namespace

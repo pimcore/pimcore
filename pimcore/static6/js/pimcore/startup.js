@@ -224,20 +224,20 @@ Ext.onReady(function () {
 
         xhrActive--;
         if (xhrActive < 1) {
-            Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static6/img/logo-white.svg"/>';
+            Ext.get("pimcore_loading").hide();
         }
 
     });
     Ext.Ajax.on("beforerequest", function () {
         if (xhrActive < 1) {
-            Ext.get("pimcore_logo").dom.innerHTML = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>';
+            Ext.get("pimcore_loading").show();
         }
         xhrActive++;
     });
     Ext.Ajax.on("requestcomplete", function (conn, response, options) {
         xhrActive--;
         if (xhrActive < 1) {
-            Ext.get("pimcore_logo").dom.innerHTML = '<img class="logo" src="/pimcore/static6/img/logo-white.svg"/>';
+            Ext.get("pimcore_loading").hide();
         }
 
         // redirect to login-page if session is expired
@@ -447,44 +447,25 @@ Ext.onReady(function () {
     pimcore.globalmanager.add("personas", personaStore);
 
     // STATUSBAR
-    var statusbar = Ext.create('Ext.toolbar.Toolbar', {
-        id: 'pimcore_statusbar',
-        cls: 'pimcore_statusbar'
-    });
-    pimcore.globalmanager.add("statusbar", statusbar);
-
     // check for devmode
     if (pimcore.settings.devmode) {
-        statusbar.add('<em class="fa fa-exclamation-triangle"></em> DEV-MODE');
-        statusbar.add("-");
+        Ext.get("pimcore_status_dev").show();
     }
 
     // check for debug
     if (pimcore.settings.debug) {
-        statusbar.add('<em class="fa fa-exclamation-circle"></em> ' + t("debug_mode_on"));
-        statusbar.add("-");
+        Ext.get("pimcore_status_debug").show();
     }
 
     // check for maintenance
     if (!pimcore.settings.maintenance_active) {
-        statusbar.add('<em class="fa fa-cog"></em> '
-            + '<a href="http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124463" '
-            + 'target="_blank">'
-            + t("maintenance_not_active") + "</a>");
-        statusbar.add("-");
+        Ext.get("pimcore_status_maintenance").show();
     }
 
     //check for mail settings
     if (!pimcore.settings.mail) {
-        statusbar.add('<em class="fa fa-envelope-o"></em> ' + t("mail_settings_incomplete"));
-        statusbar.add("-");
+        Ext.get("pimcore_status_email").show();
     }
-
-    statusbar.add("->");
-    statusbar.add('Made with <em class="fa fa-heart-o"></em>&amp; <em class="fa fa-copyright"></em>by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
-        + 'pimcore GmbH</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
-
-
 
     // check for updates
     window.setTimeout(function () {
@@ -496,7 +477,8 @@ Ext.onReady(function () {
 
 
     // remove loading
-    Ext.get("pimcore_loading").remove();
+    Ext.get("pimcore_loading").addCls("loaded");
+    Ext.get("pimcore_loading").hide();
 
     // init general layout
     try {
@@ -511,7 +493,6 @@ Ext.onReady(function () {
                     id:"pimcore_body",
                     cls:"pimcore_body",
                     layout:"border",
-                    bbar: statusbar,
                     border:false,
                     items:[
                         Ext.create('Ext.panel.Panel',
@@ -578,8 +559,23 @@ Ext.onReady(function () {
             ],
             listeners:{
                 "afterrender":function () {
-                    Ext.get("pimcore_logo").show();
                     Ext.get("pimcore_navigation").show();
+                    Ext.get("pimcore_avatar").show();
+                    Ext.get("pimcore_logout").show();
+
+                    $("[data-menu-tooltip]").mouseenter(function (e) {
+                        $("#pimcore_menu_tooltip").show();
+                        $("#pimcore_menu_tooltip").html($(this).data("menu-tooltip"));
+
+                        var offset = $(e.target).offset();
+                        var top = offset.top;
+                        top = top + ($(e.target).height() / 2);
+
+                        $("#pimcore_menu_tooltip").css({top: top});
+                    });
+                    $("[data-menu-tooltip]").mouseleave(function () {
+                        $("#pimcore_menu_tooltip").hide();
+                    });
 
                     var loadMask = new Ext.LoadMask(
                         {
@@ -588,11 +584,6 @@ Ext.onReady(function () {
                         });
                     loadMask.enable();
                     pimcore.globalmanager.add("loadingmask", loadMask);
-
-                    // update statusbar styling
-                    window.setTimeout(function () {
-                        statusbar.updateLayout();
-                    }, 1000);
                 }
             }
         });

@@ -956,3 +956,7 @@
 .pimcore_icon_qrcode {
     background: url(/pimcore/static6/img/icon/qr-code.png) center center no-repeat !important;
 }
+
+.pimcore_icon_pimcore {
+    background: url(/pimcore/static6/img/flat-color-icons/pimcore-sign.svg) center center no-repeat !important;
+}

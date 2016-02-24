@@ -2914,3 +2914,25 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
     this.metaDataWindow.show();
 };
+
+pimcore.helpers.showAbout = function () {
+
+    var html = '<div style="text-align: center">';
+    html += '<br><img src="/pimcore/static6/img/logo.svg" style="width: 300px;"><br><br>';
+    html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
+    html += '<br><b>Build: ' + pimcore.settings.build + '</b>';
+    html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="http://www.pimcore.org/" target="_blank" style="color: #000;">pimcore.org</a>)';
+    html += '</div>';
+
+    var win = new Ext.Window({
+        title: t("about"),
+        width:500,
+        height: 300,
+        bodyStyle: "padding: 10px;",
+        modal: true,
+        html: html
+    });
+
+    win.show();
+};
+

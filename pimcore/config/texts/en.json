@@ -1,5 +1,9 @@
 [
     {
+        "term": "update_available",
+        "definition": "Update Available"
+    },
+    {
         "term": "more",
         "definition": "More"
     },
