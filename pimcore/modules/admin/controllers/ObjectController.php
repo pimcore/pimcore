@@ -187,7 +187,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $tmpObject["allowVariants"] = $child->getClass()->getAllowVariants();
         }
         if ($tmpObject["type"] == "variant") {
-            $tmpObject["iconCls"] = "pimcore_icon_tree_variant";
+            $tmpObject["iconCls"] = "pimcore_icon_variant";
         } else {
             if ($child->getElementAdminStyle()->getElementIcon()) {
                 $tmpObject["icon"] = $child->getElementAdminStyle()->getElementIcon();
