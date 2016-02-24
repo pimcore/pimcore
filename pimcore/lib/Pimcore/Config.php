@@ -38,7 +38,7 @@ class Config
             $file = null;
 
             // check for environment configuration
-            $env = getenv("PIMCORE_ENVIRONMENT");
+            $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("PIMCORE_ENVIRONMENT") ?: FALSE);
             if ($env) {
                 $fileExt = File::getFileExtension($name);
                 $pureName = str_replace("." . $fileExt, "", $name);
