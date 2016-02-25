@@ -385,7 +385,7 @@
 }
 
 .pimcore_error_input input {
-    background: url(/pimcore/static6/img/icon/exclamation.png) right center no-repeat #fff !important;
+    background: url(/pimcore/static6/img/flat-color-icons/high_priority.svg) right center/16px no-repeat #fff !important;
     cursor: default;
 }
 
@@ -534,7 +534,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator.png)  top left no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator.png) top left no-repeat !important;
 }
 
 .grid_value_noview {
@@ -542,7 +542,7 @@
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
     pointer-events: none;
-    background: #dad9d9 url(/pimcore/static6/img/icon/lock.png)  center center no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/flat-color-icons/lock.svg) center center/16px no-repeat !important;
 }
 
 .grid_value_noedit {
@@ -550,8 +550,9 @@
     /*filter: Alpha(opacity=60) !important;*/
     /*opacity: 0.6 !important;*/
     pointer-events: none;
-    background: #dad9FF url(/pimcore/static6/img/icon/lock_edit.png)  center left no-repeat !important;
+    background: #dad9FF url(/pimcore/static6/img/flat-color-icons/unlock.svg) center left/16px no-repeat !important;
 }
+
 .grid_value_noedit > *{
     padding-left: 20px !important;
     opacity: 0.6 !important;
@@ -564,7 +565,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static6/img/locked.png)  top left no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/locked.png) top left no-repeat !important;
 }
 
 
@@ -572,7 +573,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator-locked.png)  top left no-repeat !important;
+    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator-locked.png) top left no-repeat !important;
     opacity: 0.6 !important;
 }
 
@@ -941,7 +942,7 @@ span.warning {
 }
 
 .pimcore_document_seo_warning {
-    background: url(/pimcore/static6/img/icon/exclamation.png) 2px 2px no-repeat #ffdbdb;
+    background: url(/pimcore/static6/img/flat-color-icons/high_priority.svg) 2px 2px/16px no-repeat #ffdbdb;
 }
 
 .pimcore_targeting_bracket {
