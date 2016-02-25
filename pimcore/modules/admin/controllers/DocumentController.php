@@ -221,8 +221,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             if ($this->getParam("translationsBaseDocument")) {
                 $translationsBaseDocument = Document::getById($this->getParam("translationsBaseDocument"));
 
-                if($document->getProperty("language") != $this->getParam("language")) {
-                    $document->setProperty("language","text",$this->getParam("language"));
+                if ($document->getProperty("language") != $this->getParam("language")) {
+                    $document->setProperty("language", "text", $this->getParam("language"));
                     $document->save();
                 }
 
@@ -1190,7 +1190,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $document = Document::getByPath($this->getParam("path"));
         if ($document) {
             $language = $document->getProperty("language");
-            if($language) {
+            if ($language) {
                 $success = true;
             }
         }
