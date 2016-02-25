@@ -610,7 +610,7 @@ pimcore.object.tree = Class.create({
             }));
         }
 
-        if (record.data.permissions.rename && this.id != 1 && !record.data.locked) {
+        if (record.data.permissions.rename && record.data.id != 1 && !record.data.locked) {
             menu.add(new Ext.menu.Item({
                 text: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
