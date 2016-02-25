@@ -266,8 +266,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     if(data["success"]) {
                         win.getComponent("language").setValue(pimcore.available_languages[data["language"]] + " [" + data["language"] + "]");
                         win.getComponent("language").show();
+                        win.getComponent("info").hide();
                     } else {
                         win.getComponent("language").hide();
+                        win.getComponent("info").show();
                     }
                 }
             });
@@ -317,6 +319,12 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 value: "",
                 hidden: true,
                 fieldLabel: t("language")
+            },{
+                xtype: "displayfield",
+                name: "language",
+                itemId: "info",
+                fieldLabel: t("info"),
+                value: t("target_document_needs_language")
             }],
             buttons: [{
                 text: t("cancel"),
