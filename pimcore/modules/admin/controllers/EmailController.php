@@ -236,7 +236,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                     unset($data['children'][$key]);
                 }
             }
-            $data['iconCls'] = 'task-folder';
+            $data['iconCls'] = 'pimcore_icon_folder';
             $data['data'] = array('type' => 'simple', 'value' => 'Children (' . count($data['children']) . ')');
         } else {
             //setting the icon class
@@ -263,7 +263,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                 } elseif (strpos($data['objectClass'], 'Document') === 0) {
                     $fullEntry['iconCls'] = 'pimcore_icon_' . strtolower($data['objectClassSubType']);
                 } else {
-                    $data['iconCls'] = 'task';
+                    $data['iconCls'] = 'pimcore_icon_text';
                 }
             }
 

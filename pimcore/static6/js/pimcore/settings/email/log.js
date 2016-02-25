@@ -98,246 +98,260 @@ pimcore.settings.email.log = Class.create({
             flex: 130,
             hidden: true
         },
-        {
-            header: t('email_log_sent_Date'),
-            dataIndex: "sentDate",
-            width: 150,
-            flex: false,
-            sortable: false,
-            renderer: function (d) {
-                var date = new Date(intval(d) * 1000);
-                return Ext.Date.format(date, "Y-m-d H:i:s");
-            }
-        },
-        {
-            header: t('email_log_from'),
-            sortable: false,
-            dataIndex: "from",
-            flex: 120
-        },
-        {
-            header: t('email_log_to'),
-            sortable: false,
-            dataIndex: "to",
-            flex: 120
-        },
-        {
-            header: t('email_log_cc'),
-            sortable: false,
-            dataIndex: "cc",
-            flex: 120
-        },
-        {
-            header: t('email_log_bcc'),
-            sortable: false,
-            dataIndex: "bcc",
-            flex: 120
-        },
-        {
-            header: t('email_log_subject'),
-            sortable: false,
-            dataIndex: "subject",
-            flex: 220
-        },
-        {
-            xtype: 'actioncolumn',
-            sortable: false,
-            width: 50,
-            dataIndex: "emailLogExistsHtml",
-            header: t('email_log_html'),
-            items : [{
-                tooltip: t('email_log_show_html_email'),
-                icon: "/pimcore/static6/img/flat-color-icons/feedback.svg",
-                handler: function(grid, rowIndex){
-                    var rec = grid.getStore().getAt(rowIndex);
-                    var iframe = new Ext.Window({
-                        title: t("email_log_iframe_title_html"),
-                        width: iFrameSettings.width,
-                        height: iFrameSettings.height,
-                        layout: 'fit',
-                        items : [{
-                                xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
-                                                                                + "&type=html"}
-                            }]
-                    });
-                    iframe.show();
-                }.bind(this),
-                getClass: function(v, meta, rec) {
-                    if(!rec.get('emailLogExistsHtml')){
-                        return "pimcore_hidden";
-                    }
+            {
+                header: t('email_log_sent_Date'),
+                dataIndex: "sentDate",
+                width: 150,
+                flex: false,
+                sortable: false,
+                renderer: function (d) {
+                    var date = new Date(intval(d) * 1000);
+                    return Ext.Date.format(date, "Y-m-d H:i:s");
                 }
-            }]
-        },
-        {
-            xtype: 'actioncolumn',
-            sortable: false,
-            width: 50,
-            dataIndex: "emailLogExistsText",
-            header: t('email_log_text'),
-            hidden: true,
-            items : [{
-                tooltip: t('email_log_show_text_email'),
-                icon: "/pimcore/static6/img/flat-color-icons/text.svg",
-                handler: function(grid, rowIndex){
-                    var rec = grid.getStore().getAt(rowIndex);
-                    var iframe = new Ext.Window({
-                        title: t("email_log_iframe_title_text"),
-                        width: iFrameSettings.width,
-                        height: iFrameSettings.height,
-                        layout: 'fit',
-                        items : [{
-                                xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
-                                                                    + "&type=text"}
-                            }]
-                    });
-                    iframe.show();
-                }.bind(this),
-                getClass: function(v, meta, rec) {
-                    if(!rec.get('emailLogExistsText')){
-                        return "pimcore_hidden";
-                    }
-                }
-            }]
-        },
-        {
-            xtype: 'actioncolumn',
-            sortable: false,
-            width: 120,
-            dataIndex: "params",
-            hidden: true,
-            header: t('email_log_params'),
-            items : [{
-                tooltip: t('email_log_show_text_params'),
-                icon: "/pimcore/static6/img/flat-color-icons/info.svg",
-                handler: function(grid, rowIndex){
-                    var rec = grid.getStore().getAt(rowIndex);
-
-                    this.tree = new Ext.ux.tree.TreeGrid({
-                        width: 700,
-                        height: 700,
-                        renderTo: Ext.getBody(),
-                        enableDD: true,
-
-                        columns:[{
-                            header: t('email_log_property'),
-                            dataIndex: 'key',
-                            width: 230
-                        },{
-                            header: t('email_log_data'),
-                            width: 370,
-                            dataIndex: 'data',
-                            tpl: new Ext.XTemplate('{data:this.formatData}', {
-                                formatData: function (data){
-                                    if(data.type == 'simple'){
-                                        return data.value;
-                                    }else{
-                                        //when the objectPath is set -> the object is still available otherwise it was
-                                        // deleted in the meantime
-                                        if(data.objectPath){
-                                            var subtype = data.objectClassSubType.toLowerCase();
-                                            return '<span onclick="pimcore.helpers.open'
-                                                + data.objectClassBase + '(' + data.objectId + ', \''
-                                                + subtype + '\');" class="input_drop_target" style="display: block;">'
-                                                                + data.objectPath + '</span>';
-                                        }else{
-                                            return '"' + data.objectClass + '" with Id: '
-                                                + data.objectId + ' (deleted)';
-                                        }
-                                    }
-                                }
-                            })
-                        }],
-
-                        dataUrl: '/admin/email/show-email-log/?id=' + rec.get('id') + '&type=params'
-                    });
-
-                    this.window = new Ext.Window({
-                         modal: true,
-                         width: 620,
-                         height: 700,
-                         title: t('email_log_params'),
-                         items: [this.tree],
-                         layout: "fit"
-                     });
-                     this.window.show();
-
-                }.bind(this)
-            }]
-        },
-        {
-            xtype:'actioncolumn',
-            width:30,
-            items:[
-                {
-                    tooltip:t('email_log_resend'),
-                    icon:"/pimcore/static6/img/flat-color-icons/email.svg",
-                    handler:function (grid, rowIndex) {
+            },
+            {
+                header: t('email_log_from'),
+                sortable: false,
+                dataIndex: "from",
+                flex: 120
+            },
+            {
+                header: t('email_log_to'),
+                sortable: false,
+                dataIndex: "to",
+                flex: 120
+            },
+            {
+                header: t('email_log_cc'),
+                sortable: false,
+                dataIndex: "cc",
+                flex: 120
+            },
+            {
+                header: t('email_log_bcc'),
+                sortable: false,
+                dataIndex: "bcc",
+                flex: 120
+            },
+            {
+                header: t('email_log_subject'),
+                sortable: false,
+                dataIndex: "subject",
+                flex: 220
+            },
+            {
+                xtype: 'actioncolumn',
+                sortable: false,
+                width: 50,
+                dataIndex: "emailLogExistsHtml",
+                header: t('email_log_html'),
+                items : [{
+                    tooltip: t('email_log_show_html_email'),
+                    icon: "/pimcore/static6/img/flat-color-icons/feedback.svg",
+                    handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
-                            Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'),
-                                function(btn){
-                                if (btn == 'yes'){
-                                    Ext.Ajax.request({
-                                        url: '/admin/email/resend-email/',
-                                        success: function(response){
-                                            var data = Ext.decode( response.responseText );
-                                            if(data.success){
-                                                Ext.Msg.alert(t('email_log_resend_window_title'),
-                                                              t('email_log_resend_window_success_message'));
-                                            }else{
-                                                Ext.Msg.alert(t('email_log_resend_window_title'),
-                                                              t('email_log_resend_window_error_message'));
-                                            }
-                                        },
-                                        failure: function () {
-                                            alert("Could not resend email");
-                                        },
-                                        params: { id : rec.get('id') }
-                                    });
-                                }
-                            });
+                        var iframe = new Ext.Window({
+                            title: t("email_log_iframe_title_html"),
+                            width: iFrameSettings.width,
+                            height: iFrameSettings.height,
+                            layout: 'fit',
+                            items : [{
+                                xtype : "box",
+                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
+                                + "&type=html"}
+                            }]
+                        });
+                        iframe.show();
                     }.bind(this),
                     getClass: function(v, meta, rec) {
-                        if(!rec.get('emailLogExistsHtml') && !rec.get('emailLogExistsText') ){
+                        if(!rec.get('emailLogExistsHtml')){
                             return "pimcore_hidden";
                         }
                     }
-                }
-            ]
-        },
-         {
-            xtype: 'actioncolumn',
-            width: 30,
-            items: [{
-                tooltip: t('delete'),
-                icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
-                handler: function (grid, rowIndex) {
-                    var rec = grid.getStore().getAt(rowIndex);
-                    Ext.Ajax.request({
-                        url: '/admin/email/delete-email-log/',
-                        success: function(response){
-                            var data = Ext.decode( response.responseText );
-                            if(!data.success){
-                                alert("Could not delete email log");
+                }]
+            },
+            {
+                xtype: 'actioncolumn',
+                sortable: false,
+                width: 50,
+                dataIndex: "emailLogExistsText",
+                header: t('email_log_text'),
+                hidden: true,
+                items : [{
+                    tooltip: t('email_log_show_text_email'),
+                    icon: "/pimcore/static6/img/flat-color-icons/text.svg",
+                    handler: function(grid, rowIndex){
+                        var rec = grid.getStore().getAt(rowIndex);
+                        var iframe = new Ext.Window({
+                            title: t("email_log_iframe_title_text"),
+                            width: iFrameSettings.width,
+                            height: iFrameSettings.height,
+                            layout: 'fit',
+                            items : [{
+                                xtype : "box",
+                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
+                                + "&type=text"}
+                            }]
+                        });
+                        iframe.show();
+                    }.bind(this),
+                    getClass: function(v, meta, rec) {
+                        if(!rec.get('emailLogExistsText')){
+                            return "pimcore_hidden";
+                        }
+                    }
+                }]
+            },
+            {
+                xtype: 'actioncolumn',
+                sortable: false,
+                width: 120,
+                dataIndex: "params",
+                hidden: false,
+                header: t('email_log_params'),
+                items : [{
+                    tooltip: t('email_log_show_text_params'),
+                    icon: "/pimcore/static6/img/flat-color-icons/info.svg",
+                    handler: function(grid, rowIndex){
+                        var rec = grid.getStore().getAt(rowIndex);
+
+                        var store = Ext.create('Ext.data.TreeStore', {
+                            proxy: {
+                                type: 'ajax',
+                                url: '/admin/email/show-email-log/?id=' + rec.get('id') + '&type=params',
+                                reader: {
+                                    type: 'json'
+                                },
+                                autoDestroy: true
                             }
-                        },
-                        failure: function () {
-                            alert("Could not delete email log");
-                        }, 
-                        params: { id : rec.get('id') }
-                    });
-                    grid.getStore().removeAt(rowIndex);
-                }.bind(this)
-            }]
-        }
+                        });
+
+
+                        this.tree =  Ext.create('Ext.tree.Panel', {
+                            expanded: true,
+                            rootVisible: false,
+                            store: store,
+                            lines: true,
+                            columnLines: true,
+                            columns:[
+                                new Ext.tree.Column({
+                                    header: t('email_log_property'),
+                                    dataIndex: 'key',
+                                    width: 230
+                                }),
+                                {
+                                    header: t('email_log_data'),
+                                    width: 370,
+                                    dataIndex: 'data',
+                                    renderer: function(value, metadata, record) {
+
+                                        var data = record.data.data;
+                                        if (data.type == 'simple') {
+                                            return data.value;
+                                        } else {
+                                            //when the objectPath is set -> the object is still available otherwise it was
+                                            // deleted in the meantime
+                                            if (data.objectPath) {
+                                                var subtype = data.objectClassSubType.toLowerCase();
+                                                return '<span onclick="pimcore.helpers.open'
+                                                    + data.objectClassBase + '(' + data.objectId + ', \''
+                                                    + subtype + '\');" class="input_drop_target" style="display: block;">'
+                                                    + data.objectPath + '</span>';
+                                            } else {
+                                                return '"' + data.objectClass + '" with Id: '
+                                                    + data.objectId + ' (deleted)';
+                                            }
+                                        }
+                                    }
+
+
+                                }]
+                        });
+
+                        this.window = new Ext.Window({
+                            modal: true,
+                            width: 620,
+                            height: 700,
+                            title: t('email_log_params'),
+                            items: [this.tree],
+                            layout: "fit"
+                        });
+                        this.window.show();
+
+                    }.bind(this)
+                }]
+            },
+            {
+                xtype:'actioncolumn',
+                width:30,
+                items:[
+                    {
+                        tooltip:t('email_log_resend'),
+                        icon:"/pimcore/static6/img/flat-color-icons/email.svg",
+                        handler:function (grid, rowIndex) {
+                            var rec = grid.getStore().getAt(rowIndex);
+                            Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'),
+                                function(btn){
+                                    if (btn == 'yes'){
+                                        Ext.Ajax.request({
+                                            url: '/admin/email/resend-email/',
+                                            success: function(response){
+                                                var data = Ext.decode( response.responseText );
+                                                if(data.success){
+                                                    Ext.Msg.alert(t('email_log_resend_window_title'),
+                                                        t('email_log_resend_window_success_message'));
+                                                }else{
+                                                    Ext.Msg.alert(t('email_log_resend_window_title'),
+                                                        t('email_log_resend_window_error_message'));
+                                                }
+                                            },
+                                            failure: function () {
+                                                alert("Could not resend email");
+                                            },
+                                            params: { id : rec.get('id') }
+                                        });
+                                    }
+                                });
+                        }.bind(this),
+                        getClass: function(v, meta, rec) {
+                            if(!rec.get('emailLogExistsHtml') && !rec.get('emailLogExistsText') ){
+                                return "pimcore_hidden";
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [{
+                    tooltip: t('delete'),
+                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        var rec = grid.getStore().getAt(rowIndex);
+                        Ext.Ajax.request({
+                            url: '/admin/email/delete-email-log/',
+                            success: function(response){
+                                var data = Ext.decode( response.responseText );
+                                if(!data.success){
+                                    alert("Could not delete email log");
+                                }
+                            },
+                            failure: function () {
+                                alert("Could not delete email log");
+                            },
+                            params: { id : rec.get('id') }
+                        });
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }]
+            }
 
         ];
 
-       var storeFields = ["id","documentId","subject","emailLogExistsHtml","params","sentDate","params",
-                          "modificationDate","requestUri","from","to","cc","bcc","emailLogExistsHtml",
-                          "emailLogExistsText"];
+        var storeFields = ["id","documentId","subject","emailLogExistsHtml","params","sentDate","params",
+            "modificationDate","requestUri","from","to","cc","bcc","emailLogExistsHtml",
+            "emailLogExistsText"];
 
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
