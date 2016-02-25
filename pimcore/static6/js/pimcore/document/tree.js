@@ -1181,7 +1181,7 @@ pimcore.document.tree = Class.create({
 
     editDocumentKey : function (tree, record) {
         Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'),
-            this.editDocumentKeyComplete.bind(this, tree, record));
+            this.editDocumentKeyComplete.bind(this, tree, record), null, null, record.data.text);
     },
 
     editDocumentKeyComplete: function (tree, record, button, value, object) {
