@@ -58,23 +58,23 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 
         $super();
 
-        var algorithmsProxy = new Ext.data.HttpProxy({
-            url:'/admin/settings/get-available-algorithms'
-        });
+        var algorithmsProxy = {
+            type: 'ajax',
+            url:'/admin/settings/get-available-algorithms',
+            reader: {
+                type: 'json',
+                totalProperty:'total',
+                successProperty:'success',
+                rootProperty: "data"
+            }
+        }
 
-        var algorithmsReader = new Ext.data.JsonReader({
-            totalProperty:'total',
-            successProperty:'success',
-            root: "data",
+        this.algorithmsStore = new Ext.data.Store({
+            proxy: algorithmsProxy,
             fields: [
                 {name:'key'},
                 {name:'value'}
-            ]
-        });
-
-        this.algorithmsStore = new Ext.data.Store({
-            proxy:algorithmsProxy,
-            reader:algorithmsReader,
+            ],
             listeners: {
 	            load: function() {
 	                if (this.datax.restrictTo) {
