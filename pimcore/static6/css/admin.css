@@ -202,6 +202,17 @@
     display:none !important;
 }
 
+
+.pimcore_about_window {
+    text-align: center;
+}
+
+.pimcore_about_window a, .pimcore_about_window a:visited, .pimcore_about_window a:active, .pimcore_about_window a:hover {
+    color:#000;
+    text-decoration: underline;
+}
+
+
 /* TODO to be removed */
 .pimcore_unpublished .x-tree-node-anchor span {
     text-decoration: line-through;

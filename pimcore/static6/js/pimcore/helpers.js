@@ -2917,11 +2917,13 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
 pimcore.helpers.showAbout = function () {
 
-    var html = '<div style="text-align: center">';
-    html += '<br><img src="/pimcore/static6/img/logo.svg" style="width: 300px;"><br><br>';
+    var html = '<div class="pimcore_about_window">';
+    html += '<br><img src="/pimcore/static6/img/logo.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Build: ' + pimcore.settings.build + '</b>';
-    html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="http://www.pimcore.org/" target="_blank" style="color: #000;">pimcore.org</a>)';
+    html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="http://www.pimcore.org/" target="_blank">pimcore.org</a>)';
+    html += '<br>a proud member of the <a href="http://elements.at" target="_blank">elements group</a>';
+    html += '<img src="/pimcore/static6/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
 
     var win = new Ext.Window({
