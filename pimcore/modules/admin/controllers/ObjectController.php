@@ -638,7 +638,14 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             if (is_file($configFile)) {
                 $gridConfig = Tool\Serialize::unserialize(file_get_contents($configFile));
                 if ($gridConfig) {
-                    $objectData["selectedClass"] = $gridConfig["classId"];
+                    $selectedClassId = $gridConfig["classId"];
+
+                    foreach ($objectData["classes"] as $class) {
+                        if ($class->getId() == $selectedClassId) {
+                            $objectData["selectedClass"] = $selectedClassId;
+                            break;
+                        }
+                    }
                 }
             }
 
