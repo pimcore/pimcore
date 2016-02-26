@@ -61,7 +61,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $key = $this->model->getKey();
 
         $data = $this->db->fetchAll(function ($row) use ($key) {
-            if ($row["name"] == $key) {
+            if ($row["key"] == $key) {
                 return true;
             }
             return false;
