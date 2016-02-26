@@ -44,7 +44,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     selectInTree: function (button) {
         try {
-            pimcore.treenodelocator.showInTree(this.id, "asset", button);
+            pimcore.treenodelocator.showInTree(this.id, "asset", button)
         } catch (e) {
             console.log(e);
         }
@@ -192,14 +192,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 iconCls: "pimcore_icon_show_in_tree",
                 handler: this.selectInTree.bind(this)
             });
-
-            if (this.isAllowed("rename") && this.data.id != 1 && !this.data.locked) {
-                moreButtons.push({
-                    text: t('edit_filename'),
-                    iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
-                    handler: this.editAssetFilename.bind(this)
-                });
-            }
 
             moreButtons.push({
                 text: t("show_metainfo"),
@@ -427,56 +419,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?asset_" + this.data.id + "_" + this.data.type
             }
         ], "asset");
-    },
-
-    editAssetFilename: function () {
-        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-            this.editAssetFilenameComplete.bind(this), window, false, this.data.filename);
-    },
-
-    editAssetFilenameComplete: function (button, value, object) {
-        try {
-            if (button == "ok") {
-
-                value = pimcore.helpers.getValidFilename(value);
-
-                var originalText = this.data.filename;
-                var originalPath = this.data.path;
-                var renameCallback = function (response) {
-
-                    var rdata = Ext.decode(response.responseText);
-
-                    if (pimcore.globalmanager.exists("asset_" + this.data.id)) {
-                        try {
-
-                            if (rdata && rdata.success) {
-                                pimcore.helpers.closeAsset(this.data.id);
-                                pimcore.helpers.openAsset(this.data.id, this.data.type);
-                            } else {
-                                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_renaming_a_folder"),
-                                    "error", t(rdata.message));
-                            }
-                        } catch (e) {
-                            pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_renaming_a_folder"),
-                                "error");
-                        }
-                    }
-                };
-
-                Ext.Ajax.request({
-                    url: "/admin/asset/update/",
-                    method: "post",
-                    params: {
-                        id: this.data.id,
-                        filename: value
-                    },
-                    success: renameCallback.bind(this)
-                });
-
-            }
-        } catch (e) {
-            console.log(e);
-        }
     }
 
 });
