@@ -180,17 +180,23 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                             Possible Links
                             # http://vimeo.com/11696823
                             # http://player.vimeo.com/video/22775048?title=0&byline=0&portrait=0
+                            # http://vimeo.com/groups/1615/videos/151603026
                          */
 
                         var path = el.getValue();
                         var parts = parse_url(path);
 
-                        var pathParts = trim(parts["path"]," /").split("/");
-
-                        for(var i=0; i<pathParts.length; i++) {
-                            if(intval(pathParts[i]) > 0 && pathParts[i].length > 3) {
-                                tmpId = pathParts[i];
-                                break;
+                        if (path.indexOf("groups") >= 0) {
+                            var explodedPath = trim(parts["path"]," /").split("/");
+                            var tmpIndex = intval(array_search('videos', explodedPath)) + 1;
+                            tmpId = explodedPath[tmpIndex];
+                        } else {
+                            var pathParts = trim(parts["path"], " /").split("/");
+                            for (var i = 0; i < pathParts.length; i++) {
+                                if (intval(pathParts[i]) > 0 && pathParts[i].length > 3) {
+                                    tmpId = pathParts[i];
+                                    break;
+                                }
                             }
                         }
 
