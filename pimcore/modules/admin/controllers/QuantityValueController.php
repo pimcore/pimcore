@@ -48,15 +48,22 @@ class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin
             }
         } else {
             $list = new Pimcore\Model\Object\QuantityValue\Unit\Listing();
-            $list->setOrder("asc");
-            $list->setOrderKey("abbreviation");
 
-            if ($this->getParam("dir")) {
-                $list->setOrder($this->getParam("dir"));
+
+            $orderKey = "abbreviation";
+            $order = "asc";
+
+
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            if ($sortingSettings['orderKey']) {
+                $orderKey = $sortingSettings['orderKey'];
             }
-            if ($this->getParam("sort")) {
-                $list->setOrderKey($this->getParam("sort"));
+            if ($sortingSettings['order']) {
+                $order  = $sortingSettings['order'];
             }
+
+            $list->setOrder($order);
+            $list->setOrderKey($orderKey);
 
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
