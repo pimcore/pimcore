@@ -9,7 +9,7 @@
                 $totalCount = count($children);
                 foreach ($children as $image) { ?>
 
-                    <?php if($image instanceof Asset_Image) { ?>
+                    <?php if($image instanceof \Pimcore\Model\Asset\Image) { ?>
                         <div class="col-md-3 col-xs-6">
                             <a href="<?= $image->getThumbnail("galleryLightbox"); ?>" class="thumbnail">
                                 <?= $image->getThumbnail("galleryThumbnail")->getHTML(); ?>

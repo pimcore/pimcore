@@ -1,4 +1,8 @@
-<?php $this->template("/includes/content-headline.php"); ?>
+<?php
+    use Pimcore\Model\Asset;
+
+    $this->template("/includes/content-headline.php");
+?>
 
 
 <?= $this->areablock("content"); ?>

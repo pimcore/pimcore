@@ -13,7 +13,7 @@
     <?php foreach ($this->list as $asset) { ?>
         <?php if(in_array($asset->getType(), ["video", "image", "document"])) { ?>
             <div class="col-xs-3" style="padding-bottom: 10px">
-                <?php if($asset instanceof Asset_Image) { ?>
+                <?php if($asset instanceof \Pimcore\Model\Asset\Image) { ?>
                     <?= $asset->getThumbnail([
                         "width" => 180,
                         "height" => 180,
