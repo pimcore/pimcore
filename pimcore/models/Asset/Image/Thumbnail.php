@@ -189,16 +189,16 @@ class Thumbnail
     /**
      * @return array
      */
-    public function getDimensions() {
-        if(!$this->width || !$this->height) {
-
+    public function getDimensions()
+    {
+        if (!$this->width || !$this->height) {
             $config = $this->getConfig();
             $asset = $this->getAsset();
 
             // first we try to calculate the final dimensions based on the thumbnail configuration
             $dimensions = $config->getEstimatedDimensions($asset->getWidth(), $asset->getHeight());
 
-            if(empty($dimensions)) {
+            if (empty($dimensions)) {
                 // unable to calculate dimensions -> use fallback
                 // generate the thumbnail and get dimensions from the thumbnail file
                 $info = @getimagesize($this->getFileSystemPath());
@@ -251,7 +251,7 @@ class Thumbnail
             $format = $targetFormat;
             $fileExt = \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
 
-            if($targetFormat == "source" || empty($targetFormat)) {
+            if ($targetFormat == "source" || empty($targetFormat)) {
                 $format = Thumbnail\Processor::getAllowedFormat($fileExt, ["jpeg", "gif", "png"], "png");
             } elseif ($targetFormat == "print") {
                 $format = Thumbnail\Processor::getAllowedFormat($fileExt, ["svg", "jpeg", "png", "tiff"], "png");
@@ -261,7 +261,7 @@ class Thumbnail
                 }
             }
 
-            if(array_key_exists($format, $mapping)) {
+            if (array_key_exists($format, $mapping)) {
                 $this->mimetype = $mapping[$format];
             } else {
                 // unknown

@@ -550,7 +550,7 @@ class Config extends Model\AbstractModel
                         } elseif ($transformation["method"] == "cropPercent") {
                             $dimensions["width"] = ceil($dimensions["width"] * ($arg["width"] / 100));
                             $dimensions["height"] = ceil($dimensions["height"] * ($arg["height"] / 100));
-                        } elseif (in_array($transformation["method"], ["rotate","trim"])) {
+                        } elseif (in_array($transformation["method"], ["rotate", "trim"])) {
                             // unable to calculate dimensions -> return empty
                             return [];
                         }
