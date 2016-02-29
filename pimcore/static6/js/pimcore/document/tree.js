@@ -378,7 +378,6 @@ pimcore.document.tree = Class.create({
                 hideOnClick: false
             }));
 
-            //ckogler
             menu.add(new Ext.menu.Item({
                 text: t('add_email'),
                 iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
@@ -401,6 +400,8 @@ pimcore.document.tree = Class.create({
                 iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 handler: this.addDocument.bind(this, tree, record, "folder")
             }));
+
+            menu.add("-");
 
             //paste
             if (this.cacheDocumentId && record.data.permissions.create) {
@@ -675,6 +676,7 @@ pimcore.document.tree = Class.create({
             });
         }
 
+        menu.add("-");
 
         if(advancedMenuItems.length) {
             menu.add(new Ext.menu.Item({

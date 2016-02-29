@@ -471,6 +471,7 @@ pimcore.asset.tree = Class.create({
                     handler: this.addFolder.bind(this, tree, record)
                 }));
 
+                menu.add("-");
             }
         }
 
@@ -619,6 +620,8 @@ pimcore.asset.tree = Class.create({
                 menu:lockMenu
             });
         }
+
+        menu.add("-");
 
         if(advancedMenuItems.length) {
             menu.add({

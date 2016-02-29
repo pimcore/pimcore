@@ -509,6 +509,8 @@ pimcore.object.tree = Class.create({
                     menu: objectMenu.importer
                 });
 
+                menu.add("-");
+
                 //paste
                 var pasteMenu = [];
 
@@ -701,6 +703,8 @@ pimcore.object.tree = Class.create({
                 menu: lockMenu
             });
         }
+
+        menu.add("-");
 
         if(advancedMenuItems.length) {
             menu.add({
