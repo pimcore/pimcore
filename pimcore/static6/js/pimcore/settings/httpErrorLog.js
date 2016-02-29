@@ -57,19 +57,21 @@ pimcore.settings.httpErrorLog = Class.create({
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
-            ["id","path", "code", "date","amount"],
+            ["id","uri", "code", "date","count"],
             itemsPerPage
         );
+
         var proxy = this.store.getProxy();
         proxy.extraParams["group"] = 1;
+        proxy.getReader().setRootProperty('items');
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
 
         var typesColumns = [
             {header: "ID", width: 50, sortable: true, hidden: true, dataIndex: 'id'},
             {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
-            {header: t("path"), width: 400, sortable: true, dataIndex: 'path'},
-            {header: t("amount"), width: 60, sortable: true, dataIndex: 'amount'},
+            {header: t("path"), width: 400, sortable: true, dataIndex: 'uri'},
+            {header: t("amount"), width: 60, sortable: true, dataIndex: 'count'},
             {header: t("date"), width: 200, sortable: true, dataIndex: 'date',
                                                                     renderer: function(d) {
                 var date = new Date(d * 1000);
