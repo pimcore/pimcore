@@ -2923,6 +2923,9 @@ pimcore.helpers.showAbout = function () {
     html += '<br><b>Build: ' + pimcore.settings.build + '</b>';
     html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="http://www.pimcore.org/" target="_blank">pimcore.org</a>)';
     html += '<br>a proud member of the <a href="http://elements.at" target="_blank">elements group</a>';
+    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
+    html += '<a href="https://www.pimcore.org/en/company/contact" target="_blank">Contact</a> | ';
+    html += '<a href="https://www.pimcore.org/en/company/team" target="_blank">Team</a>';
     html += '<img src="/pimcore/static6/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
 
