@@ -287,13 +287,11 @@ class Thumbnail
         $attr = array();
         $pictureAttribs = []; // this is used for the html5 <picture> element
 
-        if (!$this->deferred) {
-            if ($this->getWidth()) {
-                $attr['width'] = 'width="'.$this->getWidth().'"';
-            }
-            if ($this->getHeight()) {
-                $attr['height'] = 'height="'.$this->getHeight().'"';
-            }
+        if ($this->getWidth()) {
+            $attr['width'] = 'width="'.$this->getWidth().'"';
+        }
+        if ($this->getHeight()) {
+            $attr['height'] = 'height="'.$this->getHeight().'"';
         }
 
         $altText = "";
