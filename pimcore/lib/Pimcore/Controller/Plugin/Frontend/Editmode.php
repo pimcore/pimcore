@@ -153,13 +153,23 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
                     $pluginJsPaths = array();
-                    if (array_key_exists("pluginDocumentEditmodeJsPaths", $p['plugin'])
-                        && is_array($p['plugin']['pluginDocumentEditmodeJsPaths'])
-                        && isset($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
-                        if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
-                            $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
-                        } elseif ($p['plugin']['pluginDocumentEditmodeJsPaths']['path'] != null) {
-                            $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+
+                    $pluginVersions = [""];
+                    if (\Pimcore\Tool\Admin::isExtJS6()) {
+                        $pluginVersions = ["-extjs6", ""];
+                    }
+
+                    foreach ($pluginVersions as $pluginVersion) {
+                        if (array_key_exists("pluginDocumentEditmodeJsPaths".$pluginVersion, $p['plugin'])
+                            && is_array($p['plugin']['pluginDocumentEditmodeJsPaths'.$pluginVersion])
+                            && isset($p['plugin']['pluginDocumentEditmodeJsPaths'.$pluginVersion]['path'])) {
+                            if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths'.$pluginVersion]['path'])) {
+                                $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths'.$pluginVersion]['path'];
+                                break;
+                            } elseif ($p['plugin']['pluginDocumentEditmodeJsPaths'.$pluginVersion]['path'] != null) {
+                                $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths'.$pluginVersion]['path'];
+                                break;
+                            }
                         }
                     }
 
@@ -174,15 +184,21 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
 
 
                     $pluginCssPaths = array();
-                    if (array_key_exists("pluginDocumentEditmodeCssPaths", $p['plugin'])
-                        && is_array($p['plugin']['pluginDocumentEditmodeCssPaths'])
-                        && isset($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
-                        if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
-                            $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
-                        } elseif ($p['plugin']['pluginDocumentEditmodeCssPaths']['path'] != null) {
-                            $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                    foreach ($pluginVersions as $pluginVersion) {
+                        if (array_key_exists("pluginDocumentEditmodeCssPaths".$pluginVersion, $p['plugin'])
+                            && is_array($p['plugin']['pluginDocumentEditmodeCssPaths'.$pluginVersion])
+                            && isset($p['plugin']['pluginDocumentEditmodeCssPaths'.$pluginVersion]['path'])
+                        ) {
+                            if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths'.$pluginVersion]['path'])) {
+                                $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths'.$pluginVersion]['path'];
+                                break;
+                            } elseif ($p['plugin']['pluginDocumentEditmodeCssPaths'.$pluginVersion]['path'] != null) {
+                                $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths'.$pluginVersion]['path'];
+                                break;
+                            }
                         }
                     }
+
                     //manipulate path for frontend
                     if (is_array($pluginCssPaths) and count($pluginCssPaths) > 0) {
                         for ($i = 0; $i < count($pluginCssPaths); $i++) {
