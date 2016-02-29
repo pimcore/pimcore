@@ -33,7 +33,7 @@ class DefinitionCache
         }
 
         $config = KeyConfig::getById($id);
-        if (!$config->getId()) {
+        if (!$config) {
             return;
         }
         self::put($config);

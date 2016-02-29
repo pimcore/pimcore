@@ -54,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
         $fieldname = $this->model->getFieldname();
 
         $condition = $this->db->quoteInto("o_id = ?", $objectId)
-                        . " AND " . $this->db->quoteInto("fieldname = ?", $fieldname);
+            . " AND " . $this->db->quoteInto("fieldname = ?", $fieldname);
         $this->db->delete($dataTable, $condition);
 
         $items = $this->model->getItems();
@@ -158,6 +158,11 @@ class Dao extends Model\Dao\AbstractDao
             );
 
             $keyConfig = DefinitionCache::get($keyId);
+            if (!$keyConfig) {
+                \Logger::error("Could not resolve key with ID: " . $keyId);
+                continue;
+            }
+
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $value = $fd->unmarshal($value, $object);
 
