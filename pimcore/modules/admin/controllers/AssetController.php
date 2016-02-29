@@ -891,7 +891,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 "height" => $thumbnail->getHeight()));
         }
 
-        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $thumbnail;
+        $thumbnailFile = $thumbnail->getFileSystemPath();
         $fileExtension = File::getFileExtension($thumbnailFile);
         if (in_array($fileExtension, array("gif", "jpeg", "jpeg", "png", "pjpeg"))) {
             header("Content-Type: image/".$fileExtension, true);

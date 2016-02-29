@@ -550,10 +550,16 @@ class Config extends Model\AbstractModel
                         } elseif ($transformation["method"] == "cropPercent") {
                             $dimensions["width"] = ceil($dimensions["width"] * ($arg["width"] / 100));
                             $dimensions["height"] = ceil($dimensions["height"] * ($arg["height"] / 100));
+                        } elseif (in_array($transformation["method"], ["rotate","trim"])) {
+                            // unable to calculate dimensions -> return empty
+                            return [];
                         }
                     }
                 }
             } else {
+                // this method is only if we don't have the source dimensions
+                // this doesn't necessarily return both with & height
+                // and is only a very rough estimate, you should avoid falling back to this functionality
                 foreach ($transformations as $transformation) {
                     if (!empty($transformation)) {
                         if (is_array($transformation["arguments"]) && in_array($transformation["method"], ["resize", "scaleByWidth", "scaleByHeight", "cover", "frame"])) {

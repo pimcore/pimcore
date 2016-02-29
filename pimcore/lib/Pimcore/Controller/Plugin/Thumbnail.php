@@ -74,7 +74,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                             $thumbnailConfig->setHighResolution($highResFactor);
                         }
 
-                        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getThumbnail($thumbnailConfig);
+                        $thumbnailFile = $asset->getThumbnail($thumbnailConfig)->getFileSystemPath();
                     }
 
                     if ($thumbnailFile && file_exists($thumbnailFile)) {

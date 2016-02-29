@@ -216,7 +216,7 @@ class Image extends Model\Document\Tag
                     $autoName = true;
                 }
 
-                if ($this->options["highResolution"] && $this->options["highResolution"] > 1) {
+                if (isset($this->options["highResolution"]) && $this->options["highResolution"] > 1) {
                     $thumbConfig->setHighResolution($this->options["highResolution"]);
                 }
 
@@ -226,7 +226,12 @@ class Image extends Model\Document\Tag
                     $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
                 }
 
-                $imagePath = $image->getThumbnail($thumbConfig);
+                $deferred = true;
+                if (isset($this->options["deferred"])) {
+                    $deferred = $this->options["deferred"];
+                }
+
+                $imagePath = $image->getThumbnail($thumbConfig, $deferred);
             } else {
                 $imagePath = $image->getFullPath();
             }
@@ -495,9 +500,10 @@ class Image extends Model\Document\Tag
 
     /**
      * @param $conf
+     * @param bool $deferred
      * @return Asset\Image\Thumbnail|string
      */
-    public function getThumbnail($conf)
+    public function getThumbnail($conf, $deferred = true)
     {
         $image = $this->getImage();
         if ($image instanceof Asset) {
@@ -513,7 +519,7 @@ class Image extends Model\Document\Tag
                 $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
             }
 
-            return $image->getThumbnail($thumbConfig);
+            return $image->getThumbnail($thumbConfig, $deferred);
         }
         return "";
     }

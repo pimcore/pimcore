@@ -91,7 +91,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                         }
 
                         $this->output->writeln("generating thumbnail for image: " . $image->getFullpath() . " | " . $image->getId() . " | Thumbnail: " . $thumbnail . " : " . formatBytes(memory_get_usage()));
-                        $this->output->writeln("generated thumbnail: " . $image->getThumbnail($thumbnail));
+                        $this->output->writeln("generated thumbnail: " . $image->getThumbnail($thumbnail)->getFilesystemPath());
                     }
                 }
 
@@ -102,7 +102,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                     }
 
                     $this->output->writeln("generating thumbnail for image: " . $image->getFullpath() . " | " . $image->getId() . " | Thumbnail: System Preview (tree) : " . formatBytes(memory_get_usage()));
-                    $this->output->writeln("generated thumbnail: " . $image->getThumbnail($thumbnail));
+                    $this->output->writeln("generated thumbnail: " . $image->getThumbnail($thumbnail)->getFilesystemPath());
                 }
             }
             \Pimcore::collectGarbage();

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -145,9 +145,10 @@ class Hotspotimage
 
     /**
      * @param null $thumbnailName
-     * @return mixed
+     * @param bool $deferred
+     * @return Asset\Image\Thumbnail|string
      */
-    public function getThumbnail($thumbnailName = null)
+    public function getThumbnail($thumbnailName = null, $deferred = true)
     {
         if (!$this->getImage()) {
             return "";
@@ -175,7 +176,7 @@ class Hotspotimage
             $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
         }
 
-        return $this->getImage()->getThumbnail($thumbConfig);
+        return $this->getImage()->getThumbnail($thumbConfig, $deferred);
     }
 
     /**

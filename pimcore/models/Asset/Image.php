@@ -106,10 +106,11 @@ class Image extends Model\Asset
 
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration.
-     * @param mixed$config
+     * @param null $config
+     * @param bool $deferred
      * @return Image\Thumbnail
      */
-    public function getThumbnail($config = null, $deferred = false)
+    public function getThumbnail($config = null, $deferred = true)
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }
@@ -276,7 +277,7 @@ class Image extends Model\Asset
 
             /**
              * Valid APNGs have an "acTL" chunk somewhere before their first "IDAT" chunk.
-             * 
+             *
              * @see http://foone.org/apng/
              */
             $isAnimated = strpos(substr($fileContent, 0, strpos($fileContent, 'IDAT')), 'acTL') !== false;

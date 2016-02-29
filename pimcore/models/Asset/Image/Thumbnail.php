@@ -18,7 +18,7 @@ class Thumbnail
 {
 
     /**
-     * @var Pimcore\Model\Asset\Image
+     * @var \Pimcore\Model\Asset\Image
      */
     protected $asset;
 
@@ -60,7 +60,7 @@ class Thumbnail
     /**
      * @var bool
      */
-    protected $deferred = false;
+    protected $deferred = true;
 
     /**
      * @var bool
@@ -77,7 +77,7 @@ class Thumbnail
      * @param null $config
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $deferred = false)
+    public function __construct($asset, $config = null, $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
@@ -85,9 +85,9 @@ class Thumbnail
     }
 
     /**
-     *
+     * @param bool $deferredAllowed
      */
-    public function generate($deferredAllowed = false)
+    public function generate($deferredAllowed = true)
     {
         if (!$this->path) {
             // if no correct thumbnail config is given use the original image as thumbnail
@@ -131,10 +131,10 @@ class Thumbnail
     }
 
     /**
-     * Get the public path to the thumbnail image.
-     * @return string Public path to thumbnail image.
-    */
-    public function getPath($deferredAllowed = false)
+     * @param bool $deferredAllowed
+     * @return mixed|string
+     */
+    public function getPath($deferredAllowed = true)
     {
         $this->generate($deferredAllowed);
         return $this->path;
@@ -146,7 +146,7 @@ class Thumbnail
     public function getWidth()
     {
         if (!$this->width) {
-            $this->applyFileInfo();
+            $this->getDimensions();
         }
         return $this->width;
     }
@@ -158,7 +158,7 @@ class Thumbnail
     public function getHeight()
     {
         if (!$this->height) {
-            $this->applyFileInfo();
+            $this->getDimensions();
         }
         return $this->height;
     }
@@ -169,7 +169,7 @@ class Thumbnail
     public function getRealWidth()
     {
         if (!$this->realWidth) {
-            $this->applyFileInfo();
+            $this->getDimensions();
         }
         return $this->realWidth;
     }
@@ -181,9 +181,52 @@ class Thumbnail
     public function getRealHeight()
     {
         if (!$this->realHeight) {
-            $this->applyFileInfo();
+            $this->getDimensions();
         }
         return $this->realHeight;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDimensions() {
+        if(!$this->width || !$this->height) {
+
+            $config = $this->getConfig();
+            $asset = $this->getAsset();
+
+            // first we try to calculate the final dimensions based on the thumbnail configuration
+            $dimensions = $config->getEstimatedDimensions($asset->getWidth(), $asset->getHeight());
+
+            if(empty($dimensions)) {
+                // unable to calculate dimensions -> use fallback
+                // generate the thumbnail and get dimensions from the thumbnail file
+                $info = @getimagesize($this->getFileSystemPath());
+                if ($info) {
+                    $dimensions = [
+                        "width" => $info[0],
+                        "height" => $info[1]
+                    ];
+                }
+            }
+
+            $this->width = $dimensions["width"];
+            $this->height = $dimensions["height"];
+
+            // the following is only relevant if using high-res option (retina, ...)
+            $this->realHeight = $this->height;
+            $this->realWidth = $this->width;
+
+            if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
+                $this->realWidth = floor($this->width * $config->getHighResolution());
+                $this->realHeight = floor($this->height * $config->getHighResolution());
+            }
+        }
+
+        return [
+            "width" => $this->width,
+            "height" => $this->height
+        ];
     }
 
     /**
@@ -193,8 +236,39 @@ class Thumbnail
     public function getMimeType()
     {
         if (!$this->mimetype) {
-            $this->applyFileInfo();
+            // get target mime type without actually generating the thumbnail (deferred)
+            $mapping = [
+                "png" => "image/png",
+                "jpg" => "image/jpeg",
+                "jpeg" => "image/jpeg",
+                "pjpeg" => "image/jpeg",
+                "gif" => "image/gif",
+                "tiff" => "image/tiff",
+                "svg" => "image/svg+xml",
+            ];
+
+            $targetFormat = strtolower($this->getConfig()->getFormat());
+            $format = $targetFormat;
+            $fileExt = \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
+
+            if($targetFormat == "source" || empty($targetFormat)) {
+                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ["jpeg", "gif", "png"], "png");
+            } elseif ($targetFormat == "print") {
+                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ["svg", "jpeg", "png", "tiff"], "png");
+                if (($format == "tiff" || $format == "svg") && \Pimcore\Tool::isFrontentRequestByAdmin()) {
+                    // return a webformat in admin -> tiff cannot be displayed in browser
+                    $format = "png";
+                }
+            }
+
+            if(array_key_exists($format, $mapping)) {
+                $this->mimetype = $mapping[$format];
+            } else {
+                // unknown
+                $this->mimetype = "application/octet-stream";
+            }
         }
+
         return $this->mimetype;
     }
 
@@ -395,7 +469,7 @@ class Thumbnail
     }
 
     /**
-     * @return Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
+     * @return \Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
     */
     public function getAsset()
     {
@@ -437,7 +511,7 @@ class Thumbnail
      */
     public function getFileSystemPath()
     {
-        return PIMCORE_DOCUMENT_ROOT . $this->getPath();
+        return PIMCORE_DOCUMENT_ROOT . $this->getPath(false);
     }
 
     /**
@@ -448,30 +522,6 @@ class Thumbnail
     protected function createConfig($selector)
     {
         return Thumbnail\Config::getByAutoDetect($selector);
-    }
-
-    /**
-     * Get metadata from thumbnail image file and load it into class variables.
-     * Some of the data is ignored.
-    */
-    protected function applyFileInfo()
-    {
-        $info = @getimagesize($this->getFileSystemPath());
-        if ($info) {
-            list($this->width, $this->height) = $info;
-
-            if (array_key_exists("mime", $info)) {
-                $this->mimetype = $info["mime"];
-            }
-
-            $this->realHeight = $this->height;
-            $this->realWidth = $this->width;
-
-            if ($this->config && $this->config->getHighResolution() && $this->config->getHighResolution() > 1) {
-                $this->width = floor($this->width / $this->config->getHighResolution());
-                $this->height = floor($this->height / $this->config->getHighResolution());
-            }
-        }
     }
 
     /**

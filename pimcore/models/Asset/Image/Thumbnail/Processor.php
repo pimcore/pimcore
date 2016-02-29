@@ -54,7 +54,7 @@ class Processor
      * @param string $fallback
      * @return string
      */
-    protected static function getAllowedFormat($format, $allowed = array(), $fallback = "png")
+    public static function getAllowedFormat($format, $allowed = array(), $fallback = "png")
     {
         $typeMappings = array(
             "jpg" => "jpeg",
