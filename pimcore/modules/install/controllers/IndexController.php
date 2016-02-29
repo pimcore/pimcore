@@ -45,7 +45,7 @@ class Install_IndexController extends \Pimcore\Controller\Action
 
         foreach ($files as $file) {
             if (is_dir($file) && !is_writable($file)) {
-                $errors[] = "Please ensure that the entire /" . PIMCORE_WEBSITE_VAR . " directory is recursivly writeable.";
+                $errors[] = "Please ensure that the entire /" . PIMCORE_WEBSITE_VAR . " directory is recursively writeable.";
                 break;
             }
         }
@@ -83,7 +83,7 @@ class Install_IndexController extends \Pimcore\Controller\Action
                 $errors[] = "Database charset is not utf-8";
             }
         } catch (\Exception $e) {
-            $errors[] = "Couldn't establish connection to mysql: " . $e->getMessage();
+            $errors[] = "Couldn't establish connection to MySQL: " . $e->getMessage();
         }
 
         // check username & password
