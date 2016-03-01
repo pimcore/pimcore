@@ -28,7 +28,9 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
             $responseData = $this->getResponse()->getBody();
             if (strlen($responseData) > 20 && !session_id()) {
                 // do not cache if there's no data or an active session
-                $cacheKey = "error_page_response_" . \Pimcore\Tool\Frontend::getSiteKey();
+                $responseCode = $this->getResponse()->getHttpResponseCode();
+                $cacheKey = "error_page_response_" . $responseCode . "_" . \Pimcore\Tool\Frontend::getSiteKey();
+
                 \Pimcore\Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
             }
         }
