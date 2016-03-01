@@ -82,7 +82,7 @@ class Db
 
         // try to set innodb as default storage-engine
         try {
-            $db->query("SET storage_engine=InnoDB;");
+            $db->query("SET default_storage_engine=InnoDB;");
         } catch (\Exception $e) {
             \Logger::warn($e);
         }
