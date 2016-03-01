@@ -261,7 +261,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             fields = response;
         }
 
-        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find");
+        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
         this.store = gridHelper.getStore();
         this.store.setPageSize(50);
         this.store.getProxy().extraParams.limit = 50;

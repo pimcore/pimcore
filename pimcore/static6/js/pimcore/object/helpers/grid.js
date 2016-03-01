@@ -214,6 +214,10 @@ pimcore.object.helpers.grid = Class.create({
                     fc.filter = gridFilters[field.key];
                 }
 
+                if (this.isSearch) {
+                    fc.sortable = false;
+                }
+
                 gridColumns.push(fc);
                 gridColumns[gridColumns.length-1].hidden = false;
                 gridColumns[gridColumns.length-1].layout = fields[i];
