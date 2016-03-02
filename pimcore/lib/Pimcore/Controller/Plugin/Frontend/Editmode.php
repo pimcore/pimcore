@@ -291,7 +291,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 }
 
                 if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
-                    $html = str_replace("</head>", $editmodeHeadHtml . "\n\n</head>", $html);
+                    $html = preg_replace("@</head>@i", $editmodeHeadHtml . "\n\n</head>", $html, 1);
 
                     $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js";
                     if (!\Pimcore\Tool\Admin::isExtJS6()) {
@@ -299,7 +299,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                     }
 
                     $editmodeBodyHtml = "\n\n" . '<script type="text/javascript" src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
-                    $html = str_replace("</body>", $editmodeBodyHtml . "\n\n</body>", $html);
+                    $html = preg_replace("@</body>@i", $editmodeBodyHtml . "\n\n</body>", $html, 1);
 
                     $this->getResponse()->setBody($html);
                 } else {
