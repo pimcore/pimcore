@@ -51,6 +51,9 @@ if (pimcore_document_id) {
     window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
 }
 
+// overwrite default z-index of windows, this ensures that CKEditor is above ExtJS Windows
+Ext.WindowManager.zseed = 200;
+
 
 Ext.Loader.setConfig({
     enabled: true
