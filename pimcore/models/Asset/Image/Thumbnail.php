@@ -197,7 +197,7 @@ class Thumbnail
             $dimensions = [];
 
             // first we try to calculate the final dimensions based on the thumbnail configuration
-            if($config) {
+            if ($config) {
                 $dimensions = $config->getEstimatedDimensions($asset->getWidth(), $asset->getHeight());
             }
 
