@@ -194,9 +194,12 @@ class Thumbnail
         if (!$this->width || !$this->height) {
             $config = $this->getConfig();
             $asset = $this->getAsset();
+            $dimensions = [];
 
             // first we try to calculate the final dimensions based on the thumbnail configuration
-            $dimensions = $config->getEstimatedDimensions($asset->getWidth(), $asset->getHeight());
+            if($config) {
+                $dimensions = $config->getEstimatedDimensions($asset->getWidth(), $asset->getHeight());
+            }
 
             if (empty($dimensions)) {
                 // unable to calculate dimensions -> use fallback
