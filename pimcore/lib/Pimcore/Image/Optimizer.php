@@ -12,6 +12,7 @@
 
 namespace Pimcore\Image;
 
+use Pimcore\File;
 use Pimcore\Tool\Console;
 use Pimcore\Config;
 
@@ -52,6 +53,7 @@ class Optimizer
                         if (file_exists($newFile)) {
                             unlink($path);
                             rename($newFile, $path);
+                            @chmod($path, File::getDefaultMode());
                         }
                     }
                 }
@@ -64,6 +66,7 @@ class Optimizer
                         if (file_exists($newFile)) {
                             unlink($path);
                             rename($newFile, $path);
+                            @chmod($path, File::getDefaultMode());
                         }
                     } elseif ($optimizer["type"] == "jpegoptim") {
                         $additionalParams = "";
@@ -71,6 +74,7 @@ class Optimizer
                             $additionalParams = " --all-progressive";
                         }
                         Console::exec($optimizer["path"] . $additionalParams . " -o --strip-all --max=85 " . $path, null, 60);
+                        @chmod($path, File::getDefaultMode());
                     }
                 }
             }
