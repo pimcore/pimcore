@@ -194,6 +194,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             backgroundRepeat: "no-repeat"
         });
 
+        body.removeCls("pimcore_droptarget_image");
         body.repaint();
 
         this.getFileInfo(path);
