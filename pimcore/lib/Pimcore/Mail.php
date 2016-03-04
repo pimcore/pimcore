@@ -557,7 +557,7 @@ class Mail extends \Zend_Mail
                     $fromAddress = $from;
                     $fromName = null;
 
-                    if(preg_match("/(.*)<(.*)>/", $from, $matches)) {
+                    if (preg_match("/(.*)<(.*)>/", $from, $matches)) {
                         $fromAddress = trim($matches[2]);
                         $fromName = trim($matches[1]);
                     }
