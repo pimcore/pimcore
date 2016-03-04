@@ -78,12 +78,10 @@
 
 <div id="site">
     <div id="logo">
-        <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo.svg" /></a>
+        <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo.svg" style="width: 200px;" /></a>
         <hr />
         <div class="claim">
-            The premier Open-Source
-            <br />
-            Multi-Channel Experience and Engagement Management Platform
+            THE OPEN-SOURCE ENTERPRISE PLATFORM FOR PIM, CMS, DAM & COMMERCE
         </div>
     </div>
 </div>
