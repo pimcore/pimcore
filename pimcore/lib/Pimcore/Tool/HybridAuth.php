@@ -18,7 +18,7 @@ class HybridAuth
     /**
      * @throws \Zend_Loader_Exception
      */
-    public function init()
+    public static function init()
     {
         // register HybridAuth
         $autoloader = \Zend_Loader_Autoloader::getInstance();
