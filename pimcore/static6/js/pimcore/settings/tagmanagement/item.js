@@ -82,10 +82,10 @@ pimcore.settings.tagmanagement.item = Class.create({
         var paramsFieldSet = {
             xtype: "fieldset",
             title: t("parameters") + " (GET &amp; POST)",
-            items: paramsFieldSetItems
+            items: paramsFieldSetItems,
+            collapsible: true,
+            collapsed: true
         };
-
-
 
         this.panel = new Ext.form.FormPanel({
             border: false,
