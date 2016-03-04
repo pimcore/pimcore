@@ -655,8 +655,10 @@ Ext.onReady(function () {
 
 
     if (user.isAllowed("dashboards") && pimcore.globalmanager.get("user").welcomescreen) {
-        layoutPortal = new pimcore.layout.portal();
-        pimcore.globalmanager.add("layout_portal", layoutPortal);
+        window.setTimeout(function () {
+            layoutPortal = new pimcore.layout.portal();
+            pimcore.globalmanager.add("layout_portal", layoutPortal);
+        }, 1000);
     }
 
     pimcore.viewport.updateLayout();

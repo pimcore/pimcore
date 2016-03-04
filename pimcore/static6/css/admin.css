@@ -1269,7 +1269,7 @@ span.warning {
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {
-    background-image: url(/pimcore/static6/img/logo.svg);
+    background-image: url(/pimcore/static6/img/logo-gray.svg);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 300px auto;
