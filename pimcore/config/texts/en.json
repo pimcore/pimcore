@@ -3353,7 +3353,7 @@
     },
     {
         "term": "email_settings_receiver_description",
-        "definition": "Multiple recipients can be specified by separating the email addresses with a semicolon. <br\/>Example: receiver@pimcore.org; receiver2@pimcore.org"
+        "definition": "Multiple recipients can be specified by separating the email addresses with a semicolon. <br\/>Example: receiver@pimcore.org; receiver2@pimcore.org<br\/>For 'From' you can use additionally the syntax <i>My Name &lt;my-name@example.com&gt;</i>"
     },
     {
         "term": "email_logs",

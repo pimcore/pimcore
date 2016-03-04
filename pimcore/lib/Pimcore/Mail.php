@@ -553,7 +553,16 @@ class Mail extends \Zend_Mail
                 list($from) = $fromArray;
                 if ($from) {
                     $this->clearFrom();
-                    $this->setFrom($from);
+
+                    $fromAddress = $from;
+                    $fromName = null;
+
+                    if(preg_match("/(.*)<(.*)>/", $from, $matches)) {
+                        $fromAddress = trim($matches[2]);
+                        $fromName = trim($matches[1]);
+                    }
+
+                    $this->setFrom($fromAddress, $fromName);
                 }
             }
         }
