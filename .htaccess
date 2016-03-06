@@ -96,7 +96,7 @@ RewriteRule ^.*$ index.php [NC,L]
     RewriteCond %{REQUEST_URI} ^/(mod_)?pagespeed_(statistics|message|console|beacon|admin|global_admin)
     RewriteRule . - [L]
 
-    #ModPagespeed On
+    ModPagespeed Off
     AddOutputFilterByType MOD_PAGESPEED_OUTPUT_FILTER text/html
     ModPagespeedModifyCachingHeaders off
     ModPagespeedRewriteLevel PassThrough
