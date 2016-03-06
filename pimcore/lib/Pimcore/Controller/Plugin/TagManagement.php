@@ -79,28 +79,50 @@ class TagManagement extends \Zend_Controller_Plugin_Abstract
                 if (is_array($tag->getItems()) && $paramsValid) {
                     foreach ($tag->getItems() as $item) {
                         if (!empty($item["element"]) && !empty($item["code"]) && !empty($item["position"])) {
-                            if (!$html) {
-                                include_once("simple_html_dom.php");
-                                $html = str_get_html($body);
-                            }
 
-                            if ($html) {
-                                $element = $html->find($item["element"], 0);
-                                if ($element) {
-                                    if ($item["position"] == "end") {
-                                        $element->innertext = $element->innertext . "\n\n" . $item["code"] . "\n\n";
-                                    } else {
-                                        // beginning
-                                        $element->innertext = "\n\n" . $item["code"] . "\n\n" . $element->innertext;
-                                    }
-
-                                    // we havve to reinitialize the html object, otherwise it causes problems with nested child selectors
-                                    $body = $html->save();
-
+                            if(in_array($item["element"], ["body","head"])) {
+                                // check if the code should be inserted using one of the presets
+                                // because this can be done much faster than using a html parser
+                                if($html) {
+                                    // reset simple_html_dom if set
                                     $html->clear();
                                     unset($html);
-
                                     $html = null;
+                                }
+
+                                if($item["position"] == "end") {
+                                    $regEx = "@</" . $item["element"] . ">@i";
+                                    $body = preg_replace($regEx, "\n\n" . $item["code"] . "\n\n</" . $item["element"] . ">", $body, 1);
+                                } else {
+                                    $regEx = "/<" . $item["element"] . "([^a-zA-Z])?( [^>]+)?>/";
+                                    $body = preg_replace($regEx, "<" . $item["element"] . "$1$2>\n\n" . $item["code"] . "\n\n" , $body, 1);
+                                }
+
+                            } else {
+                                // use simple_html_dom
+                                if (!$html) {
+                                    include_once("simple_html_dom.php");
+                                    $html = str_get_html($body);
+                                }
+
+                                if ($html) {
+                                    $element = $html->find($item["element"], 0);
+                                    if ($element) {
+                                        if ($item["position"] == "end") {
+                                            $element->innertext = $element->innertext . "\n\n" . $item["code"] . "\n\n";
+                                        } else {
+                                            // beginning
+                                            $element->innertext = "\n\n" . $item["code"] . "\n\n" . $element->innertext;
+                                        }
+
+                                        // we havve to reinitialize the html object, otherwise it causes problems with nested child selectors
+                                        $body = $html->save();
+
+                                        $html->clear();
+                                        unset($html);
+
+                                        $html = null;
+                                    }
                                 }
                             }
                         }
