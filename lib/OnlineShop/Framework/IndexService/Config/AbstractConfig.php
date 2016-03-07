@@ -86,6 +86,16 @@ abstract class AbstractConfig implements IConfig {
     }
 
     /**
+     * @param \OnlineShop\Framework\Model\IIndexable $object
+     *
+     * @return \OnlineShop\Framework\Model\AbstractCategory[]
+     */
+    public function getCategories(\OnlineShop\Framework\Model\IIndexable $object)
+    {
+        return $object->getCategories();
+    }
+
+    /**
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *

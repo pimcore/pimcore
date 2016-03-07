@@ -167,7 +167,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                 \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
                 $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
                 \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
-                $categories = $object->getCategories();
+                $categories = $this->tenantConfig->getCategories($object);
                 $categoryIds = array();
                 $parentCategoryIds = array();
                 if($categories) {

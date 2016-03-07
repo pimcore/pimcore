@@ -69,6 +69,14 @@ interface IConfig {
 
 
     /**
+     * @param \OnlineShop\Framework\Model\IIndexable $object
+     *
+     * @return \OnlineShop\Framework\Model\AbstractCategory[]
+     */
+    public function getCategories(\OnlineShop\Framework\Model\IIndexable $object);
+
+
+    /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param \OnlineShop\Framework\Model\IIndexable $object
