@@ -15,10 +15,10 @@ $paginator = $this->paginator;
 $listing = $this->listing;
 
 
-$this->headLink()->appendStylesheet('/plugins/OnlineShop/static/vendor/pickadate.classic.css');
-$this->headLink()->appendStylesheet('/plugins/OnlineShop/static/vendor/pickadate.classic.date.css');
-$this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.v3.5.3.js');
-$this->headScript()->appendFile('/plugins/OnlineShop/static/vendor/picker.date.v3.5.3.js');
+$this->headLink()->appendStylesheet('/plugins/EcommerceFramework/static/vendor/pickadate.classic.css');
+$this->headLink()->appendStylesheet('/plugins/EcommerceFramework/static/vendor/pickadate.classic.date.css');
+$this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picker.v3.5.3.js');
+$this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picker.date.v3.5.3.js');
 ?>
 <div class="page-header">
     <h1><?= $this->translate('online-shop.back-office.order-list') ?></h1>

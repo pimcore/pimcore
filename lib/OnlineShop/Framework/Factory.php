@@ -17,7 +17,7 @@ class Factory {
     /**
      * framework configuration file
      */
-    const CONFIG_PATH = "/OnlineShop/conf/OnlineShopConfig.xml";
+    const CONFIG_PATH = "/EcommerceFramework/conf/OnlineShopConfig.xml";
 
     /**
      * @var Factory

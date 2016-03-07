@@ -27,7 +27,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             autoDestroy: true,
             autoLoad: true,
             baseParams: {class_id: fieldConfig.classId, add_empty: !this.fieldConfig.mandatory, filtergroup: this.fieldConfig.filterGroups },
-            url: '/plugin/OnlineShop/index/get-fields',
+            url: '/plugin/EcommerceFramework/index/get-fields',
             root: 'data',
             fields: ['key', 'name']
         });
@@ -40,7 +40,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                     tenant: this.data ? this.data.tenant : "",
                     field: this.data ? this.data.field : ""
                 },
-                url: '/plugin/OnlineShop/index/get-values-for-filter-field',
+                url: '/plugin/EcommerceFramework/index/get-values-for-filter-field',
                 root: 'data',
                 listeners: {
                     load: function(store) {
@@ -70,7 +70,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             this.tenantStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
-                url: '/plugin/OnlineShop/index/get-all-tenants',
+                url: '/plugin/EcommerceFramework/index/get-all-tenants',
                 root: 'data',
                 listeners: {
                     load: function(store) {

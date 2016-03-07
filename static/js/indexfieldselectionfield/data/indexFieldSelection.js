@@ -73,7 +73,7 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                 store: new Ext.data.JsonStore({
                     autoDestroy: true,
                     autoLoad: true,
-                    url: '/plugin/OnlineShop/index/get-filter-groups',
+                    url: '/plugin/EcommerceFramework/index/get-filter-groups',
                     root: 'data',
                     listeners: {
                         load: function(store) {

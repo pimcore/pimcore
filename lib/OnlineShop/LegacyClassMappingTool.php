@@ -269,6 +269,7 @@ class LegacyClassMappingTool {
 
 
     public static function loadMapping() {
+
         foreach(self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
             class_alias($withNamespace, $withoutNamespace);
         }
@@ -311,7 +312,7 @@ class ' . $classOld . ' extends \\' . $classNew . ' {};
             $fileContent .= "\n\n";
         }
 
-        file_put_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/config/namespace_compatibility.php', $fileContent);
+        file_put_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/config/namespace_compatibility.php', $fileContent);
     }
 
     public static function generateMarkdownTable() {

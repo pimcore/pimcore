@@ -141,12 +141,12 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
 
 
         //copy config file
-        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/OnlineShopConfig.xml")) {
-            mkdir(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop", 0777, true);
-            copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/OnlineShopConfig_sample.xml", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/OnlineShopConfig.xml");
-            copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/.htaccess", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShop/.htaccess");
+        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.xml")) {
+            mkdir(PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework", 0777, true);
+            copy(PIMCORE_PLUGINS_PATH . "/EcommerceFramework/config/OnlineShopConfig_sample.xml", PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.xml");
+            copy(PIMCORE_PLUGINS_PATH . "/EcommerceFramework/config/.htaccess", PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/.htaccess");
         }
-        self::setConfig("/website/var/plugins/OnlineShop/OnlineShopConfig.xml");
+        self::setConfig("/website/var/plugins/EcommerceFramework/OnlineShopConfig.xml");
 
 
 
@@ -165,7 +165,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
 
 
         // import admin-translations
-        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/admin-translations/init.csv', true);
+        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/admin-translations/init.csv', true);
 
 
         // create status message
@@ -265,9 +265,9 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
      */
     public static function getTranslationFile($language) {
         if ($language == "de") {
-            return "/OnlineShop/texts/de.csv";
+            return "/EcommerceFramework/texts/de.csv";
         } else if ($language == "en") {
-            return "/OnlineShop/texts/en.csv";
+            return "/EcommerceFramework/texts/en.csv";
         } else {
             return null;
         }
@@ -375,7 +375,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
      */
     private static function createFieldCollections() {
         // Add FieldCollections
-        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources');
+        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/fieldcollection_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
 
@@ -389,7 +389,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
                     $fieldCollection->setKey($key);
                 }
 
-                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
+                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/fieldcollection_sources/' . $filename);
                 $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
                 if(!$success){
                     \Logger::err("Could not import $key FieldCollection.");
@@ -400,14 +400,14 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
 
     private static function createClasses() {
         // Add classes
-        self::createClass("FilterDefinition", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.json');
-        self::createClass("OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrderItem_export.json');
-        self::createClass("OnlineShopVoucherSeries", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherSeries_export.json');
-        self::createClass("OnlineShopVoucherToken", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopVoucherToken_export.json');
-        self::createClass("OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OnlineShopOrder_export.json');
-        self::createClass("OfferToolOfferItem", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOfferItem_export.json');
-        self::createClass("OfferToolOffer", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolOffer_export.json');
-        self::createClass("OfferToolCustomProduct", PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_OfferToolCustomProduct_export.json');
+        self::createClass("FilterDefinition", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_FilterDefinition_export.json');
+        self::createClass("OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrderItem_export.json');
+        self::createClass("OnlineShopVoucherSeries", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherSeries_export.json');
+        self::createClass("OnlineShopVoucherToken", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherToken_export.json');
+        self::createClass("OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrder_export.json');
+        self::createClass("OfferToolOfferItem", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOfferItem_export.json');
+        self::createClass("OfferToolOffer", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOffer_export.json');
+        self::createClass("OfferToolCustomProduct", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolCustomProduct_export.json');
     }
 
     /**
@@ -415,7 +415,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
      */
     private static function createObjectBricks()
     {
-        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/objectbrick_sources');
+        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/objectbrick_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
 
@@ -429,7 +429,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
                     $brick->setKey($key);
                 }
 
-                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/objectbrick_sources/' . $filename);
+                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/objectbrick_sources/' . $filename);
                 $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
                 if(!$success){
                     \Logger::err("Could not import $key ObjectBrick.");

@@ -321,10 +321,12 @@ class CheckoutManager implements ICheckoutManager
 
         $shipping = 0;
         $modifications = $order->getPriceModifications();
-        foreach ($modifications as $modification) {
-            if ($modification->getName() == "shipping") {
-                $shipping = $modification->getAmount();
-                break;
+        if (null !== $modifications) {
+            foreach ($modifications as $modification) {
+                if ($modification->getName() == "shipping") {
+                    $shipping = $modification->getAmount();
+                    break;
+                }
             }
         }
 
@@ -387,13 +389,14 @@ class CheckoutManager implements ICheckoutManager
     {
         $code = "ga('require', 'ecommerce', 'ecommerce.js');\n";
 
-
         $shipping = 0;
         $modifications = $order->getPriceModifications();
-        foreach ($modifications as $modification) {
-            if ($modification->getName() == "shipping") {
-                $shipping = $modification->getAmount();
-                break;
+        if (null !== $modifications) {
+            foreach ($modifications as $modification) {
+                if ($modification->getName() == "shipping") {
+                    $shipping = $modification->getAmount();
+                    break;
+                }
             }
         }
 

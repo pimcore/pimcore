@@ -417,7 +417,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
         // send data
         Ext.Ajax.request({
-            url: "/plugin/OnlineShop/Pricing/save",
+            url: "/plugin/EcommerceFramework/Pricing/save",
             params: {
                 id: this.data.id,
                 data: Ext.encode(saveData)

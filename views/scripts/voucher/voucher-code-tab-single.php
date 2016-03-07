@@ -15,10 +15,10 @@
 
 <head>
 
-    <link href="/plugins/OnlineShop/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/plugins/OnlineShop/static/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
 
-    <link href="/plugins/OnlineShop/static/css/voucherservice/style.css" rel="stylesheet">
+    <link href="/plugins/EcommerceFramework/static/css/voucherservice/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -143,12 +143,12 @@ $urlParams = $this->getAllParams();
 
 <!--Plugin and Lib Scripts -->
 
-<script src="/plugins/OnlineShop/static/vendor/jquery-2.1.3.min.js"></script>
-<script src="/plugins/OnlineShop/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/jquery-2.1.3.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 
-<script src="/plugins/OnlineShop/static/vendor/chart.min.js"></script>
+<script src="/plugins/EcommerceFramework/static/vendor/chart.min.js"></script>
 
-<script src="/plugins/OnlineShop/static/js/voucherservice/voucherSeriesTabScript.js"></script>
+<script src="/plugins/EcommerceFramework/static/js/voucherservice/voucherSeriesTabScript.js"></script>
 
 <!--Script for statistics-->
 <?php if (is_array($this->statistics['usage'])) { ?>

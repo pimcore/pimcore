@@ -12,7 +12,7 @@
 
 /** Main Menu **/
 .plugin_onlineshop_icon_mainmenu {
-    background: url("/plugins/OnlineShop/static/img/icon/onlineshop.png") no-repeat left center transparent !important;
+    background: url("/plugins/EcommerceFramework/static/img/icon/onlineshop.png") no-repeat left center transparent !important;
     padding-left: 24px !important;
 }
 .plugin_onlineshop_pricing_rules {
@@ -21,10 +21,10 @@
 
 /** Tree **/
 .plugin_onlineshop_pricing_icon_rule_additiv {
-    background: url("/plugins/OnlineShop/static/img/icon/price_tag_plus.png") no-repeat scroll left center transparent !important;
+    background: url("/plugins/EcommerceFramework/static/img/icon/price_tag_plus.png") no-repeat scroll left center transparent !important;
 }
 .plugin_onlineshop_pricing_icon_rule_stopExecute {
-    background: url("/plugins/OnlineShop/static/img/icon/price-tag--exclamation.png") no-repeat scroll left center transparent !important;
+    background: url("/plugins/EcommerceFramework/static/img/icon/price-tag--exclamation.png") no-repeat scroll left center transparent !important;
 }
 .plugin_onlineshop_pricing_icon_rule_disabled {
     background: url("/pimcore/static/img/icon/tag_red.png") no-repeat scroll left center transparent !important;
@@ -77,7 +77,7 @@
     background: url("/pimcore/static/img/icon/lightning.png") no-repeat scroll left center transparent !important;
 }
 .plugin_onlineshop_pricing_icon_actionGift {
-    background: url("/plugins/OnlineShop/static/img/icon/gift.png") no-repeat scroll left center transparent !important;
+    background: url("/plugins/EcommerceFramework/static/img/icon/gift.png") no-repeat scroll left center transparent !important;
 }
 .plugin_onlineshop_pricing_icon_actionCartDiscount,
 .plugin_onlineshop_pricing_icon_actionProductDiscount {
