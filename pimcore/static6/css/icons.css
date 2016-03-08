@@ -227,7 +227,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/pdf.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_xls, .pimcore_icon_xlsx {
+.pimcore_icon_xls, .pimcore_icon_xlsx, .pimcore_icon_csv {
     background: url(/pimcore/static6/img/flat-color-icons/excel.svg)  center center no-repeat !important;
 }
 
