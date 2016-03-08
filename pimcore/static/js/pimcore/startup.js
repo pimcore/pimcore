@@ -181,7 +181,7 @@ Ext.onReady(function () {
         successProperty:'success',
         root:'data'
     }, [
-        {name:'id'},
+        {name:'id', type: 'string'},
         {name:'name', allowBlank:false},
         {name:'module', allowBlank:true},
         {name:'controller', allowBlank:true},
@@ -226,7 +226,7 @@ Ext.onReady(function () {
         successProperty:'success',
         idProperty:'id'
     }, [
-        {name:'id'},
+        {name:'id', type: 'string'},
         {name:'text', allowBlank:false},
         {name:"translatedText", convert:function (v, rec) {
             return ts(rec.text);
