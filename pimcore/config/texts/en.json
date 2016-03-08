@@ -2,10 +2,14 @@
     {
         "term": "target_document_needs_language",
         "definition": "Target document needs a language set"
-    }
-,{
+    },
+    {
         "term": "update_available",
         "definition": "Update Available"
+    },
+    {
+        "term": "tools",
+        "definition": "Tools"
     },
     {
         "term": "more",
