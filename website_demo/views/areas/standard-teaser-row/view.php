@@ -7,7 +7,7 @@
                     <div class="editmode-label">
                         <label>Type:</label>
                         <?= $this->select("type_".$t, [
-                            "width" => 80,
+                            "width" => 90,
                             "reload" => true,
                             "store" => [["direct","direct"], ["snippet","snippet"]]
                         ]); ?>
@@ -24,4 +24,4 @@
             </div>
         <?php } ?>
     </div>
-</section> 
+</section>
