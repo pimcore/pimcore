@@ -79,25 +79,23 @@ class TagManagement extends \Zend_Controller_Plugin_Abstract
                 if (is_array($tag->getItems()) && $paramsValid) {
                     foreach ($tag->getItems() as $item) {
                         if (!empty($item["element"]) && !empty($item["code"]) && !empty($item["position"])) {
-
-                            if(in_array($item["element"], ["body","head"])) {
+                            if (in_array($item["element"], ["body", "head"])) {
                                 // check if the code should be inserted using one of the presets
                                 // because this can be done much faster than using a html parser
-                                if($html) {
+                                if ($html) {
                                     // reset simple_html_dom if set
                                     $html->clear();
                                     unset($html);
                                     $html = null;
                                 }
 
-                                if($item["position"] == "end") {
+                                if ($item["position"] == "end") {
                                     $regEx = "@</" . $item["element"] . ">@i";
                                     $body = preg_replace($regEx, "\n\n" . $item["code"] . "\n\n</" . $item["element"] . ">", $body, 1);
                                 } else {
                                     $regEx = "/<" . $item["element"] . "([^a-zA-Z])?( [^>]+)?>/";
-                                    $body = preg_replace($regEx, "<" . $item["element"] . "$1$2>\n\n" . $item["code"] . "\n\n" , $body, 1);
+                                    $body = preg_replace($regEx, "<" . $item["element"] . "$1$2>\n\n" . $item["code"] . "\n\n", $body, 1);
                                 }
-
                             } else {
                                 // use simple_html_dom
                                 if (!$html) {
