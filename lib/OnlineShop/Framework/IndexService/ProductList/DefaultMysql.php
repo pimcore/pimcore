@@ -617,6 +617,9 @@ class DefaultMysql implements IProductList
                 $orderKeys = array($orderKeys);
             }
 
+            // add sorting for primary id to prevent mysql paging problem...
+            $orderKeys[] = 'o_id';
+
             $directionOrderKeys = array();
             foreach($orderKeys as $key) {
                 if(is_array($key)) {
