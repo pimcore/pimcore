@@ -50,3 +50,8 @@ Please have a look at our [contributing guide](CONTRIBUTING.md).
 ## Copyright and license 
 Copyright: [pimcore](http://www.pimcore.org) GmbH  
 For licensing details please visit [LICENSE.md](LICENSE.md) 
+  
+  
+  
+![Administration Interface](website_demo/static/screenshots/2.png)
+![Administration Interface](website_demo/static/screenshots/3.png)
