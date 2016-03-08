@@ -52,6 +52,6 @@ Copyright: [pimcore](http://www.pimcore.org) GmbH
 For licensing details please visit [LICENSE.md](LICENSE.md) 
   
   
-  
+## Screenshots
 ![Administration Interface](website_demo/static/screenshots/2.png)
 ![Administration Interface](website_demo/static/screenshots/3.png)
