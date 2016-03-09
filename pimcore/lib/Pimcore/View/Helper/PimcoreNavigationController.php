@@ -93,17 +93,17 @@ class PimcoreNavigationController
 
         if (empty($activePages)) {
             // try to find a page matching the path info
-            $activePages = $navigation->findOneBy("uri", $request->getPathInfo());
+            $activePages = $navigation->findAllBy("uri", $request->getPathInfo());
         }
 
         if (empty($activePages)) {
             // use the provided pimcore document
-            $activePages = $navigation->findOneBy("realFullPath", $activeDocument->getRealFullPath());
+            $activePages = $navigation->findAllBy("realFullPath", $activeDocument->getRealFullPath());
         }
 
         if (empty($activePages)) {
             // find by link target
-            $activePages = $navigation->findOneBy("uri", $activeDocument->getFullPath());
+            $activePages = $navigation->findAllBy("uri", $activeDocument->getFullPath());
         }
 
         if (!empty($activePages)) {
