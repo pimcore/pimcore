@@ -92,7 +92,7 @@ class UUID extends Model\AbstractModel
             throw new \Exception("No instance identifier specified.");
         }
 
-        $uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier());
+        $uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . "~" . $this->getType() . "~" . $this->getItemId());
 
         return $uuid;
     }
