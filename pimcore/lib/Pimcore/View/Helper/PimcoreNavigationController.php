@@ -89,26 +89,28 @@ class PimcoreNavigationController
         $request = $front->getRequest();
 
         // try to find a page matching exactly the request uri
-        $activePage = $navigation->findOneBy("uri", $request->getRequestUri());
+        $activePages = $navigation->findAllBy("uri", $request->getRequestUri());
 
-        if (!$activePage) {
+        if (empty($activePages)) {
             // try to find a page matching the path info
-            $activePage = $navigation->findOneBy("uri", $request->getPathInfo());
+            $activePages = $navigation->findOneBy("uri", $request->getPathInfo());
         }
 
-        if (!$activePage) {
+        if (empty($activePages)) {
             // use the provided pimcore document
-            $activePage = $navigation->findOneBy("realFullPath", $activeDocument->getRealFullPath());
+            $activePages = $navigation->findOneBy("realFullPath", $activeDocument->getRealFullPath());
         }
 
-        if (!$activePage) {
+        if (empty($activePages)) {
             // find by link target
-            $activePage = $navigation->findOneBy("uri", $activeDocument->getFullPath());
+            $activePages = $navigation->findOneBy("uri", $activeDocument->getFullPath());
         }
 
-        if ($activePage) {
+        if (!empty($activePages)) {
             // we found an active document, so we can build the active trail by getting respectively the parent
-            $this->addActiveCssClasses($activePage, true);
+            foreach($activePages as $activePage) {
+                $this->addActiveCssClasses($activePage, true);
+            }
         } else {
             // we don't have an active document, so we try to build the trail on our own
             $allPages = $navigation->findAllBy("uri", "/.*/", true);
