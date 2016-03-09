@@ -387,7 +387,7 @@ class Data extends \Pimcore\Model\AbstractModel
             $this->data = $element->getFilename();
 
             foreach ($element->getMetadata() as $md) {
-                if(is_scalar($md['data'])) {
+                if (is_scalar($md['data'])) {
                     $this->data .= " " . $md["name"] . ":" . $md["data"];
                 }
             }

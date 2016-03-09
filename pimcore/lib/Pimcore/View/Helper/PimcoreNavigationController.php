@@ -108,7 +108,7 @@ class PimcoreNavigationController
 
         if (!empty($activePages)) {
             // we found an active document, so we can build the active trail by getting respectively the parent
-            foreach($activePages as $activePage) {
+            foreach ($activePages as $activePage) {
                 $this->addActiveCssClasses($activePage, true);
             }
         } else {
