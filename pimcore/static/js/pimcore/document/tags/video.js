@@ -23,14 +23,13 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         this.setupWrapper();
 
         var element = Ext.get("pimcore_video_" + name);
-        element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>');
 
         var button = new Ext.Button({
             iconCls: "pimcore_icon_edit_video",
             cls: "pimcore_edit_link_button",
             handler: this.openEditor.bind(this)
         });
-        button.render(Ext.get(Ext.query(".pimcore_video_edit_button", element.dom)[0]));
+        button.render(element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>'));
 
         var emptyContainer = element.query(".pimcore_tag_video_empty")[0];
         if(emptyContainer) {
