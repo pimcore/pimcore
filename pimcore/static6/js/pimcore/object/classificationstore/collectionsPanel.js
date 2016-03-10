@@ -127,7 +127,12 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             displayMsg: '{0} - {1} / {2}',
             emptyMsg: t("classificationstore_collection_empty")
         });
-        
+
+        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 2
+        });
+
+        var plugins = ['gridfilters', cellEditing];
 
         var gridConfig = {
             frame: false,
@@ -137,6 +142,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             bodyCls: "pimcore_editable_grid",
             loadMask: true,
             columnLines: true,
+            plugins: plugins,
             stripeRows: true,
             trackMouseOver: true,
             region: "west",
@@ -168,7 +174,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             disabled: true,
             items: [
                 this.relationsGrid
-                ]
+            ]
 
         });
 
