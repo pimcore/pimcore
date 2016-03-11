@@ -249,6 +249,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         this.component = new Ext.Panel(wrapperConfig);
         this.component.updateLayout();
+
+        this.fieldConfig.datatype ="data";
+        this.fieldConfig.fieldtype = "localizedfields";
+
         return this.component;
     },
 
