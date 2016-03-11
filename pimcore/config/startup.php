@@ -108,7 +108,10 @@ $includePaths = array(
     PIMCORE_WEBSITE_PATH . "/lib",
     PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_CLASS_DIRECTORY,
-    get_include_path()
+    // we need to include the path to the ZF1, because we cannot remove all require_once() out of the source
+    // see also: Pimcore\Composer::zendFrameworkOptimization()
+    // actually the problem is 'require_once 'Zend/Loader.php';' in Zend/Loader/Autoloader.php
+    PIMCORE_DOCUMENT_ROOT . "/vendor/zendframework/zendframework1/library/",
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
