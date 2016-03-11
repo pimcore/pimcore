@@ -253,7 +253,7 @@ class Config
                 if (is_array($config)) {
                     self::setModelClassMappingConfig($config);
                 } else {
-                    \Logger::error("classmap.json exists but it is not a valid JSON configuration. Maybe there is a syntax error in the JSON.");
+                    \Logger::error("classmap.php exists but it is not a valid PHP array configuration.");
                 }
             }
         }
