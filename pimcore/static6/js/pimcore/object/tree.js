@@ -1066,37 +1066,58 @@ pimcore.object.tree = Class.create({
             params: parameters,
             success: function (tree, record, task, response) {
                 try {
-                    var ownerTree = record.getOwnerTree();
-                    var view = ownerTree.getView();
-                    var nodeEl = Ext.fly(view.getNodeByRecord(record));
-
-                    if (nodeEl) {
-                        var nodeElInner = nodeEl.down(".x-grid-td");
-                    }
-
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-
-                        if (task == 'unpublish') {
-                            if (nodeElInner) {
-                                nodeElInner.addCls('pimcore_unpublished');
+                        var treeNames = ["layout_object_tree"]
+                        if (pimcore.settings.customviews.length > 0) {
+                            for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
+                                var cv = pimcore.settings.customviews[cvs];
+                                treeNames.push("layout_customviews_tree" + cv.id);
                             }
-                            record.data.published = false;
-                            record.data.cls = "pimcore_unpublished";
+                        }
 
-                            if (pimcore.globalmanager.exists("object_" + record.data.id)) {
-                                pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.hide();
-                            }
+                        var index;
+                        for (index = 0; index < treeNames.length; index++) {
+                            var treeName = treeNames[index];
 
-                        } else {
-                            if (nodeElInner) {
-                                nodeElInner.removeCls('pimcore_unpublished');
-                            }
-                            delete record.data.cls;
+                            // remove class in tree panel
+                            try {
+                                var tree = pimcore.globalmanager.get(treeName).tree;
+                                var store = tree.getStore();
+                                // record of sister store
+                                var record = store.getById(record.id);
 
-                            record.data.published = true;
-                            if (pimcore.globalmanager.exists("object_" + record.data.id)) {
-                                pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.show();
+                                var view = tree.getView();
+                                var nodeEl = Ext.fly(view.getNodeByRecord(record));
+
+                                if (nodeEl) {
+                                    var nodeElInner = nodeEl.down(".x-grid-td");
+                                }
+
+                                if (task == 'unpublish') {
+                                    if (nodeElInner) {
+                                        nodeElInner.addCls('pimcore_unpublished');
+                                    }
+                                    record.data.published = false;
+                                    record.data.cls = "pimcore_unpublished";
+
+                                    if (pimcore.globalmanager.exists("object_" + record.data.id)) {
+                                        pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.hide();
+                                    }
+
+                                } else {
+                                    if (nodeElInner) {
+                                        nodeElInner.removeCls('pimcore_unpublished');
+                                    }
+                                    delete record.data.cls;
+
+                                    record.data.published = true;
+                                    if (pimcore.globalmanager.exists("object_" + record.data.id)) {
+                                        pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.show();
+                                    }
+                                }
+                            } catch (e) {
+                                console.log(e);
                             }
                         }
 
