@@ -6738,6 +6738,14 @@
     {
         "term": "object_search",
         "definition": "Search Objects"
+    },
+    {
+        "term" : "splitter",
+        "definition": "Splitter"
+    },
+    {
+        "term" : "fieldcontainer",
+        "definition": "Field Container"
     }
 
 

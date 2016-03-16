@@ -346,7 +346,7 @@ pimcore.object.classes.klass = Class.create({
         var menu = new Ext.menu.Menu();
 
         //get all allowed data types for localized fields
-        var lftypes = ["panel","tabpanel","accordion","fieldset","text","region","button"];
+        var lftypes = ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button"];
         var dataComps = Object.keys(pimcore.object.classes.data);
 
         for (var i = 0; i < dataComps.length; i++) {
@@ -363,11 +363,13 @@ pimcore.object.classes.klass = Class.create({
         var allowedTypes = {
             accordion: ["panel","region","tabpanel","text"],
             fieldset: ["data","text"],
-            panel: ["data","region","tabpanel","button","accordion","fieldset","panel","text","html"],
+            fieldcontainer: ["data","text","splitter"],
+            panel: ["data","region","tabpanel","button","accordion","fieldset", "fieldcontainer","panel","text","html"],
             region: ["panel","accordion","tabpanel","text","localizedfields"],
             tabpanel: ["panel", "region", "accordion","text","localizedfields"],
             button: [],
             text: [],
+            splitter: [],
             root: ["panel","region","tabpanel","accordion","text"],
             localizedfields: lftypes
         };
