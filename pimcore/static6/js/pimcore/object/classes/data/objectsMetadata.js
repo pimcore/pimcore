@@ -107,7 +107,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             width: 400,
             store: pimcore.globalmanager.get("object_types_store"),
             valueField: 'id',
-            editable: false,
+            editable: true,
             displayField: 'text',
             fieldLabel: t('objectsMetadata_allowed_class'),
             name: 'allowedClassId',
