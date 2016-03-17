@@ -596,6 +596,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     console.log(e);
                 }
             }
+
+            // remove class in customviews tree panels
+            var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(this.id);
+            for(var customviewId in nodeCopies) {
+                nodeCopies[customviewId].nodeEl.removeCls("pimcore_unpublished")
+                // this solves a bug(?) which applies the unpublished class to a sub-element
+                // when creating the element
+                var nestedEl = nodeCopies[customviewId].nodeEl.query('.pimcore_unpublished')[0];
+                if (nestedEl && Ext.fly(nestedEl)) Ext.fly(nestedEl).removeCls('pimcore_unpublished');
+            }
         }
 
         return state;
@@ -642,6 +652,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 } catch (e) {
                     console.log(e);
                 }
+            }
+
+            // set class in customviews tree panels
+            var nodeCopies = pimcore.helpers.getNodeCopiesInCustomviews(this.id);
+            for(var customviewId in nodeCopies) {
+                nodeCopies[customviewId].nodeEl.addCls("pimcore_unpublished");
             }
         }
     },
