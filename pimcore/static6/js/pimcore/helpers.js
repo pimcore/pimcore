@@ -25,6 +25,7 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
             key: "s",
             ctrl: true,
             shift: false,
+            alt: false,
             fn: top.pimcore.helpers.handleCtrlS
         }, {
             key:116,
