@@ -1552,9 +1552,11 @@ class Asset extends Element\AbstractElement
         }
 
         $metaData = $this->metadata;
-        foreach ($metaData as &$md) {
-            $md = (array)$md;
-            $md["data"] = $convert($md);
+        if (is_array($metaData)) {
+            foreach ($metaData as &$md) {
+                $md = (array)$md;
+                $md["data"] = $convert($md);
+            }
         }
 
         return $metaData;
