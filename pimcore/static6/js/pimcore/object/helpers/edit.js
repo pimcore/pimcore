@@ -58,6 +58,16 @@ pimcore.object.helpers.edit = {
                 hideMode: "offsets",
                 listeners: panelListenerConfig
             },
+            fieldcontainer: {
+                xtype: "fieldcontainer",
+                autoScroll: true,
+                forceLayout: true,
+                hideMode: "offsets",
+                listeners: panelListenerConfig
+            },
+            splitter: {
+                xtype: "splitter"
+            },
             panel: {
                 xtype: "panel",
                 autoScroll: true,
@@ -106,7 +116,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
-            "labelWidth","collapsible","collapsed","bodyStyle"];
+            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle"];
 
         var tmpItems;
 
@@ -124,6 +134,10 @@ pimcore.object.helpers.edit = {
                         var childConfig = l.childs[i];
                         if (typeof childConfig.labelWidth == "undefined" && l.labelWidth != "undefined") {
                             childConfig.labelWidth = l.labelWidth;
+                        }
+
+                        if (typeof childConfig.fieldLabel == "undefined" && l.fieldLabel != "undefined") {
+                            childConfig.fieldLabel = l.fieldLabel;
                         }
 
                         tmpItems = this.getRecursiveLayout(childConfig, noteditable);

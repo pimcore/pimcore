@@ -352,6 +352,14 @@
     background: url(/pimcore/static6/img/flat-color-icons/fieldset.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_fieldcontainer {
+    background: url(/pimcore/static6/img/flat-color-icons/row.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_splitter {
+    background: url(/pimcore/static6/img/flat-color-icons/rectangle.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_panel {
     background: url(/pimcore/static6/img/flat-color-icons/panel.svg) center center no-repeat !important;
 }
