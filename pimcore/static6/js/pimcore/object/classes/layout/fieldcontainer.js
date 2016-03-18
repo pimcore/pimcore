@@ -68,7 +68,7 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
                     triggerAction: 'all',
                     editable: false,
                     displayField: 'name',
-                    valueField: 'abbr',
+                    valueField: 'abbr'
                 }
             ]
         });
