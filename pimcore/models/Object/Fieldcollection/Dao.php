@@ -53,12 +53,10 @@ class Dao extends Model\Dao\AbstractDao
                 $results = array();
             }
 
-            //$allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'fieldcollection' AND ownername = ? ORDER BY `index` ASC", array($object->getO_id(), $this->model->getFieldname()));
-
             $fieldDefinitions = $definition->getFieldDefinitions();
             $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($type);
             
-            
+            $index = 0;
             foreach ($results as $result) {
                 $collection = new $collectionClass();
                 $collection->setIndex($result["index"]);
@@ -68,7 +66,14 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if (method_exists($fd, "load")) {
                         // datafield has it's own loader
-                        $value = $fd->load($collection);
+                        $value = $fd->load($collection,
+                            array(
+                                "context" => array(
+                                    "containerType" => "fieldcollection",
+                                    "containerKey" => $type,
+                                    "fieldname" =>  $this->model->getFieldname(),
+                                    "index" => $index
+                            )));
                         if ($value === 0 || !empty($value)) {
                             $collection->setValue($key, $value);
                         }
@@ -84,7 +89,8 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
                 }
-                
+
+                $index++;
                 $values[] = $collection;
             }
         }
@@ -130,13 +136,24 @@ class Dao extends Model\Dao\AbstractDao
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
                     if (method_exists($fd, "delete")) {
-                        $fd->delete($object);
+                        $fd->delete($object, array(
+                                "context" => array(
+                                    "containerType" => "fieldcollection",
+                                    "containerKey" => $type,
+                                    "fieldname" =>  $this->model->getFieldname()
+                                )
+                            )
+                        );
                     }
                 }
             }
         }
 
         // empty relation table
-        $this->db->delete("object_relations_" . $object->getClassId(), "ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()));
+        $this->db->delete("object_relations_" . $object->getClassId(),
+            "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()) . ")"
+            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $this->model->getFieldname() . "/%") . ")"
+        );
+
     }
 }

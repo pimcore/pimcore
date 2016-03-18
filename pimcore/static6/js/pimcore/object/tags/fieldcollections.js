@@ -105,7 +105,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             this.component.add(this.getControls());
         } else {
             for (var i=0; i<this.data.length; i++) {
-                this.addBlockElement(i,this.data[i].type, this.data[i].data, true);
+                this.addBlockElement(
+                    i,
+                    {
+                        type: this.data[i].type,
+                        oIndex: this.data[i].oIndex
+                    },
+                    this.data[i].data,
+                    true);
             }
         }
 
@@ -235,7 +242,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             index = this.detectBlockIndex(blockElement);
         }
 
-        this.addBlockElement(index + 1, type);
+        this.addBlockElement(index + 1, {
+            type: type
+        });
     },
 
     removeBlock: function (blockElement) {
@@ -273,7 +282,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.dirty = true;
     },
 
-    addBlockElement: function (index, type, blockData, ignoreChange) {
+    addBlockElement: function (index, config, blockData, ignoreChange) {
+
+        var type = config.type;
+        var oIndex = config.oIndex;
 
         this.closeOpenEditors();
 
@@ -297,6 +309,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         var blockElement = new Ext.Panel({
+            pimcore_oIndex: oIndex,
             bodyStyle: "padding:10px;",
             style: "margin: 0 0 10px 0;",
             manageHeight: false,
@@ -370,7 +383,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
                 data.push({
                     type: element.type,
-                    data: elementData
+                    data: elementData,
+                    oIndex: element.container.pimcore_oIndex
                 });
             }
         }

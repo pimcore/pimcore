@@ -139,9 +139,10 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Object\Data\Geobounds
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         if ($data["NElongitude"] !== null && $data["NElatitude"] !== null && $data["SWlongitude"] !== null && $data["SWlatitude"] !== null) {
             $ne = new Object\Data\Geopoint($data["NElongitude"], $data["NElatitude"]);

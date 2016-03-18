@@ -168,7 +168,7 @@ abstract class Data
      * @param null|Object\AbstractObject $object
      * @return mixed
      */
-    abstract public function getDataFromEditmode($data, $object = null);
+    abstract public function getDataFromEditmode($data, $object = null, $params = array());
 
     /**
      * Checks if data is valid for current data field
@@ -776,7 +776,9 @@ abstract class Data
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
         if (method_exists($this, "preGetData")) {
-            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+            $code .= "\t" . '$container = $this;' . "\n";
+            $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+            $code .= "\t" . '$data = $fd->preGetData($container);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
@@ -1000,12 +1002,56 @@ abstract class Data
     protected function getDataFromObjectParam($object, $params = array())
     {
         $data = null;
+        $resolved = false;
 
-        $getter = "get".ucfirst($this->getName());
-        if (method_exists($object, $getter)) { // for Object\Concrete, Object\Fieldcollection\Data\AbstractData, Object\Objectbrick\Data\AbstractData
-            $data = $object->$getter();
-        } elseif ($object instanceof Object\Localizedfield) {
-            $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
+        $context = $params && $params["context"] ? $params["context"] : null;
+
+        if ($context) {
+            if ($context["containerType"] == "fieldcollection") {
+                if ($this instanceof Object\ClassDefinition\Data\Localizedfields || $object instanceof Object\Localizedfield) {
+                    $fieldname = $context["fieldname"];
+                    $index = $context["index"];
+
+                    if ($object instanceof Object\Concrete) {
+                        $containerGetter = "get" . ucfirst($fieldname);
+                        $container = $object->$containerGetter();
+                        if ($container) {
+                            $items = $container->getItems();
+                            $originalndex = $context["oIndex"];
+
+                            // field collection items
+                            if (!is_null($originalndex)) {
+                                if ($items && count($items) > $originalndex) {
+                                    $item = $items[$originalndex];
+                                    $getter = "get" . ucfirst($this->getName());
+                                    $data = $item->$getter();
+
+                                    if ($object instanceof Object\Localizedfield) {
+                                        $data = $data->getLocalizedValue($this->getName(), $params["language"], true);
+                                    }
+
+                                    $resolved = true;
+                                } else {
+                                    throw new \Exception("object seems to be modified, item with orginal index " . $originalndex . " not found, new index: " . $index);
+                                }
+                            }
+                        }
+                    } else if ($object instanceof Object\Localizedfield) {
+                        $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
+                    }
+                }
+            }
+        }
+
+        if (!$resolved) {
+            $container = $object;
+
+            $getter = "get" . ucfirst($this->getName());
+            if (method_exists($container, $getter)) { // for Object\Concrete, Object\Fieldcollection\Data\AbstractData, Object\Objectbrick\Data\AbstractData
+                $data = $container->$getter();
+            } elseif ($object instanceof Object\Localizedfield) {
+                $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
+            }
         }
 
         return $data;

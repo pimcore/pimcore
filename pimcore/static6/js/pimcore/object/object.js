@@ -483,6 +483,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var data = {};
 
         data.id = this.id;
+        data.modificationDate = this.data.general.o_modificationDate;
 
         // get only scheduled tasks
         if (only == "scheduler") {
@@ -696,6 +697,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
                                         "success");
                                     this.resetChanges();
+                                    Ext.apply(this.data.general,rdata.general);
 
                                     pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
                                 }

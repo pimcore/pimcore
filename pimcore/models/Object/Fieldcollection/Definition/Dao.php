@@ -84,6 +84,16 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
             $this->addIndexToField($value, $table);
+
+            if ($value instanceof  Object\ClassDefinition\Data\Localizedfields) {
+                $value->classSaved($class,
+                    array(
+                        "context" => array(
+                            "containerType" => "fieldcollection",
+                            "containerKey" => $this->model->getKey()
+                        )
+                    ));
+            }
         }
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);

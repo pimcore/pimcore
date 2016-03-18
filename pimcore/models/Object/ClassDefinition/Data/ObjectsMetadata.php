@@ -184,9 +184,10 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return array
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         //if not set, return null
         if ($data === null or $data === false) {
@@ -452,7 +453,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
 
     /**
-     * @param Object\Concrete $object
+     * @param Element\AbstractElement $object
      * @return void
      */
     public function save($object, $params = array())
@@ -487,10 +488,21 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
         $position = (isset($relation["position"]) && $relation["position"]) ? $relation["position"] : "0";
 
-        $sql = $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
-            . " AND " . $db->quoteInto("position = ?", $position);
+        if ($params && $params["context"] && $params["context"]["containerType"] == "fieldcollection" && $params["context"]["subContainerType"] == "localizedfield") {
+            $context = $params["context"];
+            $index = $context["index"];
+            $containerName = $context["fieldname"];
+
+            $sql = $db->quoteInto("o_id = ?", $objectId) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . $index . "/%" )
+                . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
+                . " AND " . $db->quoteInto("position = ?", $position);
 
 
+        } else {
+            $sql = $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
+                . " AND " . $db->quoteInto("position = ?", $position);
+        }
 
         $db->delete($table, $sql);
 
@@ -548,13 +560,26 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Element\AbstractElement $object
      * @return void
      */
-    public function delete($object)
+    public function delete($object, $params = array())
     {
         $db = Db::get();
-        $db->delete("object_metadata_" . $object->getClassId(), $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
+
+        if ($params && $params["context"] && $params["context"]["containerType"] == "fieldcollection" && $params["context"]["subContainerType"] == "localizedfield") {
+            $context = $params["context"];
+            $index = $context["index"];
+            $containerName = $context["fieldname"];
+
+            $db->delete("object_metadata_" . $object->getClassId(),
+                $db->quoteInto("o_id = ?", $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . "$index . /%" )
+                . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
+            );
+        } else {
+            $db->delete("object_metadata_" . $object->getClassId(), $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
+        }
     }
 
     /**
@@ -657,7 +682,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     /**
      * @return void
      */
-    public function classSaved($class)
+    public function classSaved($class, $params = array())
     {
         $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata');
         $temp = new $className(null);

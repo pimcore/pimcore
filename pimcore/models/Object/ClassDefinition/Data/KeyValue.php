@@ -125,9 +125,11 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object\\ClassDefinition::save() and is used to create the database table for the localized data
+     * @param Object\ClassDefinition $class
+     * @param mixed $params
      * @return void
      */
-    public function classSaved($class)
+    public function classSaved($class, $params = array())
     {
         // iterate over fieldDefinitions array and check if there is an item of type
         // object_Class_Data_KeyValue
@@ -361,7 +363,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @return mixed|Object\Data\KeyValue
      * @throws \Exception
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         $class = $object->getClass();
         $objectId = $object->getId();

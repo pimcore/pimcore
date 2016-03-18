@@ -131,9 +131,10 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param integer $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return \Zend_Date|\DateTime
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         if ($data) {
             return $this->getDateFromTimestamp($data / 1000);

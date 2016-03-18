@@ -20,7 +20,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
     allowIn: {
         object: true,
         objectbrick: false,
-        fieldcollection: false,
+        fieldcollection: true,
         localizedfield: false
     },
 

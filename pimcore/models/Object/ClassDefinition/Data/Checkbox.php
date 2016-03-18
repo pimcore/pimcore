@@ -128,9 +128,10 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataFromEditmode
      * @param boolean $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return boolean
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         if ($data === "false") {
             return false;

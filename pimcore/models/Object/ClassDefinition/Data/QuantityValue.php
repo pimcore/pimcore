@@ -210,9 +210,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param float $data
+     * @param Model\Object\Concrete $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         if ($data["value"] || $data["unit"]) {
             return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], $data["unit"]);

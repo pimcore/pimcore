@@ -355,9 +355,10 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return array
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
 
         //if not set, return null

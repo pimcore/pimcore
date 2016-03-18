@@ -255,6 +255,13 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             $relation["src_id"] = $object->getObject()->getId();
             $relation["ownertype"] = "localizedfield";
             $relation["ownername"] = "localizedfield";
+            $context = $object->getContext();
+            if ($context && $context["containerType"] == "fieldcollection") {
+                $fieldname = $context["fieldname"];
+                $index = $context["index"];
+                $relation["ownername"] = "/fieldcollection~" . $fieldname . "/" . $index . "/localizedfield~" . $relation["ownername"];
+            }
+
             $relation["position"] = $params["language"];
 
             $classId = $object->getObject()->getClassId();
@@ -321,7 +328,16 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
         } elseif ($object instanceof Object\Localizedfield) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", array($object->getObject()->getId(), $this->getName(), $params["language"]));
+            if (isset($params["context"])&& $params["context"]["containerType"] == "fieldcollection") {
+                $context = $params["context"];
+                $fieldname = $context["fieldname"];
+                $index = $context["index"];
+                $filter = "/fieldcollection~" . $fieldname . "/" . $index . "/%";
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
+                    array($object->getObject()->getId(), $this->getName(), $params["language"], $filter));
+            } else {
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", array($object->getObject()->getId(), $this->getName(), $params["language"]));
+            }
         } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()));
 

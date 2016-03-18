@@ -129,7 +129,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
                 $editmodeData[] = array(
                     "data" => $collectionData,
-                    "type" => $item->getType()
+                    "type" => $item->getType(),
+                    "oIndex" => $idx
                 );
             }
         }
@@ -141,9 +142,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         $values = array();
         $count = 0;
@@ -151,11 +153,26 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
                 $collectionData = array();
-                $collectionDef = Object\Fieldcollection\Definition::getByKey($collectionRaw["type"]);
+                $collectionKey = $collectionRaw["type"];
+
+                $oIndex = $collectionRaw["oIndex"];
+
+                $collectionDef = Object\Fieldcollection\Definition::getByKey($collectionKey);
+                $fieldname = $this->getName();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if (array_key_exists($fd->getName(), $collectionRaw["data"])) {
-                        $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
+                        $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()], $object,
+                            array(
+                                "context" => array(
+                                    "containerType" => "fieldcollection",
+                                    "containerKey" => $collectionKey,
+                                    "fieldname" => $fieldname,
+                                    "index" => $count,
+                                    "oIndex" => $oIndex
+                                )
+                            )
+                        );
                     }
                 }
 
@@ -245,7 +262,15 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $container = $this->getDataFromObjectParam($object);
 
         if ($container instanceof Object\Fieldcollection) {
-            $container->save($object);
+            $params = array(
+                "context" => array(
+                    "containerType" => "fieldcollection",
+                    "fieldname" => $this->getName()
+                )
+            );
+
+            $container->save($object, $params);
+
         }
     }
 
@@ -698,7 +723,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
-     * @return Element\ElementInterface
+     * @return Model\Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = array())
     {
@@ -743,7 +768,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
      * @return void
      */
-    public function classSaved($class)
+    public function classSaved($class, $params = array())
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
@@ -753,7 +778,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
                     foreach ($fieldDefinition as $fd) {
                         if (method_exists($fd, "classSaved")) {
-                            $fd->classSaved($class);
+                            if (!$fd instanceof Localizedfields) {
+                                // defer creation
+                                $fd->classSaved($class);
+                            }
+
                         }
                     }
                 }
@@ -824,4 +853,5 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $this->collapsible = $collapsible;
     }
+
 }

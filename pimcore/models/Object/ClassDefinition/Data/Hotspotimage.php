@@ -245,9 +245,10 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Asset
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         $rewritePath = function ($data) {
 

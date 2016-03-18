@@ -121,9 +121,10 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         if ($data["longitude"] || $data["latitude"]) {
             return new Object\Data\Geopoint($data["longitude"], $data["latitude"]);

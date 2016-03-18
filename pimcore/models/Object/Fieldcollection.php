@@ -102,9 +102,10 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
         $this->getDao()->save($object);
         $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
 
-        if (is_array($this->getItems())) {
+        $collectionItems = $this->getItems();
+        if (is_array($collectionItems)) {
             $index = 0;
-            foreach ($this->getItems() as $collection) {
+            foreach ($collectionItems as $collection) {
                 if ($collection instanceof Fieldcollection\Data\AbstractData) {
                     if (in_array($collection->getType(), $allowedTypes)) {
                         $collection->setFieldname($this->getFieldname());

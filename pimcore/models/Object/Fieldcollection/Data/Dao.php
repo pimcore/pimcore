@@ -38,7 +38,17 @@ class Dao extends Model\Dao\AbstractDao
 
                 if (method_exists($fd, "save")) {
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
-                    $fd->save($this->model);
+                    $index = $this->model->getIndex();
+                    $fd->save($this->model,
+                        array(
+                            "context" => array(
+                                "containerType" => "fieldcollection",
+                                "containerKey" => $this->model->getType(),
+                                "fieldname" =>  $this->model->getFieldname(),
+                                "index" => $index
+                            )
+                        )
+                    );
                 } elseif ($fd->getColumnType()) {
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object);

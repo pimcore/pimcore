@@ -212,15 +212,19 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
-        $localizedFields = $this->getDataFromObjectParam($object);
+        $localizedFields = $this->getDataFromObjectParam($object, $params);
 
         if (!$localizedFields instanceof Object\Localizedfield) {
             $localizedFields = new Object\Localizedfield();
         }
+
+        $context = isset($params["context"]) ? $params["context"] : null;
+        $localizedFields->setContext($context);
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
@@ -543,7 +547,12 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $localizedFields = $this->getDataFromObjectParam($object);
         if ($localizedFields instanceof Object\Localizedfield) {
+            if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+                $object = $object->getObject();
+            }
             $localizedFields->setObject($object);
+            $context = isset($params["context"]) ? $params["context"] : null;
+            $localizedFields->setContext($context);
             $localizedFields->save();
         }
     }
@@ -555,9 +564,15 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function load($object, $params = array())
     {
+        if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+            $object = $object->getObject();
+        }
+
         $localizedFields = new Object\Localizedfield();
         $localizedFields->setObject($object);
-        $localizedFields->load();
+        $context = isset($params["context"]) ? $params["context"] : null;
+        $localizedFields->setContext($context);
+        $localizedFields->load($object, $params);
 
         return $localizedFields;
     }
@@ -565,12 +580,14 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      */
-    public function delete($object)
+    public function delete($object, $params = array())
     {
         $localizedFields = $this->getDataFromObjectParam($object);
 
         if ($localizedFields instanceof Object\Localizedfield) {
             $localizedFields->setObject($object);
+            $context = isset($params["context"]) ? $params["context"] : null;
+            $localizedFields->setContext($context);
             $localizedFields->delete();
         }
     }
@@ -579,15 +596,17 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
      * @return void
      */
-    public function classSaved($class)
+    public function classSaved($class, $params = array())
     {
         $localizedFields = new Object\Localizedfield();
         $localizedFields->setClass($class);
+        $context = isset($params["context"]) ? $params["context"] : null;
+        $localizedFields->setContext($context);
         $localizedFields->createUpdateTable();
 
         foreach ($this->getFieldDefinitions() as $fd) {
             if (method_exists($fd, "classSaved")) {
-                $fd->classSaved($class);
+                $fd->classSaved($class, $params);
             }
         }
     }
@@ -600,12 +619,15 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function preGetData($object, $params = array())
     {
-        if (!$object instanceof Object\Concrete) {
-            throw new \Exception("Localized Fields are only valid in Objects");
+        if (!$object instanceof Object\Concrete && !$object instanceof Object\Fieldcollection\Data\AbstractData) {
+            throw new \Exception("Localized Fields are only valid in Objects and Fieldcollections");
         }
 
         if (!$object->localizedfields instanceof Object\Localizedfield) {
             $lf = new Object\Localizedfield();
+            if ($object instanceof  Object\Fieldcollection\Data\AbstractData) {
+                $object = $object->getObject();
+            }
             $lf->setObject($object);
 
             $object->localizedfields = $lf;

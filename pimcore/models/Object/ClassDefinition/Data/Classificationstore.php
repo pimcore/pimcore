@@ -264,9 +264,10 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param string $containerData
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($containerData, $object = null)
+    public function getDataFromEditmode($containerData, $object = null, $params = array())
     {
         $classificationStore = $this->getDataFromObjectParam($object);
 
@@ -546,7 +547,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * This method is called in Object|Class::save() and is used to create the database table for the classification data
      * @return void
      */
-    public function classSaved($class)
+    public function classSaved($class, $params = array())
     {
         $clasificationStore = new Object\Classificationstore();
         $clasificationStore->setClass($class);

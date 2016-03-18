@@ -303,9 +303,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Asset|Document|Object\AbstractObject
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         if ($data["id"] && $data["type"]) {
             return Element\Service::getElementById($data["type"], $data["id"]);
@@ -529,7 +530,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @param $object
      * @param array $params
-     * @return null|Object\Fieldcollection\Data\Object\Concrete|Object\Objectbrick\Data\
+     * @return null|AbstractData|Object\Concrete|Object\Objectbrick\Data\
      */
     public function preGetData($object, $params = array())
     {

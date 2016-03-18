@@ -192,9 +192,10 @@ class Video extends Model\Object\ClassDefinition\Data
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param integer $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Asset
      */
-    public function getDataFromEditmode($data, $object = null)
+    public function getDataFromEditmode($data, $object = null, $params = array())
     {
         $video = null;
 

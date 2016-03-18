@@ -974,6 +974,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     public function saveAction()
     {
         $object = Object::getById($this->getParam("id"));
+        $originalModificationDate = $object->getModificationDate();
 
         // set the latest available version for editmode
         $object = $this->getLatestVersion($object);
@@ -1065,11 +1066,19 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         if (($this->getParam("task") == "publish" && $object->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $object->isAllowed("unpublish"))) {
             try {
+
+                if ($data) {
+                    $this->performFieldcollectionModificationCheck($object, $originalModificationDate, $data);
+                }
+
                 $object->save();
                 $treeData = array();
                 $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
 
-                $this->_helper->json(array("success" => true, "treeData" => $treeData));
+                $this->_helper->json(array(
+                    "success" => true,
+                    "general" => array("o_modificationDate" => $object->getModificationDate() ),
+                    "treeData" => $treeData));
             } catch (\Exception $e) {
                 \Logger::log($e);
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
@@ -1093,6 +1102,31 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 } catch (\Exception $e) {
                     \Logger::log($e);
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                }
+            }
+        }
+    }
+
+    public function performFieldcollectionModificationCheck(Object\Concrete $object,$originalModificationDate, $data) {
+
+        $modificationDate = $this->getParam("modificationDate");
+        if ($modificationDate != $originalModificationDate) {
+            $fielddefinitions = $object->getClass()->getFieldDefinitions();
+            foreach ($fielddefinitions as $fd) {
+                if ($fd instanceof Object\ClassDefinition\Data\Fieldcollections) {
+                    if (isset($data[$fd->getName()])) {
+                        $allowedTypes = $fd->getAllowedTypes();
+                        foreach ($allowedTypes as $type) {
+                            /** @var  $fdDef Object\Fieldcollection\Definition */
+                            $fdDef = Object\Fieldcollection\Definition::getByKey($type);
+                            $childDefinitions = $fdDef->getFieldDefinitions();
+                            foreach ($childDefinitions as $childDef) {
+                                if ($childDef instanceof Object\ClassDefinition\Data\Localizedfields) {
+                                    $this->_helper->json(array("success" => false, "message" => "Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again"));;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1188,7 +1222,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $object->save();
                 $treeData = array();
                 $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
-                $this->_helper->json(array("success" => true, "treeData" => $treeData));
+                $this->_helper->json(array(
+                                    "success" => true,
+                                    "general" => array("o_modificationDate" => $object->getModificationDate() ),
+                                    "treeData" => $treeData)
+                );
             } catch (\Exception $e) {
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }

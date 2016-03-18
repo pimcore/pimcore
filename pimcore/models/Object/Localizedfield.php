@@ -41,6 +41,9 @@ class Localizedfield extends Model\AbstractModel
      */
     public $class;
 
+    /** @var mixed  */
+    public $context;
+
     /**
      * @var bool
      */
@@ -128,8 +131,11 @@ class Localizedfield extends Model\AbstractModel
      * @param Concrete $object
      * @return void
      */
-    public function setObject(Concrete $object)
+    public function setObject($object)
     {
+        if (!$object instanceof Concrete) {
+            throw new \Exception("must be instance of object concrete");
+        }
         $this->object = $object;
         //$this->setClass($this->getObject()->getClass());
         return $this;
@@ -206,7 +212,14 @@ class Localizedfield extends Model\AbstractModel
         $data = null;
         $language = $this->getLanguage($language);
 
-        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+        $context = $this->getContext();
+        if ($context && $context["containerType"] == "fieldcollection") {
+            $containerKey = $context["containerKey"];
+            $container = Model\Object\Fieldcollection\Definition::getByKey($containerKey);
+        } else {
+            $container = $this->getObject()->getClass();
+        }
+        $fieldDefinition = $container->getFieldDefinition("localizedfields")->getFieldDefinition($name);
 
         if ($fieldDefinition instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\Object\Data\CalculatedValue($fieldDefinition->getName());
@@ -294,7 +307,15 @@ class Localizedfield extends Model\AbstractModel
             $this->items[$language] = array();
         }
 
-        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+        $contextInfo = $this->getContext();
+        if ($contextInfo && $contextInfo["containerType"] == "fieldcollection") {
+            $containerKey = $contextInfo["containerKey"];
+            $containerDefinition = Fieldcollection\Definition::getByKey($containerKey);
+        } else {
+            $containerDefinition = $this->getObject()->getClass();
+        }
+
+        $fieldDefinition = $containerDefinition->getFieldDefinition("localizedfields")->getFieldDefinition($name);
 
         if (method_exists($fieldDefinition, "preSetData")) {
             $value =  $fieldDefinition->preSetData($this, $value, array(
@@ -314,4 +335,22 @@ class Localizedfield extends Model\AbstractModel
     {
         return array("items");
     }
+
+    /**
+     * @return mixed
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param mixed $context
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
+    }
+
+    
 }
