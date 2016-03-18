@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -18,14 +18,12 @@ use Pimcore\Model;
 
 class Fieldcontainer extends Model\Object\ClassDefinition\Layout
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
     public $fieldtype = "fieldcontainer";
-
 
     /**
      * Width of input field labels
@@ -36,7 +34,7 @@ class Fieldcontainer extends Model\Object\ClassDefinition\Layout
     /**
      * @var string
      */
-    public $layout;
+    public $layout = "hbox";
 
     /**
      * @var string

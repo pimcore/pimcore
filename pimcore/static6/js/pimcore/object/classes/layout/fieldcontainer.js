@@ -35,12 +35,16 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
         $super();
 
         var layouts = Ext.create('Ext.data.Store', {
-            fields: ['abbr', 'name'],
+            fields: ['name'],
             data: [
-                {"abbr": "", "name": "vbox"},
-                {"abbr": "hbox", "name": "hbox"}
+                {"name": "vbox"},
+                {"name": "hbox"}
             ]
         });
+
+        if(!this.datax.layout) {
+            this.datax.layout = "hbox";
+        }
 
         this.layout.add({
             xtype: "form",
@@ -68,7 +72,7 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
                     triggerAction: 'all',
                     editable: false,
                     displayField: 'name',
-                    valueField: 'abbr'
+                    valueField: 'name'
                 }
             ]
         });
