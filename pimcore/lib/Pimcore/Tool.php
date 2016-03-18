@@ -721,8 +721,4 @@ class Tool
 
         die($message);
     }
-
 }
-
-
-
