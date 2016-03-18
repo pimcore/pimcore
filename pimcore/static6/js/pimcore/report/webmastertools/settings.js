@@ -23,7 +23,7 @@ pimcore.report.webmastertools.settings = Class.create({
     getLayout: function () {
 
         this.panel = new Ext.FormPanel({
-            title: "Google Webmastertools",
+            title: "Google Search Console",
             bodyStyle: "padding: 10px;",
             autoScroll: true,
             items: [
@@ -31,7 +31,7 @@ pimcore.report.webmastertools.settings = Class.create({
                     xtype: "displayfield",
                     width: 670,
                     hideLabel: true,
-                    value: "&nbsp;<br />" + t("webastertools_settings_description"),
+                    value: "&nbsp;<br />" + t("search_console_settings_description"),
                     cls: "pimcore_extra_label"
                 },
                 {

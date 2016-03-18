@@ -32,7 +32,7 @@ pimcore.report.webmastertools.settings = Class.create({
                     xtype: "displayfield",
                     width: 300,
                     hideLabel: true,
-                    value: "&nbsp;<br />" + t("webastertools_settings_description"),
+                    value: "&nbsp;<br />" + t("search_console_settings_description"),
                     cls: "pimcore_extra_label"
                 },
                 {

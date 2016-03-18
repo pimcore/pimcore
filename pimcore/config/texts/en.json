@@ -1520,8 +1520,8 @@
         "definition": "To use the complete Google Analytics integration, please configure the Google API Service Account in System Settings"
     },
     {
-        "term": "webastertools_settings_description",
-        "definition": "To use the Google Webmaster Tools integration, please configure the Google API Service Account in System Settings"
+        "term": "search_console_settings_description",
+        "definition": "To use the Google Search Console integration, please configure the Google API Service Account in System Settings"
     },
     {
         "term": "google_api_key_missing",
@@ -3032,10 +3032,6 @@
         "definition": "Create A\/B Test"
     },
     {
-        "term": "google_websiteoptimizer",
-        "definition": "Google Website Optimizer"
-    },
-    {
         "term": "pageviews",
         "definition": "Pageviews"
     },
@@ -3084,8 +3080,8 @@
         "definition": "External Keywords"
     },
     {
-        "term": "google_webmastertools",
-        "definition": "Google Webmastertools"
+        "term": "google_search_console",
+        "definition": "Google Search Console"
     },
     {
         "term": "verification_filename_text",
