@@ -371,13 +371,12 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var allowedTypes = {
             accordion: ["panel","region","tabpanel","text"],
             fieldset: ["data","text"],
-            fieldcontainer: ["data","text","splitter"],
+            fieldcontainer: ["data","text"],
             panel: ["data","region","tabpanel","button","accordion","fieldset","panel","text","html"],
             region: ["panel","accordion","tabpanel","text","localizedfields"],
             tabpanel: ["panel", "region", "accordion","text","localizedfields"],
             button: [],
             text: [],
-            splitter: [],
             root: ["panel","region","tabpanel","accordion","text"],
             localizedfields: ["panel","tabpanel","accordion","fieldset","text","region","button"]
         };

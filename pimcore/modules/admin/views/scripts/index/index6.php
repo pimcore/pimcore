@@ -370,7 +370,6 @@ $scripts = array(
     "pimcore/object/classes/layout/accordion.js",
     "pimcore/object/classes/layout/fieldset.js",
     "pimcore/object/classes/layout/fieldcontainer.js",
-    "pimcore/object/classes/layout/splitter.js",
     "pimcore/object/classes/layout/panel.js",
     "pimcore/object/classes/layout/region.js",
     "pimcore/object/classes/layout/tabpanel.js",

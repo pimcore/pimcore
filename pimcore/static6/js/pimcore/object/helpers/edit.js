@@ -65,9 +65,6 @@ pimcore.object.helpers.edit = {
                 hideMode: "offsets",
                 listeners: panelListenerConfig
             },
-            splitter: {
-                xtype: "splitter"
-            },
             panel: {
                 xtype: "panel",
                 autoScroll: true,
