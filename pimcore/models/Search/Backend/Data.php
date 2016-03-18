@@ -386,9 +386,12 @@ class Data extends \Pimcore\Model\AbstractModel
         } elseif ($element instanceof Asset) {
             $this->data = $element->getFilename();
 
-            foreach ($element->getMetadata() as $md) {
-                if (is_scalar($md['data'])) {
-                    $this->data .= " " . $md["name"] . ":" . $md["data"];
+            $elementMetadata = $element->getMetadata();
+            if (is_array($elementMetadata)) {
+                foreach ($elementMetadata as $md) {
+                    if (is_scalar($md['data'])) {
+                        $this->data .= " " . $md["name"] . ":" . $md["data"];
+                    }
                 }
             }
 
