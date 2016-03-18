@@ -634,6 +634,7 @@ Ext.onReady(function () {
                             index:(cvs + 10),
                             loaderBaseParams:{}
                         });
+                        pimcore.globalmanager.add("layout_customviews_tree" + cv.id, cvTree);
                     }
                 }
             }
