@@ -1002,7 +1002,9 @@ class Pimcore
         self::$inShutdown = true;
 
         // flush all custom output buffers
-        while (@ob_end_flush());
+        while (ob_get_level()) {
+            ob_end_flush();
+        }
 
         // flush everything
         flush();
