@@ -257,6 +257,11 @@
     /*padding: 10px 0 10px 0 !important;*/
 }
 
+.object_field.x-hbox-form-item {
+    /* right margin for items withing a fieldcontainer with layout "hbox" */
+    margin-right: 10px;
+}
+
 .object_field_panel {
     padding: 0;
 }
