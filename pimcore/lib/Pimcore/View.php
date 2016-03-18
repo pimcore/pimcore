@@ -24,11 +24,6 @@ class View extends \Zend_View
     protected $request;
 
     /**
-     * @var bool
-     */
-    protected static $addComponentIds = false;
-
-    /**
      * @param $type
      * @param $realName
      * @param array $options
@@ -237,15 +232,6 @@ class View extends \Zend_View
                     $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
                 }
             }
-
-            // we need to add a component id to all first level html containers
-            $componentId = "";
-            if ($this->document instanceof Model\Document) {
-                $componentId .= 'document:' . $this->document->getId() . '.';
-            }
-            $componentId .= 'type:inc.name:' . $include->getId();
-            ;
-            $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
         }
 
         \Zend_Registry::set("pimcore_editmode", $editmodeBackup);
@@ -391,21 +377,5 @@ class View extends \Zend_View
         }
 
         return $viewSuffix;
-    }
-
-    /**
-     * @return boolean
-     */
-    public static function addComponentIds()
-    {
-        return self::$addComponentIds;
-    }
-
-    /**
-     * @param boolean $addComponentIds
-     */
-    public static function setAddComponentIds($addComponentIds)
-    {
-        self::$addComponentIds = $addComponentIds;
     }
 }

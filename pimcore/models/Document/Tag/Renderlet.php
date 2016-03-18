@@ -143,10 +143,6 @@ class Renderlet extends Model\Document\Tag
                         isset($this->options["module"]) ? $this->options["module"] : null,
                         $params);
 
-                    // we need to add a component id to all first level html containers
-                    $componentId = 'document:' . $this->getDocumentId() . '.type:tag-renderlet.name:' . $this->type . "-" . $this->subtype . "-" . $this->id;
-                    $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
-
                     return $content;
                 } catch (\Exception $e) {
                     if (\Pimcore::inDebugMode()) {
@@ -170,7 +166,7 @@ class Renderlet extends Model\Document\Tag
         $this->id = $data["id"];
         $this->type = $data["type"];
         $this->subtype = $data["subtype"];
-        
+
         $this->setElement();
         return $this;
     }
@@ -189,7 +185,7 @@ class Renderlet extends Model\Document\Tag
         $this->setElement();
         return $this;
     }
-    
+
     /**
      * Sets the element by the data stored for the object
      *

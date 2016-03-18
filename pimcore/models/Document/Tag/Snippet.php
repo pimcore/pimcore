@@ -125,10 +125,6 @@ class Snippet extends Model\Document\Tag
                             Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
                         }
 
-                        // we need to add a component id to all first level html containers
-                        $componentId = 'document:' . $this->getDocumentId() . '.type:tag-snippet.name:' . $this->snippet->getId();
-                        $content = \Pimcore\Tool\Frontend::addComponentIdToHtml($content, $componentId);
-
                         return $content;
                     }
                     return "";
@@ -171,7 +167,7 @@ class Snippet extends Model\Document\Tag
         }
         return $this;
     }
-    
+
     /**
      * @return boolean
      */
@@ -190,7 +186,7 @@ class Snippet extends Model\Document\Tag
     public function resolveDependencies()
     {
         $dependencies = array();
-        
+
         if ($this->snippet instanceof Document\Snippet) {
             $key = "document_" . $this->snippet->getId();
 
@@ -199,7 +195,7 @@ class Snippet extends Model\Document\Tag
                 "type" => "document"
             );
         }
-        
+
         return $dependencies;
     }
 
