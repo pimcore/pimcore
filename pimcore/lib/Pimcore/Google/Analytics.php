@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -56,7 +56,7 @@ class Analytics
     public static function getSiteConfig($site = null)
     {
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey($site);
-        
+
         $config = Config::getReportConfig();
         if (!$config->analytics) {
             return false;
@@ -77,7 +77,7 @@ class Analytics
         if (is_null($config)) {
             $config = self::getSiteConfig();
         }
-        
+
         // do nothing if not configured
         if (!$config || !$config->trackid) {
             return "";
@@ -141,6 +141,7 @@ class Analytics
               " . $codeBeforeInit . "
 
               ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? ("," . $config->universal_configuration) : "") . ");
+              ga('set', 'anonymizeIp', true);
               " . $codeBeforePageview . "
               if (typeof _gaqPageView != \"undefined\"){
                 ga('send', 'pageview', _gaqPageView);
@@ -152,7 +153,7 @@ class Analytics
             </script>";
         }
 
-        
+
         return $code;
     }
 
