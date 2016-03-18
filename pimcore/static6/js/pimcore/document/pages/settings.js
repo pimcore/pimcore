@@ -401,9 +401,33 @@ pimcore.document.pages.settings = Class.create({
                                 }
                             },
                             {
+                                xtype:'combo',
                                 fieldLabel: t('module_optional'),
-                                name: 'module',
-                                value: this.page.data.module
+                                displayField: 'name',
+                                valueField: 'name',
+                                name: "module",
+                                disableKeyFilter: true,
+                                store: new Ext.data.Store({
+                                    autoDestroy: true,
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: "/admin/misc/get-available-modules",
+                                        reader: {
+                                            type: 'json',
+                                            rootProperty: 'data'
+                                        }
+                                    },
+                                    fields: ["name"]
+                                }),
+                                triggerAction: "all",
+                                mode: "local",
+                                id: "pimcore_document_settings_module_" + this.page.id,
+                                value: this.page.data.module,
+                                listeners: {
+                                    afterrender: function (el) {
+                                        el.getStore().load();
+                                    }
+                                }
                             },
                             {
                                 xtype:'combo',
@@ -429,9 +453,17 @@ pimcore.document.pages.settings = Class.create({
                                 id: "pimcore_document_settings_controller_" + this.page.id,
                                 value: this.page.data.controller,
                                 listeners: {
-                                    afterrender: function (el) {
-                                        el.getStore().load();
-                                    }
+                                    "focus": function (el) {
+                                        el.getStore().reload({
+                                            params: {
+                                                moduleName: Ext.getCmp("pimcore_document_settings_module_"
+                                                    + this.page.id).getValue()
+                                            },
+                                            callback: function() {
+                                                el.expand();
+                                            }
+                                        });
+                                    }.bind(this),
                                 }
                             },
                             {
@@ -460,6 +492,8 @@ pimcore.document.pages.settings = Class.create({
                                     "focus": function (el) {
                                         el.getStore().reload({
                                             params: {
+                                                moduleName: Ext.getCmp("pimcore_document_settings_module_"
+                                                    + this.page.id).getValue(),
                                                 controllerName: Ext.getCmp("pimcore_document_settings_controller_"
                                                                                     + this.page.id).getValue()
                                             },
