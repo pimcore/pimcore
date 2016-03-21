@@ -344,7 +344,13 @@ class Service extends Model\AbstractModel
     public static function runSanityCheck()
     {
         $sanityCheck = Sanitycheck::getNext();
+        $count = 0;
         while ($sanityCheck) {
+            $count++;
+            if ($count % 10 == 0) {
+                \Pimcore::collectGarbage();
+            }
+
             $element = self::getElementById($sanityCheck->getType(), $sanityCheck->getId());
             if ($element) {
                 try {
