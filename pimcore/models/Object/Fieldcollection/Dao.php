@@ -154,6 +154,5 @@ class Dao extends Model\Dao\AbstractDao
             "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()) . ")"
             . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $this->model->getFieldname() . "/%") . ")"
         );
-
     }
 }

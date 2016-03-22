@@ -1036,7 +1036,7 @@ abstract class Data
                                 }
                             }
                         }
-                    } else if ($object instanceof Object\Localizedfield) {
+                    } elseif ($object instanceof Object\Localizedfield) {
                         $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
                     }
                 }

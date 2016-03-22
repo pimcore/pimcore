@@ -351,6 +351,4 @@ class Localizedfield extends Model\AbstractModel
     {
         $this->context = $context;
     }
-
-    
 }

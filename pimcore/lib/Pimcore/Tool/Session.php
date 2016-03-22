@@ -210,7 +210,7 @@ class Session
                 "id" => session_id()
             ];
 
-            if(session_id()) {
+            if (session_id()) {
                 @session_write_close();
             }
             session_id($_COOKIE[$sName]);
@@ -231,7 +231,7 @@ class Session
 
             session_name(self::$restoreSession["name"]);
 
-            if(isset(self::$restoreSession["id"]) && !empty(self::$restoreSession["id"])) {
+            if (isset(self::$restoreSession["id"]) && !empty(self::$restoreSession["id"])) {
                 session_id(self::$restoreSession["id"]);
                 @session_start();
             }

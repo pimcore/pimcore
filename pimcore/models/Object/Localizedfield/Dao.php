@@ -329,8 +329,6 @@ class Dao extends Model\Dao\AbstractDao
                     $index
                 )
             );
-
-
         } else {
             $container = $this->model->getClass();
             $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",", $validLanguages) . ")", $this->model->getObject()->getId());
@@ -486,7 +484,6 @@ QUERY;
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`)
             ) DEFAULT CHARSET=utf8;");
-
         } else {
             $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
               `ooo_id` int(11) NOT NULL default '0',
@@ -507,7 +504,6 @@ QUERY;
             $protectedColumns = array("ooo_id", "language", "index", "fieldname");
             $containerKey = $context["containerKey"];
             $container = Object\Fieldcollection\Definition::getByKey($containerKey);
-
         } else {
             $protectedColumns = array("ooo_id", "language");
             $container = $this->model->getClass();
