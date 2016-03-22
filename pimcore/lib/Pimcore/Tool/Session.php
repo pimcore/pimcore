@@ -203,14 +203,16 @@ class Session
     protected static function backupForeignSession()
     {
         $sName = self::getOption("name");
-        if (session_id() && $sName != session_name()) {
+        if ($sName != session_name()) {
             // there's a different session in use, stop it and restart the admin session
             self::$restoreSession = [
                 "name" => session_name(),
                 "id" => session_id()
             ];
 
-            session_write_close();
+            if(session_id()) {
+                @session_write_close();
+            }
             session_id($_COOKIE[$sName]);
 
             return true;
@@ -228,8 +230,11 @@ class Session
             session_write_close();
 
             session_name(self::$restoreSession["name"]);
-            session_id(self::$restoreSession["id"]);
-            @session_start();
+
+            if(isset(self::$restoreSession["id"]) && !empty(self::$restoreSession["id"])) {
+                session_id(self::$restoreSession["id"]);
+                @session_start();
+            }
 
             return true;
         }
