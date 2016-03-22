@@ -213,7 +213,7 @@ class Session
             if (session_id()) {
                 @session_write_close();
             }
-            if(isset($_COOKIE[$sName])) {
+            if (isset($_COOKIE[$sName])) {
                 session_id($_COOKIE[$sName]);
             }
 
