@@ -343,7 +343,7 @@ class OrderManager implements IOrderManager
      */
     protected function getNewOrderObject() {
         $orderClassName = $this->getOrderClassName();
-        if(!class_exists($orderClassName)) {
+        if(!\Pimcore\Tool::classExists($orderClassName)) {
             throw new \Exception("Order Class" . $orderClassName . " does not exist.");
         }
         return new $orderClassName();
@@ -355,7 +355,7 @@ class OrderManager implements IOrderManager
      */
     protected function getNewOrderItemObject() {
         $orderItemClassName = $this->getOrderItemClassName();
-        if(!class_exists($orderItemClassName)) {
+        if(!\Pimcore\Tool::classExists($orderItemClassName)) {
             throw new \Exception("OrderItem Class" . $orderItemClassName . " does not exist.");
         }
         return new $orderItemClassName();
@@ -373,9 +373,9 @@ class OrderManager implements IOrderManager
     protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item,  $parent) {
 
         $orderItemListClass = $this->getOrderItemClassName() . "\\Listing";
-        if(!class_exists($orderItemListClass)) {
+        if(!\Pimcore\Tool::classExists($orderItemListClass)) {
             $orderItemListClass = $this->getOrderItemClassName() . "_List";
-            if(!class_exists($orderItemListClass)) {
+            if(!\Pimcore\Tool::classExists($orderItemListClass)) {
                 throw new \Exception("Class $orderItemListClass does not exist.");
             }
         }
