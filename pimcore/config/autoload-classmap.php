@@ -1,6 +1,6 @@
 <?php
 $pdr = PIMCORE_DOCUMENT_ROOT;
-return array(
+return array (
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'simple_html_dom' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'Pimcore\\Video\\Adapter\\Ffmpeg' => $pdr . '/pimcore/lib/Pimcore/Video/Adapter/Ffmpeg.php',
@@ -539,6 +539,7 @@ return array(
   'Pimcore\\Model\\Object\\ClassDefinition\\Layout\\Accordion' => $pdr . '/pimcore/models/Object/ClassDefinition/Layout/Accordion.php',
   'Pimcore\\Model\\Object\\ClassDefinition\\Layout\\Panel' => $pdr . '/pimcore/models/Object/ClassDefinition/Layout/Panel.php',
   'Pimcore\\Model\\Object\\ClassDefinition\\Layout\\Fieldset' => $pdr . '/pimcore/models/Object/ClassDefinition/Layout/Fieldset.php',
+  'Pimcore\\Model\\Object\\ClassDefinition\\Layout\\Fieldcontainer' => $pdr . '/pimcore/models/Object/ClassDefinition/Layout/Fieldcontainer.php',
   'Pimcore\\Model\\Object\\ClassDefinition\\Listing\\Dao' => $pdr . '/pimcore/models/Object/ClassDefinition/Listing/Dao.php',
   'Pimcore\\Model\\Object\\ClassDefinition\\Dao' => $pdr . '/pimcore/models/Object/ClassDefinition/Dao.php',
   'Pimcore\\Model\\Object\\Fieldcollection\\Data\\AbstractData' => $pdr . '/pimcore/models/Object/Fieldcollection/Data/AbstractData.php',
