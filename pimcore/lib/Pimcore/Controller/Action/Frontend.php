@@ -82,12 +82,12 @@ abstract class Frontend extends Action
 
         // assign variables
         $this->view->controller = $this;
-        
+
         // init website config
         $config = Config::getWebsiteConfig();
         $this->config = $config;
         $this->view->config = $config;
-        
+
         $document = $this->getParam("document");
         if (!$document instanceof Document) {
             \Zend_Registry::set("pimcore_editmode", false);
@@ -525,15 +525,20 @@ abstract class Frontend extends Action
                 \Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
                 \Logger::error($error->exception);
 
-                \Pimcore::getEventManager()->trigger("frontend.error", $this, [
+                $results = \Pimcore::getEventManager()->trigger("frontend.error", $this, [
                     "exception" => $error->exception
                 ]);
+
+                $cacheKeySuffix = "";
+                foreach($results as $result) {
+                    $cacheKeySuffix .= "_" . $result;
+                }
 
                 try {
                     // check if we have the error page already in the cache
                     // the cache is written in Pimcore\Controller\Plugin\HttpErrorLog::dispatchLoopShutdown()
                     $responseCode = $this->getResponse()->getHttpResponseCode();
-                    $cacheKey = "error_page_response_" . $responseCode . "_" . \Pimcore\Tool\Frontend::getSiteKey();
+                    $cacheKey = "error_" . $responseCode . "_" . \Pimcore\Tool\Frontend::getSiteKey() . $cacheKeySuffix;
                     if ($responseBody = \Pimcore\Cache::load($cacheKey)) {
                         $this->getResponse()->setBody($responseBody);
                         $this->getResponse()->sendResponse();
@@ -546,6 +551,7 @@ abstract class Frontend extends Action
 
                         exit;
                     } else {
+                        \Zend_Controller_Front::getInstance()->getPlugin("Pimcore\\Controller\\Plugin\\HttpErrorLog")->setCacheKey($cacheKey);
                         $document = \Zend_Registry::get("pimcore_error_document");
                         $this->setDocument($document);
                         $this->setParam("document", $document);

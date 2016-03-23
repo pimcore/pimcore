@@ -16,6 +16,11 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
 {
 
     /**
+     * @var null
+     */
+    protected $cacheKey = null;
+
+    /**
      *
      */
     public function dispatchLoopShutdown()
@@ -28,12 +33,19 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
             $responseData = $this->getResponse()->getBody();
             if (strlen($responseData) > 20 && !session_id()) {
                 // do not cache if there's no data or an active session
-                $responseCode = $this->getResponse()->getHttpResponseCode();
-                $cacheKey = "error_page_response_" . $responseCode . "_" . \Pimcore\Tool\Frontend::getSiteKey();
 
-                \Pimcore\Cache::save($responseData, $cacheKey, array("output"), 900, 9992);
+                if($this->cacheKey) {
+                    \Pimcore\Cache::save($responseData, $this->cacheKey, array("output"), 900, 9992);
+                }
             }
         }
+    }
+
+    /**
+     * @param $cacheKey
+     */
+    public function setCacheKey($cacheKey) {
+        $this->cacheKey = $cacheKey;
     }
 
     /**
