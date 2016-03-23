@@ -530,7 +530,7 @@ abstract class Frontend extends Action
                 ]);
 
                 $cacheKeySuffix = "";
-                foreach($results as $result) {
+                foreach ($results as $result) {
                     $cacheKeySuffix .= "_" . $result;
                 }
 

@@ -34,7 +34,7 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
             if (strlen($responseData) > 20 && !session_id()) {
                 // do not cache if there's no data or an active session
 
-                if($this->cacheKey) {
+                if ($this->cacheKey) {
                     \Pimcore\Cache::save($responseData, $this->cacheKey, array("output"), 900, 9992);
                 }
             }
@@ -44,7 +44,8 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
     /**
      * @param $cacheKey
      */
-    public function setCacheKey($cacheKey) {
+    public function setCacheKey($cacheKey)
+    {
         $this->cacheKey = $cacheKey;
     }
 
