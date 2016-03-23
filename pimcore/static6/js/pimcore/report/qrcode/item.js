@@ -291,6 +291,9 @@ pimcore.report.qrcode.item = Class.create({
 
     generateCode: function () {
         var params = this.form.getForm().getFieldValues();
+        var url = params['url'];
+
+        delete params["url"];
         delete params["description"];
         delete params["undefined"];
 
@@ -298,7 +301,7 @@ pimcore.report.qrcode.item = Class.create({
         params["_dc"] = d.getTime();
         params["name"] = this.data.name;
 
-        var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
+        var codeUrl = "/admin/reports/qrcode/code/?url=" + url + '&' + Ext.urlEncode(params);
         this.codePanel.update('<img src="' + codeUrl + '" style="padding:10px; width:100%;" />');
     },
 
