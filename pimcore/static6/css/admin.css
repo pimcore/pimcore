@@ -251,123 +251,6 @@
     overflow: auto;
 }
 
-/* objects */
-
-.object_field {
-    /*padding: 10px 0 10px 0 !important;*/
-}
-
-.object_field.x-hbox-form-item {
-    /* right margin for items withing a fieldcontainer with layout "hbox" */
-    margin-right: 10px;
-}
-
-.object_field_panel {
-    padding: 0;
-}
-
-.object_field_wrapper {
-    width: 95% !important;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #D0D0D0;
-}
-
-.object_field_wrapper_floating{
-    width: auto !important;
-    float:left;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    margin-right: 5px;
-    border-bottom: 1px solid #D0D0D0;
-}
-
-.object_field_setting_warning{
-    background:url("/pimcore/static6/img/icon/error.png") no-repeat scroll 0 0 transparent;
-    padding:2px 5px 2px 20px;
-    color: #999;
-
-}
-
-.pimcore_tag_wysiwyg {
-    position:relative;
-    padding: 10px;
-    min-height: 80px;
-    font: normal 12px tahoma, arial, helvetica, sans-serif;
-}
-
-.pimcore_tag_wysiwyg strong {
-    font-weight: bold !important;
-    font-style: inherit;
-}
-
-.pimcore_tag_wysiwyg em {
-    font-style: italic !important;
-    font-weight: inherit;
-}
-
-.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol {
-    list-style: inherit;
-    margin:inherit;
-    padding-left: 30px;
-}
-
-.pimcore_tag_wysiwyg ol {
-    list-style: decimal;
-}
-
-.pimcore_tag_wysiwyg ul {
-    list-style: disc;
-}
-
-.pimcore_tag_wysiwyg blockquote {
-    padding-left: 20px;
-    border-left: 3px solid #666666;
-}
-
-.pimcore_tag_wysiwyg h1 {
-    font-size: 28px;
-    font-weight: normal;
-}
-
-.pimcore_tag_wysiwyg h2 {
-    font-size: 24px;
-    font-weight: normal;
-}
-
-.pimcore_tag_wysiwyg h3 {
-    font-size: 20px;
-    font-weight: normal;
-}
-
-.pimcore_tag_wysiwyg h4 {
-    font-size: 18px;
-    font-weight: normal;
-}
-
-.pimcore_tag_wysiwyg h5 {
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.pimcore_tag_wysiwyg table {
-    border-collapse: collapse;
-    border-top:1px solid #333333;
-    border-right:1px solid #333333;
-}
-
-.pimcore_tag_wysiwyg table td, .pimcore_tag_wysiwyg table th{
-    border-left:1px solid #333333;
-    border-bottom:1px solid #333333;
-    padding: 3px;
-}
-
-/* this is a hack, actually don't know why?
-.x-tab-panel {
-	position: absolute;
-}
-*/
-
 
 .pimcore_iframe_mask {
     position: absolute;
@@ -1106,6 +989,10 @@ span.warning {
     color: #606060;
 }
 
+.pimcore_object_panel_edit .x-toolbar-default {
+    padding: 2px 0 2px 8px;
+}
+
 .objectlayout_element_accordion .x-accordion-item, .objectlayout_element_text  {
     border: 1px solid #d0d0d0;
 }
@@ -1128,6 +1015,115 @@ span.warning {
     border-color: #d0d0d0 !important;
 }
 
+
+.object_field {
+    /*padding: 10px 0 10px 0 !important;*/
+}
+
+.object_field.x-hbox-form-item {
+    /* right margin for items withing a fieldcontainer with layout "hbox" */
+    margin-right: 10px;
+}
+
+.object_field_panel {
+    padding: 0;
+}
+
+.object_field_wrapper {
+    width: 95% !important;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #D0D0D0;
+}
+
+.object_field_wrapper_floating{
+    width: auto !important;
+    float:left;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    border-bottom: 1px solid #D0D0D0;
+}
+
+.object_field_setting_warning{
+    background:url("/pimcore/static6/img/icon/error.png") no-repeat scroll 0 0 transparent;
+    padding:2px 5px 2px 20px;
+    color: #999;
+
+}
+
+.pimcore_tag_wysiwyg {
+    position:relative;
+    padding: 10px;
+    min-height: 80px;
+    font: normal 12px tahoma, arial, helvetica, sans-serif;
+}
+
+.pimcore_tag_wysiwyg strong {
+    font-weight: bold !important;
+    font-style: inherit;
+}
+
+.pimcore_tag_wysiwyg em {
+    font-style: italic !important;
+    font-weight: inherit;
+}
+
+.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol {
+    list-style: inherit;
+    margin:inherit;
+    padding-left: 30px;
+}
+
+.pimcore_tag_wysiwyg ol {
+    list-style: decimal;
+}
+
+.pimcore_tag_wysiwyg ul {
+    list-style: disc;
+}
+
+.pimcore_tag_wysiwyg blockquote {
+    padding-left: 20px;
+    border-left: 3px solid #666666;
+}
+
+.pimcore_tag_wysiwyg h1 {
+    font-size: 28px;
+    font-weight: normal;
+}
+
+.pimcore_tag_wysiwyg h2 {
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.pimcore_tag_wysiwyg h3 {
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.pimcore_tag_wysiwyg h4 {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.pimcore_tag_wysiwyg h5 {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.pimcore_tag_wysiwyg table {
+    border-collapse: collapse;
+    border-top:1px solid #333333;
+    border-right:1px solid #333333;
+}
+
+.pimcore_tag_wysiwyg table td, .pimcore_tag_wysiwyg table th{
+    border-left:1px solid #333333;
+    border-bottom:1px solid #333333;
+    padding: 3px;
+}
 
 
 /* ------------------------------------------------------------------------------------------------------------- */
