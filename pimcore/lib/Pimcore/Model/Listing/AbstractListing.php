@@ -199,10 +199,14 @@ abstract class AbstractListing extends AbstractModel
      */
     public function addConditionParam($key, $value = null, $concatenator = 'AND')
     {
+        $ignore = true;
+        if( strpos($key, '?') !== false || strpos($key, ':') !== false ){
+            $ignore = false;
+        }
         $this->conditionParams[$key] = [
             'value' => $value,
             'concatenator' => $concatenator,
-            'ignore-value' => (strpos($key, '?') === false), // If there is not a placeholder, ignore value!
+            'ignore-value' => $ignore, // If there is not a placeholder, ignore value!
         ];
         return $this;
     }
