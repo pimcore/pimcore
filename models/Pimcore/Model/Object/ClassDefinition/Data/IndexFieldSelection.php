@@ -177,9 +177,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param float $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getDataFromEditmode($data, $object = null) {
+    public function getDataFromEditmode($data, $object = null, $params = array()) {
         if($data["field"]) {
 
             if(is_array($data['preSelect'])) {
