@@ -503,11 +503,9 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             $containerName = $context["fieldname"];
 
             $sql = $db->quoteInto("o_id = ?", $objectId) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . $index . "/%" )
+                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . $index . "/%")
                 . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
                 . " AND " . $db->quoteInto("position = ?", $position);
-
-
         } else {
             $sql = $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
                 . " AND " . $db->quoteInto("position = ?", $position);
@@ -583,7 +581,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
             $db->delete("object_metadata_" . $object->getClassId(),
                 $db->quoteInto("o_id = ?", $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . "$index . /%" )
+                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . "$index . /%")
                 . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
             );
         } else {

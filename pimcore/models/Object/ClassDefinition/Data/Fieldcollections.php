@@ -274,7 +274,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
             );
 
             $container->save($object, $params);
-
         }
     }
 
@@ -791,7 +790,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                                 // defer creation
                                 $fd->classSaved($class);
                             }
-
                         }
                     }
                 }
@@ -862,5 +860,4 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $this->collapsible = $collapsible;
     }
-
 }
