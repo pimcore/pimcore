@@ -204,9 +204,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getVersionPreview($data) {
+    public function getVersionPreview($data, $object = null, $params = array()) {
         if($data instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return $data->getTenant() . " " . $data->getField() . " " . $data->getPreSelect();
         }
@@ -233,9 +235,10 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
      * converts object data to a simple string value or CSV Export
      * @abstract
      * @param \Pimcore\Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getForCsvExport($object) {
+    public function getForCsvExport($object, $params = array()) {
 
         $key = $this->getName();
         $getter = "get".ucfirst($key);
