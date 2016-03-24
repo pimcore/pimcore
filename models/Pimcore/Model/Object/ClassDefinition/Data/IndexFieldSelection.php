@@ -118,9 +118,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null) {
+    public function getDataForResource($data, $object = null, $params = array()) {
         if ($data instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return array(
                 $this->getName() . "__tenant" => $data->getTenant(),
@@ -139,9 +141,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataFromResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getDataFromResource($data) {
+    public function getDataFromResource($data, $object = null, $params = array()) {
         if($data[$this->getName() . "__field"]) {
             return new \Pimcore\Model\Object\Data\IndexFieldSelection($data[$this->getName() . "__tenant"], $data[$this->getName() . "__field"], $data[$this->getName() . "__preSelect"]);
         }
@@ -151,18 +155,22 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null) {
-        return $this->getDataForResource($data);
+    public function getDataForQueryResource($data, $object = null, $params = array()) {
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getDataForEditmode($data, $object = null) {
+    public function getDataForEditmode($data, $object = null, $params = array()) {
         if ($data instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return array(
                 "tenant" => $data->getTenant(),
@@ -244,9 +252,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * fills object field data values from CSV Import String
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return double
      */
-    public function getFromCsvImport($importValue) {
+    public function getFromCsvImport($importValue, $object = null, $params = array()) {
         $values = explode("%%%%", $importValue);
 
         $value = null;
@@ -261,9 +271,10 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
+    public function getForWebserviceExport ($object, $params = array()) {
 
         $key = $this->getName();
         $getter = "get".ucfirst($key);
@@ -280,9 +291,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * converts data to be imported via webservices
      * @param mixed $value
+     * @param mixed $relatedObject
+     * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport ($value, $relatedObject = null, $params = array(), $idMapper = null) {
         if(empty($value)){
             return null;
         }else if($value["field"] !== null) {
@@ -294,9 +307,11 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
 
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed() {
+    public function isDiffChangeAllowed($object, $params = array()) {
         return false;
     }
 
