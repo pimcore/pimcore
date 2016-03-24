@@ -161,9 +161,11 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param Object\Data\Geobounds $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Geobounds) {
             return $data->getNorthEast()->getLongitude() . "," . $data->getNorthEast()->getLatitude() . " " . $data->getSouthWest()->getLongitude() . "," . $data->getSouthWest()->getLatitude();

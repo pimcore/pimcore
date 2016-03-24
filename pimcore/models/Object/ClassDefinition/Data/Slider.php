@@ -283,9 +283,11 @@ class Slider extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param float $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         return $data;
     }

@@ -294,9 +294,11 @@ class Password extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         return "******";
     }
@@ -373,7 +375,7 @@ class Password extends Model\Object\ClassDefinition\Data
         $diffdata["type"] = $this->fieldtype;
 
         if ($data) {
-            $diffdata["value"] = $this->getVersionPreview($data);
+            $diffdata["value"] = $this->getVersionPreview($data, $object, $params);
             // $diffdata["value"] = $data;
         }
 

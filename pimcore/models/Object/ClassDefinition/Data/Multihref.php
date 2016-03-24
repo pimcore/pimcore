@@ -408,9 +408,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param array $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $e) {
@@ -776,7 +778,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         $value["html"] = "";
 
         if ($data) {
-            $html = $this->getVersionPreview($data);
+            $html = $this->getVersionPreview($data, $object, $params);
             $value["html"] = $html;
         }
         return $value;

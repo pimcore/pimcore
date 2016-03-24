@@ -290,9 +290,11 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param Asset\Image $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getImage()->getId() . '/width/100/height/100/aspectratio/true" />';

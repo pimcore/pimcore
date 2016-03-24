@@ -901,9 +901,11 @@ abstract class Data
 
     /**
      * @param $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         return "no preview";
     }
@@ -978,7 +980,7 @@ abstract class Data
         if (method_exists($this, "getDiffVersionPreview")) {
             $value = $this->getDiffVersionPreview($data, $object, $params);
         } else {
-            $value = $this->getVersionPreview($data);
+            $value = $this->getVersionPreview($data, $object, $params);
         }
 
         $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;

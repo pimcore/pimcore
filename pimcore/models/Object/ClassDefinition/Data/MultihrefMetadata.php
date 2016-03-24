@@ -271,9 +271,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param array $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {

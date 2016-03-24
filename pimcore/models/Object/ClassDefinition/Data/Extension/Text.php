@@ -55,9 +55,11 @@ trait Text
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         // remove all <script> tags, to prevent XSS in the version preview
         // this should normally be filtered in the project specific controllers/action (/website folder) but just to be sure

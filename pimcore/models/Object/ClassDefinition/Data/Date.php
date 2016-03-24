@@ -166,9 +166,11 @@ class Date extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param \Zend_Date|\DateTime $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         if ($data instanceof \Zend_Date) {
             return $data->get(\Zend_Date::DATE_MEDIUM);
@@ -326,7 +328,7 @@ class Date extends Model\Object\ClassDefinition\Data
         $diffdata["field"] = $this->getName();
         $diffdata["key"] = $this->getName();
         $diffdata["type"] = $this->fieldtype;
-        $diffdata["value"] = $this->getVersionPreview($data);
+        $diffdata["value"] = $this->getVersionPreview($data, $object, $params);
         $diffdata["data"] = $thedata;
         $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;
         $diffdata["disabled"] = false;

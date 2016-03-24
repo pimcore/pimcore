@@ -327,9 +327,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param Document | Asset | Object\AbstractObject $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         if ($data instanceof Element\ElementInterface) {
             return $data->getFullPath();

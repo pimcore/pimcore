@@ -260,9 +260,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         // this is handled directly in the template
         // /pimcore/modules/admin/views/scripts/object/preview-version.php

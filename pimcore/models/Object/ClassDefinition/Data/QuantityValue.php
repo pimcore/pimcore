@@ -233,9 +233,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param float $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         if ($data instanceof \Pimcore\Model\Object\Data\QuantityValue) {
             return $data->getValue() . " " . $data->getUnit()->getAbbreviation();

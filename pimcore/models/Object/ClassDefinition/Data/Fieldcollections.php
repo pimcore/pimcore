@@ -196,9 +196,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         return "FIELDCOLLECTIONS";
     }
@@ -692,7 +694,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $title = !empty($fd->title) ? $fd->title : $fd->getName();
                     $html .= "<tr><td>&nbsp;</td><td>" . $title . "</td><td>";
-                    $html .= $fd->getVersionPreview($item->{$fd->getName()});
+                    $html .= $fd->getVersionPreview($item->{$fd->getName()}, $object, $params);
                     $html .= "</td></tr>";
                 }
             }

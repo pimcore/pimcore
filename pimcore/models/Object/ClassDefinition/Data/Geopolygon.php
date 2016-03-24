@@ -131,9 +131,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
+     * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data)
+    public function getVersionPreview($data, $object = null, $params = array())
     {
         return "";
     }
