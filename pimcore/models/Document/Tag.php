@@ -349,9 +349,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      *
      * @abstract
      * @param  Webservice\Data\Document\Element $wsElement
+     * @param mixed $params
      * @return void
      */
-    public function getFromWebserviceImport($wsElement)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
     {
         return $wsElement;
     }
@@ -359,11 +360,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * Returns the current tag's data for web service export
-     *
+     * @param mixed $params
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport()
+    public function getForWebserviceExport($document = null, $params = array())
     {
         $keys = get_object_vars($this);
 

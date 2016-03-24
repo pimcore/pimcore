@@ -166,7 +166,7 @@ class Dao extends Model\Dao\AbstractDao
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $value = $fd->unmarshal($value, $object);
 
-            $value = $fd->getDataFromResource($value);
+            $value = $fd->getDataFromResource($value, $object);
 
 
             $language = $item["language"];

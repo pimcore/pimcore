@@ -64,9 +64,10 @@ class Date extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param \Zend_Date|\DateTime $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return integer
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data) {
             return $data->getTimestamp();
@@ -76,9 +77,11 @@ class Date extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param integer $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return \Zend_Date|\DateTime
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if ($data) {
             return $this->getDateFromTimestamp($data);
@@ -90,9 +93,10 @@ class Date extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param \Zend_Date|\DateTime $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return integer
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
         if ($data) {
             return $data->getTimestamp();
@@ -103,9 +107,10 @@ class Date extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param \Zend_Date\DateTime $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data) {
             return $data->getTimestamp();
@@ -146,9 +151,10 @@ class Date extends Model\Object\ClassDefinition\Data
     /**
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return int|null|string
      */
-    public function getDataForGrid($data, $object = null)
+    public function getDataForGrid($data, $object = null, $params = array())
     {
         if ($data) {
             return $data->getTimestamp();
@@ -221,9 +227,11 @@ class Date extends Model\Object\ClassDefinition\Data
 
     /**
      * @param string $importValue
-     * @return null|\Pimcore\Date|Object\ClassDefinition\Object\ClassDefinition\Data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return null|\Pimcore\Date|Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $timestamp = strtotime($importValue);
         if ($timestamp) {
@@ -236,21 +244,23 @@ class Date extends Model\Object\ClassDefinition\Data
     /**
      * converts data to be exposed via webservices
      * @param Object\Concrete $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        return $this->getForCsvExport($object);
+        return $this->getForCsvExport($object, $params);
     }
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         $timestamp = strtotime($value);
         if (empty($value)) {
@@ -273,9 +283,11 @@ class Date extends Model\Object\ClassDefinition\Data
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -283,9 +295,10 @@ class Date extends Model\Object\ClassDefinition\Data
     /** See parent class.
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return null|\Pimcore\Date
      */
-    public function getDiffDataFromEditmode($data, $object = null)
+    public function getDiffDataFromEditmode($data, $object = null, $params = array())
     {
         $thedata = $data[0]["data"];
         if ($thedata) {
@@ -298,9 +311,10 @@ class Date extends Model\Object\ClassDefinition\Data
     /** See parent class.
      * @param mixed $data
      * @param null $object
+     * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null)
+    public function getDiffDataForEditMode($data, $object = null, $params = array())
     {
         $result = array();
 

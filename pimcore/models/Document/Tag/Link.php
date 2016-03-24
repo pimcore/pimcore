@@ -324,11 +324,12 @@ class Link extends Model\Document\Tag
     }
 
     /**
-     * @param Document\Webservice\Data\Document\Element $wsElement
+     * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
     {
         if ($wsElement->value->data instanceof \stdClass) {
             $wsElement->value->data = (array) $wsElement->value->data;
@@ -375,13 +376,13 @@ class Link extends Model\Document\Tag
 
     /**
      * Returns the current tag's data for web service export
-     *
+     * @param mixed $params
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport()
+    public function getForWebserviceExport($document = null, $params = array())
     {
-        $el = parent::getForWebserviceExport();
+        $el = parent::getForWebserviceExport($document, $params);
         if ($this->data["internal"]) {
             if (intval($this->data["internalId"]) > 0) {
                 if ($this->data["internalType"] == "document") {

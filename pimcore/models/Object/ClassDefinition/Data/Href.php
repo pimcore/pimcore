@@ -222,9 +222,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param Asset | Document | Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return array
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data instanceof Element\ElementInterface) {
             $type =  Element\Service::getType($data);
@@ -243,14 +244,12 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Asset|Document|Object\AbstractObject
      */
-    public function getDataFromResource($data, $notRelationTable = false)
+    public function getDataFromResource($data, $object = null, $params = array(), $notRelationTable = false)
     {
-        if ($notRelationTable) {
-            return Element\Service::getElementById($data[$this->getName()."__type"], $data[$this->getName()."__id"]);
-        }
-        
         // data from relation table
         $data = is_array($data) ? $data : array();
         $data = current($data);
@@ -266,11 +265,12 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param Asset|Document|Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return array
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        $rData = $this->getDataForResource($data, $object);
+        $rData = $this->getDataForResource($data, $object, $params);
 
         $return = array();
         $return[$this->getName() . "__id"] = $rData[0]["dest_id"];
@@ -283,9 +283,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param Asset|Document|Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return array
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data instanceof Element\ElementInterface) {
             $r = array(
@@ -316,7 +317,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
 
-    public function getDataForGrid($data, $object = null)
+    public function getDataForGrid($data, $object = null, $params = array())
     {
         if ($data instanceof Element\ElementInterface) {
             return $data->getFullPath();
@@ -404,9 +405,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed|null|Asset|Document|Element\ElementInterface
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $value = null;
 
@@ -471,11 +474,12 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
             return array(
                 "type" => Element\Service::getType($data),
@@ -490,11 +494,12 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @param mixed $value
      * @param null $relatedObject
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
     {
         if (empty($value)) {
             return null;
@@ -599,9 +604,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }

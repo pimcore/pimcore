@@ -224,9 +224,10 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         return (float) $data;
     }
@@ -234,9 +235,11 @@ class Slider extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         return (float) $data;
     }
@@ -245,9 +248,10 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
         return $data;
     }
@@ -256,11 +260,12 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -272,7 +277,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = array())
     {
-        return $this->getDataFromResource($data);
+        return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
@@ -305,9 +310,11 @@ class Slider extends Model\Object\ClassDefinition\Data
 
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }

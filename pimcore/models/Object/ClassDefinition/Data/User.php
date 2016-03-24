@@ -30,9 +30,11 @@ class User extends Model\Object\ClassDefinition\Data\Select
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if (!empty($data)) {
             try {
@@ -48,9 +50,10 @@ class User extends Model\Object\ClassDefinition\Data\Select
     /**
      * @param string $data
      * @param null $object
+     * @param mixed $params
      * @return null|string
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if (!empty($data)) {
             try {

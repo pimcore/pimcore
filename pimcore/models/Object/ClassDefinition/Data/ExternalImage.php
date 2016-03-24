@@ -119,9 +119,10 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
@@ -132,9 +133,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         return new Model\Object\Data\ExternalImage($data);
     }
@@ -143,20 +146,22 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
@@ -209,9 +214,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         return new Model\Object\Data\ExternalImage($importValue);
     }
@@ -220,32 +227,36 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        return $this->getForCsvExport($object);
+        return $this->getForCsvExport($object, $params);
     }
 
 
     /**
      * @param mixed $value
      * @param null $relatedObject
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
     {
-        return $this->getFromCsvImport($value);
+        return $this->getFromCsvImport($value, $relatedObject, $params);
     }
 
 
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -254,9 +265,10 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
      * a image URL. See the ObjectMerger plugin documentation for details
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null)
+    public function getDiffVersionPreview($data, $object = null, $params = array())
     {
         if ($data) {
             return '<img style="max-width:200px;max-height:200px" src="' . $data  . '" />';

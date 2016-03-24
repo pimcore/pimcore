@@ -221,7 +221,13 @@ class Multihref extends Model\Document\Tag implements \Iterator
         $this->setElements();
     }
 
-    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    /**
+     * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param mixed $params
+     * @param null $idMapper
+     * @throws \Exception
+     */
+    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
     {
         // currently unsupported
         return array();

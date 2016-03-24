@@ -238,9 +238,10 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if (is_numeric($data)) {
             return $data;
@@ -251,9 +252,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if (is_numeric($data)) {
             return $this->toNumeric($data);
@@ -265,22 +268,24 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -292,7 +297,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = array())
     {
-        return $this->getDataFromResource($data);
+        return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
@@ -364,18 +369,22 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * fills object field data values from CSV Import String
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $value = $this->toNumeric(str_replace(",", ".", $importValue));
         return $value;
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }

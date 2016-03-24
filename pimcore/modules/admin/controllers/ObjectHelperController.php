@@ -609,7 +609,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $value = $data[$mapping[$key]];
                 if (array_key_exists($key, $mapping) and  $value != null) {
                     // data mapping
-                    $value = $field->getFromCsvImport($value);
+                    $value = $field->getFromCsvImport($value, $object);
 
                     if ($value !== null) {
                         $object->setValue($key, $value);

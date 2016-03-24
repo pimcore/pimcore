@@ -98,9 +98,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         $fieldData = array();
         $metaData = array();
@@ -116,7 +117,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             foreach ($data as $key => &$value) {
                 $fieldDefinition = $this->getFielddefinition($key);
                 if (!$fieldDefinition instanceof CalculatedValue) {
-                    $value = $fieldDefinition->getDataForEditmode($value, $object);
+                    $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
                 }
             }
         }
@@ -131,7 +132,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     foreach ($validLanguages as $language) {
                         $childData = new Object\Data\CalculatedValue($childDef->getName());
                         $childData->setContextualData("localizedfield", $this->getName(), null, $language);
-                        $childData = $childDef->getDataForEditmode($childData, $object);
+                        $childData = $childDef->getDataForEditmode($childData, $object, $params);
                         $result["data"][$language][$childDef->getName()] = $childData;
                     }
                 }
@@ -240,9 +241,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return \stdClass
      */
-    public function getDataForGrid($data, $object = null)
+    public function getDataForGrid($data, $object = null, $params = array())
     {
         $result = new \stdClass();
         foreach ($this->getFieldDefinitions() as $fd) {
@@ -281,18 +283,21 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return null
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         return;
     }
 
     /**
      * @param $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForSearchIndex($object)
+    public function getDataForSearchIndex($object, $params = array())
     {
         $dataString = "";
         $lfData = $this->getDataFromObjectParam($object);
@@ -312,9 +317,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * @param Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
         $data = $object->{$this->getName()};
         $wsData = array();
@@ -358,7 +364,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     $el = new Model\Webservice\Data\Object\Element();
                     $el->name = $fd->getName();
                     $el->type = $fd->getFieldType();
-                    $el->value = $fd->getForWebserviceExport($object);
+                    $el->value = $fd->getForWebserviceExport($object, $params);
                     if ($el->value ==  null && self::$dropNullValues) {
                         continue;
                     }
@@ -377,11 +383,12 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param mixed $value
      * @param null $object
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|null|Object\Localizedfield
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         if (is_array($value)) {
             $validLanguages = Tool::getValidLanguages();
@@ -445,7 +452,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     throw new \Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
                 }
 
-                $localizedFields->setLocalizedValue($field->name, $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $idMapper), $field->language);
+                $localizedFields->setLocalizedValue($field->name, $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $params, $idMapper), $field->language);
             }
 
             return $localizedFields;
@@ -921,9 +928,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /** See parent class.
      * @param mixed $data
      * @param null $object
+     * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditmode($data, $object = null)
+    public function getDiffDataForEditmode($data, $object = null, $params = array())
     {
         $return = array();
 
@@ -937,7 +945,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             foreach ($this->getFieldDefinitions() as $fd) {
                 $fieldname = $fd->getName();
 
-                $subdata = $fd->getDiffDataForEditmode($values[$fieldname], $object);
+                $subdata = $fd->getDiffDataForEditmode($values[$fieldname], $object, $params);
 
                 foreach ($subdata as $item) {
                     $diffdata["field"] = $this->getName();
@@ -969,12 +977,13 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /** See parent class.
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return null|Pimcore_Date
      */
 
-    public function getDiffDataFromEditmode($data, $object = null)
+    public function getDiffDataFromEditmode($data, $object = null, $params = array())
     {
-        $localFields = $this->getDataFromObjectParam($object);
+        $localFields = $this->getDataFromObjectParam($object, $params);
         $localData = array();
 
         // get existing data
@@ -1005,7 +1014,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($mapping as $language => $fields) {
             foreach ($fields as $key => $value) {
                 $fd = $this->getFielddefinition($key);
-                if ($fd & $fd->isDiffChangeAllowed()) {
+                if ($fd & $fd->isDiffChangeAllowed($object)) {
                     if ($value == null) {
                         unset($localData[$language][$key]);
                     } else {
@@ -1021,9 +1030,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }

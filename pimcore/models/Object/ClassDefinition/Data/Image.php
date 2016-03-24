@@ -106,9 +106,10 @@ class Image extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return integer|null
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data instanceof Asset) {
             return $data->getId();
@@ -119,9 +120,11 @@ class Image extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param integer $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Asset
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if (intval($data) > 0) {
             return Asset\Image::getById($data);
@@ -133,9 +136,10 @@ class Image extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return integer|null
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
         if ($data instanceof Asset) {
             return $data->getId();
@@ -147,11 +151,12 @@ class Image extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return integer
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -163,7 +168,7 @@ class Image extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = array())
     {
-        return $this->getDataFromResource($data);
+        return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
@@ -197,9 +202,11 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed|null|Asset
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $value = null;
         if ($el = Asset::getByPath($importValue)) {
@@ -251,11 +258,12 @@ class Image extends Model\Object\ClassDefinition\Data
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset) {
             return  $data->getId();
         }
@@ -265,11 +273,12 @@ class Image extends Model\Object\ClassDefinition\Data
     /**
      * @param mixed $value
      * @param null $relatedObject
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
     {
         $id = $value;
 
@@ -311,9 +320,11 @@ class Image extends Model\Object\ClassDefinition\Data
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -322,9 +333,10 @@ class Image extends Model\Object\ClassDefinition\Data
      * a image URL. See the ObjectMerger plugin documentation for details
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null)
+    public function getDiffVersionPreview($data, $object = null, $params = array())
     {
         $versionPreview = null;
         if ($data instanceof Asset\Image) {

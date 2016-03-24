@@ -253,11 +253,12 @@ class Renderlet extends Model\Document\Tag
     }
 
     /**
-     * @param Document\Webservice\Data\Document\Element $wsElement
+     * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->id !==null) {

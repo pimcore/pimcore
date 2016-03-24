@@ -134,10 +134,11 @@ class Date extends Model\Document\Tag
     * Receives a Webservice\Data\Document\Element from webservice import and fill the current tag's data
     *
     * @param  Model\Webservice\Data\Document\Element $wsElement
-     * @param $idMapper
+    * @param mixed $params
+    * @param $idMapper
     * @throws \Exception
     */
-    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
     {
         if (!$wsElement or empty($wsElement->value)) {
             $this->date = null;
@@ -150,11 +151,11 @@ class Date extends Model\Document\Tag
 
     /**
      * Returns the current tag's data for web service export
-     *
+     * @param mixed $params
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport()
+    public function getForWebserviceExport($document = null, $params = array())
     {
         if ($this->date) {
             return $this->date->getTimestamp();

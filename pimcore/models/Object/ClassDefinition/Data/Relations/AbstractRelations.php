@@ -285,7 +285,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         $db = Db::get();
 
         $data = $this->getDataFromObjectParam($object, $params);
-        $relations = $this->getDataForResource($data, $object);
+        $relations = $this->getDataForResource($data, $object, $params);
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
@@ -357,7 +357,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             return ($a["index"] < $b["index"]) ? -1 : 1;
         });
 
-        $data = $this->getDataFromResource($relations);
+        $data = $this->getDataFromResource($relations, $object, $params);
 
         return $data;
     }

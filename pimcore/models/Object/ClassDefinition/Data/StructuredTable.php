@@ -223,9 +223,10 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         $resourceData = array();
         if (!empty($data)) {
@@ -245,9 +246,11 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Object\Data\StructuredTable
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         $structuredData = array();
         foreach ($this->getRows() as $r) {
@@ -264,20 +267,22 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         $editArray = array();
         if ($data instanceof Object\Data\StructuredTable) {
@@ -324,9 +329,10 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     /**
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return array|null
      */
-    public function getDataForGrid($data, $object = null)
+    public function getDataForGrid($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\StructuredTable) {
             if (!$data->isEmpty()) {
@@ -408,9 +414,11 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed|Object\Data\StructuredTable
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $dataArray = explode("##", $importValue);
 
@@ -430,12 +438,13 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
         $webserviceArray = array();
-        $table = $this->getDataFromObjectParam($object);
+        $table = $this->getDataFromObjectParam($object, $params);
 
         if ($table instanceof Object\Data\StructuredTable) {
             $dataArray = $table->getData();
@@ -455,11 +464,12 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     /**
      * @param mixed $value
      * @param null $object
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         if (empty($value)) {
             return null;
@@ -562,9 +572,11 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -572,11 +584,12 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     /** See parent class.
      * @param mixed $data
      * @param null $object
+     * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null)
+    public function getDiffDataForEditMode($data, $object = null, $params = array())
     {
-        $defaultData = parent::getDiffDataForEditMode($data, $object);
+        $defaultData = parent::getDiffDataForEditMode($data, $object, $params);
         $html =  $defaultData[0]["value"];
         $value = array();
         $value["html"] = $html;

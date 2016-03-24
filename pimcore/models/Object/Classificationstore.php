@@ -251,7 +251,7 @@ class Classificationstore extends Model\AbstractModel
             $data = new Model\Object\Data\CalculatedValue($this->getFieldname());
             $childDef = Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $data->setContextualData("classificationstore", $this->getFieldname(), null, $language, $groupId, $keyId, $childDef);
-            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($this->getObject(), $data);
+            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($this->getObject(), array(), $data);
             return $data;
         }
 

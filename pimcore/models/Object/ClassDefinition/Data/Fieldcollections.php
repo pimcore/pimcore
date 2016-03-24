@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -93,9 +93,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         $editmodeData = array();
         $idx = -1;
@@ -103,7 +104,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         if ($data instanceof Object\Fieldcollection) {
             foreach ($data as $item) {
                 $idx++;
-                
+
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
@@ -120,10 +121,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     if ($fd instanceof CalculatedValue) {
                         $data = new Object\Data\CalculatedValue($fd->getName());
                         $data->setContextualData("fieldcollection", $this->getName(), $idx, null,  null, null, $fd);
-                        $data = $fd->getDataForEditmode($data, $object);
+                        $data = $fd->getDataForEditmode($data, $object, $params);
                         $collectionData[$fd->getName()] = $data;
                     } else {
-                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object);
+                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object, $params);
                     }
                 }
 
@@ -216,18 +217,21 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return null
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         return;
     }
 
     /**
      * @param $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForSearchIndex($object)
+    public function getDataForSearchIndex($object, $params = array())
     {
         $dataString = "";
         $fcData = $this->getDataFromObjectParam($object);
@@ -244,7 +248,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $dataString .= $fd->getDataForSearchIndex($item) . " ";
+                    $dataString .= $fd->getDataForSearchIndex($item, $params) . " ";
                 }
             }
         }
@@ -270,6 +274,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
             );
 
             $container->save($object, $params);
+
         }
     }
 
@@ -338,11 +343,12 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         $wsData = array();
 
         if ($data instanceof Object\Fieldcollection) {
@@ -365,7 +371,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     $el = new Webservice\Data\Object\Element();
                     $el->name = $fd->getName();
                     $el->type = $fd->getFieldType();
-                    $el->value = $fd->getForWebserviceExport($item);
+                    $el->value = $fd->getForWebserviceExport($item, $params);
                     if ($el->value ==  null && self::$dropNullValues) {
                         continue;
                     }
@@ -381,12 +387,12 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param mixed $data
-     * @param null $object
-     * @param null $idMapper
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed|Object\Fieldcollection
      * @throws \Exception
      */
-    public function getFromWebserviceImport($data, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($data, $object = null, $params = array(), $idMapper = null)
     {
         $values = array();
         $count = 0;
@@ -419,7 +425,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                             if ($field->type != $fd->getFieldType()) {
                                 throw new \Exception("Type mismatch for fieldcollection field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                             }
-                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $idMapper);
+                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, array(), $idMapper);
                             break;
                         }
                     }
@@ -587,9 +593,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param $data
      * @param Object\Concrete $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForGrid($data, $object = null)
+    public function getDataForGrid($data, $object = null, $params = array())
     {
         return "NOT SUPPORTED";
     }
@@ -645,9 +652,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -657,9 +666,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * a image URL. See the ObjectMerger plugin documentation for details
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null)
+    public function getDiffVersionPreview($data, $object = null, $params = array())
     {
         $html = "";
         if ($data instanceof Object\Fieldcollection) {
@@ -702,9 +712,9 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @return mixed
      */
-    public function getDiffDataFromEditmode($data, $object = null)
+    public function getDiffDataFromEditmode($data, $object = null, $params = array())
     {
-        $result = parent::getDiffDataFromEditmode($data, $object);
+        $result = parent::getDiffDataFromEditmode($data, $object, $params);
         \Logger::debug("bla");
         return $result;
     }
@@ -781,6 +791,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                                 // defer creation
                                 $fd->classSaved($class);
                             }
+
                         }
                     }
                 }
@@ -851,4 +862,5 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $this->collapsible = $collapsible;
     }
+
 }

@@ -157,15 +157,17 @@ abstract class Data
      *
      * @param mixed $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    abstract public function getDataForEditmode($data, $object = null);
+    abstract public function getDataForEditmode($data, $object = null, $params = array());
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
      *
      * @param mixed $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
     abstract public function getDataFromEditmode($data, $object = null, $params = array());
@@ -211,39 +213,45 @@ abstract class Data
 
     /**
      * @param $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         return $importValue;
     }
 
     /**
      * @param $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForSearchIndex($object)
+    public function getDataForSearchIndex($object, $params = array())
     {
         // this is the default, but csv doesn't work for all data types
-        return $this->getForCsvExport($object);
+        return $this->getForCsvExport($object, $params);
     }
 
     /**
      * converts data to be exposed via webservices
      * @param Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        return $this->getDataFromObjectParam($object);
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
      * converts data to be imported via webservices
      * @param mixed $value
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         return $value;
     }
@@ -913,9 +921,11 @@ abstract class Data
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return false;
     }
@@ -927,11 +937,12 @@ abstract class Data
      *  - "data" => the data
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getDiffDataFromEditmode($data, $object = null)
+    public function getDiffDataFromEditmode($data, $object = null, $params = array())
     {
-        $thedata = $this->getDataFromEditmode($data[0]["data"], $object);
+        $thedata = $this->getDataFromEditmode($data[0]["data"], $object, $params);
         return $thedata;
     }
 
@@ -952,19 +963,20 @@ abstract class Data
      *
      * @param mixed $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return null|array
      */
-    public function getDiffDataForEditMode($data, $object = null)
+    public function getDiffDataForEditMode($data, $object = null, $params = array())
     {
         $diffdata = array();
-        $diffdata["data"] = $this->getDataForEditmode($data, $object);
+        $diffdata["data"] = $this->getDataForEditmode($data, $object, $params);
         $diffdata["disabled"] = !($this->isDiffChangeAllowed());
         $diffdata["field"] = $this->getName();
         $diffdata["key"] = $this->getName();
         $diffdata["type"] = $this->fieldtype;
 
         if (method_exists($this, "getDiffVersionPreview")) {
-            $value = $this->getDiffVersionPreview($data, $object);
+            $value = $this->getDiffVersionPreview($data, $object, $params);
         } else {
             $value = $this->getVersionPreview($data);
         }
@@ -1087,9 +1099,10 @@ abstract class Data
     /** Encode value for packing it into a single column.
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null)
+    public function marshal($value, $object = null, $params = array())
     {
         return array("value" => $value);
     }
@@ -1099,7 +1112,7 @@ abstract class Data
      * @param Model\Object\AbstractObject $object
      * @return mixed
      */
-    public function unmarshal($data, $object = null)
+    public function unmarshal($data, $object = null, $params = array())
     {
         if (is_array($data)) {
             return $data["value"];

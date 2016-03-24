@@ -76,7 +76,7 @@ class PageSnippet extends Model\Webservice\Data\Document
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
                 $tag = Model\Document\Tag::factory($element->type, $element->name, $this->id);
-                $tag->getFromWebserviceImport($element, $idMapper);
+                $tag->getFromWebserviceImport($element, $object, array(), $idMapper);
 
                 $object->elements[$element->name] = $tag;
             }

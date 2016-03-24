@@ -79,9 +79,9 @@ interface TagInterface
 
     /**
      * Returns the current tag's data for web service export
-     *
+     * @param mixed $params
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport();
+    public function getForWebserviceExport($document = null, $params = array());
 }

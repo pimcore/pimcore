@@ -1066,6 +1066,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         if (($this->getParam("task") == "publish" && $object->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $object->isAllowed("unpublish"))) {
             try {
+
                 if ($data) {
                     $this->performFieldcollectionModificationCheck($object, $originalModificationDate, $data);
                 }
@@ -1106,8 +1107,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
     }
 
-    public function performFieldcollectionModificationCheck(Object\Concrete $object, $originalModificationDate, $data)
-    {
+    public function performFieldcollectionModificationCheck(Object\Concrete $object,$originalModificationDate, $data) {
+
         $modificationDate = $this->getParam("modificationDate");
         if ($modificationDate != $originalModificationDate) {
             $fielddefinitions = $object->getClass()->getFieldDefinitions();
@@ -1121,8 +1122,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                             $childDefinitions = $fdDef->getFieldDefinitions();
                             foreach ($childDefinitions as $childDef) {
                                 if ($childDef instanceof Object\ClassDefinition\Data\Localizedfields) {
-                                    $this->_helper->json(array("success" => false, "message" => "Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again"));
-                                    ;
+                                    $this->_helper->json(array("success" => false, "message" => "Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again"));;
                                 }
                             }
                         }
@@ -1223,9 +1223,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $treeData = array();
                 $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
                 $this->_helper->json(array(
-                                    "success" => true,
-                                    "general" => array("o_modificationDate" => $object->getModificationDate() ),
-                                    "treeData" => $treeData)
+                        "success" => true,
+                        "general" => array("o_modificationDate" => $object->getModificationDate() ),
+                        "treeData" => $treeData)
                 );
             } catch (\Exception $e) {
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));

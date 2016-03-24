@@ -99,9 +99,10 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return integer|null
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Hotspotimage) {
             $imageId = null;
@@ -131,9 +132,11 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param Object\Data\Hotspotimage $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Asset
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         $imageId = $data[$this->getName() . "__image"];
         $image = Asset::getById($imageId);
@@ -186,20 +189,22 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return integer|null
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return integer
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Hotspotimage) {
             $imageId = null;
@@ -313,9 +318,11 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
     /**
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed|null|Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $value = null;
         $value = Serialize::unserialize(base64_decode($importValue));
@@ -419,24 +426,26 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        return $this->getForCsvExport($object);
+        return $this->getForCsvExport($object, $params);
     }
 
 
     /**
      * @param mixed $value
      * @param null $relatedObject
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
     {
-        $hotspotImage = $this->getFromCsvImport($value);
+        $hotspotImage = $this->getFromCsvImport($value, $relatedObject, $params);
         /** @var $hotspotImage Object\Data\Hotspotimage */
 
         if (!$hotspotImage) {
@@ -474,9 +483,10 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     /**
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return null
      */
-    public function getDataForGrid($data, $object = null)
+    public function getDataForGrid($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset) {
             return $data->getImage();

@@ -59,9 +59,10 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Geopoint) {
             return array(
@@ -78,9 +79,11 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if ($data[$this->getName() . "__longitude"] && $data[$this->getName() . "__latitude"]) {
             return new Object\Data\Geopoint($data[$this->getName() . "__longitude"], $data[$this->getName() . "__latitude"]);
@@ -92,20 +95,22 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Geopoint) {
             return array(
@@ -167,9 +172,11 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return null|Object\ClassDefinition\Data|Object\Data\Geopoint
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $coords = explode(",", $importValue);
 
@@ -185,11 +192,12 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
        /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         
         if ($data instanceof Object\Data\Geopoint) {
             return array(
@@ -203,12 +211,13 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         if (empty($value)) {
             return null;
@@ -223,9 +232,11 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }

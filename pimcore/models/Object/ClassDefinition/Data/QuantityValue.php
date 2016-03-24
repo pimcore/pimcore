@@ -151,9 +151,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataForResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data instanceof \Pimcore\Model\Object\Data\QuantityValue) {
             return array(
@@ -170,9 +172,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataFromResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if ($data[$this->getName() . "__value"] && $data[$this->getName() . "__unit"]) {
             return new  \Pimcore\Model\Object\Data\QuantityValue($data[$this->getName() . "__value"], $data[$this->getName() . "__unit"]);
@@ -183,9 +187,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
         return $this->getDataForResource($data);
     }
@@ -193,9 +199,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data instanceof  \Pimcore\Model\Object\Data\QuantityValue) {
             return array(
@@ -279,9 +287,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * fills object field data values from CSV Import String
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return double
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $values = explode("_", $importValue);
 
@@ -297,9 +307,10 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
        /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
         $key = $this->getName();
         $getter = "get".ucfirst($key);
@@ -318,9 +329,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      /**
      * converts data to be imported via webservices
      * @param mixed $value
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         if (empty($value)) {
             return null;
@@ -340,9 +353,10 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /** Encode value for packing it into a single column.
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null)
+    public function marshal($value, $object = null, $params = array())
     {
         if (is_array($value)) {
             return array(
@@ -360,9 +374,10 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /** See marshal
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function unmarshal($value, $object = null)
+    public function unmarshal($value, $object = null, $params = array())
     {
         if (is_array($value)) {
             return array(

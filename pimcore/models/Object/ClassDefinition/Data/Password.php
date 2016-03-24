@@ -139,9 +139,10 @@ class Password extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if (empty($data)) {
             return null;
@@ -245,9 +246,11 @@ class Password extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         return $data;
     }
@@ -256,20 +259,22 @@ class Password extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         return $data;
     }
@@ -296,7 +301,7 @@ class Password extends Model\Object\ClassDefinition\Data
         return "******";
     }
 
-    public function getDataForGrid($data, $object)
+    public function getDataForGrid($data, $object, $params = array())
     {
         return "******";
     }
@@ -308,29 +313,33 @@ class Password extends Model\Object\ClassDefinition\Data
      * fills object field data values from CSV Import String
      * @abstract
      * @param string $importValue
-     * @param Object\AbstractObject $abstract
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
-        return $this->getDataFromEditmode($importValue);
+        return $this->getDataFromEditmode($importValue, $object, $params);
     }
 
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
         //neither hash nor password is exported via WS
         return null;
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -338,10 +347,11 @@ class Password extends Model\Object\ClassDefinition\Data
     /** See parent class.
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return null|Pimcore_Date
      */
 
-    public function getDiffDataFromEditmode($data, $object = null)
+    public function getDiffDataFromEditmode($data, $object = null, $params = array())
     {
         return $data[0]["data"];
     }
@@ -350,13 +360,14 @@ class Password extends Model\Object\ClassDefinition\Data
     /** See parent class.
      * @param mixed $data
      * @param null $object
+     * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null)
+    public function getDiffDataForEditMode($data, $object = null, $params = array())
     {
         $diffdata = array();
         $diffdata["data"] = $data;
-        $diffdata["disabled"] = !($this->isDiffChangeAllowed());
+        $diffdata["disabled"] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata["field"] = $this->getName();
         $diffdata["key"] = $this->getName();
         $diffdata["type"] = $this->fieldtype;

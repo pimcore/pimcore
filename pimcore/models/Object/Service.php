@@ -1204,7 +1204,7 @@ class Service extends Model\Element\Service
      * @param $data Model\Object\Data\CalculatedValue
      * @return mixed|null
      */
-    public static function getCalculatedFieldValueForEditMode($object, $data)
+    public static function getCalculatedFieldValueForEditMode($object, $params = array(), $data)
     {
         if (!$data) {
             return;

@@ -53,9 +53,10 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         return Serialize::serialize($data);
     }
@@ -63,9 +64,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         return Serialize::unserialize($data);
     }
@@ -74,20 +77,22 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params     *
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if (!empty($data)) {
             if (is_array($data)) {
@@ -144,7 +149,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     {
         $data = $this->getDataFromObjectParam($object);
         if (!empty($data)) {
-            $dataArray = $this->getDataForEditmode($data);
+            $dataArray = $this->getDataForEditmode($data, $object, $params);
             $rows = array();
             if (is_array($dataArray)) {
                 foreach ($dataArray as $point) {
@@ -158,9 +163,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @param $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return array|mixed
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $rows = explode("|", $importValue);
         $points = array();
@@ -176,13 +183,14 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if (!empty($data)) {
-            return $this->getDataForEditmode($data, $object);
+            return $this->getDataForEditmode($data, $object, $params);
         } else {
             return null;
         }
@@ -190,12 +198,13 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         if (empty($value)) {
             return null;
@@ -216,9 +225,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -227,9 +238,10 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * a image URL. See the ObjectMerger plugin documentation for details
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null)
+    public function getDiffVersionPreview($data, $object = null, $params = array())
     {
         if (!empty($data)) {
             $line = "";

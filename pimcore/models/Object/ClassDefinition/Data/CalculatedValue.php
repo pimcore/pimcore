@@ -120,9 +120,11 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataForResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         // nothing to do
     }
@@ -130,9 +132,11 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataFromResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         // nothing to do
     }
@@ -140,9 +144,11 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
         return $data;
     }
@@ -150,12 +156,14 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param float $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return float
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data instanceof Model\Object\Data\CalculatedValue) {
-            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($object, $data);
+            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($object, array(), $data);
         }
         return $data;
     }
@@ -163,6 +171,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param float $data
+     * @param null|Object\AbstractObject $object
      * @param mixed $params
      * @return float
      */
@@ -209,9 +218,11 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * fills object field data values from CSV Import String
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return double
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         // nothing to do
     }
@@ -220,9 +231,10 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
        /**
      * converts data to be exposed via webservices
      * @param string $object
+        * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
         //TODO
     }
@@ -230,9 +242,11 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      /**
      * converts data to be imported via webservices
      * @param mixed $value
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         // nothing to do
     }

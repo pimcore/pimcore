@@ -77,9 +77,10 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param boolean $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return int
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if (is_bool($data)) {
             $data = (int)$data;
@@ -92,9 +93,11 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param boolean $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return boolean
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if (!is_null($data)) {
             $data = (bool) $data;
@@ -106,22 +109,24 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param boolean $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return boolean
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param boolean $data
      * @param null|Object\AbstractObject $object
+     * @param mixed $params
      * @return boolean
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -136,7 +141,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
         if ($data === "false") {
             return false;
         }
-        return (bool)$this->getDataFromResource($data);
+        return (bool)$this->getDataFromResource($data, $object, $params);
     }
 
     /**
@@ -185,35 +190,40 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * fills object field data values from CSV Import String
      * @abstract
      * @param string $importValue
-     * @param Object\AbstractObject $abstract
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         return (bool)$importValue;
     }
 
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         return (bool) $data;
     }
 
     /**
      * converts data to be imported via webservices
      * @param mixed $value
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         return (bool)$value;
     }
 
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }

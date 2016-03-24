@@ -64,9 +64,10 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Object\ClassDefinition\Data::getDataForResource
      * @param Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null)
+    public function getDataForResource($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Geobounds) {
             return array(
@@ -87,9 +88,11 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string 
      */
-    public function getDataFromResource($data)
+    public function getDataFromResource($data, $object = null, $params = array())
     {
         if ($data[$this->getName() . "__NElongitude"] && $data[$this->getName() . "__NElatitude"] && $data[$this->getName() . "__SWlongitude"] && $data[$this->getName() . "__SWlatitude"]) {
             $ne = new Object\Data\Geopoint($data[$this->getName() . "__NElongitude"], $data[$this->getName() . "__NElatitude"]);
@@ -104,20 +107,22 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @see Object\ClassDefinition\Data::getDataForQueryResource
      * @param Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null)
+    public function getDataForQueryResource($data, $object = null, $params = array())
     {
-        return $this->getDataForResource($data, $object);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return array
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         if ($data instanceof Object\Data\Geobounds) {
             return array(
@@ -130,9 +135,9 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         return;
     }
 
-    public function getDataForGrid($data, $object = null)
+    public function getDataForGrid($data, $object = null, $params = array())
     {
-        return $this->getDataForEditmode($data, $object);
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
@@ -187,9 +192,11 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @param string $importValue
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return null|Object\ClassDefinition\Data|Object\Data\Geobounds
      */
-    public function getFromCsvImport($importValue)
+    public function getFromCsvImport($importValue, $object = null, $params = array())
     {
         $points = explode("|", $importValue);
         $value = null;
@@ -208,11 +215,12 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Geobounds) {
             return array(
                 "NElongitude" => $data->getNorthEast()->getLongitude(),
@@ -227,7 +235,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|void
      * @throws \Exception
@@ -249,9 +258,11 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /** True if change is allowed in edit mode.
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }

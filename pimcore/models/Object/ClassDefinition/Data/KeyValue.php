@@ -323,9 +323,10 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param Object\Data\KeyValue $data
      * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
      * @return tbd
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $params = array())
     {
         $result = array();
         if (!$data) {
@@ -412,9 +413,11 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param string $object
+     * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed()
+    public function isDiffChangeAllowed($object, $params = array())
     {
         return true;
     }
@@ -422,10 +425,11 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     /**
      * @param $data
      * @param null $object
+     * @param mixed $params
      * @return mixed|Object\Data\KeyValue
      * @throws \Exception
      */
-    public function getDiffDataFromEditmode($data, $object = null)
+    public function getDiffDataFromEditmode($data, $object = null, $params = array())
     {
         $result = array();
 
@@ -435,17 +439,18 @@ class KeyValue extends Model\Object\ClassDefinition\Data
                 $result[] = $pair["data"];
             }
         }
-        $dataFromEditMode = $this->getDataFromEditmode($result, $object);
+        $dataFromEditMode = $this->getDataFromEditmode($result, $object, $params);
         return $dataFromEditMode;
     }
 
     /**
      * @param mixed $data
      * @param null $object
+     * @param mixed $params
      * @return array|null
      * @throws \Zend_Json_Exception
      */
-    public function getDiffDataForEditMode($data, $object = null)
+    public function getDiffDataForEditMode($data, $object = null, $params = array())
     {
         if (!$data) {
             return array();
@@ -494,7 +499,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
             if (!empty($keyDescription)) {
                 $diffdata["title"] = $keyDescription;
             }
-            $diffdata["disabled"] = !($this->isDiffChangeAllowed());
+            $diffdata["disabled"] = !($this->isDiffChangeAllowed($object));
             $result[] = $diffdata;
         }
 
@@ -504,11 +509,12 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     /**
      * converts data to be exposed via webservices
      * @param string $object
+     * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object)
+    public function getForWebserviceExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data) {
             $result = array();
             foreach ($data->arr as $item) {
@@ -534,11 +540,12 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     /**
      * @param mixed $value
      * @param null $relatedObject
+     * @param mixed $params
      * @param null $idMapper
      * @return mixed|Object\Data\KeyValue
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
     {
         if ($value) {
             $pairs = array();

@@ -96,11 +96,12 @@ class Multiselect extends Model\Document\Tag
     }
 
     /**
-     * @param Model\Document\Webservice\Data\Document\Element $wsElement
+     * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->values === null or is_array($data->values)) {
