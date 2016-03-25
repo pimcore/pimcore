@@ -3,10 +3,11 @@
 $db = Pimcore\Db::get();
 
 $db->query("CREATE TABLE `classificationstore_stores` (
-	`storeId` INT NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(255) NULL,
+	`storeId` INT(11) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
-	PRIMARY KEY (`storeId`)
+	PRIMARY KEY (`storeId`),
+	INDEX `name` (`name`)
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
