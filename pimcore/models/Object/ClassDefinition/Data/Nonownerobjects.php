@@ -39,7 +39,11 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      */
     public $ownerClassName;
 
-
+    /**
+     * @var number
+     */
+    public $ownerClassId;
+    
     /**
      * @var string
      */
@@ -107,6 +111,23 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
             }
         }
         return $this->ownerClassName;
+    }
+    
+    /**
+     * @return number
+     */
+    public function getOwnerClassId()
+    {
+   
+        if (empty($this->ownerClassId)) {
+            try {
+                $class = Object\ClassDefinition::getByName($this->ownerClassName);
+                $this->ownerClassId =  $class->getId();
+            } catch (\Exception $e) {
+                \Logger::error($e->getMessage());
+            }
+        }
+        return $this->ownerClassId;
     }
 
     /**
