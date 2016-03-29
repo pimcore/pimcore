@@ -2,11 +2,16 @@
 
 $db = Pimcore\Db::get();
 
+
+
+$db->query("DROP TABLE IF EXISTS `classificationstore_stores`;");
+
+
 $db->query("CREATE TABLE `classificationstore_stores` (
-	`storeId` INT(11) NOT NULL AUTO_INCREMENT,
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
-	PRIMARY KEY (`storeId`),
+	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
 )
 COLLATE='utf8_general_ci'

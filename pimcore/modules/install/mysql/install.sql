@@ -770,10 +770,10 @@ CREATE TABLE `website_settings` (
 
 DROP TABLE IF EXISTS `classificationstore_stores`;
 CREATE TABLE `classificationstore_stores` (
-	`storeId` INT(11) NOT NULL AUTO_INCREMENT,
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
-	PRIMARY KEY (`storeId`),
+	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
 )
 ENGINE=InnoDB;
