@@ -37,23 +37,7 @@ $db->query("ALTER TABLE `classificationstore_collections`
 	ADD INDEX `storeId` (`storeId`);
 ");
 
-$db->query("ALTER TABLE `classificationstore_relations`
-	ADD COLUMN `storeId` INT NOT NULL FIRST,
-	DROP PRIMARY KEY,
-	ADD PRIMARY KEY (`groupId`, `keyId`, `storeId`),
-	ADD INDEX `storeId` (`storeId`);
-");
-
-$db->query("ALTER TABLE `classificationstore_collectionrelations`
-	ADD COLUMN `storeId` INT NOT NULL FIRST,
-	DROP PRIMARY KEY,
-	ADD PRIMARY KEY (`colId`, `groupId`, `storeId`),
-	ADD INDEX `storeId` (`storeId`);
-");
-
 $db->query("UPDATE classificationstore_keys set storeId = 1");
 $db->query("UPDATE classificationstore_groups set storeId = 1");
 $db->query("UPDATE classificationstore_collections set storeId = 1");
-$db->query("UPDATE classificationstore_relations set storeId = 1");
-$db->query("UPDATE classificationstore_collectionrelations set storeId = 1");
 
