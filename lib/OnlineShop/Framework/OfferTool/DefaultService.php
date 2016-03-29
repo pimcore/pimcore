@@ -170,7 +170,7 @@ class DefaultService implements IService {
 
         $price = $this->priceTransformationHook($price);
 
-        if($price != $offerItem->getOriginalTotalPrice()) {
+        if((string)$price != (string)$offerItem->getOriginalTotalPrice()) {
             $offerItem->setOriginalTotalPrice($price);
             $offerItem->setFinalTotalPrice($price);
         }
