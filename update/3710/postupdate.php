@@ -19,7 +19,7 @@ ENGINE=InnoDB
 ;
 ");
 
-$db->query("INSERT INTO `pimcore`.`classificationstore_stores` (`storeId`, `name`, `description`) VALUES (1, 'Default', 'Default Store');");
+$db->query("INSERT INTO `pimcore`.`classificationstore_stores` (`id`, `name`, `description`) VALUES (1, 'Default', 'Default Store');");
 
 
 $db->query("ALTER TABLE `classificationstore_keys`
