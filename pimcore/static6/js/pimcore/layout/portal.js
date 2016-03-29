@@ -153,7 +153,7 @@ pimcore.layout.portal = Class.create({
                     }
                 });
 
-            });
+            }.bind(this));
 
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("layout_portal_" + this.key);

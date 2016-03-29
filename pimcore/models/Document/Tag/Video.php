@@ -384,6 +384,8 @@ class Video extends Model\Document\Tag
             } else {
                 return $this->getErrorCode("The given thumbnail doesn't exist: '" . $options["thumbnail"] . "'");
             }
+        } else {
+            return $this->getEmptyCode();
         }
     }
 

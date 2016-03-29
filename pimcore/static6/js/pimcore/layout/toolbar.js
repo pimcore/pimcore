@@ -1466,7 +1466,7 @@ pimcore.layout.toolbar = Class.create({
                 this.doBulkImport();
             }
         }.bind(this));
-   },
+    },
 
 
     doBulkImport: function() {

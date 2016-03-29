@@ -768,23 +768,36 @@ CREATE TABLE `website_settings` (
 	INDEX `siteId` (`siteId`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `classificationstore_stores`;
+CREATE TABLE `classificationstore_stores` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NULL DEFAULT NULL,
+	`description` LONGTEXT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `name` (`name`)
+)
+ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
 CREATE TABLE `classificationstore_groups` (
 	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`storeId` INT NULL DEFAULT NULL,
 	`parentId` BIGINT(20) NOT NULL DEFAULT '0',
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	INDEX `storeId` (`storeId`),
+	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
 	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`storeId` INT NULL DEFAULT NULL,
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
-  `title` VARCHAR(255) NOT NULL DEFAULT '',
+	`title` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` TEXT NULL,
 	`type` ENUM('input','textarea','wysiwyg','checkbox','numeric','slider','select','multiselect','date','datetime','language','languagemultiselect','country','countrymultiselect','table','quantityValue','calculatedValue') NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
@@ -794,17 +807,20 @@ CREATE TABLE `classificationstore_keys` (
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `enabled` (`enabled`),
-	INDEX `type` (`type`)
+	INDEX `type` (`type`),
+	INDEX `storeId` (`storeId`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
 CREATE TABLE `classificationstore_relations` (
+	`storeId` INT NOT NULL,
 	`groupId` BIGINT(20) NOT NULL,
 	`keyId` BIGINT(20) NOT NULL,
-  `sorter` INT(11) NULL DEFAULT NULL,
-	PRIMARY KEY (`groupId`, `keyId`),
+	`sorter` INT(11) NULL DEFAULT NULL,
+	PRIMARY KEY (`groupId`, `keyId`, `storeId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	INDEX `groupId` (`groupId`),
+	INDEX `storeId` (`storeId`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8;
@@ -812,11 +828,13 @@ CREATE TABLE `classificationstore_relations` (
 DROP TABLE IF EXISTS `classificationstore_collections`;
 CREATE TABLE `classificationstore_collections` (
 	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`storeId` INT NULL DEFAULT NULL,
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	INDEX `storeId` (`storeId`)
 ) DEFAULT CHARSET=utf8;
 
 

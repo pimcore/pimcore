@@ -136,12 +136,13 @@ pimcore.element.scheduler = Class.create({
                     mode: 'local'
                 }),renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
                     try {
-                        var rec = actionTypes.findRecord("name", value);
+                        var rec = actionTypes.findRecord("key", value);
                         if (rec) {
                             return rec.get("name");
                         }
                     }
                     catch (e) {
+                        console.log(e);
 
                     }
 
