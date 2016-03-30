@@ -369,6 +369,4 @@ class KeyConfig extends Model\AbstractModel
     {
         $this->storeId = $storeId;
     }
-
-
 }

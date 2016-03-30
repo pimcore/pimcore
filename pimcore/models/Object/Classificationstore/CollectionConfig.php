@@ -235,6 +235,4 @@ class CollectionConfig extends Model\AbstractModel
     {
         $this->storeId = $storeId;
     }
-
-
 }

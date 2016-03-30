@@ -135,5 +135,4 @@ class CollectionGroupRelation extends Model\AbstractModel
     {
         $this->sorter = $sorter;
     }
-
 }

@@ -274,6 +274,4 @@ class GroupConfig extends Model\AbstractModel
     {
         $this->storeId = $storeId;
     }
-
-
 }

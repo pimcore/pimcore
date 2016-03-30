@@ -1039,6 +1039,4 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     {
         $this->storeId = $storeId ? $storeId : 1;
     }
-
-
 }

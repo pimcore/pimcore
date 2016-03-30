@@ -578,7 +578,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         }
     }
 
-    public function listStoresAction() {
+    public function listStoresAction()
+    {
         $list = new Pimcore\Model\Object\Classificationstore\StoreConfig\Listing();
         $list = $list->load();
         return $this->_helper->json($list);
@@ -1034,7 +1035,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $this->_helper->json(array("success" => true));
     }
 
-    public function editStoreAction() {
+    public function editStoreAction()
+    {
         $id = $this->getParam("id");
         $data = json_decode($this->getParam("data"), true);
 
@@ -1063,7 +1065,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $this->_helper->json(array("success" => true));
     }
 
-    public function storetreeAction() {
+    public function storetreeAction()
+    {
         $result = array();
         $list = new Pimcore\Model\Object\Classificationstore\StoreConfig\Listing();
         $list = $list->load();
@@ -1089,5 +1092,4 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         return $this->_helper->json($result);
     }
-
 }

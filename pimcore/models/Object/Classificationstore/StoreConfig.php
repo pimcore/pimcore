@@ -164,5 +164,4 @@ class StoreConfig extends Model\AbstractModel
     {
         $this->id = $id;
     }
-
 }

@@ -118,7 +118,6 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      */
     public function getOwnerClassId()
     {
-   
         if (empty($this->ownerClassId)) {
             try {
                 $class = Object\ClassDefinition::getByName($this->ownerClassName);
