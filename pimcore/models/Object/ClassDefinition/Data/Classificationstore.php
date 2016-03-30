@@ -856,6 +856,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
     public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = array())
     {
+        if (!$object) {
+            return;
+        }
         $getter = "get" . ucfirst($this->getName());
         /** @var  $classificationStore Object\Classificationstore */
         $classificationStore = $object->$getter();
@@ -890,6 +893,10 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = array())
     {
+        if (!$object) {
+            return;
+        }
+
         $getter = "get" . ucfirst($this->getName());
         /** @var  $classificationStore Object\Classificationstore */
         $classificationStore = $object->$getter();
