@@ -109,6 +109,35 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
+    getGridColumnConfig:function (field) {
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                try {
+                    metaData.tdCls += " grid_value_inherited";
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
+            if (value) {
+                return value.value + " " + value.unit;
+            } else {
+                return "";
+            }
+
+        }.bind(this, field.key);
+
+        console.log(field);
+        return {
+            header:ts(field.label),
+            sortable:true,
+            dataIndex:field.key,
+            renderer:renderer
+        };
+    },
+
 
     getLayoutShow: function () {
 
