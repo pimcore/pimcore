@@ -266,7 +266,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 			// Load object data
 			Ext.Ajax.request({
 				url: "/admin/object/get/",
-				params: {id: id},
+				params: {id: id, lock: 0},
 				success: function(response) {
 					this.object = Ext.decode(response.responseText);
 				}.bind(this)

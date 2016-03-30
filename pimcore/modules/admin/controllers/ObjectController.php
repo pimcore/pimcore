@@ -274,14 +274,18 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     public function getAction()
     {
 
-        // check for lock
-        if (Element\Editlock::isLocked($this->getParam("id"), "object")) {
-            $this->_helper->json(array(
-                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "object")
-            ));
-        }
-        Element\Editlock::lock($this->getParam("id"), "object");
+        $lock = ($this->getParam("lock") != '' ? $this->getParam("lock") : true);
+        if ($lock){
 
+            // check for lock
+            if (Element\Editlock::isLocked($this->getParam("id"), "object")) {
+                $this->_helper->json(array(
+                    "editlock" => Element\Editlock::getByElement($this->getParam("id"), "object")
+                ));
+            }
+            Element\Editlock::lock($this->getParam("id"), "object");
+        }
+        
         $object = Object::getById(intval($this->getParam("id")));
         $object = clone $object;
 
