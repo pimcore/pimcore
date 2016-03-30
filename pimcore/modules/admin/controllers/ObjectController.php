@@ -178,7 +178,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         if ($child->getType() != "folder") {
             $tmpObject["published"] = $child->isPublished();
             $tmpObject["className"] = $child->getClass()->getName();
-
+            $tmpObject["previewUrl"] = $child->getClass()->getPreviewUrl();
 
             if (!$child->isPublished()) {
                 $tmpObject["cls"] .= "pimcore_unpublished ";
@@ -222,7 +222,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $tmpObject["loaded"] = true;
             }
         }
-
+        
+       
 
         return $tmpObject;
     }

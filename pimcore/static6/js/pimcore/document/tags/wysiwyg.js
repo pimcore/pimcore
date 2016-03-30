@@ -238,6 +238,28 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         
         if (data.elementType == "object") {
         	
+        	if (data.previewUrl){
+        		var link = '';
+        		if (data.previewUrl.indexOf('%o_key')){
+        			link = data.previewUrl.replace('%o_key', data.text);
+        		}else if (data.previewUrl.indexOf('%o_id')){
+        			link = data.previewUrl.replace('%o_id', data.id);
+        		}
+        		
+        		if (link != ''){
+        			insertEl = CKEDITOR.dom.element.createFromHtml('<a href="'+link+'" pimcore_type="object" pimcore_id="' + id + '">' + wrappedText + '</a>');
+            		this.ckeditor.insertElement(insertEl);
+            	   
+            		return true;
+        		}else{
+        			return false;
+        		}
+            	   
+        	}
+        }
+        /*
+        if (data.elementType == "object") {
+        	
         	// Load static routes
 			this.store = pimcore.helpers.grid.buildDefaultStore( 
 					'/admin/settings/staticroutes?',
@@ -269,6 +291,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 				params: {id: id, lock: 0},
 				success: function(response) {
 					this.object = Ext.decode(response.responseText);
+				
 				}.bind(this)
 			});
            
@@ -299,6 +322,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     	                       select: function(combo, records){
     	                    	   this.route = records.data;
     	                    	   Ext.getCmp('saveBtn').enable();
+    	                    	   
     	                       }.bind(this)
     	                       
     	                   }
@@ -379,7 +403,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     	           }]
     	    }).show();
         }
-
+		*/
     },
 
     checkValue: function () {
@@ -412,7 +436,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             return true;
         } else if (data.elementType=="asset" && data.type != "folder" ){
             return true;
-        } else if (data.elementType=="object" && data.type != "folder" ){
+        } else if (data.elementType=="object" && data.type != "folder" && data.previewUrl ){
             return true;
         }
 
