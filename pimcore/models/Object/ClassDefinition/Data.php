@@ -808,7 +808,7 @@ abstract class Data
         $code = "";
 
         $code .= '/**' . "\n";
-        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= "* @return \\Pimcore\\Model\\Object\\" . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";

@@ -34,7 +34,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = "array";
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Localizedfield";
 
     /**
      * @var array
