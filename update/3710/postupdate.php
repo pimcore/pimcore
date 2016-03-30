@@ -6,7 +6,6 @@ $db = Pimcore\Db::get();
 
 $db->query("DROP TABLE IF EXISTS `classificationstore_stores`;");
 
-
 $db->query("CREATE TABLE `classificationstore_stores` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NULL DEFAULT NULL,
@@ -19,7 +18,7 @@ ENGINE=InnoDB
 ;
 ");
 
-$db->query("INSERT INTO `pimcore`.`classificationstore_stores` (`id`, `name`, `description`) VALUES (1, 'Default', 'Default Store');");
+$db->query("INSERT INTO `classificationstore_stores` (`id`, `name`, `description`) VALUES (1, 'Default', 'Default Store');");
 
 
 $db->query("ALTER TABLE `classificationstore_keys`
