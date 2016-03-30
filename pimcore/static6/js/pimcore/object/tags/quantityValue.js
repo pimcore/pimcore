@@ -128,8 +128,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
 
         }.bind(this, field.key);
-
-        console.log(field);
+        
         return {
             header:ts(field.label),
             sortable:true,
