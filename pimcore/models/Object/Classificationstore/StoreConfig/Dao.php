@@ -12,14 +12,14 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-namespace Pimcore\Model\Object\Classificationstore\GroupConfig;
+namespace Pimcore\Model\Object\Classificationstore\StoreConfig;
 
 use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
 
-    const TABLE_NAME_GROUPS = "classificationstore_groups";
+    const TABLE_NAME_STORES = "classificationstore_stores";
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
@@ -33,12 +33,12 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_GROUPS . " WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_STORES . " WHERE id = ?", $this->model->getId());
 
         if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("GroupConfig with id: " . $this->model->getId() . " does not exist");
+            throw new \Exception("StoreConfig with id: " . $this->model->getd() . " does not exist");
         }
     }
 
@@ -53,25 +53,14 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $name = $this->model->getName();
-        $storeId = $this->model->getStoreId();
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_GROUPS . " WHERE name = ? and storeId = ?", array($name, $storeId));
+        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_STORES . " WHERE name = ?", $name);
 
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("Config with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception("StoreConfig with name: " . $this->model->getName() . " does not exist");
         }
-    }
-
-    public function hasChilds()
-    {
-        try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . self::TABLE_NAME_GROUPS . " where parentId= " . $this->model->id);
-        } catch (\Exception $e) {
-        }
-
-        return $amount;
     }
 
     /**
@@ -94,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::TABLE_NAME_GROUPS, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete(self::TABLE_NAME_STORES, $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -104,12 +93,11 @@ class Dao extends Model\Dao\AbstractDao
     {
         try {
             $ts = time();
-            $this->model->setModificationDate($ts);
 
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_GROUPS))) {
+                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_STORES))) {
                     if (is_bool($value)) {
                         $value = (int) $value;
                     }
@@ -121,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_GROUPS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update(self::TABLE_NAME_STORES, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
             return $this->model;
         } catch (\Exception $e) {
             throw $e;
@@ -136,10 +124,8 @@ class Dao extends Model\Dao\AbstractDao
     public function create()
     {
         $ts = time();
-        $this->model->setModificationDate($ts);
-        $this->model->setCreationDate($ts);
 
-        $this->db->insert(self::TABLE_NAME_GROUPS, array());
+        $this->db->insert(self::TABLE_NAME_STORES, array());
 
         $this->model->setId($this->db->lastInsertId());
 

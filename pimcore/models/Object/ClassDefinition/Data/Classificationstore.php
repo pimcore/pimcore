@@ -86,6 +86,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public $localized;
 
     /**
+     * @var integer
+     */
+    public $storeId;
+
+    /**
      * contains further localized field definitions if there are more than one localized fields in on class
      * @var array
      */
@@ -1018,4 +1023,22 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
         $this->allowedGroupIds = $parts;
     }
+
+    /**
+     * @return int
+     */
+    public function getStoreId()
+    {
+        return $this->storeId ? $this->storeId : 1;
+    }
+
+    /**
+     * @param int $storeId
+     */
+    public function setStoreId($storeId)
+    {
+        $this->storeId = $storeId ? $storeId : 1;
+    }
+
+
 }

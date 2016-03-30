@@ -1207,10 +1207,10 @@ pimcore.layout.toolbar = Class.create({
 
     editClassificationStoreConfig: function () {
         try {
-            pimcore.globalmanager.get("classifcationstore_config").activate();
+            pimcore.globalmanager.get("classificationstore_config").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("classifcationstore_config", new pimcore.object.classificationstore.configPanel());
+            pimcore.globalmanager.add("classificationstore_config", new pimcore.object.classificationstore.storeTree());
         }
     },
 

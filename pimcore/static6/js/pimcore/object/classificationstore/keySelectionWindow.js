@@ -14,11 +14,13 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
 
     acceptEvents: true,
 
-    initialize: function (parent, enableGroups, enableKeys, enableCollections) {
+    initialize: function (parent, enableGroups, enableKeys, enableCollections, storeId) {
         this.parent = parent;
         this.enableGroups = enableGroups;
         this.enableKeys = enableKeys;
         this.enableCollections = enableCollections;
+        this.storeId = storeId;
+
         if (enableGroups && !enableCollections) {
             this.isGroupSearch = true;
         }
@@ -355,15 +357,16 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             url: "/admin/classificationstore/" + postFix,
             reader: {
                 type: 'json',
-                rootProperty: 'data'
+                rootProperty: 'data',
+            },
+            extraParams: {
+                storeId: this.storeId
             }
         };
 
         if (this.object) {
-            proxy.extraParams = {
-                "oid": this.object.id,
-                "fieldname": this.fieldname
-            };
+            proxy.extraParams.oid = this.object.id;
+            proxy.extraParams.fieldname = this.fieldname;
         }
 
         this.store = new Ext.data.Store({

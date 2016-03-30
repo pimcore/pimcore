@@ -12,8 +12,8 @@
 pimcore.registerNS("pimcore.object.classificationstore.groupsPanel");
 pimcore.object.classificationstore.groupsPanel = Class.create({
 
-    initialize: function () {
-
+    initialize: function (storeConfig) {
+        this.storeConfig = storeConfig;
     },
 
     getPanel: function () {
@@ -63,6 +63,9 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 read    : url + "xaction=read",
                 update  : url + "xaction=update",
                 destroy : url + "xaction=destroy"
+            },
+            extraParams: {
+                storeId: this.storeConfig.id
             }
         };
 
@@ -141,7 +144,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         var gridConfig = {
             frame: false,
             store: this.relationsStore,
-            border: true,
+            border: false,
             columns: gridColumns,
             loadMask: true,
             bodyCls: "pimcore_editable_grid",
@@ -189,7 +192,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
     createGroupsGrid: function(response) {
-        this.groupsFields = ['id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate'];
+        this.groupsFields = ['storeId','id', 'parentId', 'name', 'description', 'creationDate', 'modificationDate'];
 
         var readerFields = [];
         for (var i = 0; i < this.groupsFields.length; i++) {
@@ -214,7 +217,11 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true'
+            },
+            extraParams: {
+                storeId: this.storeConfig.id
             }
+
         };
 
         var listeners = {};
@@ -240,6 +247,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var gridColumns = [];
 
+        //gridColumns.push({header: t("store"), width: 60, sortable: true, dataIndex: 'storeId', filter: 'string'});
         gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id', filter: 'string'});
         gridColumns.push({header: t("parent_id"), width: 160, sortable: true, dataIndex: 'parentId', hidden: true, editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
@@ -315,7 +323,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         var gridConfig = {
             frame: false,
             store: this.groupsStore,
-            border: true,
+            border: false,
             bodyCls: "pimcore_editable_grid",
             columns: gridColumns,
             loadMask: true,
@@ -367,7 +375,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
     },
 
     onAddKey: function() {
-        var window = new pimcore.object.classificationstore.keySelectionWindow(this, false, true, false);
+        var window = new pimcore.object.classificationstore.keySelectionWindow(this, false, true, false, this.storeConfig.id);
         window.show();
     },
 
@@ -383,7 +391,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             Ext.Ajax.request({
                 url: "/admin/classificationstore/create-group",
                 params: {
-                    name: value
+                    name: value,
+                    storeId: this.storeConfig.id
                 },
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
@@ -437,6 +446,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 colData.keyId = keyDef.id;
                 colData.keyName = keyDef.name;
                 colData.keyDescription = keyDef.description;
+                colData.storeId = this.storeConfig.id;
                 colData.groupId = this.groupId;
 
                 var tempId = this.groupId + "-" + colData.keyId;

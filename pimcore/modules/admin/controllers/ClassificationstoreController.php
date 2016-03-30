@@ -77,12 +77,14 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
     public function createGroupAction()
     {
         $name = $this->getParam("name");
+        $storeId = $this->getParam("storeId");
         $alreadyExist = false;
-        $config = Classificationstore\GroupConfig::getByName($name);
+        $config = Classificationstore\GroupConfig::getByName($name, $storeId);
 
 
         if (!$config) {
             $config = new Classificationstore\GroupConfig();
+            $config->setStoreId($storeId);
             $config->setName($name);
             $config->save();
         }
@@ -90,15 +92,36 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $this->_helper->json(array("success" => !$alreadyExist, "id" => $config->getName()));
     }
 
+    public function createStoreAction()
+    {
+        $name = $this->getParam("name");
+
+        $config = Classificationstore\StoreConfig::getByName($name);
+
+        if (!$config) {
+            $config = new Classificationstore\StoreConfig();
+            $config->setName($name);
+            $config->save();
+        } else {
+            throw new \Exception("Store with the given name exists");
+        }
+
+        $this->_helper->json(array("success" => true, "storeId" => $config->getId()));
+    }
+
+
+
     public function createCollectionAction()
     {
         $name = $this->getParam("name");
+        $storeId = $this->getParam("storeId");
         $alreadyExist = false;
-        $config = Classificationstore\CollectionConfig::getByName($name);
+        $config = Classificationstore\CollectionConfig::getByName($name, $storeId);
 
         if (!$config) {
             $config = new Classificationstore\CollectionConfig();
             $config->setName($name);
+            $config->setStoreId($storeId);
             $config->save();
         }
 
@@ -142,6 +165,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $config = Classificationstore\GroupConfig::getByName($id);
 
         $data = array(
+            "storeId" => $config->getStoreId(),
             "id" => $id,
             "name" => $config->getName(),
             "description" => $config->getDescription(),
@@ -226,13 +250,16 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
-            $condition = "";
+            $conditionParts = array();
             $db = Db::get();
 
             $searchfilter = $this->getParam("searchfilter");
             if ($searchfilter) {
-                $condition = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
+                $conditionParts[] = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
             }
+
+            $conditionParts[] = " (storeId = " . $this->getParam("storeId") . ")";
+            $condition = implode(" AND ", $conditionParts);
 
             if ($this->getParam("filter")) {
                 $filterString = $this->getParam("filter");
@@ -275,6 +302,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     $name = "EMPTY";
                 }
                 $item = array(
+                    "storeId" => $config->getStoreId(),
                     "id" => $config->getId(),
                     "name" => $name,
                     "description" => $config->getDescription()
@@ -357,13 +385,20 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
-            $condition = "";
+            $conditionParts = array();
             $db = Db::get();
 
             $searchfilter = $this->getParam("searchfilter");
             if ($searchfilter) {
-                $condition = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
+                $conditionParts[] = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
             }
+
+            if ($this->getParam("storeId")) {
+                $conditionParts[] = "(storeId = " . $this->getParam("storeId") . ")";
+            }
+
+            $condition = implode(" AND ", $conditionParts);
+
 
             if ($this->getParam("filter")) {
                 $filterString = $this->getParam("filter");
@@ -413,6 +448,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     $name = "EMPTY";
                 }
                 $item = array(
+                    "storeId" => $config->getStoreId(),
                     "id" => $config->getId(),
                     "name" => $name,
                     "description" => $config->getDescription()
@@ -542,6 +578,11 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         }
     }
 
+    public function listStoresAction() {
+        $list = new Pimcore\Model\Object\Classificationstore\StoreConfig\Listing();
+        $list = $list->load();
+        return $this->_helper->json($list);
+    }
 
 
 
@@ -690,8 +731,6 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $groupList = new Classificationstore\GroupConfig\Listing();
             $groupList->setCondition($groupCondition);
-//            $groupList->setOrderKey(array("sorter", "id"));
-//            $groupList->setOrder(array("ASC", "ASC"));
             $groupList = $groupList->load();
 
             $keyCondition = "groupId in (" . implode(",", $groupIdList) . ")";
@@ -847,13 +886,19 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
-            $condition = "";
+            $conditionParts = array();
             $db = \Pimcore\Db::get();
 
             $searchfilter = $this->getParam("searchfilter");
             if ($searchfilter) {
-                $condition = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
+                $conditionParts[] = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
             }
+
+            if ($this->getParam("storeId")) {
+                $conditionParts[] = "(storeId = " . $this->getParam("storeId") . ")";
+            }
+
+            $condition = implode(" AND ", $conditionParts);
 
             if ($this->getParam("filter")) {
                 $filterString = $this->getParam("filter");
@@ -926,6 +971,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         $groupDescription = null;
         $item = array(
+            "storeId" => $config->getStoreId(),
             "id" => $config->getId(),
             "name" => $name,
             "description" => $config->getDescription(),
@@ -954,6 +1000,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
     {
         $name = $this->getParam("name");
         $alreadyExist = false;
+        $storeId = $this->getParam("storeId");
 
         if (!$alreadyExist) {
             $definition = array(
@@ -966,6 +1013,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $config->setName($name);
             $config->setTitle($name);
             $config->setType("input");
+            $config->setStoreId($storeId);
             $config->setEnabled(1);
             $config->setDefinition(json_encode($definition));
             $config->save();
@@ -985,4 +1033,61 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         $this->_helper->json(array("success" => true));
     }
+
+    public function editStoreAction() {
+        $id = $this->getParam("id");
+        $data = json_decode($this->getParam("data"), true);
+
+        $name = $data["name"];
+        if (!$name) {
+            throw new \Exception("Name must not be empty");
+        }
+
+        $description = $data["description"];
+
+        $config = Classificationstore\StoreConfig::getByName($name);
+        if ($config && $config->getId() != $id) {
+            throw new \Exception("There is already a config with the same name");
+        }
+
+        $config = Classificationstore\StoreConfig::getById($id);
+
+        if (!$config) {
+            throw new \Exception("Configuration does not exist");
+        }
+
+        $config->setName($name);
+        $config->setDescription($description);
+        $config->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function storetreeAction() {
+        $result = array();
+        $list = new Pimcore\Model\Object\Classificationstore\StoreConfig\Listing();
+        $list = $list->load();
+        /** @var  $item Classificationstore\StoreConfig */
+        foreach ($list as $item) {
+            $resultItem = array(
+                "id" => $item->getId(),
+                "text" => $item->getName(),
+                "expandable" => false,
+                "leaf" => true,
+                "expanded" => true,
+                "description" => $item->getDescription(),
+                "iconCls" => "pimcore_icon_classificationstore"
+            );
+
+            $resultItem["qtitle"] = "ID: " . $item->getId();
+
+            if ($item->getDescription()) {
+            }
+            $resultItem["qtip"] = $item->getDescription() ? $item->getDescription() : " ";
+            $result[] = $resultItem;
+        }
+
+        return $this->_helper->json($result);
+    }
+
 }

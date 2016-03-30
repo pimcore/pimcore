@@ -12,8 +12,8 @@
 pimcore.registerNS("pimcore.object.classificationstore.collectionsPanel");
 pimcore.object.classificationstore.collectionsPanel = Class.create({
 
-    initialize: function () {
-
+    initialize: function (storeConfig) {
+        this.storeConfig = storeConfig;
     },
 
     getPanel: function () {
@@ -26,7 +26,10 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                 items: [
                     this.createCollectionsGrid(),
                     this.createRelationsGrid()
-                ]
+                ],
+                viewConfig: {
+                    forceFit: true
+                }
 
             });
         }
@@ -61,6 +64,9 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                 writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true'
+            },
+            extraParams: {
+                storeId: this.storeConfig.id
             }
         };
 
@@ -137,7 +143,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         var gridConfig = {
             frame: false,
             store: this.relationsStore,
-            border: true,
+            //border: true,
             columns: gridColumns,
             bodyCls: "pimcore_editable_grid",
             loadMask: true,
@@ -183,7 +189,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
 
     createCollectionsGrid: function(response) {
-        this.groupsFields = ['id', 'name', 'description', 'creationDate', 'modificationDate'];
+        this.groupsFields = ['storeId','id', 'name', 'description', 'creationDate', 'modificationDate'];
 
         var readerFields = [];
         for (var i = 0; i < this.groupsFields.length; i++) {
@@ -208,6 +214,9 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                 writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true'
+            },
+            extraParams: {
+                storeId: this.storeConfig.id
             }
         };
 
@@ -233,6 +242,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         var gridColumns = [];
 
+        //gridColumns.push({header: t("store"), flex: 60, sortable: true, dataIndex: 'storeId', filter: 'string'});
         gridColumns.push({header: "ID", flex: 60, sortable: true, dataIndex: 'id', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("description"), flex: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
@@ -306,7 +316,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         var gridConfig = {
             frame: false,
             store: this.collectionsStore,
-            border: true,
+            //border: true,
             columns: gridColumns,
             loadMask: true,
             columnLines: true,
@@ -361,7 +371,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
 
     onAddGroup: function() {
-        var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false, false);
+        var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false, false, this.storeConfig.id);
         window.show();
     },
 
@@ -377,7 +387,8 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             Ext.Ajax.request({
                 url: "/admin/classificationstore/create-collection",
                 params: {
-                    name: value
+                    name: value,
+                    storeId: this.storeConfig.id
                 },
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
@@ -432,6 +443,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                     colData.groupId = groupDef.id;
                     colData.groupName = groupDef.name;
                     colData.gropDescription = groupDef.description;
+                    colData.storeId = this.storeConfig.id;
                     colData.colId = this.collectionId;
                     var tmpId = this.collectionId + "-" + colData.groupId;
 

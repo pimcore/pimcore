@@ -9,35 +9,57 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-pimcore.registerNS("pimcore.object.classificationstore.keyDefinitionWindow");
-pimcore.object.classificationstore.keyDefinitionWindow = Class.create({
+pimcore.registerNS("pimcore.object.classificationstore.storeConfiguration");
+pimcore.object.classificationstore.storeConfiguration = Class.create({
 
-    initialize: function (data, keyid, parentPanel) {
-        if (data) {
-            this.data = data;
+    initialize: function (storeConfig, callback) {
+        if (storeConfig) {
+            this.storeConfig = storeConfig;
         } else {
-            this.data = {};
+            this.storeConfig = {};
         }
 
-        this.parentPanel = parentPanel;
-        this.keyid = keyid;
+        this.callback = callback;
     },
 
 
     show: function() {
 
-        var fieldtype = this.data.fieldtype;
-        this.editor = new pimcore.object.classes.data[fieldtype](null, this.data);
-        var layout = this.editor.getLayout();
+
+        this.formPanel = new Ext.form.FormPanel({
+            border: false,
+            frame:false,
+            bodyStyle: 'padding:10px',
+            items: [
+                {
+                    xtype: 'textfield',
+                    name: 'name',
+                    fieldLabel: t('name'),
+                    value: this.storeConfig.name
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: t('description'),
+                    name: 'description',
+                    value: this.storeConfig.description,
+                }
+            ],
+            defaults: {
+                labelWidth: 130,
+                width: 500
+            },
+            collapsible: false,
+            autoScroll: true
+        });
 
         this.window = new Ext.Window({
             modal: true,
-            width: 800,
-            height: 600,
+            width: 600,
+            height: 250,
             resizable: true,
             autoScroll: true,
             title: t("classificationstore_detailed_config"),
-            items: [layout],
+            items: [this.formPanel],
             bbar: [
             "->",{
                 xtype: "button",
@@ -62,9 +84,7 @@ pimcore.object.classificationstore.keyDefinitionWindow = Class.create({
 
     applyData: function() {
 
-        this.editor.applyData();
-        var definition = this.editor.getData();
-        this.parentPanel.applyDetailedConfig(this.keyid, definition);
+        this.callback(this.storeConfig.id, this.formPanel.getValues());
         this.window.close();
     }
 

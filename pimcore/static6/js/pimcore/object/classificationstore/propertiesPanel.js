@@ -12,7 +12,8 @@
 pimcore.registerNS("pimcore.object.classificationstore.propertiespanel");
 pimcore.object.classificationstore.propertiespanel = Class.create({
 
-    initialize: function () {
+    initialize: function (storeConfig) {
+        this.storeConfig = storeConfig;
     },
 
     getPanel: function () {
@@ -40,7 +41,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
     },
 
     createGrid: function(response) {
-        this.fields = ['id', 'name', 'description', 'type',
+        this.fields = ['storeId','id', 'name', 'description', 'type',
             'creationDate', 'modificationDate', 'definition', 'title', 'sorter'];
 
         var readerFields = [];
@@ -66,7 +67,11 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true'
+            },
+            extraParams: {
+                storeId: this.storeConfig.id
             }
+
         };
 
         var listeners = {};
@@ -90,6 +95,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         var gridColumns = [];
 
+        //gridColumns.push({header: t("store"), width: 40, sortable: true, dataIndex: 'storeId'});
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
         gridColumns.push({
                 header: t("name"),
@@ -218,7 +224,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         var gridConfig = {
             frame: false,
             store: this.store,
-            border: true,
+            border: false,
             columns: gridColumns,
             loadMask: true,
             columnLines: true,
@@ -299,7 +305,8 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             Ext.Ajax.request({
                 url: "/admin/classificationstore/add-property",
                 params: {
-                    name: value
+                    name: value,
+                    storeId: this.storeConfig.id
                 },
                 success: function (response) {
                     var data = Ext.decode(response.responseText);

@@ -75,6 +75,33 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
         });
 
 
+
+        var  store = new Ext.data.Store({
+            proxy: {
+                type: 'ajax',
+                url: "/admin/classificationstore/list-stores"
+            },
+            autoDestroy: false,
+            autoLoad: true,
+            listeners: {
+                load: function() {
+                    this.storeCombo.setValue(this.datax.storeId ? this.datax.storeId : 1);
+                }.bind(this)
+            }
+        });
+
+        this.storeCombo = new Ext.form.ComboBox({
+            name: "storeId",
+            fieldLabel: t("store"),
+            value: this.datax.storeId ? this.datax.storeId : 1,
+            store: store,
+            displayField: 'name',
+            valueField: 'id'
+        });
+
+        this.specificPanel.add(this.storeCombo);
+
+
         this.layout.on("render", this.layoutRendered.bind(this));
 
         return this.layout;

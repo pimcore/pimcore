@@ -135,7 +135,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                             xtype: 'button',
                             iconCls: "pimcore_icon_add",
                             handler: function() {
-                                var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false, true);
+                                var storeId = this.fieldConfig.storeId;
+                                var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false, true, storeId);
                                 window.setRestriction(this.object, this.fieldConfig.name);
                                 window.show();
                             }.bind(this)

@@ -24,13 +24,18 @@ class CollectionConfig extends Model\AbstractModel
      */
     public $id;
 
+    /**
+     * Store ID
+     * @var integer
+     */
+    public $storeId = 1;
 
-    /** The group name.
+    /** The collection name.
      * @var string
      */
     public $name;
 
-    /** The group description.
+    /** The collection description.
      * @var
      */
     public $description;
@@ -66,11 +71,12 @@ class CollectionConfig extends Model\AbstractModel
      * @param $name
      * @return CollectionConfig
      */
-    public static function getByName($name)
+    public static function getByName($name, $storeId = 1)
     {
         try {
             $config = new self();
             $config->setName($name);
+            $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
 
             return $config;
@@ -213,4 +219,22 @@ class CollectionConfig extends Model\AbstractModel
     {
         return $this->creationDate;
     }
+
+    /**
+     * @return int
+     */
+    public function getStoreId()
+    {
+        return $this->storeId;
+    }
+
+    /**
+     * @param int $storeId
+     */
+    public function setStoreId($storeId)
+    {
+        $this->storeId = $storeId;
+    }
+
+
 }

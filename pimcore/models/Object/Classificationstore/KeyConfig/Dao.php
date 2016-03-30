@@ -53,9 +53,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $name = $this->model->getName();
+        $storeId = $this->model->getStoreId();
 
-
-        $stmt = "SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = '" . $name . "'";
+        $stmt = "SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = " . $this->quote($name) . " and storeId = " . $storeId;
 
         $data = $this->db->fetchRow($stmt);
 

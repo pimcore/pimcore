@@ -513,7 +513,9 @@ $scripts = array(
     "pimcore/object/classificationstore/propertiesPanel.js",
     "pimcore/object/classificationstore/collectionsPanel.js",
     "pimcore/object/classificationstore/keyDefinitionWindow.js",
-    "pimcore/object/classificationstore/keySelectionWindow.js"
+    "pimcore/object/classificationstore/keySelectionWindow.js",
+    "pimcore/object/classificationstore/storeConfiguration.js",
+    "pimcore/object/classificationstore/storeTree.js"
 
 );
 

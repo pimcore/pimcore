@@ -24,6 +24,12 @@ class GroupConfig extends Model\AbstractModel
      */
     public $id;
 
+    /**
+     * Store ID
+     * @var integer
+     */
+    public $storeId = 1;
+
     /** Parent id
      * @var int
      */
@@ -72,11 +78,12 @@ class GroupConfig extends Model\AbstractModel
      * @param $name
      * @return GroupConfig
      */
-    public static function getByName($name)
+    public static function getByName($name, $storeId = 1)
     {
         try {
             $config = new self();
             $config->setName($name);
+            $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
 
             return $config;
@@ -251,4 +258,22 @@ class GroupConfig extends Model\AbstractModel
         $list = $list->load();
         return $list;
     }
+
+    /**
+     * @return int
+     */
+    public function getStoreId()
+    {
+        return $this->storeId;
+    }
+
+    /**
+     * @param int $storeId
+     */
+    public function setStoreId($storeId)
+    {
+        $this->storeId = $storeId;
+    }
+
+
 }

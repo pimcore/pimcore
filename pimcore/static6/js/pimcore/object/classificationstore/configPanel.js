@@ -12,15 +12,15 @@
 pimcore.registerNS("pimcore.object.classificationstore.configPanel");
 pimcore.object.classificationstore.configPanel = Class.create({
 
-    initialize: function () {
-
+    initialize: function (storeConfig) {
+        this.storeConfig = storeConfig;
         this.getTabPanel();
     },
 
-    activate: function () {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.setActiveItem("pimcore_object_classificationstore_configpanel");
-    },
+    //activate: function () {
+    //    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+    //    tabPanel.setActiveItem("pimcore_object_classificationstore_configpanel");
+    //},
 
     getTabPanel: function () {
 
@@ -30,22 +30,20 @@ pimcore.object.classificationstore.configPanel = Class.create({
             this.panel = new Ext.TabPanel({
                 title: t("classificationstore_menu_config"),
                 closable: true,
-                deferredRender: false,
-                forceLayout: true,
+                //deferredRender: false,
+                //forceLayout: true,
                 activeTab: 1,
-                id: "pimcore_object_classificationstore_configpanel",
-                iconCls: "pimcore_icon_classificationstore",
-                items: [this.getCollectionsPanel(), this.getGroupsPanel(), this.getPropertiesPanel()],
+                items: [this.getCollectionsPanel() , this.getGroupsPanel(), this.getPropertiesPanel()],
                 buttons: panelButtons
             });
 
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.add(this.panel);
-            tabPanel.setActiveItem("pimcore_object_classificationstore_configpanel");
+            //var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            //tabPanel.add(this.panel);
+            //tabPanel.setActiveItem("pimcore_object_classificationstore_configpanel");
 
-            this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("classifcationstore_config");
-            }.bind(this));
+            //this.panel.on("destroy", function () {
+            //    pimcore.globalmanager.remove("classificationstore_config");
+            //}.bind(this));
 
             pimcore.layout.refresh();
         }
@@ -54,17 +52,17 @@ pimcore.object.classificationstore.configPanel = Class.create({
     },
 
     getCollectionsPanel: function () {
-        var panel = new pimcore.object.classificationstore.collectionsPanel();
+        var panel = new pimcore.object.classificationstore.collectionsPanel(this.storeConfig);
         return panel.getPanel();
     },
 
     getGroupsPanel: function () {
-        var groupsPanel = new pimcore.object.classificationstore.groupsPanel();
+        var groupsPanel = new pimcore.object.classificationstore.groupsPanel(this.storeConfig);
         return groupsPanel.getPanel();
     },
 
     getPropertiesPanel: function () {
-        var propertiesPanel = new pimcore.object.classificationstore.propertiespanel();
+        var propertiesPanel = new pimcore.object.classificationstore.propertiespanel(this.storeConfig);
         return propertiesPanel.getPanel();
     }
 
