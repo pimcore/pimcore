@@ -235,6 +235,150 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             this.ckeditor.insertElement(insertEl);
             return true;
         }
+        
+        if (data.elementType == "object") {
+        	
+        	// Load static routes
+			this.store = pimcore.helpers.grid.buildDefaultStore( 
+					'/admin/settings/staticroutes?',
+					[
+						{name:'id', type: 'int'},
+						{name:'name'},
+						{name:'pattern', allowBlank:false},
+						{name:'reverse', allowBlank:true},
+						{name:'module'},
+						{name:'controller'},
+						{name:'action'},
+						{name:'variables'},
+						{name:'defaults'},
+						{name:'siteId'},
+						{name:'priority', type:'int'},
+						{name: 'creationDate'},
+						{name: 'modificationDate'}
+					], null, {
+						remoteSort: false,
+						remoteFilter: false
+					}
+			);
+			            
+            this.store.setAutoSync(true);
+           
+			// Load object data
+			Ext.Ajax.request({
+				url: "/admin/object/get/",
+				params: {id: id},
+				success: function(response) {
+					this.object = Ext.decode(response.responseText);
+				}.bind(this)
+			});
+           
+            this.route = null;
+           
+    	    this.routeWindow = Ext.create('Ext.Window', {
+    	        title: 'Object: ' + data.path + ' (ID: ' + id + ')',
+    	        bodyStyle: 'padding: 20px;',
+    	        width: 500,
+    	        height: 200,
+    	        plain: true,
+    	        items:[
+    	               {
+    	                   xtype: 'combobox',
+    	                   fieldLabel: t('select_static_route'),
+    	                   labelWidth: 120,
+    	                   width: 400,
+    	                   queryMode: 'local',
+    	                   store:this.store,
+    	                   emptyText: t('static_route'),
+    	                   tpl: '<tpl for="."><div class="x-boundlist-item" >{name} ({reverse})</div></tpl>',
+    	                   displayTpl:'<tpl for=".">{name} ({reverse})</tpl>',
+    	                   displayField: 'name',
+    	                   valueField: 'reverse',
+    	                   typeAhead: true,
+    	                   forceSelection: true,
+    	                   listeners: {
+    	                       select: function(combo, records){
+    	                    	   this.route = records.data;
+    	                    	   Ext.getCmp('saveBtn').enable();
+    	                       }.bind(this)
+    	                       
+    	                   }
+    	           }],
+    	           buttons: [{
+    	               text: t('save'),
+    	               id: 'saveBtn',
+    	               formBind: true,
+    	               disabled: true,
+    	               listeners: {
+    	                   click: function (){
+    	                	   var reverse = this.route.reverse;
+
+    	                	   if (this.route && this.object){
+    	                		   
+    	                		   var object = this.object;
+    	                		   var link = reverse;
+    	                		   var link_values = [];
+    	                		   
+    	                		   var keys = this.route.variables.replace(/\s+/g, '').split(",");
+        	                	   keys.forEach(function(val){
+        	                		   
+        	                		   link_values[val] = '';
+        	                		   
+        	                		   switch(val) {
+	        	                		    case 'key':
+	        	                		    	link_values['key'] = object.general.o_key;
+	        	                		        break;
+	        	                		    case 'o_key':
+	        	                		    	link_values['o_key'] = object.general.o_key;
+	        	                		        break;
+	        	                		    case 'id':
+	        	                		    	link_values['id'] = object.general.o_id;
+	        	                		    case 'o_id':
+	        	                		    	link_values['o_id'] = object.general.o_id;
+	        	                		        break;
+	        	                		    default:
+	        	                		        if (object.data.hasOwnProperty(val)){
+	        	                		        	if (typeof object.data[val] === 'string' || typeof object.data[val] === 'number'){
+	        	                		        		link_values[val] = object.data[val];
+	        	                		        	}
+	        	                		        }
+	        	                		}
+        	                
+        	                		 
+        	                	   });
+        	                	   
+        	                	   var values_added = false;
+        	                	   for (var key in link_values){
+        	                		   if (link_values.hasOwnProperty(key)) {
+	        	                		   link = link.replace('%'+key, link_values[key]);
+	        	                		   if (link_values[key] != ''){ values_added=true; }
+        	                		   }
+        	                	   };
+        	                	   
+        	                	   // Check if there are values added to the link
+        	                	   if (values_added){
+        	                	  	   
+        	                    	   insertEl = CKEDITOR.dom.element.createFromHtml('<a href="'+link+'" pimcore_type="object" pimcore_id="' + id + '">' + wrappedText + '</a>');
+        	                    	   this.ckeditor.insertElement(insertEl);
+        	                    	   
+        	                    	   this.routeWindow.close();
+        	                    	   
+        	                	   }else{
+        	                		   Ext.Msg.show({
+            	                		   title:t('save_error'),
+            	                		   msg: t('link_no_values_error'),
+            	                		   buttons: Ext.Msg.OK,
+            	                		   animEl: 'elId'
+            	                		});
+        	                	   }
+        	                	
+        	              
+    	                	   }
+    	                	
+    	                   }.bind(this)
+    	               }
+    	           }]
+    	    }).show();
+        }
 
     },
 
@@ -266,7 +410,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         if (data.elementType == "document" && (data.type=="page"
                             || data.ype=="hardlink" || data.type=="link")){
             return true;
-        } else if (data.elementType=="asset" && data.type != "folder"){
+        } else if (data.elementType=="asset" && data.type != "folder" ){
+            return true;
+        } else if (data.elementType=="object" && data.type != "folder" ){
             return true;
         }
 
