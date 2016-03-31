@@ -19,6 +19,7 @@ use Pimcore\Model\Object;
 
 class Dao extends Model\Dao\AbstractDao
 {
+    use Object\ClassDefinition\Helper\Dao;
 
     /**
      * @var null
@@ -98,95 +99,5 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
         $this->tableDefinitions = null;
-    }
-
-    /**
-     * @param $field
-     * @param $table
-     */
-    protected function addIndexToField($field, $table)
-    {
-        if ($field->getIndex()) {
-            if (is_array($field->getColumnType())) {
-                // multicolumn field
-                foreach ($field->getColumnType() as $fkey => $fvalue) {
-                    $columnName = $field->getName() . "__" . $fkey;
-                    try {
-                        $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                    } catch (\Exception $e) {
-                    }
-                }
-            } else {
-                // single -column field
-                $columnName = $field->getName();
-                try {
-                    $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                } catch (\Exception $e) {
-                }
-            }
-        } else {
-            if (is_array($field->getColumnType())) {
-                // multicolumn field
-                foreach ($field->getColumnType() as $fkey => $fvalue) {
-                    $columnName = $field->getName() . "__" . $fkey;
-                    try {
-                        $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                    } catch (\Exception $e) {
-                    }
-                }
-            } else {
-                // single -column field
-                $columnName = $field->getName();
-                try {
-                    $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                } catch (\Exception $e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * @param $table
-     * @param $colName
-     * @param $type
-     * @param $default
-     * @param $null
-     */
-    protected function addModifyColumn($table, $colName, $type, $default, $null)
-    {
-        $existingColumns = $this->getValidTableColumns($table, false);
-
-        $existingColName = null;
-
-        // check for existing column case insensitive eg a rename from myInput to myinput
-        $matchingExisting = preg_grep('/^' . preg_quote($colName, '/') . '$/i', $existingColumns);
-        if (is_array($matchingExisting) && !empty($matchingExisting)) {
-            $existingColName = current($matchingExisting);
-        }
-        if ($existingColName === null) {
-            $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
-            $this->resetValidTableColumnsCache($table);
-        } else {
-            if (!Object\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
-                $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
-            }
-        }
-    }
-
-    /**
-     * @param $table
-     * @param $columnsToRemove
-     * @param $protectedColumns
-     */
-    protected function removeUnusedColumns($table, $columnsToRemove, $protectedColumns)
-    {
-        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
-            foreach ($columnsToRemove as $value) {
-                //if (!in_array($value, $protectedColumns)) {
-                if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
-                }
-            }
-        }
     }
 }

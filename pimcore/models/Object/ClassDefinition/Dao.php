@@ -21,9 +21,10 @@ use Pimcore\File;
 
 class Dao extends Model\Dao\AbstractDao
 {
+    use Object\ClassDefinition\Helper\Dao;
 
     /**
-     * @var Object\Class\ClassDefinition
+     * @var Object\ClassDefinition
      */
     protected $model;
 
@@ -220,14 +221,27 @@ class Dao extends Model\Dao\AbstractDao
 //                }
 
                 // add indices
-                $this->addIndexToField($value, $objectTable);
-                $this->addIndexToField($value, $objectDatastoreTable);
+                $this->addIndexToField($value, $objectTable, "getQueryColumnType");
+                $this->addIndexToField($value, $objectDatastoreTable, "getColumnType");
             }
         }
 
         // remove unused columns in the table
         $this->removeUnusedColumns($objectTable, $columnsToRemove, $protectedColums);
-        $this->removeUnusedColumns($objectDatastoreTable, $datastoreColumnsToRemove, $protectedDatastoreColumns, true);
+        $this->removeUnusedColumns($objectDatastoreTable, $datastoreColumnsToRemove, $protectedDatastoreColumns);
+
+        // remove / cleanup unused relations
+        if (is_array($datastoreColumnsToRemove)) {
+            foreach ($datastoreColumnsToRemove as $value) {
+                if (!in_array(strtolower($value), array_map('strtolower', $protectedDatastoreColumns))) {
+
+                    $tableRelation = "object_relations_" . $this->model->getId();
+                    $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
+
+                    // @TODO: remove localized fields and fieldcollections
+                }
+            }
+        }
 
         // create view
         try {
@@ -238,104 +252,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->tableDefinitions = null;
-    }
-
-    /**
-     * @param $table
-     * @param $columnsToRemove
-     * @param $protectedColumns
-     * @param bool $emptyRelations
-     */
-    private function removeUnusedColumns($table, $columnsToRemove, $protectedColumns, $emptyRelations = false)
-    {
-        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
-            foreach ($columnsToRemove as $value) {
-                //if (!in_array($value, $protectedColumns)) {
-                if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
-
-                    if ($emptyRelations) {
-                        $tableRelation = "object_relations_" . $this->model->getId();
-                        $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
-                    }
-
-                    // @TODO: remove localized fields and fieldcollections
-                }
-            }
-        }
-    }
-
-    /**
-     * @param $table
-     * @param $colName
-     * @param $type
-     * @param $default
-     * @param $null
-     */
-    private function addModifyColumn($table, $colName, $type, $default, $null)
-    {
-        $existingColumns = $this->getValidTableColumns($table, false);
-        $existingColName = null;
-
-        // check for existing column case insensitive eg a rename from myInput to myinput
-        $matchingExisting = preg_grep('/^' . preg_quote($colName, '/') . '$/i', $existingColumns);
-        if (is_array($matchingExisting) && !empty($matchingExisting)) {
-            $existingColName = current($matchingExisting);
-        }
-
-        if ($existingColName === null) {
-            $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
-            $this->resetValidTableColumnsCache($table);
-        } else {
-            if (!Object\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
-                $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
-            }
-        }
-    }
-
-    /**
-     * @param $field
-     * @param $table
-     */
-    private function addIndexToField($field, $table)
-    {
-        if ($field->getIndex()) {
-            if (is_array($field->getQueryColumnType())) {
-                // multicolumn field
-                foreach ($field->getQueryColumnType() as $fkey => $fvalue) {
-                    $columnName = $field->getName() . "__" . $fkey;
-                    try {
-                        $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                    } catch (\Exception $e) {
-                    }
-                }
-            } else {
-                // single -column field
-                $columnName = $field->getName();
-                try {
-                    $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                } catch (\Exception $e) {
-                }
-            }
-        } else {
-            if (is_array($field->getQueryColumnType())) {
-                // multicolumn field
-                foreach ($field->getQueryColumnType() as $fkey => $fvalue) {
-                    $columnName = $field->getName() . "__" . $fkey;
-                    try {
-                        $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                    } catch (\Exception $e) {
-                    }
-                }
-            } else {
-                // single -column field
-                $columnName = $field->getName();
-                try {
-                    $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                } catch (\Exception $e) {
-                }
-            }
-        }
     }
 
     /**

@@ -25,7 +25,7 @@ abstract class AbstractDao implements DaoInterface
     /**
      * @var \Zend_Db_Adapter_Abstract
      */
-    protected $db;
+    public $db;
 
     /**
      *
@@ -67,12 +67,12 @@ abstract class AbstractDao implements DaoInterface
     public function getValidTableColumns($table, $cache = true)
     {
         $cacheKey = self::CACHEKEY . $table;
-        
+
         if (\Zend_Registry::isRegistered($cacheKey)) {
             $columns = \Zend_Registry::get($cacheKey);
         } else {
             $columns = Cache::load($cacheKey);
-            
+
             if (!$columns || !$cache) {
                 $columns = array();
                 $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $table);
@@ -81,17 +81,17 @@ abstract class AbstractDao implements DaoInterface
                 }
                 Cache::save($columns, $cacheKey, array("system", "resource"), null, 997);
             }
-            
+
             \Zend_Registry::set($cacheKey, $columns);
         }
-        
+
         return $columns;
     }
 
     /** Clears the column information for the given table.
      * @param $table
      */
-    protected function resetValidTableColumnsCache($table)
+    public function resetValidTableColumnsCache($table)
     {
         $cacheKey = self::CACHEKEY . $table;
         \Zend_Registry::getInstance()->offsetUnset($cacheKey);
