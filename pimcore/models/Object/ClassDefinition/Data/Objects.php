@@ -298,7 +298,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (is_array($data)) {
@@ -314,7 +314,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     } else {
                         $id = "??";
                     }
-                    throw new \Exception("Invalid object relation to object [".$id."] in field " . $this->getName(), null, null);
+                    throw new Element\ValidationException("Invalid object relation to object [".$id."] in field " . $this->getName(), null, null);
                 }
             }
         }

@@ -702,8 +702,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
                                 }
                                 else {
-                                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
-                                        "error", t(rdata.message));
+                                    pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
+                                        rdata.message, rdata.stack, rdata.code);
                                 }
                             } catch (e) {
                                 pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");

@@ -66,106 +66,118 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 
     public function saveAction()
     {
-        if ($this->getParam("id")) {
-            $page = Document\Page::getById($this->getParam("id"));
+        try {
+            if ($this->getParam("id")) {
+                $page = Document\Page::getById($this->getParam("id"));
 
-            $page = $this->getLatestVersion($page);
-            $page->setUserModification($this->getUser()->getId());
+                $page = $this->getLatestVersion($page);
+                $page->setUserModification($this->getUser()->getId());
 
-            if ($this->getParam("task") == "unpublish") {
-                $page->setPublished(false);
-            }
-            if ($this->getParam("task") == "publish") {
-                $page->setPublished(true);
-            }
+                if ($this->getParam("task") == "unpublish") {
+                    $page->setPublished(false);
+                }
+                if ($this->getParam("task") == "publish") {
+                    $page->setPublished(true);
+                }
 
-            $settings = array();
-            if ($this->getParam("settings")) {
-                $settings = \Zend_Json::decode($this->getParam("settings"));
-            }
+                $settings = array();
+                if ($this->getParam("settings")) {
+                    $settings = \Zend_Json::decode($this->getParam("settings"));
+                }
 
-            // check for redirects
-            if ($this->getUser()->isAllowed("redirects") && $this->getParam("settings")) {
-                if (is_array($settings)) {
-                    $redirectList = new Redirect\Listing();
-                    $redirectList->setCondition("target = ?", $page->getId());
-                    $existingRedirects = $redirectList->load();
-                    $existingRedirectIds = array();
-                    foreach ($existingRedirects as $existingRedirect) {
-                        $existingRedirectIds[$existingRedirect->getId()] = $existingRedirect->getId();
-                    }
+                // check for redirects
+                if ($this->getUser()->isAllowed("redirects") && $this->getParam("settings")) {
+                    if (is_array($settings)) {
+                        $redirectList = new Redirect\Listing();
+                        $redirectList->setCondition("target = ?", $page->getId());
+                        $existingRedirects = $redirectList->load();
+                        $existingRedirectIds = array();
+                        foreach ($existingRedirects as $existingRedirect) {
+                            $existingRedirectIds[$existingRedirect->getId()] = $existingRedirect->getId();
+                        }
 
-                    for ($i=1;$i<100;$i++) {
-                        if (array_key_exists("redirect_url_".$i, $settings)) {
+                        for ($i=1;$i<100;$i++) {
+                            if (array_key_exists("redirect_url_".$i, $settings)) {
 
-                            // check for existing
-                            if ($settings["redirect_id_".$i]) {
-                                $redirect = Redirect::getById($settings["redirect_id_".$i]);
-                                unset($existingRedirectIds[$redirect->getId()]);
-                            } else {
-                                // create new one
-                                $redirect = new Redirect();
+                                // check for existing
+                                if ($settings["redirect_id_".$i]) {
+                                    $redirect = Redirect::getById($settings["redirect_id_".$i]);
+                                    unset($existingRedirectIds[$redirect->getId()]);
+                                } else {
+                                    // create new one
+                                    $redirect = new Redirect();
+                                }
+
+                                $redirect->setSource($settings["redirect_url_".$i]);
+                                $redirect->setTarget($page->getId());
+                                $redirect->setStatusCode(301);
+                                $redirect->save();
                             }
+                        }
 
-                            $redirect->setSource($settings["redirect_url_".$i]);
-                            $redirect->setTarget($page->getId());
-                            $redirect->setStatusCode(301);
-                            $redirect->save();
+                        // remove existing redirects which were delete
+                        foreach ($existingRedirectIds as $existingRedirectId) {
+                            $redirect = Redirect::getById($existingRedirectId);
+                            $redirect->delete();
                         }
                     }
+                }
 
-                    // remove existing redirects which were delete
-                    foreach ($existingRedirectIds as $existingRedirectId) {
-                        $redirect = Redirect::getById($existingRedirectId);
-                        $redirect->delete();
+                // check if settings exist, before saving meta data
+                if ($this->getParam("settings") && is_array($settings)) {
+                    $metaData = array();
+                    for ($i=1; $i<30; $i++) {
+                        if (array_key_exists("metadata_idName_" . $i, $settings)) {
+                            $metaData[] = array(
+                                "idName" => $settings["metadata_idName_" . $i],
+                                "idValue" => $settings["metadata_idValue_" . $i],
+                                "contentName" => $settings["metadata_contentName_" . $i],
+                                "contentValue" => $settings["metadata_contentValue_" . $i],
+                            );
+                        }
                     }
+                    $page->setMetaData($metaData);
                 }
-            }
 
-            // check if settings exist, before saving meta data
-            if ($this->getParam("settings") && is_array($settings)) {
-                $metaData = array();
-                for ($i=1; $i<30; $i++) {
-                    if (array_key_exists("metadata_idName_" . $i, $settings)) {
-                        $metaData[] = array(
-                            "idName" => $settings["metadata_idName_" . $i],
-                            "idValue" => $settings["metadata_idValue_" . $i],
-                            "contentName" => $settings["metadata_contentName_" . $i],
-                            "contentValue" => $settings["metadata_contentValue_" . $i],
-                        );
-                    }
-                }
-                $page->setMetaData($metaData);
-            }
-
-            // only save when publish or unpublish
-            if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
-                $this->setValuesToDocument($page);
-
-
-                try {
-                    $page->save();
-                    $this->saveToSession($page);
-                    $this->_helper->json(array("success" => true));
-                } catch (\Exception $e) {
-                    \Logger::err($e);
-                    $this->_helper->json(array("success" => false, "message"=>$e->getMessage()));
-                }
-            } else {
-                if ($page->isAllowed("save")) {
+                // only save when publish or unpublish
+                if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
                     $this->setValuesToDocument($page);
 
+
                     try {
-                        $page->saveVersion();
+                        $page->save();
                         $this->saveToSession($page);
                         $this->_helper->json(array("success" => true));
                     } catch (\Exception $e) {
+                        if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                            throw $e;
+                        }
                         \Logger::err($e);
                         $this->_helper->json(array("success" => false, "message"=>$e->getMessage()));
                     }
+                } else {
+                    if ($page->isAllowed("save")) {
+                        $this->setValuesToDocument($page);
+
+                        try {
+                            $page->saveVersion();
+                            $this->saveToSession($page);
+                            $this->_helper->json(array("success" => true));
+                        } catch (\Exception $e) {
+                            \Logger::err($e);
+                            $this->_helper->json(array("success" => false, "message"=>$e->getMessage()));
+                        }
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            \Logger::log($e);
+            if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+            }
+            throw $e;
         }
+
         $this->_helper->json(false);
     }
 

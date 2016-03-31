@@ -107,8 +107,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
                         }
                         else {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error",
-                                                                                                    t(rdata.message));
+                            pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_document"),
+                                rdata.message, rdata.stack, rdata.code);
                         }
                     } catch (e) {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error");

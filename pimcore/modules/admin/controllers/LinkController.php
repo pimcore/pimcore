@@ -49,26 +49,34 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
 
     public function saveAction()
     {
-        if ($this->getParam("id")) {
-            $link = Document\Link::getById($this->getParam("id"));
-            $this->setValuesToDocument($link);
+        try {
+            if ($this->getParam("id")) {
+                $link = Document\Link::getById($this->getParam("id"));
+                $this->setValuesToDocument($link);
 
-            $link->setModificationDate(time());
-            $link->setUserModification($this->getUser()->getId());
+                $link->setModificationDate(time());
+                $link->setUserModification($this->getUser()->getId());
 
-            if ($this->getParam("task") == "unpublish") {
-                $link->setPublished(false);
+                if ($this->getParam("task") == "unpublish") {
+                    $link->setPublished(false);
+                }
+                if ($this->getParam("task") == "publish") {
+                    $link->setPublished(true);
+                }
+
+                // only save when publish or unpublish
+                if (($this->getParam("task") == "publish" && $link->isAllowed("publish")) || ($this->getParam("task") == "unpublish" && $link->isAllowed("unpublish"))) {
+                    $link->save();
+
+                    $this->_helper->json(array("success" => true));
+                }
             }
-            if ($this->getParam("task") == "publish") {
-                $link->setPublished(true);
+        } catch (\Exception $e) {
+            \Logger::log($e);
+            if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
             }
-
-            // only save when publish or unpublish
-            if (($this->getParam("task") == "publish" && $link->isAllowed("publish")) || ($this->getParam("task") == "unpublish" && $link->isAllowed("unpublish"))) {
-                $link->save();
-
-                $this->_helper->json(array("success" => true));
-            }
+            throw $e;
         }
 
         $this->_helper->json(false);

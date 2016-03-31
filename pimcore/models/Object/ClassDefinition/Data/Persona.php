@@ -100,13 +100,13 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
         
         if (!empty($data)) {
             $persona = Tool\Targeting\Persona::getById($data);
             if (!$persona instanceof Tool\Targeting\Persona) {
-                throw new \Exception("invalid persona reference");
+                throw new Model\Element\ValidationException("Invalid persona reference");
             }
         }
     }

@@ -700,85 +700,95 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
     public function saveAction()
     {
-        $success = false;
-        if ($this->getParam("id")) {
-            $asset = Asset::getById($this->getParam("id"));
-            if ($asset->isAllowed("publish")) {
+        try {
+            $success = false;
+            if ($this->getParam("id")) {
+                $asset = Asset::getById($this->getParam("id"));
+                if ($asset->isAllowed("publish")) {
 
 
-                // metadata
-                if ($this->getParam("metadata")) {
-                    $metadata = \Zend_Json::decode($this->getParam("metadata"));
-                    $metadata = Asset\Service::minimizeMetadata($metadata);
-                    $asset->setMetadata($metadata);
-                }
+                    // metadata
+                    if ($this->getParam("metadata")) {
+                        $metadata = \Zend_Json::decode($this->getParam("metadata"));
+                        $metadata = Asset\Service::minimizeMetadata($metadata);
+                        $asset->setMetadata($metadata);
+                    }
 
-                // properties
-                if ($this->getParam("properties")) {
-                    $properties = array();
-                    $propertiesData = \Zend_Json::decode($this->getParam("properties"));
+                    // properties
+                    if ($this->getParam("properties")) {
+                        $properties = array();
+                        $propertiesData = \Zend_Json::decode($this->getParam("properties"));
 
-                    if (is_array($propertiesData)) {
-                        foreach ($propertiesData as $propertyName => $propertyData) {
-                            $value = $propertyData["data"];
+                        if (is_array($propertiesData)) {
+                            foreach ($propertiesData as $propertyName => $propertyData) {
+                                $value = $propertyData["data"];
 
-                            try {
-                                $property = new Model\Property();
-                                $property->setType($propertyData["type"]);
-                                $property->setName($propertyName);
-                                $property->setCtype("asset");
-                                $property->setDataFromEditmode($value);
-                                $property->setInheritable($propertyData["inheritable"]);
+                                try {
+                                    $property = new Model\Property();
+                                    $property->setType($propertyData["type"]);
+                                    $property->setName($propertyName);
+                                    $property->setCtype("asset");
+                                    $property->setDataFromEditmode($value);
+                                    $property->setInheritable($propertyData["inheritable"]);
 
-                                $properties[$propertyName] = $property;
-                            } catch (\Exception $e) {
-                                \Logger::err("Can't add " . $propertyName . " to asset " . $asset->getFullPath());
+                                    $properties[$propertyName] = $property;
+                                } catch (\Exception $e) {
+                                    \Logger::err("Can't add " . $propertyName . " to asset " . $asset->getFullPath());
+                                }
+                            }
+
+                            $asset->setProperties($properties);
+                        }
+                    }
+
+                    // scheduled tasks
+                    if ($this->getParam("scheduler")) {
+                        $tasks = array();
+                        $tasksData = \Zend_Json::decode($this->getParam("scheduler"));
+
+                        if (!empty($tasksData)) {
+                            foreach ($tasksData as $taskData) {
+                                $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
+
+                                $task = new Model\Schedule\Task($taskData);
+                                $tasks[] = $task;
                             }
                         }
 
-                        $asset->setProperties($properties);
+                        $asset->setScheduledTasks($tasks);
                     }
-                }
 
-                // scheduled tasks
-                if ($this->getParam("scheduler")) {
-                    $tasks = array();
-                    $tasksData = \Zend_Json::decode($this->getParam("scheduler"));
+                    if ($this->hasParam("data")) {
+                        $asset->setData($this->getParam("data"));
+                    }
 
-                    if (!empty($tasksData)) {
-                        foreach ($tasksData as $taskData) {
-                            $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
+                    $asset->setUserModification($this->getUser()->getId());
 
-                            $task = new Model\Schedule\Task($taskData);
-                            $tasks[] = $task;
+                    try {
+                        $asset->save();
+                        $asset->getData();
+                        $success = true;
+                    } catch (\Exception $e) {
+                        if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                            throw $e;
                         }
+                        $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                     }
-
-                    $asset->setScheduledTasks($tasks);
+                } else {
+                    \Logger::debug("prevented save asset because of missing permissions ");
                 }
 
-                if ($this->hasParam("data")) {
-                    $asset->setData($this->getParam("data"));
-                }
-
-                $asset->setUserModification($this->getUser()->getId());
-
-
-                try {
-                    $asset->save();
-                    $asset->getData();
-                    $success = true;
-                } catch (\Exception $e) {
-                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
-                }
-            } else {
-                \Logger::debug("prevented save asset because of missing permissions ");
+                $this->_helper->json(array("success" => $success));
             }
 
-            $this->_helper->json(array("success" => $success));
+            $this->_helper->json(false);
+        } catch (\Exception $e) {
+            \Logger::log($e);
+            if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+            }
+            throw $e;
         }
-
-        $this->_helper->json(false);
     }
 
     public function publishVersionAction()

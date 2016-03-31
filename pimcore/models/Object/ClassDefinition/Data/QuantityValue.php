@@ -256,13 +256,13 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     {
         if (!$omitMandatoryCheck && $this->getMandatory() &&
            ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
-            throw new \Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (!empty($data)) {
             $value = $data->getValue();
             if ((!empty($value) && !is_numeric($data->getValue())) || !($data->getUnitId())) {
-                throw new \Exception(get_class($this).": invalid dimension unit data");
+                throw new Model\Element\ValidationException(get_class($this).": invalid dimension unit data");
             }
         }
     }

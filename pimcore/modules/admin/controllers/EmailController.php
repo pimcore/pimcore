@@ -55,47 +55,60 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 
     public function saveAction()
     {
-        if ($this->getParam("id")) {
-            $page = Document\Email::getById($this->getParam("id"));
+        try {
+            if ($this->getParam("id")) {
+                $page = Document\Email::getById($this->getParam("id"));
 
-            $page = $this->getLatestVersion($page);
-            $page->setUserModification($this->getUser()->getId());
+                $page = $this->getLatestVersion($page);
+                $page->setUserModification($this->getUser()->getId());
 
-            if ($this->getParam("task") == "unpublish") {
-                $page->setPublished(false);
-            }
-            if ($this->getParam("task") == "publish") {
-                $page->setPublished(true);
-            }
-            // only save when publish or unpublish
-            if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
-                $this->setValuesToDocument($page);
-
-
-                try {
-                    $page->save();
-                    $this->saveToSession($page);
-                    $this->_helper->json(array("success" => true));
-                } catch (\Exception $e) {
-                    \Logger::err($e);
-                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                if ($this->getParam("task") == "unpublish") {
+                    $page->setPublished(false);
                 }
-            } else {
-                if ($page->isAllowed("save")) {
+                if ($this->getParam("task") == "publish") {
+                    $page->setPublished(true);
+                }
+                // only save when publish or unpublish
+                if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
                     $this->setValuesToDocument($page);
 
 
                     try {
-                        $page->saveVersion();
+                        $page->save();
                         $this->saveToSession($page);
                         $this->_helper->json(array("success" => true));
                     } catch (\Exception $e) {
                         \Logger::err($e);
                         $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                     }
+                } else {
+                    if ($page->isAllowed("save")) {
+                        $this->setValuesToDocument($page);
+
+
+                        try {
+                            $page->saveVersion();
+                            $this->saveToSession($page);
+                            $this->_helper->json(array("success" => true));
+                        } catch (\Exception $e) {
+                            if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                                throw $e;
+                            }
+
+                            \Logger::err($e);
+                            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                        }
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            \Logger::log($e);
+            if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+            }
+            throw $e;
         }
+
         $this->_helper->json(false);
     }
 

@@ -302,11 +302,11 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ] ".strval($data));
+            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ] ".strval($data));
         }
 
         if (!empty($data) and !is_numeric($data)) {
-            throw new \Exception("invalid slider data");
+            throw new Model\Element\ValidationException("invalid slider data");
         }
     }
 

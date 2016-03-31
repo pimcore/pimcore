@@ -266,13 +266,13 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (is_array($data)) {
             foreach ($data as $objectMetadata) {
                 if (!($objectMetadata instanceof Object\Data\ObjectMetadata)) {
-                    throw new \Exception("Expected Object\\Data\\ObjectMetadata");
+                    throw new Element\ValidationException("Expected Object\\Data\\ObjectMetadata");
                 }
 
                 $o = $objectMetadata->getObject();
@@ -282,7 +282,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     } else {
                         $id = "??";
                     }
-                    throw new \Exception("Invalid object relation to object [".$id."] in field " . $this->getName(), null, null);
+                    throw new Element\ValidationException("Invalid object relation to object [".$id."] in field " . $this->getName(), null, null);
                 }
             }
         }

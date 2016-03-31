@@ -296,13 +296,13 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (is_array($data)) {
             foreach ($data as $elementMetadata) {
                 if (!($elementMetadata instanceof Object\Data\ElementMetadata)) {
-                    throw new \Exception("Expected Object\\Data\\ElementMetadata");
+                    throw new Element\ValidationException("Expected Object\\Data\\ElementMetadata");
                 }
 
                 $d = $elementMetadata->getElement();
@@ -319,7 +319,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new \Exception("Invalid multihref relation", null, null);
+                    throw new Element\ValidationException("Invalid multihref relation", null, null);
                 }
             }
         }

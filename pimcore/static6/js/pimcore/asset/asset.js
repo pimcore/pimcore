@@ -315,7 +315,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                         this.resetChanges();
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_asset"), "error",t(rdata.message));
+                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_asset"),
+                            rdata.message, rdata.stack, rdata.code);
                     }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("error_saving_asset"), "error");

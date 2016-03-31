@@ -973,99 +973,99 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
     public function saveAction()
     {
-        $object = Object::getById($this->getParam("id"));
-        $originalModificationDate = $object->getModificationDate();
+        try {
+            $object = Object::getById($this->getParam("id"));
+            $originalModificationDate = $object->getModificationDate();
 
-        // set the latest available version for editmode
-        $object = $this->getLatestVersion($object);
-        $object->setUserModification($this->getUser()->getId());
+            // set the latest available version for editmode
+            $object = $this->getLatestVersion($object);
+            $object->setUserModification($this->getUser()->getId());
 
-        // data
-        if ($this->getParam("data")) {
-            $data = \Zend_Json::decode($this->getParam("data"));
-            foreach ($data as $key => $value) {
-                $fd = $object->getClass()->getFieldDefinition($key);
-                if ($fd) {
-                    if ($fd instanceof Object\ClassDefinition\Data\Localizedfields) {
-                        $user = Tool\Admin::getCurrentUser();
-                        if (!$user->getAdmin()) {
-                            $allowedLanguages = Object\Service::getLanguagePermissions($object, $user, "lEdit");
-                            if (!is_null($allowedLanguages)) {
-                                $allowedLanguages = array_keys($allowedLanguages);
-                                $submittedLanguages = array_keys($data[$key]);
-                                foreach ($submittedLanguages as $submittedLanguage) {
-                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
-                                        unset($value[$submittedLanguage]);
+            // data
+            if ($this->getParam("data")) {
+                $data = \Zend_Json::decode($this->getParam("data"));
+                foreach ($data as $key => $value) {
+                    $fd = $object->getClass()->getFieldDefinition($key);
+                    if ($fd) {
+                        if ($fd instanceof Object\ClassDefinition\Data\Localizedfields) {
+                            $user = Tool\Admin::getCurrentUser();
+                            if (!$user->getAdmin()) {
+                                $allowedLanguages = Object\Service::getLanguagePermissions($object, $user, "lEdit");
+                                if (!is_null($allowedLanguages)) {
+                                    $allowedLanguages = array_keys($allowedLanguages);
+                                    $submittedLanguages = array_keys($data[$key]);
+                                    foreach ($submittedLanguages as $submittedLanguage) {
+                                        if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                            unset($value[$submittedLanguage]);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    if (method_exists($fd, "isRemoteOwner") and $fd->isRemoteOwner()) {
-                        $remoteClass = Object\ClassDefinition::getByName($fd->getOwnerClassName());
-                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
-                        $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
-                        $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                        if (count($toAdd) > 0 or count($toDelete) > 0) {
-                            $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
+                        if (method_exists($fd, "isRemoteOwner") and $fd->isRemoteOwner()) {
+                            $remoteClass = Object\ClassDefinition::getByName($fd->getOwnerClassName());
+                            $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
+                            $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
+                            $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
+                            if (count($toAdd) > 0 or count($toDelete) > 0) {
+                                $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
+                            }
+                        } else {
+                            $object->setValue($key, $fd->getDataFromEditmode($value, $object));
                         }
-                    } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
                     }
                 }
             }
-        }
 
-        // general settings
-        // @TODO: IS THIS STILL NECESSARY?
-        if ($this->getParam("general")) {
-            $general = \Zend_Json::decode($this->getParam("general"));
+            // general settings
+            // @TODO: IS THIS STILL NECESSARY?
+            if ($this->getParam("general")) {
+                $general = \Zend_Json::decode($this->getParam("general"));
 
-            // do not allow all values to be set, will cause problems (eg. icon)
-            if (is_array($general) && count($general) > 0) {
-                foreach ($general as $key => $value) {
-                    if (!in_array($key, array("o_id", "o_classId", "o_className", "o_type", "icon", "o_userOwner", "o_userModification"))) {
-                        $object->setValue($key, $value);
+                // do not allow all values to be set, will cause problems (eg. icon)
+                if (is_array($general) && count($general) > 0) {
+                    foreach ($general as $key => $value) {
+                        if (!in_array($key, array("o_id", "o_classId", "o_className", "o_type", "icon", "o_userOwner", "o_userModification"))) {
+                            $object->setValue($key, $value);
+                        }
                     }
                 }
             }
-        }
 
-        $object = $this->assignPropertiesFromEditmode($object);
+            $object = $this->assignPropertiesFromEditmode($object);
 
 
-        // scheduled tasks
-        if ($this->getParam("scheduler")) {
-            $tasks = array();
-            $tasksData = \Zend_Json::decode($this->getParam("scheduler"));
+            // scheduled tasks
+            if ($this->getParam("scheduler")) {
+                $tasks = array();
+                $tasksData = \Zend_Json::decode($this->getParam("scheduler"));
 
-            if (!empty($tasksData)) {
-                foreach ($tasksData as $taskData) {
-                    $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
+                if (!empty($tasksData)) {
+                    foreach ($tasksData as $taskData) {
+                        $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
 
-                    $task = new Model\Schedule\Task($taskData);
-                    $tasks[] = $task;
+                        $task = new Model\Schedule\Task($taskData);
+                        $tasks[] = $task;
+                    }
                 }
+
+                $object->setScheduledTasks($tasks);
             }
 
-            $object->setScheduledTasks($tasks);
-        }
+            if ($this->getParam("task") == "unpublish") {
+                $object->setPublished(false);
+            }
+            if ($this->getParam("task") == "publish") {
+                $object->setPublished(true);
+            }
 
-        if ($this->getParam("task") == "unpublish") {
-            $object->setPublished(false);
-        }
-        if ($this->getParam("task") == "publish") {
-            $object->setPublished(true);
-        }
+            // unpublish and save version is possible without checking mandatory fields
+            if ($this->getParam("task") == "unpublish" || $this->getParam("task") == "version") {
+                $object->setOmitMandatoryCheck(true);
+            }
 
-        // unpublish and save version is possible without checking mandatory fields
-        if ($this->getParam("task") == "unpublish" || $this->getParam("task") == "version") {
-            $object->setOmitMandatoryCheck(true);
-        }
-
-        if (($this->getParam("task") == "publish" && $object->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $object->isAllowed("unpublish"))) {
-            try {
+            if (($this->getParam("task") == "publish" && $object->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $object->isAllowed("unpublish"))) {
                 if ($data) {
                     $this->performFieldcollectionModificationCheck($object, $originalModificationDate, $data);
                 }
@@ -1076,33 +1076,31 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
                 $this->_helper->json(array(
                     "success" => true,
-                    "general" => array("o_modificationDate" => $object->getModificationDate() ),
+                    "general" => array("o_modificationDate" => $object->getModificationDate()),
                     "treeData" => $treeData));
-            } catch (\Exception $e) {
-                \Logger::log($e);
-                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
-            }
-        } elseif ($this->getParam("task") == "session") {
 
-            //$object->_fulldump = true; // not working yet, donno why
+            } elseif ($this->getParam("task") == "session") {
 
-            Tool\Session::useSession(function ($session) use ($object) {
-                $key = "object_" . $object->getId();
-                $session->$key = $object;
-            }, "pimcore_objects");
+                //$object->_fulldump = true; // not working yet, donno why
 
-            $this->_helper->json(array("success" => true));
-        } else {
-            if ($object->isAllowed("save")) {
-                try {
+                Tool\Session::useSession(function ($session) use ($object) {
+                    $key = "object_" . $object->getId();
+                    $session->$key = $object;
+                }, "pimcore_objects");
+
+                $this->_helper->json(array("success" => true));
+            } else {
+                if ($object->isAllowed("save")) {
                     $object->saveVersion();
-
                     $this->_helper->json(array("success" => true));
-                } catch (\Exception $e) {
-                    \Logger::log($e);
-                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
             }
+        } catch (\Exception $e) {
+            \Logger::log($e);
+            if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+            }
+            throw $e;
         }
     }
 

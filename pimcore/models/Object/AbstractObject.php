@@ -597,6 +597,10 @@ class AbstractObject extends Model\Element\AbstractElement
                     \Logger::info($er);
                 }
 
+                if ($e instanceof Model\Element\ValidationException) {
+                    throw $e;
+                }
+
                 // set "HideUnpublished" back to the value it was originally
                 self::setHideUnpublished($hideUnpublishedBackup);
 

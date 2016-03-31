@@ -177,12 +177,12 @@ class Link extends Model\Object\ClassDefinition\Data
                     if ($data->getInternalType() == "document") {
                         $doc = Document::getById($data->getInternal());
                         if (!$doc instanceof Document) {
-                            throw new \Exception("invalid internal link, referenced document with id [" . $data->getInternal() . "] does not exist");
+                            throw new Element\ValidationException("invalid internal link, referenced document with id [" . $data->getInternal() . "] does not exist");
                         }
                     } elseif ($data->getInternalType() == "asset") {
                         $asset = Asset::getById($data->getInternal());
                         if (!$asset instanceof Asset) {
-                            throw new \Exception("invalid internal link, referenced asset with id [" . $data->getInternal() . "] does not exist");
+                            throw new Element\ValidationException("invalid internal link, referenced asset with id [" . $data->getInternal() . "] does not exist");
                         }
                     }
                 }

@@ -322,34 +322,34 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (!$this->isEmpty($data) and !is_numeric($data)) {
-            throw new \Exception("invalid numeric data [" . $data . "]");
+            throw new Model\Element\ValidationException("invalid numeric data [" . $data . "]");
         }
 
         if (!$omitMandatoryCheck) {
             $data = $this->toNumeric($data);
 
             if ($data >= PHP_INT_MAX) {
-                throw new \Exception("value exceeds PHP_INT_MAX please use an input data type instead of numeric!");
+                throw new Model\Element\ValidationException("Value exceeds PHP_INT_MAX please use an input data type instead of numeric!");
             }
 
             if ($this->getInteger() && strpos((string) $data, ".") !== false) {
-                throw new \Exception("Value in field [ ".$this->getName()." ] is not an integer");
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is not an integer");
             }
 
             if (strlen($this->getMinValue()) && $this->getMinValue() > $data) {
-                throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
             }
 
             if (strlen($this->getMaxValue()) && $data > $this->getMaxValue()) {
-                throw new \Exception("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
             }
 
             if ($this->getUnsigned() && $data < 0) {
-                throw new \Exception("Value in field [ ".$this->getName()." ] is not unsigned (bigger than 0)");
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is not unsigned (bigger than 0)");
             }
         }
     }

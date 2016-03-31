@@ -224,14 +224,14 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);
         if (is_array($dependencies)) {
             foreach ($dependencies as $key => $value) {
                 $el = Element\Service::getElementById($value['type'], $value['id']);
                 if (!$el) {
-                    throw new \Exception("invalid dependency in wysiwyg text");
+                    throw new Element\ValidationException("Invalid dependency in wysiwyg text");
                 }
             }
         }

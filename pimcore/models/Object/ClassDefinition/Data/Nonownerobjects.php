@@ -204,14 +204,14 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     {
         //TODO
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (is_array($data)) {
             foreach ($data as $o) {
                 $allowClass = $this->allowObjectRelation($o);
                 if (!$allowClass or!($o instanceof Object\Concrete)) {
-                    throw new \Exception("Invalid non owner object relation to object [".$o->getId()."]", null, null);
+                    throw new Model\Element\ValidationException("Invalid non owner object relation to object [".$o->getId()."]", null, null);
                 }
             }
         }

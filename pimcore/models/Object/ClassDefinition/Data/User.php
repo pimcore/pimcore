@@ -108,13 +108,13 @@ class User extends Model\Object\ClassDefinition\Data\Select
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
         
         if (!empty($data)) {
             $user = Model\User::getById($data);
             if (!$user instanceof Model\User) {
-                throw new \Exception("invalid user reference");
+                throw new Model\Element\ValidationException("Invalid user reference");
             }
         }
     }

@@ -380,12 +380,12 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
                 }
             }
             if ($empty) {
-                throw new \Exception("Empty mandatory field [ ".$this->getName()." ]");
+                throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
             }
         }
 
         if (!empty($data) and !$data instanceof Object\Data\StructuredTable) {
-            throw new \Exception("invalid table data");
+            throw new Model\Element\ValidationException("invalid table data");
         }
     }
 

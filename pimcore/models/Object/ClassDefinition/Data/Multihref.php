@@ -471,7 +471,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception("Empty mandatory field [ " . $this->getName() . " ]");
+            throw new Element\ValidationException("Empty mandatory field [ " . $this->getName() . " ]");
         }
 
         $allow = true;
@@ -489,7 +489,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new \Exception("Invalid multihref relation", null, null);
+                    throw new Element\ValidationException("Invalid multihref relation", null, null);
                 }
             }
         }

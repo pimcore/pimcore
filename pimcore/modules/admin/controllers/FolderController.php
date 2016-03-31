@@ -47,18 +47,27 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
 
     public function saveAction()
     {
-        if ($this->getParam("id")) {
-            $folder = Document\Folder::getById($this->getParam("id"));
-            $folder->setModificationDate(time());
-            $folder->setUserModification($this->getUser()->getId());
+        try {
+            if ($this->getParam("id")) {
+                $folder = Document\Folder::getById($this->getParam("id"));
+                $folder->setModificationDate(time());
+                $folder->setUserModification($this->getUser()->getId());
 
-            if ($folder->isAllowed("publish")) {
-                $this->setValuesToDocument($folder);
-                $folder->save();
+                if ($folder->isAllowed("publish")) {
+                    $this->setValuesToDocument($folder);
+                    $folder->save();
 
-                $this->_helper->json(array("success" => true));
+                    $this->_helper->json(array("success" => true));
+                }
             }
+        } catch (\Exception $e) {
+            \Logger::log($e);
+            if (Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+            }
+            throw $e;
         }
+
         $this->_helper->json(false);
     }
 

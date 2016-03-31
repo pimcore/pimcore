@@ -207,7 +207,7 @@ class Input extends Model\Object\ClassDefinition\Data
     {
         if (!$omitMandatoryCheck && $this->getRegex() && strlen($data) > 0) {
             if (!preg_match("#" . $this->getRegex() . "#", $data)) {
-                throw new \Exception("Value in field [ " . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
+                throw new Model\Element\ValidationException("Value in field [ " . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
             }
         }
 

@@ -174,10 +174,12 @@ class Concrete extends AbstractObject
 
                             AbstractObject::setGetInheritedValues($getInheritedValues);
                         } catch (\Exception $e) {
-                            throw new \Exception($e->getMessage() . " fieldname=" . $fd->getName());
+                            $exceptionClass = get_class($e);
+                            throw new $exceptionClass($e->getMessage() . " fieldname=" . $fd->getName());
                         }
                     } else {
-                        throw new \Exception($e->getMessage() . " fieldname=" . $fd->getName());
+                        $exceptionClass = get_class($e);
+                        throw new $exceptionClass($e->getMessage() . " fieldname=" . $fd->getName());
                     }
                 }
             }

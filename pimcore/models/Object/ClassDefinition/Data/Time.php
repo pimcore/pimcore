@@ -45,7 +45,7 @@ class Time extends Model\Object\ClassDefinition\Data\Input
         parent::checkValidity($data, $omitMandatoryCheck);
 
         if ((is_string($data) && strlen($data) != 5 && !empty($data)) || (!empty($data) && !is_string($data))) {
-            throw new \Exception("Wrong time format given must be a 5 digit string (eg: 06:49) [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException("Wrong time format given must be a 5 digit string (eg: 06:49) [ ".$this->getName()." ]");
         }
     }
 
