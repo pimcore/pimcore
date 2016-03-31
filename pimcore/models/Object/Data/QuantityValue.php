@@ -14,6 +14,8 @@
 
 namespace Pimcore\Model\Object\Data;
 
+use Pimcore\Model\Object\QuantityValue\Unit;
+
 class QuantityValue
 {
     /**
@@ -36,7 +38,12 @@ class QuantityValue
     {
         $this->value = $value;
         $this->unitId = $unitId;
-        $this->unit = null;
+        $this->unit = "";
+
+        $unit = Unit::getById($this->unitId);
+        if ($unit) {
+            $this->unit = $unit->getAbbreviation();
+        }
     }
 
 
@@ -62,7 +69,7 @@ class QuantityValue
     public function getUnit()
     {
         if (empty($this->unit)) {
-            $this->unit = \Pimcore\Model\Object\QuantityValue\Unit::getById($this->unitId);
+            $this->unit = Unit::getById($this->unitId);
         }
         return $this->unit;
     }
