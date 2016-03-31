@@ -2,6 +2,10 @@
 
 # CKEDITOR (use builder: http://ckeditor.com/builder);
 
+upload build-config.js
+
+OR:
+
 + select "full" distribution
 
 Add plugins:
