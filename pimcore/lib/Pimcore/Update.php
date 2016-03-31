@@ -312,6 +312,7 @@ class Update
         Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
 
         if (is_file($script)) {
+            $outputMessage = "";
             ob_start();
             try {
                 if (!self::$dryRun) {
@@ -319,8 +320,10 @@ class Update
                 }
             } catch (\Exception $e) {
                 \Logger::error($e);
+                $outputMessage .= "EXCEPTION: " . $e->getMessage();
+                $outputMessage .= "<br>For details please have a look into debug.log<br>";
             }
-            $outputMessage = ob_get_clean();
+            $outputMessage .= ob_get_clean();
         }
 
         self::clearOPCaches();
