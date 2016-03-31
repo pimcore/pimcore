@@ -32,36 +32,24 @@ trait Dao
                 // multicolumn field
                 foreach ($columnType as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
-                    try {
-                        $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                    } catch (\Exception $e) {
-                    }
+                    $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
-                try {
-                    $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
-                } catch (\Exception $e) {
-                }
+                $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
             }
         } else {
             if (is_array($columnType)) {
                 // multicolumn field
                 foreach ($columnType as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
-                    try {
-                        $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                    } catch (\Exception $e) {
-                    }
+                    $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
-                try {
-                    $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
-                } catch (\Exception $e) {
-                }
+                $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
             }
         }
     }

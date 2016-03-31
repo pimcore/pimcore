@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -224,6 +224,18 @@ class Wrapper
         $return = $this->__call("commit", []);
         $this->inTransaction = false;
         return $return;
+    }
+
+    public function queryIgnoreError($sql, $bind = []) {
+        try {
+            // we call callResourceMethod() directly to bypass the error-handling in __call()
+            $return = $this->callResourceMethod("query", [$sql, $bind]);
+            return $return;
+        } catch (\Exception $e) {
+            // we simply ignore the error
+        }
+
+        return null;
     }
 
     /**
