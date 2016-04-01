@@ -843,11 +843,13 @@ abstract class Data
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
-        $code .= "\t\t" . 'return $preValue;' . "\n";
-        $code .= "\t" . '}' . "\n";
+        if (!$class instanceof  Object\Fieldcollection\Definition) {
+            // adds a hook preGetValue which can be defined in an extended class
+            $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+            $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
+            $code .= "\t\t" . 'return $preValue;' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
 
         // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
 
