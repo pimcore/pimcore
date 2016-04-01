@@ -103,6 +103,7 @@ Ext.onReady(function () {
     window.setInterval(pimcore.edithelpers.setBodyHeight, 1000);
 
     Ext.QuickTips.init();
+    Ext.MessageBox.minPromptWidth = 500;
     
     function getEditable(config) {
         var id = config.id;

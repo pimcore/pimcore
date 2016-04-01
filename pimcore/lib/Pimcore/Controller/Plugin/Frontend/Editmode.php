@@ -78,6 +78,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 "/pimcore/static6/js/pimcore/document/tags/areablock.js",
                 "/pimcore/static6/js/pimcore/document/tags/area.js",
                 "/pimcore/static6/js/pimcore/document/tags/pdf.js",
+                "/pimcore/static6/js/pimcore/document/tags/embed.js",
                 "/pimcore/static6/js/pimcore/document/edit/helper.js"
             );
 

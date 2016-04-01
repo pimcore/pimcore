@@ -1,5 +1,13 @@
 [
   {
+    "term": "please_enter_url",
+    "definition": "Please enter the URL",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+    {
     "term": "brightness",
     "definition": "Brightness",
     "context": "",

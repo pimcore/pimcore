@@ -169,6 +169,7 @@ Ext.onReady(function () {
     };
 
     Ext.QuickTips.init();
+    Ext.MessageBox.minPromptWidth = 500;
 
     Ext.Ajax.setDisableCaching(true);
     Ext.Ajax.setTimeout(900000);

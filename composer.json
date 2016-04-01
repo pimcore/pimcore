@@ -57,6 +57,7 @@
         "ramsey/uuid": "~3",
         "colinmollenhour/credis": "~1",
         "endroid/qrcode": "~1.5",
+        "mpratt/embera": "~1",
         "linfo/linfo": "~3",
         "amnuts/opcache-gui": "~2",
         "vrana/adminer": "~4.2"

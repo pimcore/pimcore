@@ -170,9 +170,19 @@
 
 .pimcore_tag_video_empty {
 	border: 1px solid #d0d0d0 !important;
-	/*background:url(/pimcore/static6/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
     background:url(/pimcore/static6/img/flat-color-icons/film_reel.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
+}
+
+.pimcore_tag_embed {
+    position: relative;
+}
+
+.pimcore_tag_embed_empty {
+    border: 1px solid #d0d0d0 !important;
+    background:url(/pimcore/static6/img/flat-color-icons/bricks.svg) center center/50px no-repeat #f9fbfb !important;
+    cursor: pointer;
+    min-height:100px;
 }
 
 .pimcore_tag_href input{
