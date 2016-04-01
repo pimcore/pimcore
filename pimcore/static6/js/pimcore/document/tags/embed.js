@@ -42,7 +42,7 @@ pimcore.document.tags.embed = Class.create(pimcore.document.tag, {
         // disable the global dnd handler in this editmode/frame
         window.dndManager.disable();
 
-        Ext.MessageBox.prompt("", t('please_enter_url'),
+        parent.Ext.MessageBox.prompt("", t('please_enter_url'),
         function (button, value, object) {
             if(button == "ok") {
                 this.data["url"] = value;

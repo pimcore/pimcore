@@ -65,6 +65,15 @@ class Embed extends Model\Document\Tag
         if($this->url) {
 
             $config = $this->getOptions();
+            if(!isset($config["params"])) {
+                $config["params"] = [];
+            }
+
+            foreach(["width","height"] as $property) {
+                if(isset($config[$property])) {
+                    $config["params"][$property] = $config[$property];
+                }
+            }
 
             $embera = new \Embera\Embera($config);
             return $embera->autoEmbed($this->url);
