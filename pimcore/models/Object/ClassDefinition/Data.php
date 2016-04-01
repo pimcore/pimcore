@@ -865,11 +865,16 @@ abstract class Data
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
+        if ($class instanceof  Object\Fieldcollection\Definition) {
+            $classname = ucfirst($class->getKey());
+        } else {
+            $classname = $class->getName();
+        }
 
         $code  = '/**' . "\n";
         $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= "* @return \\Pimcore\\Model\\Object\\" . ucfirst($class->getName()) . "\n";
+        $code .= "* @return \\Pimcore\\Model\\Object\\" . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ', $language = null) {' . "\n";
 

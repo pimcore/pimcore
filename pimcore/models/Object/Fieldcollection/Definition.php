@@ -262,7 +262,28 @@ class Definition extends Model\AbstractModel
                  */
 
                 $cd .= $def->getGetterCodeFieldcollection($this);
+
+                if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
+                    foreach ($def->getFieldDefinitions() as $localizedFd) {
+
+                        /**
+                         * @var $fd Object\ClassDefinition\Data
+                         */
+                        $cd .= $localizedFd->getGetterCodeLocalizedfields($this);
+                    }
+                }
+
                 $cd .= $def->getSetterCodeFieldcollection($this);
+
+                if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
+                    foreach ($def->getFieldDefinitions() as $localizedFd) {
+
+                        /**
+                         * @var $fd Object\ClassDefinition\Data
+                         */
+                        $cd .= $localizedFd->getSetterCodeLocalizedfields($this);
+                    }
+                }
             }
         }
 
