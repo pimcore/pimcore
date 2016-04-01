@@ -554,7 +554,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function save($object, $params = array())
     {
-        $localizedFields = $this->getDataFromObjectParam($object);
+        $localizedFields = $this->getDataFromObjectParam($object, $params);
         if ($localizedFields instanceof Object\Localizedfield) {
             if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
                 $object = $object->getObject();
@@ -626,22 +626,24 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @return Object\Localizedfield
      * @throws \Exception
      */
-    public function preGetData($object, $params = array())
+    public function preGetData($container, $params = array())
     {
-        if (!$object instanceof Object\Concrete && !$object instanceof Object\Fieldcollection\Data\AbstractData) {
+        if (!$container instanceof Object\Concrete && !$container instanceof Object\Fieldcollection\Data\AbstractData) {
             throw new \Exception("Localized Fields are only valid in Objects and Fieldcollections");
         }
 
-        if (!$object->localizedfields instanceof Object\Localizedfield) {
+        if (!$container->localizedfields instanceof Object\Localizedfield) {
             $lf = new Object\Localizedfield();
-            if ($object instanceof  Object\Fieldcollection\Data\AbstractData) {
-                $object = $object->getObject();
+
+            $object = $container;
+            if ($container instanceof  Object\Fieldcollection\Data\AbstractData) {
+                $object = $container->getObject();
             }
             $lf->setObject($object);
 
-            $object->localizedfields = $lf;
+            $container->localizedfields = $lf;
         }
-        return $object->localizedfields;
+        return $container->localizedfields;
     }
 
     /**

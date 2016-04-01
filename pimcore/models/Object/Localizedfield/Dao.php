@@ -261,23 +261,27 @@ class Dao extends Model\Dao\AbstractDao
     {
         try {
             $object = $this->model->getObject();
-            if ($deleteQuery) {
-                $id = $object->getId();
-                $tablename = $this->getTableName();
-                $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
 
-                $validLanguages = Tool::getValidLanguages();
-                foreach ($validLanguages as $language) {
-                    $queryTable = $this->getQueryTableName() . "_" . $language;
-                    $this->db->delete($queryTable, $this->db->quoteInto("ooo_id = ?", $id));
-                }
-            }
             $context = $this->model->getContext();
             if ($context && $context["containerType"] == "fieldcollection") {
                 $containerKey = $context["containerKey"];
                 $container = Object\Fieldcollection\Definition::getByKey($containerKey);
             } else {
                 $container =  $object->getClass();
+            }
+
+            if ($deleteQuery) {
+                $id = $object->getId();
+                $tablename = $this->getTableName();
+                $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
+
+                if (!$container instanceof  Object\Fieldcollection\Definition) {
+                    $validLanguages = Tool::getValidLanguages();
+                    foreach ($validLanguages as $language) {
+                        $queryTable = $this->getQueryTableName() . "_" . $language;
+                        $this->db->delete($queryTable, $this->db->quoteInto("ooo_id = ?", $id));
+                    }
+                }
             }
 
             $childDefinitions = $container->getFieldDefinition("localizedfields")->getFielddefinitions();
