@@ -20,9 +20,6 @@ use Pimcore\Model\Asset;
 
 class Video extends Model\Document\Tag
 {
-
-    public static $playerJsEmbedded = false;
-
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
      *
