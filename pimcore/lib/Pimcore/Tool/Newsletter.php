@@ -349,6 +349,24 @@ class Newsletter
     }
 
     /**
+     * Checks if e-mail address already
+     * exists in the database.
+     *
+     * @param array $params
+     * @return bool
+     */
+    public function isEmailExists($params)
+    {
+        $className = $this->getClassName();
+        $existingObject = $className::getByEmail($params["email"], 1);
+        if ($existingObject) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param Object\ClassDefinition $class
      */
     public function setClass($class)
