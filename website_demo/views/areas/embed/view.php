@@ -3,7 +3,11 @@
     <div class="row">
         <?php for($i=1;$i<=2;$i++) { ?>
             <div class="col-sm-6">
-                <?= $this->embed("socialContent_" . $i, ["width" => 426]) ?>
+                <?php while($this->block("contents_".$i)->loop()) { ?>
+                    <div class="embed">
+                        <?= $this->embed("socialContent", ["width" => 426, "height" => 300]) ?>
+                    </div>
+                <?php } ?>
             </div>
         <?php } ?>
     </div>

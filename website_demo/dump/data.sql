@@ -396,6 +396,10 @@ CREATE TABLE `object_store_6` (
 
 
 
+
+
+
+
 INSERT INTO `assets` VALUES ('1','0','folder','','/','','1368522989','1368522989','1','1','','0');
 INSERT INTO `assets` VALUES ('3','1','folder','portal-sujets','/','','1368530371','1368632469','0','0','a:0:{}','0');
 INSERT INTO `assets` VALUES ('4','3','image','slide-01.jpg','/portal-sujets/','image/jpeg','1368530684','1370432846','0','0','a:4:{s:10:\"imageWidth\";i:1500;s:11:\"imageHeight\";i:550;s:25:\"imageDimensionsCalculated\";b:1;s:10:\"thumbnails\";N;}','0');
@@ -463,6 +467,10 @@ INSERT INTO `classes` VALUES ('3','inquiry','','1368620413','1368622807','0','0'
 INSERT INTO `classes` VALUES ('4','person','','1368620452','1368621909','0','0','0','0','',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0');
 INSERT INTO `classes` VALUES ('5','blogArticle','','1388389165','1388389849','7','7','0','0','',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0');
 INSERT INTO `classes` VALUES ('6','blogCategory','','1388389401','1388389839','7','7','0','0','',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0');
+
+
+
+
 
 
 
@@ -774,6 +782,10 @@ INSERT INTO `dependencies` VALUES ('document','72','document','5');
 INSERT INTO `dependencies` VALUES ('document','72','document','40');
 INSERT INTO `dependencies` VALUES ('document','72','document','60');
 INSERT INTO `dependencies` VALUES ('document','72','document','69');
+INSERT INTO `dependencies` VALUES ('document','73','document','3');
+INSERT INTO `dependencies` VALUES ('document','73','document','40');
+INSERT INTO `dependencies` VALUES ('document','73','document','57');
+INSERT INTO `dependencies` VALUES ('document','73','document','60');
 INSERT INTO `dependencies` VALUES ('object','3','document','19');
 INSERT INTO `dependencies` VALUES ('object','3','document','24');
 INSERT INTO `dependencies` VALUES ('object','3','asset','43');
@@ -818,17 +830,17 @@ INSERT INTO `documents` VALUES ('18','3','page','pdf-viewer','/en/basic-examples
 INSERT INTO `documents` VALUES ('19','3','page','galleries','/en/basic-examples/','3','1','1368549805','1395043436','0',NULL);
 INSERT INTO `documents` VALUES ('20','3','page','glossary','/en/basic-examples/','4','1','1368559903','1395043487','0',NULL);
 INSERT INTO `documents` VALUES ('21','3','page','thumbnails','/en/basic-examples/','5','1','1368602443','1395043532','0',NULL);
-INSERT INTO `documents` VALUES ('22','3','page','website-translations','/en/basic-examples/','6','1','1368607207','1395043561','0',NULL);
+INSERT INTO `documents` VALUES ('22','3','page','website-translations','/en/basic-examples/','7','1','1368607207','1395043561','0',NULL);
 INSERT INTO `documents` VALUES ('23','51','page','website-uebersetzungen','/de/einfache-beispiele/','0','1','1368608357','1382958135','0','0');
 INSERT INTO `documents` VALUES ('24','3','page','content-page','/en/basic-examples/','0','1','1368609059','1405923178','0',NULL);
-INSERT INTO `documents` VALUES ('25','3','page','editable-roundup','/en/basic-examples/','7','1','1368609569','1395043587','0',NULL);
-INSERT INTO `documents` VALUES ('26','3','page','form','/en/basic-examples/','8','1','1368610663','1388733533','0','0');
-INSERT INTO `documents` VALUES ('27','3','page','news','/en/basic-examples/','9','1','1368613137','1395043614','0',NULL);
-INSERT INTO `documents` VALUES ('28','3','page','properties','/en/basic-examples/','10','1','1368615986','1382956040','0','0');
-INSERT INTO `documents` VALUES ('29','3','page','tag-and-snippet-management','/en/basic-examples/','11','1','1368617118','1395043636','0',NULL);
+INSERT INTO `documents` VALUES ('25','3','page','editable-roundup','/en/basic-examples/','8','1','1368609569','1395043587','0',NULL);
+INSERT INTO `documents` VALUES ('26','3','page','form','/en/basic-examples/','9','1','1368610663','1388733533','0','0');
+INSERT INTO `documents` VALUES ('27','3','page','news','/en/basic-examples/','10','1','1368613137','1395043614','0',NULL);
+INSERT INTO `documents` VALUES ('28','3','page','properties','/en/basic-examples/','11','1','1368615986','1382956040','0','0');
+INSERT INTO `documents` VALUES ('29','3','page','tag-and-snippet-management','/en/basic-examples/','12','1','1368617118','1395043636','0',NULL);
 INSERT INTO `documents` VALUES ('30','5','page','content-inheritance','/en/advanced-examples/','2','1','1368623726','1395043816','0',NULL);
 INSERT INTO `documents` VALUES ('31','30','page','content-inheritance','/en/advanced-examples/content-inheritance/','2','1','1368623866','1395043901','0',NULL);
-INSERT INTO `documents` VALUES ('32','3','link','pimcore.org','/en/basic-examples/','12','1','1368626404','1382956040','0','0');
+INSERT INTO `documents` VALUES ('32','3','link','pimcore.org','/en/basic-examples/','13','1','1368626404','1382956040','0','0');
 INSERT INTO `documents` VALUES ('33','34','hardlink','basic-examples','/en/advanced-examples/hard-link/','0','1','1368626461','1382956042','0','0');
 INSERT INTO `documents` VALUES ('34','5','page','hard-link','/en/advanced-examples/','3','1','1368626655','1382956042','0','0');
 INSERT INTO `documents` VALUES ('35','5','page','image-with-hotspots-and-markers','/en/advanced-examples/','4','1','1368626888','1382956042','0','0');
@@ -866,6 +878,7 @@ INSERT INTO `documents` VALUES ('69','5','snippet','sidebar','/en/advanced-examp
 INSERT INTO `documents` VALUES ('70','5','page','product-information-management','/en/advanced-examples/','12','1','1388740191','1388740585','0','0');
 INSERT INTO `documents` VALUES ('71','5','page','e-commerce','/en/advanced-examples/','11','1','1388740265','1388740613','0','0');
 INSERT INTO `documents` VALUES ('72','5','page','sub-modules','/en/advanced-examples/','10','1','1419933647','1419933980','32','32');
+INSERT INTO `documents` VALUES ('73','3','page','social-contents','/en/basic-examples/','6','1','1459501213','1459501429','39','39');
 
 
 
@@ -1756,6 +1769,17 @@ INSERT INTO `documents_elements` VALUES ('72','content','areablock','a:0:{}');
 INSERT INTO `documents_elements` VALUES ('72','headDescription','input','');
 INSERT INTO `documents_elements` VALUES ('72','headline','input','');
 INSERT INTO `documents_elements` VALUES ('72','headTitle','input','');
+INSERT INTO `documents_elements` VALUES ('73','content','areablock','a:1:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:5:\"embed\";}}');
+INSERT INTO `documents_elements` VALUES ('73','contents_1content1','block','a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}');
+INSERT INTO `documents_elements` VALUES ('73','contents_2content1','block','a:2:{i:0;s:1:\"1\";i:1;s:1:\"2\";}');
+INSERT INTO `documents_elements` VALUES ('73','headDescription','input','');
+INSERT INTO `documents_elements` VALUES ('73','headline','input','Embedding Social Contents');
+INSERT INTO `documents_elements` VALUES ('73','headTitle','input','');
+INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_1content11_1','embed','a:1:{s:3:\"url\";s:61:\"https://twitter.com/DiscoverAustria/status/707491558229217280\";}');
+INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_1content11_2','embed','a:1:{s:3:\"url\";s:27:\"https://vimeo.com/121649600\";}');
+INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_1content11_3','embed','a:1:{s:3:\"url\";s:113:\"https://www.facebook.com/1007688325917154/photos/a.1046725715346748.1073741827.1007688325917154/1182670351752283/\";}');
+INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_2content11_1','embed','a:1:{s:3:\"url\";s:43:\"https://www.youtube.com/watch?v=nPntDiARQYw\";}');
+INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_2content11_2','embed','a:1:{s:3:\"url\";s:40:\"https://www.instagram.com/p/BCne7kJIYLR/\";}');
 
 
 
@@ -1818,6 +1842,7 @@ INSERT INTO `documents_page` VALUES ('68','','advanced','asset-thumbnail-list','
 INSERT INTO `documents_page` VALUES ('70','','content','default','','Product Information Management','','','a:0:{}','','0','','');
 INSERT INTO `documents_page` VALUES ('71','','content','default','','E-Commerce','','','a:0:{}','','0','','');
 INSERT INTO `documents_page` VALUES ('72','','category_example','test','','','','','a:0:{}',NULL,NULL,'','');
+INSERT INTO `documents_page` VALUES ('73',NULL,'content','default',NULL,'Social Contents','','','a:0:{}',NULL,NULL,NULL,'');
 
 
 
@@ -2178,6 +2203,17 @@ INSERT INTO `properties` VALUES ('72','document','/en/advanced-examples/sub-modu
 INSERT INTO `properties` VALUES ('72','document','/en/advanced-examples/sub-modules','navigation_name','text','Sub-Modules','0');
 INSERT INTO `properties` VALUES ('72','document','/en/advanced-examples/sub-modules','navigation_target','text','','0');
 INSERT INTO `properties` VALUES ('72','document','/en/advanced-examples/sub-modules','navigation_title','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','language','text','en','1');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_accesskey','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_anchor','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_class','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_exclude','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_name','text','Social Contents','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_parameters','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_relation','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_tabindex','text','','0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_target','text',NULL,'0');
+INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_title','text','','0');
 
 
 
@@ -2350,6 +2386,7 @@ INSERT INTO `search_backend_data` VALUES ('70','/screenshots/pim1.png','asset','
 INSERT INTO `search_backend_data` VALUES ('70','/en/advanced-examples/product-information-management','document','page','page','1','1388740191','1388740585','0','0','ID: 70  \nPath: /en/advanced-examples/product-information-management  \n Please visit our&nbsp;PIM, E-Commerce &amp; Asset Management demo to see it in action.&nbsp; Product Information Management Product Information Management ','sidebar:/en/advanced-examples/sidebar blog:/en/advanced-examples/blog mainNavStartNode:/en leftNavStartNode:/en/advanced-examples language:en navigation_name:Product Information Management ');
 INSERT INTO `search_backend_data` VALUES ('71','/en/advanced-examples/e-commerce','document','page','page','1','1388740265','1388740613','0','0','ID: 71  \nPath: /en/advanced-examples/e-commerce  \n Please visit our&nbsp;PIM, E-Commerce &amp; Asset Management demo to see it in action.&nbsp; E-Commerce E-Commerce ','sidebar:/en/advanced-examples/sidebar blog:/en/advanced-examples/blog mainNavStartNode:/en leftNavStartNode:/en/advanced-examples language:en navigation_name:E-Commerce ');
 INSERT INTO `search_backend_data` VALUES ('72','/en/advanced-examples/sub-modules','document','page','page','1','1419933647','1419933980','32','32','ID: 72  \nPath: /en/advanced-examples/sub-modules  \n ','sidebar:/en/advanced-examples/sidebar blog:/en/advanced-examples/blog mainNavStartNode:/en leftNavStartNode:/en/advanced-examples language:en navigation_title: navigation_target: navigation_name:Sub-Modules navigation_exclude: ');
+INSERT INTO `search_backend_data` VALUES ('73','/en/basic-examples/social-contents','document','page','page','1','1459501213','1459501429','39','39','ID: 73  \nPath: /en/basic-examples/social-contents  \n Embedding Social Contents Summer in Salzburg pic.twitter.com/XjulNLrnxZ&mdash; Discover Austria (@DiscoverAustria) March 9, 2016 (function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = \"//connect.facebook.net/de_DE/sdk.js#xfbml=1&version=v2.3\"; fjs.parentNode.insertBefore(js, fjs); }(document, \'script\', \'facebook-jssdk\'));Over the rainbow in SalzburgPosted by Discover Austria on&nbsp;Dienstag, 29. März 2016 SALZBURG | by @fatboy199 A photo posted by Discover Austria (@discoveraustria) on Mar 6, 2016 at 7:39am PST Social Contents ','blog:/en/advanced-examples/blog leftNavStartNode:/en/basic-examples mainNavStartNode:/en sidebar:/en/sidebar language:en navigation_parameters: navigation_target: navigation_tabindex: navigation_relation: navigation_anchor: navigation_name:Social Contents navigation_exclude: navigation_class: navigation_accesskey: navigation_title: ');
 
 
 
@@ -2399,6 +2436,8 @@ INSERT INTO `translations_admin` VALUES ('contents','en','','1382958363','138295
 INSERT INTO `translations_admin` VALUES ('date','en','','1368613497','1368613497');
 INSERT INTO `translations_admin` VALUES ('dateregister','en','','1368621929','1368621929');
 INSERT INTO `translations_admin` VALUES ('email','en','','1368621928','1368621928');
+INSERT INTO `translations_admin` VALUES ('embed','de','','1459501213','1459501213');
+INSERT INTO `translations_admin` VALUES ('embed','en','','1459501213','1459501213');
 INSERT INTO `translations_admin` VALUES ('featurette ','de','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('featurette ','en','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('female','en','','1368621928','1368621928');
@@ -2558,6 +2597,8 @@ INSERT INTO `translations_website` VALUES ('introduction','de','','0','0');
 INSERT INTO `translations_website` VALUES ('introduction','en','','0','0');
 INSERT INTO `translations_website` VALUES ('keyword','de','','0','0');
 INSERT INTO `translations_website` VALUES ('keyword','en','','0','0');
+INSERT INTO `translations_website` VALUES ('language','de','','1459501213','1459501213');
+INSERT INTO `translations_website` VALUES ('language','en','','1459501213','1459501213');
 INSERT INTO `translations_website` VALUES ('lastname','de','','1368610820','1368610820');
 INSERT INTO `translations_website` VALUES ('lastname','en','','1368610820','1368610820');
 INSERT INTO `translations_website` VALUES ('male','de','','0','0');

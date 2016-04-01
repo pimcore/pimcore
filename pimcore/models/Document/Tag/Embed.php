@@ -75,8 +75,16 @@ class Embed extends Model\Document\Tag
                 }
             }
 
-            $embera = new \Embera\Embera($config);
-            return $embera->autoEmbed($this->url);
+            $cacheKey = "doc_embed_" . crc32(serialize([$this->url, $config]));
+
+            if(!$html = \Pimcore\Cache::load($cacheKey)) {
+                $embera = new \Embera\Embera($config);
+                $html = $embera->autoEmbed($this->url);
+
+                \Pimcore\Cache::save($html, $cacheKey, ["embed"], 86400, 1, true);
+            }
+
+            return $html;
         }
 
         return "";
