@@ -1078,7 +1078,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     "success" => true,
                     "general" => array("o_modificationDate" => $object->getModificationDate()),
                     "treeData" => $treeData));
-
             } elseif ($this->getParam("task") == "session") {
 
                 //$object->_fulldump = true; // not working yet, donno why

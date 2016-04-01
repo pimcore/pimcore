@@ -62,22 +62,21 @@ class Embed extends Model\Document\Tag
      */
     public function frontend()
     {
-        if($this->url) {
-
+        if ($this->url) {
             $config = $this->getOptions();
-            if(!isset($config["params"])) {
+            if (!isset($config["params"])) {
                 $config["params"] = [];
             }
 
-            foreach(["width","height"] as $property) {
-                if(isset($config[$property])) {
+            foreach (["width", "height"] as $property) {
+                if (isset($config[$property])) {
                     $config["params"][$property] = $config[$property];
                 }
             }
 
             $cacheKey = "doc_embed_" . crc32(serialize([$this->url, $config]));
 
-            if(!$html = \Pimcore\Cache::load($cacheKey)) {
+            if (!$html = \Pimcore\Cache::load($cacheKey)) {
                 $embera = new \Embera\Embera($config);
                 $html = $embera->autoEmbed($this->url);
 

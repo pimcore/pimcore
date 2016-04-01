@@ -18,5 +18,4 @@ use Pimcore\Model;
 
 class ValidationException extends \Exception
 {
-
 }

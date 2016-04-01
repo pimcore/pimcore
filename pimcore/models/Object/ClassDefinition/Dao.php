@@ -234,7 +234,6 @@ class Dao extends Model\Dao\AbstractDao
         if (is_array($datastoreColumnsToRemove)) {
             foreach ($datastoreColumnsToRemove as $value) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedDatastoreColumns))) {
-
                     $tableRelation = "object_relations_" . $this->model->getId();
                     $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
 
