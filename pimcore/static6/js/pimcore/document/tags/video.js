@@ -25,7 +25,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         var element = Ext.get("pimcore_video_" + name);
 
         var button = new Ext.Button({
-            iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
+            iconCls: "pimcore_icon_overlay_edit",
             cls: "pimcore_edit_link_button",
             handler: this.openEditor.bind(this)
         });
