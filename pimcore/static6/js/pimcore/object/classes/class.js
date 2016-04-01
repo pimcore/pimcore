@@ -643,6 +643,32 @@ pimcore.object.classes.klass = Class.create({
                 }.bind(this)
             }
         });
+        
+    	// Load static routes
+		this.staticRouteStore = pimcore.helpers.grid.buildDefaultStore( 
+				'/admin/settings/staticroutes?',
+				[
+					{name:'id', type: 'int'},
+					{name:'name'},
+					{name:'pattern', allowBlank:false},
+					{name:'reverse', allowBlank:true},
+					{name:'module'},
+					{name:'controller'},
+					{name:'action'},
+					{name:'variables'},
+					{name:'defaults'},
+					{name:'siteId'},
+					{name:'priority', type:'int'},
+					{name: 'creationDate'},
+					{name: 'modificationDate'}
+				], null, {
+					remoteSort: false,
+					remoteFilter: false
+				}
+		);
+		            
+		this.staticRouteStore.setAutoSync(true);
+        
 
         this.showVariants = new Ext.form.Checkbox({
             fieldLabel: t("show_variants"),
@@ -650,8 +676,7 @@ pimcore.object.classes.klass = Class.create({
             checked: this.data.showVariants,
             disabled: !this.data.allowInherit
         });
-
-
+        
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             //border: true,
@@ -706,6 +731,20 @@ pimcore.object.classes.klass = Class.create({
                     name: "previewUrl",
                     width: 600,
                     value: this.data.previewUrl
+                }, 
+                {
+					xtype: 'combobox',
+					fieldLabel: t('object_url'),
+					name: "objectUrl",
+					width: 600,
+					queryMode: 'local',
+					store: this.staticRouteStore,
+					value: this.data.objectUrl,
+					emptyText: t('static_route'),
+					tpl: '<tpl for="."><div class="x-boundlist-item" >{name} ({reverse})</div></tpl>',
+					displayTpl:'<tpl for=".">{reverse}</tpl>',
+					displayField: 'name',
+					valueField: 'reverse'
                 },
                 {
                     xtype: "displayfield",

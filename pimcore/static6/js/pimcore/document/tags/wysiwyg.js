@@ -16,7 +16,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     type: "wysiwyg",
 
     initialize: function(id, name, options, data, inherited) {
-
+    	
         this.id = id;
         this.name = name;
         this.setupWrapper();
@@ -235,7 +235,36 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             this.ckeditor.insertElement(insertEl);
             return true;
         }
+        
+        if (data.elementType == "object") {
 
+    		var document_language = window.editWindow.document.data.properties.language.data;
+    		
+    		Ext.Ajax.request({
+				url: "/admin/object/get-object-url/",
+				params: {id: id, arguments: '{"language":"'+document_language+'"}'},
+				success: function(response) {
+					var data = Ext.decode(response.responseText);
+					if (data.succes){
+						insertEl = CKEDITOR.dom.element.createFromHtml('<a href="'+data.url+'" pimcore_type="object" pimcore_id="' + id + '">' + wrappedText + '</a>');
+	            		this.ckeditor.insertElement(insertEl);
+	            		return true;
+					}else{
+						Ext.Msg.show({
+                		   title: t('url_error'),
+                		   msg: t('url_error_message') + data.not_filled.toString(), 
+                		   buttons: Ext.Msg.OK,
+                		   animEl: 'elId'
+                		});
+						return false;
+					}
+					
+				
+				}.bind(this)
+			});
+       
+        	
+        }
     },
 
     checkValue: function () {
@@ -267,6 +296,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                             || data.ype=="hardlink" || data.type=="link")){
             return true;
         } else if (data.elementType=="asset" && data.type != "folder"){
+            return true;
+        } else if (data.elementType=="object" && data.type != "folder" && data.objectUrl ){
             return true;
         }
 

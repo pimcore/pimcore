@@ -78,6 +78,7 @@ class Service
         $class->setParentClass($importData["parentClass"]);
         $class->setUseTraits($importData["useTraits"]);
         $class->setPreviewUrl($importData["previewUrl"]);
+        $class->setObjectUrl($importData["objectUrl"]);
         $class->setPropertyVisibility($importData["propertyVisibility"]);
 
         $class->save();

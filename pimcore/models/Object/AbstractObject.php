@@ -844,6 +844,33 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         return $this->o_userModification;
     }
+    
+    /**
+     * @return string
+     */
+    public function getUrl($arguments = [])
+    {   
+        
+        $url = $this->getClass()->getObjectUrl();
+
+        // replace named variables
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
+            if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                $url = str_replace("%" . $key, urlencode($value), $url);
+            }
+        }
+ 
+        if (count($arguments) > 0){
+            foreach ($arguments as $key => $value) {
+                if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                    $url = str_replace("%" . $key, urlencode($value), $url);
+                }
+            }
+        }
+        
+        return $url;
+    }
 
     /**
      * @param int $o_id

@@ -178,7 +178,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         if ($child->getType() != "folder") {
             $tmpObject["published"] = $child->isPublished();
             $tmpObject["className"] = $child->getClass()->getName();
-
+            $tmpObject["objectUrl"] = $child->getUrl();
 
             if (!$child->isPublished()) {
                 $tmpObject["cls"] .= "pimcore_unpublished ";
@@ -1799,4 +1799,30 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
         return $object;
     }
+    
+    public function getObjectUrlAction()
+    {
+        
+        $arguments = json_decode($this->getParam("arguments"));
+        
+        $object = Object::getById(intval($this->getParam("id")));
+
+        $url = $object->getUrl($arguments);
+        
+        // Check if replaceable variable still exists
+        $not_filled = [];
+        $url_parsed = explode("/", parse_url(substr($url, 1), PHP_URL_PATH));
+        foreach($url_parsed as $part){
+            if (substr($part, 0, 1) == '%'){  $not_filled[] = $part;}
+        }
+        
+        if (count($not_filled) == 0){
+            $this->_helper->json(['succes'=>true, 'url'=>$url ]);
+        }else{
+            $this->_helper->json(['succes'=>false, 'url'=>$url, 'not_filled'=>$not_filled]);
+        }
+        
+        
+    }
+        
 }

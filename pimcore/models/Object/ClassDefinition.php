@@ -100,6 +100,11 @@ class ClassDefinition extends Model\AbstractModel
      * @var string
      */
     public $previewUrl;
+    
+    /**
+     * @var string
+     */
+    public $objectUrl;
 
     /**
      * @var array
@@ -786,7 +791,25 @@ class ClassDefinition extends Model\AbstractModel
     {
         return $this->previewUrl;
     }
-
+    
+    /**
+     * @param $objectUrl
+     * @return $this
+     */
+    public function setObjectUrl($objectUrl)
+    {
+        $this->objectUrl = $objectUrl;
+        return $this;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getObjectUrl()
+    {
+        return $this->objectUrl;
+    }
+    
     /**
      * @param $description
      * @return $this

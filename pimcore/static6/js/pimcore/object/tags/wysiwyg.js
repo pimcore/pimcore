@@ -187,15 +187,17 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
 
-        if (!this.ckeditor) {
+        if (!this.ckeditor ||!this.dndAllowed(data)) {
             return;
         }
-
+   
+        // we have to foxus the editor otherwise an error is thrown in the case the editor wasn't opend before a drop element
         this.ckeditor.focus();
 
-        var node = data.records[0];
-        var wrappedText = node.data.text;
+        var wrappedText = data.text;
         var textIsSelected = false;
         
         try {
@@ -223,7 +225,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         catch (e2) {
         }
 
-
         // remove existing links out of the wrapped text
         wrappedText = wrappedText.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, function ($0, $1) {
             if($1.toLowerCase() == "a") {
@@ -232,48 +233,171 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             return $0;
         });
 
-        var id = node.data.id;
-        var uri = node.data.path;
+        var insertEl = null;
+        var id = data.id;
+        var uri = data.path;
         var browserPossibleExtensions = ["jpg","jpeg","gif","png"];
-        
-        if (node.data.elementType == "asset") {
-            if (node.data.type == "image" && textIsSelected == false) {
+
+        if (data.elementType == "asset") {
+            if (data.type == "image" && textIsSelected == false) {
                 // images bigger than 600px or formats which cannot be displayed by the browser directly will be
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
-                uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
 
-                if(typeof node.data.imageWidth != "undefined") {
-                    if(node.data.imageWidth < defaultWidth
-                                && in_arrayi(pimcore.helpers.getFileExtension(node.data.text),
-                                                                        browserPossibleExtensions)) {
-                        uri = node.data.path;
+                if(typeof data.imageWidth != "undefined") {
+                    uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
+                    if(data.imageWidth < defaultWidth
+                            && in_arrayi(pimcore.helpers.getFileExtension(data.text),
+                                        browserPossibleExtensions)) {
+                        uri = data.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
                     }
 
-                    if(node.data.imageWidth < defaultWidth) {
-                        defaultWidth = node.data.imageWidth;
+                    if(data.imageWidth < defaultWidth) {
+                        defaultWidth = data.imageWidth;
                     }
+
+                    additionalAttributes += ' style="width:' + defaultWidth + 'px;"';
                 }
 
-                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id
-                                + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="'
+                            + uri + '" pimcore_type="asset" pimcore_id="' + id + '" ' + additionalAttributes + ' />');
+                this.ckeditor.insertElement(insertEl);
                 return true;
             }
             else {
-                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="'
-                                + id + '">' + wrappedText + '</a>');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri
+                            + '" target="_blank" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                this.ckeditor.insertElement(insertEl);
                 return true;
             }
         }
 
-        if (node.data.elementType == "document" && (node.data.type=="page"
-                                || node.data.type=="hardlink" || node.data.type=="link")){
-            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
-                                + id + '">' + wrappedText + '</a>');
+        if (data.elementType == "document" && (data.type=="page"
+                            || data.type=="hardlink" || data.type=="link")){
+            insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
+                                                                        + id + '">' + wrappedText + '</a>');
+            this.ckeditor.insertElement(insertEl);
             return true;
         }
+ 
+        if (data.elementType == "object") {
+
+    		var document_language = '';
+    		
+    		this.url = '';
+    		
+    		Ext.Ajax.request({
+				url: "/admin/object/get-object-url/",
+				params: {id: id},
+				success: function(response) {
+					var data = Ext.decode(response.responseText);
+					if (data.succes){
+
+						insertEl = CKEDITOR.dom.element.createFromHtml('<a href="'+data.url+'" pimcore_type="object" pimcore_id="' + id + '">' + wrappedText + '</a>');
+	            		this.ckeditor.insertElement(insertEl);
+	            		return true;
+					}else{
+						
+						this.url = data.url;
+						
+						if (data.not_filled.indexOf('%language') > -1){
+							var languagestore = [];
+				            var websiteLanguages = pimcore.settings.websiteLanguages;
+				            var selectContent = "";
+				            for (var i=0; i<websiteLanguages.length; i++) {
+				                selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
+				                languagestore.push([websiteLanguages[i], selectContent]);
+				            }
+				        
+				            this.language = '';
+				            
+				    	    this.languageWindow = Ext.create('Ext.Window', {
+				    	        title:  t('language'),
+				    	        bodyStyle: 'padding: 20px;',
+				    	        width: 400,
+				    	        height: 200,
+				    	        plain: true,
+				    	        items:[
+				    	               {
+				    	                   xtype: 'combobox',
+				    	                   fieldLabel: t('language'),
+				    	                   name: "language",
+				    	                   store: languagestore,
+				    	                   editable: false,
+				    	                   forceSelection: true,
+				    	                   triggerAction: 'all',
+				    	                   mode: "local",
+				    	                   listeners: {
+				    	                       select: function(combo, records){
+				    	                    	   this.language = records.data.field1;
+				    	                    	   Ext.getCmp('saveBtn').enable();
+				    	                       }.bind(this)
+				    	                       
+				    	                   }
+				    	           }],
+				    	           buttons: [{
+				    	               text: t('save'),
+				    	               id: 'saveBtn',
+				    	               formBind: true,
+				    	               disabled: true,
+				    	               listeners: {
+				    	                   click: function (){
+				    	                	   
+				    	                	   this.url = this.url.replace('%language', this.language);
+				    	                	   insertEl = CKEDITOR.dom.element.createFromHtml('<a href="'+this.url+'" pimcore_type="object" pimcore_id="' + id + '">' + wrappedText + '</a>');
+				    	                	   this.ckeditor.insertElement(insertEl);
+				    	                	   
+				    	                	   this.languageWindow.close();
+				    	                	   
+				    	                   }.bind(this)
+				    	               }
+				    	           }]
+				    	    }).show();
+				    	 
+						}else{
+							Ext.Msg.show({
+							   title: t('url_error'),
+							   msg: t('url_error_message') + data.not_filled.toString(), 
+	                		   buttons: Ext.Msg.OK,
+	                		   animEl: 'elId'
+	                		});
+						}
+						return false;
+					}
+					
+				
+				}.bind(this)
+			});
+       
+        	
+        }
+    },
+    
+    onNodeOver: function(target, dd, e, data) {
+        var record = data.records[0];
+        data = record.data;
+        if (this.dndAllowed(data)) {
+            return Ext.dd.DropZone.prototype.dropAllowed;
+        }
+        else {
+            return Ext.dd.DropZone.prototype.dropNotAllowed;
+        }
+    },
+ 
+    dndAllowed: function(data) {
+
+        if (data.elementType == "document" && (data.type=="page"
+                            || data.ype=="hardlink" || data.type=="link")){
+            return true;
+        } else if (data.elementType=="asset" && data.type != "folder"){
+            return true;
+        } else if (data.elementType=="object" && data.type != "folder" && data.objectUrl ){
+            return true;
+        }
+
+        return false;
 
     },
 
