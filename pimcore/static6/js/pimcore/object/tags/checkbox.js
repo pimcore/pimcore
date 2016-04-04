@@ -67,7 +67,8 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         var checkbox = {
             fieldLabel:this.fieldConfig.title,
             name:this.fieldConfig.name,
-            componentCls:"object_field"
+            componentCls:"object_field",
+            value: this.data
         };
 
         if (this.fieldConfig.labelWidth) {
@@ -75,15 +76,12 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         }
         checkbox.width += checkbox.labelWidth;
 
-
-
         if (this.fieldConfig.width) {
             checkbox.width = this.fieldConfig.width;
         }
 
         this.component = new Ext.form.Checkbox(checkbox);
 
-        this.component.setValue(this.data);
         return this.component;
     },
 
