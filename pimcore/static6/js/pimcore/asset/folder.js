@@ -214,52 +214,48 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             }
 
             this.toolbarButtons.remove = new Ext.Button({
-                text: t('delete_folder'),
+                tooltip: t('delete_folder'),
                 iconCls: "pimcore_icon_delete",
                 scale: "medium",
                 handler: this.remove.bind(this)
             });
-            if (this.isAllowed("delete") && !this.data.locked && this.data.id != 1) {
-                buttons.push(this.toolbarButtons.remove);
-            }
 
             buttons.push("-");
 
-            var moreButtons = [];
-
-            moreButtons.push({
-                text: t("download_as_zip"),
+            if (this.isAllowed("delete") && !this.data.locked && this.data.id != 1) {
+                buttons.push(this.toolbarButtons.remove);
+            }
+            
+            buttons.push({
+                tooltip: t("download_as_zip"),
                 iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
+                scale: "medium",
                 handler: this.downloadZip.bind(this)
             });
 
-            moreButtons.push({
-                text: t('reload'),
+            buttons.push({
+                tooltip: t('reload'),
                 iconCls: "pimcore_icon_reload",
+                scale: "medium",
                 handler: this.reload.bind(this)
             });
 
-            moreButtons.push({
-                text: t('show_in_tree'),
+            buttons.push({
+                tooltip: t('show_in_tree'),
                 iconCls: "pimcore_icon_show_in_tree",
+                scale: "medium",
                 handler: this.selectInTree.bind(this)
             });
 
             var user = pimcore.globalmanager.get("user");
             if (user.admin) {
-                moreButtons.push({
-                    text: t("show_metainfo"),
+                buttons.push({
+                    tooltip: t("show_metainfo"),
                     iconCls: "pimcore_icon_info",
+                    scale: "medium",
                     handler: this.showMetaInfo.bind(this)
                 });
             }
-
-            buttons.push({
-                text: t("more"),
-                iconCls: "pimcore_icon_more",
-                scale: "medium",
-                menu: moreButtons
-            });
 
             buttons.push("-");
             buttons.push({

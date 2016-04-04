@@ -146,9 +146,12 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 buttons.push(this.toolbarButtons.publish);
             }
 
+            buttons.push("-");
+
+
             if (this.isAllowed("delete") && !this.data.locked) {
                 this.toolbarButtons.remove = new Ext.Button({
-                    text: t('delete'),
+                    tooltip: t('delete'),
                     iconCls: "pimcore_icon_delete",
                     scale: "medium",
                     handler: this.remove.bind(this)
@@ -156,11 +159,9 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 buttons.push(this.toolbarButtons.remove);
             }
 
-            buttons.push("-");
-
             if (this.isAllowed("publish")) {
                 this.toolbarButtons.upload = new Ext.Button({
-                    text: t("upload"),
+                    tooltip: t("upload"),
                     iconCls: "pimcore_icon_upload",
                     scale: "medium",
                     handler: this.upload.bind(this)
@@ -169,7 +170,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
 
             buttons.push({
-                text: t("download"),
+                tooltip: t("download"),
                 iconCls: "pimcore_icon_download",
                 scale: "medium",
                 handler: function () {
@@ -177,33 +178,33 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 }.bind(this)
             });
 
-            buttons.push("-");
-
-            var moreButtons = [];
-
-            moreButtons.push({
-                text: t('reload'),
+            buttons.push({
+                tooltip: t('reload'),
                 iconCls: "pimcore_icon_reload",
+                scale: "medium",
                 handler: this.reload.bind(this)
             });
 
-            moreButtons.push({
-                text: t('show_in_tree'),
+            buttons.push({
+                tooltip: t('show_in_tree'),
                 iconCls: "pimcore_icon_show_in_tree",
+                scale: "medium",
                 handler: this.selectInTree.bind(this)
             });
 
-            moreButtons.push({
-                text: t("show_metainfo"),
+            buttons.push({
+                tooltip: t("show_metainfo"),
                 iconCls: "pimcore_icon_info",
+                scale: "medium",
                 handler: this.showMetaInfo.bind(this)
             });
 
             // only for videos and images
             if (this.isAllowed("publish") && in_array(this.data.type,["image","video"])) {
-                moreButtons.push({
-                    text: t("clear_thumbnails"),
+                buttons.push({
+                    tooltip: t("clear_thumbnails"),
                     iconCls: "pimcore_icon_menu_clear_thumbnails",
+                    scale: "medium",
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/asset/clear-thumbnail",
@@ -214,13 +215,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     }.bind(this)
                 });
             }
-
-            buttons.push({
-                text: t("more"),
-                iconCls: "pimcore_icon_more",
-                scale: "medium",
-                menu: moreButtons
-            });
 
             buttons.push("-");
             buttons.push({

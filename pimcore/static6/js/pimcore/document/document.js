@@ -534,8 +534,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         }
 
         return {
-            text: t("translation"),
+            tooltip: t("translation"),
             iconCls: "pimcore_icon_translations",
+            scale: "medium",
             menu: [{
                 text: t("new_document"),
                 hidden: !in_array(this.getType(), ["page","snippet","email"]),

@@ -155,7 +155,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             });
 
             this.toolbarButtons.remove = new Ext.Button({
-                text: t('delete_folder'),
+                tooltip: t('delete_folder'),
                 iconCls: "pimcore_icon_delete",
                 scale: "medium",
                 handler: this.remove.bind(this)
@@ -167,37 +167,31 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 buttons.push(this.toolbarButtons.publish);
             }
 
+            buttons.push("-");
+
             if(this.isAllowed("delete") && !this.data.general.o_locked && this.data.general.o_id != 1) {
                 buttons.push(this.toolbarButtons.remove);
             }
 
-            buttons.push("-");
-
-            var moreButtons = [];
-
-            moreButtons.push({
-                text: t('reload'),
+            buttons.push({
+                tooltip: t('reload'),
                 iconCls: "pimcore_icon_reload",
+                scale: "medium",
                 handler: this.reload.bind(this)
             });
 
-            moreButtons.push({
-                text: t('show_in_tree'),
+            buttons.push({
+                tooltip: t('show_in_tree'),
                 iconCls: "pimcore_icon_show_in_tree",
+                scale: "medium",
                 handler: this.selectInTree.bind(this, "folder")
             });
 
-            moreButtons.push({
-                text: t("show_metainfo"),
-                iconCls: "pimcore_icon_info",
-                handler: this.showMetaInfo.bind(this)
-            });
-
             buttons.push({
-                text: t("more"),
-                iconCls: "pimcore_icon_more",
+                tooltip: t("show_metainfo"),
+                iconCls: "pimcore_icon_info",
                 scale: "medium",
-                menu: moreButtons
+                handler: this.showMetaInfo.bind(this)
             });
 
             buttons.push("-");

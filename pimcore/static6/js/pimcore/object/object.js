@@ -349,7 +349,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             });
 
             this.toolbarButtons.remove = new Ext.Button({
-                text: t("delete"),
+                tooltip: t("delete"),
                 iconCls: "pimcore_icon_delete",
                 scale: "medium",
                 handler: this.remove.bind(this)
@@ -365,17 +365,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 buttons.push(this.toolbarButtons.unpublish);
             }
 
+            buttons.push("-");
+
             if(this.isAllowed("delete") && !this.data.general.o_locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
 
-            buttons.push("-");
-
-            var moreButtons = [];
-
             var reloadConfig = {
-                text: t('reload'),
+                xtype: "splitbutton",
+                tooltip: t('reload'),
                 iconCls: "pimcore_icon_reload",
+                scale: "medium",
                 handler: this.reload.bind(this, this.data.currentLayoutId)
             }
 
@@ -395,27 +395,22 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 reloadConfig.menu = menu;
             }
 
-            moreButtons.push(reloadConfig);
+            buttons.push(reloadConfig);
 
             if(this.data.general.o_type != "variant" || this.data.general.showVariants) {
-                moreButtons.push({
-                    text: t('show_in_tree'),
+                buttons.push({
+                    tooltip: t('show_in_tree'),
                     iconCls: "pimcore_icon_show_in_tree",
+                    scale: "medium",
                     handler: this.selectInTree.bind(this, this.data.general.o_type)
                 });
             }
 
-            moreButtons.push({
-                text: t("show_metainfo"),
-                iconCls: "pimcore_icon_info",
-                handler: this.showMetaInfo.bind(this)
-            });
-
             buttons.push({
-                text: t("more"),
-                iconCls: "pimcore_icon_more",
+                tooltip: t("show_metainfo"),
+                iconCls: "pimcore_icon_info",
                 scale: "medium",
-                menu: moreButtons
+                handler: this.showMetaInfo.bind(this)
             });
 
             buttons.push("-");
