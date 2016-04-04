@@ -20,8 +20,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     public function __construct()
     {
-        parent::__construct();
-        $this->db = \Pimcore\Resource::get();
+        $this->db = \Pimcore\Db::get();
     }
 
     /**
