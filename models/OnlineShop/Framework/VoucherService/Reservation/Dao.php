@@ -17,10 +17,10 @@ namespace OnlineShop\Framework\VoucherService\Reservation;
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_reservations";
-    protected $db;
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = \Pimcore\Db::get();
     }
 

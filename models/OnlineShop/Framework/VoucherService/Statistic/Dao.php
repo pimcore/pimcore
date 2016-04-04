@@ -18,8 +18,6 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_statistics";
 
-    protected $db;
-
     public function __construct()
     {
         parent::__construct();

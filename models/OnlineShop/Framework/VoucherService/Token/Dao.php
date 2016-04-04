@@ -18,10 +18,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_tokens";
 
-    protected $db;
-
     public function __construct()
     {
+        parent::__construct();
         $this->db = \Pimcore\Resource::get();
     }
 
