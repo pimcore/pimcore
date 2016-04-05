@@ -13558,5 +13558,13 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "lower_sortvalues_first",
+    "definition": "Items with lower values will be displayed first (defaults to 0)",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
 ]

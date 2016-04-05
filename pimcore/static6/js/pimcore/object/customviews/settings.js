@@ -209,6 +209,8 @@ pimcore.object.customviews.settings = Class.create({
             ]
         });
 
+        Ext.QuickTips.register({target:  sorterField.getEl(), text: t("lower_sortvalues_first")});
+
         this.panel.updateLayout();
 
         this.entryCount++;
