@@ -93,7 +93,7 @@ class User extends User\UserRole
     /**
      * @var string|null
      */
-    public $perspective;
+    public $activePerspective;
 
 
     /**
@@ -507,17 +507,17 @@ class User extends User\UserRole
     /**
      * @return null|string
      */
-    public function getPerspective()
+    public function getActivePerspective()
     {
-        return $this->perspective;
+        return $this->activePerspective;
     }
 
     /**
-     * @param null|string $perspective
+     * @param null|string $activePerspective
      */
-    public function setPerspective($perspective)
+    public function setActivePerspective($activePerspective)
     {
-        $this->perspective = $perspective;
+        $this->activePerspective = $activePerspective;
     }
 
 

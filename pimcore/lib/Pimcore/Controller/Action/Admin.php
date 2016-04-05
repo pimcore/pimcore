@@ -180,7 +180,7 @@ abstract class Admin extends Action
         // update perspective settings
         $requestedPerspective = $this->getParam("perspective");
         if ($requestedPerspective) {
-            if ($requestedPerspective != $user->getPerspective()) {
+            if ($requestedPerspective != $user->getActivePerspective()) {
                 $existingPerspectives = array_keys(Config::getPerspectivesConfig()->toArray());
                 if (!in_array($requestedPerspective, $existingPerspectives)) {
                     $requestedPerspective = null;
@@ -189,13 +189,13 @@ abstract class Admin extends Action
         }
 
         if (!$requestedPerspective) {
-            $requestedPerspective = $user->getPerspective();
+            $requestedPerspective = $user->getActivePerspective();
         }
 
         //TODO check if perspective is still allowed
 
-        if ($requestedPerspective != $user->getPerspective()) {
-            $user->setPerspective($requestedPerspective);
+        if ($requestedPerspective != $user->getActivePerspective()) {
+            $user->setActivePerspective($requestedPerspective);
             $user->save();
         }
 

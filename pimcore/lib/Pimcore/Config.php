@@ -374,7 +374,7 @@ class Config
      */
     public static function getRuntimePerspective() {
         $currentUser = Tool\Admin::getCurrentUser();
-        $currentConfigName = $currentUser->getPerspective() ? $currentUser->getPerspective() : "default";
+        $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : "default";
 
         $config = self::getPerspectivesConfig()->toArray();
         //TODO fallback
@@ -448,7 +448,7 @@ class Config
 
         $currentUser = Tool\Admin::getCurrentUser();
 
-        $correntConfigName = $currentUser->getPerspective() ? $currentUser->getPerspective() : "default";
+        $correntConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : "default";
 
         $result = array();
         foreach ($config as $configName => $config) {
