@@ -19,7 +19,7 @@ namespace OnlineShop\Framework\VoucherService\TokenManager;
 
 use OnlineShop\Framework\Exception\InvalidConfigException;
 
-class Single extends AbstractTokenManager
+class Single extends AbstractTokenManager implements IExportableTokenManager
 {
 
     protected $template;
@@ -86,6 +86,26 @@ class Single extends AbstractTokenManager
         $view->statistics = $this->getStatistics($statisticUsagePeriod);
 
         return $this->template;
+    }
+
+    /**
+     * Get data for export
+     *
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     * @throws \Zend_Paginator_Exception
+     */
+    protected function getExportData(array $params)
+    {
+        $data = [];
+        if ($codes = $this->getCodes()) {
+            foreach ($codes as $code) {
+                $data[] = $code;
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -281,5 +301,4 @@ class Single extends AbstractTokenManager
     {
         $this->template = $template;
     }
-
 }

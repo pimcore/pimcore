@@ -18,7 +18,9 @@
 namespace OnlineShop\Framework\VoucherService\TokenManager;
 
 use OnlineShop\Framework\Exception\VoucherServiceException;
+use OnlineShop\Framework\VoucherService\Token;
 use Pimcore\Model\Object\OnlineShopVoucherSeries;
+use Pimcore\View\Helper\TranslateAdmin;
 
 abstract class AbstractTokenManager implements ITokenManager
 {
@@ -112,6 +114,94 @@ abstract class AbstractTokenManager implements ITokenManager
                 throw new VoucherServiceException("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);
             }
         }
+    }
+
+    /**
+     * Export tokens to CSV
+     *
+     * @param $params
+     * @return mixed
+     * @implements IExportableTokenManager
+     */
+    public function exportCsv(array $params)
+    {
+        $translator = new TranslateAdmin();
+
+        $stream = fopen('php://temp', 'w+');
+        fputcsv($stream, [
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-token'),
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-usages'),
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-length'),
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-date'),
+        ]);
+
+        $data = null;
+
+        try {
+            $data = $this->getExportData($params);
+        } catch (\Exception $e) {
+            fputcsv($stream, [$e->getMessage()]);
+            fputcsv($stream, '');
+        }
+
+        if (null !== $data && is_array($data)) {
+            foreach ($data as $tokenInfo) {
+                fputcsv($stream, [
+                    $tokenInfo['token'],
+                    (int) $tokenInfo['usages'],
+                    (int) $tokenInfo['length'],
+                    $tokenInfo['timestamp']
+                ]);
+            }
+        }
+
+        rewind($stream);
+        $result = stream_get_contents($stream);
+        fclose($stream);
+
+        return $result;
+    }
+
+    /**
+     * Export tokens to plain text list
+     *
+     * @param $params
+     * @return mixed
+     * @implements IExportableTokenManager
+     */
+    public function exportPlain(array $params)
+    {
+        $result = [];
+        $data   = null;
+
+        try {
+            $data = $this->getExportData($params);
+        } catch (\Exception $e) {
+            $result[] = $e->getMessage();
+            $result[] = '';
+        }
+
+        if (null !== $data && is_array($data)) {
+            /** @var Token $token */
+            foreach ($data as $tokenInfo) {
+                $result[] = $tokenInfo['token'];
+            }
+        }
+
+        return implode(PHP_EOL, $result) . PHP_EOL;
+    }
+
+    /**
+     * Get data for export - to be overridden in child classes
+     *
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     * @throws \Zend_Paginator_Exception
+     */
+    protected function getExportData(array $params)
+    {
+        return [];
     }
 
     /**

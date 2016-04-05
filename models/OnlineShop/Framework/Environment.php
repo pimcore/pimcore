@@ -64,7 +64,7 @@ class Environment implements IEnvironment {
     protected function loadFromSession() {
         // when $_SESSION[self::SESSION_NAMESPACE] is set, always load environment from session (also within cli scripts)
         if(php_sapi_name() != "cli" || $_SESSION[$this->sessionNamespace]) {
-            $this->session = new \Zend_Session_Namespace($this->sessionNamespace);
+            $this->session = $this->buildSession();
 
             $key = self::SESSION_KEY_CUSTOM_ITEMS;
             $this->customItems = $this->session->$key;
@@ -320,6 +320,14 @@ class Environment implements IEnvironment {
     public function getCurrentCheckoutTenant()
     {
         return $this->currentCheckoutTenant;
+    }
+
+    /**
+     * @return \Zend_Session_Namespace
+     */
+    protected function buildSession()
+    {
+        return new \Zend_Session_Namespace($this->sessionNamespace);
     }
 
     /**

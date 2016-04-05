@@ -86,12 +86,21 @@ if ($this->paginator) {
                         <?php } ?>
                     </div>
 
-
                     <div class="col col-sm-4 text-right">
                         <div class="btn-group">
-                            <!--
-                            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-export"></span> <?=$this->ts('plugin_onlineshop_voucherservice_export-button')?></button>
-                            -->
+                            <?php if ($this->supportsExport): ?>
+                                <?php
+                                $exportUrl = $this->url(array_merge($this->getAllParams(), [
+                                    'action' => 'export-tokens',
+                                    'format' => 'csv'
+                                ]), 'plugin', false);
+                                ?>
+
+                                <a class="btn btn-default" href="<?= $exportUrl ?>" target="_blank">
+                                    <span class="glyphicon glyphicon-export"></span>
+                                    <?= $this->ts('plugin_onlineshop_voucherservice_export-button') ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

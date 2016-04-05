@@ -35,10 +35,9 @@ class SessionCart extends AbstractCart implements ICart {
         return '\OnlineShop\Framework\CartManager\SessionCartCheckoutData';
     }
 
-
-
     protected function getSession() {
-        $session = new \Zend_Session_Namespace(self::$sessionNamespace);
+        $session = new \Zend_Session_Namespace(static::$sessionNamespace);
+
         if(empty($session->carts)) {
             $session->carts = array();
         }
@@ -97,7 +96,7 @@ class SessionCart extends AbstractCart implements ICart {
      * @return \OnlineShop\Framework\CartManager\SessionCart
      */
     public static function getById($id) {
-        $carts = self::getAllCartsForUser(-1);
+        $carts = static::getAllCartsForUser(-1);
         return $carts[$id];
     }
 
@@ -107,16 +106,16 @@ class SessionCart extends AbstractCart implements ICart {
      * @return array
      */
     public static function getAllCartsForUser($userId) {
-        if(self::$unserializedCarts == null) {
+        if(static::$unserializedCarts == null) {
 
-            $tmpCart = new self();
+            $tmpCart = new static();
 
             foreach($tmpCart->getSession()->carts as $serializedCart) {
                 $cart = unserialize($serializedCart);
-                self::$unserializedCarts[$cart->getId()] = $cart;
+                static::$unserializedCarts[$cart->getId()] = $cart;
             }
         }
-        return self::$unserializedCarts;
+        return static::$unserializedCarts;
     }
 
     /**
@@ -124,7 +123,7 @@ class SessionCart extends AbstractCart implements ICart {
      */
     public static function getSessionNamespace()
     {
-        return self::$sessionNamespace;
+        return static::$sessionNamespace;
     }
 
     /**
@@ -132,7 +131,7 @@ class SessionCart extends AbstractCart implements ICart {
      */
     public static function setSessionNamespace($sessionNamespace)
     {
-        self::$sessionNamespace = $sessionNamespace;
+        static::$sessionNamespace = $sessionNamespace;
     }
 
 
