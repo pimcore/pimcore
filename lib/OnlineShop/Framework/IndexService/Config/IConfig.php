@@ -69,6 +69,9 @@ interface IConfig {
 
 
     /**
+     * Returns categories for given object in context of the current tenant.
+     * Possible hook to filter categories for specific tenants.
+     *
      * @param \OnlineShop\Framework\Model\IIndexable $object
      *
      * @return \OnlineShop\Framework\Model\AbstractCategory[]
