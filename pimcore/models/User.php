@@ -90,6 +90,11 @@ class User extends User\UserRole
      */
     public $contentLanguages;
 
+    /**
+     * @var string|null
+     */
+    public $perspective;
+
 
     /**
      * @return string
@@ -498,4 +503,22 @@ class User extends User\UserRole
         }
         $this->contentLanguages = $contentLanguages;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getPerspective()
+    {
+        return $this->perspective;
+    }
+
+    /**
+     * @param null|string $perspective
+     */
+    public function setPerspective($perspective)
+    {
+        $this->perspective = $perspective;
+    }
+
+
 }

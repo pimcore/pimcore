@@ -968,3 +968,7 @@
 .pimcore_icon_sql {
     background: url(/pimcore/static6/img/flat-color-icons/database.svg) no-repeat !important;
 }
+
+.pimcore_icon_perspective {
+    background: url(/pimcore/static6/img/flat-color-icons/reading.svg) center center no-repeat !important;
+}

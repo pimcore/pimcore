@@ -19,6 +19,40 @@ pimcore.layout.toolbar = Class.create({
 
         var fileItems = [];
 
+        if (pimcore.settings.availablePerspectives.length > 1) {
+
+            var items = [];
+            for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
+                var perspective = pimcore.settings.availablePerspectives[i];
+                var itemCfg = {
+                    text: perspective.name,
+                    disabled: perspective.active,
+                    handler: this.openPerspective.bind(this, perspective.name)
+                }
+
+                if (perspective.icon) {
+                    itemCfg.icon = perspective.icon;
+                } else  if (perspective.iconCls) {
+                    itemCfg.iconCls = perspective.iconCls;
+                }
+
+                items.push(itemCfg);
+            }
+
+            this.perspectivesMenu = new Ext.menu.Item({
+                text: t("perspectives"),
+                iconCls: "pimcore_icon_perspective",
+                hideOnClick: false,
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    shadow: false,
+                    items: items
+                }
+            });
+            fileItems.push(this.perspectivesMenu);
+        }
+
+
         if(user.isAllowed("dashboards")) {
             this.dashboardMenu = new Ext.menu.Item({
                 text: t("dashboards"),
@@ -987,6 +1021,10 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("redirects", new pimcore.settings.redirects());
         }
+    },
+
+    openPerspective: function(name) {
+        location.href = "/admin/?perspective=" + name;
     },
 
     generatePagePreviews: function ()  {

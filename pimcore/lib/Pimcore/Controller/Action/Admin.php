@@ -176,6 +176,29 @@ abstract class Admin extends Action
         \Zend_Registry::set("pimcore_admin_user", $this->user);
 
         $this->setLanguage($this->user->getLanguage());
+
+        // update perspective settings
+        $requestedPerspective = $this->getParam("perspective");
+        if ($requestedPerspective) {
+            if ($requestedPerspective != $user->getPerspective()) {
+                $existingPerspectives = array_keys(Config::getPerspectivesConfig()->toArray());
+                if (!in_array($requestedPerspective, $existingPerspectives)) {
+                    $requestedPerspective = null;
+                }
+            }
+        }
+
+        if (!$requestedPerspective) {
+            $requestedPerspective = $user->getPerspective();
+        }
+
+        //TODO check if perspective is still allowed
+
+        if ($requestedPerspective != $user->getPerspective()) {
+            $user->setPerspective($requestedPerspective);
+            $user->save();
+        }
+
         return $this;
     }
 

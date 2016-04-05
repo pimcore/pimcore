@@ -653,6 +653,7 @@ CREATE TABLE `users` (
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` varchar(255) DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
+  `perspective` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),

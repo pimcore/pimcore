@@ -114,6 +114,10 @@
 
 <?php // define stylesheets ?>
 <?php
+
+$runtimePerspective = \Pimcore\Config::getRuntimePerspective();
+$extjsDev = $runtimePerspective["extjsDev"];
+
 $styles = array(
     "/admin/misc/admin-css?extjs6=true",
     "/pimcore/static6/css/icons.css",
@@ -143,7 +147,7 @@ $styles = array(
 
 // SCRIPT LIBRARIES
 $debugSuffix = "";
-if (PIMCORE_DEVMODE) {
+if (PIMCORE_DEVMODE || $extjsDev) {
     $debugSuffix = "-debug";
 }
 
@@ -538,7 +542,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         maintenance_mode: <?= \Pimcore\Tool\Admin::isInMaintenanceMode() ? "true" : "false"; ?>,
         mail: <?= $this->mail_settings_complete ?>,
         debug: <?= \Pimcore::inDebugMode() ? "true" : "false"; ?>,
-        devmode: <?= PIMCORE_DEVMODE ? "true" : "false"; ?>,
+        devmode: <?= PIMCORE_DEVMODE || $extjsDev ? "true" : "false"; ?>,
         google_analytics_enabled: <?= \Zend_Json::encode((bool) \Pimcore\Google\Analytics::isConfigured()) ?>,
         google_webmastertools_enabled: <?= \Zend_Json::encode((bool) \Pimcore\Google\Webmastertools::isConfigured()) ?>,
         language: '<?= $this->language; ?>',
@@ -550,7 +554,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         htmltoimage: <?= \Zend_Json::encode(\Pimcore\Image\HtmlToImage::isSupported()) ?>,
         videoconverter: <?= \Zend_Json::encode(\Pimcore\Video::isAvailable()) ?>,
         asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
-        perspective: <?= \Zend_Json::encode(\Pimcore\Config::getRuntimePerspective()) ?>
+        perspective: <?= \Zend_Json::encode($runtimePerspective) ?>,
+        availablePerspectives: <?= \Zend_Json::encode(\Pimcore\Config::getAvailablePerspectives(\Pimcore\Tool\Admin::getCurrentUser())) ?>,
     };
 </script>
 
@@ -580,7 +585,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 
 <!-- internal scripts -->
-<?php if (PIMCORE_DEVMODE) { ?>
+<?php if (PIMCORE_DEVMODE || $extjsDev) { ?>
     <?php foreach ($scripts as $scriptUrl) { ?>
     <script type="text/javascript" src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
@@ -603,7 +608,7 @@ foreach ($scripts as $scriptUrl) {
 // only add the timestamp if the devmode is not activated, otherwise it is very hard to develop and debug plugins,
 // because the filename changes on every reload and therefore breakpoints, ... are resetted on every reload
 $pluginDcValue = time();
-if(PIMCORE_DEVMODE) {
+if(PIMCORE_DEVMODE || $extjsDev) {
     $pluginDcValue = 1;
 }
 

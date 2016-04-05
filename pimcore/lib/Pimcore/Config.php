@@ -369,17 +369,27 @@ class Config
         ];
     }
 
+    /** Gets the active perspective for the current user
+     * @return array
+     */
     public static function getRuntimePerspective() {
-        //TODO make
-        $name = "default";
+        $currentUser = Tool\Admin::getCurrentUser();
+        $currentConfigName = $currentUser->getPerspective() ? $currentUser->getPerspective() : "default";
 
-        $result = array();
-        $result["elementTree"] = self::getElementTreeConfig($name);
+        $config = self::getPerspectivesConfig()->toArray();
+        //TODO fallback
+        if ($config[$currentConfigName]) {
+            $result = $config[$currentConfigName];
+        } else {
+            $result = self::getStandardPerspective();
+        }
+
+        $result["elementTree"] = self::getRuntimeElementTreeConfig($currentConfigName);
         return $result;
     }
 
 
-    public static function getElementTreeConfig($name = "default") {
+    protected static function getRuntimeElementTreeConfig($name) {
         $config = self::getPerspectivesConfig()->toArray();
 
         $result = $config[$name]["elementTree"];
@@ -426,6 +436,31 @@ class Config
     public static function setPerspectivesConfig(\Zend_Config $config)
     {
         \Zend_Registry::set("pimcore_config_perspectives", $config);
+    }
+
+
+    /** Returns a list of available perspectives for the given user
+     * @param Model\User $user
+     * @return array
+     */
+    public static function getAvailablePerspectives(Model\User $user) {
+        $config = self::getPerspectivesConfig()->toArray();
+
+        $currentUser = Tool\Admin::getCurrentUser();
+
+        $correntConfigName = $currentUser->getPerspective() ? $currentUser->getPerspective() : "default";
+
+        $result = array();
+        foreach ($config as $configName => $config) {
+            $result[] = array(
+                "name" => $configName,
+                "active" => $configName == $correntConfigName,
+                "icon" => $config["icon"],
+                "iconCls" => $config["iconCls"]
+            );
+        }
+
+        return $result;
     }
 
 }
